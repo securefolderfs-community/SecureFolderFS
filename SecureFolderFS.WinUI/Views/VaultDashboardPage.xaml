@@ -1,0 +1,48 @@
+﻿<Page
+    x:Class="SecureFolderFS.WinUI.Views.VaultDashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
+    xmlns:vm="using:SecureFolderFS.Backend.ViewModels.Dashboard.Navigation"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+
+        <DataTemplate x:Key="ParentBreadcrumbItem" x:DataType="vm:DashboardNavigationItemViewModel">
+            <TextBlock
+                FontSize="24"
+                FontWeight="Semibold"
+                Opacity="0.8"
+                Text="{x:Bind SectionName, Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate x:Key="LeadingBreadcrumbItem" x:DataType="vm:DashboardNavigationItemViewModel">
+            <TextBlock
+                FontSize="24"
+                FontWeight="Semibold"
+                Text="{x:Bind SectionName, Mode=OneWay}" />
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Padding="32,16">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <BreadcrumbBar Grid.Row="0" ItemsSource="{x:Bind ViewModel.DashboardNavigationViewModel.DashboardNavigationItems}">
+            <BreadcrumbBar.ItemTemplate>
+                <DataTemplate x:DataType="vm:DashboardNavigationItemViewModel">
+                    <BreadcrumbBarItem DataContext="{Binding}">
+                        <BreadcrumbBarItem.ContentTemplateSelector>
+                            <ts:BreadcrumbItemTemplateSelector LeadingItemTemplate="{StaticResource LeadingBreadcrumbItem}" ParentItemTemplate="{StaticResource ParentBreadcrumbItem}" />
+                        </BreadcrumbBarItem.ContentTemplateSelector>
+                    </BreadcrumbBarItem>
+                </DataTemplate>
+            </BreadcrumbBar.ItemTemplate>
+        </BreadcrumbBar>
+    </Grid>
+</Page>

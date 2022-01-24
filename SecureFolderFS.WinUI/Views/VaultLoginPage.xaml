@@ -1,0 +1,61 @@
+﻿<Page
+    x:Class="SecureFolderFS.WinUI.Views.VaultLoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        RowSpacing="32">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--  Header  -->
+        <StackPanel Grid.Row="0" Spacing="6">
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="32"
+                FontWeight="Semibold"
+                Text="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="16"
+                Opacity="0.8"
+                Text="Vault is locked" />
+        </StackPanel>
+
+        <!--  Image  -->
+        <Image Grid.Row="1" />
+
+        <!--  Password and login  -->
+        <StackPanel Grid.Row="1" Spacing="24">
+
+            <!--  Password Control  -->
+            <StackPanel Spacing="8">
+                <TextBlock Opacity="0.8" Text="Enter password" />
+                <PasswordBox
+                    x:Name="VaultPasswordBox"
+                    MinWidth="300"
+                    IsPasswordRevealButtonEnabled="True"
+                    KeyUp="VaultPasswordBox_KeyUp"
+                    PlaceholderText="Password" />
+            </StackPanel>
+
+            <!--  Login  -->
+            <Button
+                Padding="24,6"
+                HorizontalAlignment="Center"
+                Command="{x:Bind ViewModel.UnlockVaultCommand}"
+                CommandParameter="{x:Bind VaultPasswordBox.Password, Mode=OneWay}"
+                Content="Continue"
+                Style="{ThemeResource AccentButtonStyle}" />
+        </StackPanel>
+    </Grid>
+</Page>

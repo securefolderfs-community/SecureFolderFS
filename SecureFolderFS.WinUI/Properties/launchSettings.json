@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SecureFolderFS.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "SecureFolderFS.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

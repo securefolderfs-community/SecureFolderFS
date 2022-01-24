@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+	<LangVersion>10.0</LangVersion>
+	<Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DokanNet" Version="1.5.0" />
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1" />
+    <PackageReference Include="Miscreant" Version="0.3.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NSec.Cryptography" Version="21.11.0-preview2" />
+    <PackageReference Include="RFC3394" Version="1.0.0" />
+    <PackageReference Include="System.Runtime.Caching" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>
