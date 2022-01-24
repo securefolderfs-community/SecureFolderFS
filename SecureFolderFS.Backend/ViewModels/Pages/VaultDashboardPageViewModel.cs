@@ -18,6 +18,16 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
             : base(vaultModel)
         {
             DashboardNavigationViewModel = new();
+
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            DashboardNavigationViewModel.AppendNavigation(new()
+            {
+                SectionName = VaultModel.VaultName,
+            });
         }
 
         public override void Dispose()

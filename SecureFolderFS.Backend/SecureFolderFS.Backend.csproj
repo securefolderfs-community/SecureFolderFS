@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="DataModels\" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 
 </Project>

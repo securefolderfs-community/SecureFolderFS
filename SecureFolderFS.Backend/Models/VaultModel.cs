@@ -4,10 +4,8 @@
 
 namespace SecureFolderFS.Backend.Models
 {
-    public sealed class VaultModel : IDisposable, IEquatable<VaultModel>
+    public sealed class VaultModel : IEquatable<VaultModel>
     {
-        public IVaultInstance? VaultInstance { get; set; }
-
         public string? VaultRootPath { get; init; }
 
         public string? VaultName { get; init; }
@@ -20,11 +18,6 @@ namespace SecureFolderFS.Backend.Models
         public override int GetHashCode()
         {
             return VaultRootPath?.GetHashCode() ?? base.GetHashCode();
-        }
-
-        public void Dispose()
-        {
-            VaultInstance?.Dispose();
         }
     }
 }

@@ -45,22 +45,6 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
             else
             {
                 var disposablePassword = new DisposablePassword(Encoding.UTF8.GetBytes(password));
-
-                VaultModel.VaultInstance = VaultRoutines.NewVaultLoadRoutine()
-                    .EstablishRoutine()
-                    .AddVaultPath(new(VaultModel.VaultRootPath))
-                    .AddFileOperations()
-                    .FindConfigurationFile()
-                    .ContinueConfigurationFileInitialization()
-                    .FindKeystoreFile()
-                    .ContinueKeystoreFileInitialization()
-                    .AddEncryptionAlgorithmBuilder()
-                    .DeriveMasterKeyFromPassword(disposablePassword)
-                    .ContinueInitializationWithMasterKey()
-                    .VerifyVaultConfiguration()
-                    .ContinueInitialization()
-                    .Finish()
-                    .Deploy();
             }
         }
 

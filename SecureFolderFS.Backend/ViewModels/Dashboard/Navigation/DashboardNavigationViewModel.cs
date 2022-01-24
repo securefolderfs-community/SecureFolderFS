@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 #nullable enable
@@ -17,9 +12,29 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard.Navigation
         public DashboardNavigationViewModel()
         {
             DashboardNavigationItems = new();
+        }
 
-            DashboardNavigationItems.Add(new());
-            DashboardNavigationItems.Add(new() { SectionName = "test2", IsLeading = true});
+        public void SetNavigation(DashboardNavigationItemViewModel dashboardNavigationItemViewModel)
+        {
+            ArgumentNullException.ThrowIfNull(dashboardNavigationItemViewModel);
+
+            DashboardNavigationItems.Clear();
+
+            AppendNavigation(dashboardNavigationItemViewModel);
+        }
+
+        public void AppendNavigation(DashboardNavigationItemViewModel dashboardNavigationItemViewModel)
+        {
+            ArgumentNullException.ThrowIfNull(dashboardNavigationItemViewModel);
+
+            var current = dashboardNavigationItemViewModel;
+            while (current != null)
+            {
+                current.IsLeading = current.Parent == null;
+                DashboardNavigationItems.Add(current);
+
+                current = current.Parent;
+            }
         }
     }
 }
