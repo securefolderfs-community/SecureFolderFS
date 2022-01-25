@@ -10,6 +10,7 @@
 
     <UserControl.Resources>
         <vc:DateTimeToStringValueConverter x:Key="DateTimeToStringValueConverter" />
+        <vc:VaultHealthStateToStringConverter x:Key="VaultHealthStateToStringConverter" />
     </UserControl.Resources>
 
     <Grid ColumnSpacing="8">
@@ -37,8 +38,8 @@
             <TextBlock
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                FontWeight="Semibold"
-                Text="{x:Bind ViewModel.VaultStatus, Mode=OneWay}" />
+                FontWeight="SemiBold"
+                Text="{x:Bind ViewModel.VaultHealthState, Mode=OneWay, Converter={StaticResource VaultHealthStateToStringConverter}}" />
 
             <!--  Last checked  -->
             <TextBlock

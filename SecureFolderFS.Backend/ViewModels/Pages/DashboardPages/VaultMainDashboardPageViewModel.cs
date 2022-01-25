@@ -9,10 +9,16 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
     {
         public VaultHealthViewModel VaultHealthViewModel { get; }
 
+        public GraphWidgetControlViewModel ReadGraphViewModel { get; }
+
+        public GraphWidgetControlViewModel WriteGraphViewModel { get; }
+
         public VaultMainDashboardPageViewModel(VaultModel vaultModel)
             : base(vaultModel)
         {
             VaultHealthViewModel = new();
+            ReadGraphViewModel = new();
+            WriteGraphViewModel = new();
         }
     }
 }

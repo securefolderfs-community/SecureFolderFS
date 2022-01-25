@@ -14,14 +14,14 @@
         <DataTemplate x:Key="ParentBreadcrumbItem" x:DataType="vm:DashboardNavigationItemViewModel">
             <TextBlock
                 FontSize="24"
-                FontWeight="Semibold"
+                FontWeight="SemiBold"
                 Opacity="0.8"
                 Text="{x:Bind SectionName, Mode=OneWay}" />
         </DataTemplate>
         <DataTemplate x:Key="LeadingBreadcrumbItem" x:DataType="vm:DashboardNavigationItemViewModel">
             <TextBlock
                 FontSize="24"
-                FontWeight="Semibold"
+                FontWeight="SemiBold"
                 Text="{x:Bind SectionName, Mode=OneWay}" />
         </DataTemplate>
     </Page.Resources>

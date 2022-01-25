@@ -1,17 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using SecureFolderFS.Backend.ViewModels.Dashboard;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -28,11 +16,10 @@ namespace SecureFolderFS.WinUI.UserControls
 
         public VaultHealthViewModel ViewModel
         {
-            get { return (VaultHealthViewModel)GetValue(ViewModelProperty); }
-            set { SetValue(ViewModelProperty, value); }
+            get => (VaultHealthViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
         }
-        
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register("ViewModel", typeof(int), typeof(VaultHealthControl), new PropertyMetadata(null));
+            DependencyProperty.Register("ViewModel", typeof(VaultHealthViewModel), typeof(VaultHealthControl), new PropertyMetadata(null));
     }
 }

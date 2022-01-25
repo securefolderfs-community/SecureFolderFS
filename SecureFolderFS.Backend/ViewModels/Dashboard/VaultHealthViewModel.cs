@@ -20,13 +20,6 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard
             set => SetProperty(ref _VaultHealthLastCheckedDate, value);
         }
 
-        private string? _VaultStatus = "Abc";
-        public string? VaultStatus
-        {
-            get => _VaultStatus;
-            set => SetProperty(ref _VaultStatus, value);
-        }
-
         private VaultHealthState _VaultHealthState;
         public VaultHealthState VaultHealthState
         {

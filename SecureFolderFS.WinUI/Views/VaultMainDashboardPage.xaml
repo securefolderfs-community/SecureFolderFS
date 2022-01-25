@@ -8,16 +8,45 @@
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     mc:Ignorable="d">
 
-
-    <Grid>
+    <Grid RowSpacing="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
 
         <!--  Vault Health  -->
         <uc:VaultHealthControl Grid.Row="0" ViewModel="{x:Bind ViewModel.VaultHealthViewModel}" />
+
+        <!--  Read/Write Graphs  -->
+        <Grid Grid.Row="1" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <!--  Read  -->
+            <uc:GraphWidgetControl
+                Grid.Column="0"
+                ChartPrimaryColor="#4C00AED4"
+                GraphHeader="Read speeds"
+                ViewModel="{x:Bind ViewModel.ReadGraphViewModel}">
+                <uc:GraphWidgetControl.ChartStroke>
+                    <SolidColorBrush Color="#00AED4" />
+                </uc:GraphWidgetControl.ChartStroke>
+            </uc:GraphWidgetControl>
+
+            <!--  Write  -->
+            <uc:GraphWidgetControl
+                Grid.Column="1"
+                ChartPrimaryColor="#4C008d74"
+                GraphHeader="Write speeds"
+                ViewModel="{x:Bind ViewModel.WriteGraphViewModel}">
+                <uc:GraphWidgetControl.ChartStroke>
+                    <SolidColorBrush Color="#008D74" />
+                </uc:GraphWidgetControl.ChartStroke>
+            </uc:GraphWidgetControl>
+        </Grid>
     </Grid>
 </Page>

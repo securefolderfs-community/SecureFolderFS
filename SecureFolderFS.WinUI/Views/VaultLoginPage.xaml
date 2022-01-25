@@ -22,7 +22,7 @@
             <TextBlock
                 HorizontalAlignment="Center"
                 FontSize="32"
-                FontWeight="Semibold"
+                FontWeight="SemiBold"
                 Text="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
             <TextBlock
                 HorizontalAlignment="Center"

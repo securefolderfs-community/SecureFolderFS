@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.WinUI.UserControls.GraphWidgetControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sf="using:Syncfusion.UI.Xaml.Charts"
+    mc:Ignorable="d">
+
+    <Button
+        Height="264"
+        Padding="12"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!--  Header (small)  -->
+            <TextBlock
+                Grid.Row="0"
+                Opacity="0.8"
+                Text="{x:Bind GraphHeader, Mode=OneWay}" />
+
+            <!--  Subheader (big)  -->
+            <TextBlock
+                Grid.Row="1"
+                FontSize="24"
+                FontWeight="SemiBold"
+                Text="{x:Bind ViewModel.GraphSubheader, Mode=OneWay}" />
+
+            <!--  Chart  -->
+            <sf:SfCartesianChart Grid.Row="2" Margin="0,8,0,0">
+                <sf:SfCartesianChart.PrimaryAxis>
+                    <sf:DateTimeAxis ShowGridLines="False" Visibility="Collapsed" />
+                </sf:SfCartesianChart.PrimaryAxis>
+                <sf:SfCartesianChart.SecondaryAxis>
+                    <sf:NumericalAxis
+                        Minimum="0"
+                        ShowGridLines="False"
+                        SmallTickLineSize="8"
+                        TickLineSize="0" />
+                </sf:SfCartesianChart.SecondaryAxis>
+
+                <sf:SfCartesianChart.Series>
+                    <sf:AreaSeries
+                        ItemsSource="{x:Bind ViewModel.Data}"
+                        Palette="Custom"
+                        Stroke="{x:Bind ChartStroke, Mode=OneWay}"
+                        StrokeThickness="1"
+                        XBindingPath="Date"
+                        YBindingPath="High">
+                        <sf:AreaSeries.ColorModel>
+                            <sf:ChartColorModel>
+                                <sf:ChartColorModel.CustomBrushes>
+                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                        <GradientStop Offset="0" Color="{x:Bind ChartPrimaryColor}" />
+                                        <GradientStop Offset="1" Color="{x:Bind ChartSecondaryColor}" />
+                                    </LinearGradientBrush>
+                                </sf:ChartColorModel.CustomBrushes>
+                            </sf:ChartColorModel>
+                        </sf:AreaSeries.ColorModel>
+                    </sf:AreaSeries>
+                </sf:SfCartesianChart.Series>
+            </sf:SfCartesianChart>
+        </Grid>
+    </Button>
+
+</UserControl>
