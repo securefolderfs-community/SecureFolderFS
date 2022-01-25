@@ -1,0 +1,77 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.WinUI.UserControls.VaultHealthControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <vc:DateTimeToStringValueConverter x:Key="DateTimeToStringValueConverter" />
+    </UserControl.Resources>
+
+    <Grid ColumnSpacing="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <!--  Icon  -->
+        <Image
+            Grid.Column="0"
+            Width="64"
+            Height="60"
+            Margin="0,-6,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Source="../Assets/AppAssets/GreenShield.svg"
+            Stretch="UniformToFill" />
+
+        <!--  Health status  -->
+        <StackPanel Grid.Column="1">
+
+            <!--  Vault status  -->
+            <TextBlock
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontWeight="Semibold"
+                Text="{x:Bind ViewModel.VaultStatus, Mode=OneWay}" />
+
+            <!--  Last checked  -->
+            <TextBlock
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Opacity="0.8"
+                Text="{x:Bind ViewModel.VaultHealthLastCheckedDate, Mode=OneWay, Converter={StaticResource DateTimeToStringValueConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}" />
+        </StackPanel>
+
+        <!--  Start scanning  -->
+        <StackPanel
+            Grid.Column="2"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+
+            <Button
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                VerticalContentAlignment="Center"
+                Command="{x:Bind ViewModel.StartScanningCommand}"
+                Content="Start scanning"
+                CornerRadius="4 0 0 4" />
+            <Button
+                Padding="12,9,12,10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                VerticalContentAlignment="Center"
+                Command="{x:Bind ViewModel.OpenHealthCommand}"
+                CornerRadius="0 4 4 0">
+                <FontIcon FontSize="14" Glyph="&#xE95E;" />
+            </Button>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

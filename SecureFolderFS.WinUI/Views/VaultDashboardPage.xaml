@@ -26,13 +26,13 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Padding="32,16">
+    <Grid Padding="32,16" RowSpacing="24">
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
+        <!--  Navigation breadcrumb  -->
         <BreadcrumbBar Grid.Row="0" ItemsSource="{x:Bind ViewModel.DashboardNavigationViewModel.DashboardNavigationItems}">
             <BreadcrumbBar.ItemTemplate>
                 <DataTemplate x:DataType="vm:DashboardNavigationItemViewModel">
@@ -44,5 +44,8 @@
                 </DataTemplate>
             </BreadcrumbBar.ItemTemplate>
         </BreadcrumbBar>
+
+        <!--  Content  -->
+        <Frame x:Name="ContentFrame" Grid.Row="1" />
     </Grid>
 </Page>

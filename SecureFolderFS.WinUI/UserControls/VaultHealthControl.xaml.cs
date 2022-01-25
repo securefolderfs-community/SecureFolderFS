@@ -12,20 +12,27 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using SecureFolderFS.Backend.ViewModels.Dashboard;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace SecureFolderFS.WinUI.Views
+namespace SecureFolderFS.WinUI.UserControls
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class VaultDashboardInformationPage : Page
+    public sealed partial class VaultHealthControl : UserControl
     {
-        public VaultDashboardInformationPage()
+        public VaultHealthControl()
         {
             this.InitializeComponent();
         }
+
+        public VaultHealthViewModel ViewModel
+        {
+            get { return (VaultHealthViewModel)GetValue(ViewModelProperty); }
+            set { SetValue(ViewModelProperty, value); }
+        }
+        
+        public static readonly DependencyProperty ViewModelProperty =
+            DependencyProperty.Register("ViewModel", typeof(int), typeof(VaultHealthControl), new PropertyMetadata(null));
     }
 }

@@ -1,4 +1,7 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Backend.Messages;

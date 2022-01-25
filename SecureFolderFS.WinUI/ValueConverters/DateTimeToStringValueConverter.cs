@@ -14,14 +14,30 @@ namespace SecureFolderFS.WinUI.ValueConverters
                 return string.Empty;
             }
 
+            string dateString;
             if (dateTime.Date == DateTime.Today)
             {
-                return dateTime.ToString("Today, HH:mm");
+                dateString = dateTime.ToString("Today, HH:mm"); // TODO: Localize
             }
             else
             {
-                return dateTime.ToString("MM/dd/yyyy, HH:mm");
+                dateString = dateTime.ToString("MM/dd/yyyy, HH:mm");
             }
+
+            if (parameter is string formatString)
+            {
+                var split = formatString.Split('|');
+                if (split[0] == "LOCALIZE")
+                {
+                    return string.Format(split[1], dateString); // TODO: Localize
+                }
+                else
+                {
+                    return string.Format(split[1], dateString);
+                }
+            }
+
+            return dateString;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

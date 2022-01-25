@@ -36,7 +36,17 @@
             PaneTitle="My vaults"
             SelectionChanged="Sidebar_SelectionChanged">
 
-            <Frame x:Name="ContentFrame" />
+            <Frame x:Name="ContentFrame">
+                <Frame.ContentTransitions>
+                    <TransitionCollection>
+                        <NavigationThemeTransition>
+                            <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                <SlideNavigationTransitionInfo />
+                            </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                        </NavigationThemeTransition>
+                    </TransitionCollection>
+                </Frame.ContentTransitions>
+            </Frame>
 
             <NavigationView.AutoSuggestBox>
                 <AutoSuggestBox
