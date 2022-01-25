@@ -6,21 +6,24 @@
     xmlns:local="using:SecureFolderFS.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     mc:Ignorable="d">
 
-    <Grid RowSpacing="24">
+    <Grid RowSpacing="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
         <!--  Vault Health  -->
         <uc:VaultHealthControl Grid.Row="0" ViewModel="{x:Bind ViewModel.VaultHealthViewModel}" />
 
+        <InfoBar Grid.Row="1" Visibility="Collapsed" />
+
         <!--  Read/Write Graphs  -->
-        <Grid Grid.Row="1" ColumnSpacing="8">
+        <Grid Grid.Row="2" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -48,5 +51,56 @@
                 </uc:GraphWidgetControl.ChartStroke>
             </uc:GraphWidgetControl>
         </Grid>
+
+        <!--  Vault options  -->
+        <StackPanel Grid.Row="3" Spacing="4">
+
+            <!--  Open in File Explorer  -->
+            <ucab:ActionBlockControl Description="Open vault">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xEC50;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.AdditionalDescription>
+                    <TextBlock Text="Open this vault using File Explorer" />
+                </ucab:ActionBlockControl.AdditionalDescription>
+                <ucab:ActionBlockControl.ActionElement>
+                    <Button
+                        Width="32"
+                        Height="32"
+                        Padding="0">
+                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                    </Button>
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+
+            <!--  Lock vault  -->
+            <ucab:ActionBlockControl Description="Lock vault">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE72E;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.AdditionalDescription>
+                    <TextBlock Text="Securely lock this vault and close the dashboard" />
+                </ucab:ActionBlockControl.AdditionalDescription>
+                <ucab:ActionBlockControl.ActionElement>
+                    <Button Padding="40,6" Content="Lock" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+
+            <!--  Vault information  -->
+            <ucab:ActionBlockControl Description="Vault properties" IsClickable="True">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE946;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.AdditionalDescription>
+                    <TextBlock
+                        FontSize="14"
+                        Opacity="0.8"
+                        Text="View information about this vault" />
+                </ucab:ActionBlockControl.AdditionalDescription>
+                <ucab:ActionBlockControl.ActionElement>
+                    <FontIcon Glyph="&#xE76C;" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+        </StackPanel>
     </Grid>
 </Page>

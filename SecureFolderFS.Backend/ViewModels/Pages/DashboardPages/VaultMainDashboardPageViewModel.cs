@@ -17,8 +17,8 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
             : base(vaultModel)
         {
             VaultHealthViewModel = new();
-            ReadGraphViewModel = new();
-            WriteGraphViewModel = new();
+            ReadGraphViewModel = new() { GraphSubheader = "0mb/s" };
+            WriteGraphViewModel = new() { GraphSubheader = "0mb/s" };
         }
     }
 }

@@ -12,7 +12,8 @@
         Height="264"
         Padding="12"
         HorizontalContentAlignment="Center"
-        VerticalContentAlignment="Center">
+        VerticalContentAlignment="Center"
+        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
