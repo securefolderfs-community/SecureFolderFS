@@ -22,14 +22,16 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <ContentPresenter
             x:Name="BlockIcon"
+            Grid.Row="0"
             Grid.RowSpan="2"
             Grid.Column="0"
+            Padding="8,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             x:Load="{x:Bind Icon, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
@@ -37,6 +39,7 @@
 
         <TextBlock
             x:Name="BlockDescription"
+            Grid.Row="0"
             Grid.Column="1"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"

@@ -8,8 +8,8 @@
     mc:Ignorable="d">
 
     <StackPanel
-        Height="40"
-        Padding="14,5"
+        Height="32"
+        Padding="14,6"
         IsHitTestVisible="True"
         Orientation="Horizontal"
         Spacing="12">
@@ -23,7 +23,10 @@
             Source="../Assets/Square44x44Logo.png" />
 
         <!--  Title  -->
-        <RichTextBlock HorizontalAlignment="Left" VerticalAlignment="Center">
+        <RichTextBlock
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            FontSize="12">
             <Paragraph>
                 SecureFolderFS
             </Paragraph>
