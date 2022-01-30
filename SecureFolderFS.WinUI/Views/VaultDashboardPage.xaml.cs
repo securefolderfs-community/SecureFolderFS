@@ -1,11 +1,11 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
+﻿using System.Linq;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
@@ -19,7 +19,7 @@ namespace SecureFolderFS.WinUI.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class VaultDashboardPage : Page, IRecipient<DashboardNavigationRequestedMessage>
+    public sealed partial class VaultDashboardPage : Page, IRecipient<DashboardNavigationFinishedMessage>
     {
         public VaultDashboardPageViewModel ViewModel
         {
@@ -30,6 +30,8 @@ namespace SecureFolderFS.WinUI.Views
         public VaultDashboardPage()
         {
             this.InitializeComponent();
+
+            WeakReferenceMessenger.Default.Register<DashboardNavigationFinishedMessage>(this);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -38,24 +40,37 @@ namespace SecureFolderFS.WinUI.Views
             {
                 ViewModel = vaultDashboardPageViewModel;
 
-                NavigatePage(ViewModel.BaseDashboardPageViewModel);
+                NavigatePage(ViewModel.BaseDashboardPageViewModel!, null);
             }
 
             base.OnNavigatedTo(e);
         }
 
-        public void Receive(DashboardNavigationRequestedMessage message)
+        public void Receive(DashboardNavigationFinishedMessage message)
         {
-            NavigatePage(message.Value);
+            NavigatePage(message.Value, message.From);
         }
 
-        private void NavigatePage(BaseDashboardPageViewModel baseDashboardPageViewModel)
+        private void NavigatePage(BaseDashboardPageViewModel baseDashboardPageViewModel, string? senderFrom)
         {
             switch (baseDashboardPageViewModel)
             {
                 case VaultMainDashboardPageViewModel:
-                    ContentFrame.Navigate(typeof(VaultMainDashboardPage), new DashboardPageNavigationParameterModel() { ViewModel = baseDashboardPageViewModel }, new SlideNavigationTransitionInfo());
+                    NavigationTransitionInfo transition = !string.IsNullOrEmpty(senderFrom) && senderFrom != "Properties" ? new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft} : new ContinuumNavigationTransitionInfo();
+                    ContentFrame.Navigate(typeof(VaultMainDashboardPage), new DashboardPageNavigationParameterModel() { ViewModel = baseDashboardPageViewModel }, transition);
                     break;
+
+                case VaultDashboardPropertiesPageViewModel:
+                    ContentFrame.Navigate(typeof(VaultDashboardPropertiesPage), new DashboardPageNavigationParameterModel() { ViewModel = baseDashboardPageViewModel }, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight});
+                    break;
+            }
+        }
+
+        private void BreadcrumbBar_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
+        {
+            if (args.Item is DashboardNavigationItemViewModel dashboardNavigationItemViewModel)
+            {
+                dashboardNavigationItemViewModel.NavigationAction?.Invoke(ViewModel.DashboardNavigationViewModel.DashboardNavigationItems.FirstOrDefault());
             }
         }
     }

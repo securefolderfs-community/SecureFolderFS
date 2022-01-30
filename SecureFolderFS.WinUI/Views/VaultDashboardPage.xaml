@@ -33,7 +33,7 @@
         </Grid.RowDefinitions>
 
         <!--  Navigation breadcrumb  -->
-        <BreadcrumbBar Grid.Row="0" ItemsSource="{x:Bind ViewModel.DashboardNavigationViewModel.DashboardNavigationItems}">
+        <BreadcrumbBar ItemClicked="BreadcrumbBar_ItemClicked" Grid.Row="0" ItemsSource="{x:Bind ViewModel.DashboardNavigationViewModel.DashboardNavigationItems}">
             <BreadcrumbBar.ItemTemplate>
                 <DataTemplate x:DataType="vm:DashboardNavigationItemViewModel">
                     <BreadcrumbBarItem DataContext="{Binding}">

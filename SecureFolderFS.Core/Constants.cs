@@ -1,6 +1,6 @@
 ﻿namespace SecureFolderFS.Core
 {
-    internal static class Constants
+    public static class Constants
     {
         public const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -14,7 +14,7 @@
 
         public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
 
-        public static class FileSystem
+        internal static class FileSystem
         {
             public const int INVALID_FILE_ATTRIBUTES = -0x1;
 
@@ -28,7 +28,7 @@
 
             public const int MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP = 10;
 
-            public static class Dokan
+            internal static class Dokan
             {
                 public const int DOKAN_VERSION = 150;
 
@@ -59,7 +59,7 @@
             }
         }
 
-        public static class IO
+        internal static class IO
         {
             public const int DIRECTORY_ID_MAX_SIZE = 16;
 
@@ -78,11 +78,11 @@
             public const int MAX_CACHED_CLEARTEXT_FILENAMES = 2000;
         }
 
-        public static class Security
+        internal static class Security
         {
             public const bool ALWAYS_CHECK_CHUNK_INTEGRITY = true;
 
-            internal static class KeyChains
+            public static class KeyChains
             {
                 public const int ENCRYPTIONKEY_LENGTH = 32;
 

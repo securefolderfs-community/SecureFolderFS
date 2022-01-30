@@ -38,17 +38,7 @@
             PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
             SelectionChanged="Sidebar_SelectionChanged">
 
-            <Frame x:Name="ContentFrame">
-                <Frame.ContentTransitions>
-                    <TransitionCollection>
-                        <NavigationThemeTransition>
-                            <NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                                <SlideNavigationTransitionInfo />
-                            </NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                        </NavigationThemeTransition>
-                    </TransitionCollection>
-                </Frame.ContentTransitions>
-            </Frame>
+            <uc:NavigationControl PageViewModel="{x:Bind ViewModel.ActivePageViewModel, Mode=TwoWay}" />
 
             <NavigationView.AutoSuggestBox>
                 <AutoSuggestBox
@@ -162,6 +152,8 @@
                                 <TextBlock
                                     Grid.Row="1"
                                     Grid.Column="0"
+                                    FontSize="14"
+                                    Opacity="0.8"
                                     Text="{x:Bind LastOpened, Mode=OneWay, Converter={StaticResource DateTimeToStringValueConverter}}" />
                             </Grid>
                         </NavigationViewItem.Content>

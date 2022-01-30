@@ -21,12 +21,12 @@
         <StackPanel Grid.Row="0" Spacing="6">
             <TextBlock
                 HorizontalAlignment="Center"
-                FontSize="32"
+                FontSize="26"
                 FontWeight="SemiBold"
                 Text="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
             <TextBlock
                 HorizontalAlignment="Center"
-                FontSize="16"
+                FontSize="14"
                 Opacity="0.8"
                 Text="Vault is locked" />
         </StackPanel>
@@ -38,7 +38,7 @@
         <StackPanel Grid.Row="1" Spacing="24">
 
             <!--  Password Control  -->
-            <StackPanel Spacing="8">
+            <StackPanel MaxWidth="400" Spacing="8">
                 <TextBlock Opacity="0.8" Text="Enter password" />
                 <PasswordBox
                     x:Name="VaultPasswordBox"

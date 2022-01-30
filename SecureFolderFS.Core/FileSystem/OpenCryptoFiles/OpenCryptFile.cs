@@ -58,8 +58,6 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Close(ICleartextFileStream cleartextFileStream)
         {
-            AssertNotDisposed();
-
             try
             {
                 if (_openedCleartextStreams.ContainsKey(cleartextFileStream) && ((--_openedCleartextStreams[cleartextFileStream]) <= 0))

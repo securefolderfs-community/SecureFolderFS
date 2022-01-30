@@ -40,11 +40,13 @@ namespace SecureFolderFS.Core.Chunks.IO
 
                 byte[] ciphertextChunkBuffer = ciphertextChunk.ToArray();
 
-                _fileSystemStatsTracker?.AddBytesEncrypted(ciphertextChunkBuffer.Length);
+                _fileSystemStatsTracker?.AddBytesEncrypted(cleartextChunk.ActualLength);
 
                 var ciphertextFileStream = _ciphertextStreamsManager.EnsureReadWriteStreamInstance();
                 ciphertextFileStream.Position = ciphertextPosition;
                 ciphertextFileStream.Write(ciphertextChunkBuffer, 0, ciphertextChunkBuffer.Length);
+
+                _fileSystemStatsTracker?.AddBytesWritten(ciphertextChunkBuffer.Length);
             }
         }
 

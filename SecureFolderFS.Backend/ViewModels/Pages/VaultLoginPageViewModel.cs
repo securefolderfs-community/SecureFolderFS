@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Text;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery;
+using SecureFolderFS.Core.VaultLoader.Routine;
 
 #nullable enable
 
@@ -15,8 +15,6 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
 {
     public sealed class VaultLoginPageViewModel : BasePageViewModel
     {
-        public NavigationModel NavigationModel { get; }
-
         private string? _VaultName;
         public string? VaultName
         {
@@ -26,10 +24,9 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
 
         public IRelayCommand<string> UnlockVaultCommand { get; }
 
-        public VaultLoginPageViewModel(VaultModel vaultModel, NavigationModel navigationModel)
+        public VaultLoginPageViewModel(VaultModel vaultModel)
             : base(vaultModel)
         {
-            this.NavigationModel = navigationModel;
             this._VaultName = vaultModel.VaultName;
 
             this.UnlockVaultCommand = new RelayCommand<string?>(UnlockVault);
@@ -40,11 +37,71 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
             if (string.IsNullOrEmpty(password))
             {
                 // TODO: Please provide password
-                NavigationModel.NavigateToPage(VaultModel, new VaultDashboardPageViewModel(VaultModel));
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, new VaultDashboardPageViewModel(VaultModel)));
+                return;
             }
             else
             {
                 var disposablePassword = new DisposablePassword(Encoding.UTF8.GetBytes(password));
+                // TODO: PasswordClearRequestedMessage
+
+                IFinalizedVaultLoadRoutine finalizedVaultLoadRoutine;
+                try
+                {
+                    var step5 = VaultRoutines.NewVaultLoadRoutine()
+                        .EstablishRoutine()
+                        .AddVaultPath(new(VaultModel.VaultRootPath))
+                        .AddFileOperations()
+                        .FindConfigurationFile()
+                        .ContinueConfigurationFileInitialization();
+
+                    IVaultLoadRoutineStep6 step6;
+                    if (!File.Exists(Path.Combine(VaultModel.VaultRootPath!,
+                            SecureFolderFS.Core.Constants.VAULT_KEYSTORE_FILENAME)))
+                    {
+                        // TODO: Ask for the keystore file
+                        IVaultKeystoreDiscoverer keystoreDiscoverer = null;
+
+                        step6 = step5.FindKeystoreFile(true, keystoreDiscoverer);
+                    }
+                    else
+                    {
+                        step6 = step5.FindKeystoreFile();
+                    }
+
+                    finalizedVaultLoadRoutine = step6.ContinueKeystoreFileInitialization()
+                        .AddEncryptionAlgorithmBuilder()
+                        .DeriveMasterKeyFromPassword(disposablePassword)
+                        .ContinueInitializationWithMasterKey()
+                        .VerifyVaultConfiguration()
+                        .ContinueInitialization()
+                        .Finish();
+                }
+                catch (FileNotFoundException)
+                {
+                    // TODO: Vault is corrupted (configuration file not found), show message
+                    return;
+                }
+                catch (UnsupportedVaultException)
+                {
+                    // TODO: Vault version is unsupported by SecureFolderFS
+                    return;
+                }
+                catch (IncorrectPasswordException)
+                {
+                    // TODO: The password is incorrect, show info
+                    return;
+                }
+                catch (UnauthenticVaultConfigurationException)
+                {
+                    // TODO: The vault has been tampered, show message
+                    return;
+                }
+
+                var vaultDashboardPageViewModel = new VaultDashboardPageViewModel(VaultModel);
+                vaultDashboardPageViewModel.InitializeWithFinalizedVaultLoadRoutine(finalizedVaultLoadRoutine);
+
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, vaultDashboardPageViewModel));
             }
         }
 

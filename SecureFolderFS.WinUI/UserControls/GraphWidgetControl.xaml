@@ -6,14 +6,22 @@
     xmlns:local="using:SecureFolderFS.WinUI.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.Charts"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+    </UserControl.Resources>
+
     <Button
+        x:Name="RootButton"
         Height="264"
         Padding="12"
+        HorizontalAlignment="Stretch"
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center"
-        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}">
+        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
+        Loaded="RootButton_Loaded">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -25,17 +33,31 @@
             <TextBlock
                 Grid.Row="0"
                 Opacity="0.8"
-                Text="{x:Bind GraphHeader, Mode=OneWay}" />
+                Text="{x:Bind GraphHeader, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.GraphLoaded, Mode=OneWay}" />
 
             <!--  Subheader (big)  -->
             <TextBlock
                 Grid.Row="1"
                 FontSize="24"
                 FontWeight="SemiBold"
-                Text="{x:Bind ViewModel.GraphSubheader, Mode=OneWay}" />
+                Text="{x:Bind ViewModel.GraphSubheader, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.GraphLoaded, Mode=OneWay}" />
+
+            <!--  Load progress  -->
+            <ProgressRing
+                x:Name="LoadProgress"
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                x:Load="{x:Bind ViewModel.GraphLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
 
             <!--  Chart  -->
-            <sf:SfCartesianChart Grid.Row="2" Margin="0,8,0,0">
+            <sf:SfCartesianChart
+                x:Name="CartesianChart"
+                Grid.Row="2"
+                Margin="0,8,0,0"
+                x:DeferLoadStrategy="Lazy">
                 <sf:SfCartesianChart.PrimaryAxis>
                     <sf:DateTimeAxis ShowGridLines="False" Visibility="Collapsed" />
                 </sf:SfCartesianChart.PrimaryAxis>

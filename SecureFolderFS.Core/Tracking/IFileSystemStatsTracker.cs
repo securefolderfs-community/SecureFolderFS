@@ -24,11 +24,11 @@ namespace SecureFolderFS.Core.Tracking
 
         #region Chunks
 
-        void AddChunkAccess();
-
         void AddChunkCacheMiss();
 
         void AddChunkCacheHit();
+
+        void AddChunkAccess();
 
         #endregion
 

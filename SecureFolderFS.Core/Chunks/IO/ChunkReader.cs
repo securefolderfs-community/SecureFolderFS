@@ -49,6 +49,8 @@ namespace SecureFolderFS.Core.Chunks.IO
                 return _chunkFactory.FromCleartextChunkBuffer(new byte[payloadSize], 0);
             }
 
+            _fileSystemStatsTracker?.AddBytesRead(read);
+
             var actualCiphertextBuffer = new byte[read];
             actualCiphertextBuffer.EmplaceArrays(ciphertextBuffer);
 

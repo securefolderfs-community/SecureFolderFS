@@ -17,6 +17,28 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard
             set => SetProperty(ref _GraphSubheader, value);
         }
 
+        private bool _GraphLoaded;
+        public bool GraphLoaded
+        {
+            get => _GraphLoaded;
+            set => SetProperty(ref _GraphLoaded, value);
+        }
+
+        public void AddPoint(GraphPointModel graphPointModel)
+        {
+            if (!GraphLoaded)
+            {
+                return;
+            }
+
+            if (Data.Count == Constants.MAX_GRAPH_POINTS)
+            {
+                Data.RemoveAt(0);
+            }
+
+            Data.Add(graphPointModel);
+        }
+
         public GraphWidgetControlViewModel()
         {
             Data = new();

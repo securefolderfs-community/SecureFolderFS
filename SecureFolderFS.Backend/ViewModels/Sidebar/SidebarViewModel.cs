@@ -66,11 +66,11 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
         {
             SearchQuery = string.Empty;
 
-            string name = "C:\\Temp";
+            string path = "C:\\Temp";
+            path += new Random().Next(0, 10);
 
-            name += new Random().Next(0, 10);
 
-            var vm = new VaultModel() { VaultRootPath = name, VaultName = Path.GetFileNameWithoutExtension(name) };
+            var vm = new VaultModel() { VaultRootPath = path, VaultName = Path.GetFileNameWithoutExtension(path) };
             SidebarItems.Add(new(vm));
 
             WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(vm));

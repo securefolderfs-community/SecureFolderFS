@@ -1,8 +1,11 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Backend.ViewModels.Dashboard;
 using Windows.UI;
+using CommunityToolkit.WinUI;
+using Microsoft.UI.Dispatching;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -15,6 +18,15 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             this.InitializeComponent();
         }
+
+        private async void RootButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            await Task.Delay(100);
+            _ = FindName("CartesianChart"); // Realize the chart and load it to view
+            await Task.Delay(100);
+            ViewModel.GraphLoaded = true;
+        }
+
 
         public GraphWidgetControlViewModel ViewModel
         {

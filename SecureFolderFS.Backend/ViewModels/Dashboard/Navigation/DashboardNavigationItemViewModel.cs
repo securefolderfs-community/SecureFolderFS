@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 #nullable enable
 
 namespace SecureFolderFS.Backend.ViewModels.Dashboard.Navigation
 {
-    public sealed class DashboardNavigationItemViewModel : ObservableObject
+    public sealed class DashboardNavigationItemViewModel : ObservableObject, IDashboardNavigationItemSource
     {
-        public DashboardNavigationItemViewModel? Parent { get; init; }
+        public int Index { get; set; }
 
-        public Action? NavigationAction { get; init; }
+        public Action<DashboardNavigationItemViewModel?> NavigationAction { get; init; }
 
         private string? _SectionName;
         public string? SectionName
