@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.Routines;
@@ -25,7 +26,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
         public IRelayCommand<string> UnlockVaultCommand { get; }
 
         public VaultLoginPageViewModel(VaultModel vaultModel)
-            : base(vaultModel)
+            : base(new WeakReferenceMessenger(), vaultModel)
         {
             this._VaultName = vaultModel.VaultName;
 
@@ -37,7 +38,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
             if (string.IsNullOrEmpty(password))
             {
                 // TODO: Please provide password
-                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, new VaultDashboardPageViewModel(VaultModel)));
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, new VaultDashboardPageViewModel(Messenger, VaultModel)) { Transition = new DrillInTransitionModel() });
                 return;
             }
             else
@@ -60,6 +61,8 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
                             SecureFolderFS.Core.Constants.VAULT_KEYSTORE_FILENAME)))
                     {
                         // TODO: Ask for the keystore file
+                        // DoubleFA dfa = new();
+                        // dfa.AskForKeystore(); // ??
                         IVaultKeystoreDiscoverer keystoreDiscoverer = null;
 
                         step6 = step5.FindKeystoreFile(true, keystoreDiscoverer);
@@ -98,15 +101,11 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
                     return;
                 }
 
-                var vaultDashboardPageViewModel = new VaultDashboardPageViewModel(VaultModel);
-                vaultDashboardPageViewModel.InitializeWithFinalizedVaultLoadRoutine(finalizedVaultLoadRoutine);
+                var vaultDashboardPageViewModel = new VaultDashboardPageViewModel(Messenger, VaultModel);
+                vaultDashboardPageViewModel.InitializeWithRoutine(finalizedVaultLoadRoutine);
 
-                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, vaultDashboardPageViewModel));
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, vaultDashboardPageViewModel) { Transition = new DrillInTransitionModel() });
             }
-        }
-
-        public override void Dispose()
-        {
         }
     }
 }

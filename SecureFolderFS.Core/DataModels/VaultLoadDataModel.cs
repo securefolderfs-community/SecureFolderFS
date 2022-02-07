@@ -2,7 +2,6 @@
 using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Security.KeyCrypt;
-using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
 using SecureFolderFS.Core.VaultLoader.KeyDerivation;
 
@@ -13,8 +12,6 @@ namespace SecureFolderFS.Core.DataModels
         public Stream VaultConfigurationStream { get; set; }
 
         public Stream VaultKeystoreStream { get; set; }
-
-        public BaseVaultConfiguration BaseVaultConfiguration { get; set; }
 
         public BaseVaultKeystore BaseVaultKeystore { get; set; }
 

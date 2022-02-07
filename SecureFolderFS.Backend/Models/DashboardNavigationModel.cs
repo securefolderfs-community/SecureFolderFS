@@ -8,18 +8,14 @@ namespace SecureFolderFS.Backend.Models
 {
     public sealed class DashboardNavigationModel : IRecipient<DashboardNavigationRequestedMessage>, IRecipient<LockVaultRequestedMessage>
     {
-        private readonly UnlockedVaultModel _unlockedVaultModel;
+        private IMessenger Messenger { get; }
 
         private Dictionary<VaultDashboardPageType, BaseDashboardPageViewModel?> NavigationDestinations { get; }
 
-        public DashboardNavigationModel(UnlockedVaultModel unlockedVaultModel)
+        public DashboardNavigationModel(IMessenger messenger)
         {
-            this._unlockedVaultModel = unlockedVaultModel;
-
-            NavigationDestinations = new();
-
-            WeakReferenceMessenger.Default.Register<DashboardNavigationRequestedMessage>(this);
-            WeakReferenceMessenger.Default.Register<LockVaultRequestedMessage>(this);
+            this.Messenger = messenger;
+            this.NavigationDestinations = new();
         }
 
         private BaseDashboardPageViewModel? NavigateToPage(VaultDashboardPageType vaultDashboardPageType, UnlockedVaultModel unlockedVaultModel)
@@ -28,11 +24,12 @@ namespace SecureFolderFS.Backend.Models
             switch (vaultDashboardPageType)
             {
                 case VaultDashboardPageType.MainDashboardPage:
-                    NavigationDestinations.SetAndGet(vaultDashboardPageType, out baseDashboardPageViewModel, () => new VaultMainDashboardPageViewModel(unlockedVaultModel));
+                    NavigationDestinations.SetAndGet(vaultDashboardPageType, out baseDashboardPageViewModel, () => new VaultMainDashboardPageViewModel(Messenger, unlockedVaultModel));
                     break;
                 case VaultDashboardPageType.DashboardPropertiesPage:
-                    NavigationDestinations.SetAndGet(vaultDashboardPageType, out baseDashboardPageViewModel, () => new VaultDashboardPropertiesPageViewModel(unlockedVaultModel));
+                    NavigationDestinations.SetAndGet(vaultDashboardPageType, out baseDashboardPageViewModel, () => new VaultDashboardPropertiesPageViewModel(Messenger, unlockedVaultModel));
                     break;
+                case VaultDashboardPageType.Undefined:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(vaultDashboardPageType));
             }
@@ -51,11 +48,6 @@ namespace SecureFolderFS.Backend.Models
 
         public void Receive(DashboardNavigationRequestedMessage message)
         {
-            if (message.UnlockedVaultModel != _unlockedVaultModel)
-            {
-                return;
-            }
-
             BaseDashboardPageViewModel? baseDashboardPageViewModel;
             if (message.Value == null)
             {
@@ -67,15 +59,12 @@ namespace SecureFolderFS.Backend.Models
                 baseDashboardPageViewModel = message.Value;
             }
 
-            WeakReferenceMessenger.Default.Send(new DashboardNavigationFinishedMessage(baseDashboardPageViewModel!) { From = message.From });
+            Messenger.Send(new DashboardNavigationFinishedMessage(baseDashboardPageViewModel!) { Transition = message.Transition });
         }
 
         public void Receive(LockVaultRequestedMessage message)
         {
-            if (_unlockedVaultModel.VaultModel == message.Value)
-            {
-                NavigationDestinations.Clear();
-            }
+            NavigationDestinations.Clear();
         }
     }
 }

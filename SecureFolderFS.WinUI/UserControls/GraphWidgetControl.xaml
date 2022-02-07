@@ -34,15 +34,15 @@
                 Grid.Row="0"
                 Opacity="0.8"
                 Text="{x:Bind GraphHeader, Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.GraphLoaded, Mode=OneWay}" />
+                Visibility="{x:Bind ControlLoaded, Mode=OneWay}" />
 
             <!--  Subheader (big)  -->
             <TextBlock
                 Grid.Row="1"
                 FontSize="24"
                 FontWeight="SemiBold"
-                Text="{x:Bind ViewModel.GraphSubheader, Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.GraphLoaded, Mode=OneWay}" />
+                Text="{x:Bind GraphSubheader, Mode=OneWay}"
+                Visibility="{x:Bind ControlLoaded, Mode=OneWay}" />
 
             <!--  Load progress  -->
             <ProgressRing
@@ -50,7 +50,7 @@
                 Grid.Row="2"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                x:Load="{x:Bind ViewModel.GraphLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
+                x:Load="{x:Bind ControlLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
 
             <!--  Chart  -->
             <sf:SfCartesianChart
@@ -71,7 +71,7 @@
 
                 <sf:SfCartesianChart.Series>
                     <sf:AreaSeries
-                        ItemsSource="{x:Bind ViewModel.Data}"
+                        ItemsSource="{x:Bind Data, Mode=OneWay}"
                         Palette="Custom"
                         Stroke="{x:Bind ChartStroke, Mode=OneWay}"
                         StrokeThickness="1"

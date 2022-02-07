@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
         {
             try
             {
-                if (!vaultLoadDataModel.BaseVaultConfiguration.Verify(vaultLoadDataModel.KeyCryptor, vaultLoadDataModel.MasterKey))
+                if (!vaultInstance.BaseVaultConfiguration.Verify(vaultLoadDataModel.KeyCryptor, vaultLoadDataModel.MasterKey))
                 {
                     throw new UnauthenticVaultConfigurationException();
                 }

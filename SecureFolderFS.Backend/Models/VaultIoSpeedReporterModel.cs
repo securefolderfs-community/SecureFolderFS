@@ -104,7 +104,7 @@ namespace SecureFolderFS.Backend.Models
                 ReadGraphViewModel?.AddPoint(new()
                 {
                     Date = now,
-                    High = (long)ByteSize.FromBytes(_readAmountBeforeFlush).KiloBytes  * 8
+                    High = (long)ByteSize.FromBytes(_readAmountBeforeFlush).KiloBytes * 8
                 });
                 WriteGraphViewModel?.AddPoint(new()
                 {

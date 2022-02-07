@@ -1,6 +1,8 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
+using System.Windows.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Backend.ViewModels.Dashboard;
+using SecureFolderFS.Backend.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,12 +16,41 @@ namespace SecureFolderFS.WinUI.UserControls
             this.InitializeComponent();
         }
 
-        public VaultHealthViewModel ViewModel
+
+        public VaultHealthState VaultHealthState
         {
-            get => (VaultHealthViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
+            get => (VaultHealthState)GetValue(VaultHealthStateProperty);
+            set => SetValue(VaultHealthStateProperty, value);
         }
-        public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register("ViewModel", typeof(VaultHealthViewModel), typeof(VaultHealthControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty VaultHealthStateProperty =
+            DependencyProperty.Register("VaultHealthState", typeof(VaultHealthState), typeof(VaultHealthControl), new PropertyMetadata(null));
+
+
+        public DateTime VaultHealthLastCheckedDate
+        {
+            get => (DateTime)GetValue(VaultHealthLastCheckedDateProperty);
+            set => SetValue(VaultHealthLastCheckedDateProperty, value);
+        }
+
+        public static readonly DependencyProperty VaultHealthLastCheckedDateProperty =
+            DependencyProperty.Register("VaultHealthLastCheckedDate", typeof(DateTime), typeof(VaultHealthControl), new PropertyMetadata(0));
+
+
+        public ICommand StartScanningCommand
+        {
+            get => (ICommand)GetValue(StartScanningCommandProperty);
+            set => SetValue(StartScanningCommandProperty, value);
+        }
+        public static readonly DependencyProperty StartScanningCommandProperty =
+            DependencyProperty.Register("StartScanningCommand", typeof(ICommand), typeof(VaultHealthControl), new PropertyMetadata(null));
+
+
+        public ICommand OpenVaultHealthCommand
+        {
+            get => (ICommand)GetValue(OpenVaultHealthCommandProperty);
+            set => SetValue(OpenVaultHealthCommandProperty, value);
+        }
+        public static readonly DependencyProperty OpenVaultHealthCommandProperty =
+            DependencyProperty.Register("OpenVaultHealthCommand", typeof(ICommand), typeof(VaultHealthControl), new PropertyMetadata(null));
     }
 }

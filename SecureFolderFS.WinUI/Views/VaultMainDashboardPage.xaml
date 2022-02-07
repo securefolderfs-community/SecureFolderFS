@@ -19,7 +19,12 @@
             </Grid.RowDefinitions>
 
             <!--  Vault Health  -->
-            <uc:VaultHealthControl Grid.Row="0" ViewModel="{x:Bind ViewModel.VaultHealthViewModel}" />
+            <uc:VaultHealthControl
+                Grid.Row="0"
+                OpenVaultHealthCommand="{x:Bind ViewModel.VaultHealthViewModel.OpenVaultHealthCommand, Mode=OneWay}"
+                StartScanningCommand="{x:Bind ViewModel.VaultHealthViewModel.StartScanningCommand, Mode=OneWay}"
+                VaultHealthLastCheckedDate="{x:Bind ViewModel.VaultHealthViewModel.VaultHealthLastCheckedDate, Mode=OneWay}"
+                VaultHealthState="{x:Bind ViewModel.VaultHealthViewModel.VaultHealthState, Mode=OneWay}" />
 
             <InfoBar Grid.Row="1" Visibility="Collapsed" />
 
@@ -32,10 +37,13 @@
 
                 <!--  Read  -->
                 <uc:GraphWidgetControl
+                    x:Name="ReadGraph"
                     Grid.Column="0"
                     ChartPrimaryColor="#4C00AED4"
+                    ControlLoaded="{x:Bind ViewModel.ReadGraphViewModel.IsReady, Mode=TwoWay}"
+                    Data="{x:Bind ViewModel.ReadGraphViewModel.Data, Mode=OneWay}"
                     GraphHeader="Read speeds"
-                    ViewModel="{x:Bind ViewModel.ReadGraphViewModel}">
+                    GraphSubheader="{x:Bind ViewModel.ReadGraphViewModel.GraphSubheader, Mode=OneWay}">
                     <uc:GraphWidgetControl.ChartStroke>
                         <SolidColorBrush Color="#00AED4" />
                     </uc:GraphWidgetControl.ChartStroke>
@@ -43,10 +51,13 @@
 
                 <!--  Write  -->
                 <uc:GraphWidgetControl
+                    x:Name="WriteGraph"
                     Grid.Column="1"
                     ChartPrimaryColor="#4C008d74"
+                    ControlLoaded="{x:Bind ViewModel.WriteGraphViewModel.IsReady, Mode=TwoWay}"
+                    Data="{x:Bind ViewModel.WriteGraphViewModel.Data, Mode=OneWay}"
                     GraphHeader="Write speeds"
-                    ViewModel="{x:Bind ViewModel.WriteGraphViewModel}">
+                    GraphSubheader="{x:Bind ViewModel.WriteGraphViewModel.GraphSubheader, Mode=OneWay}">
                     <uc:GraphWidgetControl.ChartStroke>
                         <SolidColorBrush Color="#008D74" />
                     </uc:GraphWidgetControl.ChartStroke>

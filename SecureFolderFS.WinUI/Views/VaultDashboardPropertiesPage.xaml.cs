@@ -1,6 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -26,15 +25,20 @@ namespace SecureFolderFS.WinUI.Views
             this.InitializeComponent();
         }
 
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if ((e.Parameter as DashboardPageNavigationParameterModel)?.ViewModel is VaultDashboardPropertiesPageViewModel vaultDashboardPropertiesPageViewModel)
+            if (e.Parameter is VaultDashboardPropertiesPageViewModel viewModel)
             {
-                this.ViewModel = vaultDashboardPropertiesPageViewModel;
+                this.ViewModel = viewModel;
             }
 
             base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            ViewModel.Cleanup();
+            base.OnNavigatingFrom(e);
         }
     }
 }

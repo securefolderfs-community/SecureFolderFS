@@ -53,7 +53,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
             var fileNameReceiverFactory = new FileNameReceiverFactory(_vaultInstance.VaultVersion, _vaultInstance.Security, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker, _optionalVaultLoadRoutine.FileNameCachingStrategy);
             var fileNameReceiver = fileNameReceiverFactory.GetFileNameReceiver();
 
-            var pathReceiverFactory = new PathReceiverFactory(_vaultInstance.VaultVersion, _vaultInstance.VaultPath, directoryIdReceiver, fileNameReceiver, _vaultLoadDataModel.BaseVaultConfiguration.FileNameCipherScheme);
+            var pathReceiverFactory = new PathReceiverFactory(_vaultInstance.VaultVersion, _vaultInstance.VaultPath, directoryIdReceiver, fileNameReceiver, _vaultInstance.BaseVaultConfiguration.FileNameCipherScheme);
             _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver = pathReceiverFactory.GetPathReceiver();
 
             var fileSystemOperationsFactory = new FileSystemOperationsFactory(_vaultInstance.VaultVersion, directoryIdReceiver, _vaultInstance.FileOperations, _vaultInstance.DirectoryOperations);

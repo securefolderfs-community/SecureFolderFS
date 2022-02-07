@@ -9,7 +9,7 @@ using SecureFolderFS.Core.Security.KeyCrypt;
 namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
 {
     [Serializable]
-    internal abstract class BaseVaultConfiguration : VaultVersion
+    public abstract class BaseVaultConfiguration : VaultVersion
     {
         private const uint UNDEFINED_CONTENT_ENCRYPTION_SCHEME = (uint)ContentCipherScheme.Undefined; // Type safety for Undefined
 
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
         [JsonProperty("hmacsha256mac")]
         public byte[] Hmacsha256Mac { get; }
 
-        protected BaseVaultConfiguration(int version, ContentCipherScheme contentCipherScheme, FileNameCipherScheme fileNameCipherScheme, byte[] hmacsha256Mac)
+        protected internal BaseVaultConfiguration(int version, ContentCipherScheme contentCipherScheme, FileNameCipherScheme fileNameCipherScheme, byte[] hmacsha256Mac)
             : base(version)
         {
             this.ContentCipherScheme = contentCipherScheme;
@@ -43,8 +43,8 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
             this.Hmacsha256Mac = hmacsha256Mac;
         }
 
-        public abstract void WriteConfiguration(Stream destinationStream);
+        internal abstract void WriteConfiguration(Stream destinationStream);
 
-        public abstract bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey);
+        internal abstract bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey);
     }
 }

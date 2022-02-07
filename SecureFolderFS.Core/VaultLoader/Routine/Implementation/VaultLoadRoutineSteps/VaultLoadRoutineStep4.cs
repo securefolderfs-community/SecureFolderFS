@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
             var vaultConfigurationLoaderFactory = new VaultConfigurationLoaderFactory(vaultInstance.VaultVersion);
             IVaultConfigurationLoader vaultConfigurationLoader = vaultConfigurationLoaderFactory.GetVaultConfigurationLoader();
 
-            vaultLoadDataModel.BaseVaultConfiguration = vaultConfigurationLoader.LoadVaultConfiguration(rawVaultConfiguration);
+            vaultInstance.BaseVaultConfiguration = vaultConfigurationLoader.LoadVaultConfiguration(rawVaultConfiguration);
 
             return new VaultLoadRoutineStep5(vaultInstance, vaultLoadDataModel);
         }

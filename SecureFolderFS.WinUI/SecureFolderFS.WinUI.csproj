@@ -23,6 +23,7 @@
     <Content Remove="Assets\AppAssets\GreenShield.svg" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Dialogs\VaultWizardDialog.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <None Remove="UserControls\GraphWidgetControl.xaml" />
@@ -34,6 +35,8 @@
     <None Remove="Views\VaultDashboardPropertiesPage.xaml" />
     <None Remove="Views\VaultLoginPage.xaml" />
     <None Remove="Views\VaultMainDashboardPage.xaml" />
+    <None Remove="Views\VaultWizard\AddExistingVaultPage.xaml" />
+    <None Remove="Views\VaultWizard\VaultWizardMainPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -88,6 +91,15 @@
     <None Update="Assets\AppAssets\GreenShield.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\VaultWizard\AddExistingVaultPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\VaultWizard\VaultWizardMainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Dialogs\VaultWizardDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UserControls\NavigationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

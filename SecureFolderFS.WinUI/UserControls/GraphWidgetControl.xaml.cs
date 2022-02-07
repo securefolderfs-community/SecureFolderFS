@@ -1,18 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using SecureFolderFS.Backend.ViewModels.Dashboard;
 using Windows.UI;
-using CommunityToolkit.WinUI;
-using Microsoft.UI.Dispatching;
+using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.WinUI.UserControls
 {
-    public sealed partial class GraphWidgetControl : UserControl
+    public sealed partial class GraphWidgetControl : UserControl, IDisposable
     {
         public GraphWidgetControl()
         {
@@ -24,17 +25,44 @@ namespace SecureFolderFS.WinUI.UserControls
             await Task.Delay(100);
             _ = FindName("CartesianChart"); // Realize the chart and load it to view
             await Task.Delay(100);
-            ViewModel.GraphLoaded = true;
+            ControlLoaded = true;
         }
 
 
-        public GraphWidgetControlViewModel ViewModel
+        public bool ControlLoaded
         {
-            get => (GraphWidgetControlViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
+            get => (bool)GetValue(ControlLoadedProperty);
+            set => SetValue(ControlLoadedProperty, value);
         }
-        public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register("ViewModel", typeof(GraphWidgetControlViewModel), typeof(GraphWidgetControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty ControlLoadedProperty =
+            DependencyProperty.Register("ControlLoaded", typeof(bool), typeof(GraphWidgetControl), new PropertyMetadata(false));
+
+
+        public ObservableCollection<GraphPointModel> Data
+        {
+            get => (ObservableCollection<GraphPointModel>)GetValue(DataProperty);
+            set => SetValue(DataProperty, value);
+        }
+        public static readonly DependencyProperty DataProperty =
+            DependencyProperty.Register("Data", typeof(ObservableCollection<GraphPointModel>), typeof(GraphWidgetControl), new PropertyMetadata(null));
+
+
+        public string GraphHeader
+        {
+            get => (string)GetValue(GraphHeaderProperty);
+            set => SetValue(GraphHeaderProperty, value);
+        }
+        public static readonly DependencyProperty GraphHeaderProperty =
+            DependencyProperty.Register("GraphHeader", typeof(string), typeof(GraphWidgetControl), new PropertyMetadata(null));
+
+
+        public string GraphSubheader
+        {
+            get => (string)GetValue(GraphSubheaderProperty);
+            set => SetValue(GraphSubheaderProperty, value);
+        }
+        public static readonly DependencyProperty GraphSubheaderProperty =
+            DependencyProperty.Register("GraphSubheader", typeof(string), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
 
         public Brush ChartStroke
@@ -63,14 +91,9 @@ namespace SecureFolderFS.WinUI.UserControls
         public static readonly DependencyProperty ChartSecondaryColorProperty =
             DependencyProperty.Register("ChartSecondaryColor", typeof(Color), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
-
-        public string GraphHeader
+        public void Dispose()
         {
-            get => (string)GetValue(GraphHeaderProperty);
-            set => SetValue(GraphHeaderProperty, value);
+            CartesianChart.Dispose();
         }
-
-        public static readonly DependencyProperty GraphHeaderProperty =
-            DependencyProperty.Register("GraphHeader", typeof(string), typeof(GraphWidgetControl), new PropertyMetadata(null));
     }
 }

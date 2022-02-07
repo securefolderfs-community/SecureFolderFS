@@ -61,7 +61,9 @@ namespace SecureFolderFS.WinUI
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
+                .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
+                .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>();
 
 

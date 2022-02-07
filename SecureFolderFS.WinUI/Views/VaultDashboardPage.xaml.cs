@@ -4,10 +4,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Models.Transitions;
+using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
+using SecureFolderFS.WinUI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,47 +32,54 @@ namespace SecureFolderFS.WinUI.Views
         public VaultDashboardPage()
         {
             this.InitializeComponent();
+        }
 
-            WeakReferenceMessenger.Default.Register<DashboardNavigationFinishedMessage>(this);
+        public void Receive(DashboardNavigationFinishedMessage message)
+        {
+            NavigatePage(message.Value, message.Transition);
+        }
+
+        private void NavigatePage(BaseDashboardPageViewModel baseDashboardPageViewModel, TransitionModel? transition = null)
+        {
+            var transitionInfo = ConversionHelpers.ToNavigationTransitionInfo(transition);
+            switch (baseDashboardPageViewModel)
+            {
+                case VaultMainDashboardPageViewModel:
+                    ContentFrame.Navigate(typeof(VaultMainDashboardPage), baseDashboardPageViewModel, transitionInfo ?? new SuppressNavigationTransitionInfo());
+                    break;
+
+                case VaultDashboardPropertiesPageViewModel:
+                    ContentFrame.Navigate(typeof(VaultDashboardPropertiesPage), baseDashboardPageViewModel, transitionInfo ?? new SuppressNavigationTransitionInfo());
+                    break;
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if ((e.Parameter as PageNavigationParameterModel)?.ViewModel is VaultDashboardPageViewModel vaultDashboardPageViewModel)
+            if (e.Parameter is VaultDashboardPageViewModel viewModel)
             {
-                ViewModel = vaultDashboardPageViewModel;
-
-                NavigatePage(ViewModel.BaseDashboardPageViewModel!, null);
+                ViewModel = viewModel;
+                ViewModel.Messenger.Register<DashboardNavigationFinishedMessage>(this);
+                ViewModel.StartNavigation();
             }
 
             base.OnNavigatedTo(e);
         }
 
-        public void Receive(DashboardNavigationFinishedMessage message)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            NavigatePage(message.Value, message.From);
-        }
+            (ViewModel as ICleanable)?.Cleanup();
 
-        private void NavigatePage(BaseDashboardPageViewModel baseDashboardPageViewModel, string? senderFrom)
-        {
-            switch (baseDashboardPageViewModel)
-            {
-                case VaultMainDashboardPageViewModel:
-                    NavigationTransitionInfo transition = !string.IsNullOrEmpty(senderFrom) && senderFrom != "Properties" ? new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft} : new ContinuumNavigationTransitionInfo();
-                    ContentFrame.Navigate(typeof(VaultMainDashboardPage), new DashboardPageNavigationParameterModel() { ViewModel = baseDashboardPageViewModel }, transition);
-                    break;
+            ViewModel.Messenger.Unregister<DashboardNavigationFinishedMessage>(this);
 
-                case VaultDashboardPropertiesPageViewModel:
-                    ContentFrame.Navigate(typeof(VaultDashboardPropertiesPage), new DashboardPageNavigationParameterModel() { ViewModel = baseDashboardPageViewModel }, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight});
-                    break;
-            }
+            base.OnNavigatingFrom(e);
         }
 
         private void BreadcrumbBar_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
         {
-            if (args.Item is DashboardNavigationItemViewModel dashboardNavigationItemViewModel)
+            if (args.Item is NavigationItemViewModel itemViewModel)
             {
-                dashboardNavigationItemViewModel.NavigationAction?.Invoke(ViewModel.DashboardNavigationViewModel.DashboardNavigationItems.FirstOrDefault());
+                itemViewModel.NavigationAction?.Invoke(ViewModel.NavigationBreadcrumbViewModel.DashboardNavigationItems.FirstOrDefault());
             }
         }
     }

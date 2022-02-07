@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Backend.Messages;
+using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Sidebar;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
+
+#nullable enable
 
 namespace SecureFolderFS.WinUI.Views
 {
@@ -29,9 +32,9 @@ namespace SecureFolderFS.WinUI.Views
 
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (args.SelectedItem is SidebarItemViewModel sidebarItemViewModel)
+            if (args.SelectedItem is SidebarItemViewModel itemViewModel)
             {
-                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(sidebarItemViewModel.VaultModel));
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(itemViewModel.VaultModel) { Transition = new EntranceTransitionModel() });
             }
         }
     }

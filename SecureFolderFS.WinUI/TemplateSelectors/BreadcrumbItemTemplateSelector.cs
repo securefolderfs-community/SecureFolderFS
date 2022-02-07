@@ -12,12 +12,12 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is not DashboardNavigationItemViewModel dashboardNavigationItemViewModel)
+            if (item is not NavigationItemViewModel itemViewModel)
             {
                 return base.SelectTemplateCore(item, container);
             }
 
-            return dashboardNavigationItemViewModel.IsLeading ? LeadingItemTemplate : ParentItemTemplate;
+            return itemViewModel.IsLeading ? LeadingItemTemplate : ParentItemTemplate;
         }
     }
 }

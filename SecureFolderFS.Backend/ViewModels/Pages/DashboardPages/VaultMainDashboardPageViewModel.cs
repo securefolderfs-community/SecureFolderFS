@@ -4,9 +4,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.ViewModels.Dashboard;
-using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 
 #nullable enable
 
@@ -24,33 +24,29 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
 
         public VaultIoSpeedReporterModel VaultIoSpeedReporterModel { get; }
 
-        public override int Index { get; }
-
-        public override Action<DashboardNavigationItemViewModel?> NavigationAction { get; }
-
-        public override string SectionName { get; }
-
         public IAsyncRelayCommand ShowInFileExplorerCommand { get; }
 
         public IRelayCommand LockVaultCommand { get; }
 
         public IRelayCommand OpenVaultPropertiesCommand { get; }
 
-        public VaultMainDashboardPageViewModel(UnlockedVaultModel unlockedVaultModel)
-            : base(unlockedVaultModel)
+        public VaultMainDashboardPageViewModel(IMessenger messenger, UnlockedVaultModel unlockedVaultModel)
+            : base(messenger, unlockedVaultModel, VaultDashboardPageType.MainDashboardPage)
         {
             this.VaultHealthViewModel = new();
-            this.ReadGraphViewModel = new() { GraphSubheader = "0mb/s" };
-            this.WriteGraphViewModel = new() { GraphSubheader = "0mb/s" };
+            this.ReadGraphViewModel = new();
+            this.WriteGraphViewModel = new();
             this.VaultIoSpeedReporterModel = new()
             {
                 ReadGraphViewModel = this.ReadGraphViewModel,
                 WriteGraphViewModel = this.WriteGraphViewModel
             };
-
-            this.Index = 0;
-            this.NavigationAction = (first) => WeakReferenceMessenger.Default.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.MainDashboardPage, unlockedVaultModel) { From = first?.SectionName });
-            this.SectionName = unlockedVaultModel.VaultModel!.VaultName!;
+            base.NavigationItemViewModel = new()
+            {
+                Index = 0,
+                NavigationAction = (first) => Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.MainDashboardPage, unlockedVaultModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToRight) }),
+                SectionName = unlockedVaultModel.VaultModel.VaultName!
+            };
 
             this.VaultIoSpeedReporterModel.Start();
 
@@ -70,12 +66,20 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
         private void LockVault()
         {
             UnlockedVaultModel.VaultInstance?.Dispose();
-            WeakReferenceMessenger.Default.Send(new LockVaultRequestedMessage(UnlockedVaultModel.VaultModel));
+            Messenger.Send(new LockVaultRequestedMessage(UnlockedVaultModel.VaultModel));
         }
 
         private void OpenVaultProperties()
         {
-            WeakReferenceMessenger.Default.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.DashboardPropertiesPage, UnlockedVaultModel));
+            Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.DashboardPropertiesPage, UnlockedVaultModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToLeft)});
+        }
+
+        public override void Cleanup()
+        {
+            ReadGraphViewModel.GraphDisposable?.Dispose();
+            WriteGraphViewModel.GraphDisposable?.Dispose();
+
+            base.Cleanup();
         }
     }
 }

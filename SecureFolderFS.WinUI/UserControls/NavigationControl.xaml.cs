@@ -6,7 +6,9 @@ using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Backend.Extensions;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.ViewModels.Pages;
+using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.Views;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -34,7 +36,7 @@ namespace SecureFolderFS.WinUI.UserControls
 
         public void Receive(NavigationRequestedMessage message)
         {
-            Navigate(message.VaultModel, message.Value);
+            Navigate(message.VaultModel, message.Value, message.Transition);
         }
 
         public void Receive(RemoveVaultRequestedMessage message)
@@ -55,12 +57,16 @@ namespace SecureFolderFS.WinUI.UserControls
             Navigate(message.Value, null);
         }
 
-        private void Navigate(VaultModel vaultModel, BasePageViewModel? basePageViewModel)
+        private void Navigate(VaultModel vaultModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
         {
             if (basePageViewModel == null)
             {
                 NavigationDestinations.SetAndGet(vaultModel, out basePageViewModel, () => new VaultLoginPageViewModel(vaultModel));
                 PageViewModel = basePageViewModel!;
+                if (!PageViewModel.Messenger.IsRegistered<LockVaultRequestedMessage>(this))
+                {
+                    PageViewModel.Messenger.Register<LockVaultRequestedMessage>(this);
+                }
             }
             else
             {
@@ -72,21 +78,23 @@ namespace SecureFolderFS.WinUI.UserControls
                 }
             }
 
-            Navigate(PageViewModel!);
+            Navigate(PageViewModel, transition);
 
-            WeakReferenceMessenger.Default.Send(new NavigationFinishedMessage(PageViewModel!));
+            WeakReferenceMessenger.Default.Send(new NavigationFinishedMessage(PageViewModel));
         }
 
-        private void Navigate(BasePageViewModel basePageViewModel)
+        private void Navigate(BasePageViewModel basePageViewModel, TransitionModel? transition = null)
         {
+            var transitionInfo = ConversionHelpers.ToNavigationTransitionInfo(transition) ?? new EntranceNavigationTransitionInfo();
+
             switch (basePageViewModel)
             {
                 case VaultLoginPageViewModel:
-                    ContentFrame.Navigate(typeof(VaultLoginPage), new PageNavigationParameterModel() { ViewModel = basePageViewModel }, new EntranceNavigationTransitionInfo());
+                    ContentFrame.Navigate(typeof(VaultLoginPage), basePageViewModel, transitionInfo);
                     break;
 
                 case VaultDashboardPageViewModel:
-                    ContentFrame.Navigate(typeof(VaultDashboardPage), new PageNavigationParameterModel() { ViewModel = basePageViewModel }, new DrillInNavigationTransitionInfo());
+                    ContentFrame.Navigate(typeof(VaultDashboardPage), basePageViewModel, transitionInfo);
                     break;
             }
         }

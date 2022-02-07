@@ -10,38 +10,44 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard
     {
         public ObservableCollection<GraphPointModel> Data { get; }
 
-        private string? _GraphSubheader;
+        public IDisposable? GraphDisposable { get; set; }
+
+        private string? _GraphSubheader = "0mb/s";
         public string? GraphSubheader
         {
             get => _GraphSubheader;
             set => SetProperty(ref _GraphSubheader, value);
         }
 
-        private bool _GraphLoaded;
-        public bool GraphLoaded
+        private bool _IsReady;
+        public bool IsReady
         {
-            get => _GraphLoaded;
-            set => SetProperty(ref _GraphLoaded, value);
-        }
-
-        public void AddPoint(GraphPointModel graphPointModel)
-        {
-            if (!GraphLoaded)
-            {
-                return;
-            }
-
-            if (Data.Count == Constants.MAX_GRAPH_POINTS)
-            {
-                Data.RemoveAt(0);
-            }
-
-            Data.Add(graphPointModel);
+            get => _IsReady;
+            set => SetProperty(ref _IsReady, value);
         }
 
         public GraphWidgetControlViewModel()
         {
             Data = new();
+        }
+
+        public void AddPoint(GraphPointModel graphPointModel)
+        {
+            if (!IsReady)
+            {
+                return;
+            }
+
+            try
+            {
+                if (Data.Count == Constants.MAX_GRAPH_POINTS)
+                {
+                    Data.RemoveAt(0);
+                }
+
+                Data.Add(graphPointModel);
+            }
+            catch (Exception) { }
         }
     }
 }

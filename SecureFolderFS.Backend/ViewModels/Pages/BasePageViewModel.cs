@@ -1,19 +1,26 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Utils;
 
 #nullable enable
 
 namespace SecureFolderFS.Backend.ViewModels.Pages
 {
-    public abstract class BasePageViewModel : ObservableObject, IDisposable
+    public abstract class BasePageViewModel : ObservableObject, ICleanable, IDisposable
     {
-        public VaultModel VaultModel { get; }
+        public IMessenger Messenger { get; }
 
-        public BasePageViewModel(VaultModel vaultModel)
+        protected VaultModel VaultModel { get; }
+
+        protected BasePageViewModel(IMessenger messenger, VaultModel vaultModel)
         {
+            this.Messenger = messenger;
             this.VaultModel = vaultModel;
         }
 
-        public abstract void Dispose();
+        public virtual void Cleanup() { }
+
+        public virtual void Dispose() { }
     }
 }

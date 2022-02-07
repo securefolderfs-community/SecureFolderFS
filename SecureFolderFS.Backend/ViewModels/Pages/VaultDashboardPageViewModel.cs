@@ -2,6 +2,7 @@
 using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 using SecureFolderFS.Core.VaultLoader.Routine;
@@ -14,31 +15,32 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
     {
         public UnlockedVaultModel UnlockedVaultModel { get; }
 
-        public DashboardNavigationViewModel DashboardNavigationViewModel { get; }
+        public NavigationBreadcrumbViewModel NavigationBreadcrumbViewModel { get; }
 
         public DashboardNavigationModel DashboardNavigationModel { get; }
 
-        public BaseDashboardPageViewModel? BaseDashboardPageViewModel { get; private set; }
+        public BaseDashboardPageViewModel? CurrentPage { get; private set; }
 
-        public VaultDashboardPageViewModel(VaultModel vaultModel)
-            : base(vaultModel)
+        public VaultDashboardPageViewModel(IMessenger messenger, VaultModel vaultModel)
+            : base(messenger, vaultModel)
         {
-            UnlockedVaultModel = new(vaultModel);
-            DashboardNavigationViewModel = new(vaultModel);
-            DashboardNavigationModel = new(UnlockedVaultModel);
+            this.UnlockedVaultModel = new(vaultModel);
+            this.NavigationBreadcrumbViewModel = new();
+            this.DashboardNavigationModel = new(Messenger);
 
-            WeakReferenceMessenger.Default.Register<DashboardNavigationFinishedMessage>(this);
-
-            Initialize();
+            Messenger.Register<DashboardNavigationFinishedMessage>(this);
+            Messenger.Register<DashboardNavigationFinishedMessage>(NavigationBreadcrumbViewModel);
+            Messenger.Register<DashboardNavigationRequestedMessage>(DashboardNavigationModel);
+            Messenger.Register<LockVaultRequestedMessage>(DashboardNavigationModel);
         }
 
-        public void InitializeWithFinalizedVaultLoadRoutine(IFinalizedVaultLoadRoutine finalizedVaultLoadRoutine)
+        public void InitializeWithRoutine(IFinalizedVaultLoadRoutine finalizedVaultLoadRoutine)
         {
-            if (BaseDashboardPageViewModel is VaultMainDashboardPageViewModel vaultMainDashboardPageViewModel)
+            if (CurrentPage is VaultMainDashboardPageViewModel viewModel)
             {
                 finalizedVaultLoadRoutine = finalizedVaultLoadRoutine.ContinueWithOptionalRoutine()
                     .EstablishOptionalRoutine()
-                    .AddFileSystemStatsTracker(vaultMainDashboardPageViewModel.VaultIoSpeedReporterModel)
+                    .AddFileSystemStatsTracker(viewModel.VaultIoSpeedReporterModel)
                     .Finish();
 
                 UnlockedVaultModel.VaultInstance = finalizedVaultLoadRoutine.Deploy();
@@ -46,23 +48,23 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
             }
         }
 
-        private void Initialize()
+        public void StartNavigation()
         {
-            WeakReferenceMessenger.Default.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.MainDashboardPage, UnlockedVaultModel));
-        }
-
-        public override void Dispose()
-        {
+            Messenger.Send(new DashboardNavigationRequestedMessage(CurrentPage?.VaultDashboardPageType ?? VaultDashboardPageType.MainDashboardPage, UnlockedVaultModel, CurrentPage)
+            {
+                Transition = CurrentPage == null ? new ContinuumTransitionModel() : new SuppressTransitionModel()
+            });
         }
 
         public void Receive(DashboardNavigationFinishedMessage message)
         {
-            if (message.Value.UnlockedVaultModel != UnlockedVaultModel)
-            {
-                return;
-            }
+            CurrentPage = message.Value;
+        }
 
-            BaseDashboardPageViewModel = message.Value;
+        public override void Cleanup()
+        {
+            CurrentPage?.Cleanup();
+            base.Cleanup();
         }
     }
 }

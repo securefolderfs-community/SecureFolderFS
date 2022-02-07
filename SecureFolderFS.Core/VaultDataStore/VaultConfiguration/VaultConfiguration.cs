@@ -11,19 +11,20 @@ using SecureFolderFS.Core.Helpers;
 namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
 {
     [Serializable]
-    internal sealed class VaultConfiguration : BaseVaultConfiguration
+    public sealed class VaultConfiguration : BaseVaultConfiguration
     {
-        public VaultConfiguration(int version, ContentCipherScheme contentCipherScheme, FileNameCipherScheme fileNameCipherScheme, byte[] hmacsha256Mac) 
+        [JsonConstructor]
+        internal VaultConfiguration(int version, ContentCipherScheme contentCipherScheme, FileNameCipherScheme fileNameCipherScheme, byte[] hmacsha256Mac) 
             : base(version, contentCipherScheme, fileNameCipherScheme, hmacsha256Mac)
         {
         }
 
-        public static VaultConfiguration Load(RawVaultConfiguration rawVaultConfiguration)
+        internal static VaultConfiguration Load(RawVaultConfiguration rawVaultConfiguration)
         {
             return JsonConvert.DeserializeObject<VaultConfiguration>(rawVaultConfiguration.rawData);
         }
 
-        public override bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey)
+        internal override bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey)
         {
             if (Hmacsha256Mac.IsEmpty() || masterKey.IsEmpty() || keyCryptor == null)
             {
@@ -41,7 +42,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
             return Hmacsha256Mac.SequenceEqual(hmacSha256Crypt.GetHash());
         }
 
-        public override void WriteConfiguration(Stream destinationStream)
+        internal override void WriteConfiguration(Stream destinationStream)
         {
             string serialized = JsonConvert.SerializeObject(this, Formatting.Indented);
 

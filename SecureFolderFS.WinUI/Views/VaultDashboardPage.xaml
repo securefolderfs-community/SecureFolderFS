@@ -10,15 +10,14 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-
-        <DataTemplate x:Key="ParentBreadcrumbItem" x:DataType="vm:DashboardNavigationItemViewModel">
+        <DataTemplate x:Key="ParentBreadcrumbItem" x:DataType="vm:NavigationItemViewModel">
             <TextBlock
                 FontSize="24"
                 FontWeight="SemiBold"
                 Opacity="0.8"
                 Text="{x:Bind SectionName, Mode=OneWay}" />
         </DataTemplate>
-        <DataTemplate x:Key="LeadingBreadcrumbItem" x:DataType="vm:DashboardNavigationItemViewModel">
+        <DataTemplate x:Key="LeadingBreadcrumbItem" x:DataType="vm:NavigationItemViewModel">
             <TextBlock
                 FontSize="24"
                 FontWeight="SemiBold"
@@ -33,9 +32,12 @@
         </Grid.RowDefinitions>
 
         <!--  Navigation breadcrumb  -->
-        <BreadcrumbBar ItemClicked="BreadcrumbBar_ItemClicked" Grid.Row="0" ItemsSource="{x:Bind ViewModel.DashboardNavigationViewModel.DashboardNavigationItems}">
+        <BreadcrumbBar
+            Grid.Row="0"
+            ItemClicked="BreadcrumbBar_ItemClicked"
+            ItemsSource="{x:Bind ViewModel.NavigationBreadcrumbViewModel.DashboardNavigationItems}">
             <BreadcrumbBar.ItemTemplate>
-                <DataTemplate x:DataType="vm:DashboardNavigationItemViewModel">
+                <DataTemplate x:DataType="vm:NavigationItemViewModel">
                     <BreadcrumbBarItem DataContext="{Binding}">
                         <BreadcrumbBarItem.ContentTemplateSelector>
                             <ts:BreadcrumbItemTemplateSelector LeadingItemTemplate="{StaticResource LeadingBreadcrumbItem}" ParentItemTemplate="{StaticResource ParentBreadcrumbItem}" />

@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.ViewModels.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -30,9 +29,9 @@ namespace SecureFolderFS.WinUI.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if ((e.Parameter as PageNavigationParameterModel)?.ViewModel is VaultLoginPageViewModel vaultLoginPageViewModel)
+            if (e.Parameter is VaultLoginPageViewModel viewModel)
             {
-                ViewModel = vaultLoginPageViewModel;
+                ViewModel = viewModel;
             }
 
             base.OnNavigatedTo(e);

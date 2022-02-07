@@ -39,14 +39,14 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontWeight="SemiBold"
-                Text="{x:Bind ViewModel.VaultHealthState, Mode=OneWay, Converter={StaticResource VaultHealthStateToStringConverter}}" />
+                Text="{x:Bind VaultHealthState, Mode=OneWay, Converter={StaticResource VaultHealthStateToStringConverter}}" />
 
             <!--  Last checked  -->
             <TextBlock
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Opacity="0.8"
-                Text="{x:Bind ViewModel.VaultHealthLastCheckedDate, Mode=OneWay, Converter={StaticResource DateTimeToStringValueConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}" />
+                Text="{x:Bind VaultHealthLastCheckedDate, Mode=OneWay, Converter={StaticResource DateTimeToStringValueConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}" />
         </StackPanel>
 
         <!--  Start scanning  -->
@@ -60,7 +60,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
-                Command="{x:Bind ViewModel.StartScanningCommand}"
+                Command="{x:Bind StartScanningCommand, Mode=OneWay}"
                 Content="Start scanning"
                 CornerRadius="4 0 0 4" />
             <Button
@@ -68,7 +68,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
-                Command="{x:Bind ViewModel.OpenHealthCommand}"
+                Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
                 CornerRadius="0 4 4 0">
                 <FontIcon FontSize="14" Glyph="&#xE95E;" />
             </Button>

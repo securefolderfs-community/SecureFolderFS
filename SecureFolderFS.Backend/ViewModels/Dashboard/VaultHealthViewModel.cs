@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Backend.Enums;
 
@@ -29,12 +24,12 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard
 
         public IRelayCommand StartScanningCommand { get; }
 
-        public IRelayCommand OpenHealthCommand { get; }
+        public IRelayCommand OpenVaultHealthCommand { get; }
 
         public VaultHealthViewModel()
         {
             this.StartScanningCommand = new RelayCommand(StartScanning);
-            this.OpenHealthCommand = new RelayCommand(OpenHealth);
+            this.OpenVaultHealthCommand = new RelayCommand(OpenVaultHealth);
         }
 
         private void StartScanning()
@@ -42,7 +37,7 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard
 
         }
 
-        private void OpenHealth()
+        private void OpenVaultHealth()
         {
 
         }

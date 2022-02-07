@@ -2,8 +2,8 @@
 {
     public sealed class GraphPointModel
     {
-        public long High { get; init; }
+        public long High { get; set; }
 
-        public DateTime Date { get; init; }
+        public DateTime Date { get; set; }
     }
 }

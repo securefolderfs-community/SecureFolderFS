@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
 #nullable enable
@@ -9,7 +10,7 @@ namespace SecureFolderFS.Backend.Messages
 {
     public sealed class DashboardNavigationRequestedMessage : ValueChangedMessage<BaseDashboardPageViewModel?>
     {
-        public string? From { get; init; }
+        public TransitionModel? Transition { get; init; }
 
         public VaultDashboardPageType VaultDashboardPageType { get; }
 

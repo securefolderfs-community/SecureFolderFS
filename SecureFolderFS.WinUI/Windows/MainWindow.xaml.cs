@@ -4,10 +4,10 @@ using Microsoft.UI.Windowing;
 using SecureFolderFS.WinUI.Helpers;
 using WinRT.Interop;
 
-#nullable enable
-
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
+
+#nullable enable
 
 namespace SecureFolderFS.WinUI.Windows
 {
@@ -16,9 +16,13 @@ namespace SecureFolderFS.WinUI.Windows
     /// </summary>
     public sealed partial class MainWindow : Window // TODO: Remove SecureFolderFS.Core reference from the UI
     {
+        public static MainWindow? Instance { get; private set; }
+
         public MainWindow()
         {
-            this.InitializeComponent();
+            Instance = this;
+
+            InitializeComponent();
 
             PrepareWindow();
         }

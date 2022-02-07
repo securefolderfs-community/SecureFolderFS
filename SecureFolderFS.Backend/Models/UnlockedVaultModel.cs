@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Instance;
+﻿using SecureFolderFS.Backend.Enums;
+using SecureFolderFS.Core.Instance;
 
 #nullable enable
 
@@ -6,8 +7,6 @@ namespace SecureFolderFS.Backend.Models
 {
     public sealed class UnlockedVaultModel : IDisposable
     {
-        public static Dictionary<UnlockedVaultModel, IVaultInstance> Instances = new();
-
         public IVaultInstance? VaultInstance { get; set; }
 
         public VaultModel VaultModel { get; }
@@ -21,9 +20,7 @@ namespace SecureFolderFS.Backend.Models
         {
             ArgumentNullException.ThrowIfNull(VaultInstance);
 
-            Instances.Add(this, VaultInstance);
-
-            _ = Task.Run(() =>
+            AsyncExtensions.RunAndForget(() =>
             {
                 VaultInstance.SecureFolderFSInstance.StartFileSystem();
             });
