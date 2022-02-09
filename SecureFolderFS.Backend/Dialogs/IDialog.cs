@@ -1,8 +1,10 @@
-﻿using SecureFolderFS.Backend.Enums;
+﻿using System.ComponentModel;
+using SecureFolderFS.Backend.Enums;
 
 namespace SecureFolderFS.Backend.Dialogs
 {
     public interface IDialog<TViewModel>
+        where TViewModel : INotifyPropertyChanged
     {
         TViewModel ViewModel { get; set; }
 

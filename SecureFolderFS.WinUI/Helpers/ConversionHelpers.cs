@@ -16,7 +16,7 @@ namespace SecureFolderFS.WinUI.Helpers
                 EntranceTransitionModel => new EntranceNavigationTransitionInfo(),
                 DrillInTransitionModel => new DrillInNavigationTransitionInfo(),
                 ContinuumTransitionModel => new ContinuumNavigationTransitionInfo(),
-                _ => null
+                _ => transitionModel?.IsCustom ?? false ? new SuppressNavigationTransitionInfo() : null
             };
         }
     }

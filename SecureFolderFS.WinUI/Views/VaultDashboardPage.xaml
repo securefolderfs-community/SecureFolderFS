@@ -48,6 +48,9 @@
         </BreadcrumbBar>
 
         <!--  Content  -->
-        <Frame x:Name="ContentFrame" Grid.Row="1" />
+        <Frame
+            x:Name="ContentFrame"
+            Grid.Row="1"
+            IsNavigationStackEnabled="False" />
     </Grid>
 </Page>

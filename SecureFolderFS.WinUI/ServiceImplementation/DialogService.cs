@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Backend.Dialogs;
@@ -26,6 +27,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         public IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel)
+            where TViewModel : INotifyPropertyChanged
         {
             if (!_dialogs.TryGetValue(typeof(TViewModel), out var initializer))
             {
@@ -46,6 +48,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         public Task<DialogResult> ShowDialog<TViewModel>(TViewModel viewModel)
+            where TViewModel : INotifyPropertyChanged
         {
             return GetDialog<TViewModel>(viewModel).ShowAsync();
         }

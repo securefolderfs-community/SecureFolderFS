@@ -12,6 +12,8 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard
 
         public IDisposable? GraphDisposable { get; set; }
 
+        public bool IsExtended { get; set; }
+
         private string? _GraphSubheader = "0mb/s";
         public string? GraphSubheader
         {

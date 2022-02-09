@@ -21,7 +21,9 @@
         HorizontalContentAlignment="Center"
         VerticalContentAlignment="Center"
         BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
+        Click="RootButton_Click"
         Loaded="RootButton_Loaded">
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

@@ -81,7 +81,7 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
 
             WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(vm));
 
-
+            return;
             var vaultWizardViewModel = new VaultWizardDialogViewModel();
             if (await DialogService.ShowDialog(vaultWizardViewModel) == DialogResult.Primary)
             {

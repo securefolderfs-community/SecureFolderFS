@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Numerics;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
 using SecureFolderFS.Backend.Models;
-using SecureFolderFS.Backend.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,6 +28,7 @@ namespace SecureFolderFS.WinUI.UserControls
             ControlLoaded = true;
         }
 
+        public event RoutedEventHandler Click;
 
         public bool ControlLoaded
         {
@@ -91,9 +92,15 @@ namespace SecureFolderFS.WinUI.UserControls
         public static readonly DependencyProperty ChartSecondaryColorProperty =
             DependencyProperty.Register("ChartSecondaryColor", typeof(Color), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
+
         public void Dispose()
         {
-            CartesianChart.Dispose();
+            CartesianChart?.Dispose();
+        }
+
+        private void RootButton_Click(object sender, RoutedEventArgs e)
+        {
+            Click?.Invoke(sender, e);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Backend.Enums;
+﻿using SecureFolderFS.Backend.Extensions;
 using SecureFolderFS.Core.Instance;
 
 #nullable enable

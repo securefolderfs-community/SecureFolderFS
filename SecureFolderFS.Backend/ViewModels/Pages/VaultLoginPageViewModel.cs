@@ -38,7 +38,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
             if (string.IsNullOrEmpty(password))
             {
                 // TODO: Please provide password
-                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, new VaultDashboardPageViewModel(Messenger, VaultModel)) { Transition = new DrillInTransitionModel() });
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, new VaultDashboardPageViewModel(Messenger, VaultModel)));
                 return;
             }
             else
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
                     {
                         // TODO: Ask for the keystore file
                         // DoubleFA dfa = new();
-                        // dfa.AskForKeystore(); // ??
+                        // if (dfa.IsEnabledForVault(VaultModel)) dfa.AskForKeystore(); // ??
                         IVaultKeystoreDiscoverer keystoreDiscoverer = null;
 
                         step6 = step5.FindKeystoreFile(true, keystoreDiscoverer);
@@ -104,7 +104,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
                 var vaultDashboardPageViewModel = new VaultDashboardPageViewModel(Messenger, VaultModel);
                 vaultDashboardPageViewModel.InitializeWithRoutine(finalizedVaultLoadRoutine);
 
-                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, vaultDashboardPageViewModel) { Transition = new DrillInTransitionModel() });
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultModel, vaultDashboardPageViewModel));
             }
         }
     }

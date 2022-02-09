@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.Backend.Enums
+﻿namespace SecureFolderFS.Backend.Extensions
 {
     internal static class AsyncExtensions
     {

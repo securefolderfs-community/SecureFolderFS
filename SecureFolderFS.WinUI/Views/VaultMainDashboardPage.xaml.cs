@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using CommunityToolkit.WinUI.UI.Animations;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
@@ -43,6 +48,68 @@ namespace SecureFolderFS.WinUI.Views
         {
             ViewModel.Cleanup();
             base.OnNavigatingFrom(e);
+        }
+
+        private async void ReadGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ViewModel.ReadGraphViewModel.IsExtended)
+            {
+                await StartGraphHideStoryboard(WriteGraph);
+                HideColumn(WriteColumn);
+            }
+            else
+            {
+                RestoreColumn(WriteColumn);
+                await StartGraphRestoreStoryboard(WriteGraph);
+            }
+
+            ViewModel.ReadGraphViewModel.IsExtended = !ViewModel.ReadGraphViewModel.IsExtended;
+        }
+
+        private async void WriteGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ViewModel.WriteGraphViewModel.IsExtended)
+            {
+                await StartGraphHideStoryboard(ReadGraph);
+                HideColumn(ReadColumn);
+            }
+            else
+            {
+                RestoreColumn(ReadColumn);
+                await StartGraphRestoreStoryboard(ReadGraph);
+            }
+
+            ViewModel.WriteGraphViewModel.IsExtended = !ViewModel.WriteGraphViewModel.IsExtended;
+        }
+
+        private async Task StartGraphHideStoryboard(UIElement element, [CallerArgumentExpression("element")] string? name = null)
+        {
+            Storyboard.SetTargetName(GraphHideStoryboard.Children[0], name);
+            Storyboard.SetTargetName(GraphHideStoryboard.Children[1], name); 
+            await GraphHideStoryboard.BeginAsync();
+            element.Visibility = Visibility.Collapsed;
+            GraphHideStoryboard.Stop();
+        }
+
+        private async Task StartGraphRestoreStoryboard(UIElement element, [CallerArgumentExpression("element")] string? name = null)
+        {
+            Storyboard.SetTargetName(GraphRestoreStoryboard.Children[0], name);
+            Storyboard.SetTargetName(GraphRestoreStoryboard.Children[1], name); 
+            element.Visibility = Visibility.Visible;
+            await GraphRestoreStoryboard.BeginAsync(); 
+            GraphRestoreStoryboard.Stop();
+        }
+
+        private void HideColumn(ColumnDefinition column)
+        {
+            GraphsGrid.ColumnSpacing = 0;
+            column.Width = new(0, GridUnitType.Star);
+        }
+
+        private void RestoreColumn(ColumnDefinition column)
+        {
+            GraphsGrid.ColumnSpacing = 8;
+            column.Width = new(1, GridUnitType.Star);
         }
     }
 }

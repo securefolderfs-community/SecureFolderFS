@@ -31,7 +31,6 @@ namespace SecureFolderFS.WinUI.UserControls
             get => (DateTime)GetValue(VaultHealthLastCheckedDateProperty);
             set => SetValue(VaultHealthLastCheckedDateProperty, value);
         }
-
         public static readonly DependencyProperty VaultHealthLastCheckedDateProperty =
             DependencyProperty.Register("VaultHealthLastCheckedDate", typeof(DateTime), typeof(VaultHealthControl), new PropertyMetadata(0));
 

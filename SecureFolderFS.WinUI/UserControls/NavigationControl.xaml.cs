@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Backend.Extensions;
@@ -18,7 +19,11 @@ using SecureFolderFS.WinUI.Views;
 
 namespace SecureFolderFS.WinUI.UserControls
 {
-    public sealed partial class NavigationControl : UserControl, IRecipient<LockVaultRequestedMessage>, IRecipient<NavigationRequestedMessage>, IRecipient<RemoveVaultRequestedMessage>, IRecipient<AddVaultRequestedMessage>
+    public sealed partial class NavigationControl : UserControl,
+        IRecipient<LockVaultRequestedMessage>,
+        IRecipient<NavigationRequestedMessage>,
+        IRecipient<RemoveVaultRequestedMessage>,
+        IRecipient<AddVaultRequestedMessage>
     {
         private Dictionary<VaultModel, BasePageViewModel?> NavigationDestinations { get; }
 
@@ -54,7 +59,7 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             NavigationDestinations[message.Value]?.Dispose();
             NavigationDestinations[message.Value] = null;
-            Navigate(message.Value, null);
+            Navigate(message.Value, null, new DrillOutTransitionModel());
         }
 
         private void Navigate(VaultModel vaultModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
@@ -83,9 +88,20 @@ namespace SecureFolderFS.WinUI.UserControls
             WeakReferenceMessenger.Default.Send(new NavigationFinishedMessage(PageViewModel));
         }
 
-        private void Navigate(BasePageViewModel basePageViewModel, TransitionModel? transition = null)
+        private async void Navigate(BasePageViewModel basePageViewModel, TransitionModel? transition = null)
         {
             var transitionInfo = ConversionHelpers.ToNavigationTransitionInfo(transition) ?? new EntranceNavigationTransitionInfo();
+
+            if (transition?.IsCustom ?? false)
+            {
+                if (transition is DrillOutTransitionModel)
+                {
+                    DrillOutAnimationStoryboard.Begin();
+                    await Task.Delay(200);
+                    DrillOutAnimationStoryboard.Stop();
+                    transitionInfo = new EntranceNavigationTransitionInfo();
+                }
+            }
 
             switch (basePageViewModel)
             {

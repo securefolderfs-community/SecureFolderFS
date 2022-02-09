@@ -5,9 +5,28 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tua="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <Storyboard x:Name="GraphHideStoryboard">
+            <FadeOutThemeAnimation BeginTime="0:0:0.02" Duration="0:0:0.10" />
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                To="0"
+                Duration="0:0:0.12" />
+        </Storyboard>
+        <Storyboard x:Name="GraphRestoreStoryboard">
+            <FadeInThemeAnimation BeginTime="0:0:0.02" Duration="0:0:0.10" />
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                From="0"
+                To="1"
+                Duration="0:0:0.12" />
+        </Storyboard>
+    </Page.Resources>
 
     <ScrollViewer>
         <Grid RowSpacing="8">
@@ -29,21 +48,36 @@
             <InfoBar Grid.Row="1" Visibility="Collapsed" />
 
             <!--  Read/Write Graphs  -->
-            <Grid Grid.Row="2" ColumnSpacing="8">
+            <Grid
+                x:Name="GraphsGrid"
+                Grid.Row="2"
+                ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition x:Name="ReadColumn" Width="*" />
+                    <ColumnDefinition x:Name="WriteColumn" Width="*" />
                 </Grid.ColumnDefinitions>
+
+                <Grid.ChildrenTransitions>
+                    <TransitionCollection>
+                        <RepositionThemeTransition />
+                    </TransitionCollection>
+                </Grid.ChildrenTransitions>
+
+                <Grid />
 
                 <!--  Read  -->
                 <uc:GraphWidgetControl
                     x:Name="ReadGraph"
                     Grid.Column="0"
                     ChartPrimaryColor="#4C00AED4"
+                    Click="ReadGraph_Click"
                     ControlLoaded="{x:Bind ViewModel.ReadGraphViewModel.IsReady, Mode=TwoWay}"
                     Data="{x:Bind ViewModel.ReadGraphViewModel.Data, Mode=OneWay}"
                     GraphHeader="Read speeds"
                     GraphSubheader="{x:Bind ViewModel.ReadGraphViewModel.GraphSubheader, Mode=OneWay}">
+                    <uc:GraphWidgetControl.RenderTransform>
+                        <ScaleTransform />
+                    </uc:GraphWidgetControl.RenderTransform>
                     <uc:GraphWidgetControl.ChartStroke>
                         <SolidColorBrush Color="#00AED4" />
                     </uc:GraphWidgetControl.ChartStroke>
@@ -54,10 +88,15 @@
                     x:Name="WriteGraph"
                     Grid.Column="1"
                     ChartPrimaryColor="#4C008d74"
+                    Click="WriteGraph_Click"
                     ControlLoaded="{x:Bind ViewModel.WriteGraphViewModel.IsReady, Mode=TwoWay}"
                     Data="{x:Bind ViewModel.WriteGraphViewModel.Data, Mode=OneWay}"
                     GraphHeader="Write speeds"
-                    GraphSubheader="{x:Bind ViewModel.WriteGraphViewModel.GraphSubheader, Mode=OneWay}">
+                    GraphSubheader="{x:Bind ViewModel.WriteGraphViewModel.GraphSubheader, Mode=OneWay}"
+                    RenderTransformOrigin="1.0,0.5">
+                    <uc:GraphWidgetControl.RenderTransform>
+                        <ScaleTransform />
+                    </uc:GraphWidgetControl.RenderTransform>
                     <uc:GraphWidgetControl.ChartStroke>
                         <SolidColorBrush Color="#008D74" />
                     </uc:GraphWidgetControl.ChartStroke>

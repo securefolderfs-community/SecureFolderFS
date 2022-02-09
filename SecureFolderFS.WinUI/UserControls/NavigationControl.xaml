@@ -7,5 +7,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Frame x:Name="ContentFrame" />
+    <UserControl.Resources>
+        <Storyboard x:Name="DrillOutAnimationStoryboard">
+            <DrillOutThemeAnimation EntranceTarget="{x:Bind EntranceTarget}" ExitTarget="{x:Bind ContentFrame}" />
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid x:Name="EntranceTarget" Background="Transparent" />
+
+        <Frame x:Name="ContentFrame" IsNavigationStackEnabled="False" />
+    </Grid>
 </UserControl>

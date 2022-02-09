@@ -9,7 +9,6 @@
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Backend.ViewModels.Sidebar"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -18,11 +17,15 @@
         <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
     </Page.Resources>
 
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
+
+        <Grid.BackgroundTransition>
+            <BrushTransition />
+        </Grid.BackgroundTransition>
 
         <!--  Title  -->
         <uc:TitleBarControl Grid.Row="0" />
