@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Enums;
-using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 
@@ -13,16 +12,16 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
     {
         protected IMessenger Messenger { get; }
 
-        protected UnlockedVaultModel UnlockedVaultModel { get; }
+        protected VaultViewModel VaultViewModel { get; }
 
         public VaultDashboardPageType VaultDashboardPageType { get; }
 
         public NavigationItemViewModel? NavigationItemViewModel { get; protected init; }
 
-        protected BaseDashboardPageViewModel(IMessenger messenger, UnlockedVaultModel unlockedVaultModel, VaultDashboardPageType vaultDashboardPageType)
+        protected BaseDashboardPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel, VaultDashboardPageType vaultDashboardPageType)
         {
             this.Messenger = messenger;
-            this.UnlockedVaultModel = unlockedVaultModel;
+            this.VaultViewModel = vaultViewModel;
             this.VaultDashboardPageType = vaultDashboardPageType;
         }
 

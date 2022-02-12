@@ -14,6 +14,8 @@ using SecureFolderFS.WinUI.Views.VaultWizard;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+#nullable enable
+
 namespace SecureFolderFS.WinUI.Dialogs
 {
     public sealed partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<VaultWizardNavigationRequestedMessage>

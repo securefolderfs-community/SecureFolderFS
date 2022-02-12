@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.Helpers
                 return char.MinValue;
             }
 
-            var occupiedLetters = Directory.GetLogicalDrives().Select((item) => item[0]);
+            var occupiedLetters = Directory.GetLogicalDrives().Select(item => item[0]);
             var availableLetters = Constants.ALPHABET.ToCharArray().Skip(3).Except(occupiedLetters); // Skip C and A, B - these are reserved for floppy disks and should not be used
 
             // Return first or default letter

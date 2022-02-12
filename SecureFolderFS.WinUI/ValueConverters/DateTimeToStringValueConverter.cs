@@ -17,11 +17,11 @@ namespace SecureFolderFS.WinUI.ValueConverters
             string dateString;
             if (dateTime.Date == DateTime.Today)
             {
-                dateString = dateTime.ToString("Today, HH:mm"); // TODO: Localize
+                dateString = $"Today, {dateTime.ToString("HH:mm")}"; // TODO: Localize
             }
             else
             {
-                dateString = dateTime.ToString("MM/dd/yyyy, HH:mm");
+                dateString = dateTime.Year == 1 ? "Unspecified" : dateTime.ToString("MM/dd/yyyy, HH:mm");
             }
 
             if (parameter is string formatString)

@@ -2,6 +2,7 @@
 using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Extensions;
 using SecureFolderFS.Backend.Messages;
+using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
 namespace SecureFolderFS.Backend.Models
@@ -18,16 +19,16 @@ namespace SecureFolderFS.Backend.Models
             this.NavigationDestinations = new();
         }
 
-        private BaseDashboardPageViewModel? NavigateToPage(VaultDashboardPageType vaultDashboardPageType, UnlockedVaultModel unlockedVaultModel)
+        private BaseDashboardPageViewModel? NavigateToPage(VaultDashboardPageType vaultDashboardPageType, VaultViewModel vaultViewModel)
         {
             BaseDashboardPageViewModel? baseDashboardPageViewModel;
             switch (vaultDashboardPageType)
             {
                 case VaultDashboardPageType.MainDashboardPage:
-                    NavigationDestinations.SetAndGet(vaultDashboardPageType, out baseDashboardPageViewModel, () => new VaultMainDashboardPageViewModel(Messenger, unlockedVaultModel));
+                    NavigationDestinations.SetAndGet(vaultDashboardPageType, out baseDashboardPageViewModel, () => new VaultMainDashboardPageViewModel(Messenger, vaultViewModel));
                     break;
                 case VaultDashboardPageType.DashboardPropertiesPage:
-                    NavigationDestinations.SetAndGet(vaultDashboardPageType, out baseDashboardPageViewModel, () => new VaultDashboardPropertiesPageViewModel(Messenger, unlockedVaultModel));
+                    NavigationDestinations.SetAndGet(vaultDashboardPageType, out baseDashboardPageViewModel, () => new VaultDashboardPropertiesPageViewModel(Messenger, vaultViewModel));
                     break;
                 case VaultDashboardPageType.Undefined:
                 default:
@@ -51,7 +52,7 @@ namespace SecureFolderFS.Backend.Models
             BaseDashboardPageViewModel? baseDashboardPageViewModel;
             if (message.Value == null)
             {
-                baseDashboardPageViewModel = NavigateToPage(message.VaultDashboardPageType, message.UnlockedVaultModel);
+                baseDashboardPageViewModel = NavigateToPage(message.VaultDashboardPageType, message.VaultViewModel);
             }
             else
             {

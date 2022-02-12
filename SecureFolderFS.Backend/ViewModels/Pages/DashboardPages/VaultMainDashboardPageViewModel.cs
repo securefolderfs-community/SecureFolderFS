@@ -30,8 +30,8 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
 
         public IRelayCommand OpenVaultPropertiesCommand { get; }
 
-        public VaultMainDashboardPageViewModel(IMessenger messenger, UnlockedVaultModel unlockedVaultModel)
-            : base(messenger, unlockedVaultModel, VaultDashboardPageType.MainDashboardPage)
+        public VaultMainDashboardPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
+            : base(messenger, vaultViewModel, VaultDashboardPageType.MainDashboardPage)
         {
             this.VaultHealthViewModel = new();
             this.ReadGraphViewModel = new();
@@ -44,8 +44,8 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
             base.NavigationItemViewModel = new()
             {
                 Index = 0,
-                NavigationAction = (first) => Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.MainDashboardPage, unlockedVaultModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToRight) }),
-                SectionName = unlockedVaultModel.VaultModel.VaultName!
+                NavigationAction = first => Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.MainDashboardPage, VaultViewModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToRight) }),
+                SectionName = vaultViewModel.VaultName
             };
 
             this.VaultIoSpeedReporterModel.Start();
@@ -57,21 +57,21 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
 
         private async Task ShowInFileExplorer()
         {
-            if (UnlockedVaultModel.VaultInstance != null)
+            if (VaultViewModel.VaultInstance != null)
             {
-                await FileExplorerService.OpenPathInFileExplorerAsync(UnlockedVaultModel.VaultInstance.SecureFolderFSInstance.MountLocation);
+                await FileExplorerService.OpenPathInFileExplorerAsync(VaultViewModel.VaultInstance.SecureFolderFSInstance.MountLocation);
             }
         }
 
         private void LockVault()
         {
-            UnlockedVaultModel.VaultInstance?.Dispose();
-            Messenger.Send(new LockVaultRequestedMessage(UnlockedVaultModel.VaultModel));
+            VaultViewModel.VaultInstance?.Dispose();
+            Messenger.Send(new LockVaultRequestedMessage(VaultViewModel));
         }
 
         private void OpenVaultProperties()
         {
-            Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.DashboardPropertiesPage, UnlockedVaultModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToLeft)});
+            Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.DashboardPropertiesPage, VaultViewModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToLeft)});
         }
 
         public override void Cleanup()

@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Services;
 
 #nullable enable
@@ -14,29 +13,22 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
-        public VaultModel VaultModel { get; }
+        public VaultViewModel VaultViewModel { get; }
 
         private string? _VaultName;
         public string? VaultName
         {
             get => _VaultName;
-            private set => SetProperty(ref _VaultName, value);
-        }
-
-        private DateTime _LastOpened;
-        public DateTime LastOpened
-        {
-            get => _LastOpened;
-            set => SetProperty(ref _LastOpened, value);
+            set => SetProperty(ref _VaultName, value);
         }
 
         public IAsyncRelayCommand ShowInFileExplorerCommand { get; }
 
         public IRelayCommand RemoveVaultCommand { get; }
 
-        public SidebarItemViewModel(VaultModel vaultModel)
+        public SidebarItemViewModel(VaultViewModel vaultModel)
         {
-            this.VaultModel = vaultModel;
+            this.VaultViewModel = vaultModel;
             this._VaultName = vaultModel.VaultName;
 
             this.ShowInFileExplorerCommand = new AsyncRelayCommand(ShowInFileExplorer);
@@ -46,12 +38,12 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
         private async Task ShowInFileExplorer()
         {
             // TODO: Check if exists (hide the option if doesn't)
-            await FileExplorerService.OpenPathInFileExplorerAsync(VaultModel!.VaultRootPath!);
+            await FileExplorerService.OpenPathInFileExplorerAsync(VaultViewModel.VaultRootPath);
         }
 
         private void RemoveVault()
         {
-            WeakReferenceMessenger.Default.Send(new RemoveVaultRequestedMessage(VaultModel!));
+            WeakReferenceMessenger.Default.Send(new RemoveVaultRequestedMessage(VaultViewModel.VaultIdModel));
         }
     }
 }

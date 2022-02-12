@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Enums;
+using SecureFolderFS.Backend.Extensions;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Models.Transitions;
@@ -13,18 +14,15 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
 {
     public class VaultDashboardPageViewModel : BasePageViewModel, IRecipient<DashboardNavigationFinishedMessage>
     {
-        public UnlockedVaultModel UnlockedVaultModel { get; }
-
         public NavigationBreadcrumbViewModel NavigationBreadcrumbViewModel { get; }
 
         public DashboardNavigationModel DashboardNavigationModel { get; }
 
         public BaseDashboardPageViewModel? CurrentPage { get; private set; }
 
-        public VaultDashboardPageViewModel(IMessenger messenger, VaultModel vaultModel)
-            : base(messenger, vaultModel)
+        public VaultDashboardPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
+            : base(messenger, vaultViewModel)
         {
-            this.UnlockedVaultModel = new(vaultModel);
             this.NavigationBreadcrumbViewModel = new();
             this.DashboardNavigationModel = new(Messenger);
 
@@ -43,14 +41,17 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
                     .AddFileSystemStatsTracker(viewModel.VaultIoSpeedReporterModel)
                     .Finish();
 
-                UnlockedVaultModel.VaultInstance = finalizedVaultLoadRoutine.Deploy();
-                UnlockedVaultModel.StartFileSystem();
+                VaultViewModel.VaultInstance = finalizedVaultLoadRoutine.Deploy();
+                AsyncExtensions.RunAndForget(() =>
+                {
+                    VaultViewModel.VaultInstance.SecureFolderFSInstance.StartFileSystem();
+                });
             }
         }
 
         public void StartNavigation()
         {
-            Messenger.Send(new DashboardNavigationRequestedMessage(CurrentPage?.VaultDashboardPageType ?? VaultDashboardPageType.MainDashboardPage, UnlockedVaultModel, CurrentPage)
+            Messenger.Send(new DashboardNavigationRequestedMessage(CurrentPage?.VaultDashboardPageType ?? VaultDashboardPageType.MainDashboardPage, VaultViewModel, CurrentPage)
             {
                 Transition = CurrentPage == null ? new ContinuumTransitionModel() : new SuppressTransitionModel()
             });

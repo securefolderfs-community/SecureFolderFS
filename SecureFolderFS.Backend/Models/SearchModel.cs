@@ -30,7 +30,7 @@ namespace SecureFolderFS.Backend.Models
                 var splitQuery = query.ToLowerInvariant().Split(' ');
                 foreach (var item in _savedItems)
                 {
-                    var found = splitQuery.All((key) => FinderPredicate(item, key));
+                    var found = splitQuery.All(key => FinderPredicate(item, key));
                     if (found)
                     {
                         Collection!.Add(item);

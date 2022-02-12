@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
 
 #nullable enable
@@ -12,7 +11,7 @@ namespace SecureFolderFS.Backend.ViewModels.Dialogs
     {
         public IMessenger Messenger { get; }
 
-        public VaultModel? VaultModel { get; set; }
+        public VaultViewModel? VaultViewModel { get; set; }
 
         private string? _Title = "Add new vault";
         public string? Title

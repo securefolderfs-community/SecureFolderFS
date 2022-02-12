@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Models.Transitions;
+using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages;
 
 #nullable enable
@@ -11,18 +12,12 @@ namespace SecureFolderFS.Backend.Messages
     {
         public TransitionModel? Transition { get; init; }
 
-        public VaultModel VaultModel { get; }
+        public VaultViewModel VaultViewModel { get; }
 
-        public NavigationRequestedMessage(VaultModel vaultModel)
-            : this(vaultModel, null)
-        {
-            this.VaultModel = vaultModel;
-        }
-
-        public NavigationRequestedMessage(VaultModel vaultModel, BasePageViewModel? value)
+        public NavigationRequestedMessage(VaultViewModel vaultModel, BasePageViewModel? value = null)
             : base(value)
         {
-            this.VaultModel = vaultModel;
+            this.VaultViewModel = vaultModel;
         }
     }
 }

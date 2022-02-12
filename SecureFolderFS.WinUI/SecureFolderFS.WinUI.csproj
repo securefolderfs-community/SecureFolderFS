@@ -23,6 +23,7 @@
     <Content Remove="Assets\AppAssets\GreenShield.svg" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Dialogs\SettingsDialog.xaml" />
     <None Remove="Dialogs\VaultWizardDialog.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
@@ -70,6 +71,10 @@
     <ProjectReference Include="..\SecureFolderFS.Backend\SecureFolderFS.Backend.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Dialogs\SettingsDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\MainWindowHostPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

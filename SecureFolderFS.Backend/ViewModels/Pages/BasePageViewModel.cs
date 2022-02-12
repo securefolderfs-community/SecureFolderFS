@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Utils;
 
 #nullable enable
@@ -11,12 +10,12 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
     {
         public IMessenger Messenger { get; }
 
-        protected VaultModel VaultModel { get; }
+        protected VaultViewModel VaultViewModel { get; }
 
-        protected BasePageViewModel(IMessenger messenger, VaultModel vaultModel)
+        protected BasePageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
         {
             this.Messenger = messenger;
-            this.VaultModel = vaultModel;
+            this.VaultViewModel = vaultViewModel;
         }
 
         public virtual void Cleanup() { }

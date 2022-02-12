@@ -8,6 +8,7 @@ using SecureFolderFS.Backend.Extensions;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Models.Transitions;
+using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages;
 using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.Views;
@@ -25,7 +26,7 @@ namespace SecureFolderFS.WinUI.UserControls
         IRecipient<RemoveVaultRequestedMessage>,
         IRecipient<AddVaultRequestedMessage>
     {
-        private Dictionary<VaultModel, BasePageViewModel?> NavigationDestinations { get; }
+        private Dictionary<VaultIdModel, BasePageViewModel?> NavigationDestinations { get; }
 
         public NavigationControl()
         {
@@ -41,7 +42,7 @@ namespace SecureFolderFS.WinUI.UserControls
 
         public void Receive(NavigationRequestedMessage message)
         {
-            Navigate(message.VaultModel, message.Value, message.Transition);
+            Navigate(message.VaultViewModel, message.Value, message.Transition);
         }
 
         public void Receive(RemoveVaultRequestedMessage message)
@@ -52,21 +53,21 @@ namespace SecureFolderFS.WinUI.UserControls
 
         public void Receive(AddVaultRequestedMessage message)
         {
-            NavigationDestinations.AddOrSet(message.Value);
+            NavigationDestinations.AddOrSet(message.Value.VaultIdModel);
         }
 
         public void Receive(LockVaultRequestedMessage message)
         {
-            NavigationDestinations[message.Value]?.Dispose();
-            NavigationDestinations[message.Value] = null;
+            NavigationDestinations[message.Value.VaultIdModel]?.Dispose();
+            NavigationDestinations[message.Value.VaultIdModel] = null;
             Navigate(message.Value, null, new DrillOutTransitionModel());
         }
 
-        private void Navigate(VaultModel vaultModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
+        private void Navigate(VaultViewModel vaultViewModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
         {
             if (basePageViewModel == null)
             {
-                NavigationDestinations.SetAndGet(vaultModel, out basePageViewModel, () => new VaultLoginPageViewModel(vaultModel));
+                NavigationDestinations.SetAndGet(vaultViewModel.VaultIdModel, out basePageViewModel, () => new VaultLoginPageViewModel(vaultViewModel));
                 PageViewModel = basePageViewModel!;
                 if (!PageViewModel.Messenger.IsRegistered<LockVaultRequestedMessage>(this))
                 {
@@ -75,10 +76,10 @@ namespace SecureFolderFS.WinUI.UserControls
             }
             else
             {
-                if (!NavigationDestinations.SetAndGet(vaultModel, out _, () => basePageViewModel))
+                if (!NavigationDestinations.SetAndGet(vaultViewModel.VaultIdModel, out _, () => basePageViewModel))
                 {
                     // Wasn't updated, do it manually..
-                    NavigationDestinations[vaultModel] = basePageViewModel;
+                    NavigationDestinations[vaultViewModel.VaultIdModel] = basePageViewModel;
                     PageViewModel = basePageViewModel;
                 }
             }

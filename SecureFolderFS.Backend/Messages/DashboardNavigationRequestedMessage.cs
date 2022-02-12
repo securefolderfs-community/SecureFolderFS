@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using SecureFolderFS.Backend.Enums;
-using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Models.Transitions;
+using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
 #nullable enable
@@ -14,18 +14,18 @@ namespace SecureFolderFS.Backend.Messages
 
         public VaultDashboardPageType VaultDashboardPageType { get; }
 
-        public UnlockedVaultModel UnlockedVaultModel { get; }
+        public VaultViewModel VaultViewModel { get; }
 
-        public DashboardNavigationRequestedMessage(VaultDashboardPageType vaultDashboardPageType, UnlockedVaultModel unlockedVaultModel)
-            : this(vaultDashboardPageType, unlockedVaultModel, null)
+        public DashboardNavigationRequestedMessage(VaultDashboardPageType vaultDashboardPageType, VaultViewModel vaultViewModel)
+            : this(vaultDashboardPageType, vaultViewModel, null)
         {
         }
 
-        public DashboardNavigationRequestedMessage(VaultDashboardPageType vaultDashboardPageType, UnlockedVaultModel unlockedVaultModel, BaseDashboardPageViewModel? value)
+        public DashboardNavigationRequestedMessage(VaultDashboardPageType vaultDashboardPageType, VaultViewModel vaultViewModel, BaseDashboardPageViewModel? value)
             : base(value)
         {
             this.VaultDashboardPageType = vaultDashboardPageType;
-            this.UnlockedVaultModel = unlockedVaultModel;
+            this.VaultViewModel = vaultViewModel;
         }
     }
 }

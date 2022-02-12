@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.Chunks.Receivers
             _memoryCache.Set(chunkNumber.ToString(), cleartextChunk, new CacheItemPolicy()
             {
                 AbsoluteExpiration = new DateTimeOffset().ToOffset(TimeSpan.FromMinutes(1d)),
-                RemovedCallback = (e) => base.SetChunk(Convert.ToInt64(e.CacheItem.Key), (ICleartextChunk)e.CacheItem.Value)
+                RemovedCallback = e => base.SetChunk(Convert.ToInt64(e.CacheItem.Key), (ICleartextChunk)e.CacheItem.Value)
             });
         }
 

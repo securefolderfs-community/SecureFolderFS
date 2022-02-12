@@ -1,23 +1,31 @@
-﻿using SecureFolderFS.Core.Instance;
-
-#nullable enable
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace SecureFolderFS.Backend.Models
 {
-    public sealed class VaultModel : IEquatable<VaultModel>
+    [Serializable]
+    public sealed class VaultModel : ObservableObject
     {
-        public string? VaultRootPath { get; init; }
+        [JsonIgnore]
+        public VaultIdModel VaultIdModel { get; }
 
-        public string? VaultName { get; init; }
-
-        public bool Equals(VaultModel? other)
+        private DateTime _LastOpened;
+        public DateTime LastOpened
         {
-            return VaultRootPath?.Equals(other?.VaultRootPath) ?? base.Equals(other);
+            get => _LastOpened;
+            set => SetProperty(ref _LastOpened, value);
         }
 
-        public override int GetHashCode()
+        private DateTime _LastScanned;
+        public DateTime LastScanned
         {
-            return VaultRootPath?.GetHashCode() ?? base.GetHashCode();
+            get => _LastOpened;
+            set => SetProperty(ref _LastScanned, value);
+        }
+
+        public VaultModel(VaultIdModel vaultIdModel)
+        {
+            this.VaultIdModel = vaultIdModel;
         }
     }
 }

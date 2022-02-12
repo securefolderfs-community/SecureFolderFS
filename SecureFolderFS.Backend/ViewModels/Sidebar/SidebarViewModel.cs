@@ -7,17 +7,20 @@ using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Services;
+using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 
 #nullable enable
 
 namespace SecureFolderFS.Backend.ViewModels.Sidebar
 {
-    public sealed class SidebarViewModel : ObservableObject, IRecipient<RemoveVaultRequestedMessage>
+    public sealed class SidebarViewModel : ObservableObject, IInitializableSource<IDictionary<VaultIdModel, VaultViewModel>>, IRecipient<RemoveVaultRequestedMessage>, IRecipient<AddVaultRequestedMessage>
     {
         private readonly SearchModel<SidebarItemViewModel> _sidebarSearchModel;
 
         private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
+
+        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
         public ObservableCollection<SidebarItemViewModel> SidebarItems { get; }
 
@@ -57,44 +60,61 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
             };
 
             WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
+            WeakReferenceMessenger.Default.Register<AddVaultRequestedMessage>(this);
         }
 
         public void Receive(RemoveVaultRequestedMessage message)
         {
-            var itemToRemove = SidebarItems.FirstOrDefault((item) => item.VaultModel == message.Value);
+            var itemToRemove = SidebarItems.FirstOrDefault(item => item.VaultViewModel.VaultIdModel == message.Value);
             if (itemToRemove != null)
             {
                 SidebarItems.Remove(itemToRemove);
             }
         }
 
+        public void Receive(AddVaultRequestedMessage message)
+        {
+            SidebarItems.Add(new(message.Value));
+        }
+
+        void IInitializableSource<IDictionary<VaultIdModel, VaultViewModel>>.Initialize(IDictionary<VaultIdModel, VaultViewModel> param)
+        {
+            ThreadingService.ExecuteOnUiThreadAsync(() =>
+            {
+                foreach (var item in param.Values)
+                {
+                    SidebarItems.Add(new(item));
+                }
+            });
+        }
+
         private async Task CreateNewVault()
         {
             SearchQuery = string.Empty;
 
-            var path = @"C:\\Temp";
+            var path = @"C:\Temp";
             path += new Random().Next(0, 10);
 
 
-            var vm = new VaultModel() { VaultRootPath = path, VaultName = Path.GetFileNameWithoutExtension(path) };
-            SidebarItems.Add(new(vm));
+            VaultIdModel vaultIdModel = new();
+            var vaultViewModel = new VaultViewModel(vaultIdModel, path);
+            WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(vaultViewModel));
 
-            WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(vm));
+            return; // TODO
 
-            return;
             var vaultWizardViewModel = new VaultWizardDialogViewModel();
             if (await DialogService.ShowDialog(vaultWizardViewModel) == DialogResult.Primary)
             {
-                if (vaultWizardViewModel.VaultModel != null)
+                if (vaultWizardViewModel.VaultViewModel != null)
                 {
-                    WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(vaultWizardViewModel.VaultModel));
+                    WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(vaultWizardViewModel.VaultViewModel));
                 }
             }
         }
 
-        private Task OpenSettings()
+        private async Task OpenSettings()
         {
-            return Task.CompletedTask;
+            await DialogService.ShowDialog(new SettingsDialogViewModel());
         }
 
         private void SearchQueryChanged(string? query)

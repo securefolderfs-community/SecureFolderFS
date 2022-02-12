@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             if (_driveInfoTries < Constants.FileSystem.MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP)
             {
                 _driveInfoTries++;
-                _secureFolderDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault((di) => di.IsReady && string.Equals(di.RootDirectory.Name, Path.GetPathRoot(vaultPath), StringComparison.OrdinalIgnoreCase));
+                _secureFolderDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => di.IsReady && string.Equals(di.RootDirectory.Name, Path.GetPathRoot(vaultPath), StringComparison.OrdinalIgnoreCase));
             }
 
             freeBytesAvailable = _secureFolderDriveInfo?.TotalFreeSpace ?? 0L;

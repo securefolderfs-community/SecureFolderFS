@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Backend.Extensions;
+using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.ViewModels.Pages;
 using SecureFolderFS.Backend.ViewModels.Sidebar;
 
@@ -10,6 +12,8 @@ namespace SecureFolderFS.Backend.ViewModels
     {
         public SidebarViewModel SidebarViewModel { get; }
 
+        public SavedVaultsModel SavedVaultsModel { get; }
+
         private BasePageViewModel? _ActivePageViewModel;
         public BasePageViewModel? ActivePageViewModel
         {
@@ -20,6 +24,18 @@ namespace SecureFolderFS.Backend.ViewModels
         public MainViewModel()
         {
             SidebarViewModel = new();
+            SavedVaultsModel = new()
+            {
+                InitializableSource = SidebarViewModel
+            };
+        }
+
+        public void EnsureLateApplication()
+        {
+            AsyncExtensions.RunAndForget(() =>
+            {
+                SavedVaultsModel.Initialize();
+            });
         }
     }
 }

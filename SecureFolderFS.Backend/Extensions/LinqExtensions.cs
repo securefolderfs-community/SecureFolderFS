@@ -1,8 +1,10 @@
-﻿namespace SecureFolderFS.Backend.Extensions
+﻿#nullable enable
+
+namespace SecureFolderFS.Backend.Extensions
 {
     public static class LinqExtensions
     {
-        public static bool IsEmpty<T>(this IEnumerable<T> enumerable) => enumerable == null || !enumerable.Any();
+        public static bool IsEmpty<T>(this IEnumerable<T>? enumerable) => enumerable == null || !enumerable.Any();
 
         public static void DisposeCollection<T>(this IEnumerable<T> enumerable)
             where T : IDisposable
@@ -11,6 +13,18 @@
             {
                 item.Dispose();
             }
+        }
+
+        public static Dictionary<TKey, TValue?> ToDictionary<TKey, TValue>(this IDictionary<TKey, TValue?> dic)
+            where TKey : notnull
+        {
+            return Enumerable.ToDictionary(dic, kvp => kvp.Key, kvp => kvp.Value);
+        }
+
+        public static Dictionary<TKey, TValue?> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue?>> kvps)
+            where TKey : notnull
+        {
+            return Enumerable.ToDictionary(kvps, kvp => kvp.Key, kvp => kvp.Value);
         }
 
         public static void EnumeratedAdd<T>(this ICollection<T> collection, IEnumerable<T> source)

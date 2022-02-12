@@ -6,10 +6,10 @@ using SecureFolderFS.Backend.Services;
 using SecureFolderFS.WinUI.ServiceImplementation;
 using SecureFolderFS.WinUI.Windows;
 
-#nullable enable
-
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
+
+#nullable enable
 
 namespace SecureFolderFS.WinUI
 {
@@ -20,7 +20,7 @@ namespace SecureFolderFS.WinUI
     {
         private Window? _window;
 
-        internal IServiceProvider? ServiceProvider { get; private set; }
+        private IServiceProvider? ServiceProvider { get; set; }
 
         /// <summary>
         /// Initializes the singleton application object. This is the first line of authored code
@@ -30,7 +30,7 @@ namespace SecureFolderFS.WinUI
         {
             this.InitializeComponent();
 
-            ConfigureEarlyApp();
+            EnsureEarlyApp();
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace SecureFolderFS.WinUI
             _window.Activate();
         }
 
-        private void ConfigureEarlyApp()
+        private void EnsureEarlyApp()
         {
             // Configure exception handlers
             UnhandledException += App_UnhandledException;
@@ -54,6 +54,7 @@ namespace SecureFolderFS.WinUI
             Ioc.Default.ConfigureServices(ServiceProvider);
 
             // Start AppCenter
+            // TODO: Start AppCenter
         }
 
         private IServiceProvider ConfigureServices()
@@ -61,6 +62,8 @@ namespace SecureFolderFS.WinUI
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
+                .AddSingleton<ISettingsService, SettingsService>()
+                .AddSingleton<IConfidentialStorageService, ConfidentialStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<ILocalizationService, LocalizationService>()

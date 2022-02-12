@@ -14,7 +14,7 @@ namespace SecureFolderFS.WinUI.Windows
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainWindow : Window // TODO: Remove SecureFolderFS.Core reference from the UI
+    public sealed partial class MainWindow : Window
     {
         public static MainWindow? Instance { get; private set; }
 
@@ -24,10 +24,10 @@ namespace SecureFolderFS.WinUI.Windows
 
             InitializeComponent();
 
-            PrepareWindow();
+            EnsureEarlyWindow();
         }
 
-        private void PrepareWindow()
+        private void EnsureEarlyWindow()
         {
             // Get AppWindow
             var hWnd = WindowNative.GetWindowHandle(this);
@@ -47,6 +47,9 @@ namespace SecureFolderFS.WinUI.Windows
             // Register ThemeHelper
             var themeHelper = ThemeHelper.RegisterWindowInstance(appWindow);
             themeHelper!.UpdateTheme();
+
+            // Set min size
+            // TODO: Set min size
         }
     }
 }

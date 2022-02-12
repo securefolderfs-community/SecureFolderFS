@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
                 files = _storageEnumerator
                     .EnumerateFileSystemEntries(ciphertextPath.Path, searchPattern)
-                    .Select<FileEnumerationInfo, FileInformation?>((item) =>
+                    .Select<FileEnumerationInfo, FileInformation?>(item =>
                     {
                         if (PathHelpers.IsCoreFile(item.FileName))
                         {
@@ -63,8 +63,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                             return null;
                         }
                     })
-                    .Where((item) => item != null)
-                    .Select((item) => (FileInformation)item!)
+                    .Where(item => item != null)
+                    .Select(item => (FileInformation)item!)
                     .ToArray();
 
                 return DokanResult.Success;

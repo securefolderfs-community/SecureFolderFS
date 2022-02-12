@@ -9,6 +9,7 @@
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Backend.ViewModels.Sidebar"
+    Loaded="MainWindowHostPage_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -35,7 +36,7 @@
             x:Name="Sidebar"
             Grid.Row="1"
             IsBackButtonVisible="Collapsed"
-            IsPaneToggleButtonVisible="False"
+            IsPaneToggleButtonVisible="True"
             IsSettingsVisible="False"
             MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
             PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
@@ -129,7 +130,10 @@
 
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="vm:SidebarItemViewModel">
-                    <NavigationViewItem Height="64" AutomationProperties.Name="{x:Bind VaultName, Mode=OneWay}">
+                    <NavigationViewItem
+                        Height="64"
+                        AutomationProperties.Name="{x:Bind VaultName, Mode=OneWay}"
+                        ToolTipService.ToolTip="{x:Bind VaultName, Mode=OneWay}">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xF540;" />
                         </NavigationViewItem.Icon>
@@ -157,7 +161,7 @@
                                     Grid.Column="0"
                                     FontSize="14"
                                     Opacity="0.8"
-                                    Text="{x:Bind LastOpened, Mode=OneWay, Converter={StaticResource DateTimeToStringValueConverter}}" />
+                                    Text="{x:Bind VaultViewModel.VaultModel.LastOpened, Mode=OneWay, Converter={StaticResource DateTimeToStringValueConverter}}" />
                             </Grid>
                         </NavigationViewItem.Content>
                         <NavigationViewItem.ContextFlyout>

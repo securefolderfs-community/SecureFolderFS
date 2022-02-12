@@ -3,9 +3,9 @@ using SecureFolderFS.Backend.Models;
 
 namespace SecureFolderFS.Backend.Messages
 {
-    public sealed class RemoveVaultRequestedMessage : ValueChangedMessage<VaultModel>
+    public sealed class RemoveVaultRequestedMessage : ValueChangedMessage<VaultIdModel>
     {
-        public RemoveVaultRequestedMessage(VaultModel value)
+        public RemoveVaultRequestedMessage(VaultIdModel value)
             : base(value)
         {
         }

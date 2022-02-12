@@ -25,8 +25,8 @@ namespace SecureFolderFS.Core.FileSystem.StorageEnumeration.Enumerators
         {
             return _directoryOperations
                 .EnumerateFileSystemInfos(path)
-                .Where((finfo) => _fileSystemHelpers.IsNameInExpression(searchPattern, finfo.Name, true))
-                .Select((fileSystemInfo) => GetConverted(new FileEnumerationInfo()
+                .Where(finfo => _fileSystemHelpers.IsNameInExpression(searchPattern, finfo.Name, true))
+                .Select(fileSystemInfo => GetConverted(new FileEnumerationInfo()
                 {
                     FileName = fileSystemInfo.Name,
                     Attributes = fileSystemInfo.Attributes,

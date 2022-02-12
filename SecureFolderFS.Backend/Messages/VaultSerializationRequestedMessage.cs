@@ -3,9 +3,9 @@ using SecureFolderFS.Backend.ViewModels;
 
 namespace SecureFolderFS.Backend.Messages
 {
-    public sealed class LockVaultRequestedMessage : ValueChangedMessage<VaultViewModel>
+    public sealed class VaultSerializationRequestedMessage : ValueChangedMessage<VaultViewModel>
     {
-        public LockVaultRequestedMessage(VaultViewModel value)
+        public VaultSerializationRequestedMessage(VaultViewModel value)
             : base(value)
         {
         }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models.Transitions;
@@ -34,8 +35,13 @@ namespace SecureFolderFS.WinUI.Views
         {
             if (args.SelectedItem is SidebarItemViewModel itemViewModel)
             {
-                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(itemViewModel.VaultModel) { Transition = new EntranceTransitionModel() });
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(itemViewModel.VaultViewModel) { Transition = new EntranceTransitionModel() });
             }
+        }
+
+        private void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.EnsureLateApplication();
         }
     }
 }

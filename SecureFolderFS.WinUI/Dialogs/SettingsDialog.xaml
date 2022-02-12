@@ -1,13 +1,14 @@
-﻿<Page
-    x:Class="SecureFolderFS.WinUI.Views.VaultWizard.AddExistingVaultPage"
+﻿<ContentDialog
+    x:Class="SecureFolderFS.WinUI.Dialogs.SettingsDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:SecureFolderFS.WinUI.Views.VaultWizard"
+    xmlns:local="using:SecureFolderFS.WinUI.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    SecondaryButtonText="Cancel"
+    Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
-    <Grid>
-        <TextBlock Text="Something something :)" />
-    </Grid>
-</Page>
+    <TextBlock Text="Coming soon" />
+
+</ContentDialog>

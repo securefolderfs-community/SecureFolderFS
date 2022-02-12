@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml;
@@ -20,6 +21,8 @@ namespace SecureFolderFS.WinUI.Views
     /// </summary>
     public sealed partial class VaultMainDashboardPage : Page
     {
+        private readonly SemaphoreSlim _graphClickSemaphore;
+
         public VaultMainDashboardPageViewModel ViewModel
         {
             get => (VaultMainDashboardPageViewModel)DataContext;
@@ -29,6 +32,8 @@ namespace SecureFolderFS.WinUI.Views
         public VaultMainDashboardPage()
         {
             this.InitializeComponent();
+
+            _graphClickSemaphore = new(1, 1);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -39,6 +44,8 @@ namespace SecureFolderFS.WinUI.Views
 
                 viewModel.ReadGraphViewModel.GraphDisposable = (IDisposable)ReadGraph;
                 viewModel.WriteGraphViewModel.GraphDisposable = (IDisposable)WriteGraph;
+
+                RestoreGraphsState();
             }
 
             base.OnNavigatedTo(e);
@@ -46,40 +53,25 @@ namespace SecureFolderFS.WinUI.Views
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
+            _graphClickSemaphore.Dispose();
             ViewModel.Cleanup();
             base.OnNavigatingFrom(e);
         }
 
-        private async void ReadGraph_Click(object sender, RoutedEventArgs e)
+        private void RestoreGraphsState()
         {
-            if (!ViewModel.ReadGraphViewModel.IsExtended)
+            if (ViewModel.ReadGraphViewModel.IsExtended)
             {
-                await StartGraphHideStoryboard(WriteGraph);
+                WriteGraph.Visibility = Visibility.Collapsed;
                 HideColumn(WriteColumn);
+                GraphsGrid.ColumnSpacing = 0;
             }
-            else
+            else if (ViewModel.WriteGraphViewModel.IsExtended)
             {
-                RestoreColumn(WriteColumn);
-                await StartGraphRestoreStoryboard(WriteGraph);
-            }
-
-            ViewModel.ReadGraphViewModel.IsExtended = !ViewModel.ReadGraphViewModel.IsExtended;
-        }
-
-        private async void WriteGraph_Click(object sender, RoutedEventArgs e)
-        {
-            if (!ViewModel.WriteGraphViewModel.IsExtended)
-            {
-                await StartGraphHideStoryboard(ReadGraph);
+                ReadGraph.Visibility = Visibility.Collapsed;
                 HideColumn(ReadColumn);
+                GraphsGrid.ColumnSpacing = 0;
             }
-            else
-            {
-                RestoreColumn(ReadColumn);
-                await StartGraphRestoreStoryboard(ReadGraph);
-            }
-
-            ViewModel.WriteGraphViewModel.IsExtended = !ViewModel.WriteGraphViewModel.IsExtended;
         }
 
         private async Task StartGraphHideStoryboard(UIElement element, [CallerArgumentExpression("element")] string? name = null)
@@ -89,6 +81,20 @@ namespace SecureFolderFS.WinUI.Views
             await GraphHideStoryboard.BeginAsync();
             element.Visibility = Visibility.Collapsed;
             GraphHideStoryboard.Stop();
+        }
+
+        private async Task StartGraphExtendStoryboard(FrameworkElement element, [CallerArgumentExpression("element")] string? name = null)
+        {
+            Storyboard.SetTargetName(GraphExtendStoryboard.Children[0], name);
+            await GraphExtendStoryboard.BeginAsync();
+            GraphExtendStoryboard.Stop();
+        }
+
+        private async Task StartGraphRetractStoryboard(UIElement element, [CallerArgumentExpression("element")] string? name = null)
+        {
+            Storyboard.SetTargetName(GraphRetractStoryboard.Children[0], name);
+            await GraphRetractStoryboard.BeginAsync();
+            GraphRetractStoryboard.Stop();
         }
 
         private async Task StartGraphRestoreStoryboard(UIElement element, [CallerArgumentExpression("element")] string? name = null)
@@ -102,7 +108,6 @@ namespace SecureFolderFS.WinUI.Views
 
         private void HideColumn(ColumnDefinition column)
         {
-            GraphsGrid.ColumnSpacing = 0;
             column.Width = new(0, GridUnitType.Star);
         }
 
@@ -110,6 +115,68 @@ namespace SecureFolderFS.WinUI.Views
         {
             GraphsGrid.ColumnSpacing = 8;
             column.Width = new(1, GridUnitType.Star);
+        }
+
+        private async void ReadGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (!await _graphClickSemaphore.WaitAsync(0))
+            {
+                return;
+            }
+
+            try
+            {
+                if (!ViewModel.ReadGraphViewModel.IsExtended)
+                {
+                    await StartGraphHideStoryboard(WriteGraph);
+                    GraphsGrid.ColumnSpacing = 0;
+                    HideColumn(WriteColumn);
+                    await StartGraphExtendStoryboard(ReadGraph);
+                }
+                else
+                {
+                    RestoreColumn(WriteColumn);
+                    await StartGraphRetractStoryboard(ReadGraph);
+                    await StartGraphRestoreStoryboard(WriteGraph);
+                }
+
+                ViewModel.ReadGraphViewModel.IsExtended = !ViewModel.ReadGraphViewModel.IsExtended;
+            }
+            finally
+            {
+                _graphClickSemaphore.Release();
+            }
+        }
+
+        private async void WriteGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (!await _graphClickSemaphore.WaitAsync(0))
+            {
+                return;
+            }
+
+            try
+            {
+                if (!ViewModel.WriteGraphViewModel.IsExtended)
+                {
+                    await StartGraphHideStoryboard(ReadGraph);
+                    GraphsGrid.ColumnSpacing = 0;
+                    HideColumn(ReadColumn);
+                    await StartGraphExtendStoryboard(WriteGraph);
+                }
+                else
+                {
+                    RestoreColumn(ReadColumn);
+                    await StartGraphRetractStoryboard(WriteGraph);
+                    await StartGraphRestoreStoryboard(ReadGraph);
+                }
+
+                ViewModel.WriteGraphViewModel.IsExtended = !ViewModel.WriteGraphViewModel.IsExtended;
+            }
+            finally
+            {
+                _graphClickSemaphore.Release();
+            }
         }
     }
 }

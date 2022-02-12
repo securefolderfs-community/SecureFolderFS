@@ -22,6 +22,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         {
             this._dialogs = new()
             {
+                { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() }
             };
         }
