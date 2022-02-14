@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System;
+using Microsoft.UI.Xaml;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using SecureFolderFS.WinUI.Helpers;
@@ -18,6 +19,8 @@ namespace SecureFolderFS.WinUI.Windows
     {
         public static MainWindow? Instance { get; private set; }
 
+        public IntPtr Hwnd { get; private set; }
+
         public MainWindow()
         {
             Instance = this;
@@ -30,8 +33,8 @@ namespace SecureFolderFS.WinUI.Windows
         private void EnsureEarlyWindow()
         {
             // Get AppWindow
-            var hWnd = WindowNative.GetWindowHandle(this);
-            var mainWindowWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Hwnd = WindowNative.GetWindowHandle(this);
+            var mainWindowWndId = Win32Interop.GetWindowIdFromWindow(Hwnd);
             var appWindow = AppWindow.GetFromWindowId(mainWindowWndId);
 
             // Set title

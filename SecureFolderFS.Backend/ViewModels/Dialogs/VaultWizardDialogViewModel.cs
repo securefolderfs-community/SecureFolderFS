@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
@@ -18,6 +19,27 @@ namespace SecureFolderFS.Backend.ViewModels.Dialogs
         {
             get => _Title;
             set => SetProperty(ref _Title, value);
+        }
+
+        private bool _IsConfirmButtonVisible;
+        public bool IsConfirmButtonVisible
+        {
+            get => _IsConfirmButtonVisible;
+            set => SetProperty(ref _IsConfirmButtonVisible, value);
+        }
+
+        private bool _IsConfirmButtonEnabled;
+        public bool IsConfirmButtonEnabled
+        {
+            get => _IsConfirmButtonEnabled;
+            set => SetProperty(ref _IsConfirmButtonEnabled, value);
+        }
+
+        private IRelayCommand? _ConfirmCommand;
+        public IRelayCommand? ConfirmCommand
+        {
+            get => _ConfirmCommand;
+            set => SetProperty(ref _ConfirmCommand, value);
         }
 
         public VaultWizardDialogViewModel()

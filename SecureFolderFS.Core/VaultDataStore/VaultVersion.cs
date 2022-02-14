@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.VaultDataStore
                 (Version <= maxVersion && maxVersion >= LOWEST_VERSION && maxVersion <= HIGHEST_VERSION);   // For maxVersion
         }
 
-        internal static bool IsVersionSupported(int version)
+        public static bool IsVersionSupported(int version)
         {
             return version == V1; // || V2, V3, V4 ...
         }

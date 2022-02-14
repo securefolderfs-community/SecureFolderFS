@@ -63,7 +63,6 @@ namespace SecureFolderFS.Core.Chunks.IO
             _fileSystemStatsTracker?.AddBytesDecrypted(cleartextChunk.ActualLength);
 
             return cleartextChunk;
-
         }
 
         private void AssertNotDisposed()

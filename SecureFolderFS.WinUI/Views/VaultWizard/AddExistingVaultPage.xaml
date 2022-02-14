@@ -5,9 +5,31 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.VaultWizard"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="464"
     mc:Ignorable="d">
 
-    <Grid>
-        <TextBlock Text="Something something :)" />
+    <Grid RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Select vault path" />
+
+        <Grid Grid.Row="1" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox
+                Grid.Column="0"
+                PlaceholderText="Vault path"
+                Text="{x:Bind ViewModel.PathSourceText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            <Button
+                Grid.Column="1"
+                Command="{x:Bind ViewModel.BrowseForFolderCommand}"
+                Content="Browse" />
+        </Grid>
     </Grid>
 </Page>

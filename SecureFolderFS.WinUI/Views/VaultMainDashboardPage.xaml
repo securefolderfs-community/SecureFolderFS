@@ -132,7 +132,7 @@
                         <TextBlock
                             FontSize="14"
                             Opacity="0.8"
-                            Text="Open this vault using File Explorer" />
+                            Text="Show this vault in File Explorer" />
                     </ucab:ActionBlockControl.AdditionalDescription>
                     <ucab:ActionBlockControl.ActionElement>
                         <Button

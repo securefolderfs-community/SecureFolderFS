@@ -66,6 +66,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
         private void LockVault()
         {
             VaultViewModel.VaultInstance?.Dispose();
+            VaultViewModel.VaultInstance = null;
             Messenger.Send(new LockVaultRequestedMessage(VaultViewModel));
         }
 

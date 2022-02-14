@@ -33,14 +33,14 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
         /// The HMAC-SHA256 hash of payload.
         /// </summary>
         [JsonProperty("hmacsha256mac")]
-        public byte[] Hmacsha256Mac { get; }
+        public byte[] HmacSha256Mac { get; }
 
-        protected internal BaseVaultConfiguration(int version, ContentCipherScheme contentCipherScheme, FileNameCipherScheme fileNameCipherScheme, byte[] hmacsha256Mac)
+        protected internal BaseVaultConfiguration(int version, ContentCipherScheme contentCipherScheme, FileNameCipherScheme fileNameCipherScheme, byte[] hmacSha256Mac)
             : base(version)
         {
             this.ContentCipherScheme = contentCipherScheme;
             this.FileNameCipherScheme = fileNameCipherScheme;
-            this.Hmacsha256Mac = hmacsha256Mac;
+            this.HmacSha256Mac = hmacSha256Mac;
         }
 
         internal abstract void WriteConfiguration(Stream destinationStream);

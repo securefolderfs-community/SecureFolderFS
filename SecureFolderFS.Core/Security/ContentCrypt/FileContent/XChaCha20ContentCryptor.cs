@@ -58,13 +58,13 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
                 ciphertextChunk.Nonce,
                 ciphertextChunk.Auth,
                 beChunkNumberWithFileHeaderNonce);
+
             if (cleartextChunkBuffer == null)
             {
                 throw UnauthenticChunkException.ForXChaCha20();
             }
 
             return chunkFactory.FromCleartextChunkBuffer(ExtendCleartextChunkBuffer(cleartextChunkBuffer), cleartextChunkBuffer.Length);
-
         }
 
         protected override void CheckIntegrity(CiphertextXChaCha20Chunk ciphertextChunk, XChaCha20FileHeader fileHeader, long chunkNumber, bool requestedIntegrityCheck)

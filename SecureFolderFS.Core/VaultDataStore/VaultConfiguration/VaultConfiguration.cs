@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
 
         internal override bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey)
         {
-            if (Hmacsha256Mac.IsEmpty() || masterKey.IsEmpty() || keyCryptor == null)
+            if (HmacSha256Mac.IsEmpty() || masterKey.IsEmpty() || keyCryptor == null)
             {
                 return false;
             }
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
             hmacSha256Crypt.Update(BitConverter.GetBytes((uint)FileNameCipherScheme));
             hmacSha256Crypt.DoFinal(BitConverter.GetBytes((uint)ContentCipherScheme));
 
-            return Hmacsha256Mac.SequenceEqual(hmacSha256Crypt.GetHash());
+            return HmacSha256Mac.SequenceEqual(hmacSha256Crypt.GetHash());
         }
 
         internal override void WriteConfiguration(Stream destinationStream)

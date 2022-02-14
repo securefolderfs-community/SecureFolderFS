@@ -21,19 +21,19 @@
         </Grid.ColumnDefinitions>
 
         <!--  Icon  -->
-        <Image
-            Grid.Column="0"
-            Width="64"
-            Height="60"
-            Margin="0,-6,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Source="../Assets/AppAssets/GreenShield.svg"
-            Stretch="UniformToFill" />
+        <Grid Grid.Column="0" Margin="-8,0,0,0">
+            <Image
+                Width="64"
+                Height="60"
+                Margin="0,-6,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Source="../Assets/AppAssets/GreenShield.svg"
+                Stretch="UniformToFill" />
+        </Grid>
 
         <!--  Health status  -->
         <StackPanel Grid.Column="1">
-
             <!--  Vault status  -->
             <TextBlock
                 HorizontalAlignment="Left"
@@ -55,7 +55,6 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
             Orientation="Horizontal">
-
             <Button
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -69,10 +68,10 @@
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
-                CornerRadius="0 4 4 0">
+                CornerRadius="0 4 4 0"
+                ToolTipService.ToolTip="Go to Vault Health">
                 <FontIcon FontSize="14" Glyph="&#xE95E;" />
             </Button>
-
         </StackPanel>
     </Grid>
 </UserControl>

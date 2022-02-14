@@ -5,11 +5,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     Title="{x:Bind ViewModel.Title, Mode=OneWay}"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.IsConfirmButtonEnabled, Mode=OneWay}"
     Loaded="VaultWizardDialog_Loaded"
+    PrimaryButtonCommand="{x:Bind ViewModel.ConfirmCommand, Mode=OneWay}"
+    PrimaryButtonText="{x:Bind ViewModel.IsConfirmButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|Confirm'}"
     SecondaryButtonText="Cancel"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
+
+    <ContentDialog.Resources>
+        <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+    </ContentDialog.Resources>
 
     <Frame x:Name="ContentFrame" IsNavigationStackEnabled="False" />
 

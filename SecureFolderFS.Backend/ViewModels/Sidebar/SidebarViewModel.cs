@@ -92,16 +92,6 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
         {
             SearchQuery = string.Empty;
 
-            var path = @"C:\Temp";
-            path += new Random().Next(0, 10);
-
-
-            VaultIdModel vaultIdModel = new();
-            var vaultViewModel = new VaultViewModel(vaultIdModel, path);
-            WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(vaultViewModel));
-
-            return; // TODO
-
             var vaultWizardViewModel = new VaultWizardDialogViewModel();
             if (await DialogService.ShowDialog(vaultWizardViewModel) == DialogResult.Primary)
             {

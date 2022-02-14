@@ -6,6 +6,7 @@
     xmlns:local="using:SecureFolderFS.WinUI.Views.VaultWizard"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
+    Width="464"
     mc:Ignorable="d">
 
     <StackPanel Spacing="8">

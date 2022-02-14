@@ -10,7 +10,6 @@ namespace SecureFolderFS.Core.Chunks.Implementation
 
         public const int CHUNK_FULL_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CleartextXChaCha20Chunk.CHUNK_CLEARTEXT_SIZE + CHUNK_TAG_SIZE;
 
-
         private CiphertextXChaCha20Chunk(byte[] nonce, byte[] payload, byte[] auth)
             : base(nonce, payload, auth)
         {
