@@ -9,7 +9,7 @@
     Width="464"
     mc:Ignorable="d">
 
-    <StackPanel Spacing="8">
+    <StackPanel HorizontalAlignment="Stretch" Spacing="8">
         <uc:ActionBlockControl
             ButtonCommand="{x:Bind ViewModel.AddExistingVaultCommand}"
             Description="Add existing vault"

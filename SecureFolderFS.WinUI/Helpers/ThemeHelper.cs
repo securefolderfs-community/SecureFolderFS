@@ -19,6 +19,8 @@ namespace SecureFolderFS.WinUI.Helpers
 
         private readonly DispatcherQueue _dispatcherQueue;
 
+        private readonly Dictionary<string, Action<ApplicationTheme>> _themeChangedCallbacks;
+
         public static ApplicationTheme CurrentTheme { get; private set; } = Application.Current.RequestedTheme;
 
         private static Dictionary<AppWindow, ThemeHelper> _ThemeHelpers { get; } = new();
@@ -32,13 +34,22 @@ namespace SecureFolderFS.WinUI.Helpers
             this._appWindow = appWindow;
             this._uiSettings = new();
             this._dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            this._themeChangedCallbacks = new();
             this._uiSettings.ColorValuesChanged += Settings_ColorValuesChanged;
         }
 
         private async void Settings_ColorValuesChanged(UISettings sender, object args)
         {
             CurrentTheme = CurrentTheme == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark;
-            await _dispatcherQueue.EnqueueAsync(UpdateTheme);
+            await _dispatcherQueue.EnqueueAsync(() =>
+            {
+                UpdateTheme();
+
+                foreach (var item in _themeChangedCallbacks.Values)
+                {
+                    item(CurrentTheme);
+                }
+            });
         }
 
         public void UpdateTheme()
@@ -53,6 +64,16 @@ namespace SecureFolderFS.WinUI.Helpers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void RegisterForThemeChangeCallback(string className, Action<ApplicationTheme> callback)
+        {
+            _themeChangedCallbacks.Add(className, callback);
+        }
+
+        public void UnregisterForThemeChangeCallback(string className)
+        {
+            _themeChangedCallbacks.Remove(className);
         }
 
         public static ThemeHelper? RegisterWindowInstance(AppWindow appWindow)

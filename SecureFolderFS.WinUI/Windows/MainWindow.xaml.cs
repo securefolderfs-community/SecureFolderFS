@@ -21,6 +21,8 @@ namespace SecureFolderFS.WinUI.Windows
 
         public IntPtr Hwnd { get; private set; }
 
+        public AppWindow? AppWindow { get; private set; }
+
         public MainWindow()
         {
             Instance = this;
@@ -35,20 +37,20 @@ namespace SecureFolderFS.WinUI.Windows
             // Get AppWindow
             Hwnd = WindowNative.GetWindowHandle(this);
             var mainWindowWndId = Win32Interop.GetWindowIdFromWindow(Hwnd);
-            var appWindow = AppWindow.GetFromWindowId(mainWindowWndId);
+            AppWindow = AppWindow.GetFromWindowId(mainWindowWndId);
 
             // Set title
-            appWindow.Title = "SecureFolderFS";
+            AppWindow.Title = "SecureFolderFS";
 
             // Extend title bar
-            appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+            AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 
             // Set window buttons background to transparent
-            appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-            appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
             // Register ThemeHelper
-            var themeHelper = ThemeHelper.RegisterWindowInstance(appWindow);
+            var themeHelper = ThemeHelper.RegisterWindowInstance(AppWindow);
             themeHelper!.UpdateTheme();
 
             // Set min size

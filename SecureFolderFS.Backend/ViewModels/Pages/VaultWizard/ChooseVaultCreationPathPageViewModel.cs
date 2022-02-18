@@ -1,18 +1,16 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
-using SecureFolderFS.Core.VaultDataStore;
-using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
-
-#nullable enable
+using SecureFolderFS.Core.Routines;
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
-    public sealed class AddExistingVaultPageViewModel : BaseVaultWizardPageViewModel
+    public sealed class ChooseVaultCreationPathPageViewModel : BaseVaultWizardPageViewModel
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
@@ -31,25 +29,36 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 
         public IAsyncRelayCommand BrowseForFolderCommand { get; }
 
-        public AddExistingVaultPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public ChooseVaultCreationPathPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
+            DialogViewModel.IsPrimaryButtonEnabled = false;
+
             DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
             BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
         }
 
         private void PrimaryButtonClick(HandledCallback? e)
         {
+            // Cancel the confirm button
             e?.Handle();
-            DialogViewModel.VaultViewModel = new(new(), Path.GetDirectoryName(PathSourceText!)!);
-            
-            WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(DialogViewModel.VaultViewModel));
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardFinishPageViewModel(Messenger, DialogViewModel)));
+
+            var step7 = VaultRoutines.NewVaultCreationRoutine()
+                .EstablishRoutine()
+                .SetVaultPath(new(PathSourceText))
+                .AddFileOperations()
+                .CreateConfigurationFile()
+                .CreateKeystoreFile()
+                .CreateContentFolder()
+                .AddEncryptionAlgorithmBuilder();
+
+            // Navigate
+            Messenger.Send(new VaultWizardNavigationRequestedMessage(new SetPasswordPageViewModel(step7, Messenger, DialogViewModel)));
         }
 
         private async Task BrowseForFolder()
         {
-            var path = await FileExplorerService.PickSingleFileAsync(new List<string>() { Path.GetExtension(SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME) });
+            var path = await FileExplorerService.PickSingleFolderAsync();
             if (!string.IsNullOrEmpty(path))
             {
                 PathSourceText = path;
@@ -63,18 +72,14 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
                 return false;
             }
 
-            path = Path.Combine(Path.GetDirectoryName(path)!, SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME);
-            if (File.Exists(path))
-            {
-                using var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return Directory.Exists(path);
+        }
 
-                var rawVaultConfiguration = RawVaultConfiguration.Load(fileStream);
-                return VaultVersion.IsVersionSupported((VaultVersion)rawVaultConfiguration);
-            }
-            else
-            {
-                return false;
-            }
+        public override void UpdateViewModelOnReturn()
+        {
+            // TODO
+            //DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(step7 =>
+            //    Messenger.Send(new VaultWizardNavigationRequestedMessage(new SetPasswordPageViewModel(step7, Messenger, DialogViewModel))));
         }
     }
 }

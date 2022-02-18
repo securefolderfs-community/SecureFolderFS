@@ -93,7 +93,7 @@
                     GraphHeader="Read speeds"
                     GraphSubheader="{x:Bind ViewModel.ReadGraphViewModel.GraphSubheader, Mode=OneWay}">
                     <uc:GraphWidgetControl.RenderTransform>
-                        <CompositeTransform />
+                        <ScaleTransform />
                     </uc:GraphWidgetControl.RenderTransform>
                     <uc:GraphWidgetControl.ChartStroke>
                         <SolidColorBrush Color="#00AED4" />
@@ -112,7 +112,7 @@
                     GraphSubheader="{x:Bind ViewModel.WriteGraphViewModel.GraphSubheader, Mode=OneWay}"
                     RenderTransformOrigin="1.0,0.0">
                     <uc:GraphWidgetControl.RenderTransform>
-                        <CompositeTransform />
+                        <ScaleTransform />
                     </uc:GraphWidgetControl.RenderTransform>
                     <uc:GraphWidgetControl.ChartStroke>
                         <SolidColorBrush Color="#008D74" />
@@ -132,7 +132,9 @@
                         <TextBlock
                             FontSize="14"
                             Opacity="0.8"
-                            Text="Show this vault in File Explorer" />
+                            Text="Show this vault in File Explorer"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="Show this vault in File Explorer" />
                     </ucab:ActionBlockControl.AdditionalDescription>
                     <ucab:ActionBlockControl.ActionElement>
                         <Button
@@ -154,7 +156,9 @@
                         <TextBlock
                             FontSize="14"
                             Opacity="0.8"
-                            Text="Securely lock this vault and close the dashboard" />
+                            Text="Securely lock this vault and close the dashboard"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="Securely lock this vault and close the dashboard" />
                     </ucab:ActionBlockControl.AdditionalDescription>
                     <ucab:ActionBlockControl.ActionElement>
                         <Button
@@ -176,7 +180,9 @@
                         <TextBlock
                             FontSize="14"
                             Opacity="0.8"
-                            Text="View information about this vault" />
+                            Text="View information about this vault"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="View information about this vault" />
                     </ucab:ActionBlockControl.AdditionalDescription>
                     <ucab:ActionBlockControl.ActionElement>
                         <FontIcon FontSize="14" Glyph="&#xE76C;" />

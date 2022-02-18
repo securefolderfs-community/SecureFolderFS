@@ -14,33 +14,16 @@ namespace SecureFolderFS.Backend.ViewModels.Dialogs
 
         public VaultViewModel? VaultViewModel { get; set; }
 
-        private string? _Title = "Add new vault";
-        public string? Title
+        private bool _IsPrimaryButtonEnabled;
+        public bool IsPrimaryButtonEnabled
         {
-            get => _Title;
-            set => SetProperty(ref _Title, value);
+            get => _IsPrimaryButtonEnabled;
+            set => SetProperty(ref _IsPrimaryButtonEnabled, value);
         }
 
-        private bool _IsConfirmButtonVisible;
-        public bool IsConfirmButtonVisible
-        {
-            get => _IsConfirmButtonVisible;
-            set => SetProperty(ref _IsConfirmButtonVisible, value);
-        }
+        public IRelayCommand? PrimaryButtonClickCommand { get; set; }
 
-        private bool _IsConfirmButtonEnabled;
-        public bool IsConfirmButtonEnabled
-        {
-            get => _IsConfirmButtonEnabled;
-            set => SetProperty(ref _IsConfirmButtonEnabled, value);
-        }
-
-        private IRelayCommand? _ConfirmCommand;
-        public IRelayCommand? ConfirmCommand
-        {
-            get => _ConfirmCommand;
-            set => SetProperty(ref _ConfirmCommand, value);
-        }
+        public IRelayCommand? SecondaryButtonClickCommand { get; set;}
 
         public VaultWizardDialogViewModel()
         {

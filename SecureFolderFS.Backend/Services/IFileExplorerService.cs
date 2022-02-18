@@ -7,5 +7,7 @@ namespace SecureFolderFS.Backend.Services
         Task OpenPathInFileExplorerAsync(string path);
 
         Task<string?> PickSingleFileAsync(IEnumerable<string>? filter);
+
+        Task<string?> PickSingleFolderAsync();
     }
 }

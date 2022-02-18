@@ -113,7 +113,7 @@
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         Background="Transparent"
-                        BorderBrush="Transparent"
+                        BorderThickness="0"
                         Command="{x:Bind ViewModel.SidebarViewModel.OpenSettingsCommand}"
                         Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                         <AnimatedIcon>
@@ -167,7 +167,7 @@
                         <NavigationViewItem.ContextFlyout>
                             <MenuFlyout>
                                 <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
-                                <MenuFlyoutItem Command="{x:Bind ShowInFileExplorerCommand}" Text="Show in File Explorer">
+                                <MenuFlyoutItem Command="{x:Bind ShowInFileExplorerCommand}" Text="Show encrypted vault in File Explorer">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xED25;" />
                                     </MenuFlyoutItem.Icon>

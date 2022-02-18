@@ -17,5 +17,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             this.Messenger = messenger;
             this.DialogViewModel = dialogViewModel;
         }
+
+        public virtual void UpdateViewModelOnReturn() { }
     }
 }

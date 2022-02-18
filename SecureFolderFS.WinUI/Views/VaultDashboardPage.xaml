@@ -15,13 +15,17 @@
                 FontSize="24"
                 FontWeight="SemiBold"
                 Opacity="0.8"
-                Text="{x:Bind SectionName, Mode=OneWay}" />
+                Text="{x:Bind SectionName, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"
+                ToolTipService.ToolTip="{x:Bind SectionName, Mode=OneWay}" />
         </DataTemplate>
         <DataTemplate x:Key="LeadingBreadcrumbItem" x:DataType="vm:NavigationItemViewModel">
             <TextBlock
                 FontSize="24"
                 FontWeight="SemiBold"
-                Text="{x:Bind SectionName, Mode=OneWay}" />
+                Text="{x:Bind SectionName, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"
+                ToolTipService.ToolTip="{x:Bind SectionName, Mode=OneWay}" />
         </DataTemplate>
     </Page.Resources>
 

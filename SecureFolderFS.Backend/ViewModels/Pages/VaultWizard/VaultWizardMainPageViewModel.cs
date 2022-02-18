@@ -27,7 +27,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 
         private void CreateNewVault()
         {
-            // TODO: Create new vault navigation
+            Messenger.Send(new VaultWizardNavigationRequestedMessage(new ChooseVaultCreationPathPageViewModel(Messenger, DialogViewModel)));
         }
     }
 }
