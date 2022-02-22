@@ -8,7 +8,7 @@ using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
 {
-    public abstract class BaseDashboardPageViewModel : ObservableObject, ICleanable
+    public abstract class BaseDashboardPageViewModel : ObservableObject, ICleanable, IDisposable
     {
         protected IMessenger Messenger { get; }
 
@@ -26,5 +26,11 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
         }
 
         public virtual void Cleanup() { }
+
+        public virtual void Dispose()
+        {
+            VaultViewModel.VaultInstance?.Dispose();
+            VaultViewModel.VaultInstance = null;
+        }
     }
 }

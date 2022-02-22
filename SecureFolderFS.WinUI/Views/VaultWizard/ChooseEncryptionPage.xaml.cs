@@ -11,22 +11,22 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AddExistingVaultPage : Page, IDisposable
+    public sealed partial class ChooseEncryptionPage : Page, IDisposable
     {
-        public AddExistingVaultPageViewModel ViewModel
+        public ChooseEncryptionPageViewModel ViewModel
         {
-            get => (AddExistingVaultPageViewModel)DataContext;
+            get => (ChooseEncryptionPageViewModel)DataContext;
             set => DataContext = value;
         }
 
-        public AddExistingVaultPage()
+        public ChooseEncryptionPage()
         {
             this.InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is AddExistingVaultPageViewModel viewModel)
+            if (e.Parameter is ChooseEncryptionPageViewModel viewModel)
             {
                 ViewModel = viewModel;
             }

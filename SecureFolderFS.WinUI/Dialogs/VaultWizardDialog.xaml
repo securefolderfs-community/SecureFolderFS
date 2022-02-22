@@ -29,6 +29,7 @@
                 BeginTime="0:0:0.05"
                 Storyboard.TargetName="TitleText"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                From="0"
                 To="-48"
                 Duration="0:0:0.2">
                 <DoubleAnimation.EasingFunction>

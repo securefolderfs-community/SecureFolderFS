@@ -37,6 +37,7 @@
     <None Remove="Views\VaultLoginPage.xaml" />
     <None Remove="Views\VaultMainDashboardPage.xaml" />
     <None Remove="Views\VaultWizard\AddExistingVaultPage.xaml" />
+    <None Remove="Views\VaultWizard\ChooseEncryptionPage.xaml" />
     <None Remove="Views\VaultWizard\ChooseVaultCreationPathPage.xaml" />
     <None Remove="Views\VaultWizard\SetPasswordPage.xaml" />
     <None Remove="Views\VaultWizard\VaultWizardFinishPage.xaml" />
@@ -101,6 +102,9 @@
     <None Update="Assets\AppAssets\GreenShield.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\VaultWizard\ChooseEncryptionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\VaultWizard\SetPasswordPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

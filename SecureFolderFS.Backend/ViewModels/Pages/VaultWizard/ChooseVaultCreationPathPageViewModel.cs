@@ -7,12 +7,17 @@ using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.VaultCreator.Routine;
+
+#nullable enable
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
     public sealed class ChooseVaultCreationPathPageViewModel : BaseVaultWizardPageViewModel
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
+
+        private SetPasswordPageViewModel? _nextViewModel;
 
         private string? _PathSourceText;
         public string? PathSourceText
@@ -38,6 +43,17 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
         }
 
+        public override void ReattachCommands()
+        {
+            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(e =>
+            {
+                e?.Handle();
+
+                Messenger.Send(new VaultWizardNavigationRequestedMessage(_nextViewModel!));
+            });
+            DialogViewModel.IsPrimaryButtonEnabled = CheckAvailability(_PathSourceText);
+        }
+
         private void PrimaryButtonClick(HandledCallback? e)
         {
             // Cancel the confirm button
@@ -52,8 +68,11 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
                 .CreateContentFolder()
                 .AddEncryptionAlgorithmBuilder();
 
+            DialogViewModel.VaultViewModel = new(new(), PathSourceText!);
+            _nextViewModel = new(step7, Messenger, DialogViewModel);
+
             // Navigate
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new SetPasswordPageViewModel(step7, Messenger, DialogViewModel)));
+            Messenger.Send(new VaultWizardNavigationRequestedMessage(_nextViewModel));
         }
 
         private async Task BrowseForFolder()
@@ -73,13 +92,6 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             }
 
             return Directory.Exists(path);
-        }
-
-        public override void UpdateViewModelOnReturn()
-        {
-            // TODO
-            //DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(step7 =>
-            //    Messenger.Send(new VaultWizardNavigationRequestedMessage(new SetPasswordPageViewModel(step7, Messenger, DialogViewModel))));
         }
     }
 }

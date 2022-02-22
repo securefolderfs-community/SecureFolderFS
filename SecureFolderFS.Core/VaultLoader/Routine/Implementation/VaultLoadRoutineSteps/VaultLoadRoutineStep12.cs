@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
         {
         }
 
-        public IFinalizedVaultLoadRoutine Finish()
+        public IFinalizedVaultLoadRoutine Finalize()
         {
             return new FinalizedVaultLoadRoutine(vaultInstance, vaultLoadDataModel);
         }

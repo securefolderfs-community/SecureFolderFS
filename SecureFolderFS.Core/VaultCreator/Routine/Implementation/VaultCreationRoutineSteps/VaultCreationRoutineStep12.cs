@@ -2,18 +2,16 @@
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
-    internal sealed class VaultCreationRoutineStep12 : IVaultCreationRoutineStep12
+    internal sealed class VaultCreationRoutineStep12 : BaseVaultCreationRoutineStep, IVaultCreationRoutineStep12
     {
-        private readonly VaultCreationDataModel _vaultCreationDataModel;
-
         public VaultCreationRoutineStep12(VaultCreationDataModel vaultCreationDataModel)
+            : base(vaultCreationDataModel)
         {
-            this._vaultCreationDataModel = vaultCreationDataModel;
         }
 
-        public IFinalizedVaultCreationRoutine Finish()
+        public IFinalizedVaultCreationRoutine Finalize()
         {
-            _vaultCreationDataModel.Cleanup();
+            vaultCreationDataModel.Cleanup();
             return new FinalizedVaultCreationRoutine();
         }
     }

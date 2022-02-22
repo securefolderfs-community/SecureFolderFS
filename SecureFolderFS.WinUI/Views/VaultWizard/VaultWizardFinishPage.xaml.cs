@@ -59,6 +59,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         public void Dispose()
         {
             ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].UnregisterForThemeChangeCallback(nameof(VaultWizardFinishPage));
+            ViewModel.Dispose();
         }
     }
 }

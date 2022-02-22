@@ -32,6 +32,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine
 
         IOptionalVaultLoadRoutineSteps AddMountVolumeDataModel(MountVolumeDataModel mountVolumeDataModel);
 
-        IFinalizedVaultLoadRoutine Finish();
+        IFinalizedVaultLoadRoutine Finalize();
     }
 }

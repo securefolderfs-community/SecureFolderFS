@@ -112,7 +112,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
             return this;
         }
 
-        public IFinalizedVaultLoadRoutine Finish()
+        public IFinalizedVaultLoadRoutine Finalize()
         {
             var fileSystemAdapterType = FileSystemAvailabilityHelpers.GetAvailableAdapter(FileSystemAdapterType.DokanAdapter);
             FileSystemAdapterType = InitializeIfNotInstantiated(FileSystemAdapterType, () => FileSystemAdapterType.DokanAdapter);
@@ -148,7 +148,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                                          .AddFileSystemAdapterType(fileSystemAdapterType)
                                          .AddStorageEnumerator(new BuiltinStorageEnumerator(vaultInstance.FileOperations, vaultInstance.DirectoryOperations, new FileSystemHelpersFactory(fileSystemAdapterType).GetFileSystemHelpers()))
                                          .AddMountVolumeDataModel(GetDefaultMountVolumeDataModel(vaultInstance.VolumeName))
-                                         .Finish();
+                                         .Finalize();
         }
 
         private static MountVolumeDataModel GetDefaultMountVolumeDataModel(string volumeName)

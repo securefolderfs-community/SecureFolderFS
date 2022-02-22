@@ -1,25 +1,21 @@
-﻿using SecureFolderFS.Core.Assertions;
-using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Enums;
+﻿using SecureFolderFS.Core.DataModels;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
-    internal sealed class VaultCreationRoutineStep8 : IVaultCreationRoutineStep8
+    internal sealed class VaultCreationRoutineStep8 : BaseVaultCreationRoutineStep, IVaultCreationRoutineStep8
     {
-        private readonly VaultCreationDataModel _vaultCreationDataModel;
-
         public VaultCreationRoutineStep8(VaultCreationDataModel vaultCreationDataModel)
+            : base(vaultCreationDataModel)
         {
-            this._vaultCreationDataModel = vaultCreationDataModel;
         }
 
         public IVaultCreationRoutineStep9 ContinueKeystoreFileInitialization()
         {
-            using (_vaultCreationDataModel.VaultKeystoreStream)
+            using (vaultCreationDataModel.VaultKeystoreStream)
             {
-                _vaultCreationDataModel.BaseVaultKeystore.WriteKeystore(_vaultCreationDataModel.VaultKeystoreStream);
+                vaultCreationDataModel.BaseVaultKeystore.WriteKeystore(vaultCreationDataModel.VaultKeystoreStream);
 
-                return new VaultCreationRoutineStep9(_vaultCreationDataModel);
+                return new VaultCreationRoutineStep9(vaultCreationDataModel);
             }
         }
     }

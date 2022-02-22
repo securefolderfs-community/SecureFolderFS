@@ -7,13 +7,11 @@ using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
-    internal sealed class VaultCreationRoutineStep7 : IVaultCreationRoutineStep7
+    internal sealed class VaultCreationRoutineStep7 : BaseVaultCreationRoutineStep, IVaultCreationRoutineStep7
     {
-        private readonly VaultCreationDataModel _vaultCreationDataModel;
-
         public VaultCreationRoutineStep7(VaultCreationDataModel vaultCreationDataModel)
+            : base(vaultCreationDataModel)
         {
-            this._vaultCreationDataModel = vaultCreationDataModel;
         }
 
         public IVaultCreationRoutineStep8 InitializeKeystoreData(DisposablePassword disposablePassword)
@@ -31,16 +29,16 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
                 StrongFillKeys(encryptionKey, macKey, salt);
 
                 // Derive key-encryption-key (KEK)
-                byte[] kek = _vaultCreationDataModel.KeyCryptor.Argon2idCrypt.Argon2idHash(disposablePassword?.Password, salt);
+                byte[] kek = vaultCreationDataModel.KeyCryptor.Argon2idCrypt.Argon2idHash(disposablePassword?.Password, salt);
 
                 // Wrap keys
-                byte[] wrappedEncryptionKey = _vaultCreationDataModel.KeyCryptor.Rfc3394KeyWrap.Rfc3394WrapKey(encryptionKey, kek);
-                byte[] wrappedMacKey = _vaultCreationDataModel.KeyCryptor.Rfc3394KeyWrap.Rfc3394WrapKey(macKey, kek);
+                byte[] wrappedEncryptionKey = vaultCreationDataModel.KeyCryptor.Rfc3394KeyWrap.Rfc3394WrapKey(encryptionKey, kek);
+                byte[] wrappedMacKey = vaultCreationDataModel.KeyCryptor.Rfc3394KeyWrap.Rfc3394WrapKey(macKey, kek);
 
-                _vaultCreationDataModel.BaseVaultKeystore = new VaultKeystore(wrappedEncryptionKey, wrappedMacKey, salt);
-                _vaultCreationDataModel.MacKey = macKey.CreateCopy();
+                vaultCreationDataModel.BaseVaultKeystore = new VaultKeystore(wrappedEncryptionKey, wrappedMacKey, salt);
+                vaultCreationDataModel.MacKey = macKey.CreateCopy();
 
-                return new VaultCreationRoutineStep8(_vaultCreationDataModel);
+                return new VaultCreationRoutineStep8(vaultCreationDataModel);
             }
         }
 

@@ -13,7 +13,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <vc:DateTimeToStringValueConverter x:Key="DateTimeToStringValueConverter" />
+        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
     </Page.Resources>
@@ -161,7 +161,7 @@
                                     Grid.Column="0"
                                     FontSize="14"
                                     Opacity="0.8"
-                                    Text="{x:Bind VaultViewModel.VaultModel.LastOpened, Mode=OneWay, Converter={StaticResource DateTimeToStringValueConverter}}" />
+                                    Text="{x:Bind VaultViewModel.VaultModel.LastOpened, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                             </Grid>
                         </NavigationViewItem.Content>
                         <NavigationViewItem.ContextFlyout>

@@ -4,22 +4,20 @@ using System;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
-    internal sealed class VaultCreationRoutineStep1 : IVaultCreationRoutineStep1
+    internal sealed class VaultCreationRoutineStep1 : BaseVaultCreationRoutineStep, IVaultCreationRoutineStep1
     {
-        private readonly VaultCreationDataModel _vaultCreationDataModel;
-
         public VaultCreationRoutineStep1(VaultCreationDataModel vaultCreationDataModel)
+            : base(vaultCreationDataModel)
         {
-            this._vaultCreationDataModel = vaultCreationDataModel;
         }
 
         public IVaultCreationRoutineStep2 SetVaultPath(VaultPath vaultPath)
         {
             ArgumentNullException.ThrowIfNull(vaultPath);
 
-            _vaultCreationDataModel.VaultPath = vaultPath;
+            vaultCreationDataModel.VaultPath = vaultPath;
 
-            return new VaultCreationRoutineStep2(_vaultCreationDataModel);
+            return new VaultCreationRoutineStep2(vaultCreationDataModel);
         }
     }
 }

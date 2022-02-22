@@ -3,13 +3,20 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
+using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.VaultCreator.Routine;
+
+#nullable enable
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
     public sealed class SetPasswordPageViewModel : BaseVaultWizardPageViewModel
     {
         private readonly IVaultCreationRoutineStep7 _step7;
+
+        private ChooseEncryptionPageViewModel? _nextViewModel;
+
+        public Func<DisposablePassword>? InitializeWithPassword { get; set; }
 
         public SetPasswordPageViewModel(IVaultCreationRoutineStep7 step7, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
@@ -20,16 +27,31 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             DialogViewModel.SecondaryButtonClickCommand = new RelayCommand<HandledCallback?>(SecondaryButtonClick);
         }
 
+        public override void ReattachCommands()
+        {
+            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
+        }
+
         private void PrimaryButtonClick(HandledCallback? e)
         {
             e?.Handle();
 
-            Messenger.Send(new PasswordClearRequestedMessage());
+            var step9 = _step7.InitializeKeystoreData(InitializeWithPassword!())
+                .ContinueKeystoreFileInitialization();
+
+            _nextViewModel = new(step9, Messenger, DialogViewModel);
+
+            Messenger.Send(new VaultWizardNavigationRequestedMessage(_nextViewModel));
         }
 
         private void SecondaryButtonClick(HandledCallback? e)
         {
             Messenger.Send(new PasswordClearRequestedMessage());
+        }
+
+        public override void Dispose()
+        {
+            _step7.Dispose();
         }
     }
 }

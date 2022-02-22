@@ -6,18 +6,23 @@ using SecureFolderFS.Backend.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
-    public abstract class BaseVaultWizardPageViewModel : ObservableObject
+    public abstract class BaseVaultWizardPageViewModel : ObservableObject, IDisposable
     {
-        protected IMessenger Messenger { get; }
+        public VaultWizardDialogViewModel DialogViewModel { get; }
 
-        protected VaultWizardDialogViewModel DialogViewModel { get; }
+        public IMessenger Messenger { get; }
+
+        public bool CanGoBack { get; protected init; }
 
         protected BaseVaultWizardPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
         {
             this.Messenger = messenger;
             this.DialogViewModel = dialogViewModel;
+            this.CanGoBack = true;
         }
 
-        public virtual void UpdateViewModelOnReturn() { }
+        public virtual void ReattachCommands() { }
+
+        public virtual void Dispose() { }
     }
 }

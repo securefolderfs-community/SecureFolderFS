@@ -3,22 +3,20 @@ using SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
-    internal sealed class VaultCreationRoutineStep3 : IVaultCreationRoutineStep3
+    internal sealed class VaultCreationRoutineStep3 : BaseVaultCreationRoutineStep, IVaultCreationRoutineStep3
     {
-        private readonly VaultCreationDataModel _vaultCreationDataModel;
-
         public VaultCreationRoutineStep3(VaultCreationDataModel vaultCreationDataModel)
+            : base(vaultCreationDataModel)
         {
-            this._vaultCreationDataModel = vaultCreationDataModel;
         }
 
         public IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationGenerator vaultConfigurationGenerator = null)
         {
-            vaultConfigurationGenerator ??= new FromVaultPathVaultConfigurationGenerator(_vaultCreationDataModel.FileOperations);
+            vaultConfigurationGenerator ??= new FromVaultPathVaultConfigurationGenerator(vaultCreationDataModel.FileOperations);
 
-            _vaultCreationDataModel.VaultConfigurationStream = vaultConfigurationGenerator.GenerateVaultConfig(_vaultCreationDataModel.VaultPath.VaultRootPath, Constants.VAULT_CONFIGURATION_FILENAME);
+            vaultCreationDataModel.VaultConfigurationStream = vaultConfigurationGenerator.GenerateVaultConfig(vaultCreationDataModel.VaultPath.VaultRootPath, Constants.VAULT_CONFIGURATION_FILENAME);
 
-            return new VaultCreationRoutineStep4(_vaultCreationDataModel);
+            return new VaultCreationRoutineStep4(vaultCreationDataModel);
         }
     }
 }

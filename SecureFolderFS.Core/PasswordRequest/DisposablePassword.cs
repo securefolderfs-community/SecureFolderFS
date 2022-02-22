@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SecureFolderFS.Core.SecureStore;
+using System;
+
+#nullable enable
 
 namespace SecureFolderFS.Core.PasswordRequest
 {
@@ -10,16 +13,23 @@ namespace SecureFolderFS.Core.PasswordRequest
     /// </summary>
     public sealed class DisposablePassword : IDisposable
     {
-        internal byte[] Password { get; }
+        internal DisposableArray Password { get; }
+
+        public int Length => Password.Bytes.Length;
 
         public DisposablePassword(byte[] password)
         {
-            this.Password = password;
+            this.Password = new(password);
+        }
+
+        public static DisposablePassword AsEmpty()
+        {
+            return new DisposablePassword(new byte[0]);
         }
 
         public void Dispose()
         {
-            Array.Clear(Password);
+            Password.Dispose();
         }
     }
 }

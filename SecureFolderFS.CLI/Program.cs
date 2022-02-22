@@ -43,7 +43,7 @@ namespace SecureFolderFS.CLI
                          .SetContentCipherScheme(ContentCipherScheme.XChaCha20_Poly1305)
                          .SetFileNameCipherScheme(FileNameCipherScheme.None)
                          .ContinueConfigurationFileInitialization()
-                         .Finish()
+                         .Finalize()
                          .Deploy();
         }
 
@@ -62,14 +62,14 @@ namespace SecureFolderFS.CLI
                                 .ContinueInitializationWithMasterKey()
                                 .VerifyVaultConfiguration()
                                 .ContinueInitialization()
-                                .Finish()
+                                .Finalize()
                                 .ContinueWithOptionalRoutine()
                                 .EstablishOptionalRoutine()
                                 .AddFileSystemStatsTracker(new ConsoleLoggingFileSystemStatsTracker())
                                 .AddChunkCachingStrategy(ChunkCachingStrategy.RandomAccessMemoryCache)
                                 .AddFileSystemAdapterType(FileSystemAdapterType.DokanAdapter)
                                 .AddFileNameCachingStrategy(FileNameCachingStrategy.RandomAccessMemoryCache)
-                                .Finish()
+                                .Finalize()
                                 .Deploy();
         }
     }

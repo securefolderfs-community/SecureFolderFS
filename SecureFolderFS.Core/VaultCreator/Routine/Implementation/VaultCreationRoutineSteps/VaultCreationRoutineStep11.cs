@@ -5,38 +5,36 @@ using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
-    internal sealed class VaultCreationRoutineStep11 : IVaultCreationRoutineStep11
+    internal sealed class VaultCreationRoutineStep11 : BaseVaultCreationRoutineStep, IVaultCreationRoutineStep11
     {
-        private readonly VaultCreationDataModel _vaultCreationDataModel;
-
         public VaultCreationRoutineStep11(VaultCreationDataModel vaultCreationDataModel)
+            : base(vaultCreationDataModel)
         {
-            this._vaultCreationDataModel = vaultCreationDataModel;
         }
 
         public IVaultCreationRoutineStep12 ContinueConfigurationFileInitialization()
         {
-            using (_vaultCreationDataModel.VaultConfigurationStream)
-            using (_vaultCreationDataModel.MacKey)
+            using (vaultCreationDataModel.VaultConfigurationStream)
+            using (vaultCreationDataModel.MacKey)
             {
                 const int version = VaultVersion.HIGHEST_VERSION;
 
-                using var hmacSha256Crypt = _vaultCreationDataModel.KeyCryptor.HmacSha256Crypt.GetInstance(_vaultCreationDataModel.MacKey);
+                using var hmacSha256Crypt = vaultCreationDataModel.KeyCryptor.HmacSha256Crypt.GetInstance(vaultCreationDataModel.MacKey);
                 hmacSha256Crypt.InitializeHMAC();
                 hmacSha256Crypt.Update(BitConverter.GetBytes(version));
-                hmacSha256Crypt.Update(BitConverter.GetBytes((uint)_vaultCreationDataModel.FileNameCipherScheme));
-                hmacSha256Crypt.DoFinal(BitConverter.GetBytes((uint)_vaultCreationDataModel.ContentCipherScheme));
+                hmacSha256Crypt.Update(BitConverter.GetBytes((uint)vaultCreationDataModel.FileNameCipherScheme));
+                hmacSha256Crypt.DoFinal(BitConverter.GetBytes((uint)vaultCreationDataModel.ContentCipherScheme));
 
                 var vaultConfiguration = new VaultConfiguration(
                     version,
-                    _vaultCreationDataModel.ContentCipherScheme,
-                    _vaultCreationDataModel.FileNameCipherScheme,
+                    vaultCreationDataModel.ContentCipherScheme,
+                    vaultCreationDataModel.FileNameCipherScheme,
                     hmacSha256Crypt.GetHash());
 
-                vaultConfiguration.WriteConfiguration(_vaultCreationDataModel.VaultConfigurationStream);
+                vaultConfiguration.WriteConfiguration(vaultCreationDataModel.VaultConfigurationStream);
             }
 
-            return new VaultCreationRoutineStep12(_vaultCreationDataModel);
+            return new VaultCreationRoutineStep12(vaultCreationDataModel);
         }
     }
 }

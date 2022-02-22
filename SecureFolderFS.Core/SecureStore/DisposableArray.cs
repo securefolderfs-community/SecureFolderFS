@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Core.UnsafeNative;
 
 namespace SecureFolderFS.Core.SecureStore
 {
@@ -35,7 +37,23 @@ namespace SecureFolderFS.Core.SecureStore
 
         protected override void SecureFree()
         {
-            Array.Clear(Bytes);
+            EnsureSecureDisposal(Bytes);
+        }
+
+        internal static void EnsureSecureDisposal(byte[] buffer)
+        {
+            var bufHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            try
+            {
+                IntPtr bufPtr = bufHandle.AddrOfPinnedObject();
+                UIntPtr cnt = new UIntPtr((uint)buffer.Length * (uint)sizeof(byte));
+
+                UnsafeNativeApis.RtlZeroMemory(bufPtr, cnt);
+            }
+            finally
+            {
+                bufHandle.Free();
+            }
         }
 
         public static implicit operator byte[](DisposableArray disposableArray) => disposableArray.Bytes;

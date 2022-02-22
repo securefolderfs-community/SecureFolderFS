@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace SecureFolderFS.WinUI.ValueConverters
 {
-    internal sealed class DateTimeToStringValueConverter : IValueConverter
+    internal sealed class DateTimeToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

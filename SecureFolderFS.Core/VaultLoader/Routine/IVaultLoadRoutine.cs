@@ -75,6 +75,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine
 
     public interface IVaultLoadRoutineStep12
     {
-        IFinalizedVaultLoadRoutine Finish();
+        IFinalizedVaultLoadRoutine Finalize();
     }
 }

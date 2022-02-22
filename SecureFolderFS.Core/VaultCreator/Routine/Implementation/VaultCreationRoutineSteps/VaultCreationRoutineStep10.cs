@@ -4,22 +4,20 @@ using SecureFolderFS.Core.Enums;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
-    internal sealed class VaultCreationRoutineStep10 : IVaultCreationRoutineStep10
+    internal sealed class VaultCreationRoutineStep10 : BaseVaultCreationRoutineStep, IVaultCreationRoutineStep10
     {
-        private readonly VaultCreationDataModel _vaultCreationDataModel;
-
         public VaultCreationRoutineStep10(VaultCreationDataModel vaultCreationDataModel)
+            : base(vaultCreationDataModel)
         {
-            this._vaultCreationDataModel = vaultCreationDataModel;
         }
 
         public IVaultCreationRoutineStep11 SetFileNameCipherScheme(FileNameCipherScheme fileNameCipherScheme)
         {
             EnumAssertions.AssertCorrectFileNameCipherScheme(fileNameCipherScheme);
 
-            _vaultCreationDataModel.FileNameCipherScheme = fileNameCipherScheme;
+            vaultCreationDataModel.FileNameCipherScheme = fileNameCipherScheme;
 
-            return new VaultCreationRoutineStep11(_vaultCreationDataModel);
+            return new VaultCreationRoutineStep11(vaultCreationDataModel);
         }
     }
 }

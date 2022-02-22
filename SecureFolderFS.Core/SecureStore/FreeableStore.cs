@@ -5,6 +5,8 @@ namespace SecureFolderFS.Core.SecureStore
     internal abstract class FreeableStore<TImplementation> : IDisposable, IEquatable<TImplementation>
         where TImplementation : class
     {
+        protected bool disposed;
+
         public override bool Equals(object obj)
         {
             return Equals(obj as TImplementation);
@@ -21,6 +23,7 @@ namespace SecureFolderFS.Core.SecureStore
         public void Dispose()
         {
             SecureFree();
+            disposed = true;
         }
     }
 }

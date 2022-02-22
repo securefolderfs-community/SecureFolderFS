@@ -23,7 +23,7 @@ namespace SecureFolderFS.Backend.ViewModels.Dialogs
 
         public IRelayCommand? PrimaryButtonClickCommand { get; set; }
 
-        public IRelayCommand? SecondaryButtonClickCommand { get; set;}
+        public IRelayCommand? SecondaryButtonClickCommand { get; set; }
 
         public VaultWizardDialogViewModel()
         {

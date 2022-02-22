@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.SecureStore
 
         protected override void SecureFree()
         {
-            Array.Clear(Key);
+            DisposableArray.EnsureSecureDisposal(Key);
         }
 
         public static implicit operator byte[](SecretKey secretKey) => secretKey.Key;

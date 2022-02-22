@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.VaultLoader.KeyDerivation
             {
                 try
                 {
-                    if (disposablePassword?.Password?.IsEmpty() ?? true)
+                    if (disposablePassword?.Password?.Bytes?.IsEmpty() ?? true)
                     {
                         throw new ArgumentException($"The password was empty or null.");
                     }

@@ -5,13 +5,11 @@ using SecureFolderFS.Core.VaultDataStore;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
-    internal sealed class VaultCreationRoutineStep6 : IVaultCreationRoutineStep6
+    internal sealed class VaultCreationRoutineStep6 : BaseVaultCreationRoutineStep, IVaultCreationRoutineStep6
     {
-        private readonly VaultCreationDataModel _vaultCreationDataModel;
-
         public VaultCreationRoutineStep6(VaultCreationDataModel vaultCreationDataModel)
+            : base(vaultCreationDataModel)
         {
-            this._vaultCreationDataModel = vaultCreationDataModel;
         }
 
         public IVaultCreationRoutineStep7 AddEncryptionAlgorithmBuilder(IEncryptionAlgorithmBuilder encryptionAlgorithmBuilder = null)
@@ -19,9 +17,9 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
             encryptionAlgorithmBuilder ??= EncryptionAlgorithmBuilder.GetBuilder().DoFinal();
 
             var keyCryptFactory = new KeyCryptFactory(new VaultVersion(VaultVersion.HIGHEST_VERSION), encryptionAlgorithmBuilder);
-            _vaultCreationDataModel.KeyCryptor = keyCryptFactory.GetKeyCryptor();
+            vaultCreationDataModel.KeyCryptor = keyCryptFactory.GetKeyCryptor();
 
-            return new VaultCreationRoutineStep7(_vaultCreationDataModel);
+            return new VaultCreationRoutineStep7(vaultCreationDataModel);
         }
     }
 }

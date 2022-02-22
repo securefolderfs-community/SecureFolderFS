@@ -10,7 +10,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:DateTimeToStringValueConverter x:Key="DateTimeToStringValueConverter" />
+        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:VaultHealthStateToStringConverter x:Key="VaultHealthStateToStringConverter" />
 
         <DataTemplate x:Key="WithDetailedHealthDataTemplate" x:DataType="local:VaultHealthControl">
@@ -28,7 +28,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Opacity="0.8"
-                    Text="{Binding Path=VaultHealthLastCheckedDate, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource DateTimeToStringValueConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}"
+                    Text="{Binding Path=VaultHealthLastCheckedDate, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}"
                     TextTrimming="CharacterEllipsis" />
             </StackPanel>
         </DataTemplate>

@@ -5,6 +5,7 @@ using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
 using SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration;
 using SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration;
+using System;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine
 {
@@ -19,63 +20,63 @@ namespace SecureFolderFS.Core.VaultCreator.Routine
         IVaultCreationRoutineStep1 EstablishRoutine();
     }
 
-    public interface IVaultCreationRoutineStep1
+    public interface IVaultCreationRoutineStep1 : IDisposable
     {
         IVaultCreationRoutineStep2 SetVaultPath(VaultPath vaultPath);
     }
 
-    public interface IVaultCreationRoutineStep2
+    public interface IVaultCreationRoutineStep2 : IDisposable
     {
         IVaultCreationRoutineStep3 AddFileOperations(IFileOperations fileOperations = null, IDirectoryOperations directoryOperations = null);
     }
 
-    public interface IVaultCreationRoutineStep3
+    public interface IVaultCreationRoutineStep3 : IDisposable
     {
         IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationGenerator vaultConfigurationGenerator = null);
     }
 
-    public interface IVaultCreationRoutineStep4
+    public interface IVaultCreationRoutineStep4 : IDisposable
     {
         IVaultCreationRoutineStep5 CreateKeystoreFile(IVaultKeystoreGenerator vaultKeystoreGenerator = null);
     }
 
-    public interface IVaultCreationRoutineStep5
+    public interface IVaultCreationRoutineStep5 : IDisposable
     {
         IVaultCreationRoutineStep6 CreateContentFolder();
     }
 
-    public interface IVaultCreationRoutineStep6
+    public interface IVaultCreationRoutineStep6 : IDisposable
     {
         IVaultCreationRoutineStep7 AddEncryptionAlgorithmBuilder(IEncryptionAlgorithmBuilder encryptionAlgorithmBuilder = null);
     }
 
-    public interface IVaultCreationRoutineStep7
+    public interface IVaultCreationRoutineStep7 : IDisposable
     {
         IVaultCreationRoutineStep8 InitializeKeystoreData(DisposablePassword disposablePassword);
     }
 
-    public interface IVaultCreationRoutineStep8
+    public interface IVaultCreationRoutineStep8 : IDisposable
     {
         IVaultCreationRoutineStep9 ContinueKeystoreFileInitialization();
     }
 
-    public interface IVaultCreationRoutineStep9
+    public interface IVaultCreationRoutineStep9 : IDisposable
     {
         IVaultCreationRoutineStep10 SetContentCipherScheme(ContentCipherScheme contentCipherScheme);
     }
 
-    public interface IVaultCreationRoutineStep10
+    public interface IVaultCreationRoutineStep10 : IDisposable
     {
         IVaultCreationRoutineStep11 SetFileNameCipherScheme(FileNameCipherScheme fileNameCipherScheme);
     }
 
-    public interface IVaultCreationRoutineStep11
+    public interface IVaultCreationRoutineStep11 : IDisposable
     {
         IVaultCreationRoutineStep12 ContinueConfigurationFileInitialization();
     }
 
-    public interface IVaultCreationRoutineStep12
+    public interface IVaultCreationRoutineStep12 : IDisposable
     {
-        IFinalizedVaultCreationRoutine Finish();
+        IFinalizedVaultCreationRoutine Finalize();
     }
 }

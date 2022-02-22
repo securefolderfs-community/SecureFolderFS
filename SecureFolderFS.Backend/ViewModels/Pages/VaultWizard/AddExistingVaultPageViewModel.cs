@@ -43,7 +43,6 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             e?.Handle();
             DialogViewModel.VaultViewModel = new(new(), Path.GetDirectoryName(PathSourceText!)!);
             
-            WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(DialogViewModel.VaultViewModel));
             Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardFinishPageViewModel(Messenger, DialogViewModel)));
         }
 

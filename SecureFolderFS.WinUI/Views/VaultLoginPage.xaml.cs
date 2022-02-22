@@ -3,6 +3,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages;
+using System.Text;
+using Microsoft.UI.Xaml;
+using SecureFolderFS.Core.PasswordRequest;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,8 +44,15 @@ namespace SecureFolderFS.WinUI.Views
         {
             if (e.Key == VirtualKey.Enter)
             {
-                ViewModel.UnlockVaultCommand.Execute((sender as PasswordBox)!.Password);
+                var disposablePassword = new DisposablePassword(Encoding.UTF8.GetBytes(VaultPasswordBox.Password));
+                ViewModel.UnlockVaultCommand.Execute(disposablePassword);
             }
+        }
+
+        private void ContinueButton_Click(object sender, RoutedEventArgs e)
+        {
+            var disposablePassword = new DisposablePassword(Encoding.UTF8.GetBytes(VaultPasswordBox.Password));
+            ViewModel.UnlockVaultCommand.Execute(disposablePassword);
         }
     }
 }

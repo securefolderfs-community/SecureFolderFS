@@ -12,6 +12,8 @@ using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages;
 using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.Views;
+using System;
+using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,6 +51,11 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             NavigationDestinations.Remove(message.Value, out var viewModel);
             viewModel?.Dispose();
+
+            if (PageViewModel == viewModel && NavigationDestinations.Keys.FirstOrDefault() is VaultIdModel vaultIdModelToNavigateTo)
+            {
+                Navigate(vaultIdModelToNavigateTo);
+            }
         }
 
         public void Receive(AddVaultRequestedMessage message)
@@ -61,6 +68,20 @@ namespace SecureFolderFS.WinUI.UserControls
             NavigationDestinations[message.Value.VaultIdModel]?.Dispose();
             NavigationDestinations[message.Value.VaultIdModel] = null;
             Navigate(message.Value, null, new DrillOutTransitionModel());
+        }
+
+        private void Navigate(VaultIdModel vaultIdModel, TransitionModel? transition = null)
+        {
+            NavigationDestinations.SetAndGet(vaultIdModel, out var basePageViewModel, () => throw new InvalidOperationException("Could not navigate - insufficient parameters."));
+            PageViewModel = basePageViewModel!;
+            if (!PageViewModel.Messenger.IsRegistered<LockVaultRequestedMessage>(this))
+            {
+                PageViewModel.Messenger.Register<LockVaultRequestedMessage>(this);
+            }
+
+            Navigate(PageViewModel, transition);
+
+            WeakReferenceMessenger.Default.Send(new NavigationFinishedMessage(PageViewModel));
         }
 
         private void Navigate(VaultViewModel vaultViewModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)

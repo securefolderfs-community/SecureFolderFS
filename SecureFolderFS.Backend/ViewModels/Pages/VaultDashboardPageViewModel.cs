@@ -39,7 +39,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
                 finalizedVaultLoadRoutine = finalizedVaultLoadRoutine.ContinueWithOptionalRoutine()
                     .EstablishOptionalRoutine()
                     .AddFileSystemStatsTracker(viewModel.VaultIoSpeedReporterModel)
-                    .Finish();
+                    .Finalize();
 
                 VaultViewModel.VaultInstance = finalizedVaultLoadRoutine.Deploy();
                 AsyncExtensions.RunAndForget(() =>
@@ -66,6 +66,12 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
         {
             CurrentPage?.Cleanup();
             base.Cleanup();
+        }
+
+        public override void Dispose()
+        {
+            CurrentPage?.Dispose();
+            base.Dispose();
         }
     }
 }
