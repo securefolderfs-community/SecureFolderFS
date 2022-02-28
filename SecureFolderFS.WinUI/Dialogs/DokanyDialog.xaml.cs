@@ -12,19 +12,24 @@ using SecureFolderFS.Backend.ViewModels.Dialogs;
 
 namespace SecureFolderFS.WinUI.Dialogs
 {
-    public sealed partial class SettingsDialog : ContentDialog, IDialog<SettingsDialogViewModel>
+    public sealed partial class DokanyDialog : ContentDialog, IDialog<DokanyDialogViewModel>
     {
-        public SettingsDialogViewModel ViewModel
+        public DokanyDialogViewModel ViewModel
         {
-            get => (SettingsDialogViewModel)DataContext;
+            get => (DokanyDialogViewModel)DataContext;
             set => DataContext = value;
         }
 
-        public SettingsDialog()
+        public DokanyDialog()
         {
             this.InitializeComponent();
         }
 
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
+
+        private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            args.Cancel = true;
+        }
     }
 }

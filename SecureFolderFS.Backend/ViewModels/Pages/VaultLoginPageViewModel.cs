@@ -34,10 +34,6 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
         {
             if (password == null || password.Length == 0)
             {
-                password?.Dispose();
-                VaultViewModel.VaultModel.LastOpened = DateTime.Now;
-                WeakReferenceMessenger.Default.Send(new VaultSerializationRequestedMessage(VaultViewModel));
-                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultViewModel, new VaultDashboardPageViewModel(Messenger, VaultViewModel)));
                 return;
             }
 

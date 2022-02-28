@@ -65,6 +65,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<ISettingsService, SettingsService>()
                 .AddSingleton<IConfidentialStorageService, ConfidentialStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
+                .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>();

@@ -115,6 +115,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Command="{x:Bind ViewModel.SidebarViewModel.OpenSettingsCommand}"
+                        IsEnabled="False"
                         Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                         <AnimatedIcon>
                             <AnimatedIcon.Source>

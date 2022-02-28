@@ -23,13 +23,22 @@
             Source="../Assets/Square44x44Logo.png" />
 
         <!--  Title  -->
-        <RichTextBlock
+        <StackPanel
             HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            FontSize="12">
-            <Paragraph>
-                SecureFolderFS
-            </Paragraph>
-        </RichTextBlock>
+            Orientation="Horizontal"
+            Spacing="6">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="12"
+                Text="SecureFolderFS" />
+            <TextBlock
+                Margin="0,0,0,1"
+                VerticalAlignment="Bottom"
+                CharacterSpacing="64"
+                FontSize="10"
+                FontWeight="Thin"
+                Opacity="0.8"
+                Text="ALPHA" />
+        </StackPanel>
     </StackPanel>
 </UserControl>

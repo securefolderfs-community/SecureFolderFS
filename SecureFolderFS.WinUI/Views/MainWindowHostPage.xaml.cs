@@ -39,9 +39,9 @@ namespace SecureFolderFS.WinUI.Views
             }
         }
 
-        private void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
+        private async void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.EnsureLateApplication();
+            await ViewModel.EnsureLateApplication();
         }
     }
 }

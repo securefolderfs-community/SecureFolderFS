@@ -1,0 +1,23 @@
+﻿<ContentDialog
+    x:Class="SecureFolderFS.WinUI.Dialogs.DokanyDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="SecureFolderFS unavailable"
+    Closing="ContentDialog_Closing"
+    DefaultButton="Primary"
+    PrimaryButtonCommand="{x:Bind ViewModel.OpenInstallationWebsiteCommand}"
+    PrimaryButtonText="Open installation website"
+    SecondaryButtonCommand="{x:Bind ViewModel.CloseApplicationCommand}"
+    SecondaryButtonText="Close application"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="8">
+        <TextBlock Text="{x:Bind ViewModel.ErrorText, Mode=OneWay}" TextWrapping="WrapWholeWords" />
+        <TextBlock Text="After installation is completed, restart SecureFolderFS." TextWrapping="WrapWholeWords" />
+    </StackPanel>
+
+</ContentDialog>

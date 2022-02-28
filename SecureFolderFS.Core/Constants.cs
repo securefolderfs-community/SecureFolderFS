@@ -30,7 +30,7 @@
 
             internal static class Dokan
             {
-                public const int DOKAN_VERSION = 150;
+                public const int DOKAN_VERSION = 151;
 
                 public const int DOKAN_MAX_VERSION = 200;
 

@@ -172,7 +172,8 @@
                 <ucab:ActionBlockControl
                     ButtonCommand="{x:Bind ViewModel.OpenVaultPropertiesCommand}"
                     Description="Vault properties"
-                    IsClickable="True">
+                    IsClickable="True"
+                    IsEnabled="False">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </ucab:ActionBlockControl.Icon>
