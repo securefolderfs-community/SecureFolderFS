@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.WinUI.ServiceImplementation;
 using SecureFolderFS.WinUI.Windows;
+using SecureFolderFS.WinUI.Helpers;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -48,6 +50,7 @@ namespace SecureFolderFS.WinUI
         {
             // Configure exception handlers
             UnhandledException += App_UnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
             // Configure IoC
             ServiceProvider = ConfigureServices();
@@ -74,8 +77,24 @@ namespace SecureFolderFS.WinUI
             return serviceCollection.BuildServiceProvider();
         }
 
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+        {
+            LogException(e.Exception);
+        }
+
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
+            LogException(e.Exception);
+        }
+
+        private void LogException(Exception ex)
+        {
+            LogExceptionToFile(ex);
+        }
+
+        private void LogExceptionToFile(Exception ex)
+        {
+            LoggingHelpers.SafeLogExceptionToFile(ex);
         }
     }
 }
