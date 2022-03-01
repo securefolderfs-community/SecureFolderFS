@@ -33,7 +33,6 @@
 
         <!--  Main Content  -->
         <NavigationView
-            Style="{ThemeResource aaaa}"
             x:Name="Sidebar"
             Grid.Row="1"
             IsBackButtonVisible="Collapsed"
