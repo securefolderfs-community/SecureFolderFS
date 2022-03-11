@@ -58,8 +58,11 @@ namespace SecureFolderFS.WinUI.Helpers
             {
                 case ApplicationTheme.Dark:
                 case ApplicationTheme.Light:
-                    _appWindow.TitleBar.ButtonHoverBackgroundColor = (Color)Application.Current.Resources["SystemBaseLowColor"];
-                    _appWindow.TitleBar.ButtonForegroundColor = (Color)Application.Current.Resources["SystemBaseHighColor"];
+                    if (_appWindow.TitleBar is not null)
+                    {
+                        _appWindow.TitleBar.ButtonHoverBackgroundColor = (Color)Application.Current.Resources["SystemBaseLowColor"];
+                        _appWindow.TitleBar.ButtonForegroundColor = (Color)Application.Current.Resources["SystemBaseHighColor"];
+                    }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

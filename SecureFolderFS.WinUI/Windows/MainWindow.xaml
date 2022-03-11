@@ -9,5 +9,8 @@
     mc:Ignorable="d">
 
     <!--  UI Root  -->
-    <views:MainWindowHostPage HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+    <views:MainWindowHostPage
+        x:Name="HostPage"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch" />
 </Window>

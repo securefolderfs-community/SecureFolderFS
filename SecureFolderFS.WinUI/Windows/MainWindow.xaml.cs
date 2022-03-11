@@ -42,12 +42,20 @@ namespace SecureFolderFS.WinUI.Windows
             // Set title
             AppWindow.Title = "SecureFolderFS";
 
-            // Extend title bar
-            AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+            if (AppWindow.TitleBar is not null)
+            {
+                // Extend title bar
+                AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 
-            // Set window buttons background to transparent
-            AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-            AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                // Set window buttons background to transparent
+                AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            }
+            else
+            {
+                this.ExtendsContentIntoTitleBar = true;
+                SetTitleBar(HostPage.CustomTitleBar);
+            }
 
             // Register ThemeHelper
             var themeHelper = ThemeHelper.RegisterWindowInstance(AppWindow);

@@ -29,7 +29,10 @@
         </Grid.BackgroundTransition>
 
         <!--  Title  -->
-        <uc:TitleBarControl Grid.Row="0" />
+        <uc:TitleBarControl
+            x:Name="CustomTitleBar"
+            Grid.Row="0"
+            x:FieldModifier="public" />
 
         <!--  Main Content  -->
         <NavigationView
