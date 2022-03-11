@@ -58,7 +58,7 @@ namespace SecureFolderFS.WinUI.Helpers
             {
                 case ApplicationTheme.Dark:
                 case ApplicationTheme.Light:
-                    if (_appWindow.TitleBar is not null)
+                    if (AppWindowTitleBar.IsCustomizationSupported())
                     {
                         _appWindow.TitleBar.ButtonHoverBackgroundColor = (Color)Application.Current.Resources["SystemBaseLowColor"];
                         _appWindow.TitleBar.ButtonForegroundColor = (Color)Application.Current.Resources["SystemBaseHighColor"];

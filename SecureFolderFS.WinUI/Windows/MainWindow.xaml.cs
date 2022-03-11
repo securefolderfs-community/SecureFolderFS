@@ -42,7 +42,7 @@ namespace SecureFolderFS.WinUI.Windows
             // Set title
             AppWindow.Title = "SecureFolderFS";
 
-            if (AppWindow.TitleBar is not null)
+            if (AppWindowTitleBar.IsCustomizationSupported())
             {
                 // Extend title bar
                 AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
