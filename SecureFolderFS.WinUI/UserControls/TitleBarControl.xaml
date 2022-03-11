@@ -10,9 +10,14 @@
     <StackPanel
         Height="32"
         Padding="14,6"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
         IsHitTestVisible="True"
         Orientation="Horizontal"
         Spacing="12">
+
+        <StackPanel.BackgroundTransition>
+            <BrushTransition />
+        </StackPanel.BackgroundTransition>
 
         <!--  App icon  -->
         <Image
