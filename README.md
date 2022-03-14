@@ -4,6 +4,10 @@
 
 SecureFolderFS helps you keep your files private. Protect your data with state-of-the-art encryption algorithms that seamlessly secure your data thanks to SecureFolderFS' advanced on-fly encryption/decryption.
 
+## Get SecureFolderFS
+
+- [Releases](https://github.com/securefolderfs-community/SecureFolderFS/releases)
+
 ## FAQ
 
 Check out our [wiki](https://github.com/securefolderfs-community/SecureFolderFS/wiki) for more information.
@@ -22,6 +26,6 @@ Check out our [wiki](https://github.com/securefolderfs-community/SecureFolderFS/
 - Set architecture to match your processor configuration
 - Launch the app
 
-### Contributing
+## Contributing
 
 SecureFolderFS is open to contributions! You can open an [issue](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose) or a [pull request](https://github.com/securefolderfs-community/SecureFolderFS/compare) with your changes. Take a look at [Contributing Guidelines](CONTRIBUTING.md) to make sure your PR matches SecureFolderFS quality standards.
