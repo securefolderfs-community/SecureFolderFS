@@ -2,9 +2,9 @@
 
 namespace SecureFolderFS.Backend.Messages
 {
-    public sealed class AddVaultRequestedMessage : ValueMessage<VaultViewModel>
+    public sealed class VaultUnlockedMessage : ValueMessage<VaultViewModel>
     {
-        public AddVaultRequestedMessage(VaultViewModel value)
+        public VaultUnlockedMessage(VaultViewModel value)
             : base(value)
         {
         }

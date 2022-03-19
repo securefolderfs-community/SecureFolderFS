@@ -9,7 +9,7 @@ using SecureFolderFS.Backend.Services;
 
 namespace SecureFolderFS.Backend.ViewModels.Sidebar
 {
-    public sealed class SidebarItemViewModel : ObservableObject
+    public sealed class SidebarItemViewModel : ObservableObject, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
@@ -22,6 +22,13 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
             set => SetProperty(ref _VaultName, value);
         }
 
+        private bool _CanRemoveVault;
+        public bool CanRemoveVault
+        {
+            get => _CanRemoveVault;
+            set => SetProperty(ref _CanRemoveVault, value);
+        }
+
         public IAsyncRelayCommand ShowInFileExplorerCommand { get; }
 
         public IRelayCommand RemoveVaultCommand { get; }
@@ -30,9 +37,29 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
         {
             this.VaultViewModel = vaultModel;
             this._VaultName = vaultModel.VaultName;
+            this._CanRemoveVault = true;
 
             this.ShowInFileExplorerCommand = new AsyncRelayCommand(ShowInFileExplorer);
             this.RemoveVaultCommand = new RelayCommand(RemoveVault);
+
+            WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
+            WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
+        }
+
+        public void Receive(VaultUnlockedMessage message)
+        {
+            if (message.Value.VaultIdModel == VaultViewModel.VaultIdModel)
+            {
+                CanRemoveVault = false;
+            }
+        }
+
+        public void Receive(VaultLockedMessage message)
+        {
+            if (message.Value.VaultIdModel == VaultViewModel.VaultIdModel)
+            {
+                CanRemoveVault = true;
+            }
         }
 
         private async Task ShowInFileExplorer()

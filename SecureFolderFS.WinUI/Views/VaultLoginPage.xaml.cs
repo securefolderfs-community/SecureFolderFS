@@ -42,17 +42,21 @@ namespace SecureFolderFS.WinUI.Views
 
         private void VaultPasswordBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
+            if (e.Key == VirtualKey.Enter && ContinueButton.IsEnabled)
             {
+                ContinueButton.IsEnabled = false;
                 var disposablePassword = new DisposablePassword(Encoding.UTF8.GetBytes(VaultPasswordBox.Password));
                 ViewModel.UnlockVaultCommand.Execute(disposablePassword);
+                ContinueButton.IsEnabled = true;
             }
         }
 
         private void ContinueButton_Click(object sender, RoutedEventArgs e)
         {
+            ContinueButton.IsEnabled = false;
             var disposablePassword = new DisposablePassword(Encoding.UTF8.GetBytes(VaultPasswordBox.Password));
             ViewModel.UnlockVaultCommand.Execute(disposablePassword);
+            ContinueButton.IsEnabled = true;
         }
     }
 }

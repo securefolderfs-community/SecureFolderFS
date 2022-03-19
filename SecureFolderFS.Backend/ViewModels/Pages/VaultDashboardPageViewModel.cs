@@ -29,7 +29,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
             Messenger.Register<DashboardNavigationFinishedMessage>(this);
             Messenger.Register<DashboardNavigationFinishedMessage>(NavigationBreadcrumbViewModel);
             Messenger.Register<DashboardNavigationRequestedMessage>(DashboardNavigationModel);
-            Messenger.Register<LockVaultRequestedMessage>(DashboardNavigationModel);
+            Messenger.Register<VaultLockedMessage>(DashboardNavigationModel);
         }
 
         public void InitializeWithRoutine(IFinalizedVaultLoadRoutine finalizedVaultLoadRoutine)

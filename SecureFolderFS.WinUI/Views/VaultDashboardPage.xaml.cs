@@ -23,7 +23,7 @@ namespace SecureFolderFS.WinUI.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class VaultDashboardPage : Page, IRecipient<DashboardNavigationFinishedMessage>, IRecipient<LockVaultRequestedMessage>
+    public sealed partial class VaultDashboardPage : Page, IRecipient<DashboardNavigationFinishedMessage>, IRecipient<VaultLockedMessage>
     {
         public VaultDashboardPageViewModel ViewModel
         {
@@ -41,7 +41,7 @@ namespace SecureFolderFS.WinUI.Views
             NavigatePage(message.Value, message.Transition);
         }
 
-        public async void Receive(LockVaultRequestedMessage message)
+        public async void Receive(VaultLockedMessage message)
         {
             // Await and change the visibility so the page doesn't prevail on the lock animation
             await Task.Delay(100);
@@ -69,7 +69,7 @@ namespace SecureFolderFS.WinUI.Views
             {
                 ViewModel = viewModel;
                 ViewModel.Messenger.Register<DashboardNavigationFinishedMessage>(this);
-                ViewModel.Messenger.Register<LockVaultRequestedMessage>(this);
+                ViewModel.Messenger.Register<VaultLockedMessage>(this);
                 ViewModel.StartNavigation();
             }
 
@@ -81,7 +81,7 @@ namespace SecureFolderFS.WinUI.Views
             (ViewModel as ICleanable)?.Cleanup();
 
             ViewModel.Messenger.Unregister<DashboardNavigationFinishedMessage>(this);
-            ViewModel.Messenger.Unregister<LockVaultRequestedMessage>(this);
+            ViewModel.Messenger.Unregister<VaultLockedMessage>(this);
 
             base.OnNavigatingFrom(e);
         }

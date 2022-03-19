@@ -23,7 +23,7 @@ using System.Linq;
 namespace SecureFolderFS.WinUI.UserControls
 {
     public sealed partial class NavigationControl : UserControl,
-        IRecipient<LockVaultRequestedMessage>,
+        IRecipient<VaultLockedMessage>,
         IRecipient<NavigationRequestedMessage>,
         IRecipient<RemoveVaultRequestedMessage>,
         IRecipient<AddVaultRequestedMessage>
@@ -39,7 +39,7 @@ namespace SecureFolderFS.WinUI.UserControls
             WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(this);
             WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
             WeakReferenceMessenger.Default.Register<AddVaultRequestedMessage>(this);
-            WeakReferenceMessenger.Default.Register<LockVaultRequestedMessage>(this);
+            WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
         public void Receive(NavigationRequestedMessage message)
@@ -63,7 +63,7 @@ namespace SecureFolderFS.WinUI.UserControls
             NavigationDestinations.AddOrSet(message.Value.VaultIdModel);
         }
 
-        public void Receive(LockVaultRequestedMessage message)
+        public void Receive(VaultLockedMessage message)
         {
             NavigationDestinations[message.Value.VaultIdModel]?.Dispose();
             NavigationDestinations[message.Value.VaultIdModel] = null;
@@ -74,9 +74,9 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             NavigationDestinations.SetAndGet(vaultIdModel, out var basePageViewModel, () => throw new InvalidOperationException("Could not navigate - insufficient parameters."));
             PageViewModel = basePageViewModel!;
-            if (!PageViewModel.Messenger.IsRegistered<LockVaultRequestedMessage>(this))
+            if (!PageViewModel.Messenger.IsRegistered<VaultLockedMessage>(this))
             {
-                PageViewModel.Messenger.Register<LockVaultRequestedMessage>(this);
+                PageViewModel.Messenger.Register<VaultLockedMessage>(this);
             }
 
             Navigate(PageViewModel, transition);
@@ -90,9 +90,9 @@ namespace SecureFolderFS.WinUI.UserControls
             {
                 NavigationDestinations.SetAndGet(vaultViewModel.VaultIdModel, out basePageViewModel, () => new VaultLoginPageViewModel(vaultViewModel));
                 PageViewModel = basePageViewModel!;
-                if (!PageViewModel.Messenger.IsRegistered<LockVaultRequestedMessage>(this))
+                if (!PageViewModel.Messenger.IsRegistered<VaultLockedMessage>(this))
                 {
-                    PageViewModel.Messenger.Register<LockVaultRequestedMessage>(this);
+                    PageViewModel.Messenger.Register<VaultLockedMessage>(this);
                 }
             }
             else

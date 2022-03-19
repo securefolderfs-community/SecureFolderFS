@@ -7,7 +7,7 @@ using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
 namespace SecureFolderFS.Backend.Models
 {
-    public sealed class DashboardNavigationModel : IRecipient<DashboardNavigationRequestedMessage>, IRecipient<LockVaultRequestedMessage>
+    public sealed class DashboardNavigationModel : IRecipient<DashboardNavigationRequestedMessage>, IRecipient<VaultLockedMessage>
     {
         private IMessenger Messenger { get; }
 
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Backend.Models
             Messenger.Send(new DashboardNavigationFinishedMessage(baseDashboardPageViewModel!) { Transition = message.Transition });
         }
 
-        public void Receive(LockVaultRequestedMessage message)
+        public void Receive(VaultLockedMessage message)
         {
             NavigationDestinations.Clear();
         }

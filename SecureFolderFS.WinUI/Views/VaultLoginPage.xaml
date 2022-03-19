@@ -54,11 +54,11 @@
 
                 <!--  Login  -->
                 <Button
+                    x:Name="ContinueButton"
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Click="ContinueButton_Click"
-                    x:Name="ContinueButton"
-                    Content="Continue"
+                    Content="Unlock"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </Grid>

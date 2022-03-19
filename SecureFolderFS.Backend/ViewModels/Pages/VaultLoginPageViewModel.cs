@@ -105,6 +105,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
 
             vaultDashboardPageViewModel.InitializeWithRoutine(finalizedVaultLoadRoutine);
 
+            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultViewModel));
         }
     }
 }

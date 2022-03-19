@@ -177,8 +177,10 @@
                                             <FontIcon Glyph="&#xED25;" />
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
-
-                                    <MenuFlyoutItem Command="{x:Bind RemoveVaultCommand}" Text="Remove vault from the list">
+                                    <MenuFlyoutItem
+                                        Command="{x:Bind RemoveVaultCommand}"
+                                        IsEnabled="{x:Bind CanRemoveVault, Mode=OneWay}"
+                                        Text="Remove vault from the list">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE738;" />
                                         </MenuFlyoutItem.Icon>
