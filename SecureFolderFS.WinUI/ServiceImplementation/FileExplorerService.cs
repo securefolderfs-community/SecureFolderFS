@@ -5,7 +5,7 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using SecureFolderFS.Backend.Extensions;
 using SecureFolderFS.Backend.Services;
-using SecureFolderFS.WinUI.Windows;
+using SecureFolderFS.WinUI.WindowViews;
 
 #nullable enable
 

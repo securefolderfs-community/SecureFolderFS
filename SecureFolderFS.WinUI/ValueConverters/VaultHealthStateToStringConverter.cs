@@ -21,7 +21,7 @@ namespace SecureFolderFS.WinUI.ValueConverters
                 VaultHealthState.Healthy => "No problems found",
                 VaultHealthState.NeedsAttention => "Needs attention",
                 VaultHealthState.Error => "Problems found",
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(vaultHealthState))
             };
         }
 

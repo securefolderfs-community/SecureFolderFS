@@ -49,7 +49,7 @@ namespace SecureFolderFS.WinUI.Helpers
                 {
                     item(CurrentTheme);
                 }
-            });
+            }, DispatcherQueuePriority.Low);
         }
 
         public void UpdateTheme()

@@ -124,18 +124,10 @@
             <StackPanel Grid.Row="3" Spacing="4">
 
                 <!--  Open in File Explorer  -->
-                <ucab:ActionBlockControl Description="Open vault">
+                <ucab:ActionBlockControl Title="Open vault" Description="Show this vault in File Explorer">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xEC50;" />
                     </ucab:ActionBlockControl.Icon>
-                    <ucab:ActionBlockControl.AdditionalDescription>
-                        <TextBlock
-                            FontSize="14"
-                            Opacity="0.8"
-                            Text="Show this vault in File Explorer"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="Show this vault in File Explorer" />
-                    </ucab:ActionBlockControl.AdditionalDescription>
                     <ucab:ActionBlockControl.ActionElement>
                         <Button
                             Width="32"
@@ -148,18 +140,10 @@
                 </ucab:ActionBlockControl>
 
                 <!--  Lock vault  -->
-                <ucab:ActionBlockControl Description="Lock vault">
+                <ucab:ActionBlockControl Title="Lock vault" Description="Securely lock this vault and close the dashboard">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE72E;" />
                     </ucab:ActionBlockControl.Icon>
-                    <ucab:ActionBlockControl.AdditionalDescription>
-                        <TextBlock
-                            FontSize="14"
-                            Opacity="0.8"
-                            Text="Securely lock this vault and close the dashboard"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="Securely lock this vault and close the dashboard" />
-                    </ucab:ActionBlockControl.AdditionalDescription>
                     <ucab:ActionBlockControl.ActionElement>
                         <Button
                             Padding="48,6"
@@ -170,21 +154,14 @@
 
                 <!--  Vault information  -->
                 <ucab:ActionBlockControl
-                    ButtonCommand="{x:Bind ViewModel.OpenVaultPropertiesCommand}"
-                    Description="Vault properties"
+                    Title="Vault properties"
+                    ClickCommand="{x:Bind ViewModel.OpenVaultPropertiesCommand}"
+                    Description="View information about this vault"
                     IsClickable="True"
                     IsEnabled="False">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </ucab:ActionBlockControl.Icon>
-                    <ucab:ActionBlockControl.AdditionalDescription>
-                        <TextBlock
-                            FontSize="14"
-                            Opacity="0.8"
-                            Text="View information about this vault"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="View information about this vault" />
-                    </ucab:ActionBlockControl.AdditionalDescription>
                     <ucab:ActionBlockControl.ActionElement>
                         <FontIcon FontSize="14" Glyph="&#xE76C;" />
                     </ucab:ActionBlockControl.ActionElement>

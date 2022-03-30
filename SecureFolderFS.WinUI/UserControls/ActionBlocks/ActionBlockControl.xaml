@@ -13,12 +13,12 @@
         <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
     </UserControl.Resources>
 
-    <Grid>
+    <Grid VerticalAlignment="Center">
         <!--  Default  -->
         <Grid x:Name="DefaultBlock" x:Load="{x:Bind ExpanderContent, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}, ConverterParameter='invert'}">
             <Grid
                 x:Name="DefaultBlock2"
-                MinHeight="{StaticResource ExpanderMinHeight}"
+                Height="72"
                 Padding="{StaticResource ExpanderContentPadding}"
                 HorizontalAlignment="Stretch"
                 x:Load="{x:Bind IsClickable, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}"
@@ -27,10 +27,11 @@
                 BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
                 CornerRadius="{ThemeResource ControlCornerRadius}">
                 <local:ActionBlockContentControl
+                    Title="{x:Bind Title, Mode=OneWay, FallbackValue={x:Null}}"
                     ActionElement="{x:Bind ActionElement, Mode=OneWay}"
                     AdditionalActionElement="{x:Bind AdditionalActionElement, Mode=OneWay}"
-                    AdditionalDescription="{x:Bind AdditionalDescription, Mode=OneWay}"
-                    Description="{x:Bind Description, Mode=OneWay}"
+                    CustomDescription="{x:Bind CustomDescription, Mode=OneWay}"
+                    Description="{x:Bind Description, Mode=OneWay, FallbackValue={x:Null}}"
                     Icon="{x:Bind Icon, Mode=OneWay}" />
             </Grid>
         </Grid>
@@ -38,6 +39,7 @@
         <Grid x:Name="ClickableBlock" x:Load="{x:Bind ExpanderContent, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}, ConverterParameter='invert'}">
             <Grid x:Name="ClickableBlock2" x:Load="{x:Bind IsClickable, Mode=OneWay}">
                 <Button
+                    Height="72"
                     MinHeight="{StaticResource ExpanderMinHeight}"
                     Padding="{StaticResource ExpanderContentPadding}"
                     HorizontalAlignment="Stretch"
@@ -45,13 +47,14 @@
                     Background="{ThemeResource ExpanderHeaderBackground}"
                     BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
                     BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
-                    Command="{x:Bind ButtonCommand, Mode=OneWay}"
+                    Command="{x:Bind ClickCommand, Mode=OneWay}"
                     CornerRadius="{ThemeResource ControlCornerRadius}">
                     <local:ActionBlockContentControl
+                        Title="{x:Bind Title, Mode=OneWay, FallbackValue={x:Null}}"
                         ActionElement="{x:Bind ActionElement, Mode=OneWay}"
                         AdditionalActionElement="{x:Bind AdditionalActionElement, Mode=OneWay}"
-                        AdditionalDescription="{x:Bind AdditionalDescription, Mode=OneWay}"
-                        Description="{x:Bind Description, Mode=OneWay}"
+                        CustomDescription="{x:Bind CustomDescription, Mode=OneWay}"
+                        Description="{x:Bind Description, Mode=OneWay, FallbackValue={x:Null}}"
                         Icon="{x:Bind Icon, Mode=OneWay}" />
                 </Button>
             </Grid>
@@ -64,6 +67,7 @@
                     Padding="{StaticResource ExpanderContentPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Center"
                     Background="{ThemeResource ExpanderHeaderBackground}"
                     BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
                     BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
@@ -71,10 +75,12 @@
                     Expanding="Expander_Expanding">
                     <Expander.Header>
                         <local:ActionBlockContentControl
+                            Title="{x:Bind Title, Mode=OneWay, FallbackValue={x:Null}}"
+                            Height="72"
                             ActionElement="{x:Bind ActionElement, Mode=OneWay}"
                             AdditionalActionElement="{x:Bind AdditionalActionElement, Mode=OneWay}"
-                            AdditionalDescription="{x:Bind AdditionalDescription, Mode=OneWay}"
-                            Description="{x:Bind Description, Mode=OneWay}"
+                            CustomDescription="{x:Bind CustomDescription, Mode=OneWay}"
+                            Description="{x:Bind Description, Mode=OneWay, FallbackValue={x:Null}}"
                             Icon="{x:Bind Icon, Mode=OneWay}" />
                     </Expander.Header>
                     <ContentPresenter HorizontalAlignment="Stretch" Content="{x:Bind ExpanderContent, Mode=OneWay}" />

@@ -10,7 +10,7 @@ using WinRT.Interop;
 
 #nullable enable
 
-namespace SecureFolderFS.WinUI.Windows
+namespace SecureFolderFS.WinUI.WindowViews
 {
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.

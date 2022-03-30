@@ -1,0 +1,130 @@
+﻿<Page
+    x:Class="SecureFolderFS.WinUI.Views.Settings.AboutSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Views.Settings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
+    mc:Ignorable="d">
+
+    <Grid Padding="16,16,16,8" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <!--  Banner  -->
+            <RowDefinition Height="Auto" />
+            <!--  Other info  -->
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--  Banner  -->
+        <uc:BannerControl Grid.Row="0">
+            <uc:BannerControl.LeftSide>
+                <StackPanel
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Source="/Assets/Square44x44Logo.png" />
+                    <TextBlock
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Text="SecureFolderFS" />
+                </StackPanel>
+            </uc:BannerControl.LeftSide>
+            <uc:BannerControl.RightSide>
+                <StackPanel
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Button x:Name="VersionButton" Click="VersionButton_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Glyph="&#xE946;" />
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <TextBlock FontWeight="SemiBold" Text="Version" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                                    Text="{x:Bind ViewModel.AppVersion}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{x:Bind ViewModel.OpenGitHubRepositoryCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Glyph="&#xE735;" />
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <TextBlock FontWeight="SemiBold" Text="GitHub" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                                    Text="View repository" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </uc:BannerControl.RightSide>
+        </uc:BannerControl>
+
+        <TeachingTip
+            x:Name="VersionCopiedTeachingTip"
+            Title="Copied to clipboard"
+            IsLightDismissEnabled="True"
+            PreferredPlacement="Bottom"
+            Target="{x:Bind VersionButton}">
+            <TeachingTip.IconSource>
+                <FontIconSource Glyph="&#xE73E;" />
+            </TeachingTip.IconSource>
+        </TeachingTip>
+
+        <StackPanel Grid.Row="1" Spacing="4">
+            <ucab:ActionBlockControl Title="Social" Description="Join the discussion!">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE8BD;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <HyperlinkButton Command="{x:Bind ViewModel.OpenDiscordSocialCommand}" Content="Discord" />
+                    </StackPanel>
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl Title="Privacy policy" Description="View the privacy policy statement">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xEA18;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <Button
+                        Width="32"
+                        Height="32"
+                        Padding="0"
+                        Command="{x:Bind ViewModel.OpenPrivacyPolicyCommand}">
+                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                    </Button>
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl Title="View log location" Description="Opens file explorer where log file is located">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE838;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <Button
+                        Width="32"
+                        Height="32"
+                        Padding="0"
+                        Command="{x:Bind ViewModel.OpenLogLocationCommand}">
+                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                    </Button>
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+        </StackPanel>
+    </Grid>
+</Page>

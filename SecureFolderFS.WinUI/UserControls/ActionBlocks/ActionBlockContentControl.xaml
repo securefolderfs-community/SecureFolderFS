@@ -10,9 +10,11 @@
 
     <UserControl.Resources>
         <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid
+        Margin="0,-2,0,-2"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Center"
         ColumnSpacing="16">
@@ -22,7 +24,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -34,29 +36,48 @@
             Padding="8,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
+            VerticalContentAlignment="Center"
             x:Load="{x:Bind Icon, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
             Content="{x:Bind Icon, Mode=OneWay}" />
 
         <TextBlock
-            x:Name="BlockDescription"
+            x:Name="BlockTitle"
             Grid.Row="0"
             Grid.Column="1"
+            Padding="0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            x:Load="{x:Bind Title, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+            Text="{x:Bind Title, Mode=OneWay}"
+            TextTrimming="CharacterEllipsis"
+            ToolTipService.ToolTip="{x:Bind Title, Mode=OneWay}" />
+
+        <TextBlock
+            x:Name="BlockDescription"
+            Grid.Row="1"
+            Grid.Column="1"
+            Padding="0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             x:Load="{x:Bind Description, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+            FontSize="12"
+            Opacity="0.8"
             Text="{x:Bind Description, Mode=OneWay}"
-            TextTrimming="CharacterEllipsis" />
+            TextTrimming="CharacterEllipsis"
+            ToolTipService.ToolTip="{x:Bind Description, Mode=OneWay}" />
 
         <ContentPresenter
-            x:Name="BlockAdditionalDescription"
+            x:Name="BlockCustomDescription"
             Grid.Row="1"
             Grid.Column="1"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            x:Load="{x:Bind AdditionalDescription, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
-            Content="{x:Bind AdditionalDescription, Mode=OneWay}" />
+            VerticalContentAlignment="Center"
+            x:Load="{x:Bind CustomDescription, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+            Content="{x:Bind CustomDescription, Mode=OneWay}" />
 
         <StackPanel
+            Grid.Row="0"
             Grid.RowSpan="2"
             Grid.Column="2"
             HorizontalAlignment="Right"
@@ -64,18 +85,18 @@
             Orientation="Horizontal"
             Spacing="8">
             <ContentPresenter
-                x:Name="AdditionalActionElementControl"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                x:Load="{x:Bind AdditionalActionElement, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
-                Content="{x:Bind AdditionalActionElement, Mode=OneWay}" />
-
-            <ContentPresenter
-                x:Name="ActionElementControl"
+                x:Name="BlockActionElement"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 x:Load="{x:Bind ActionElement, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
                 Content="{x:Bind ActionElement, Mode=OneWay}" />
+
+            <ContentPresenter
+                x:Name="BlockAdditionalActionElement"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                x:Load="{x:Bind AdditionalActionElement, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+                Content="{x:Bind AdditionalActionElement, Mode=OneWay}" />
         </StackPanel>
     </Grid>
 </UserControl>

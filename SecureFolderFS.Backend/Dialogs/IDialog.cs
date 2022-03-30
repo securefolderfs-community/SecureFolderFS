@@ -9,5 +9,7 @@ namespace SecureFolderFS.Backend.Dialogs
         TViewModel ViewModel { get; set; }
 
         Task<DialogResult> ShowAsync();
+
+        void Hide();
     }
 }

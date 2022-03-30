@@ -8,6 +8,8 @@
         {
             public const string SETTINGS_FOLDER_NAME = "settings";
 
+            public const string APPLICATION_SETTINGS_FILENAME = "application_settings.json";
+
             public const string USER_SETTINGS_FILE_NAME = "user_settings.json";
 
             public const string CONFIDENTIAL_SETTINGS_FILE_NAME = "confidential_settings.json";

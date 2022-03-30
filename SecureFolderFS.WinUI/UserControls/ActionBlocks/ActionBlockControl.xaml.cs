@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.Input;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+#nullable enable
+
 namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
 {
     public sealed partial class ActionBlockControl : UserControl
@@ -14,13 +16,13 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             this.InitializeComponent();
         }
 
-        public IRelayCommand ButtonCommand
+        public IRelayCommand ClickCommand
         {
-            get => (IRelayCommand)GetValue(ButtonCommandProperty);
-            set => SetValue(ButtonCommandProperty, value);
+            get => (IRelayCommand)GetValue(ClickCommandProperty);
+            set => SetValue(ClickCommandProperty, value);
         }
-        public static readonly DependencyProperty ButtonCommandProperty =
-            DependencyProperty.Register("ButtonCommand", typeof(IRelayCommand), typeof(ActionBlockControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty ClickCommandProperty =
+            DependencyProperty.Register(nameof(ClickCommand), typeof(IRelayCommand), typeof(ActionBlockControl), new PropertyMetadata(null));
 
 
         public IRelayCommand ExpanderExpandingCommand
@@ -29,7 +31,7 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(ExpanderExpandingCommandProperty, value);
         }
         public static readonly DependencyProperty ExpanderExpandingCommandProperty =
-            DependencyProperty.Register("ExpanderExpandingCommand", typeof(IRelayCommand), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ExpanderExpandingCommand), typeof(IRelayCommand), typeof(ActionBlockControl), new PropertyMetadata(null));
 
 
         public FrameworkElement ExpanderContent
@@ -38,7 +40,7 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(ExpanderContentProperty, value);
         }
         public static readonly DependencyProperty ExpanderContentProperty =
-            DependencyProperty.Register("ExpanderContent", typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ExpanderContent), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
 
 
         public bool IsClickable
@@ -47,7 +49,7 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(IsClickableProperty, value);
         }
         public static readonly DependencyProperty IsClickableProperty =
-            DependencyProperty.Register("IsClickable", typeof(bool), typeof(ActionBlockControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsClickable), typeof(bool), typeof(ActionBlockControl), new PropertyMetadata(false));
 
 
         public IconElement Icon
@@ -56,25 +58,34 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(IconProperty, value);
         }
         public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(IconElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Icon), typeof(IconElement), typeof(ActionBlockControl), new PropertyMetadata(null));
 
 
-        public string Description
+        public string? Title
         {
-            get => (string)GetValue(DescriptionProperty);
+            get => (string?)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
+        }
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+
+
+        public string? Description
+        {
+            get => (string?)GetValue(DescriptionProperty);
             set => SetValue(DescriptionProperty, value);
         }
         public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register("Description", typeof(string), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Description), typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
 
 
-        public FrameworkElement AdditionalDescription
+        public FrameworkElement CustomDescription
         {
-            get => (FrameworkElement)GetValue(AdditionalDescriptionProperty);
-            set => SetValue(AdditionalDescriptionProperty, value);
+            get => (FrameworkElement)GetValue(CustomDescriptionProperty);
+            set => SetValue(CustomDescriptionProperty, value);
         }
-        public static readonly DependencyProperty AdditionalDescriptionProperty =
-            DependencyProperty.Register("AdditionalDescription", typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty CustomDescriptionProperty =
+            DependencyProperty.Register(nameof(CustomDescription), typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
 
 
         public FrameworkElement ActionElement
@@ -83,7 +94,7 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(ActionElementProperty, value);
         }
         public static readonly DependencyProperty ActionElementProperty =
-            DependencyProperty.Register("ActionElement", typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ActionElement), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
 
 
         public FrameworkElement AdditionalActionElement
@@ -92,7 +103,7 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(AdditionalActionElementProperty, value);
         }
         public static readonly DependencyProperty AdditionalActionElementProperty =
-            DependencyProperty.Register("AdditionalActionElement", typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(AdditionalActionElement), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
 
         private void Expander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
         {

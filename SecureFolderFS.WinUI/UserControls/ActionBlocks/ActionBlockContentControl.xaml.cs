@@ -4,6 +4,8 @@ using Microsoft.UI.Xaml.Controls;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+#nullable enable
+
 namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
 {
     public sealed partial class ActionBlockContentControl : UserControl
@@ -19,25 +21,34 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(IconProperty, value);
         }
         public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(IconElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Icon), typeof(IconElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
 
 
-        public string Description
+        public string? Title
         {
-            get => (string)GetValue(DescriptionProperty);
+            get => (string?)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
+        }
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+
+
+        public string? Description
+        {
+            get => (string?)GetValue(DescriptionProperty);
             set => SetValue(DescriptionProperty, value);
         }
         public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register("Description", typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Description), typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
 
 
-        public FrameworkElement AdditionalDescription
+        public FrameworkElement CustomDescription
         {
-            get => (FrameworkElement)GetValue(AdditionalDescriptionProperty);
-            set => SetValue(AdditionalDescriptionProperty, value);
+            get => (FrameworkElement)GetValue(CustomDescriptionProperty);
+            set => SetValue(CustomDescriptionProperty, value);
         }
-        public static readonly DependencyProperty AdditionalDescriptionProperty =
-            DependencyProperty.Register("AdditionalDescription", typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty CustomDescriptionProperty =
+            DependencyProperty.Register(nameof(CustomDescription), typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
 
 
         public FrameworkElement ActionElement
@@ -46,7 +57,7 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(ActionElementProperty, value);
         }
         public static readonly DependencyProperty ActionElementProperty =
-            DependencyProperty.Register("ActionElement", typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ActionElement), typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
 
 
         public FrameworkElement AdditionalActionElement
@@ -55,6 +66,6 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             set => SetValue(AdditionalActionElementProperty, value);
         }
         public static readonly DependencyProperty AdditionalActionElementProperty =
-            DependencyProperty.Register("AdditionalActionElement", typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(AdditionalActionElement), typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
     }
 }

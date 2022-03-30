@@ -14,33 +14,37 @@ namespace SecureFolderFS.Core.Paths.Receivers
 
         public TRequestedPath FromCiphertextPath<TRequestedPath>(string ciphertextPath) where TRequestedPath : IPath
         {
-            if (typeof(ICleartextPath).IsAssignableFrom(typeof(TRequestedPath)))
+            var requestedPathType = typeof(TRequestedPath);
+
+            if (typeof(ICleartextPath).IsAssignableFrom(requestedPathType))
             {
                 return (TRequestedPath)CleartextPathFromRawCiphertextPath(ciphertextPath);
             }
-            else if (typeof(ICiphertextPath).IsAssignableFrom(typeof(TRequestedPath)))
+            else if (typeof(ICiphertextPath).IsAssignableFrom(requestedPathType))
             {
                 return (TRequestedPath)CiphertextPathFromRawCiphertextPath(ciphertextPath);
             }
             else
             {
-                throw new ArgumentException($"Could not assign {typeof(TRequestedPath).Name} from ciphertext path.");
+                throw new ArgumentException($"Could not assign {requestedPathType.Name} from ciphertext path.");
             }
         }
 
         public TRequestedPath FromCleartextPath<TRequestedPath>(string cleartextPath) where TRequestedPath : IPath
         {
-            if (typeof(ICleartextPath).IsAssignableFrom(typeof(TRequestedPath)))
+            var requestedPathType = typeof(TRequestedPath);
+
+            if (typeof(ICleartextPath).IsAssignableFrom(requestedPathType))
             {
                 return (TRequestedPath)CleartextPathFromRawCleartextPath(cleartextPath);
             }
-            else if (typeof(ICiphertextPath).IsAssignableFrom(typeof(TRequestedPath)))
+            else if (typeof(ICiphertextPath).IsAssignableFrom(requestedPathType))
             {
                 return (TRequestedPath)CiphertextPathFromRawCleartextPath(cleartextPath);
             }
             else
             {
-                throw new ArgumentException($"Could not assign {typeof(TRequestedPath).Name} from cleartext path.");
+                throw new ArgumentException($"Could not assign {requestedPathType.Name} from cleartext path.");
             }
         }
 

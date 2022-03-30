@@ -39,19 +39,19 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        public void Receive(VaultWizardNavigationRequestedMessage message)
+        public async void Receive(VaultWizardNavigationRequestedMessage message)
         {
             if (message.Value is VaultWizardMainPageViewModel)
             {
-                Navigate(message.Value, new SuppressNavigationTransitionInfo());
+                await NavigateAsync(message.Value, new SuppressNavigationTransitionInfo());
             }
             else
             {
-                Navigate(message.Value, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+                await NavigateAsync(message.Value, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
             }
         }
 
-        private async void Navigate(BaseVaultWizardPageViewModel viewModel, NavigationTransitionInfo transition)
+        private async Task NavigateAsync(BaseVaultWizardPageViewModel viewModel, NavigationTransitionInfo transition)
         {
             switch (viewModel)
             {

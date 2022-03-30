@@ -1,9 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using SecureFolderFS.Backend.ViewModels;
+﻿using SecureFolderFS.Backend.ViewModels;
 
 namespace SecureFolderFS.Backend.Messages
 {
-    public sealed class VaultSerializationRequestedMessage : ValueChangedMessage<VaultViewModel>
+    public sealed class VaultSerializationRequestedMessage : ValueMessage<VaultViewModel>
     {
         public VaultSerializationRequestedMessage(VaultViewModel value)
             : base(value)

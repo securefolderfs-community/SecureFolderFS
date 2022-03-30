@@ -16,6 +16,11 @@
     mc:Ignorable="d">
 
     <StackPanel Spacing="8">
+
+        <StackPanel.BackgroundTransition>
+            <BrushTransition />
+        </StackPanel.BackgroundTransition>
+
         <TextBlock Text="{x:Bind ViewModel.ErrorText, Mode=OneWay}" TextWrapping="WrapWholeWords" />
         <TextBlock Text="After installation is completed, restart SecureFolderFS." TextWrapping="WrapWholeWords" />
     </StackPanel>

@@ -33,18 +33,21 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
             return SettingsSerializer.WriteToFile(jsonData);
         }
 
-        public virtual TValue? GetValue<TValue>(string key, TValue? defaultValue = default)
+        public virtual TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null)
         {
             var data = GetFreshSettings();
 
             if (data.TryGetValue(key, out var objVal))
             {
-                return GetValueFromObject<TValue>(objVal) ?? defaultValue;
+                return GetValueFromObject<TValue?>(objVal) ?? (defaultValue != null ? defaultValue() : default);
             }
             else
             {
-                SetValue(key, defaultValue);
-                return defaultValue;
+                var newValue = defaultValue != null ? defaultValue() : default;
+
+                SetValue<TValue?>(key, newValue);
+
+                return newValue;
             }
         }
 
@@ -117,7 +120,7 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
         {
             if (obj is JToken jToken)
             {
-                return jToken.ToObject<TValue>();
+                return jToken.ToObject<TValue?>();
             }
 
             return (TValue?)obj;

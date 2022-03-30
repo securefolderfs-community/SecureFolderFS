@@ -4,9 +4,12 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.WinUI.ServiceImplementation;
-using SecureFolderFS.WinUI.Windows;
+using SecureFolderFS.WinUI.WindowViews;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
+using SecureFolderFS.Backend.Services.Settings;
+using SecureFolderFS.WinUI.ServiceImplementation.Settings;
+using SecureFolderFS.WinUI.Serialization;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -66,13 +69,19 @@ namespace SecureFolderFS.WinUI
 
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>()
+                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
+                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
+                .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
+
+                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
                 .AddSingleton<IConfidentialStorageService, ConfidentialStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<ILocalizationService, LocalizationService>()
-                .AddSingleton<IFileExplorerService, FileExplorerService>();
-
+                .AddSingleton<IFileExplorerService, FileExplorerService>()
+                .AddSingleton<IClipboardService, ClipboardService>()
+                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>();
 
             return serviceCollection.BuildServiceProvider();
         }

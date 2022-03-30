@@ -25,7 +25,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
         public Dictionary<VaultIdModel, VaultModel> SavedVaultModels
         {
-            get => Get<List<KeyValuePair<VaultIdModel, VaultModel>>>(new())!.ToDictionary()!;
+            get => Get<List<KeyValuePair<VaultIdModel, VaultModel>>>(() => new())!.ToDictionary()!;
             set => Set<List<KeyValuePair<VaultIdModel, VaultModel>>>(value.ToList());
         }
     }

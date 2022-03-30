@@ -4,7 +4,7 @@
     {
         public T Value { get; }
 
-        public ValueMessage(T value)
+        protected ValueMessage(T value)
         {
             this.Value = value;
         }

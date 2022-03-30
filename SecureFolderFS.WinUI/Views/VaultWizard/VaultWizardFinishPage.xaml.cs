@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.WinUI.Helpers;
-using SecureFolderFS.WinUI.Windows;
+using SecureFolderFS.WinUI.WindowViews;
 using System;
 using System.Threading.Tasks;
 

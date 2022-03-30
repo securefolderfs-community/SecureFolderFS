@@ -8,7 +8,7 @@ using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 using SecureFolderFS.WinUI.Dialogs;
-using SecureFolderFS.WinUI.Windows;
+using SecureFolderFS.WinUI.WindowViews;
 
 #nullable enable
 

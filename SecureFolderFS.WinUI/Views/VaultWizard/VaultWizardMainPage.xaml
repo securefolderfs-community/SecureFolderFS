@@ -5,44 +5,34 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.VaultWizard"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
+    xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     Width="464"
     mc:Ignorable="d">
 
     <StackPanel HorizontalAlignment="Stretch" Spacing="8">
-        <uc:ActionBlockControl
-            ButtonCommand="{x:Bind ViewModel.AddExistingVaultCommand}"
-            Description="Add existing vault"
+        <ucab:ActionBlockControl
+            Title="Add existing vault"
+            ClickCommand="{x:Bind ViewModel.AddExistingVaultCommand}"
+            Description="Select an existing vault from your device"
             IsClickable="True">
-            <uc:ActionBlockControl.AdditionalDescription>
-                <TextBlock
-                    FontSize="14"
-                    Opacity="0.8"
-                    Text="Select an existing vault from your device" />
-            </uc:ActionBlockControl.AdditionalDescription>
-            <uc:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xED25;" />
-            </uc:ActionBlockControl.Icon>
-            <uc:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
                 <FontIcon FontSize="14" Glyph="&#xE76C;" />
-            </uc:ActionBlockControl.ActionElement>
-        </uc:ActionBlockControl>
-        <uc:ActionBlockControl
-            ButtonCommand="{x:Bind ViewModel.CreateNewVaultCommand}"
-            Description="Create new vault"
+            </ucab:ActionBlockControl.ActionElement>
+        </ucab:ActionBlockControl>
+        <ucab:ActionBlockControl
+            Title="Create new vault"
+            ClickCommand="{x:Bind ViewModel.CreateNewVaultCommand}"
+            Description="Create new SecureFolderFS vault"
             IsClickable="True">
-            <uc:ActionBlockControl.AdditionalDescription>
-                <TextBlock
-                    FontSize="14"
-                    Opacity="0.8"
-                    Text="Create new SecureFolderFS vault" />
-            </uc:ActionBlockControl.AdditionalDescription>
-            <uc:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE710;" />
-            </uc:ActionBlockControl.Icon>
-            <uc:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
                 <FontIcon FontSize="14" Glyph="&#xE76C;" />
-            </uc:ActionBlockControl.ActionElement>
-        </uc:ActionBlockControl>
+            </ucab:ActionBlockControl.ActionElement>
+        </ucab:ActionBlockControl>
     </StackPanel>
 </Page>

@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using SecureFolderFS.Backend.Enums;
+﻿using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
@@ -8,7 +7,7 @@ using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
 namespace SecureFolderFS.Backend.Messages
 {
-    public sealed class DashboardNavigationRequestedMessage : ValueChangedMessage<BaseDashboardPageViewModel?>
+    public sealed class DashboardNavigationRequestedMessage : ValueMessage<BaseDashboardPageViewModel?>
     {
         public TransitionModel? Transition { get; init; }
 

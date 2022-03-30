@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,18 +16,22 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
         {
         }
 
-        public override TValue? GetValue<TValue>(string key, TValue? defaultValue = default) where TValue : default
+        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null)
+            where TValue : default
         {
             _settingsCache ??= GetFreshSettings();
 
             if (_settingsCache.TryGetValue(key, out var objVal))
             {
-                return GetValueFromObject<TValue>(objVal) ?? defaultValue;
+                return GetValueFromObject<TValue?>(objVal) ?? (defaultValue != null ? defaultValue() : default);
             }
             else
             {
-                base.SetValue(key, defaultValue);
-                return defaultValue;
+                var newValue = defaultValue != null ? defaultValue() : default;
+
+                base.SetValue<TValue?>(key, newValue);
+
+                return newValue;
             }
         }
 

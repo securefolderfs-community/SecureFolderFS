@@ -1,7 +1,17 @@
-﻿namespace SecureFolderFS.Backend.Services
+﻿using SecureFolderFS.Backend.Models;
+
+namespace SecureFolderFS.Backend.Services
 {
     public interface ILocalizationService
     {
-        string GetResource(string resourceKey);
+        AppLanguageModel CurrentAppLanguage { get; }
+
+        string? LocalizeFromResourceKey(string resourceKey);
+
+        AppLanguageModel? GetActiveLanguage();
+
+        void SetActiveLanguage(AppLanguageModel language);
+
+        IEnumerable<AppLanguageModel> GetLanguages();
     }
 }

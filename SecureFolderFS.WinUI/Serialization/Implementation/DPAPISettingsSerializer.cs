@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
 
             using var fileStream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
 
-            var buffer = Encoding.UTF8.GetBytes(text);
+            var buffer = Encoding.UTF8.GetBytes(text ?? string.Empty);
 
             _ = EncryptDataToStream(fileStream, buffer, DataProtectionScope.CurrentUser);
 
@@ -45,7 +45,7 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
             return ProtectedData.Unprotect(readBuffer, null, scope);
         }
 
-        private long EncryptDataToStream(Stream stream, byte[] buffer, DataProtectionScope scope)
+        private static long EncryptDataToStream(Stream stream, byte[] buffer, DataProtectionScope scope)
         {
             var encryptedBuffer = ProtectedData.Protect(buffer, null, scope);
 

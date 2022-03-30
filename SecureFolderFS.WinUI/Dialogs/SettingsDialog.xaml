@@ -5,10 +5,89 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    SecondaryButtonText="Cancel"
+    Loaded="SettingsDialog_Loaded"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
-    <TextBlock Text="Coming soon" />
+    <ContentDialog.Resources>
+        <ResourceDictionary>
+            <x:Double x:Key="ContentDialogMaxWidth">1300</x:Double>
+        </ResourceDictionary>
+    </ContentDialog.Resources>
+
+    <Grid
+        Height="500"
+        Margin="-24"
+        Background="{ThemeResource ContentDialogBackground}">
+
+        <Grid.BackgroundTransition>
+            <BrushTransition />
+        </Grid.BackgroundTransition>
+
+        <NavigationView
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="False"
+            PaneDisplayMode="Top"
+            SelectionChanged="NavigationView_SelectionChanged">
+            <NavigationView.MenuItems>
+                <!--  General  -->
+                <NavigationViewItem
+                    AutomationProperties.Name="General"
+                    Content="General"
+                    IsSelected="True"
+                    Tag="0">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE12A;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <!--  Preferences  -->
+                <NavigationViewItem
+                    AutomationProperties.Name="Preferences"
+                    Content="Preferences"
+                    Tag="1">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xF116;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <!--  Security  -->
+                <NavigationViewItem
+                    AutomationProperties.Name="Security"
+                    Content="Security"
+                    Tag="2">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEA18;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <!--  About  -->
+                <NavigationViewItem
+                    Margin="0,0,45,0"
+                    Content="About"
+                    Tag="3">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <!--  Display frame  -->
+            <ScrollViewer Width="644">
+                <Frame x:Name="ContentFrame" />
+            </ScrollViewer>
+        </NavigationView>
+
+        <Button
+            Width="34"
+            Height="34"
+            Margin="0,8,8,0"
+            Padding="0"
+            BorderThickness="0"
+            Background="Transparent"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Click="CloseButton_Click"
+            CornerRadius="20">
+            <FontIcon FontSize="10" Glyph="&#xE8BB;" />
+        </Button>
+    </Grid>
 
 </ContentDialog>

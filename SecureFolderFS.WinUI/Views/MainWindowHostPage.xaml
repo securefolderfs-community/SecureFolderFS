@@ -119,7 +119,6 @@
                             Background="Transparent"
                             BorderThickness="0"
                             Command="{x:Bind ViewModel.SidebarViewModel.OpenSettingsCommand}"
-                            IsEnabled="False"
                             Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                             <AnimatedIcon>
                                 <AnimatedIcon.Source>
@@ -158,7 +157,8 @@
                                         Grid.Row="0"
                                         Grid.Column="0"
                                         FontWeight="SemiBold"
-                                        Text="{x:Bind VaultName, Mode=OneWay}" />
+                                        Text="{x:Bind VaultName, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis" />
 
                                     <!--  Last opened  -->
                                     <TextBlock

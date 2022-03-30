@@ -1,9 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using SecureFolderFS.Backend.Models;
+﻿using SecureFolderFS.Backend.Models;
 
 namespace SecureFolderFS.Backend.Messages
 {
-    public sealed class RemoveVaultRequestedMessage : ValueChangedMessage<VaultIdModel>
+    public sealed class RemoveVaultRequestedMessage : ValueMessage<VaultIdModel>
     {
         public RemoveVaultRequestedMessage(VaultIdModel value)
             : base(value)

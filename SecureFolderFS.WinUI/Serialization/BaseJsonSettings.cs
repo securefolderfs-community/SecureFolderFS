@@ -75,14 +75,14 @@ namespace SecureFolderFS.WinUI.Serialization
             IsAvailable = SettingsSerializer?.CreateFile(filePath) ?? false;
         }
 
-        protected virtual TValue? Get<TValue>(TValue? defaultValue, [CallerMemberName] string propertyName = "")
+        protected virtual TValue? Get<TValue>(Func<TValue?>? defaultValue, [CallerMemberName] string propertyName = "")
         {
             if (string.IsNullOrEmpty(propertyName))
             {
-                return defaultValue;
+                return defaultValue != null ? defaultValue() : default;
             }
 
-            return JsonSettingsDatabase == null ? defaultValue : JsonSettingsDatabase.GetValue(propertyName, defaultValue) ?? defaultValue;
+            return JsonSettingsDatabase == null ? (defaultValue != null ? defaultValue() : default) : (JsonSettingsDatabase.GetValue(propertyName, defaultValue) ?? (defaultValue != null ? defaultValue() : default));
         }
 
         protected virtual bool Set<TValue>(TValue? value, [CallerMemberName] string propertyName = "")
