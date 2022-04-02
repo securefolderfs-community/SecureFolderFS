@@ -95,7 +95,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.SettingsDialog
             {
                 IsUpdateSupported = false;
                 VersionInfoBar.IsOpen = true;
-                VersionInfoBar.MessageText = "Updates are not supported for sideloaded version.";
+                VersionInfoBar.MessageText = "Updates are not supported for the sideloaded version.";
                 VersionInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
                 VersionInfoBar.CanBeClosed = false;
             }
