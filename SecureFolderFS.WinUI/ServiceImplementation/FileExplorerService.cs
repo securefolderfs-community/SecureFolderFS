@@ -44,6 +44,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance!.Hwnd);
 
+            folderPicker.FileTypeFilter.Add("*");
+
             var folder = await folderPicker.PickSingleFolderAsync();
 
             return folder?.Path;
