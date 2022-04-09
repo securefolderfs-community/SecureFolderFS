@@ -122,33 +122,31 @@
 
             <!--  Vault options  -->
             <StackPanel Grid.Row="3" Spacing="4">
-
                 <!--  Open in File Explorer  -->
-                <ucab:ActionBlockControl Title="Open vault" Description="Show this vault in File Explorer">
+                <ucab:ActionBlockControl
+                    Title="View vault"
+                    ClickCommand="{x:Bind ViewModel.ShowInFileExplorerCommand}"
+                    Description="Show this vault in File Explorer"
+                    IsClickable="True">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xEC50;" />
                     </ucab:ActionBlockControl.Icon>
                     <ucab:ActionBlockControl.ActionElement>
-                        <Button
-                            Width="32"
-                            Height="32"
-                            Padding="0"
-                            Command="{x:Bind ViewModel.ShowInFileExplorerCommand}">
-                            <FontIcon FontSize="14" Glyph="&#xE2B4;" />
-                        </Button>
+                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                     </ucab:ActionBlockControl.ActionElement>
                 </ucab:ActionBlockControl>
 
                 <!--  Lock vault  -->
-                <ucab:ActionBlockControl Title="Lock vault" Description="Securely lock this vault and close the dashboard">
+                <ucab:ActionBlockControl
+                    Title="Lock vault"
+                    ClickCommand="{x:Bind ViewModel.LockVaultCommand}"
+                    Description="Securely lock this vault and close the dashboard"
+                    IsClickable="True">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE72E;" />
                     </ucab:ActionBlockControl.Icon>
                     <ucab:ActionBlockControl.ActionElement>
-                        <Button
-                            Padding="48,6"
-                            Command="{x:Bind ViewModel.LockVaultCommand}"
-                            Content="Lock" />
+                        <Grid />
                     </ucab:ActionBlockControl.ActionElement>
                 </ucab:ActionBlockControl>
 
@@ -158,7 +156,7 @@
                     ClickCommand="{x:Bind ViewModel.OpenVaultPropertiesCommand}"
                     Description="View information about this vault"
                     IsClickable="True"
-                    IsEnabled="False">
+                    IsEnabled="True">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </ucab:ActionBlockControl.Icon>

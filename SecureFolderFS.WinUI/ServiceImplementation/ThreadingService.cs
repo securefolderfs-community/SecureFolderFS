@@ -19,5 +19,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         {
             return _dispatcherQueue.EnqueueAsync(action);
         }
+
+        public Task<TResult?> ExecuteOnUiThreadAsync<TResult>(Func<TResult?> func)
+        {
+            return _dispatcherQueue.EnqueueAsync<TResult?>(func);
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace SecureFolderFS.WinUI.ValueConverters
 
             if (parameter is string strParam)
             {
+                // enumValue-convertedValue: 0-1,1-2
                 var enumConversionValues = strParam.Split(',').ToDictionary(k => System.Convert.ToInt32(k.Split('-')[0]), v => System.Convert.ToInt32(v.Split('-')[1]));
                 
                 if (enumConversionValues.TryGetValue((int)value, out var convertedValue))
@@ -21,13 +22,17 @@ namespace SecureFolderFS.WinUI.ValueConverters
                 // else.. use value from the cast above
             }
 
-            var returnEnum = Enum.Parse(targetType, Enum.GetName(targetType, enumValue));
-            return returnEnum;
+            if (Enum.GetName(targetType, enumValue) is string enumName)
+            {
+                return Enum.Parse(targetType, enumName);
+            }
+
+            return enumValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return Convert(value, targetType, parameter, language);
         }
     }
 }

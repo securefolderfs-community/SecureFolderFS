@@ -8,6 +8,6 @@
     mc:Ignorable="d">
 
     <Grid>
-        <TextBlock Text="VaultDashboard Properties" />
+        <TextBlock HorizontalAlignment="Center" Text="Coming soon" />
     </Grid>
 </Page>
