@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SecureFolderFS.Core.Streams
+namespace SecureFolderFS.Sdk.Streams
 {
     public interface IBaseFileStream : IDisposable
     {

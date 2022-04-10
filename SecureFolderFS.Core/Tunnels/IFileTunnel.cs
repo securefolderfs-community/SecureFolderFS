@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Streams;
+﻿using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Tunnels
 {

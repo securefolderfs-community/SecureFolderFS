@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Sdk.Streams;
 using SecureFolderFS.Core.Streams.InternalStreams;
+using SecureFolderFS.Core.Streams;
 
 namespace SecureFolderFS.Core.Extensions
 {

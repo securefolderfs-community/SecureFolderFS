@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Management
 {

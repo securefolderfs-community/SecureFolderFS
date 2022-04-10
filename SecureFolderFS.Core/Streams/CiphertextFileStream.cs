@@ -2,6 +2,7 @@
 using Microsoft.Win32.SafeHandles;
 using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams.InternalStreams;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Implementation
 {

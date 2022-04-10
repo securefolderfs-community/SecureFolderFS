@@ -12,6 +12,7 @@ using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Implementation
 {

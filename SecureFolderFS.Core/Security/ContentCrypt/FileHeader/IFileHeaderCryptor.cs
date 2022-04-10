@@ -1,6 +1,6 @@
 ﻿using System;
 using SecureFolderFS.Core.FileHeaders;
-using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 {

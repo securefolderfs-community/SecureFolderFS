@@ -6,6 +6,7 @@ using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.Streams.Receiver;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Tunnels.Implementation
 {

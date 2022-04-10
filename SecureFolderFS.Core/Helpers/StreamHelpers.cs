@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Sdk.Streams;
 using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.Helpers

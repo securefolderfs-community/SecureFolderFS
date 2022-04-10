@@ -4,9 +4,10 @@ using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Sdk.Paths;
-using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Sdk.Streams;
 using SecureFolderFS.Core.Streams.Management;
 using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Core.Streams;
 
 namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 {
