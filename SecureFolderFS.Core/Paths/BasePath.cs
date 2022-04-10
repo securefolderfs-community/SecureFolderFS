@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Core.Paths.Implementation
+﻿using SecureFolderFS.Sdk.Paths;
+
+namespace SecureFolderFS.Core.Paths
 {
     internal abstract class BasePath : IPath
     {

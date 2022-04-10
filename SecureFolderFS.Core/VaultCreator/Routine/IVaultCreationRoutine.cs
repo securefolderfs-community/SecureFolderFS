@@ -1,11 +1,12 @@
 ﻿using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.PasswordRequest;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
 using SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration;
 using SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration;
 using System;
+using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine
 {

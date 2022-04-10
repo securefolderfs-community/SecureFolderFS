@@ -8,7 +8,7 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Extensions;

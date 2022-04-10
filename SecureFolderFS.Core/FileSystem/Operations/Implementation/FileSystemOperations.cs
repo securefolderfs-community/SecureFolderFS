@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 
 namespace SecureFolderFS.Core.FileSystem.Operations.Implementation

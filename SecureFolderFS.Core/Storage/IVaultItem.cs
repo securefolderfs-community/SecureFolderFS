@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Storage
 {

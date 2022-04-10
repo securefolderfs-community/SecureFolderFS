@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.UnsafeNative;

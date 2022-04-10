@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using SecureFolderFS.Core.Paths.Implementation;
+using SecureFolderFS.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Paths.Receivers
 {

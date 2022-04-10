@@ -1,10 +1,9 @@
 ﻿using System;
-using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Core.Tunnels;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
+using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.Instance
 {

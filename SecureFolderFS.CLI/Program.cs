@@ -2,8 +2,9 @@
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Instance;
 using SecureFolderFS.Core.PasswordRequest;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.CLI
 {

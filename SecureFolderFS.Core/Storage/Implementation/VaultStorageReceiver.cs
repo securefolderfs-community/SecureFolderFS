@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Paths;
+﻿using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.FileSystem.Operations;
 

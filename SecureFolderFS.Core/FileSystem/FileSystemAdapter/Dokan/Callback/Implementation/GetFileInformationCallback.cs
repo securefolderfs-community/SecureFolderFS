@@ -4,6 +4,7 @@ using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.Security.ContentCrypt;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using Microsoft.Win32.SafeHandles;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams.InternalStreams;
 
 namespace SecureFolderFS.Core.Streams.Implementation

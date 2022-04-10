@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.Streams.Management;
 using SecureFolderFS.Core.Extensions;
