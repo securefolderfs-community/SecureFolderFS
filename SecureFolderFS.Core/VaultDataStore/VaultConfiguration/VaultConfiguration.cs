@@ -2,7 +2,7 @@
 using System.Linq;
 using System.IO;
 using Newtonsoft.Json;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.Security.KeyCrypt;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Enums;

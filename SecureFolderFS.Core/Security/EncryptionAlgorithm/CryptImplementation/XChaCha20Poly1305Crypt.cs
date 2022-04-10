@@ -1,6 +1,6 @@
 ﻿using System;
 using NSec.Cryptography;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
 {

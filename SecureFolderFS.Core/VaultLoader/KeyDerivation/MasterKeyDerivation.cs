@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
 using SecureFolderFS.Core.PasswordRequest;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.Security.KeyCrypt;
 using SecureFolderFS.Core.Exceptions;
 

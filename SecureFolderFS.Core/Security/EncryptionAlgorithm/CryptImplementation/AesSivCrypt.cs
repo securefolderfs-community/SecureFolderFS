@@ -1,6 +1,6 @@
 ﻿using System;
 using Miscreant;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
 {

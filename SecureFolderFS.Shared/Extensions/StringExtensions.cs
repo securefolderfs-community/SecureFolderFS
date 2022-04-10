@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.Backend.Extensions
+﻿namespace SecureFolderFS.Shared.Extensions
 {
     public static class StringExtensions
     {

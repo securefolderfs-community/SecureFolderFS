@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Extensions;
+﻿using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.FileHeaders
 {

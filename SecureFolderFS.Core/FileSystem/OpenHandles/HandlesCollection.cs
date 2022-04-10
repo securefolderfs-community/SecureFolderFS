@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Storage;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {

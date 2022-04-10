@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Backend.Extensions;
+﻿using SecureFolderFS.Shared.Extensions;
 
 #nullable enable
 

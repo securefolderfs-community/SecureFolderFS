@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Enums;
-using SecureFolderFS.Backend.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Backend.Models
 {

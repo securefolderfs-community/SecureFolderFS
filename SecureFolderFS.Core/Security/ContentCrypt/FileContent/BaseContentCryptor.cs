@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using SecureFolderFS.Core.Chunks;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Security.KeyCrypt;
