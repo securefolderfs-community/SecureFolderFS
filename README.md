@@ -23,6 +23,7 @@ Check out our [wiki](https://github.com/securefolderfs-community/SecureFolderFS/
 - Visual Studio 2022 with the following components:
     - .NET desktop development 
     - Universal Windows Platform development with Windows 11 SDK (10.0.22000.0) and C++ (v143)
+    - [Single-project MSIX Packaging Tools (VS2022)](https://marketplace.visualstudio.com/items?itemName=ProjectReunion.MicrosoftSingleProjectMSIXPackagingToolsDev17)
 
 ### Building the project
 
