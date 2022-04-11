@@ -13,5 +13,13 @@ namespace SecureFolderFS.Shared.Extensions
 
             list.Add(item);
         }
+
+        public static void EnumeratedAdd<T>(this ICollection<T> collection, IEnumerable<T> source)
+        {
+            foreach (var item in source)
+            {
+                collection.Add(item);
+            }
+        }
     }
 }

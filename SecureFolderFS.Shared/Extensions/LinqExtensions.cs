@@ -17,14 +17,6 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static void EnumeratedAdd<T>(this ICollection<T> collection, IEnumerable<T> source)
-        {
-            foreach (var item in source)
-            {
-                collection.Add(item);
-            }
-        }
-
         public static IEnumerable<T> AtLeast<T>(this IEnumerable<T> enumerable, T item)
         {
             if (enumerable.IsEmpty())
