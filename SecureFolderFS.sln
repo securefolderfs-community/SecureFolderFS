@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.CLI", "SecureFolderFS.CLI\SecureFolderFS.CLI.csproj", "{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SecureFolderFS.UI", "SecureFolderFS.UI", "{66BC1E2B-D99A-49E2-8B8F-EF7851493CB0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.WinUI", "SecureFolderFS.WinUI\SecureFolderFS.WinUI.csproj", "{CF1D02FA-B9CF-4920-884B-4D30545BC2F3}"
@@ -15,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core", "Secu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SecureFolderFS.API", "SecureFolderFS.API", "{DA5AA2CC-F4FE-4C7F-B751-F4E6E50B78B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Shared", "SecureFolderFS.Shared\SecureFolderFS.Shared.csproj", "{AD6D47C4-FCEE-4638-B667-403DD16E5824}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Shared", "SecureFolderFS.Shared\SecureFolderFS.Shared.csproj", "{AD6D47C4-FCEE-4638-B667-403DD16E5824}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Sdk", "SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj", "{5150D6BC-F66C-4F83-9756-CB334B68C447}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Sdk", "SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj", "{5150D6BC-F66C-4F83-9756-CB334B68C447}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,22 +29,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Debug|arm64.Build.0 = Debug|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Debug|x64.ActiveCfg = Debug|x64
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Debug|x64.Build.0 = Debug|x64
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Debug|x86.Build.0 = Debug|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Release|arm64.ActiveCfg = Release|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Release|arm64.Build.0 = Release|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Release|x64.ActiveCfg = Release|x64
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Release|x64.Build.0 = Release|x64
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Release|x86.ActiveCfg = Release|Any CPU
-		{8C21AC3E-EC01-43AE-B215-BD3E5932E73F}.Release|x86.Build.0 = Release|Any CPU
 		{CF1D02FA-B9CF-4920-884B-4D30545BC2F3}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{CF1D02FA-B9CF-4920-884B-4D30545BC2F3}.Debug|Any CPU.Build.0 = Debug|x64
 		{CF1D02FA-B9CF-4920-884B-4D30545BC2F3}.Debug|Any CPU.Deploy.0 = Debug|x64

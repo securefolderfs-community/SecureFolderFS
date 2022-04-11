@@ -24,7 +24,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             {
                 if (SetProperty(ref _PathSourceText, value))
                 {
-                    DialogViewModel.IsPrimaryButtonEnabled = CheckAvailability(value);
+                    DialogViewModel.PrimaryButtonEnabled = CheckAvailability(value);
                 }
             }
         }

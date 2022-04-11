@@ -97,32 +97,28 @@
                     </StackPanel>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="Privacy policy" Description="View the privacy policy statement">
+            <ucab:ActionBlockControl
+                Title="Privacy policy"
+                ClickCommand="{x:Bind ViewModel.OpenPrivacyPolicyCommand}"
+                Description="View the privacy policy statement"
+                IsClickable="True">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xEA18;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <Button
-                        Width="32"
-                        Height="32"
-                        Padding="0"
-                        Command="{x:Bind ViewModel.OpenPrivacyPolicyCommand}">
-                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
-                    </Button>
+                    <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="View log location" Description="Opens file explorer where log file is located">
+            <ucab:ActionBlockControl
+                Title="Open log location"
+                ClickCommand="{x:Bind ViewModel.OpenLogLocationCommand}"
+                Description="Launches file explorer where log file is located"
+                IsClickable="True">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE838;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <Button
-                        Width="32"
-                        Height="32"
-                        Padding="0"
-                        Command="{x:Bind ViewModel.OpenLogLocationCommand}">
-                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
-                    </Button>
+                    <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>

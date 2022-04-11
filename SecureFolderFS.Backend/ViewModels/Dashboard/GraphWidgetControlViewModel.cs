@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Backend.Models;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Dashboard
 {
     public sealed class GraphWidgetControlViewModel : ObservableObject

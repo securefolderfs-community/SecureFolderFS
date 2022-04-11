@@ -6,8 +6,6 @@ using SecureFolderFS.Backend.ViewModels.Dialogs;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.VaultCreator.Routine;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
     public sealed class ChooseEncryptionPageViewModel : BaseVaultWizardPageViewModel
@@ -34,7 +32,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             this._step9 = step9;
             base.CanGoBack = false;
 
-            DialogViewModel.IsPrimaryButtonEnabled = true;
+            DialogViewModel.PrimaryButtonEnabled = true;
             DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
         }
 

@@ -16,7 +16,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             this.VaultName = DialogViewModel.VaultViewModel!.VaultName;
             base.CanGoBack = false;
 
-            DialogViewModel.IsPrimaryButtonEnabled = true;
+            DialogViewModel.PrimaryButtonEnabled = true;
             DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(_ => { }); // Override the previous action
 
             WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(DialogViewModel.VaultViewModel));

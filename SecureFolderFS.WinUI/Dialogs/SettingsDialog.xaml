@@ -80,10 +80,10 @@
             Height="34"
             Margin="0,8,8,0"
             Padding="0"
-            BorderThickness="0"
-            Background="Transparent"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
+            Background="Transparent"
+            BorderThickness="0"
             Click="CloseButton_Click"
             CornerRadius="20">
             <FontIcon FontSize="10" Glyph="&#xE8BB;" />

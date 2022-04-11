@@ -42,7 +42,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             }
 
             // Always false since passwords are not preserved
-            ViewModel.DialogViewModel.IsPrimaryButtonEnabled = false;
+            ViewModel.DialogViewModel.PrimaryButtonEnabled = false;
             ClearPasswords();
 
             base.OnNavigatedTo(e);
@@ -81,7 +81,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
                 return;
             }
 
-            ViewModel.DialogViewModel.IsPrimaryButtonEnabled = CanContinue();
+            ViewModel.DialogViewModel.PrimaryButtonEnabled = CanContinue();
         }
 
         private void SecondPassword_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -91,7 +91,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
                 return;
             }
 
-            ViewModel.DialogViewModel.IsPrimaryButtonEnabled = CanContinue();
+            ViewModel.DialogViewModel.PrimaryButtonEnabled = CanContinue();
         }
 
         public void Dispose()

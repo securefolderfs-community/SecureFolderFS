@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
+    NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -146,7 +147,7 @@
                         <FontIcon Glyph="&#xE72E;" />
                     </ucab:ActionBlockControl.Icon>
                     <ucab:ActionBlockControl.ActionElement>
-                        <Grid />
+                        <FontIcon FontSize="14" Glyph="&#xE7E8;" />
                     </ucab:ActionBlockControl.ActionElement>
                 </ucab:ActionBlockControl>
 
@@ -155,8 +156,7 @@
                     Title="Vault properties"
                     ClickCommand="{x:Bind ViewModel.OpenVaultPropertiesCommand}"
                     Description="View information about this vault"
-                    IsClickable="True"
-                    IsEnabled="True">
+                    IsClickable="True">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </ucab:ActionBlockControl.Icon>

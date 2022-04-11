@@ -24,5 +24,26 @@ namespace SecureFolderFS.Shared.Extensions
                 collection.Add(item);
             }
         }
+
+        public static IEnumerable<T> AtLeast<T>(this IEnumerable<T> enumerable, T item)
+        {
+            if (enumerable.IsEmpty())
+            {
+                return enumerable.Append(item);
+            }
+
+            return enumerable;
+        }
+
+        public static IEnumerable<T> With<T>(this IEnumerable<T> enumerable, T item)
+            where T : notnull
+        {
+            if (enumerable.Contains(item))
+            {
+                return enumerable.Where(x => !x.Equals(item)).Append(item);
+            }
+
+            return enumerable.Append(item);
+        }
     }
 }
