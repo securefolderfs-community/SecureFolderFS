@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Backend.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.ViewModels.Dialogs;

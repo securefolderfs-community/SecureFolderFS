@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Core.Paths.Implementation
+﻿using SecureFolderFS.Sdk.Paths;
+
+namespace SecureFolderFS.Core.Paths
 {
     internal sealed class CiphertextPath : BasePath, ICiphertextPath
     {

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Storage.Implementation
 {

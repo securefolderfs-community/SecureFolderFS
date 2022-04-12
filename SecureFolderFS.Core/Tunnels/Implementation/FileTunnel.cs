@@ -3,9 +3,10 @@ using System.IO;
 using System.Linq;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.Streams.Receiver;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Tunnels.Implementation
 {

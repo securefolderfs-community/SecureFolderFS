@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.Tracking;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.IO;
 

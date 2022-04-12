@@ -5,9 +5,10 @@ using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Implementation;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Receiver
 {

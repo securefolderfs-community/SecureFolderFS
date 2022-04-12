@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Core.Streams
+﻿using System.IO;
+
+namespace SecureFolderFS.Sdk.Streams
 {
     public interface ICleartextFileStream : IBaseFileStream
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.SecureStore
 {

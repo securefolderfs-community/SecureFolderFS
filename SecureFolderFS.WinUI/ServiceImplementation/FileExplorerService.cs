@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using Windows.System;
-using SecureFolderFS.Backend.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.WinUI.WindowViews;
 

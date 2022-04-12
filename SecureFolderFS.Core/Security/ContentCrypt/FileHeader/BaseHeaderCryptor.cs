@@ -4,7 +4,7 @@ using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Security.KeyCrypt;
-using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 {

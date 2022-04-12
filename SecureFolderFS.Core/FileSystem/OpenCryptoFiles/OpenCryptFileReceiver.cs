@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
 

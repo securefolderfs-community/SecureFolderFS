@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Backend.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Messages;
 
 #nullable enable

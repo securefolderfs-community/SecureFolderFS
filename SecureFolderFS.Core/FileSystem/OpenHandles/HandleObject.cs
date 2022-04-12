@@ -1,5 +1,5 @@
 ﻿using System;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {

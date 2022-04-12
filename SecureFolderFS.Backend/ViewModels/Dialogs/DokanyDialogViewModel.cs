@@ -1,13 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Backend.Services;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Dialogs
 {
-    public sealed class DokanyDialogViewModel : ObservableObject
+    public sealed class DokanyDialogViewModel : BaseDialogViewModel
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
@@ -18,22 +15,18 @@ namespace SecureFolderFS.Backend.ViewModels.Dialogs
             set => SetProperty(ref _ErrorText, value);
         }
 
-        public IAsyncRelayCommand OpenInstallationWebsiteCommand { get; }
-
-        public IRelayCommand CloseApplicationCommand { get; }
-
         public DokanyDialogViewModel()
         {
-            OpenInstallationWebsiteCommand = new AsyncRelayCommand(OpenInstallationWebsite);
-            CloseApplicationCommand = new RelayCommand(CloseApplication);
+            PrimaryButtonClickCommand = new AsyncRelayCommand(PrimaryButtonClick);
+            SecondaryButtonClickCommand = new RelayCommand(SecondaryButtonClick);
         }
 
-        private async Task OpenInstallationWebsite()
+        private async Task PrimaryButtonClick()
         {
             await ApplicationService.OpenUriAsync(new Uri("https://github.com/dokan-dev/dokany/releases/tag/v1.5.1.1000"));
         }
 
-        private void CloseApplication()
+        private void SecondaryButtonClick()
         {
             ApplicationService.CloseApplication();
         }

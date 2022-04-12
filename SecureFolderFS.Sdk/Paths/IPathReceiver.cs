@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SecureFolderFS.Core.Paths
+namespace SecureFolderFS.Sdk.Paths
 {
-    /// <summary>
+/// <summary>
     /// Provides module for handling SecureFolderFS paths.
     /// <br/>
     /// <br/>
@@ -18,9 +18,19 @@ namespace SecureFolderFS.Core.Paths
         /// <returns>Requested <typeparamref name="TRequestedPath"/>.</returns>
         TRequestedPath FromCiphertextPath<TRequestedPath>(string ciphertextPath) where TRequestedPath : IPath;
 
-        string GetCleartextFileName(string ciphertextFilePath); // TODO: An interface here? return- ICleartextFileName, param- ICiphertextFileNameFromRoot : ICiphertextFileName
+        /// <summary>
+        /// Gets active cleartext file name from provided ciphertext path.
+        /// </summary>
+        /// <param name="ciphertextFilePath">The path.</param>
+        /// <returns></returns>
+        string GetCleartextFileName(string ciphertextFilePath); // TODO: Refactor // TODO: An interface here? return- ICleartextFileName, param- ICiphertextFileNameFromRoot : ICiphertextFileName
 
-        string GetCiphertextFileName(string cleartextFilePath);
+        /// <summary>
+        /// Gets active ciphertext file name from provided cleartext path.
+        /// </summary>
+        /// <param name="cleartextFilePath">The path.</param>
+        /// <returns></returns>
+        string GetCiphertextFileName(string cleartextFilePath); // TODO: Refactor
 
         /// <summary>
         /// Converts provided <paramref name="ciphertextPath"/> to <see cref="ICleartextPath"/>.

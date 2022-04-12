@@ -4,8 +4,9 @@ using System.IO;
 using System.Diagnostics;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Exceptions;
+using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {

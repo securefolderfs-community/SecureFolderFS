@@ -3,7 +3,7 @@ using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm;
 using SecureFolderFS.Core.Security.KeyCrypt;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.Exceptions;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader

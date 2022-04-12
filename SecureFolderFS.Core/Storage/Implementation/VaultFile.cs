@@ -3,8 +3,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths;
-using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Sdk.Streams;
 using SecureFolderFS.Core.Streams.Receiver;
 
 namespace SecureFolderFS.Core.Storage.Implementation

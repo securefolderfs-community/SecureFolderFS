@@ -1,19 +1,33 @@
-﻿#nullable enable
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace SecureFolderFS.Backend.Extensions
+namespace SecureFolderFS.Shared.Extensions
 {
-    public static class LinqExtensions
+    public static class DictionaryExtensions
     {
-        public static bool IsEmpty<T>(this IEnumerable<T>? enumerable) => enumerable == null || !enumerable.Any();
-
-        public static void DisposeCollection<T>(this IEnumerable<T> enumerable)
-            where T : IDisposable
+        public static bool AddIfNotPresent<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
-            foreach (var item in enumerable)
+            if (!dictionary.ContainsKey(key))
             {
-                item.Dispose();
+                dictionary.Add(key, value);
+                return true;
+            }
+
+            return false;
+        }
+
+        public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        {
+            if (!dictionary.AddIfNotPresent(key, value))
+            {
+                if (dictionary.Remove(key))
+                {
+                    dictionary.Add(key, value);
+                }
             }
         }
+
 
         public static Dictionary<TKey, TValue?> ToDictionary<TKey, TValue>(this IDictionary<TKey, TValue?> dic)
             where TKey : notnull
@@ -25,14 +39,6 @@ namespace SecureFolderFS.Backend.Extensions
             where TKey : notnull
         {
             return Enumerable.ToDictionary(kvps, kvp => kvp.Key, kvp => kvp.Value);
-        }
-
-        public static void EnumeratedAdd<T>(this ICollection<T> collection, IEnumerable<T> source)
-        {
-            foreach (var item in source)
-            {
-                collection.Add(item);
-            }
         }
 
         public static bool SetAndGet<TKey, TValue>(this IDictionary<TKey, TValue?> dictionary, TKey key, out TValue? value,

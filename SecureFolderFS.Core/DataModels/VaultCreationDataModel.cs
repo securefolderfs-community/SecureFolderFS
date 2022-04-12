@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Security.KeyCrypt;
 using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
+using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.DataModels
 {

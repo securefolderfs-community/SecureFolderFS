@@ -6,10 +6,11 @@ using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.FileSystem.StorageEnumeration;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Security.ContentCrypt;
 using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Core.VaultDataStore;
+using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
 {

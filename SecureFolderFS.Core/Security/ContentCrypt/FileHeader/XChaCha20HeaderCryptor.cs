@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Core.Exceptions;
-using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Security.KeyCrypt;

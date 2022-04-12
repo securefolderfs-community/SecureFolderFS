@@ -1,5 +1,6 @@
 ﻿using System;
 using SecureFolderFS.Core.Chunks.IO;
+using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams
 {

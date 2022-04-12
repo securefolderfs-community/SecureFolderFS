@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.VaultDataStore;
 

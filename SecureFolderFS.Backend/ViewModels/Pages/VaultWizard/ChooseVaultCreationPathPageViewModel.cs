@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
@@ -7,9 +6,6 @@ using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 using SecureFolderFS.Core.Routines;
-using SecureFolderFS.Core.VaultCreator.Routine;
-
-#nullable enable
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
@@ -27,7 +23,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             {
                 if (SetProperty(ref _PathSourceText, value))
                 {
-                    DialogViewModel.IsPrimaryButtonEnabled = CheckAvailability(value);
+                    DialogViewModel.PrimaryButtonEnabled = CheckAvailability(value);
                 }
             }
         }
@@ -37,7 +33,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
         public ChooseVaultCreationPathPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            DialogViewModel.IsPrimaryButtonEnabled = false;
+            DialogViewModel.PrimaryButtonEnabled = false;
 
             DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
             BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
@@ -51,7 +47,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 
                 Messenger.Send(new VaultWizardNavigationRequestedMessage(_nextViewModel!));
             });
-            DialogViewModel.IsPrimaryButtonEnabled = CheckAvailability(_PathSourceText);
+            DialogViewModel.PrimaryButtonEnabled = CheckAvailability(_PathSourceText);
         }
 
         private void PrimaryButtonClick(HandledCallback? e)

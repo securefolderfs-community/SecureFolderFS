@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.VaultDataStore;
 

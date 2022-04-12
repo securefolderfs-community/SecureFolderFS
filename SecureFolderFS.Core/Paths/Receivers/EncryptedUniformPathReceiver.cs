@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.FileNames;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
-using SecureFolderFS.Core.Paths.Implementation;
+using SecureFolderFS.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Paths.Receivers
 {

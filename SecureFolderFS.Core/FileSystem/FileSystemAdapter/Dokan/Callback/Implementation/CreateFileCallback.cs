@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Diagnostics;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.DataModels;
@@ -14,6 +14,7 @@ using FileAccess = DokanNet.FileAccess;
 using static SecureFolderFS.Core.UnsafeNative.UnsafeNativeDataModels;
 using System.Runtime.InteropServices;
 using SecureFolderFS.Core.Helpers;
+using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {

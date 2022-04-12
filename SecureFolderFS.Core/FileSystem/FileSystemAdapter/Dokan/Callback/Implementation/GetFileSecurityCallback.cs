@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.AccessControl;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using Windows.Storage;
-using SecureFolderFS.Backend.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.WinUI.Serialization;

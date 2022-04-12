@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
-using SecureFolderFS.Core.Extensions;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Storage;
-using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Sdk.Streams;
 using SecureFolderFS.Core.UnsafeNative;
+using SecureFolderFS.Core.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {

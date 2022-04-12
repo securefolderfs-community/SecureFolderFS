@@ -8,9 +8,9 @@
     Title="SecureFolderFS unavailable"
     Closing="ContentDialog_Closing"
     DefaultButton="Primary"
-    PrimaryButtonCommand="{x:Bind ViewModel.OpenInstallationWebsiteCommand}"
+    PrimaryButtonCommand="{x:Bind ViewModel.PrimaryButtonClickCommand}"
     PrimaryButtonText="Open installation website"
-    SecondaryButtonCommand="{x:Bind ViewModel.CloseApplicationCommand}"
+    SecondaryButtonCommand="{x:Bind ViewModel.SecondaryButtonClickCommand}"
     SecondaryButtonText="Close application"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">

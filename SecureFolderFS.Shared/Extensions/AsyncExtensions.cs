@@ -1,6 +1,9 @@
-﻿namespace SecureFolderFS.Backend.Extensions
+﻿using System;
+using System.Threading.Tasks;
+
+namespace SecureFolderFS.Shared.Extensions
 {
-    internal static class AsyncExtensions // TODO: Move to SecureFolderFS.Shared
+    public static class AsyncExtensions
     {
         public static void RunAndForget(Action action)
         {

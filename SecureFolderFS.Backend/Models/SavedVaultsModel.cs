@@ -4,7 +4,7 @@ using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels;
-using SecureFolderFS.Backend.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Services.Settings;
 
 #nullable enable

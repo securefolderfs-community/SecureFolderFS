@@ -2,6 +2,7 @@
 using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation

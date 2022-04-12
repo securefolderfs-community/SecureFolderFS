@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Backend.Extensions;
+﻿using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Services;
 using System;
 using System.Collections.Generic;

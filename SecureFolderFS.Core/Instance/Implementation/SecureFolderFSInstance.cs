@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.Tracking;
 
