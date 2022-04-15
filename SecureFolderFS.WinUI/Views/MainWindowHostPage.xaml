@@ -131,7 +131,6 @@
                         </Button>
                     </Grid>
                 </NavigationView.PaneFooter>
-
                 <NavigationView.MenuItemTemplate>
                     <DataTemplate x:DataType="vm:SidebarItemViewModel">
                         <NavigationViewItem

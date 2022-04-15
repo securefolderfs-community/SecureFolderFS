@@ -46,7 +46,7 @@
                     Content="Preferences"
                     Tag="1">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xF116;" />
+                        <FontIcon Glyph="&#xE90F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Security  -->

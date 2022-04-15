@@ -7,11 +7,9 @@ using Windows.UI;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Dispatching;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Helpers
 {
-    internal class ThemeHelper
+    internal sealed class ThemeHelper
     {
         private readonly AppWindow _appWindow;
 
@@ -69,12 +67,12 @@ namespace SecureFolderFS.WinUI.Helpers
             }
         }
 
-        public void RegisterForThemeChangeCallback(string className, Action<ApplicationTheme> callback)
+        public void RegisterForThemeChangedCallback(string className, Action<ApplicationTheme> callback)
         {
             _themeChangedCallbacks.Add(className, callback);
         }
 
-        public void UnregisterForThemeChangeCallback(string className)
+        public void UnregisterForThemeChangedCallback(string className)
         {
             _themeChangedCallbacks.Remove(className);
         }

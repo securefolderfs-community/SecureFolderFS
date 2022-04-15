@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SecureFolderFS.WinUI.ValueConverters
@@ -8,31 +9,47 @@ namespace SecureFolderFS.WinUI.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            int enumValue = (int)value;
+            return ConvertInternal(value, targetType, parameter, language,
+                s => s.Split(',').ToDictionary(k => System.Convert.ToInt64(k.Split('-')[0]), v => System.Convert.ToInt64(v.Split('-')[1])));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return ConvertInternal(value, targetType, parameter, language,
+                s => s.Split(',').ToDictionary(k => System.Convert.ToInt64(k.Split('-')[1]), v => System.Convert.ToInt64(v.Split('-')[0])));
+        }
+
+        private object ConvertInternal(object value, Type targetType, object parameter, string language, Func<string, Dictionary<long, long>> enumConversion)
+        {
+            var enumValue = System.Convert.ToInt64(value);
 
             if (parameter is string strParam)
             {
                 // enumValue-convertedValue: 0-1,1-2
-                var enumConversionValues = strParam.Split(',').ToDictionary(k => System.Convert.ToInt32(k.Split('-')[0]), v => System.Convert.ToInt32(v.Split('-')[1]));
-                
-                if (enumConversionValues.TryGetValue((int)value, out var convertedValue))
+                var enumConversionValues = enumConversion(strParam);
+
+                if (enumConversionValues.TryGetValue(enumValue, out var convertedValue))
                 {
                     enumValue = convertedValue;
                 }
                 // else.. use value from the cast above
             }
 
-            if (Enum.GetName(targetType, enumValue) is string enumName)
+            try
             {
-                return Enum.Parse(targetType, enumName);
+                if (Enum.GetName(targetType, enumValue) is string enumName)
+                {
+                    return Enum.Parse(targetType, enumName);
+                }
             }
+            catch { }
+            try
+            {
+                return System.Convert.ChangeType(enumValue, targetType);
+            }
+            catch { }
 
             return enumValue;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return Convert(value, targetType, parameter, language);
         }
     }
 }

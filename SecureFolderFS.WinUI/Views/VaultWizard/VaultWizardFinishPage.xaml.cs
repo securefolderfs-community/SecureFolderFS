@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Views.VaultWizard
 {
     /// <summary>
@@ -30,7 +28,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         {
             this.InitializeComponent();
 
-            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].RegisterForThemeChangeCallback(nameof(VaultWizardFinishPage), _ =>
+            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].RegisterForThemeChangedCallback(nameof(VaultWizardFinishPage), _ =>
             {
                 CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);
             });
@@ -58,7 +56,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         public void Dispose()
         {
-            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].UnregisterForThemeChangeCallback(nameof(VaultWizardFinishPage));
+            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].UnregisterForThemeChangedCallback(nameof(VaultWizardFinishPage));
             ViewModel.Dispose();
         }
     }
