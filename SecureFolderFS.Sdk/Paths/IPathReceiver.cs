@@ -2,7 +2,7 @@
 
 namespace SecureFolderFS.Sdk.Paths
 {
-/// <summary>
+    /// <summary>
     /// Provides module for handling SecureFolderFS paths.
     /// <br/>
     /// <br/>
