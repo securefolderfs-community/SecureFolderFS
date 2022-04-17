@@ -111,8 +111,8 @@ namespace SecureFolderFS.Backend.Models
 
             await ThreadingService.ExecuteOnUiThreadAsync(() =>
             {
-                ReadGraphViewModel.GraphSubheader = $"{(long)ByteSize.FromBytes(_readRates.Where(x => x != 0).AtLeast(0).Average()).MegaBytes}mb/s";
-                WriteGraphViewModel.GraphSubheader = $"{(long)ByteSize.FromBytes(_writeRates.Where(x => x != 0).AtLeast(0).Average()).MegaBytes}mb/s";
+                ReadGraphViewModel.GraphSubheader = $"{ByteSize.FromBytes(_readRates.Where(x => x != 0).AtLeast(0).Average()).MegaBytes.ToString("0.#")}mb/s";
+                WriteGraphViewModel.GraphSubheader = $"{ByteSize.FromBytes(_writeRates.Where(x => x != 0).AtLeast(0).Average()).MegaBytes.ToString("0.#")}mb/s";
             });
         }
 
