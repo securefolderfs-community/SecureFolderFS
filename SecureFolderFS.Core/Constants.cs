@@ -22,7 +22,7 @@
 
             public const uint FILESYSTEM_SERIAL_NUMBER = 1137196800u;
 
-            public const string FILESYSTEM_NAME = "SFFS";
+            public const string FILESYSTEM_NAME = "NTFS";
 
             public const string UNC_NAME = "securefolderfs";
 

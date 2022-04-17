@@ -28,7 +28,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             this._fileSystemOperations = fileSystemOperations;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus CreateFile(string fileName, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
             // ATTENTION!
@@ -76,16 +75,15 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
             if (info.IsDirectory = (foInformation.PathExists ? foInformation.PathIsDirectory : info.IsDirectory))
             {
-                return CreateDirectoryInternal2(fileName, currentAccess, share, mode, options, attributes, foInformation, info);
+                return CreateDirectoryInternal(fileName, currentAccess, share, mode, options, attributes, foInformation, info);
             }
             else
             {
-                return CreateFileInternal2(fileName, access, share, mode, options, attributes, foInformation, info);
+                return CreateFileInternal(fileName, access, share, mode, options, attributes, foInformation, info);
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private NtStatus CreateDirectoryInternal2(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
+        private NtStatus CreateDirectoryInternal(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
         {
             var returnStatus = DokanResult.Success;
 
@@ -180,7 +178,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             return returnStatus;
         }
 
-        private NtStatus CreateFileInternal2(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
+        private NtStatus CreateFileInternal(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
         {
             var returnStatus = DokanResult.Success;
 
@@ -259,247 +257,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
             return returnStatus;
         }
-
-        #region CreateDirectoryInternal1
-
-        //private NtStatus CreateDirectoryInternal(string fileName, FileMode mode, FileAttributes attributes, IDokanFileInfo info)
-        //{
-        //    string filePath = ConstructFilePath(fileName);
-        //    FileAttributes fileAttributes = (FileAccess)Constants.FileSystem.INVALID_FILE_ATTRIBUTES;
-
-        //    try
-        //    {
-        //        if (_fileSystemOperations.DangerousFileOperations.Exists(filePath) || _fileSystemOperations.DangerousDirectoryOperations.Exists(filePath))
-        //        {
-        //            fileAttributes = _fileSystemOperations.DangerousFileOperations.GetAttributes(filePath);
-        //        }
-        //    }
-        //    catch { }
-
-        //    try
-        //    {
-        //        switch (mode)
-        //        {
-        //            case FileMode.Open:
-        //                {
-        //                    if (!_fileSystemOperations.DangerousDirectoryOperations.Exists(filePath))
-        //                    {
-        //                        if (fileAttributes == Constants.FileSystem.INVALID_FILE_ATTRIBUTES)
-        //                        {
-        //                            return DokanResult.FileNotFound;
-        //                        }
-        //                        else if (!fileAttributes.HasFlag(FileAttributes.Directory))
-        //                        {
-        //                            return DokanResult.NotADirectory;
-        //                        }
-        //                        else
-        //                        {
-        //                            return DokanResult.PathNotFound;
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        // Will throw if unsuccessful and catch UnauthorizedAccessException to return DokanResult.AccessDenied
-        //                        _ = new DirectoryInfo(filePath).EnumerateFileSystemInfos().Any(); // .Any() iterator moves by one
-
-        //                        info.Context = handles.OpenHandleToDirectory(_pathReceiver.FromCleartextPath<ICleartextPath>(filePath));
-        //                    }
-
-        //                    break;
-        //                }
-
-        //            case FileMode.CreateNew:
-        //                {
-        //                    if (_fileSystemOperations.DangerousDirectoryOperations.Exists(filePath))
-        //                    {
-        //                        return DokanResult.FileExists;
-        //                    }
-        //                    else if (fileAttributes.HasFlag(FileAttributes.Directory))
-        //                    {
-        //                        return DokanResult.AlreadyExists;
-        //                    }
-        //                    else
-        //                    {
-        //                        _fileSystemOperations.InitializeWithDirectory(filePath);
-        //                    }
-
-        //                    break;
-        //                }
-        //        }
-        //    }
-        //    catch (PathTooLongException)
-        //    {
-        //        return DokanResult.InvalidName;
-        //    }
-        //    catch (UnauthorizedAccessException)
-        //    {
-        //        return DokanResult.AccessDenied;
-        //    }
-
-        //    return DokanResult.Success;
-        //}
-
-        #endregion
-
-        #region CreateFileInternal1
-
-        //private NtStatus CreateFileInternal(string fileName, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
-        //{
-        //    string filePath = _pathReceiver.FromCleartextPath<ICiphertextPath>(ConstructFilePath(fileName)).Path;
-        //    FileAttributes fileAttributes = Constants.FileSystem.INVALID_FILE_ATTRIBUTES;
-
-        //    bool pathExists = true;
-        //    bool pathIsDirectory = false;
-
-        //    bool readWriteAttributes = access.HasFlag(Constants.FileSystem.Dokan.DATA_ACCESS);
-        //    bool readAccess = access.HasFlag(Constants.FileSystem.Dokan.DATA_WRITE_ACCESS);
-        //    System.IO.FileAccess openAccess = readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
-
-        //    try
-        //    {
-        //        pathExists = _fileSystemOperations.DangerousFileOperations.Exists(filePath) || _fileSystemOperations.DangerousDirectoryOperations.Exists(filePath);
-
-        //        if (pathExists)
-        //        {
-        //            fileAttributes = _fileSystemOperations.DangerousFileOperations.GetAttributes(filePath);
-        //            pathIsDirectory = fileAttributes.HasFlag(FileAttributes.Directory);
-        //        }
-        //    }
-        //    catch { }
-
-        //    switch (mode)
-        //    {
-        //        case FileMode.Open:
-        //            {
-        //                if (pathExists)
-        //                {
-        //                    // Check if driver only wants to read attributes, security info, or open directory
-        //                    if (readWriteAttributes || pathIsDirectory)
-        //                    {
-        //                        if (pathIsDirectory && (access & DokanNet.FileAccess.Delete) == DokanNet.FileAccess.Delete
-        //                            && (access & DokanNet.FileAccess.Synchronize) != DokanNet.FileAccess.Synchronize)
-        //                        {
-        //                            // A DeleteFile request on a directory
-        //                            return DokanResult.AccessDenied;
-        //                        }
-        //                        else
-        //                        {
-        //                            if (info.IsDirectory = pathIsDirectory)
-        //                            {
-        //                                InvalidateContext(info);
-        //                            }
-        //                            else
-        //                            {
-        //                                info.Context = handles.OpenHandleToFile(_pathReceiver.FromCleartextPath<ICleartextPath>(filePath), mode, openAccess, share, options);
-        //                            }
-
-        //                            return DokanResult.Success;
-        //                        }
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    return DokanResult.FileNotFound;
-        //                }
-
-        //                break;
-        //            }
-
-        //        case FileMode.CreateNew:
-        //            {
-        //                if (pathExists)
-        //                {
-        //                    return DokanResult.FileExists;
-        //                }
-
-        //                break;
-        //            }
-
-        //        case FileMode.Create:
-        //        case FileMode.Truncate:
-        //            {
-        //                if (!pathExists && mode == FileMode.Truncate)
-        //                {
-        //                    return DokanResult.FileNotFound;
-        //                }
-        //                else
-        //                {
-        //                    FileAttributes tempFileAttrs = fileAttributes == Constants.FileSystem.INVALID_FILE_ATTRIBUTES ? attributes : fileAttributes;
-        //                    if (tempFileAttrs.HasFlag(FileAttributes.Hidden) || tempFileAttrs.HasFlag(FileAttributes.System))
-        //                    {
-        //                        // Don't overwrite system/hidden files
-        //                        return DokanResult.AccessDenied;
-        //                    }
-        //                    else if (tempFileAttrs.HasFlag(FileAttributes.ReadOnly))
-        //                    {
-        //                        // Don't overwrite read-only files
-        //                        return DokanResult.AccessDenied;
-        //                    }
-        //                }
-
-        //                break;
-        //            }
-        //    }
-
-        //    NtStatus createFileResult = DokanResult.Success;
-
-        //    try
-        //    {
-        //        info.Context = handles.OpenHandleToFile(_pathReceiver.FromCleartextPath<ICleartextPath>(filePath), mode, openAccess, share, options);
-
-        //        if (pathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
-        //        {
-        //            createFileResult = DokanResult.AlreadyExists;
-        //        }
-
-        //        if (mode == FileMode.CreateNew || mode == FileMode.Create || (!pathExists && mode == FileMode.OpenOrCreate))
-        //        {
-        //            // File was created...
-
-        //            FileAttributes newAttributes = attributes;
-        //            newAttributes |= FileAttributes.Archive; // Files are always created as Archive
-        //                                                     // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
-        //            newAttributes &= ~FileAttributes.Normal;
-        //            _fileSystemOperations.DangerousFileOperations.SetAttributes(filePath, newAttributes);
-        //        }
-        //    }
-        //    catch (PathTooLongException)
-        //    {
-        //        return DokanResult.InvalidName;
-        //    }
-        //    catch (UnauthorizedAccessException)
-        //    {
-        //        if (!IsContextInvalid(info))
-        //        {
-        //            handles.Close(GetContextValue(info));
-        //            InvalidateContext(info);
-        //        }
-
-        //        return DokanResult.AccessDenied;
-        //    }
-        //    catch (DirectoryNotFoundException)
-        //    {
-        //        return DokanResult.PathNotFound;
-        //    }
-        //    catch (UnauthenticFileHeaderException)
-        //    {
-        //        return NtStatus.FileInvalid;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        switch ((uint)ex.HResult)
-        //        {
-        //            case 0x80070020: // Sharing violation
-        //                return DokanResult.SharingViolation;
-        //            default:
-        //                throw;
-        //        }
-        //    }
-
-        //    return createFileResult;
-        //}
-
-        #endregion
 
         private FileObjectInformation GetFileObjectInformation(string fileName)
         {

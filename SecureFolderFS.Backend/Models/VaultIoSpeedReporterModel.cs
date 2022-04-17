@@ -125,12 +125,12 @@ namespace SecureFolderFS.Backend.Models
                 ReadGraphViewModel?.AddPoint(new()
                 {
                     Date = now,
-                    High = (long)ByteSize.FromBytes(_readAmountBeforeFlush).MegaBytes
+                    High = Convert.ToInt64(Math.Round(ByteSize.FromBytes(_readAmountBeforeFlush).MegaBytes))
                 });
                 WriteGraphViewModel?.AddPoint(new()
                 {
                     Date = now,
-                    High = (long)ByteSize.FromBytes(_writeAmountBeforeFlush).MegaBytes
+                    High = Convert.ToInt64(Math.Round(ByteSize.FromBytes(_writeAmountBeforeFlush).MegaBytes))
                 });
             });
 
