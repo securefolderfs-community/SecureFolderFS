@@ -79,6 +79,22 @@ namespace SecureFolderFS.Core.Streams.Implementation
             this._Length = _security.ContentCryptor.FileContentCryptor.CalculateCleartextSize(_ciphertextFileStream.Length - _security.ContentCryptor.FileHeaderCryptor.HeaderSize);
         }
 
+        public override void Write(ReadOnlySpan<byte> buffer)
+        {
+            long oldFileSize = Length;
+            if (Position > oldFileSize)
+            {
+                long gapLength = Position - oldFileSize;
+                WriteToFillSpace(oldFileSize, gapLength);
+            }
+            else
+            {
+                WriteInternal2(buffer, Position);
+            }
+
+            _Position += buffer.Length;
+        }
+
         public override void Write(byte[] buffer, int offset, int count)
         {
             ArgumentNullException.ThrowIfNull(buffer);
@@ -91,8 +107,7 @@ namespace SecureFolderFS.Core.Streams.Implementation
             }
             else
             {
-                using var memoryStreamBuffer = new MemoryStream(buffer, offset, Math.Min(count, buffer.Length - offset));
-                WriteInternal(memoryStreamBuffer, Position);
+                WriteInternal2(buffer.AsSpan(offset, Math.Min(count, buffer.Length - offset)), Position);
             }
 
             _Position += count;
@@ -209,6 +224,41 @@ namespace SecureFolderFS.Core.Streams.Implementation
             }
         }
 
+        private void WriteInternal2(ReadOnlySpan<byte> buffer, long position)
+        {
+            TryWriteHeader();
+
+            int cleartextChunkSize = this._security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
+            int written = 0;
+            int positionInBuffer = 0;
+
+            while (positionInBuffer < buffer.Length)
+            {
+                long currentPosition = position + written;
+                long chunkNumber = currentPosition / cleartextChunkSize;
+                int offsetInChunk = (int)(currentPosition % cleartextChunkSize);
+                int length = (int)Math.Min(buffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
+
+                ICleartextChunk cleartextChunk;
+                if (offsetInChunk == 0 && length == cleartextChunkSize)
+                {
+                    cleartextChunk = _chunkFactory.FromCleartextChunkBuffer(new byte[cleartextChunkSize], 0);
+                    cleartextChunk.CopyFrom2(buffer, 0, ref positionInBuffer);
+                    ChunkReceiver.SetChunk(chunkNumber, cleartextChunk);
+                }
+                else
+                {
+                    cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
+                    cleartextChunk.CopyFrom2(buffer, offsetInChunk, ref positionInBuffer);
+                }
+
+                written += length;
+            }
+
+            _Length = Math.Max(position + written, Length);
+            _fileSystemOperations.DangerousFileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
+        }
+
         private void WriteInternal(MemoryStream streamBuffer, long position)
         {
             TryWriteHeader();
@@ -300,9 +350,7 @@ namespace SecureFolderFS.Core.Streams.Implementation
 
         private void WriteToFillSpace(long position, long count)
         {
-            using var weakNoiseMemoryStream = new MemoryStream(ArrayExtensions.GenerateWeakNoise(count));
-
-            WriteInternal(weakNoiseMemoryStream, position);
+            WriteInternal2(ArrayExtensions.GenerateWeakNoise(count), position);
         }
 
         private bool TryWriteHeader()

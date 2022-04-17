@@ -1,10 +1,24 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace SecureFolderFS.Core.UnsafeNative
 {
     internal static class UnsafeNativeDataModels
     {
+        [StructLayout(LayoutKind.Explicit, Size = 8)]
+        public struct LARGE_INTEGER
+        {
+            [FieldOffset(0)]
+            public UInt32 LowPart;
+
+            [FieldOffset(4)]
+            public Int32 HighPart;
+
+            [FieldOffset(0)]
+            public Int64 QuadPart;
+        }
+
         public static class FILE_ACCESS
         {
             public const uint GENERIC_READ = 0x80000000u;

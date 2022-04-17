@@ -8,13 +8,13 @@ using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.DataModels;
-using System.Runtime.CompilerServices;
-
-using FileAccess = DokanNet.FileAccess;
-using static SecureFolderFS.Core.UnsafeNative.UnsafeNativeDataModels;
 using System.Runtime.InteropServices;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths;
+
+using FileAccess = DokanNet.FileAccess;
+using static SecureFolderFS.Core.UnsafeNative.UnsafeNativeDataModels;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -28,6 +28,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             this._fileSystemOperations = fileSystemOperations;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus CreateFile(string fileName, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
             // ATTENTION!
@@ -37,7 +38,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 and vice versa
             */
 
-            // Check for wildcard filename (filename with metacharacters)
+            // Check for wildcard filenames (filename with metacharacters)
             if (fileName.Contains('*') || fileName.Contains('?'))
             {
                 // Return INVALID_NAME
@@ -83,6 +84,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             }
         }
 
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private NtStatus CreateDirectoryInternal(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
         {
             var returnStatus = DokanResult.Success;
@@ -178,6 +181,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             return returnStatus;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private NtStatus CreateFileInternal(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
         {
             var returnStatus = DokanResult.Success;

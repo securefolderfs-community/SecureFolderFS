@@ -44,19 +44,18 @@ namespace SecureFolderFS.Core.Helpers
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public static int WriteFromIntPtrBuffer(IBaseFileStream baseFileStream, IntPtr nativeBuffer, uint bufferLength, long offset)
+        public unsafe static int WriteFromIntPtrBuffer(IBaseFileStream baseFileStream, IntPtr nativeBuffer, uint bufferLength, long offset)
         {
-            var writeBuffer = new byte[Constants.IO.WRITE_BUFFER_SIZE];
             var position = 0;
 
             baseFileStream.Position = offset;
             do
             {
                 var remaining = bufferLength - position;
-                var writeLength = (int)Math.Min(remaining, writeBuffer.Length);
+                var writeLength = (int)Math.Min(remaining, Constants.IO.WRITE_BUFFER_SIZE);
+                var writeBuffer = new Span<byte>((nativeBuffer + position).ToPointer(), writeLength);
 
-                Marshal.Copy(nativeBuffer + position, writeBuffer, 0, writeLength);
-                baseFileStream.Write(writeBuffer, 0, writeLength);
+                baseFileStream.Write(writeBuffer.Slice(0, writeLength));
 
                 position += writeLength;
             } while (position < bufferLength);

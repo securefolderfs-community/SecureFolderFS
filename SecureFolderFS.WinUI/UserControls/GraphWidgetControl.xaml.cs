@@ -14,6 +14,8 @@ namespace SecureFolderFS.WinUI.UserControls
 {
     public sealed partial class GraphWidgetControl : UserControl, IDisposable
     {
+        public event RoutedEventHandler? Click;
+
         public GraphWidgetControl()
         {
             this.InitializeComponent();
@@ -23,11 +25,9 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             await Task.Delay(100);
             _ = FindName("CartesianChart"); // Realize the chart and load it to view
-            await Task.Delay(100);
+            await Task.Delay(25);
             ControlLoaded = true;
         }
-
-        public event RoutedEventHandler Click;
 
         public bool ControlLoaded
         {
@@ -35,7 +35,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(ControlLoadedProperty, value);
         }
         public static readonly DependencyProperty ControlLoadedProperty =
-            DependencyProperty.Register("ControlLoaded", typeof(bool), typeof(GraphWidgetControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(ControlLoaded), typeof(bool), typeof(GraphWidgetControl), new PropertyMetadata(false));
 
 
         public ObservableCollection<GraphPointModel> Data
@@ -44,7 +44,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data", typeof(ObservableCollection<GraphPointModel>), typeof(GraphWidgetControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Data), typeof(ObservableCollection<GraphPointModel>), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
 
         public string GraphHeader
@@ -53,7 +53,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(GraphHeaderProperty, value);
         }
         public static readonly DependencyProperty GraphHeaderProperty =
-            DependencyProperty.Register("GraphHeader", typeof(string), typeof(GraphWidgetControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(GraphHeader), typeof(string), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
 
         public string GraphSubheader
@@ -62,7 +62,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(GraphSubheaderProperty, value);
         }
         public static readonly DependencyProperty GraphSubheaderProperty =
-            DependencyProperty.Register("GraphSubheader", typeof(string), typeof(GraphWidgetControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(GraphSubheader), typeof(string), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
 
         public Brush ChartStroke
@@ -71,7 +71,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(ChartStrokeProperty, value);
         }
         public static readonly DependencyProperty ChartStrokeProperty =
-            DependencyProperty.Register("ChartStroke", typeof(Brush), typeof(GraphWidgetControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ChartStroke), typeof(Brush), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
 
         public Color ChartPrimaryColor
@@ -80,7 +80,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(ChartPrimaryColorProperty, value);
         }
         public static readonly DependencyProperty ChartPrimaryColorProperty =
-            DependencyProperty.Register("ChartPrimaryColor", typeof(Color), typeof(GraphWidgetControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ChartPrimaryColor), typeof(Color), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
 
         public Color ChartSecondaryColor
@@ -89,7 +89,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(ChartSecondaryColorProperty, value);
         }
         public static readonly DependencyProperty ChartSecondaryColorProperty =
-            DependencyProperty.Register("ChartSecondaryColor", typeof(Color), typeof(GraphWidgetControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ChartSecondaryColor), typeof(Color), typeof(GraphWidgetControl), new PropertyMetadata(null));
 
 
         public void Dispose()

@@ -25,6 +25,8 @@ namespace SecureFolderFS.Sdk.Streams
 
         void Write(byte[] array, int offset, int count);
 
+        void Write(ReadOnlySpan<byte> buffer);
+
         void Lock(long position, long length);
 
         void Unlock(long position, long length);

@@ -7,6 +7,7 @@ using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.Paths;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -17,6 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
             if (info.IsDirectory)
@@ -42,8 +44,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 }
 
                 // Read file
-                bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength,
-                    offset);
+                bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, offset);
                 return DokanResult.Success;
             }
             catch (PathTooLongException)

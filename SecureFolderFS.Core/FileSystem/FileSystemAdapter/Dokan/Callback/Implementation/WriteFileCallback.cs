@@ -7,6 +7,7 @@ using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.Paths;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -17,6 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             if (info.IsDirectory)
@@ -46,7 +48,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 if (handles.GetHandle(contextHandle) is not FileHandle fileHandle)
                 {
                     // Invalid handle...
-                    contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
+                    contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.ReadWrite,
+                        FileShare.Read, FileOptions.None);
                     fileHandle = (FileHandle)handles.GetHandle(contextHandle);
 
                     opened = true;
