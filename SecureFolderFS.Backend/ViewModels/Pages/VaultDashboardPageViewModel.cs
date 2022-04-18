@@ -8,11 +8,9 @@ using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 using SecureFolderFS.Core.VaultLoader.Routine;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages
 {
-    public class VaultDashboardPageViewModel : BasePageViewModel, IRecipient<DashboardNavigationFinishedMessage>
+    public sealed class VaultDashboardPageViewModel : BasePageViewModel, IRecipient<DashboardNavigationFinishedMessage>
     {
         public NavigationBreadcrumbViewModel NavigationBreadcrumbViewModel { get; }
 

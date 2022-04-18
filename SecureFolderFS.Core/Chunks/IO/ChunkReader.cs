@@ -2,7 +2,6 @@
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Tracking;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.Streams.Management;
 
 namespace SecureFolderFS.Core.Chunks.IO
@@ -34,16 +33,21 @@ namespace SecureFolderFS.Core.Chunks.IO
         {
             AssertNotDisposed();
 
+            // Calculate
             var payloadSize = _security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
             var chunkSize = _security.ContentCryptor.FileContentCryptor.ChunkFullCiphertextSize;
-
             var ciphertextPosition = _security.ContentCryptor.FileHeaderCryptor.HeaderSize + (chunkNumber * chunkSize);
-            var ciphertextBuffer = new byte[chunkSize];
 
+            // Initialize buffer
+            var ciphertextBuffer = new byte[chunkSize];
+            var ciphertextBufferMemory = ciphertextBuffer.AsMemory();
+
+            // Read from stream
             var ciphertextFileStream = _ciphertextStreamsManager.EnsureReadOnlyStreamInstance();
             ciphertextFileStream.Position = ciphertextPosition;
-            var read = ciphertextFileStream.Read(ciphertextBuffer, 0, ciphertextBuffer.Length);
+            var read = ciphertextFileStream.Read(ciphertextBufferMemory.Span);
 
+            // Check for end-of-file
             if (read == Constants.IO.FILE_EOF)
             {
                 return _chunkFactory.FromCleartextChunkBuffer(new byte[payloadSize], 0);
@@ -51,11 +55,9 @@ namespace SecureFolderFS.Core.Chunks.IO
 
             _fileSystemStatsTracker?.AddBytesRead(read);
 
-            var actualCiphertextBuffer = new byte[read];
-            actualCiphertextBuffer.EmplaceArrays(ciphertextBuffer);
-
+            // Decrypt
             var cleartextChunk = _security.ContentCryptor.FileContentCryptor.DecryptChunk(
-                _chunkFactory.FromCiphertextChunkBuffer(actualCiphertextBuffer),
+                _chunkFactory.FromCiphertextChunkBuffer(ciphertextBufferMemory.Slice(0, read)),
                 chunkNumber,
                 _fileHeader,
                 Constants.Security.ALWAYS_CHECK_CHUNK_INTEGRITY);

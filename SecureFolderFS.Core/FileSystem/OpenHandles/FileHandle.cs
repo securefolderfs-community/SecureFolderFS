@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         {
             AssertNotDisposed();
 
-            var hFile = CleartextFileStream.AsBaseFileStreamInternal().GetSafeFileHandle();
+            var hFile = CleartextFileStream.AsBaseFileStreamInternal().DangerousGetSafeFileHandle();
             return UnsafeNativeApis.SetFileTime(hFile, ref ct, ref lat, ref lwt);
         }
 

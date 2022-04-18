@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
                 {
                     _openedCleartextStreams.Remove(cleartextFileStream);
 
-                    using var ciphertextFileStream = cleartextFileStream.AsCleartextFileStreamInternal().GetInternalCiphertextFileStream();
+                    using var ciphertextFileStream = cleartextFileStream.AsCleartextFileStreamInternal().DangerousGetInternalCiphertextFileStream();
                     _ciphertextStreamsManager.RemoveStream(ciphertextFileStream);
                 }
             }

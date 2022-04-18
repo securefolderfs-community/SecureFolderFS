@@ -25,47 +25,55 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         protected override ICiphertextChunk EncryptChunk(CleartextAesGcmChunk cleartextChunk, long chunkNumber, AesGcmFileHeader fileHeader)
         {
+            var fullCiphertextChunk = new byte[CiphertextAesGcmChunk.CHUNK_NONCE_SIZE + cleartextChunk.ActualLength + CiphertextAesGcmChunk.CHUNK_TAG_SIZE];
+            var fullCiphertextChunkSpan = fullCiphertextChunk.AsSpan();
+
             // Chunk nonce
-            var chunkNonce = new byte[CiphertextAesGcmChunk.CHUNK_NONCE_SIZE];
-            secureRandom.GetBytes(chunkNonce);
+            secureRandom.GetBytes(fullCiphertextChunkSpan.Slice(0, CiphertextAesGcmChunk.CHUNK_NONCE_SIZE));
 
             // Big Endian chunk number and file header nonce
+            var beChunkNumberWithFileHeaderNonce = new byte[sizeof(long) + fileHeader.Nonce.Length]; // TODO: Rent array? (and in xchacha20 too)
             var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
-            var beChunkNumberWithFileHeaderNonce = new byte[beChunkNumber.Length + fileHeader.Nonce.Length];
-            beChunkNumberWithFileHeaderNonce.EmplaceArrays(beChunkNumber, fileHeader.Nonce);
+
+            Buffer.BlockCopy(beChunkNumber, 0, beChunkNumberWithFileHeaderNonce, 0, beChunkNumber.Length);
+            Buffer.BlockCopy(fileHeader.Nonce, 0, beChunkNumberWithFileHeaderNonce, beChunkNumber.Length, fileHeader.Nonce.Length);
 
             // Payload
-            var ciphertextPayload = keyCryptor.AesGcmCrypt.AesGcmEncrypt(
-                cleartextChunk.ToArray(),
+            keyCryptor.AesGcmCrypt.AesGcmEncrypt2(
+                cleartextChunk.AsSpan(),
                 fileHeader.ContentKey,
-                chunkNonce,
-                out var tag,
+                fullCiphertextChunkSpan.Slice(0, CiphertextAesGcmChunk.CHUNK_NONCE_SIZE),
+                fullCiphertextChunkSpan.Slice(fullCiphertextChunkSpan.Length - CiphertextAesGcmChunk.CHUNK_TAG_SIZE),
+                fullCiphertextChunkSpan.Slice(CiphertextAesGcmChunk.CHUNK_NONCE_SIZE, cleartextChunk.ActualLength),
                 beChunkNumberWithFileHeaderNonce);
 
-            // Construct ciphertextChunkBuffer
-            var ciphertextChunkBuffer = new byte[CiphertextAesGcmChunk.CHUNK_NONCE_SIZE + ciphertextPayload.Length + CiphertextAesGcmChunk.CHUNK_TAG_SIZE];
-            ciphertextChunkBuffer.EmplaceArrays(chunkNonce, ciphertextPayload, tag);
-
-            return chunkFactory.FromCiphertextChunkBuffer(ciphertextChunkBuffer);
+            return chunkFactory.FromCiphertextChunkBuffer(fullCiphertextChunk);
         }
 
         protected override ICleartextChunk DecryptChunk(CiphertextAesGcmChunk ciphertextChunk, long chunkNumber, AesGcmFileHeader fileHeader)
         {
             try
             {
-                // Big Endian chunk number and file header nonce
-                var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
-                var beChunkNumberWithFileHeaderNonce = new byte[beChunkNumber.Length + fileHeader.Nonce.Length];
-                beChunkNumberWithFileHeaderNonce.EmplaceArrays(beChunkNumber, fileHeader.Nonce);
+                var fullCleartextBuffer = new byte[ChunkCleartextSize];
+                var fullCleartextBufferSpan = fullCleartextBuffer.AsSpan();
 
-                var cleartextChunkBuffer = keyCryptor.AesGcmCrypt.AesGcmDecrypt(
-                    ciphertextChunk.Payload,
+                // Big Endian chunk number and file header nonce
+                var beChunkNumberWithFileHeaderNonce = new byte[sizeof(long) + fileHeader.Nonce.Length];
+                var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
+
+                Buffer.BlockCopy(beChunkNumber, 0, beChunkNumberWithFileHeaderNonce, 0, beChunkNumber.Length);
+                Buffer.BlockCopy(fileHeader.Nonce, 0, beChunkNumberWithFileHeaderNonce, beChunkNumber.Length, fileHeader.Nonce.Length);
+
+                // Decrypt
+                keyCryptor.AesGcmCrypt.AesGcmDecrypt2(
+                    ciphertextChunk.GetPayloadAsSpan(),
                     fileHeader.ContentKey,
-                    ciphertextChunk.Nonce,
-                    ciphertextChunk.Auth,
+                    ciphertextChunk.GetNonceAsSpan(),
+                    ciphertextChunk.GetAuthAsSpan(),
+                    fullCleartextBufferSpan.Slice(0, ciphertextChunk.Buffer.Length - (CiphertextAesGcmChunk.CHUNK_NONCE_SIZE + CiphertextAesGcmChunk.CHUNK_TAG_SIZE)),
                     beChunkNumberWithFileHeaderNonce);
 
-                return chunkFactory.FromCleartextChunkBuffer(ExtendCleartextChunkBuffer(cleartextChunkBuffer), cleartextChunkBuffer.Length);
+                return chunkFactory.FromCleartextChunkBuffer(fullCleartextBuffer, ciphertextChunk.Buffer.Length - (CiphertextAesGcmChunk.CHUNK_NONCE_SIZE + CiphertextAesGcmChunk.CHUNK_TAG_SIZE));
             }
             catch (CryptographicException)
             {

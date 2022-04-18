@@ -11,12 +11,10 @@ namespace SecureFolderFS.Core.Chunks
 
         void CopyTo(MemoryStream destinationStream, int offset);
 
-        int CopyFrom(MemoryStream sourceStream, int offset);
-
-        void CopyFrom2(ReadOnlySpan<byte> sourceBuffer, int offset, ref int positionInBuffer);
+        void CopyFrom(ReadOnlySpan<byte> sourceBuffer, int offset, ref int positionInBuffer);
 
         void SetActualLength(int length);
 
-        byte[] ToArray();
+        ReadOnlySpan<byte> AsSpan();
     }
 }

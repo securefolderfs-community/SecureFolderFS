@@ -2,8 +2,8 @@
 
 namespace SecureFolderFS.Core.Chunks
 {
-    internal interface ICiphertextChunk : IDisposable
+    internal interface ICiphertextChunk
     {
-        byte[] ToArray();
+        ReadOnlyMemory<byte> Buffer { get; }
     }
 }

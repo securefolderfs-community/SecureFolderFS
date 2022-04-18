@@ -34,6 +34,11 @@ namespace SecureFolderFS.Shared.Helpers
             return target;
         }
 
+        public static void OutputToDebug(object obj)
+        {
+            OutputToDebug(obj.ToString() ?? "NULL-MESSAGEs");
+        }
+
         public static void OutputToDebug(string message)
         {
             if (!CanLog()) return;

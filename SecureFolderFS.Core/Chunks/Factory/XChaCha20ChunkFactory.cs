@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Core.Chunks.Implementation;
+using System;
 
 namespace SecureFolderFS.Core.Chunks.Factory
 {
@@ -14,9 +15,9 @@ namespace SecureFolderFS.Core.Chunks.Factory
             return new CleartextXChaCha20Chunk(cleartextChunkBuffer, actualLength);
         }
 
-        public ICiphertextChunk FromCiphertextChunkBuffer(byte[] ciphertextChunkBuffer)
+        public ICiphertextChunk FromCiphertextChunkBuffer(ReadOnlyMemory<byte> ciphertextChunkBuffer)
         {
-            return CiphertextXChaCha20Chunk.FromCiphertextChunkBuffer(ciphertextChunkBuffer);
+            return new CiphertextXChaCha20Chunk(ciphertextChunkBuffer);
         }
     }
 }

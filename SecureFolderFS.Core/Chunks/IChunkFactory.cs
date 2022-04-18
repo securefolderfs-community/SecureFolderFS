@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Core.Chunks
+﻿using System;
+
+namespace SecureFolderFS.Core.Chunks
 {
     internal interface IChunkFactory
     {
@@ -6,6 +8,6 @@
 
         ICleartextChunk FromCleartextChunkBuffer(byte[] cleartextChunkBuffer, int actualLength);
 
-        ICiphertextChunk FromCiphertextChunkBuffer(byte[] ciphertextChunkBuffer);
+        ICiphertextChunk FromCiphertextChunkBuffer(ReadOnlyMemory<byte> ciphertextChunkBuffer);
     }
 }

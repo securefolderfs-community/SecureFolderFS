@@ -19,8 +19,8 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
             {
                 const int version = VaultVersion.HIGHEST_VERSION;
 
-                using var hmacSha256Crypt = vaultCreationDataModel.KeyCryptor.HmacSha256Crypt.GetInstance(vaultCreationDataModel.MacKey);
-                hmacSha256Crypt.InitializeHMAC();
+                using var hmacSha256Crypt = vaultCreationDataModel.KeyCryptor.HmacSha256Crypt.GetInstance();
+                hmacSha256Crypt.InitializeHMAC(vaultCreationDataModel.MacKey);
                 hmacSha256Crypt.Update(BitConverter.GetBytes(version));
                 hmacSha256Crypt.Update(BitConverter.GetBytes((uint)vaultCreationDataModel.FileNameCipherScheme));
                 hmacSha256Crypt.DoFinal(BitConverter.GetBytes((uint)vaultCreationDataModel.ContentCipherScheme));

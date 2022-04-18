@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Serialization.Implementation
 {
     internal class DefaultJsonSettingsDatabase : IJsonSettingsDatabase

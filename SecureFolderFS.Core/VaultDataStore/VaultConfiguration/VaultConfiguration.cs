@@ -32,9 +32,9 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
             }
 
             using var macKey = masterKey.CreateMacKeyCopy();
-            using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance(macKey);
+            using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance();
 
-            hmacSha256Crypt.InitializeHMAC();
+            hmacSha256Crypt.InitializeHMAC(macKey);
             hmacSha256Crypt.Update(BitConverter.GetBytes(Version));
             hmacSha256Crypt.Update(BitConverter.GetBytes((uint)FileNameCipherScheme));
             hmacSha256Crypt.DoFinal(BitConverter.GetBytes((uint)ContentCipherScheme));

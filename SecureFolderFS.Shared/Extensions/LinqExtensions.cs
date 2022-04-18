@@ -26,16 +26,5 @@ namespace SecureFolderFS.Shared.Extensions
 
             return enumerable;
         }
-
-        public static IEnumerable<T> With<T>(this IEnumerable<T> enumerable, T item)
-            where T : notnull
-        {
-            if (enumerable.Contains(item))
-            {
-                return enumerable.Where(x => !x.Equals(item)).Append(item);
-            }
-
-            return enumerable.Append(item);
-        }
     }
 }

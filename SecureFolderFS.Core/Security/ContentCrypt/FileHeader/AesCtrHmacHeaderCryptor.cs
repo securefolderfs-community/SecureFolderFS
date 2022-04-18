@@ -67,8 +67,8 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
         private byte[] CalculateFileHeaderMac(SecretKey macKey, byte[] fileHeaderNonce, byte[] ciphertextPayload)
         {
-            using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance(macKey);
-            hmacSha256Crypt.InitializeHMAC();
+            using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance();
+            hmacSha256Crypt.InitializeHMAC(macKey);
             hmacSha256Crypt.Update(fileHeaderNonce);
             hmacSha256Crypt.DoFinal(ciphertextPayload);
 

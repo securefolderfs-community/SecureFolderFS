@@ -3,58 +3,62 @@ using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
 {
-    internal sealed class HmacSha256Crypt : HMACSHA256, IHmacSha256Crypt
+    internal sealed class HmacSha256Crypt : IHmacSha256Crypt
     {
         private readonly bool _isBaseInstance;
 
-        private HmacSha256Crypt()
-        {
-            this._isBaseInstance = true;
-        }
+        private IncrementalHash _incrementalHash;
 
-        private HmacSha256Crypt(byte[] key)
-            : base(key)
+        private HmacSha256Crypt(bool baseInstance)
         {
+            this._isBaseInstance = baseInstance;
         }
 
         internal static HmacSha256Crypt GetBaseInstance()
         {
-            return new HmacSha256Crypt();
+            return new HmacSha256Crypt(true);
         }
 
-        public IHmacSha256Crypt GetInstance(byte[] key)
+        public IHmacSha256Crypt GetInstance()
         {
             AssertIsBaseInstance();
 
-            return new HmacSha256Crypt(key);
+            return new HmacSha256Crypt(false);
         }
 
-        public void InitializeHMAC()
+        public void InitializeHMAC(byte[] key)
         {
             AssertNotBaseInstance();
 
-            //base.Initialize();
+            _incrementalHash = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, key);
         }
 
-        public void Update(byte[] bytes)
+        public void Update(ReadOnlySpan<byte> bytes)
         {
             AssertNotBaseInstance();
 
-            base.TransformBlock(bytes, 0, bytes.Length, null, 0);
+            _incrementalHash.AppendData(bytes);
         }
 
-        public void DoFinal(byte[] bytes)
+        public void DoFinal(ReadOnlySpan<byte> bytes)
         {
             AssertNotBaseInstance();
 
-            base.TransformFinalBlock(bytes, 0, bytes.Length);
+            _incrementalHash.AppendData(bytes);
         }
 
         public byte[] GetHash()
         {
             AssertNotBaseInstance();
 
-            return Hash;
+            return _incrementalHash.GetCurrentHash();
+        }
+
+        public void GetHash(Span<byte> destination)
+        {
+            AssertNotBaseInstance();
+
+            _incrementalHash.GetCurrentHash(destination);
         }
 
         private void AssertNotBaseInstance()
@@ -71,6 +75,11 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
             {
                 throw new InvalidOperationException("Cannot perform this operation on non-base instance object.");
             }
+        }
+
+        public void Dispose()
+        {
+            _incrementalHash?.Dispose();
         }
     }
 }

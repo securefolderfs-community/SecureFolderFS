@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace SecureFolderFS.Sdk.Streams
 {
@@ -21,11 +20,13 @@ namespace SecureFolderFS.Sdk.Streams
 
         void Flush();
 
-        int Read([In, Out] byte[] array, int offset, int count);
+        int Read(Span<byte> buffer);
 
-        void Write(byte[] array, int offset, int count);
+        int Read(byte[] array, int offset, int count);
 
         void Write(ReadOnlySpan<byte> buffer);
+
+        void Write(byte[] array, int offset, int count);
 
         void Lock(long position, long length);
 

@@ -22,6 +22,14 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
             return result;
         }
 
+        public void AesGcmEncrypt2(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> nonce, Span<byte> tag, Span<byte> result, ReadOnlySpan<byte> associatedData = default)
+        {
+            AssertNotDisposed();
+
+            using var aesGcm = new AesGcm(key);
+            aesGcm.Encrypt(nonce: nonce, plaintext: bytes, ciphertext: result, tag: tag, associatedData: associatedData);
+        }
+
         public byte[] AesGcmDecrypt(byte[] bytes, byte[] key, byte[] iv, byte[] tag, byte[] associatedData = null)
         {
             AssertNotDisposed();
@@ -32,6 +40,14 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
             aesGcm.Decrypt(nonce: iv, ciphertext: bytes, tag: tag, plaintext: result, associatedData: associatedData);
 
             return result;
+        }
+
+        public void AesGcmDecrypt2(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, ReadOnlySpan<byte> tag, Span<byte> result, ReadOnlySpan<byte> associatedData = default)
+        {
+            AssertNotDisposed();
+
+            using var aesGcm = new AesGcm(key);
+            aesGcm.Decrypt(nonce: iv, ciphertext: bytes, tag: tag, plaintext: result, associatedData: associatedData);
         }
 
         private void AssertNotDisposed()

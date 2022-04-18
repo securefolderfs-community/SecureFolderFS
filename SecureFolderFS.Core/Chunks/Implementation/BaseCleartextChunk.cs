@@ -28,27 +28,14 @@ namespace SecureFolderFS.Core.Chunks.Implementation
             destinationStream.Write(buffer, offset, writeCount);
         }
 
-        public virtual int CopyFrom(MemoryStream sourceStream, int offset)
-        {
-            AssertNotDisposed();
-
-            NeedsFlush = true;
-
-            var readCount = Math.Min(buffer.Length - offset, (int)sourceStream.RemainingLength());
-            var actualRead = sourceStream.Read(buffer, offset, readCount);
-            ActualLength = Math.Max(ActualLength, readCount + offset);
-
-            return actualRead;
-        }
-
-        public virtual void CopyFrom2(ReadOnlySpan<byte> sourceBuffer, int offset, ref int positionInBuffer)
+        public virtual void CopyFrom(ReadOnlySpan<byte> sourceBuffer, int offset, ref int positionInBuffer)
         {
             AssertNotDisposed();
 
             NeedsFlush = true;
 
             var readCount = Math.Min(buffer.Length - offset, sourceBuffer.Length - positionInBuffer);
-            var destination = new Span<byte>(buffer, offset, readCount);
+            var destination = buffer.AsSpan(offset, readCount);
             sourceBuffer.Slice(0, readCount).CopyTo(destination);
             positionInBuffer += readCount;
 
@@ -66,17 +53,7 @@ namespace SecureFolderFS.Core.Chunks.Implementation
             }
         }
 
-        public virtual byte[] ToArray()
-        {
-            AssertNotDisposed();
-
-            byte[] returnBuffer = new byte[ActualLength];
-            Array.Copy(buffer, 0, returnBuffer, 0, ActualLength);
-
-            return returnBuffer;
-        }
-
-        public virtual Span<byte> AsSpan()
+        public virtual ReadOnlySpan<byte> AsSpan()
         {
             AssertNotDisposed();
 

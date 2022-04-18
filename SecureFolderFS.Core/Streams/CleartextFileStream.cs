@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.Chunks.IO;
@@ -79,41 +78,12 @@ namespace SecureFolderFS.Core.Streams.Implementation
             this._Length = _security.ContentCryptor.FileContentCryptor.CalculateCleartextSize(_ciphertextFileStream.Length - _security.ContentCryptor.FileHeaderCryptor.HeaderSize);
         }
 
-        public override void Write(ReadOnlySpan<byte> buffer)
+        public override int Read(Span<byte> buffer)
         {
-            long oldFileSize = Length;
-            if (Position > oldFileSize)
-            {
-                long gapLength = Position - oldFileSize;
-                WriteToFillSpace(oldFileSize, gapLength);
-            }
-            else
-            {
-                WriteInternal2(buffer, Position);
-            }
-
-            _Position += buffer.Length;
+            return base.Read(buffer);
         }
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            ArgumentNullException.ThrowIfNull(buffer);
-
-            long oldFileSize = Length;
-            if (Position > oldFileSize)
-            {
-                long gapLength = Position - oldFileSize;
-                WriteToFillSpace(oldFileSize, gapLength);
-            }
-            else
-            {
-                WriteInternal2(buffer.AsSpan(offset, Math.Min(count, buffer.Length - offset)), Position);
-            }
-
-            _Position += count;
-        }
-
-        public override int Read([In, Out] byte[] buffer, int offset, int count)
+        public override int Read(byte[] buffer, int offset, int count)
         {
             ArgumentNullException.ThrowIfNull(buffer);
 
@@ -146,6 +116,29 @@ namespace SecureFolderFS.Core.Streams.Implementation
 
             _Position += read;
             return read;
+        }
+
+        public override void Write(ReadOnlySpan<byte> buffer)
+        {
+            long oldFileSize = Length;
+            if (Position > oldFileSize)
+            {
+                long gapLength = Position - oldFileSize;
+                WriteToFillSpace(oldFileSize, gapLength);
+            }
+            else
+            {
+                WriteInternal(buffer, Position);
+            }
+
+            _Position += buffer.Length;
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            ArgumentNullException.ThrowIfNull(buffer);
+
+            this.Write(buffer.AsSpan(offset, Math.Min(count, buffer.Length - offset)));
         }
 
         public override void SetLength(long value)
@@ -224,7 +217,7 @@ namespace SecureFolderFS.Core.Streams.Implementation
             }
         }
 
-        private void WriteInternal2(ReadOnlySpan<byte> buffer, long position)
+        private void WriteInternal(ReadOnlySpan<byte> buffer, long position)
         {
             TryWriteHeader();
 
@@ -243,47 +236,13 @@ namespace SecureFolderFS.Core.Streams.Implementation
                 if (offsetInChunk == 0 && length == cleartextChunkSize)
                 {
                     cleartextChunk = _chunkFactory.FromCleartextChunkBuffer(new byte[cleartextChunkSize], 0);
-                    cleartextChunk.CopyFrom2(buffer, 0, ref positionInBuffer);
+                    cleartextChunk.CopyFrom(buffer, 0, ref positionInBuffer);
                     ChunkReceiver.SetChunk(chunkNumber, cleartextChunk);
                 }
                 else
                 {
                     cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
-                    cleartextChunk.CopyFrom2(buffer, offsetInChunk, ref positionInBuffer);
-                }
-
-                written += length;
-            }
-
-            _Length = Math.Max(position + written, Length);
-            _fileSystemOperations.DangerousFileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
-        }
-
-        private void WriteInternal(MemoryStream streamBuffer, long position)
-        {
-            TryWriteHeader();
-
-            var cleartextChunkSize = this._security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
-            var written = 0;
-
-            while (streamBuffer.HasRemainingLength())
-            {
-                long currentPosition = position + written;
-                long chunkNumber = currentPosition / cleartextChunkSize;
-                int offsetInChunk = (int)(currentPosition % cleartextChunkSize);
-                int length = (int)Math.Min(streamBuffer.RemainingLength(), cleartextChunkSize - offsetInChunk);
-
-                ICleartextChunk cleartextChunk;
-                if (offsetInChunk == 0 && length == cleartextChunkSize)
-                {
-                    cleartextChunk = _chunkFactory.FromCleartextChunkBuffer(new byte[cleartextChunkSize], 0);
-                    cleartextChunk.CopyFrom(streamBuffer, 0);
-                    ChunkReceiver.SetChunk(chunkNumber, cleartextChunk);
-                }
-                else
-                {
-                    cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
-                    cleartextChunk.CopyFrom(streamBuffer, offsetInChunk);
+                    cleartextChunk.CopyFrom(buffer, offsetInChunk, ref positionInBuffer);
                 }
 
                 written += length;
@@ -338,19 +297,19 @@ namespace SecureFolderFS.Core.Streams.Implementation
             _ciphertextFileStream.Unlock(position, length);
         }
 
-        public SafeFileHandle GetSafeFileHandle()
+        SafeFileHandle IBaseFileStreamInternal.DangerousGetSafeFileHandle()
         {
-            return _ciphertextFileStream.AsBaseFileStreamInternal().GetSafeFileHandle();
+            return _ciphertextFileStream.AsBaseFileStreamInternal().DangerousGetSafeFileHandle();
         }
 
-        public ICiphertextFileStream GetInternalCiphertextFileStream()
+        ICiphertextFileStream ICleartextFileStreamInternal.DangerousGetInternalCiphertextFileStream()
         {
             return _ciphertextFileStream;
         }
 
         private void WriteToFillSpace(long position, long count)
         {
-            WriteInternal2(ArrayExtensions.GenerateWeakNoise(count), position);
+            WriteInternal(ArrayExtensions.GenerateWeakNoise(count), position);
         }
 
         private bool TryWriteHeader()
@@ -385,11 +344,6 @@ namespace SecureFolderFS.Core.Streams.Implementation
             {
                 return chunk * _security.ContentCryptor.FileContentCryptor.ChunkFullCiphertextSize + _security.ContentCryptor.FileHeaderCryptor.HeaderSize;
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
         }
     }
 }

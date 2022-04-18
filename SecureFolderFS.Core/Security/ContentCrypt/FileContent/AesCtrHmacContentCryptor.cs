@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             secureRandom.GetBytes(chunkNonce);
 
             // Payload
-            var ciphertextPayload = keyCryptor.AesCtrCrypt.AesCtrEncrypt(cleartextChunk.ToArray(), fileHeader.ContentKey, chunkNonce);
+            var ciphertextPayload = keyCryptor.AesCtrCrypt.AesCtrEncrypt(cleartextChunk.AsSpan(), fileHeader.ContentKey, chunkNonce);
 
             // Calculate MAC
             var chunkMac = CalculateChunkMac(
@@ -52,7 +52,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         protected override ICleartextChunk DecryptChunk(CiphertextAesCtrHmacChunk ciphertextChunk, long chunkNumber, AesCtrHmacFileHeader fileHeader)
         {
-            var cleartextChunkBuffer = keyCryptor.AesCtrCrypt.AesCtrDecrypt(ciphertextChunk.Payload, fileHeader.ContentKey, ciphertextChunk.Nonce);
+            var cleartextChunkBuffer = keyCryptor.AesCtrCrypt.AesCtrDecrypt(ciphertextChunk.GetPayloadAsSpan(), fileHeader.ContentKey, ciphertextChunk.GetNonceAsSpan());
 
             return chunkFactory.FromCleartextChunkBuffer(ExtendCleartextChunkBuffer(cleartextChunkBuffer), cleartextChunkBuffer.Length);
         }
@@ -70,19 +70,19 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             var realMac = CalculateChunkMac(
                 fileHeaderNonce: fileHeaderNonce,
                 chunkNumber: chunkNumber,
-                chunkNonce: ciphertextAesCtrHmacChunk.Nonce,
-                ciphertextPayload: ciphertextAesCtrHmacChunk.Payload);
+                chunkNonce: ciphertextAesCtrHmacChunk.GetNonceAsSpan(),
+                ciphertextPayload: ciphertextAesCtrHmacChunk.GetPayloadAsSpan());
 
-            return realMac.SequenceEqual(ciphertextAesCtrHmacChunk.Auth);
+            return realMac.SequenceEqual(ciphertextAesCtrHmacChunk.GetAuthAsSpan().ToArray()); // TODO: When IEnumerable<T> support is added, remove .ToArray()
         }
 
-        private byte[] CalculateChunkMac(byte[] fileHeaderNonce, long chunkNumber, byte[] chunkNonce, byte[] ciphertextPayload)
+        private byte[] CalculateChunkMac(byte[] fileHeaderNonce, long chunkNumber, ReadOnlySpan<byte> chunkNonce, ReadOnlySpan<byte> ciphertextPayload)
         {
             using var macKey = _masterKey.CreateMacKeyCopy();
             var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
 
-            using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance(macKey);
-            hmacSha256Crypt.InitializeHMAC();
+            using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance();
+            hmacSha256Crypt.InitializeHMAC(macKey);
             hmacSha256Crypt.Update(fileHeaderNonce);
             hmacSha256Crypt.Update(beChunkNumber);
             hmacSha256Crypt.Update(chunkNonce);
