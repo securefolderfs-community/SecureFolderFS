@@ -33,10 +33,10 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             base.CanGoBack = false;
 
             DialogViewModel.PrimaryButtonEnabled = true;
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
+            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(PrimaryButtonClick);
         }
 
-        private void PrimaryButtonClick(HandledCallback? e)
+        private void PrimaryButtonClick(IHandledFlag? e)
         {
             e?.Handle();
 

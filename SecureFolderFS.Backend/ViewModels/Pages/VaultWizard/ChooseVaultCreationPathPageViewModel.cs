@@ -35,13 +35,13 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
         {
             DialogViewModel.PrimaryButtonEnabled = false;
 
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
+            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(PrimaryButtonClick);
             BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
         }
 
         public override void ReattachCommands()
         {
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(e =>
+            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(e =>
             {
                 e?.Handle();
 
@@ -50,7 +50,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             DialogViewModel.PrimaryButtonEnabled = CheckAvailability(_PathSourceText);
         }
 
-        private void PrimaryButtonClick(HandledCallback? e)
+        private void PrimaryButtonClick(IHandledFlag? e)
         {
             // Cancel the confirm button
             e?.Handle();

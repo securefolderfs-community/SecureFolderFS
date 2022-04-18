@@ -23,16 +23,16 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
         {
             this._step7 = step7;
 
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
-            DialogViewModel.SecondaryButtonClickCommand = new RelayCommand<HandledCallback?>(SecondaryButtonClick);
+            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(PrimaryButtonClick);
+            DialogViewModel.SecondaryButtonClickCommand = new RelayCommand<IHandledFlag?>(SecondaryButtonClick);
         }
 
         public override void ReattachCommands()
         {
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
+            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(PrimaryButtonClick);
         }
 
-        private void PrimaryButtonClick(HandledCallback? e)
+        private void PrimaryButtonClick(IHandledFlag? e)
         {
             e?.Handle();
 
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             Messenger.Send(new VaultWizardNavigationRequestedMessage(_nextViewModel));
         }
 
-        private void SecondaryButtonClick(HandledCallback? e)
+        private void SecondaryButtonClick(IHandledFlag? e)
         {
             Messenger.Send(new PasswordClearRequestedMessage());
         }

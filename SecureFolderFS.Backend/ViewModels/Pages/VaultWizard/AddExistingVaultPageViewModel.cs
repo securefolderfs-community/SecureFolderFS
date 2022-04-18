@@ -34,11 +34,11 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
         public AddExistingVaultPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<HandledCallback?>(PrimaryButtonClick);
+            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(PrimaryButtonClick);
             BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
         }
 
-        private void PrimaryButtonClick(HandledCallback? e)
+        private void PrimaryButtonClick(IHandledFlag? e)
         {
             e?.Handle();
             DialogViewModel.VaultViewModel = new(new(), Path.GetDirectoryName(PathSourceText!)!);

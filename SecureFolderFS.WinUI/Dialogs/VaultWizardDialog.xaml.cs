@@ -11,6 +11,7 @@ using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.Views.VaultWizard;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -152,13 +153,13 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var handledCallback = new HandledCallback(value => args.Cancel = value);
+            var handledCallback = new HandledOrCanceledFlag(value => args.Cancel = value);
             ViewModel.PrimaryButtonClickCommand?.Execute(handledCallback);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var handledCallback = new HandledCallback(value => args.Cancel = value);
+            var handledCallback = new HandledOrCanceledFlag(value => args.Cancel = value);
             ViewModel.SecondaryButtonClickCommand?.Execute(handledCallback);
         }
 

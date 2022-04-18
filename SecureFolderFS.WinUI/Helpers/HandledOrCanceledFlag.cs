@@ -1,23 +1,27 @@
-﻿using System;
+﻿using SecureFolderFS.Backend.Utils;
+using System;
 
-#nullable enable
-
-namespace SecureFolderFS.Backend.Utils
+namespace SecureFolderFS.WinUI.Helpers
 {
-    public sealed class HandledCallback
+    internal sealed class HandledOrCanceledFlag : IHandledFlag, ICanceledFlag
     {
         private readonly Action<bool> _flagCallback;
 
-        public HandledCallback(Action<bool> flagCallback)
+        public HandledOrCanceledFlag(Action<bool> flagCallback)
         {
             this._flagCallback = flagCallback;
+        }
+
+        public void Cancel()
+        {
+            Handle();
         }
 
         public void Handle()
         {
             Handle(true);
         }
-        
+
         public void Handle(bool value)
         {
             _flagCallback(value);

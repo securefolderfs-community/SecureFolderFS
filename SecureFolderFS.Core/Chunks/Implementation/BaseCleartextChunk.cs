@@ -76,6 +76,13 @@ namespace SecureFolderFS.Core.Chunks.Implementation
             return returnBuffer;
         }
 
+        public virtual Span<byte> AsSpan()
+        {
+            AssertNotDisposed();
+
+            return buffer.AsSpan(0, ActualLength);
+        }
+
         protected void AssertNotDisposed()
         {
             if (_disposed)
