@@ -6,7 +6,7 @@
 
 SecureFolderFS helps you keep your files private. Protect your data with state-of-the-art encryption algorithms that seamlessly secure your data thanks to SecureFolderFS' advanced on-fly encryption/decryption.
 
-![18 03 2022_20_26_59](https://user-images.githubusercontent.com/53011783/162184621-f46f3787-afda-4095-9607-22b1990d63f7.png)
+![42-19-22-164216](https://user-images.githubusercontent.com/53011783/164031142-0881cddb-683f-4f39-89b0-3788f6c01ac2.png)
 
 ## Get SecureFolderFS
 
