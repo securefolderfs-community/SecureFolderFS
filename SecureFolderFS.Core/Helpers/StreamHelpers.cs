@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using SecureFolderFS.Sdk.Streams;
 using System.Runtime.CompilerServices;
@@ -11,7 +10,7 @@ namespace SecureFolderFS.Core.Helpers
     internal static class StreamHelpers
     {
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public static int ReadToIntPtrBuffer(IBaseFileStream baseFileStream, IntPtr nativeBuffer, uint bufferLength, long offset)
+        public unsafe static int ReadToIntPtrBuffer(IBaseFileStream baseFileStream, IntPtr nativeBuffer, uint bufferLength, long offset)
         {
             if (offset >= baseFileStream.Length)
             {
@@ -19,48 +18,24 @@ namespace SecureFolderFS.Core.Helpers
             }
             else
             {
-                var readBuffer = new byte[Constants.IO.READ_BUFFER_SIZE];
-                var position = 0;
                 baseFileStream.Position = offset;
 
-                do
-                {
-                    var remaining = (int)bufferLength - position;
-                    var read = baseFileStream.Read(readBuffer, 0, Math.Min(readBuffer.Length, remaining));
+                var nativeBufferSpan = new Span<byte>(nativeBuffer.ToPointer(), (int)bufferLength);
+                baseFileStream.Read(nativeBufferSpan);
 
-                    if (read == Constants.IO.FILE_EOF)
-                    {
-                        return position; // Reached End-of-File EOF
-                    }
-                    else
-                    {
-                        Marshal.Copy(readBuffer, 0, nativeBuffer + position, read);
-                        position += read;
-                    }
-                } while (position < bufferLength);
-
-                return position;
+                return (int)bufferLength;
             }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public unsafe static int WriteFromIntPtrBuffer(IBaseFileStream baseFileStream, IntPtr nativeBuffer, uint bufferLength, long offset)
         {
-            var position = 0;
-
             baseFileStream.Position = offset;
-            do
-            {
-                var remaining = bufferLength - position;
-                var writeLength = (int)Math.Min(remaining, Constants.IO.WRITE_BUFFER_SIZE);
-                var writeBuffer = new Span<byte>((nativeBuffer + position).ToPointer(), writeLength);
 
-                baseFileStream.Write(writeBuffer.Slice(0, writeLength));
+            var nativeBufferSpan = new ReadOnlySpan<byte>(nativeBuffer.ToPointer(), (int)bufferLength);
+            baseFileStream.Write(nativeBufferSpan);
 
-                position += writeLength;
-            } while (position < bufferLength);
-
-            return position;
+            return (int)bufferLength;
         }
 
         public static void WriteToStream(Stream sourceStream, Stream destinationStream)

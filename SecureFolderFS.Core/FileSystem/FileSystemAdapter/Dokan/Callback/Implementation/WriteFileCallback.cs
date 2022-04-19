@@ -48,15 +48,28 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 if (handles.GetHandle(contextHandle) is not FileHandle fileHandle)
                 {
                     // Invalid handle...
-                    contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.ReadWrite,
+                    contextHandle = handles.OpenHandleToFile(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite,
                         FileShare.Read, FileOptions.None);
                     fileHandle = (FileHandle)handles.GetHandle(contextHandle);
 
                     opened = true;
                 }
 
+                var correctOffset = !appendToFile ? offset : fileHandle.CleartextFileStream.Length;
+
                 // Write file
-                bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, appendToFile ? fileHandle.CleartextFileStream.Length : offset);
+                if (opened)
+                {
+                    bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, correctOffset);
+                }
+                else
+                {
+                    lock (fileHandle.CleartextFileStream)
+                    {
+                        bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, correctOffset);
+                    }
+                }
+
                 return DokanResult.Success;
             }
             catch (PathTooLongException)
@@ -68,6 +81,11 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             {
                 bytesWritten = 0;
                 return NtStatus.CrcError;
+            }
+            catch (UnavailableStreamException)
+            {
+                bytesWritten = 0;
+                return DokanResult.InvalidHandle;
             }
             catch (Exception ex)
             {

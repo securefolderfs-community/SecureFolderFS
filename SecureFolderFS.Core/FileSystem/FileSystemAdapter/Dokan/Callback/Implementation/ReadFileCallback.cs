@@ -44,7 +44,18 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 }
 
                 // Read file
-                bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, offset);
+                if (opened)
+                {
+                    bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, offset);
+                }
+                else
+                {
+                    lock (fileHandle.CleartextFileStream)
+                    {
+                        bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, offset);
+                    }
+                }
+                
                 return DokanResult.Success;
             }
             catch (PathTooLongException)

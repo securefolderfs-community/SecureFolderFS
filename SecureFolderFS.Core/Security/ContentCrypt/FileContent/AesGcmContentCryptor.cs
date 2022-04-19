@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             secureRandom.GetBytes(fullCiphertextChunkSpan.Slice(0, CiphertextAesGcmChunk.CHUNK_NONCE_SIZE));
 
             // Big Endian chunk number and file header nonce
-            var beChunkNumberWithFileHeaderNonce = new byte[sizeof(long) + fileHeader.Nonce.Length]; // TODO: Rent array? (and in xchacha20 too)
+            var beChunkNumberWithFileHeaderNonce = new byte[sizeof(long) + fileHeader.Nonce.Length];
             var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
 
             Buffer.BlockCopy(beChunkNumber, 0, beChunkNumberWithFileHeaderNonce, 0, beChunkNumber.Length);

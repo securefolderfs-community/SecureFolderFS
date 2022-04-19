@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.Chunks.Implementation
 
             var readCount = Math.Min(buffer.Length - offset, sourceBuffer.Length - positionInBuffer);
             var destination = buffer.AsSpan(offset, readCount);
-            sourceBuffer.Slice(0, readCount).CopyTo(destination);
+            sourceBuffer.Slice(positionInBuffer, readCount).CopyTo(destination);
             positionInBuffer += readCount;
 
             ActualLength = Math.Max(ActualLength, readCount + offset);
