@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace SecureFolderFS.Backend.Services
+﻿namespace SecureFolderFS.Backend.Services
 {
     public interface IFileExplorerService
     {

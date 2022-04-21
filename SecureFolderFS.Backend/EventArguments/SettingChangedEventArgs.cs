@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace SecureFolderFS.Backend.EventArguments
+﻿namespace SecureFolderFS.Backend.EventArguments
 {
     public sealed class SettingChangedEventArgs : EventArgs
     {

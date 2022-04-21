@@ -1,8 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {
     internal sealed class BreadcrumbItemTemplateSelector : BaseTemplateSelector<NavigationItemViewModel>

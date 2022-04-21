@@ -14,8 +14,6 @@ using SecureFolderFS.WinUI.Views.Settings;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Dialogs
 {
     public sealed partial class SettingsDialog : ContentDialog, IDialog<SettingsDialogViewModel>, IRecipient<SettingsNavigationRequestedMessage>

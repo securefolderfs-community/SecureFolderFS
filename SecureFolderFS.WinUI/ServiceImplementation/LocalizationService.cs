@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.Globalization;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class LocalizationService : ILocalizationService

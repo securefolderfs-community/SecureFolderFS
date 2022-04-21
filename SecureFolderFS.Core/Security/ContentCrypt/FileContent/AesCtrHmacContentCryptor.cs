@@ -57,7 +57,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             return chunkFactory.FromCleartextChunkBuffer(ExtendCleartextChunkBuffer(cleartextChunkBuffer), cleartextChunkBuffer.Length);
         }
 
-        protected override void CheckIntegrity(CiphertextAesCtrHmacChunk ciphertextChunk,AesCtrHmacFileHeader fileHeader, long chunkNumber, bool requestedIntegrityCheck)
+        protected override void CheckIntegrity(CiphertextAesCtrHmacChunk ciphertextChunk, AesCtrHmacFileHeader fileHeader, long chunkNumber, bool requestedIntegrityCheck)
         {
             if (requestedIntegrityCheck && !CheckChunkMacIntegrity(fileHeader.Nonce, ciphertextChunk, chunkNumber))
             {

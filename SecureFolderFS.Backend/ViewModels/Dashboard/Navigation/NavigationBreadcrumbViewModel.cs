@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Messages;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Dashboard.Navigation
 {
     public sealed class NavigationBreadcrumbViewModel : ObservableObject, IRecipient<DashboardNavigationFinishedMessage>

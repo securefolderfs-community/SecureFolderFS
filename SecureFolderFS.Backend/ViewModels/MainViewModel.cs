@@ -9,8 +9,6 @@ using SecureFolderFS.Backend.ViewModels.Sidebar;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Helpers;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels
 {
     public sealed class MainViewModel : ObservableObject

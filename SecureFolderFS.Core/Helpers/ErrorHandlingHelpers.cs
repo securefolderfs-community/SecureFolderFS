@@ -19,10 +19,10 @@ namespace SecureFolderFS.Core.Helpers
         public static bool Win32FromHresult(int hresult, out uint win32Error)
         {
             const int S_OK = 0x00000000;
-            const int SEVERITY_ERROR = 1;
+            const int S_ERROR = 1;
             const int FACILITY_WIN32 = 7;
 
-            if ((hresult & 0xFFFF0000) == MakeHResult(SEVERITY_ERROR, FACILITY_WIN32)
+            if ((hresult & 0xFFFF0000) == MakeHResult(FACILITY_WIN32, S_ERROR)
                 || hresult == S_OK
                 || hresult < 0)
             {

@@ -7,8 +7,6 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.WinUI.WindowViews;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class FileExplorerService : IFileExplorerService

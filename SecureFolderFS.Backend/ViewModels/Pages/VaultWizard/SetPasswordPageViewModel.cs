@@ -6,8 +6,6 @@ using SecureFolderFS.Backend.ViewModels.Dialogs;
 using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.VaultCreator.Routine;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
     public sealed class SetPasswordPageViewModel : BaseVaultWizardPageViewModel

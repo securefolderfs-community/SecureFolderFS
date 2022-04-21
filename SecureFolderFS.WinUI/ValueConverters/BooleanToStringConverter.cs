@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Data;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ValueConverters
 {
     internal sealed class BooleanToStringConverter : IValueConverter

@@ -7,8 +7,6 @@ using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery;
 using SecureFolderFS.Core.VaultLoader.Routine;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages
 {
     public sealed class VaultLoginPageViewModel : BasePageViewModel

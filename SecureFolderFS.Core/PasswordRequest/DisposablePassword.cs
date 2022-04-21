@@ -1,8 +1,6 @@
 ﻿using SecureFolderFS.Core.SecureStore;
 using System;
 
-#nullable enable
-
 namespace SecureFolderFS.Core.PasswordRequest
 {
     /// <summary>

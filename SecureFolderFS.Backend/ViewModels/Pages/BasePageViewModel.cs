@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Utils;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages
 {
     public abstract class BasePageViewModel : ObservableObject, ICleanable, IDisposable

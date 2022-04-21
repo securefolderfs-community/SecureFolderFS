@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.UI.Xaml.Data;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ValueConverters
 {
     internal sealed class DateTimeToStringConverter : IValueConverter

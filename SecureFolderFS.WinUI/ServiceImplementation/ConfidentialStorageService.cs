@@ -8,8 +8,6 @@ using SecureFolderFS.Backend.Services;
 using SecureFolderFS.WinUI.Serialization;
 using SecureFolderFS.WinUI.Serialization.Implementation;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class ConfidentialStorageService : BaseJsonSettings, IConfidentialStorageService

@@ -6,8 +6,6 @@ using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.System;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class ApplicationService : IApplicationService

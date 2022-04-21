@@ -256,7 +256,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
         {
             AssertNotDisposed();
 
-            DokanOptions options = DokanOptions.CaseSensitive | DokanOptions.FixedDrive;
+            DokanOptions options = DokanOptions.CaseSensitive | DokanOptions.FixedDrive | DokanOptions.CurrentSession;
             ILogger dokanLogger = new NullLogger();
 
             this.Mount(

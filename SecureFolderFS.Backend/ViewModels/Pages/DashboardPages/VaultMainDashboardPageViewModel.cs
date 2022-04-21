@@ -8,8 +8,6 @@ using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.ViewModels.Dashboard;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
 {
     public sealed class VaultMainDashboardPageViewModel : BaseDashboardPageViewModel

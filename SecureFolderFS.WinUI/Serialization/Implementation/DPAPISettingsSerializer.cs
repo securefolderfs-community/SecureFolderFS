@@ -3,8 +3,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Serialization.Implementation
 {
     internal sealed class DPAPISettingsSerializer : DefaultSettingsSerializer

@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Serialization.Implementation
 {
     internal sealed class DefaultJsonSettingsSerializer : IJsonSettingsSerializer

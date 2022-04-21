@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
     public sealed class VaultWizardMainPageViewModel : BaseVaultWizardPageViewModel

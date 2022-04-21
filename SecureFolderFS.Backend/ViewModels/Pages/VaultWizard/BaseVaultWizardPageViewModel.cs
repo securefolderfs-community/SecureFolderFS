@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
     public abstract class BaseVaultWizardPageViewModel : ObservableObject, IDisposable

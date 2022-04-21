@@ -1,8 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Backend.Models.Transitions;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Helpers
 {
     internal static class ConversionHelpers

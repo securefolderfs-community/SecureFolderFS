@@ -3,8 +3,6 @@ using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.Messages
 {
     public sealed class DashboardNavigationRequestedMessage : ValueMessage<BaseDashboardPageViewModel?>

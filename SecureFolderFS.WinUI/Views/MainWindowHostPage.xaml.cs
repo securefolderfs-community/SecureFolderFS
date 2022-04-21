@@ -5,18 +5,17 @@ using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Sidebar;
+using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-
-#nullable enable
 
 namespace SecureFolderFS.WinUI.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    internal sealed partial class MainWindowHostPage : Page
+    internal sealed partial class MainWindowHostPage : Page, IRecipient<RemoveVaultRequestedMessage>
     {
         public MainViewModel ViewModel
         {
@@ -29,6 +28,8 @@ namespace SecureFolderFS.WinUI.Views
             this.InitializeComponent();
 
             this.ViewModel = new();
+
+            WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
         }
 
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -42,6 +43,11 @@ namespace SecureFolderFS.WinUI.Views
         private async void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.EnsureLateApplication();
+        }
+
+        public void Receive(RemoveVaultRequestedMessage message)
+        {
+            Sidebar.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
         }
     }
 }

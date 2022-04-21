@@ -13,12 +13,9 @@ using SecureFolderFS.Backend.ViewModels.Pages;
 using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.Views;
 using System;
-using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-
-#nullable enable
 
 namespace SecureFolderFS.WinUI.UserControls
 {
@@ -42,9 +39,9 @@ namespace SecureFolderFS.WinUI.UserControls
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
-        public void Receive(NavigationRequestedMessage message)
+        public async void Receive(NavigationRequestedMessage message)
         {
-            Navigate(message.VaultViewModel, message.Value, message.Transition);
+            await Navigate(message.VaultViewModel, message.Value, message.Transition);
         }
 
         public void Receive(RemoveVaultRequestedMessage message)
@@ -52,9 +49,9 @@ namespace SecureFolderFS.WinUI.UserControls
             NavigationDestinations.Remove(message.Value, out var viewModel);
             viewModel?.Dispose();
 
-            if (PageViewModel == viewModel && NavigationDestinations.Keys.FirstOrDefault() is VaultIdModel vaultIdModelToNavigateTo)
+            if (NavigationDestinations.IsEmpty())
             {
-                Navigate(vaultIdModelToNavigateTo);
+                // TODO: Navigate to the start page
             }
         }
 
@@ -63,14 +60,14 @@ namespace SecureFolderFS.WinUI.UserControls
             NavigationDestinations.AddOrSet(message.Value.VaultIdModel);
         }
 
-        public void Receive(VaultLockedMessage message)
+        public async void Receive(VaultLockedMessage message)
         {
             NavigationDestinations[message.Value.VaultIdModel]?.Dispose();
             NavigationDestinations[message.Value.VaultIdModel] = null;
-            Navigate(message.Value, null, new DrillOutTransitionModel());
+            await Navigate(message.Value, null, new DrillOutTransitionModel());
         }
 
-        private void Navigate(VaultIdModel vaultIdModel, TransitionModel? transition = null)
+        private async Task Navigate(VaultIdModel vaultIdModel, TransitionModel? transition = null)
         {
             NavigationDestinations.SetAndGet(vaultIdModel, out var basePageViewModel, () => throw new InvalidOperationException("Could not navigate - insufficient parameters."));
             PageViewModel = basePageViewModel!;
@@ -79,12 +76,12 @@ namespace SecureFolderFS.WinUI.UserControls
                 PageViewModel.Messenger.Register<VaultLockedMessage>(this);
             }
 
-            Navigate(PageViewModel, transition);
+            await Navigate(PageViewModel, transition);
 
             WeakReferenceMessenger.Default.Send(new NavigationFinishedMessage(PageViewModel));
         }
 
-        private void Navigate(VaultViewModel vaultViewModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
+        private async Task Navigate(VaultViewModel vaultViewModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
         {
             if (basePageViewModel == null)
             {
@@ -105,12 +102,12 @@ namespace SecureFolderFS.WinUI.UserControls
                 }
             }
 
-            Navigate(PageViewModel, transition);
+            await Navigate(PageViewModel, transition);
 
             WeakReferenceMessenger.Default.Send(new NavigationFinishedMessage(PageViewModel));
         }
 
-        private async void Navigate(BasePageViewModel basePageViewModel, TransitionModel? transition = null)
+        private async Task Navigate(BasePageViewModel basePageViewModel, TransitionModel? transition = null)
         {
             var transitionInfo = ConversionHelpers.ToNavigationTransitionInfo(transition) ?? new EntranceNavigationTransitionInfo();
 
@@ -133,6 +130,10 @@ namespace SecureFolderFS.WinUI.UserControls
 
                 case VaultDashboardPageViewModel:
                     ContentFrame.Navigate(typeof(VaultDashboardPage), basePageViewModel, transitionInfo);
+                    break;
+
+                default:
+                    ContentFrame.Navigate(null, null);
                     break;
             }
         }

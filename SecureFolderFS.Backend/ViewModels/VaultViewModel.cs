@@ -3,8 +3,6 @@ using Newtonsoft.Json;
 using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Core.Instance;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels
 {
     [Serializable]

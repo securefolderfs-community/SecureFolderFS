@@ -2,8 +2,6 @@
 using System;
 using System.Runtime.CompilerServices;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Serialization
 {
     internal abstract class BaseJsonSettings : ISettingsSharingContext

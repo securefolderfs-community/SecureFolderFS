@@ -3,14 +3,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
-
-#nullable enable
 
 namespace SecureFolderFS.Backend.ViewModels.Sidebar
 {

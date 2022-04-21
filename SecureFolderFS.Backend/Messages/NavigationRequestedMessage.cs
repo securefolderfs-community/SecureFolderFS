@@ -2,8 +2,6 @@
 using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Backend.ViewModels.Pages;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.Messages
 {
     public sealed class NavigationRequestedMessage : ValueMessage<BasePageViewModel?>

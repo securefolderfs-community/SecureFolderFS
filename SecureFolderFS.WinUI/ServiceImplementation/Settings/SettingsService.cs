@@ -10,8 +10,6 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Services.Settings;
 using CommunityToolkit.Mvvm.DependencyInjection;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {
     internal sealed class SettingsService : BaseJsonSettings, ISettingsService

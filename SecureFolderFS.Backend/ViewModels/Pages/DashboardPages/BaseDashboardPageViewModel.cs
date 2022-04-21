@@ -4,8 +4,6 @@ using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
 {
     public abstract class BaseDashboardPageViewModel : ObservableObject, ICleanable, IDisposable

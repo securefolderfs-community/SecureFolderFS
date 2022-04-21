@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace SecureFolderFS.WinUI.Serialization
+﻿namespace SecureFolderFS.WinUI.Serialization
 {
     internal interface ISettingsSerializer
     {

@@ -5,8 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Services;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Sidebar
 {
     public sealed class SidebarItemViewModel : ObservableObject, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>

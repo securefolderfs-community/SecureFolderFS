@@ -8,8 +8,6 @@ using SecureFolderFS.Backend.ViewModels.Dialogs;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Dialogs
 {
     public sealed partial class DokanyDialog : ContentDialog, IDialog<DokanyDialogViewModel>

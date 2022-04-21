@@ -2,8 +2,6 @@
 using Microsoft.UI.Xaml.Data;
 using SecureFolderFS.Backend.Enums;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ValueConverters
 {
     internal sealed class VaultHealthStateToStringConverter : IValueConverter

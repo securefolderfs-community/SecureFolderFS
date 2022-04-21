@@ -1,8 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {
     internal abstract class BaseTemplateSelector<TItem> : DataTemplateSelector

@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Backend.Enums;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.ViewModels.Dashboard
 {
     public sealed class VaultHealthViewModel : ObservableObject

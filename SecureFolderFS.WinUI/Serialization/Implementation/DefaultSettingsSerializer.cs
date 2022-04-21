@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.Serialization.Implementation
 {
     internal class DefaultSettingsSerializer : ISettingsSerializer

@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace SecureFolderFS.Backend.ViewModels.Dashboard.Navigation
+﻿namespace SecureFolderFS.Backend.ViewModels.Dashboard.Navigation
 {
     public sealed class NavigationItemViewModel
     {

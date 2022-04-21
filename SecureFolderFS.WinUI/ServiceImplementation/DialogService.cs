@@ -10,8 +10,6 @@ using SecureFolderFS.Backend.ViewModels.Dialogs;
 using SecureFolderFS.WinUI.Dialogs;
 using SecureFolderFS.WinUI.WindowViews;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class DialogService : IDialogService

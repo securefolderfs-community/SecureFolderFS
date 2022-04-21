@@ -7,8 +7,6 @@ using SecureFolderFS.Backend.ViewModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Backend.Services.Settings;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.Models
 {
     public sealed class SavedVaultsModel : IRecipient<AddVaultRequestedMessage>, IRecipient<RemoveVaultRequestedMessage>, IRecipient<VaultSerializationRequestedMessage>

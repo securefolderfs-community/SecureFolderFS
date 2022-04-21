@@ -2,8 +2,6 @@
 using System;
 using Windows.ApplicationModel.DataTransfer;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class ClipboardService : IClipboardService

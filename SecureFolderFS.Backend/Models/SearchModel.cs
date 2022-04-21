@@ -1,7 +1,5 @@
 ﻿using SecureFolderFS.Shared.Extensions;
 
-#nullable enable
-
 namespace SecureFolderFS.Backend.Models
 {
     internal sealed class SearchModel<TItem>

@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using Windows.Services.Store;
 using System.Diagnostics;
 
-#nullable enable
-
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class MicrosoftStoreUpdateService : IUpdateService
