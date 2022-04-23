@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace SecureFolderFS.Core.Chunks
 {
@@ -9,7 +8,7 @@ namespace SecureFolderFS.Core.Chunks
 
         bool NeedsFlush { get; }
 
-        void CopyTo(MemoryStream destinationStream, int offset);
+        void CopyTo(Span<byte> destinationBuffer, int offset, ref int positionInBuffer);
 
         void CopyFrom(ReadOnlySpan<byte> sourceBuffer, int offset, ref int positionInBuffer);
 

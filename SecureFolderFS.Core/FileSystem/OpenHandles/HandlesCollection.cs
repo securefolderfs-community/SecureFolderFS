@@ -54,7 +54,10 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             if (fileHandle != null)
             {
                 handle = _handleGenerator.ThreadSafeIncrementAndGet();
-                _openHandles.Add(handle, fileHandle);
+                lock (_openHandles)
+                {
+                    _openHandles.Add(handle, fileHandle);
+                }
             }
 
             return handle;

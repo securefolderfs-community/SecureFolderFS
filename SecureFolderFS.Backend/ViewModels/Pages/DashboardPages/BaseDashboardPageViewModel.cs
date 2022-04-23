@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Enums;
-using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
 {

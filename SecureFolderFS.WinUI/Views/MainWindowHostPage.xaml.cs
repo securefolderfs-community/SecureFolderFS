@@ -47,7 +47,7 @@ namespace SecureFolderFS.WinUI.Views
 
         public void Receive(RemoveVaultRequestedMessage message)
         {
-            Sidebar.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
+            ViewModel.SidebarViewModel.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
         }
     }
 }

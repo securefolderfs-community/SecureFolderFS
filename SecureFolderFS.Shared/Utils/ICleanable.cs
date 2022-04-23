@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.Backend.Utils
+﻿namespace SecureFolderFS.Shared.Utils
 {
     /// <summary>
     /// Provides functionality for cleaning up class instances.

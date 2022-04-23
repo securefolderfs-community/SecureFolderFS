@@ -7,7 +7,6 @@ using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.Paths;
-using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -18,7 +17,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
             if (info.IsDirectory)

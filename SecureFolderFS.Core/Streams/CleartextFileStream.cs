@@ -80,42 +80,39 @@ namespace SecureFolderFS.Core.Streams.Implementation
 
         public override int Read(Span<byte> buffer)
         {
-            return base.Read(buffer);
+            var lengthToEof = _Length - _Position;
+            if (lengthToEof < 1L)
+            {
+                return Constants.IO.FILE_EOF;
+            }
+
+            int cleartextChunkSize = this._security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
+            int read = 0;
+            int positionInBuffer = 0;
+
+            var adjustedBuffer = buffer.Slice(0, (int)Math.Min(buffer.Length, lengthToEof));
+
+            while (positionInBuffer < adjustedBuffer.Length)
+            {
+                long readPosition = Position + read;
+                long chunkNumber = readPosition / cleartextChunkSize;
+                int offsetInChunk = (int)(readPosition % cleartextChunkSize);
+                int length = Math.Min(adjustedBuffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
+
+                ICleartextChunk cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
+                cleartextChunk.CopyTo(adjustedBuffer, offsetInChunk, ref positionInBuffer);
+                read += length;
+            }
+
+            _Position += read;
+            return read;
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
             ArgumentNullException.ThrowIfNull(buffer);
 
-            int read = 0;
-            long lengthToEof = _Length - _Position;
-            if (lengthToEof < 1)
-            {
-                return Constants.IO.FILE_EOF;
-            }
-
-            int payloadSize = this._security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
-
-            using (MemoryStream streamBuffer = new MemoryStream(buffer, offset, count))
-            {
-                long newLength = Math.Min(count, lengthToEof);
-                streamBuffer.SetLength(newLength);
-
-                while (streamBuffer.HasRemainingLength())
-                {
-                    long readPosition = Position + read;
-                    long chunkNumber = readPosition / payloadSize;
-                    int offsetInChunk = (int)(readPosition % payloadSize);
-                    int length = (int)Math.Min(streamBuffer.RemainingLength(), payloadSize - offsetInChunk);
-
-                    ICleartextChunk cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
-                    cleartextChunk.CopyTo(streamBuffer, offsetInChunk);
-                    read += length;
-                }
-            }
-
-            _Position += read;
-            return read;
+            return this.Read(buffer.AsSpan(offset, Math.Min(count, buffer.Length - offset)));
         }
 
         public override void Write(ReadOnlySpan<byte> buffer)
@@ -230,7 +227,7 @@ namespace SecureFolderFS.Core.Streams.Implementation
                 long currentPosition = position + written;
                 long chunkNumber = currentPosition / cleartextChunkSize;
                 int offsetInChunk = (int)(currentPosition % cleartextChunkSize);
-                int length = (int)Math.Min(buffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
+                int length = Math.Min(buffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
 
                 ICleartextChunk cleartextChunk;
                 if (offsetInChunk == 0 && length == cleartextChunkSize)

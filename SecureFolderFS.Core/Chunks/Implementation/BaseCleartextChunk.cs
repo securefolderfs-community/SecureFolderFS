@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using SecureFolderFS.Core.Extensions;
 
 namespace SecureFolderFS.Core.Chunks.Implementation
 {
@@ -20,12 +18,14 @@ namespace SecureFolderFS.Core.Chunks.Implementation
             this.ActualLength = actualLength;
         }
 
-        public virtual void CopyTo(MemoryStream destinationStream, int offset)
+        public virtual void CopyTo(Span<byte> destinationBuffer, int offset, ref int positionInBuffer)
         {
             AssertNotDisposed();
 
-            var writeCount = Math.Min(ActualLength - offset, (int)destinationStream.RemainingLength());
-            destinationStream.Write(buffer, offset, writeCount);
+            var writeCount = Math.Min(ActualLength - offset, destinationBuffer.Length - positionInBuffer);
+            var destination = destinationBuffer.Slice(positionInBuffer);
+            buffer.AsSpan(offset, writeCount).CopyTo(destination);
+            positionInBuffer += writeCount;
         }
 
         public virtual void CopyFrom(ReadOnlySpan<byte> sourceBuffer, int offset, ref int positionInBuffer)

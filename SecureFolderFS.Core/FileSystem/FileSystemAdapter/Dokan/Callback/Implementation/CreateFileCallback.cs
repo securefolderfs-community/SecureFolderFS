@@ -28,7 +28,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             this._fileSystemOperations = fileSystemOperations;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus CreateFile(string fileName, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
             // ATTENTION!
@@ -84,8 +83,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             }
         }
 
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private NtStatus CreateDirectoryInternal(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
         {
             var returnStatus = DokanResult.Success;
@@ -181,7 +178,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             return returnStatus;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private NtStatus CreateFileInternal(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
         {
             var returnStatus = DokanResult.Success;

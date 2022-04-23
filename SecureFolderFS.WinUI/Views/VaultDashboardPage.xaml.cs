@@ -7,10 +7,10 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models.Transitions;
-using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages;
 using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
+using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,

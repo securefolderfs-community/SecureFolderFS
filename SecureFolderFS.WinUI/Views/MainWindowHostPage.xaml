@@ -44,6 +44,7 @@
                 IsSettingsVisible="False"
                 MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
                 PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
+                SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectionChanged="Sidebar_SelectionChanged">
 
                 <uc:NavigationControl PageViewModel="{x:Bind ViewModel.ActivePageViewModel, Mode=TwoWay}" />

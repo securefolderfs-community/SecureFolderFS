@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Backend.Utils;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Backend.ViewModels.Pages
 {

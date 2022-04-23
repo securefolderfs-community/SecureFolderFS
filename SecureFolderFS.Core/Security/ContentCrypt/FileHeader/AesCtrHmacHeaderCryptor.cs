@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.EncryptionAlgorithm;
 using SecureFolderFS.Core.Security.KeyCrypt;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.Exceptions;

@@ -18,7 +18,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             if (info.IsDirectory)

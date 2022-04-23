@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Backend.Models.Transitions;
 using SecureFolderFS.Backend.Services;
 using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
@@ -20,6 +21,13 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
         public ObservableCollection<SidebarItemViewModel> SidebarItems { get; }
+
+        private SidebarItemViewModel? _SelectedItem;
+        public SidebarItemViewModel? SelectedItem
+        {
+            get => _SelectedItem;
+            set => SetProperty(ref _SelectedItem, value);
+        }
 
         private string? _SearchQuery;
         public string? SearchQuery
@@ -76,11 +84,17 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
 
         void IInitializableSource<IDictionary<VaultIdModel, VaultViewModel>>.Initialize(IDictionary<VaultIdModel, VaultViewModel> param)
         {
-            ThreadingService.ExecuteOnUiThreadAsync(() =>
+            _ = ThreadingService.ExecuteOnUiThreadAsync(() =>
             {
                 foreach (var item in param.Values)
                 {
                     SidebarItems.Add(new(item));
+                }
+
+                if (SidebarItems.FirstOrDefault() is SidebarItemViewModel itemToSelect)
+                {
+                    SelectedItem = itemToSelect;
+                    WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(itemToSelect.VaultViewModel) { Transition = new SuppressTransitionModel() });
                 }
             });
         }
