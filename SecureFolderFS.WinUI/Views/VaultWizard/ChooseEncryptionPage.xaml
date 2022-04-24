@@ -24,7 +24,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Spacing="4">
-            <TextBlock Text="Data encryption" />
+            <TextBlock Text="File name encryption" />
             <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedFileNameEncryptionIndex, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <ComboBoxItem Content="AES-SIV (Default)" />
                 <ComboBoxItem Content="None" />
