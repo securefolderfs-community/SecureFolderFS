@@ -67,6 +67,8 @@
                     </Grid>
                 </uc:BannerControl.RightSide>
             </uc:BannerControl>
+
+            <!--  Version InfoBar  -->
             <InfoBar
                 IsClosable="{x:Bind ViewModel.VersionInfoBar.CanBeClosed, Mode=OneWay}"
                 IsOpen="{x:Bind ViewModel.VersionInfoBar.IsOpen, Mode=OneWay}"
@@ -107,13 +109,16 @@
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="Settings configuration">
+            <ucab:ActionBlockControl Title="Configure settings">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE713;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
                     <StackPanel Margin="-16">
-                        <ucab:ActionBlockControl Title="Import settings" IsClickable="True">
+                        <ucab:ActionBlockControl
+                            Title="Import settings"
+                            IsClickable="True"
+                            IsEnabled="False">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xE8B5;" />
                             </ucab:ActionBlockControl.Icon>
@@ -121,7 +126,10 @@
                                 <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                             </ucab:ActionBlockControl.ActionElement>
                         </ucab:ActionBlockControl>
-                        <ucab:ActionBlockControl Title="Export settings" IsClickable="True">
+                        <ucab:ActionBlockControl
+                            Title="Export settings"
+                            IsClickable="True"
+                            IsEnabled="False">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xEDE2;" />
                             </ucab:ActionBlockControl.Icon>

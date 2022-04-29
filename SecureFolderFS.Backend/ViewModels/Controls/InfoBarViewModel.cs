@@ -3,7 +3,7 @@ using SecureFolderFS.Backend.Enums;
 
 namespace SecureFolderFS.Backend.ViewModels.Controls
 {
-    public sealed class InfoBarViewModel : ObservableObject
+    public class InfoBarViewModel : ObservableObject
     {
         private string? _MessageText;
         public string? MessageText

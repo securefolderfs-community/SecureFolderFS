@@ -13,7 +13,7 @@ using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Extensions;
 using SecureFolderFS.Sdk.Streams;
 
-namespace SecureFolderFS.Core.Streams.Implementation
+namespace SecureFolderFS.Core.Streams
 {
     internal sealed class CleartextFileStream : Stream, ICleartextFileStream, IBaseFileStreamInternal, ICleartextFileStreamInternal
     {
@@ -86,9 +86,9 @@ namespace SecureFolderFS.Core.Streams.Implementation
                 return Constants.IO.FILE_EOF;
             }
 
-            int cleartextChunkSize = this._security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
-            int read = 0;
-            int positionInBuffer = 0;
+            var cleartextChunkSize = this._security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
+            var read = 0;
+            var positionInBuffer = 0;
 
             var adjustedBuffer = buffer.Slice(0, (int)Math.Min(buffer.Length, lengthToEof));
 

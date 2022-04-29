@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using SecureFolderFS.Core.Streams.Implementation;
 using SecureFolderFS.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams

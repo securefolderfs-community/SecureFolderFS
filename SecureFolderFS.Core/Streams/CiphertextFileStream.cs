@@ -4,7 +4,7 @@ using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Sdk.Streams;
 
-namespace SecureFolderFS.Core.Streams.Implementation
+namespace SecureFolderFS.Core.Streams
 {
     internal sealed class CiphertextFileStream : FileStream, ICiphertextFileStream, ICiphertextFileStreamInternal, IBaseFileStreamInternal
     {
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Core.Streams.Implementation
             base.Dispose(disposing);
         }
 
-        public SafeFileHandle DangerousGetSafeFileHandle()
+        SafeFileHandle IBaseFileStreamInternal.DangerousGetSafeFileHandle()
         {
             return SafeFileHandle;
         }

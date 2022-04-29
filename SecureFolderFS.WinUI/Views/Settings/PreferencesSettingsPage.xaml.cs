@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Backend.ViewModels.Pages.SettingsDialog;
 
@@ -31,6 +32,11 @@ namespace SecureFolderFS.WinUI.Views.Settings
             }
 
             base.OnNavigatedTo(e);
+        }
+
+        private void PreferencesSettingsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ConfigureFileSystems();
         }
     }
 }
