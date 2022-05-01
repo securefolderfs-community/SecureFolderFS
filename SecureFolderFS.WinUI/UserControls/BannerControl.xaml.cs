@@ -21,6 +21,7 @@ namespace SecureFolderFS.WinUI.UserControls
         public static readonly DependencyProperty LeftSideProperty =
             DependencyProperty.Register(nameof(LeftSide), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(null));
 
+
         public FrameworkElement RightSide
         {
             get => (FrameworkElement)GetValue(RightSideProperty);
@@ -28,5 +29,14 @@ namespace SecureFolderFS.WinUI.UserControls
         }
         public static readonly DependencyProperty RightSideProperty =
             DependencyProperty.Register(nameof(RightSide), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(null));
+
+
+        public FrameworkElement AdditionalBottomContent
+        {
+            get => (FrameworkElement)GetValue(AdditionalBottomContentProperty);
+            set => SetValue(AdditionalBottomContentProperty, value);
+        }
+        public static readonly DependencyProperty AdditionalBottomContentProperty =
+            DependencyProperty.Register(nameof(AdditionalBottomContent), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(null));
     }
 }

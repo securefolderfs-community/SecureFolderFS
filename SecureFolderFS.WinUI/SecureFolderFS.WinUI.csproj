@@ -27,7 +27,6 @@
     <Content Remove="Assets\AppAssets\GreenShield.svg" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Dialogs\DokanyDialog.xaml" />
     <None Remove="Dialogs\SettingsDialog.xaml" />
     <None Remove="Dialogs\VaultWizardDialog.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
@@ -106,10 +105,6 @@
     <ProjectReference Include="..\SecureFolderFS.Backend\SecureFolderFS.Backend.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Dialogs\DokanyDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Dialogs\SettingsDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

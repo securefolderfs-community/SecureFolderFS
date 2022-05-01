@@ -66,14 +66,15 @@
                         </Button>
                     </Grid>
                 </uc:BannerControl.RightSide>
+                <uc:BannerControl.AdditionalBottomContent>
+                    <!--  Version InfoBar  -->
+                    <InfoBar
+                        IsClosable="{x:Bind ViewModel.VersionInfoBar.CanBeClosed, Mode=OneWay}"
+                        IsOpen="{x:Bind ViewModel.VersionInfoBar.IsOpen, Mode=OneWay}"
+                        Message="{x:Bind ViewModel.VersionInfoBar.Message, Mode=OneWay}"
+                        Severity="{x:Bind ViewModel.VersionInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
+                </uc:BannerControl.AdditionalBottomContent>
             </uc:BannerControl>
-
-            <!--  Version InfoBar  -->
-            <InfoBar
-                IsClosable="{x:Bind ViewModel.VersionInfoBar.CanBeClosed, Mode=OneWay}"
-                IsOpen="{x:Bind ViewModel.VersionInfoBar.IsOpen, Mode=OneWay}"
-                Message="{x:Bind ViewModel.VersionInfoBar.MessageText, Mode=OneWay}"
-                Severity="{x:Bind ViewModel.VersionInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}, ConverterParameter='4-3'}" />
         </StackPanel>
 
         <!--  Other settings  -->

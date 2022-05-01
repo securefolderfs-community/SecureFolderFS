@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Backend.Services.Settings;
+using SecureFolderFS.Core.Enums;
 using SecureFolderFS.WinUI.Serialization;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
@@ -8,6 +9,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
         public PreferencesSettingsService(ISettingsSharingContext settingsSharingContext)
         {
             RegisterSettingsContext(settingsSharingContext);
+        }
+
+        public FileSystemAdapterType ActiveFileSystemAdapter
+        {
+            get => (FileSystemAdapterType)Get<uint>(() => (uint)FileSystemAdapterType.DokanAdapter);
+            set => Set<uint>((uint)value);
         }
 
         public bool StartOnSystemStartup

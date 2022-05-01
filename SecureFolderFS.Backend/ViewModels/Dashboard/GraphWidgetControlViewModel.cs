@@ -40,14 +40,17 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard
 
             try
             {
-                if (Data.Count == Constants.MAX_GRAPH_POINTS)
+                if (Data.Count == Constants.Graphs.MAX_GRAPH_POINTS)
                 {
                     Data.RemoveAt(0);
                 }
 
                 Data.Add(graphPointModel);
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                _ = ex;
+            }
         }
     }
 }

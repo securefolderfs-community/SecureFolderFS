@@ -36,7 +36,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private void PreferencesSettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.ConfigureFileSystems();
+            ViewModel.ActiveFileSystemInfoBarViewModel.ConfigureFileSystem(ViewModel.ActiveFileSystemAdapter);
         }
     }
 }

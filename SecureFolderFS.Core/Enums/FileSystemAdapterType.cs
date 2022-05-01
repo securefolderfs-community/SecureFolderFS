@@ -1,18 +1,16 @@
-﻿namespace SecureFolderFS.Core.Enums
+﻿using System;
+
+namespace SecureFolderFS.Core.Enums
 {
     /// <summary>
     /// Defines types of virtual file system adapters for SecureFolderFS to use.
     /// </summary>
-    public enum FileSystemAdapterType
+    [Serializable]
+    public enum FileSystemAdapterType : uint
     {
         /// <summary>
-        /// Undefined state.
+        /// Dokany file system adapter.
         /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// Dokan file system adapter.
-        /// </summary>
-        DokanAdapter = 1
+        DokanAdapter = 0
     }
 }

@@ -5,11 +5,18 @@ namespace SecureFolderFS.Backend.ViewModels.Controls
 {
     public class InfoBarViewModel : ObservableObject
     {
-        private string? _MessageText;
-        public string? MessageText
+        private string? _Title;
+        public string? Title
         {
-            get => _MessageText;
-            set => SetProperty(ref _MessageText, value);
+            get => _Title;
+            set => SetProperty(ref _Title, value);
+        }
+
+        private string? _Message;
+        public string? Message
+        {
+            get => _Message;
+            set => SetProperty(ref _Message, value);
         }
         
         private bool _IsOpen;

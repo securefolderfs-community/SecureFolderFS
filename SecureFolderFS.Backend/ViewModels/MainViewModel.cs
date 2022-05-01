@@ -35,50 +35,12 @@ namespace SecureFolderFS.Backend.ViewModels
             };
         }
 
-        public async Task EnsureLateApplication()
+        public void EnsureLateApplication()
         {
-            if (!await CheckAvailability())
-            {
-                return;
-            }
-
             AsyncExtensions.RunAndForget(() =>
             {
                 SavedVaultsModel.Initialize();
             });
-        }
-
-        private async Task<bool> CheckAvailability()
-        {
-            var dokanyAvailability = FileSystemAvailabilityHelpers.IsDokanyAvailable();
-            if (dokanyAvailability != FileSystemAvailabilityErrorType.FileSystemAvailable)
-            {
-                var dokanyDialogViewModel = new DokanyDialogViewModel();
-
-                if (dokanyAvailability.HasFlag(FileSystemAvailabilityErrorType.ModuleNotAvailable)
-                    || dokanyAvailability.HasFlag(FileSystemAvailabilityErrorType.DriverNotAvailable))
-                {
-                    dokanyDialogViewModel.ErrorText = "Dokany has not been detected. Please install Dokany to continue using SecureFolderFS.";
-                }
-                else if (dokanyAvailability == FileSystemAvailabilityErrorType.VersionTooLow)
-                {
-                    dokanyDialogViewModel.ErrorText = "The installed version of Dokany is outdated. Please update Dokany to match requested version.";
-                }
-                else if (dokanyAvailability == FileSystemAvailabilityErrorType.VersionTooHigh)
-                {
-                    dokanyDialogViewModel.ErrorText = "The installed version of Dokany is not compatible with SecureFolderFS version. Please install requested version of Dokany.";
-                }
-                else
-                {
-                    dokanyDialogViewModel.ErrorText = "SecureFolderFS cannot work with installed Dokany version. Please install requested version of Dokany.";
-                }
-
-                await DialogService.ShowDialog(dokanyDialogViewModel);
-
-                return false;
-            }
-
-            return true;
         }
     }
 }

@@ -22,7 +22,6 @@
                     FontWeight="SemiBold"
                     Text="{Binding Path=VaultHealthState, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource VaultHealthStateToStringConverter}}"
                     TextTrimming="CharacterEllipsis" />
-
                 <!--  Last checked  -->
                 <TextBlock
                     HorizontalAlignment="Left"

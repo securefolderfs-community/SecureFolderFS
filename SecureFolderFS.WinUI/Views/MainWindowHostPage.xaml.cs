@@ -40,9 +40,9 @@ namespace SecureFolderFS.WinUI.Views
             }
         }
 
-        private async void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.EnsureLateApplication();
+            ViewModel.EnsureLateApplication();
         }
 
         public void Receive(RemoveVaultRequestedMessage message)

@@ -121,7 +121,7 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
                 return jToken.ToObject<TValue?>();
             }
 
-            return (TValue?)obj;
+            return (TValue?)Convert.ChangeType(obj, typeof(TValue));
         }
     }
 }

@@ -5,31 +5,47 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     mc:Ignorable="d">
 
-    <Grid
-        Height="96"
-        Padding="16"
-        Background="{ThemeResource ExpanderHeaderBackground}"
-        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
-        BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
-        CornerRadius="{ThemeResource ControlCornerRadius}">
+    <UserControl.Resources>
+        <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+    </UserControl.Resources>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+    <StackPanel>
+        <Grid
+            Height="96"
+            Padding="16"
+            Background="{ThemeResource ExpanderHeaderBackground}"
+            BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
+            BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
+            CornerRadius="{ThemeResource ControlCornerRadius}">
 
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Left side  -->
+            <ContentPresenter
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalContentAlignment="Center"
+                Content="{x:Bind LeftSide, Mode=OneWay}" />
+
+            <!--  Right side  -->
+            <ContentPresenter
+                Grid.Row="0"
+                Grid.Column="1"
+                VerticalContentAlignment="Center"
+                Content="{x:Bind RightSide, Mode=OneWay}" />
+        </Grid>
+
+        <!--  Additional content  -->
         <ContentPresenter
-            Grid.Column="0"
-            VerticalAlignment="Center"
+            x:Name="BottomContent"
             VerticalContentAlignment="Center"
-            Content="{x:Bind LeftSide, Mode=OneWay}" />
-
-        <ContentPresenter
-            Grid.Column="1"
-            VerticalAlignment="Center"
-            VerticalContentAlignment="Center"
-            Content="{x:Bind RightSide, Mode=OneWay}" />
-    </Grid>
+            x:Load="{x:Bind AdditionalBottomContent, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+            Content="{x:Bind AdditionalBottomContent, Mode=OneWay}" />
+    </StackPanel>
 </UserControl>

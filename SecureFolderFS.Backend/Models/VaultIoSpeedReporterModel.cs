@@ -111,8 +111,8 @@ namespace SecureFolderFS.Backend.Models
 
             await ThreadingService.ExecuteOnUiThreadAsync(() =>
             {
-                ReadGraphViewModel.GraphSubheader = $"{ByteSize.FromBytes(_readRates.Where(x => x != 0).AtLeast(0).Average()).MegaBytes.ToString("0.#")}mb/s";
-                WriteGraphViewModel.GraphSubheader = $"{ByteSize.FromBytes(_writeRates.Where(x => x != 0).AtLeast(0).Average()).MegaBytes.ToString("0.#")}mb/s";
+                ReadGraphViewModel.GraphSubheader = $"{ByteSize.FromBytes(_readRates.Where(x => x != 0).AtLeast(() => 0).Average()).MegaBytes.ToString("0.#")}mb/s";
+                WriteGraphViewModel.GraphSubheader = $"{ByteSize.FromBytes(_writeRates.Where(x => x != 0).AtLeast(() => 0).Average()).MegaBytes.ToString("0.#")}mb/s";
             });
         }
 
@@ -134,8 +134,8 @@ namespace SecureFolderFS.Backend.Models
                 });
             });
 
-            _readRates.AddWithOverflow(_readAmountBeforeFlush, Constants.MAX_GRAPH_RATES);
-            _writeRates.AddWithOverflow(_writeAmountBeforeFlush, Constants.MAX_GRAPH_RATES);
+            _readRates.AddWithOverflow(_readAmountBeforeFlush, Constants.Graphs.MAX_GRAPH_RATES);
+            _writeRates.AddWithOverflow(_writeAmountBeforeFlush, Constants.Graphs.MAX_GRAPH_RATES);
 
             _readAmountBeforeFlush = 0;
             _writeAmountBeforeFlush = 0;

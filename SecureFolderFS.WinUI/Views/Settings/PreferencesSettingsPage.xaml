@@ -5,10 +5,35 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.Settings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Backend.ViewModels.Controls.FileSystemInfoBars"
     Loaded="PreferencesSettingsPage_Loaded"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+
+        <DataTemplate x:Key="DokanyNotAvailableInfoBarTemplate" x:DataType="vm:DokanyInfoBarViewModel">
+            <InfoBar
+                IsClosable="{x:Bind CanBeClosed, Mode=OneWay}"
+                IsOpen="{x:Bind IsOpen, Mode=OneWay}"
+                Message="{x:Bind Message, Mode=OneWay}"
+                Severity="{x:Bind InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}">
+                <InfoBar.Content>
+                    <Grid Padding="16,8,16,8">
+                        <HyperlinkButton
+                            Margin="0,-16,0,0"
+                            HorizontalAlignment="Right"
+                            Command="{x:Bind OpenInstallationLinkCommand}"
+                            Content="Open website" />
+                    </Grid>
+                </InfoBar.Content>
+            </InfoBar>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid Padding="16,16,16,8" RowSpacing="12">
         <Grid.RowDefinitions>
@@ -33,12 +58,23 @@
                 </StackPanel>
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
-                <ComboBox VerticalAlignment="Center" SelectedIndex="0">
+                <ComboBox VerticalAlignment="Center" SelectedIndex="{x:Bind ViewModel.ActiveFileSystemAdapter, Mode=TwoWay, Converter={StaticResource GenericEnumConverter}}">
                     <ComboBox.Items>
                         <ComboBoxItem Content="Dokany" />
                     </ComboBox.Items>
                 </ComboBox>
             </uc:BannerControl.RightSide>
+            <uc:BannerControl.AdditionalBottomContent>
+                <!--  File system InfoBar  -->
+                <ContentControl
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    Content="{x:Bind ViewModel.ActiveFileSystemInfoBarViewModel.InfoBarViewModel, Mode=OneWay}">
+                    <ContentControl.ContentTemplateSelector>
+                        <ts:FileSystemInfoBarTemplateSelector DokanyNotAvailableInfoBarTemplate="{StaticResource DokanyNotAvailableInfoBarTemplate}" />
+                    </ContentControl.ContentTemplateSelector>
+                </ContentControl>
+            </uc:BannerControl.AdditionalBottomContent>
         </uc:BannerControl>
 
         <!--  Other settings  -->
