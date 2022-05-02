@@ -7,52 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
+    xmlns:ucw="using:SecureFolderFS.WinUI.UserControls.Widgets"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <Storyboard x:Name="GraphHideStoryboard">
-            <FadeOutThemeAnimation BeginTime="0:0:0.02" Duration="0:0:0.10" />
-            <DoubleAnimation
-                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                To="0"
-                Duration="0:0:0.12">
-                <DoubleAnimation.EasingFunction>
-                    <ExponentialEase EasingMode="EaseIn" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-        <Storyboard x:Name="GraphExtendStoryboard">
-            <DoubleAnimation
-                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                From="0.5"
-                To="1"
-                Duration="0:0:0.12">
-                <DoubleAnimation.EasingFunction>
-                    <ExponentialEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-        <Storyboard x:Name="GraphRetractStoryboard">
-            <DoubleAnimation
-                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                From="2"
-                To="1"
-                Duration="0:0:0.12">
-                <DoubleAnimation.EasingFunction>
-                    <ExponentialEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-        <Storyboard x:Name="GraphRestoreStoryboard">
-            <FadeInThemeAnimation BeginTime="0:0:0.02" Duration="0:0:0.10" />
-            <DoubleAnimation
-                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                From="0"
-                To="1"
-                Duration="0:0:0.12" />
-        </Storyboard>
-    </Page.Resources>
 
     <ScrollViewer>
         <Grid RowSpacing="8">
@@ -66,60 +23,25 @@
             <!--  Vault Health  -->
             <uc:VaultHealthControl
                 Grid.Row="0"
-                OpenVaultHealthCommand="{x:Bind ViewModel.VaultHealthViewModel.OpenVaultHealthCommand, Mode=OneWay}"
-                StartScanningCommand="{x:Bind ViewModel.VaultHealthViewModel.StartScanningCommand, Mode=OneWay}"
-                VaultHealthLastCheckedDate="{x:Bind ViewModel.VaultHealthViewModel.VaultHealthLastCheckedDate, Mode=OneWay}"
-                VaultHealthState="{x:Bind ViewModel.VaultHealthViewModel.VaultHealthState, Mode=OneWay}" />
+                OpenVaultHealthCommand="{x:Bind ViewModel.VaultHealthWidgetViewModel.OpenVaultHealthCommand, Mode=OneWay}"
+                StartScanningCommand="{x:Bind ViewModel.VaultHealthWidgetViewModel.StartScanningCommand, Mode=OneWay}"
+                VaultHealthLastCheckedDate="{x:Bind ViewModel.VaultHealthWidgetViewModel.VaultHealthLastCheckedDate, Mode=OneWay}"
+                VaultHealthState="{x:Bind ViewModel.VaultHealthWidgetViewModel.VaultHealthState, Mode=OneWay}" />
 
             <InfoBar Grid.Row="1" Visibility="Collapsed" />
 
             <!--  Read/Write Graphs  -->
-            <Grid
-                x:Name="GraphsGrid"
+            <ucw:GraphsWidget
+                x:Name="Graphs"
                 Grid.Row="2"
-                ColumnSpacing="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="ReadColumn" Width="*" />
-                    <ColumnDefinition x:Name="WriteColumn" Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <!--  Read  -->
-                <uc:GraphWidgetControl
-                    x:Name="ReadGraph"
-                    Grid.Column="0"
-                    ChartPrimaryColor="#4C00AED4"
-                    Click="ReadGraph_Click"
-                    ControlLoaded="{x:Bind ViewModel.ReadGraphViewModel.IsReady, Mode=TwoWay}"
-                    Data="{x:Bind ViewModel.ReadGraphViewModel.Data, Mode=OneWay}"
-                    GraphHeader="Read speeds"
-                    GraphSubheader="{x:Bind ViewModel.ReadGraphViewModel.GraphSubheader, Mode=OneWay}">
-                    <uc:GraphWidgetControl.RenderTransform>
-                        <ScaleTransform />
-                    </uc:GraphWidgetControl.RenderTransform>
-                    <uc:GraphWidgetControl.ChartStroke>
-                        <SolidColorBrush Color="#00AED4" />
-                    </uc:GraphWidgetControl.ChartStroke>
-                </uc:GraphWidgetControl>
-
-                <!--  Write  -->
-                <uc:GraphWidgetControl
-                    x:Name="WriteGraph"
-                    Grid.Column="1"
-                    ChartPrimaryColor="#4C008d74"
-                    Click="WriteGraph_Click"
-                    ControlLoaded="{x:Bind ViewModel.WriteGraphViewModel.IsReady, Mode=TwoWay}"
-                    Data="{x:Bind ViewModel.WriteGraphViewModel.Data, Mode=OneWay}"
-                    GraphHeader="Write speeds"
-                    GraphSubheader="{x:Bind ViewModel.WriteGraphViewModel.GraphSubheader, Mode=OneWay}"
-                    RenderTransformOrigin="1.0,0.0">
-                    <uc:GraphWidgetControl.RenderTransform>
-                        <ScaleTransform />
-                    </uc:GraphWidgetControl.RenderTransform>
-                    <uc:GraphWidgetControl.ChartStroke>
-                        <SolidColorBrush Color="#008D74" />
-                    </uc:GraphWidgetControl.ChartStroke>
-                </uc:GraphWidgetControl>
-            </Grid>
+                ReadGraphData="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.Data, Mode=OneWay}"
+                ReadGraphIsExtended="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.IsExtended, Mode=TwoWay}"
+                ReadGraphLoaded="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.IsReady, Mode=TwoWay}"
+                ReadGraphSubheader="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
+                WriteGraphData="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.Data, Mode=OneWay}"
+                WriteGraphIsExtended="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.IsExtended, Mode=TwoWay}"
+                WriteGraphLoaded="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.IsReady, Mode=TwoWay}"
+                WriteGraphSubheader="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
 
             <!--  Vault options  -->
             <StackPanel Grid.Row="3" Spacing="4">

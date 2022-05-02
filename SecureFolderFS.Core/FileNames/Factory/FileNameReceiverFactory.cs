@@ -3,7 +3,7 @@ using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileNames.Receivers;
 using SecureFolderFS.Core.Security;
-using SecureFolderFS.Core.Tracking;
+using SecureFolderFS.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.FileNames.Factory
 {

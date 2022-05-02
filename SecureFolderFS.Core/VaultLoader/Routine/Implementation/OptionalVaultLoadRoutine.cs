@@ -9,7 +9,7 @@ using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.FileSystem.StorageEnumeration.Enumerators;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Core.Tracking;
+using SecureFolderFS.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Core.Tracking;
+using SecureFolderFS.Sdk.Tracking;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Chunks.Receivers

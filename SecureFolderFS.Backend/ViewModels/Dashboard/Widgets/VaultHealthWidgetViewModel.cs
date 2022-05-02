@@ -1,10 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Backend.Enums;
 
-namespace SecureFolderFS.Backend.ViewModels.Dashboard
+namespace SecureFolderFS.Backend.ViewModels.Dashboard.Widgets
 {
-    public sealed class VaultHealthViewModel : ObservableObject
+    public sealed class VaultHealthWidgetViewModel : BaseWidgetViewModel
     {
         private DateTime _VaultHealthLastCheckedDate;
         public DateTime VaultHealthLastCheckedDate
@@ -24,7 +23,7 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard
 
         public IRelayCommand OpenVaultHealthCommand { get; }
 
-        public VaultHealthViewModel()
+        public VaultHealthWidgetViewModel()
         {
             this.StartScanningCommand = new RelayCommand(StartScanning);
             this.OpenVaultHealthCommand = new RelayCommand(OpenVaultHealth);

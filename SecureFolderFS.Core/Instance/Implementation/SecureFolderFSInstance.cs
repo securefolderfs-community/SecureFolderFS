@@ -4,7 +4,7 @@ using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Streams.Receiver;
-using SecureFolderFS.Core.Tracking;
+using SecureFolderFS.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.Instance.Implementation
 {

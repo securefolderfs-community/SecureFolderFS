@@ -36,7 +36,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
             {
                 finalizedVaultLoadRoutine = finalizedVaultLoadRoutine.ContinueWithOptionalRoutine()
                     .EstablishOptionalRoutine()
-                    .AddFileSystemStatsTracker(viewModel.VaultIoSpeedReporterModel)
+                    .AddFileSystemStatsTracker(viewModel.GraphsWidgetViewModel.VaultIoSpeedReporterModel)
                     .Finalize();
 
                 VaultViewModel.VaultInstance = finalizedVaultLoadRoutine.Deploy();

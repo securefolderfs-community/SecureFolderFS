@@ -3,7 +3,7 @@ using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.IO;
-using SecureFolderFS.Core.Tracking;
+using SecureFolderFS.Sdk.Tracking;
 using SecureFolderFS.Core.VaultDataStore;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers

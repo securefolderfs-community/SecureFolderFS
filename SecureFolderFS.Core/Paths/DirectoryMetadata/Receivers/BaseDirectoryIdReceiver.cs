@@ -1,5 +1,5 @@
 ﻿using System;
-using SecureFolderFS.Core.Tracking;
+using SecureFolderFS.Sdk.Tracking;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.IO;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers

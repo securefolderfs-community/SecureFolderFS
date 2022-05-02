@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Security;
-using SecureFolderFS.Core.Tracking;
+using SecureFolderFS.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.FileNames.Receivers
 {

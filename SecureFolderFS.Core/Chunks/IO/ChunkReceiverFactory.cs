@@ -5,7 +5,7 @@ using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
-using SecureFolderFS.Core.Tracking;
+using SecureFolderFS.Sdk.Tracking;
 using SecureFolderFS.Core.VaultDataStore;
 
 namespace SecureFolderFS.Core.Chunks.IO
