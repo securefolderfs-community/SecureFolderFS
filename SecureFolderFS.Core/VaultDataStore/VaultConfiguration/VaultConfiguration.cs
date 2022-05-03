@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
 
         internal override bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey)
         {
-            if (HmacSha256Mac.IsEmpty() || masterKey.IsEmpty() || keyCryptor == null)
+            if (HmacSha256Mac.IsEmpty() || masterKey.AnyEmpty() || keyCryptor == null)
             {
                 return false;
             }

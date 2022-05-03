@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.Streams.Management
             _readWriteStreams.RemoveStream(ciphertextFileStream);
         }
 
-        public ICiphertextFileStream EnsureReadOnlyStreamInstance(ICiphertextFileStream ciphertextFileStream = null)
+        public ICiphertextFileStream GetReadOnlyStreamInstance(ICiphertextFileStream ciphertextFileStream = null)
         {
             AssertNotDisposed();
 
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.Streams.Management
             return ciphertextFileStream;
         }
 
-        public ICiphertextFileStream EnsureReadWriteStreamInstance(ICiphertextFileStream ciphertextFileStream = null)
+        public ICiphertextFileStream GetReadWriteStreamInstance(ICiphertextFileStream ciphertextFileStream = null)
         {
             AssertNotDisposed();
 

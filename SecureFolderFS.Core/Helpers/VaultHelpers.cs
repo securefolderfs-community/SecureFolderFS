@@ -1,7 +1,7 @@
-﻿using SecureFolderFS.Core.DataModels;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.Helpers
 {
@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Helpers
     {
         public static char GetUnusedMountLetter()
         {
-            if (!PlatformDataModel.IsPlatformWindows)
+            if (!CompatibilityHelpers.IsPlatformWindows)
             {
                 return char.MinValue;
             }

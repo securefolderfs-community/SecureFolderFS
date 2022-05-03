@@ -9,58 +9,67 @@
     mc:Ignorable="d">
 
     <ScrollViewer>
-        <Grid
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            RowSpacing="32">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
+        <Grid>
+            <Grid
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                RowSpacing="32">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-            <!--  Header  -->
-            <StackPanel Grid.Row="0" Spacing="6">
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="26"
-                    FontWeight="SemiBold"
-                    Text="{x:Bind ViewModel.VaultName, Mode=OneWay}"
-                    TextTrimming="CharacterEllipsis"
-                    ToolTipService.ToolTip="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="14"
-                    Opacity="0.8"
-                    Text="Vault is locked" />
-            </StackPanel>
-
-            <!--  Image  -->
-            <Image Grid.Row="1" />
-
-            <!--  Password and login  -->
-            <StackPanel Grid.Row="1" Spacing="24">
-
-                <!--  Password Control  -->
-                <StackPanel MaxWidth="400" Spacing="8">
-                    <TextBlock Opacity="0.8" Text="Enter password" />
-                    <PasswordBox
-                        x:Name="VaultPasswordBox"
-                        MinWidth="300"
-                        IsPasswordRevealButtonEnabled="True"
-                        KeyUp="VaultPasswordBox_KeyUp"
-                        PlaceholderText="Password" />
+                <!--  Header  -->
+                <StackPanel Grid.Row="0" Spacing="6">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="26"
+                        FontWeight="SemiBold"
+                        Text="{x:Bind ViewModel.VaultName, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTipService.ToolTip="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="14"
+                        Opacity="0.8"
+                        Text="Vault is locked" />
                 </StackPanel>
 
-                <!--  Login  -->
-                <Button
-                    x:Name="ContinueButton"
-                    Padding="24,6"
-                    HorizontalAlignment="Center"
-                    Click="ContinueButton_Click"
-                    Content="Unlock"
-                    Style="{ThemeResource AccentButtonStyle}" />
-            </StackPanel>
+                <!--  Image  -->
+                <Image Grid.Row="1" />
+
+                <!--  Password and login  -->
+                <StackPanel Grid.Row="1" Spacing="24">
+                    <!--  Password Control  -->
+                    <StackPanel Width="400" Spacing="8">
+                        <TextBlock Opacity="0.8" Text="Enter password" />
+                        <PasswordBox
+                            x:Name="VaultPasswordBox"
+                            MinWidth="300"
+                            IsPasswordRevealButtonEnabled="True"
+                            KeyUp="VaultPasswordBox_KeyUp"
+                            PlaceholderText="Password" />
+                    </StackPanel>
+
+                    <!--  Login  -->
+                    <Button
+                        x:Name="ContinueButton"
+                        Padding="24,6"
+                        HorizontalAlignment="Center"
+                        Click="ContinueButton_Click"
+                        Content="Unlock"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+            </Grid>
+
+            <InfoBar
+                Title="Password is incorrect."
+                Margin="32"
+                VerticalAlignment="Bottom"
+                IsOpen="False"
+                Severity="Error" />
         </Grid>
     </ScrollViewer>
 </Page>

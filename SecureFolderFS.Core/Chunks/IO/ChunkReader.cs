@@ -43,7 +43,7 @@ namespace SecureFolderFS.Core.Chunks.IO
             var ciphertextBufferMemory = ciphertextBuffer.AsMemory();
 
             // Read from stream
-            var ciphertextFileStream = _ciphertextStreamsManager.EnsureReadOnlyStreamInstance();
+            var ciphertextFileStream = _ciphertextStreamsManager.GetReadOnlyStreamInstance();
             ciphertextFileStream.Position = ciphertextPosition;
             var read = ciphertextFileStream.Read(ciphertextBufferMemory.Span);
 

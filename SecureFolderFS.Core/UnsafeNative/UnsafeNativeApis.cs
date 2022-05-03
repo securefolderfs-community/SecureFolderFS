@@ -27,6 +27,14 @@ namespace SecureFolderFS.Core.UnsafeNative
         public static extern bool CloseHandle([In] IntPtr hObject);
 
         [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool VirtualLock([In] IntPtr lpAddress, UIntPtr dwSize);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool VirtualUnlock([In] IntPtr lpAddress, UIntPtr dwSize);
+
+        [DllImport("kernel32.dll")]
         public static extern void RtlZeroMemory([Out] IntPtr ptr, [In] UIntPtr cnt);
 
         [DllImport("dokan1.dll", ExactSpelling = true)]

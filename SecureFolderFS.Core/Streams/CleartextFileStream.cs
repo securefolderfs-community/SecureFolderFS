@@ -3,7 +3,6 @@ using System.IO;
 using Microsoft.Win32.SafeHandles;
 using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.FileSystem.Operations;
@@ -12,6 +11,7 @@ using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Extensions;
 using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.Streams
 {
@@ -251,7 +251,7 @@ namespace SecureFolderFS.Core.Streams
 
         public bool CanBeDeleted()
         {
-            if (PlatformDataModel.IsPlatformOSX)
+            if (CompatibilityHelpers.IsPlatformOSX)
             {
                 return true;
             }

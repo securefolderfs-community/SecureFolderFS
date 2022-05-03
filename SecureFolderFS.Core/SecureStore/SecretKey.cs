@@ -1,41 +1,43 @@
 ﻿using System;
-using System.Linq;
+using SecureFolderFS.Sdk.SecureStore;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.SecureStore
 {
-    internal sealed class SecretKey : FreeableStore<SecretKey>
+    internal sealed class SecretKey : IDisposable, ICopyable<SecretKey>
     {
-        public byte[] Key { get; }
+        private readonly LockedArray<byte> _internal;
+
+        private readonly IExposedBuffer<byte> _exposedBuffer;
+
+        public byte[] Key => _exposedBuffer.Buffer;
 
         public SecretKey(byte[] key)
         {
-            this.Key = key;
+            _internal = EnsureCorrectImplementation(key);
+            _exposedBuffer = _internal as IExposedBuffer<byte>;
         }
 
-        public override SecretKey CreateCopy()
+        public SecretKey CreateCopy()
         {
-            return new SecretKey(Key.CloneArray());
+            return new(Key.CloneArray());
         }
 
-        public override bool Equals(SecretKey other)
+        private static LockedArray<byte> EnsureCorrectImplementation(byte[] key)
         {
-            if (other?.Key == null || Key == null)
+            if (CompatibilityHelpers.IsPlatformWindows)
             {
-                return false;
+                return new Win32LockedArray<byte>(key);
             }
 
-            return Key.SequenceEqual(other.Key);
+            throw new PlatformNotSupportedException();
         }
 
-        public override int GetHashCode()
+        public void Dispose()
         {
-            return Key.GetHashCode();
-        }
-
-        protected override void SecureFree()
-        {
-            DisposableArray.EnsureSecureDisposal(Key);
+            _internal.Dispose();
         }
 
         public static implicit operator byte[](SecretKey secretKey) => secretKey.Key;

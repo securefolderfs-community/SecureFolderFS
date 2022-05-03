@@ -11,9 +11,9 @@ namespace SecureFolderFS.Core.PasswordRequest
     /// </summary>
     public sealed class DisposablePassword : IDisposable
     {
-        internal DisposableArray Password { get; }
+        internal SecretKey Password { get; }
 
-        public int Length => Password.Bytes.Length;
+        public int Length => Password.Key.Length;
 
         public DisposablePassword(byte[] password)
         {
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Core.PasswordRequest
 
         public static DisposablePassword AsEmpty()
         {
-            return new DisposablePassword(new byte[0]);
+            return new DisposablePassword(Array.Empty<byte>());
         }
 
         public void Dispose()

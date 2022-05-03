@@ -2,10 +2,10 @@
 using System;
 using System.IO;
 using System.Security.AccessControl;
-using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public NtStatus GetFileSecurity(string fileName, out FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
         {
-            if (!PlatformDataModel.IsPlatformWindows)
+            if (!CompatibilityHelpers.IsPlatformWindows)
             {
 
                 security = null;
