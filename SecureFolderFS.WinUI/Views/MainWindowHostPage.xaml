@@ -24,10 +24,6 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid.BackgroundTransition>
-            <BrushTransition />
-        </Grid.BackgroundTransition>
-
         <!--  Title  -->
         <uc:TitleBarControl
             x:Name="CustomTitleBar"
@@ -35,10 +31,9 @@
             x:FieldModifier="public" />
 
         <!--  Main Content  -->
-        <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Grid.Row="1">
             <NavigationView
                 x:Name="Sidebar"
-                Grid.Row="1"
                 IsBackButtonVisible="Collapsed"
                 IsPaneToggleButtonVisible="True"
                 IsSettingsVisible="False"

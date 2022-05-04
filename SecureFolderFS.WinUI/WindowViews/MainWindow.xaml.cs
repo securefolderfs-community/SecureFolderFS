@@ -1,8 +1,11 @@
 ﻿using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using SecureFolderFS.WinUI.Helpers;
+using WinRT;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -15,6 +18,10 @@ namespace SecureFolderFS.WinUI.WindowViews
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        private WindowsSystemDispatcherQueueHelper? _systemDispatcherQueueHelper;
+        private MicaController? _micaController;
+        private SystemBackdropConfiguration? _systemBackdropConfiguration;
+
         public static MainWindow? Instance { get; private set; }
 
         public IntPtr Hwnd { get; private set; }
@@ -53,15 +60,88 @@ namespace SecureFolderFS.WinUI.WindowViews
             {
                 this.ExtendsContentIntoTitleBar = true;
                 SetTitleBar(HostPage.CustomTitleBar);
-                HostPage.CustomTitleBar.Margin = new Thickness(0, 0, 138, 0); // Don't cover up Window buttons
+                //HostPage.CustomTitleBar.Margin = new Thickness(0, 0, 138, 0); // Don't cover up Window buttons
             }
+
+            // Set mica material
+            _ = TrySetMicaBackdrop();
 
             // Register ThemeHelper
             var themeHelper = ThemeHelper.RegisterWindowInstance(AppWindow);
-            themeHelper!.UpdateTheme();
+            themeHelper.UpdateTheme();
+
+            // Register ThemeHelper callback (for theme change to update the backdrop)
+            if (MicaController.IsSupported())
+            {
+                themeHelper.RegisterForThemeChangedCallback(nameof(MainWindow), _ =>
+                {
+                    if (_systemBackdropConfiguration is not null)
+                    {
+                        SetBackdropConfiguration(_systemBackdropConfiguration);
+                    }
+                });
+            }
 
             // Set min size
             // TODO: Set min size
+        }
+
+        private bool TrySetMicaBackdrop()
+        {
+            if (MicaController.IsSupported())
+            {
+                _systemBackdropConfiguration = new();
+                _systemDispatcherQueueHelper = new();
+                _micaController = new();
+
+                _systemDispatcherQueueHelper.EnsureWindowsSystemDispatcherQueueController();
+
+                // Hook up the policy object
+                Activated += MainWindow_Activated;
+                Closed += MainWindow_Closed;
+
+                // Enable the backdrop
+                var compositionSupportsSystemBackdrop = this.As<ICompositionSupportsSystemBackdrop>();
+                _micaController.AddSystemBackdropTarget(compositionSupportsSystemBackdrop);
+                _micaController.SetSystemBackdropConfiguration(_systemBackdropConfiguration);
+
+                // Initialize state
+                SetBackdropConfiguration(_systemBackdropConfiguration);
+
+                return true;
+            }
+
+            return false; // Mica not supported
+        }
+
+        private void SetBackdropConfiguration(SystemBackdropConfiguration systemBackdropConfiguration)
+        {
+            systemBackdropConfiguration.Theme = ((FrameworkElement)this.Content).ActualTheme switch
+            {
+                ElementTheme.Dark => SystemBackdropTheme.Dark,
+                ElementTheme.Light => SystemBackdropTheme.Light,
+                ElementTheme.Default => SystemBackdropTheme.Default,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            if (_systemBackdropConfiguration is not null)
+            {
+                _systemBackdropConfiguration.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+            }
+        }
+
+        private void MainWindow_Closed(object sender, WindowEventArgs args)
+        {
+            // Make sure any Mica/Acrylic controller is disposed so it doesn't try to use this closed window.
+            _micaController?.Dispose();
+            _micaController = null;
+            _systemBackdropConfiguration = null;
+            ThemeHelper.ThemeHelpers[AppWindow!].UnregisterForThemeChangedCallback(nameof(MainWindow));
+
+            this.Activated -= MainWindow_Activated;
         }
     }
 }

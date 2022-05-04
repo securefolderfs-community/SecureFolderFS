@@ -32,6 +32,11 @@ namespace SecureFolderFS.WinUI.Views
             WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
         }
 
+        public void Receive(RemoveVaultRequestedMessage message)
+        {
+            ViewModel.SidebarViewModel.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
+        }
+
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is SidebarItemViewModel itemViewModel)
@@ -43,11 +48,6 @@ namespace SecureFolderFS.WinUI.Views
         private void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.EnsureLateApplication();
-        }
-
-        public void Receive(RemoveVaultRequestedMessage message)
-        {
-            ViewModel.SidebarViewModel.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
         }
     }
 }

@@ -90,12 +90,12 @@
     <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.0" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.3" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0-preview3" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196" />
-    <PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.50" />
+    <PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.52" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 

@@ -89,11 +89,5 @@
         </StackPanel>
     </ContentDialog.Title>
 
-    <Grid>
-        <Grid.BackgroundTransition>
-            <BrushTransition />
-        </Grid.BackgroundTransition>
-
-        <Frame x:Name="ContentFrame" />
-    </Grid>
+    <Frame x:Name="ContentFrame" />
 </ContentDialog>

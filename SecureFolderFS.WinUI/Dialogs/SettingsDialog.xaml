@@ -19,11 +19,6 @@
         Height="500"
         Margin="-24"
         Background="{ThemeResource ContentDialogBackground}">
-
-        <Grid.BackgroundTransition>
-            <BrushTransition />
-        </Grid.BackgroundTransition>
-
         <NavigationView
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="False"

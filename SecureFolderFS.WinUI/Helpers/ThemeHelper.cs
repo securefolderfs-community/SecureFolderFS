@@ -12,11 +12,8 @@ namespace SecureFolderFS.WinUI.Helpers
     internal sealed class ThemeHelper
     {
         private readonly AppWindow _appWindow;
-
         private readonly UISettings _uiSettings;
-
         private readonly DispatcherQueue _dispatcherQueue;
-
         private readonly Dictionary<string, Action<ApplicationTheme>> _themeChangedCallbacks;
 
         public static ApplicationTheme CurrentTheme { get; private set; } = Application.Current.RequestedTheme;
@@ -34,20 +31,6 @@ namespace SecureFolderFS.WinUI.Helpers
             this._dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             this._themeChangedCallbacks = new();
             this._uiSettings.ColorValuesChanged += Settings_ColorValuesChanged;
-        }
-
-        private async void Settings_ColorValuesChanged(UISettings sender, object args)
-        {
-            CurrentTheme = CurrentTheme == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark;
-            await _dispatcherQueue.EnqueueAsync(() =>
-            {
-                UpdateTheme();
-
-                foreach (var item in _themeChangedCallbacks.Values)
-                {
-                    item(CurrentTheme);
-                }
-            }, DispatcherQueuePriority.Low);
         }
 
         public void UpdateTheme()
@@ -77,11 +60,31 @@ namespace SecureFolderFS.WinUI.Helpers
             _themeChangedCallbacks.Remove(className);
         }
 
-        public static ThemeHelper? RegisterWindowInstance(AppWindow appWindow)
+        private async void Settings_ColorValuesChanged(UISettings sender, object args)
         {
-            var themeHelper = new ThemeHelper(appWindow);
+            CurrentTheme = CurrentTheme == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark;
+            await _dispatcherQueue.EnqueueAsync(() =>
+            {
+                UpdateTheme();
 
-            return _ThemeHelpers.TryAdd(appWindow, themeHelper) ? themeHelper : null;
+                foreach (var item in _themeChangedCallbacks.Values)
+                {
+                    item(CurrentTheme);
+                }
+            }, DispatcherQueuePriority.Low);
+        }
+
+        public static ThemeHelper RegisterWindowInstance(AppWindow appWindow)
+        {
+            if (_ThemeHelpers.TryGetValue(appWindow, out var themeHelper))
+            {
+                return themeHelper;
+            }
+
+            themeHelper = new(appWindow);
+            _ThemeHelpers.Add(appWindow, themeHelper);
+
+            return themeHelper;
         }
 
         public static bool UnregisterWindowInstance(AppWindow appWindow)

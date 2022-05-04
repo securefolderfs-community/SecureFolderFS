@@ -10,13 +10,13 @@ namespace SecureFolderFS.Core.UnsafeNative
         public struct LARGE_INTEGER
         {
             [FieldOffset(0)]
-            public UInt32 LowPart;
+            public uint LowPart;
 
             [FieldOffset(4)]
-            public Int32 HighPart;
+            public int HighPart;
 
             [FieldOffset(0)]
-            public Int64 QuadPart;
+            public long QuadPart;
         }
 
         public static class FILE_ACCESS
