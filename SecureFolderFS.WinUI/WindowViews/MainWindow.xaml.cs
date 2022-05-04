@@ -4,7 +4,9 @@ using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.WinUI.Views;
 using WinRT;
 using WinRT.Interop;
 
@@ -21,6 +23,7 @@ namespace SecureFolderFS.WinUI.WindowViews
         private WindowsSystemDispatcherQueueHelper? _systemDispatcherQueueHelper;
         private MicaController? _micaController;
         private SystemBackdropConfiguration? _systemBackdropConfiguration;
+        private bool _isMicaSupported;
 
         public static MainWindow? Instance { get; private set; }
 
@@ -79,6 +82,11 @@ namespace SecureFolderFS.WinUI.WindowViews
                     {
                         SetBackdropConfiguration(_systemBackdropConfiguration);
                     }
+
+                    if (!_isMicaSupported)
+                    {
+                        (Content as MainWindowHostPage)!.Background = (Brush)App.Current.Resources["ApplicationPageBackgroundThemeBrush"];
+                    }
                 });
             }
 
@@ -88,7 +96,7 @@ namespace SecureFolderFS.WinUI.WindowViews
 
         private bool TrySetMicaBackdrop()
         {
-            if (MicaController.IsSupported())
+            if (_isMicaSupported = MicaController.IsSupported())
             {
                 _systemBackdropConfiguration = new();
                 _systemDispatcherQueueHelper = new();
@@ -110,6 +118,8 @@ namespace SecureFolderFS.WinUI.WindowViews
 
                 return true;
             }
+
+            (Content as MainWindowHostPage)!.Background = (Brush)App.Current.Resources["ApplicationPageBackgroundThemeBrush"];
 
             return false; // Mica not supported
         }
