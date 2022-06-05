@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using System;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using SecureFolderFS.Backend.Services;
@@ -51,6 +52,7 @@ namespace SecureFolderFS.WinUI
         {
             // Configure exception handlers
             UnhandledException += App_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
             // Configure IoC
@@ -94,14 +96,21 @@ namespace SecureFolderFS.WinUI
             LogException(e.Exception);
         }
 
-        private void LogException(Exception ex)
+        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
         {
-            LogExceptionToFile(ex);
+            LogException(e.ExceptionObject as Exception);
         }
 
-        private void LogExceptionToFile(Exception ex)
+        private void LogException(Exception? ex)
         {
-            LoggingHelpers.SafeLogExceptionToFile(ex);
+            var formattedException = ExceptionHelpers.FormatException(ex);
+
+            Debug.WriteLine(formattedException);
+            Debugger.Break(); // Please check "Output Window" for exception details (View -> Output Window) (Ctr + Alt + O)
+
+#if !DEBUG
+            ExceptionHelpers.LogExceptionToFile(formattedException);
+#endif
         }
     }
 }

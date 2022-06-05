@@ -63,7 +63,6 @@ namespace SecureFolderFS.WinUI.WindowViews
             {
                 this.ExtendsContentIntoTitleBar = true;
                 SetTitleBar(HostPage.CustomTitleBar);
-                //HostPage.CustomTitleBar.Margin = new Thickness(0, 0, 138, 0); // Don't cover up Window buttons
             }
 
             // Set mica material

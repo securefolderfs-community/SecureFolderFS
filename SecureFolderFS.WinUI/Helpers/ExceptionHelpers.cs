@@ -5,13 +5,13 @@ using Windows.Storage;
 
 namespace SecureFolderFS.WinUI.Helpers
 {
-    internal static class LoggingHelpers
+    internal static class ExceptionHelpers
     {
-        public static void SafeLogExceptionToFile(Exception ex)
+        public static string? FormatException(Exception? ex)
         {
-            if (ex == null)
+            if (ex is null)
             {
-                return;
+                return null;
             }
 
             var exceptionString = string.Empty;
@@ -24,23 +24,28 @@ namespace SecureFolderFS.WinUI.Helpers
             exceptionString += $">>> INNER {ex.InnerException}\n";
             exceptionString += $">>> SOURCE {ex.Source}\n\n";
 
-            LogToFile(exceptionString);
+            return exceptionString;
         }
 
-        private static void LogToFile(string text)
+        public static void LogExceptionToFile(string? formattedException)
         {
+            if (formattedException is null)
+            {
+                return;
+            }
+
             try
             {
                 var filePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.Application.EXCEPTIONLOG_FILENAME);
 
                 var existing = File.ReadAllText(filePath);
-                existing += text;
+                existing += formattedException;
 
                 File.WriteAllText(filePath, existing);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine(ex);
             }
         }
     }

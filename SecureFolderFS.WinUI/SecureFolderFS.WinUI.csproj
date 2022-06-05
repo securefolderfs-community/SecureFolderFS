@@ -93,9 +93,9 @@
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0-preview3" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196" />
-    <PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.52" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
+    <PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.58" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
