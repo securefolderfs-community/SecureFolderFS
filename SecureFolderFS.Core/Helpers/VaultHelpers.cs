@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.Helpers
             }
             catch
             {
-                if (usedDefaultDiscoverer && vaultFileDiscoverer != null)
+                if (usedDefaultDiscoverer && vaultFileDiscoverer is not null)
                 {
                     vaultFileStream = openStreamToVaultFile(appropriateDiscoverer);
                 }

@@ -83,7 +83,7 @@ namespace SecureFolderFS.WinUI.UserControls
 
         private async Task Navigate(VaultViewModel vaultViewModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
         {
-            if (basePageViewModel == null)
+            if (basePageViewModel is null)
             {
                 NavigationDestinations.SetAndGet(vaultViewModel.VaultIdModel, out basePageViewModel, () => new VaultLoginPageViewModel(vaultViewModel));
                 PageViewModel = basePageViewModel!;

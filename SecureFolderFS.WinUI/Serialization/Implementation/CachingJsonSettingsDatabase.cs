@@ -21,11 +21,11 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
 
             if (_settingsCache.TryGetValue(key, out var objVal))
             {
-                return GetValueFromObject<TValue?>(objVal) ?? (defaultValue != null ? defaultValue() : default);
+                return GetValueFromObject<TValue?>(objVal) ?? (defaultValue is not null ? defaultValue() : default);
             }
             else
             {
-                var newValue = defaultValue != null ? defaultValue() : default;
+                var newValue = defaultValue is not null ? defaultValue() : default;
 
                 base.SetValue<TValue?>(key, newValue);
 

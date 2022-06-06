@@ -8,7 +8,6 @@ using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Backend.Dialogs;
 using SecureFolderFS.Backend.Enums;
 using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.WinUI.Helpers;
@@ -146,18 +145,18 @@ namespace SecureFolderFS.WinUI.Dialogs
         private void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Messenger.Register<VaultWizardNavigationRequestedMessage>(this);
-            ViewModel.StartNavigation();
+            ViewModel.Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardMainPageViewModel(ViewModel.Messenger, ViewModel)));
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var handledCallback = new HandledOrCanceledFlag(value => args.Cancel = value);
+            var handledCallback = new EventDispatchFlagHelper(() => args.Cancel = true);
             ViewModel.PrimaryButtonClickCommand?.Execute(handledCallback);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var handledCallback = new HandledOrCanceledFlag(value => args.Cancel = value);
+            var handledCallback = new EventDispatchFlagHelper(() => args.Cancel = true);
             ViewModel.SecondaryButtonClickCommand?.Execute(handledCallback);
         }
 
@@ -167,15 +166,18 @@ namespace SecureFolderFS.WinUI.Dialogs
 
             if ((ContentFrame.Content as Page)?.DataContext is BaseVaultWizardPageViewModel viewModel)
             {
-                viewModel.ReattachCommands();
-
+                ViewModel.CurrentPageViewModel = viewModel;
+                viewModel.ReturnToViewModel();
                 await FinalizeNavigationAnimationAsync(viewModel);
             }
         }
 
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-            (ContentFrame.Content as IDisposable)?.Dispose();
+            if (!args.Cancel)
+            {
+                (ContentFrame.Content as IDisposable)?.Dispose();
+            }
         }
     }
 }

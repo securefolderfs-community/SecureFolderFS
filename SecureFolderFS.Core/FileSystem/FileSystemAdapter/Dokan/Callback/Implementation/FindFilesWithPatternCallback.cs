@@ -64,7 +64,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                             return null;
                         }
                     })
-                    .Where(item => item != null)
+                    .Where(item => item is not null)
                     .Select(item => (FileInformation)item!)
                     .ToArray();
 

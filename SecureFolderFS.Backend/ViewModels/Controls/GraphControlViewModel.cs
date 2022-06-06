@@ -6,7 +6,7 @@ using SecureFolderFS.Backend.Services;
 
 namespace SecureFolderFS.Backend.ViewModels.Controls
 {
-    public sealed class GraphControlViewModel : ObservableObject, IGraphManagerModel, IProgress<double>
+    public sealed class GraphControlViewModel : ObservableObject, IGraphModel, IProgress<double>
     {
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 

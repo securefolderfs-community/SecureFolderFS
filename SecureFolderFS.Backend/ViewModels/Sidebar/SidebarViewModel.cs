@@ -71,7 +71,7 @@ namespace SecureFolderFS.Backend.ViewModels.Sidebar
         public void Receive(RemoveVaultRequestedMessage message)
         {
             var itemToRemove = SidebarItems.FirstOrDefault(item => item.VaultViewModel.VaultIdModel == message.Value);
-            if (itemToRemove != null)
+            if (itemToRemove is not null)
             {
                 SidebarItems.Remove(itemToRemove);
             }

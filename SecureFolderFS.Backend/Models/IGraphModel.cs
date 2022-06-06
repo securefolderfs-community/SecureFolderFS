@@ -1,6 +1,6 @@
 ﻿namespace SecureFolderFS.Backend.Models
 {
-    public interface IGraphManagerModel
+    public interface IGraphModel
     {
         void AddPoint(GraphPointModel point);
     }

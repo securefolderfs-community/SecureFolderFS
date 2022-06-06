@@ -45,7 +45,7 @@ namespace SecureFolderFS.Backend.Models
 
         public void ResetSearch()
         {
-            if (_savedItems != null)
+            if (_savedItems is not null)
             {
                 Collection!.EnumeratedAdd(_savedItems);
                 _savedItems = null;

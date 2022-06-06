@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             var directoryHandle = DirectoryHandle.Open(ciphertextPath, _vaultStorageReceiver, mode, access, share, options);
             var handle = Constants.FileSystem.INVALID_HANDLE;
 
-            if (directoryHandle != null)
+            if (directoryHandle is not null)
             {
                 handle = _handleGenerator.ThreadSafeIncrementAndGet();
                 _openHandles.Add(handle, directoryHandle);
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             var fileHandle = FileHandle.Open(ciphertextPath, _vaultStorageReceiver, mode, access, share, options);
             var handle = Constants.FileSystem.INVALID_HANDLE;
 
-            if (fileHandle != null)
+            if (fileHandle is not null)
             {
                 handle = _handleGenerator.ThreadSafeIncrementAndGet();
                 lock (_openHandles)

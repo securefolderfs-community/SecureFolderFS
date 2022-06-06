@@ -11,7 +11,7 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
 
         protected override DataTemplate? SelectTemplateCore(NavigationItemViewModel? item, DependencyObject container)
         {
-            if (item == null)
+            if (item is null)
             {
                 return base.SelectTemplateCore(item, container);
             }

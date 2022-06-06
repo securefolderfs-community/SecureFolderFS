@@ -19,7 +19,7 @@ namespace SecureFolderFS.WinUI.Helpers
                 return;
             }
 
-            if (_dispatcherQueueController == null)
+            if (_dispatcherQueueController is null)
             {
                 DispatcherQueueOptions options = new();
 

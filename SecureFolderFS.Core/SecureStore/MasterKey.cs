@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.SecureStore
 
         public override bool Equals(MasterKey? other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }

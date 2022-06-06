@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.Helpers
             else
             {
                 var parentPath = Path.GetDirectoryName(path);
-                if (vaultRootPath != null && parentPath == vaultRootPath)
+                if (vaultRootPath is not null && parentPath == vaultRootPath)
                 {
                     // Parent path is the same as vaultRootPath where the directoryId is we want to get - return empty
                     return string.Empty;

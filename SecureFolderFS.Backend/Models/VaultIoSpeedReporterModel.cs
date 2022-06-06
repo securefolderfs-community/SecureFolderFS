@@ -18,19 +18,19 @@ namespace SecureFolderFS.Backend.Models
 
         private readonly List<long> _writeRates;
 
-        private long _readAmountBeforeFlush;
+        private int _updateTimerInterval;
         
+        private long _readAmountBeforeFlush;
+
         private long _writeAmountBeforeFlush;
 
-        private int _updateTimerInterval;
+        private IProgress<double>? ReadGraphProgress { get; }
 
-        public IProgress<double>? ReadGraphProgress { get; }
+        private IProgress<double>? WriteGraphProgress { get; }
 
-        public IProgress<double>? WriteGraphProgress { get; }
+        public IGraphModel? ReadGraphModel { get; init; }
 
-        public IGraphManagerModel? ReadGraphManagerModel { get; init; }
-
-        public IGraphManagerModel? WriteGraphManagerModel { get; init; }
+        public IGraphModel? WriteGraphModel { get; init; }
 
         public VaultIoSpeedReporterModel(IProgress<double>? readGraphProgress, IProgress<double>? writeGraphProgress)
         {
@@ -70,12 +70,12 @@ namespace SecureFolderFS.Backend.Models
 
             await ThreadingService.ExecuteOnUiThreadAsync(() =>
             {
-                ReadGraphManagerModel?.AddPoint(new()
+                ReadGraphModel?.AddPoint(new()
                 {
                     Date = now,
                     High = Convert.ToInt64(Math.Round(ByteSize.FromBytes(_readAmountBeforeFlush).MegaBytes))
                 });
-                WriteGraphManagerModel?.AddPoint(new()
+                WriteGraphModel?.AddPoint(new()
                 {
                     Date = now,
                     High = Convert.ToInt64(Math.Round(ByteSize.FromBytes(_writeAmountBeforeFlush).MegaBytes))
@@ -92,7 +92,6 @@ namespace SecureFolderFS.Backend.Models
             if (_updateTimerInterval == 4)
             {
                 CalculateRates();
-
                 _updateTimerInterval = 0;
             }
         }

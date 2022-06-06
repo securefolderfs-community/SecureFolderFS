@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             var tag = ciphertextFileHeader.Slice(XChaCha20FileHeader.HEADER_NONCE_SIZE + XChaCha20FileHeader.HEADER_CONTENTKEY_SIZE, XChaCha20FileHeader.HEADER_TAG_SIZE);
 
             var cleartextPayload = keyCryptor.XChaCha20Poly1305Crypt.XChaCha20Poly1305Decrypt(ciphertextPayload, encKey, nonce, tag);
-            if (cleartextPayload == null)
+            if (cleartextPayload is null)
             {
                 throw UnauthenticFileHeaderException.ForXChaCha20();
             }

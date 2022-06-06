@@ -1,7 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.Utils;
 using SecureFolderFS.Backend.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
@@ -13,11 +11,9 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
         public VaultWizardFinishPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            this.VaultName = DialogViewModel.VaultViewModel!.VaultName;
-            base.CanGoBack = false;
-
+            CanGoBack = false;
             DialogViewModel.PrimaryButtonEnabled = true;
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(_ => { }); // Override the previous action
+            VaultName = DialogViewModel.VaultViewModel!.VaultName;
 
             WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(DialogViewModel.VaultViewModel));
         }

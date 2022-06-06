@@ -10,7 +10,7 @@ using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
-    public sealed class AddExistingVaultPageViewModel : BaseVaultWizardPageViewModel
+    public sealed class AddExistingVaultPageViewModel : BaseVaultWizardPageViewModel // TODO: Refactor
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
@@ -21,9 +21,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             set
             {
                 if (SetProperty(ref _PathSourceText, value))
-                {
                     DialogViewModel.PrimaryButtonEnabled = CheckAvailability(value);
-                }
             }
         }
 
@@ -32,16 +30,18 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
         public AddExistingVaultPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(PrimaryButtonClick);
+            DialogViewModel.PrimaryButtonEnabled = false;
             BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
         }
 
-        private void PrimaryButtonClick(IHandledFlag? e)
+        public override Task PrimaryButtonClick(IEventDispatchFlag? flag)
         {
-            e?.Handle();
-            DialogViewModel.VaultViewModel = new(new(), Path.GetDirectoryName(PathSourceText!)!);
+            flag?.NoForwarding();
             
+            DialogViewModel.VaultViewModel = new(new(), Path.GetDirectoryName(PathSourceText!)!);
             Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardFinishPageViewModel(Messenger, DialogViewModel)));
+
+            return Task.CompletedTask;
         }
 
         private async Task BrowseForFolder()
@@ -68,10 +68,8 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
                 var rawVaultConfiguration = RawVaultConfiguration.Load(fileStream);
                 return VaultVersion.IsVersionSupported((VaultVersion)rawVaultConfiguration);
             }
-            else
-            {
-                return false;
-            }
+            
+            return false;
         }
     }
 }

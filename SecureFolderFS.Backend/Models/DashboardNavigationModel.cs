@@ -50,7 +50,7 @@ namespace SecureFolderFS.Backend.Models
         public void Receive(DashboardNavigationRequestedMessage message)
         {
             BaseDashboardPageViewModel? baseDashboardPageViewModel;
-            if (message.Value == null)
+            if (message.Value is null)
             {
                 baseDashboardPageViewModel = NavigateToPage(message.VaultDashboardPageType, message.VaultViewModel);
             }

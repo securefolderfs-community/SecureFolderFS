@@ -22,7 +22,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.Hwnd);
 
-            if (filter != null)
+            if (filter is not null)
             {
                 filePicker.FileTypeFilter.EnumeratedAdd(filter);
             }

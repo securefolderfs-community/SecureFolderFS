@@ -29,16 +29,16 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
         public ChooseEncryptionPageViewModel(IVaultCreationRoutineStep9 step9, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            this._step9 = step9;
-            base.CanGoBack = false;
+            _step9 = step9;
+            CanGoBack = false;
 
             DialogViewModel.PrimaryButtonEnabled = true;
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(PrimaryButtonClick);
+            DialogViewModel.SecondaryButtonText = null; // Don't show the option to cancel the dialog
         }
 
-        private void PrimaryButtonClick(IHandledFlag? e)
+        public override Task PrimaryButtonClick(IEventDispatchFlag? flag)
         {
-            e?.Handle();
+            flag?.NoForwarding();
 
             var contentCipher = SelectedDataEncryptionIndex switch
             {
@@ -61,6 +61,8 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
                 .Deploy();
 
             Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardFinishPageViewModel(Messenger, DialogViewModel)));
+
+            return Task.CompletedTask;
         }
 
         public override void Dispose()

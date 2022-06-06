@@ -53,7 +53,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation.A
 
         public CounterModeCryptoTransform(SymmetricAlgorithm symmetricAlgorithm, byte[] key, ulong nonce, ulong counter)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw new ArgumentNullException(nameof(key));
             }

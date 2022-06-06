@@ -26,7 +26,7 @@ namespace SecureFolderFS.Backend.Models
 
         public void Initialize()
         {
-            if (InitializableSource != null && (SettingsService.IsAvailable && ConfidentialStorageService.IsAvailable))
+            if (InitializableSource is not null && (SettingsService.IsAvailable && ConfidentialStorageService.IsAvailable))
             {
                 var savedVaults = SettingsService.SavedVaults;
                 var savedVaultModels = ConfidentialStorageService.SavedVaultModels;

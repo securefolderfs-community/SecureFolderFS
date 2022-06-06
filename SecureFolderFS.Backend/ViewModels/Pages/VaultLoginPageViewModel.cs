@@ -30,7 +30,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
 
         private void UnlockVault(DisposablePassword? password)
         {
-            if (password == null || password.Length == 0)
+            if (password is null || password.Length == 0)
             {
                 return;
             }

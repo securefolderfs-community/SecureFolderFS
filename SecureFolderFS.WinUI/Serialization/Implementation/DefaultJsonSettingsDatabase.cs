@@ -37,11 +37,11 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
 
             if (data.TryGetValue(key, out var objVal))
             {
-                return GetValueFromObject<TValue?>(objVal) ?? (defaultValue != null ? defaultValue() : default);
+                return GetValueFromObject<TValue?>(objVal) ?? (defaultValue is not null ? defaultValue() : default);
             }
             else
             {
-                var newValue = defaultValue != null ? defaultValue() : default;
+                var newValue = defaultValue is not null ? defaultValue() : default;
 
                 SetValue<TValue?>(key, newValue);
 
@@ -89,7 +89,7 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
             {
                 // Try convert
                 var data = (Dictionary<string, object?>?)import;
-                if (data == null)
+                if (data is null)
                 {
                     return false;
                 }

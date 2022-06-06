@@ -95,7 +95,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     {
                         return DokanResult.AlreadyExists;
                     }
-                    else if (_fileSystemOperations.DangerousDirectoryOperations.CreateDirectory(foInformation.CiphertextPath.Path) != null)
+                    else if (_fileSystemOperations.DangerousDirectoryOperations.CreateDirectory(foInformation.CiphertextPath.Path) is not null)
                     {
                         // The directory has been created successfully
 

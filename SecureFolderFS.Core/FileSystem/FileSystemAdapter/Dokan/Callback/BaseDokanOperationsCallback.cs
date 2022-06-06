@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
 
         protected static long GetContextValue(IDokanFileInfo info)
         {
-            if (info?.Context == null)
+            if (info?.Context is null)
             {
                 return Constants.FileSystem.INVALID_HANDLE;
             }

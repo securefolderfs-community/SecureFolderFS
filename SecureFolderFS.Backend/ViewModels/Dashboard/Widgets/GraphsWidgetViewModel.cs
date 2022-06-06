@@ -17,8 +17,8 @@ namespace SecureFolderFS.Backend.ViewModels.Dashboard.Widgets
             WriteGraphViewModel = new();
             VaultIoSpeedReporterModel = new(ReadGraphViewModel, WriteGraphViewModel)
             {
-                ReadGraphManagerModel = ReadGraphViewModel,
-                WriteGraphManagerModel = WriteGraphViewModel
+                ReadGraphModel = ReadGraphViewModel,
+                WriteGraphModel = WriteGraphViewModel
             };
         }
 

@@ -51,7 +51,7 @@ namespace SecureFolderFS.Shared.Extensions
 
                 return true;
             }
-            else if (dictionary[key] == null)
+            else if (dictionary[key] is null)
             {
                 value ??= initializer();
                 dictionary[key] = value;

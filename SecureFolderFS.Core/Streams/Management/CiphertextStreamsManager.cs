@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.Streams.Management
         {
             AssertNotDisposed();
 
-            if (ciphertextFileStream == null || ciphertextFileStream.IsDisposed)
+            if (ciphertextFileStream is null || ciphertextFileStream.IsDisposed)
             {
                 return _readOnlyStreams.GetAvailableStream();
             }
@@ -52,7 +52,7 @@ namespace SecureFolderFS.Core.Streams.Management
         {
             AssertNotDisposed();
 
-            if (ciphertextFileStream == null || ciphertextFileStream.IsDisposed)
+            if (ciphertextFileStream is null || ciphertextFileStream.IsDisposed)
             {
                 return _readWriteStreams.GetAvailableStream();
             }

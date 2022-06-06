@@ -51,7 +51,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages
         {
             Messenger.Send(new DashboardNavigationRequestedMessage(CurrentPage?.VaultDashboardPageType ?? VaultDashboardPageType.MainDashboardPage, VaultViewModel, CurrentPage)
             {
-                Transition = CurrentPage == null ? new ContinuumTransitionModel() : new SuppressTransitionModel()
+                Transition = CurrentPage is null ? new ContinuumTransitionModel() : new SuppressTransitionModel()
             });
         }
 

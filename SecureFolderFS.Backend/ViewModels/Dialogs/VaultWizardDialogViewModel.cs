@@ -1,28 +1,41 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Backend.Messages;
 using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Backend.Messages;
+using SecureFolderFS.Backend.Utils;
 
 namespace SecureFolderFS.Backend.ViewModels.Dialogs
 {
-    public sealed class VaultWizardDialogViewModel : BaseDialogViewModel
+    public sealed class VaultWizardDialogViewModel : BaseDialogViewModel, IRecipient<VaultWizardNavigationRequestedMessage>
     {
         public IMessenger Messenger { get; }
 
+        public BaseVaultWizardPageViewModel? CurrentPageViewModel { get; set; }
+
         public VaultViewModel? VaultViewModel { get; set; }
-
-        public new ICommand? PrimaryButtonClickCommand { get; set; }
-
-        public new ICommand? SecondaryButtonClickCommand { get; set; }
 
         public VaultWizardDialogViewModel()
         {
-            this.Messenger = new WeakReferenceMessenger();
+            Messenger = new WeakReferenceMessenger();
+            Messenger.Register(this);
+
+            PrimaryButtonClickCommand = new AsyncRelayCommand<IEventDispatchFlag?>(PrimaryButtonClick);
+            SecondaryButtonClickCommand = new AsyncRelayCommand<IEventDispatchFlag?>(SecondaryButtonClick);
         }
 
-        public void StartNavigation()
+        private Task PrimaryButtonClick(IEventDispatchFlag? flag)
         {
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardMainPageViewModel(Messenger, this)));
+            return CurrentPageViewModel?.PrimaryButtonClick(flag) ?? Task.CompletedTask;
+        }
+
+        private Task SecondaryButtonClick(IEventDispatchFlag? flag)
+        {
+            return CurrentPageViewModel?.SecondaryButtonClick(flag) ?? Task.CompletedTask;
+        }
+
+        void IRecipient<VaultWizardNavigationRequestedMessage>.Receive(VaultWizardNavigationRequestedMessage message)
+        {
+            CurrentPageViewModel = message.Value;
         }
     }
 }

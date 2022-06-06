@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 
         public IVaultInstance Deploy()
         {
-            if (_optionalVaultLoadRoutine == null)
+            if (_optionalVaultLoadRoutine is null)
             {
                 OptionalVaultLoadRoutine.CreateWithDefaultOptions(this, _vaultInstance);
             }

@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.Instance.Implementation
 
         public void StartFileSystem()
         {
-            if (MountLocation == null)
+            if (MountLocation is null)
             {
                 var mountLetter = VaultHelpers.GetUnusedMountLetter();
                 if (mountLetter == char.MinValue)

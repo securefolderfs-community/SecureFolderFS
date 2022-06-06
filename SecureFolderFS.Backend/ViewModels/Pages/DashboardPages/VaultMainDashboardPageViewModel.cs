@@ -43,7 +43,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.DashboardPages
 
         private async Task ShowInFileExplorer()
         {
-            if (VaultViewModel.VaultInstance != null)
+            if (VaultViewModel.VaultInstance is not null)
             {
                 await FileExplorerService.OpenPathInFileExplorerAsync(VaultViewModel.VaultInstance.SecureFolderFSInstance.MountLocation);
             }

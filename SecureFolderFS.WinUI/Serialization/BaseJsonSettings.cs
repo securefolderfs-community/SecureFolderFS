@@ -52,7 +52,7 @@ namespace SecureFolderFS.WinUI.Serialization
 
         public bool RegisterSettingsContext(ISettingsSharingContext settingsSharingContext)
         {
-            if (_settingsSharingContext == null)
+            if (_settingsSharingContext is null)
             {
                 // Can register only once
                 _settingsSharingContext = settingsSharingContext;
@@ -77,10 +77,10 @@ namespace SecureFolderFS.WinUI.Serialization
         {
             if (string.IsNullOrEmpty(propertyName))
             {
-                return defaultValue != null ? defaultValue() : default;
+                return defaultValue is not null ? defaultValue() : default;
             }
 
-            return JsonSettingsDatabase == null ? (defaultValue != null ? defaultValue() : default) : (JsonSettingsDatabase.GetValue(propertyName, defaultValue) ?? (defaultValue != null ? defaultValue() : default));
+            return JsonSettingsDatabase is null ? (defaultValue is not null ? defaultValue() : default) : (JsonSettingsDatabase.GetValue(propertyName, defaultValue) ?? (defaultValue is not null ? defaultValue() : default));
         }
 
         protected virtual bool Set<TValue>(TValue? value, [CallerMemberName] string propertyName = "")

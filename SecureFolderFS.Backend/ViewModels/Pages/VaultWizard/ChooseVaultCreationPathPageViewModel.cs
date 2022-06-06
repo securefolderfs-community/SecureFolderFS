@@ -9,11 +9,9 @@ using SecureFolderFS.Core.Routines;
 
 namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
 {
-    public sealed class ChooseVaultCreationPathPageViewModel : BaseVaultWizardPageViewModel
+    public sealed class ChooseVaultCreationPathPageViewModel : BaseVaultWizardPageViewModel // TODO: Refactor
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
-
-        private SetPasswordPageViewModel? _nextViewModel;
 
         private string? _PathSourceText;
         public string? PathSourceText
@@ -22,9 +20,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             set
             {
                 if (SetProperty(ref _PathSourceText, value))
-                {
                     DialogViewModel.PrimaryButtonEnabled = CheckAvailability(value);
-                }
             }
         }
 
@@ -34,27 +30,22 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             : base(messenger, dialogViewModel)
         {
             DialogViewModel.PrimaryButtonEnabled = false;
-
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(PrimaryButtonClick);
             BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
         }
 
-        public override void ReattachCommands()
-        {
-            DialogViewModel.PrimaryButtonClickCommand = new RelayCommand<IHandledFlag?>(e =>
-            {
-                e?.Handle();
-
-                Messenger.Send(new VaultWizardNavigationRequestedMessage(_nextViewModel!));
-            });
-            DialogViewModel.PrimaryButtonEnabled = CheckAvailability(_PathSourceText);
-        }
-
-        private void PrimaryButtonClick(IHandledFlag? e)
+        public override Task PrimaryButtonClick(IEventDispatchFlag? flag)
         {
             // Cancel the confirm button
-            e?.Handle();
+            flag?.NoForwarding();
 
+            // We've already got the next view model
+            if (NextViewModel is not null)
+            {
+                Messenger.Send(new VaultWizardNavigationRequestedMessage(NextViewModel));
+                return Task.CompletedTask;
+            }
+
+            // Continue with initialization
             var step7 = VaultRoutines.NewVaultCreationRoutine()
                 .EstablishRoutine()
                 .SetVaultPath(new(PathSourceText))
@@ -65,10 +56,15 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
                 .AddEncryptionAlgorithmBuilder();
 
             DialogViewModel.VaultViewModel = new(new(), PathSourceText!);
-            _nextViewModel = new(step7, Messenger, DialogViewModel);
+            NextViewModel = new SetPasswordPageViewModel(step7, Messenger, DialogViewModel);
+            Messenger.Send(new VaultWizardNavigationRequestedMessage(NextViewModel));
 
-            // Navigate
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(_nextViewModel));
+            return Task.CompletedTask;
+        }
+
+        public override void ReturnToViewModel()
+        {
+            DialogViewModel.PrimaryButtonEnabled = CheckAvailability(PathSourceText);
         }
 
         private async Task BrowseForFolder()
@@ -80,7 +76,7 @@ namespace SecureFolderFS.Backend.ViewModels.Pages.VaultWizard
             }
         }
 
-        private bool CheckAvailability(string? path)
+        private static bool CheckAvailability(string? path)
         {
             if (string.IsNullOrEmpty(path))
             {

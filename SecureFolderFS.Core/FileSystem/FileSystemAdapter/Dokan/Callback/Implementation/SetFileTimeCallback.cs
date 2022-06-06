@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     }
 
                     var hrException = Marshal.GetExceptionForHR(Marshal.GetLastWin32Error());
-                    if (hrException != null)
+                    if (hrException is not null)
                     {
                         throw hrException;
                     }
