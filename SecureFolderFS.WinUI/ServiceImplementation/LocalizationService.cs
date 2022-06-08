@@ -1,6 +1,6 @@
 ﻿using Microsoft.Windows.ApplicationModel.Resources;
-using SecureFolderFS.Backend.Models;
-using SecureFolderFS.Backend.Services;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.Globalization;

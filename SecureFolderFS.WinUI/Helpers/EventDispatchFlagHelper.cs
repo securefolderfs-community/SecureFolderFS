@@ -1,5 +1,5 @@
-﻿using SecureFolderFS.Backend.Utils;
-using System;
+﻿using System;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.WinUI.Helpers
 {
@@ -9,7 +9,7 @@ namespace SecureFolderFS.WinUI.Helpers
 
         public EventDispatchFlagHelper(Action flagCallback)
         {
-            this._flagCallback = flagCallback;
+            _flagCallback = flagCallback;
         }
 
         public void NoForwarding()

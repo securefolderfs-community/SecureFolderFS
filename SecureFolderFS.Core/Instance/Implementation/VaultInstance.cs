@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Core.Tunnels;
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Core.Instance.Implementation
 
         public VaultInstance()
         {
-            this.SecureFolderFSInstanceImpl = new SecureFolderFSInstance();
+            SecureFolderFSInstanceImpl = new SecureFolderFSInstance();
         }
 
         public void Dispose()

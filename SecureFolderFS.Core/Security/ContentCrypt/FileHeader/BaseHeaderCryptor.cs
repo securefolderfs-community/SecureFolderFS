@@ -4,7 +4,7 @@ using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Security.KeyCrypt;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 {
@@ -23,9 +23,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
         protected BaseHeaderCryptor(MasterKey masterKey, IKeyCryptor keyCryptor)
         {
-            this.masterKey = masterKey;
-            this.keyCryptor = keyCryptor;
-            this.secureRandom = RandomNumberGenerator.Create();
+            masterKey = masterKey;
+            keyCryptor = keyCryptor;
+            secureRandom = RandomNumberGenerator.Create();
         }
 
         public byte[] EncryptHeader(IFileHeader fileHeader)

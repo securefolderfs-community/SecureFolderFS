@@ -14,9 +14,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt
 
         public ContentCryptor(IFileContentCryptor fileContentCryptor, IFileHeaderCryptor fileHeaderCryptor, IFileNameCryptor fileNameCryptor)
         {
-            this.FileContentCryptor = fileContentCryptor;
-            this.FileHeaderCryptor = fileHeaderCryptor;
-            this.FileNameCryptor = fileNameCryptor;
+            FileContentCryptor = fileContentCryptor;
+            FileHeaderCryptor = fileHeaderCryptor;
+            FileNameCryptor = fileNameCryptor;
         }
 
         public void Dispose()

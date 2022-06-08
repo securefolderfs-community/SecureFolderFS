@@ -12,8 +12,8 @@ namespace SecureFolderFS.Core.Security.Loader
 
         public SecurityLoaderFactory(VaultVersion vaultVersion, IChunkFactory chunkFactory)
         {
-            this._vaultVersion = vaultVersion;
-            this._chunkFactory = chunkFactory;
+            _vaultVersion = vaultVersion;
+            _chunkFactory = chunkFactory;
         }
 
         public ISecurityLoader GetSecurityLoader()

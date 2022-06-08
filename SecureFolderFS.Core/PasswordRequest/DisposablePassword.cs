@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.PasswordRequest
 
         public DisposablePassword(byte[] password)
         {
-            this.Password = new(password);
+            Password = new(password);
         }
 
         public static DisposablePassword AsEmpty()

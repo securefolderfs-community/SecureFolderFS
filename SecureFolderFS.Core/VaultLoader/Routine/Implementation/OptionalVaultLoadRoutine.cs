@@ -9,7 +9,7 @@ using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.FileSystem.StorageEnumeration.Enumerators;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 {
@@ -35,10 +35,10 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 
         public OptionalVaultLoadRoutine(VaultInstance vaultInstance, Func<IFinalizedVaultLoadRoutine> finalizeCallback)
         {
-            this._vaultInstance = vaultInstance;
-            this._finalizeCallback = finalizeCallback;
+            _vaultInstance = vaultInstance;
+            _finalizeCallback = finalizeCallback;
 
-            this._instancedProperties = new List<string>();
+            _instancedProperties = new List<string>();
         }
 
         public IOptionalVaultLoadRoutineSteps EstablishOptionalRoutine()

@@ -21,15 +21,15 @@ namespace SecureFolderFS.Core.FileSystem.StorageEnumeration
 
         public FileEnumerationInfo AsFolder()
         {
-            this.IsFile = false;
-            this.Length = 0L;
+            IsFile = false;
+            Length = 0L;
             return this;
         }
 
         public FileEnumerationInfo AsFile(long ciphertextLength)
         {
-            this.IsFile = true;
-            this.Length = ciphertextLength;
+            IsFile = true;
+            Length = ciphertextLength;
             return this;
         }
     }

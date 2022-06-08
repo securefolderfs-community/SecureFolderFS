@@ -5,11 +5,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.Models.Transitions;
-using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
-using SecureFolderFS.Backend.ViewModels.Pages;
-using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
+using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Models.Transitions;
+using SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation;
+using SecureFolderFS.Sdk.ViewModels.Pages;
+using SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.Helpers;
 
@@ -31,7 +31,7 @@ namespace SecureFolderFS.WinUI.Views
 
         public VaultDashboardPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public void Receive(DashboardNavigationFinishedMessage message)

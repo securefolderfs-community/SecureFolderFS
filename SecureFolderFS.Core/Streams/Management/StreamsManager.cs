@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Management
 {
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Streams.Management
 
         public StreamsManager()
         {
-            this._streams = new List<TStream>();
+            _streams = new List<TStream>();
         }
 
         public void AddStream(TStream stream)

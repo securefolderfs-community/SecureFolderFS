@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Diagnostics;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.DataModels;
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         public CreateFileCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            this._fileSystemOperations = fileSystemOperations;
+            _fileSystemOperations = fileSystemOperations;
         }
 
         public NtStatus CreateFile(string fileName, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)

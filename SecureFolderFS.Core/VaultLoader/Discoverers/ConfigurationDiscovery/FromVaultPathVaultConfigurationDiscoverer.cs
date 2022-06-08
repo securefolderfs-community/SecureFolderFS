@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultLoader.Discoverers.ConfigurationDiscovery
 
         public FromVaultPathVaultConfigurationDiscoverer(IFileOperations fileOperations)
         {
-            this._fileOperations = fileOperations;
+            _fileOperations = fileOperations;
         }
 
         public Stream OpenStreamToVaultConfig(string vaultPath, string configFileName)

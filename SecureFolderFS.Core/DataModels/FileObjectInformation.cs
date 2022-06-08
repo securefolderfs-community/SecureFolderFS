@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.DataModels
 {

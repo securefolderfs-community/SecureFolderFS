@@ -61,7 +61,7 @@ namespace SecureFolderFS.WinUI.WindowViews
             }
             else
             {
-                this.ExtendsContentIntoTitleBar = true;
+                ExtendsContentIntoTitleBar = true;
                 SetTitleBar(HostPage.CustomTitleBar);
             }
 
@@ -108,7 +108,7 @@ namespace SecureFolderFS.WinUI.WindowViews
                 Closed += MainWindow_Closed;
 
                 // Enable the backdrop
-                var compositionSupportsSystemBackdrop = this.As<ICompositionSupportsSystemBackdrop>();
+                var compositionSupportsSystemBackdrop = As<ICompositionSupportsSystemBackdrop>();
                 _micaController.AddSystemBackdropTarget(compositionSupportsSystemBackdrop);
                 _micaController.SetSystemBackdropConfiguration(_systemBackdropConfiguration);
 
@@ -125,7 +125,7 @@ namespace SecureFolderFS.WinUI.WindowViews
 
         private void SetBackdropConfiguration(SystemBackdropConfiguration systemBackdropConfiguration)
         {
-            systemBackdropConfiguration.Theme = ((FrameworkElement)this.Content).ActualTheme switch
+            systemBackdropConfiguration.Theme = ((FrameworkElement)Content).ActualTheme switch
             {
                 ElementTheme.Dark => SystemBackdropTheme.Dark,
                 ElementTheme.Light => SystemBackdropTheme.Light,
@@ -150,7 +150,7 @@ namespace SecureFolderFS.WinUI.WindowViews
             _systemBackdropConfiguration = null;
             ThemeHelper.ThemeHelpers[AppWindow!].UnregisterForThemeChangedCallback(nameof(MainWindow));
 
-            this.Activated -= MainWindow_Activated;
+            Activated -= MainWindow_Activated;
         }
     }
 }

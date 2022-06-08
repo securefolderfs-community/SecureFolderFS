@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.Models;
-using SecureFolderFS.Backend.Models.Transitions;
-using SecureFolderFS.Backend.ViewModels;
-using SecureFolderFS.Backend.ViewModels.Pages;
+using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Models.Transitions;
+using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Pages;
 using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.Views;
 using System;
@@ -29,9 +29,9 @@ namespace SecureFolderFS.WinUI.UserControls
 
         public NavigationControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.NavigationDestinations = new();
+            NavigationDestinations = new();
 
             WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(this);
             WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);

@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Backend.Services.Settings;
+﻿using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.WinUI.Serialization;
 

@@ -13,8 +13,8 @@ namespace SecureFolderFS.WinUI.Serialization.Implementation
 
         public DefaultJsonSettingsDatabase(ISettingsSerializer settingsSerializer, IJsonSettingsSerializer jsonSettingsSerializer)
         {
-            this.SettingsSerializer = settingsSerializer;
-            this.JsonSettingsSerializer = jsonSettingsSerializer;
+            SettingsSerializer = settingsSerializer;
+            JsonSettingsSerializer = jsonSettingsSerializer;
         }
 
         protected Dictionary<string, object?> GetFreshSettings()

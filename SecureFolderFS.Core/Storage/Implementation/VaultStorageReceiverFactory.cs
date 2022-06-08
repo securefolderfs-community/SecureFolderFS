@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.VaultDataStore;
 
@@ -18,10 +18,10 @@ namespace SecureFolderFS.Core.Storage.Implementation
 
         public VaultStorageReceiverFactory(VaultVersion vaultVersion, IFileStreamReceiver fileStreamReceiver, IPathReceiver pathReceiver, IFileSystemOperations fileSystemOperations)
         {
-            this._vaultVersion = vaultVersion;
-            this._fileStreamReceiver = fileStreamReceiver;
-            this._pathReceiver = pathReceiver;
-            this._fileSystemOperations = fileSystemOperations;
+            _vaultVersion = vaultVersion;
+            _fileStreamReceiver = fileStreamReceiver;
+            _pathReceiver = pathReceiver;
+            _fileSystemOperations = fileSystemOperations;
         }
 
         public IVaultStorageReceiver GetVaultStorageReceiver()

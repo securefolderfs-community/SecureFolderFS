@@ -10,8 +10,8 @@ namespace SecureFolderFS.Core.Paths
 
         public VaultPath(string vaultRootPath)
         {
-            this.VaultRootPath = vaultRootPath;
-            this.VaultContentPath = Path.Combine(vaultRootPath, Constants.CONTENT_FOLDERNAME);
+            VaultRootPath = vaultRootPath;
+            VaultContentPath = Path.Combine(vaultRootPath, Constants.CONTENT_FOLDERNAME);
         }
 
         public static implicit operator string(VaultPath vaultPath) => vaultPath.VaultContentPath;

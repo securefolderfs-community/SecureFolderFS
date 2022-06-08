@@ -3,12 +3,12 @@ using System;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using SecureFolderFS.Backend.Services;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.WinUI.ServiceImplementation;
 using SecureFolderFS.WinUI.WindowViews;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
-using SecureFolderFS.Backend.Services.Settings;
+using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.WinUI.ServiceImplementation.Settings;
 using SecureFolderFS.WinUI.Serialization;
 
@@ -32,7 +32,7 @@ namespace SecureFolderFS.WinUI
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             EnsureEarlyApp();
         }

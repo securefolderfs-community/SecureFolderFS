@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.VaultDataStore;
 
@@ -22,11 +22,11 @@ namespace SecureFolderFS.Core.Streams.Receiver
 
         public FileStreamReceiverFactory(VaultVersion vaultVersion, ISecurity security, OpenCryptFileReceiver openCryptFileReceiver, IChunkFactory chunkFactory, IFileSystemOperations fileSystemOperations)
         {
-            this._vaultVersion = vaultVersion;
-            this._security = security;
-            this._openCryptFileReceiver = openCryptFileReceiver;
-            this._chunkFactory = chunkFactory;
-            this._fileSystemOperations = fileSystemOperations;
+            _vaultVersion = vaultVersion;
+            _security = security;
+            _openCryptFileReceiver = openCryptFileReceiver;
+            _chunkFactory = chunkFactory;
+            _fileSystemOperations = fileSystemOperations;
         }
 
         public IFileStreamReceiver GetFileStreamReceiver()

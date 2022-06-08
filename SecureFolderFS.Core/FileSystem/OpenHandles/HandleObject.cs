@@ -1,5 +1,5 @@
 ﻿using System;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {
@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
 
         protected HandleObject(ICiphertextPath ciphertextPath)
         {
-            this.CiphertextPath = ciphertextPath;
+            CiphertextPath = ciphertextPath;
         }
 
         public abstract void Dispose();

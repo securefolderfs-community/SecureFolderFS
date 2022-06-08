@@ -8,7 +8,7 @@ namespace SecureFolderFS.Core.Chunks.Implementation
 
         protected BaseCiphertextChunk(ReadOnlyMemory<byte> buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
 
         public abstract ReadOnlySpan<byte> GetNonceAsSpan();

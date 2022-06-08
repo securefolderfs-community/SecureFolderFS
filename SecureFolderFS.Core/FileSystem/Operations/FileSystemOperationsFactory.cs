@@ -17,10 +17,10 @@ namespace SecureFolderFS.Core.FileSystem.Operations
 
         public FileSystemOperationsFactory(VaultVersion vaultVersion, IDirectoryIdReceiver directoryIdReceiver, IFileOperations fileOperations, IDirectoryOperations directoryOperations)
         {
-            this._vaultVersion = vaultVersion;
-            this._directoryIdReceiver = directoryIdReceiver;
-            this._fileOperations = fileOperations;
-            this._directoryOperations = directoryOperations;
+            _vaultVersion = vaultVersion;
+            _directoryIdReceiver = directoryIdReceiver;
+            _fileOperations = fileOperations;
+            _directoryOperations = directoryOperations;
         }
 
         public IFileSystemOperations GetFileSystemOperations()

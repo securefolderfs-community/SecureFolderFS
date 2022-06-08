@@ -3,7 +3,7 @@ using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileNames;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.VaultDataStore;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Paths.Receivers
 {
@@ -25,11 +25,11 @@ namespace SecureFolderFS.Core.Paths.Receivers
             IFileNameReceiver fileNameReceiver,
             FileNameCipherScheme fileNameCipherScheme)
         {
-            this._vaultVersion = vaultVersion;
-            this._vaultPath = vaultPath;
-            this._directoryIdReceiver = directoryIdReceiver;
-            this._fileNameReceiver = fileNameReceiver;
-            this._fileNameCipherScheme = fileNameCipherScheme;
+            _vaultVersion = vaultVersion;
+            _vaultPath = vaultPath;
+            _directoryIdReceiver = directoryIdReceiver;
+            _fileNameReceiver = fileNameReceiver;
+            _fileNameCipherScheme = fileNameCipherScheme;
         }
 
         public IPathReceiver GetPathReceiver()

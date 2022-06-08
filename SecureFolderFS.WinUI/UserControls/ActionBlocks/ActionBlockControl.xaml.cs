@@ -11,7 +11,7 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
     {
         public ActionBlockControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public IRelayCommand ClickCommand

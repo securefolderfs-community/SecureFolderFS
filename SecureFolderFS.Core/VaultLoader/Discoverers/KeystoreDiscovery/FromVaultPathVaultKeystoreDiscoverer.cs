@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery
 
         public FromVaultPathVaultKeystoreDiscoverer(IFileOperations fileOperations)
         {
-            this._fileOperations = fileOperations;
+            _fileOperations = fileOperations;
         }
 
         public Stream OpenStreamToVaultKeystore(string vaultPath, string keystoreFileName)

@@ -5,7 +5,7 @@ using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.VaultDataStore;
 
 namespace SecureFolderFS.Core.Chunks.IO
@@ -22,10 +22,10 @@ namespace SecureFolderFS.Core.Chunks.IO
 
         public ChunkReceiverFactory(VaultVersion vaultVersion, IChunkFactory chunkFactory, ChunkCachingStrategy chunkCachingStrategy, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            this._vaultVersion = vaultVersion;
-            this._chunkFactory = chunkFactory;
-            this._chunkCachingStrategy = chunkCachingStrategy;
-            this._fileSystemStatsTracker = fileSystemStatsTracker;
+            _vaultVersion = vaultVersion;
+            _chunkFactory = chunkFactory;
+            _chunkCachingStrategy = chunkCachingStrategy;
+            _fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public IChunkReader GetChunkReader(ISecurity security, CiphertextStreamsManager ciphertextStreamsManager, IFileHeader fileHeader)

@@ -1,5 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
-using SecureFolderFS.Backend.ViewModels.Dashboard.Navigation;
+using SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation;
 
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {

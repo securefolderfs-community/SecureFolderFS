@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.WindowViews;
 using System;
@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         public VaultWizardFinishPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].RegisterForThemeChangedCallback(nameof(VaultWizardFinishPage), _ =>
             {

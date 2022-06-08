@@ -1,5 +1,5 @@
 ﻿using System;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Paths.Receivers
 {
@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Paths.Receivers
 
         protected BasePathReceiver(VaultPath vaultPath)
         {
-            this.vaultPath = vaultPath;
+            vaultPath = vaultPath;
         }
 
         public TRequestedPath FromCiphertextPath<TRequestedPath>(string ciphertextPath) where TRequestedPath : IPath

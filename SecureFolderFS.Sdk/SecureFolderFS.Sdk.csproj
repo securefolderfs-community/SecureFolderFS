@@ -1,13 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+    <Compile Remove="DataModels\**" />
+    <EmbeddedResource Remove="DataModels\**" />
+    <None Remove="DataModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ByteSize" Version="2.1.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SecureFolderFS.Core.Sdk\SecureFolderFS.Core.Sdk.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
   </ItemGroup>
 
 </Project>

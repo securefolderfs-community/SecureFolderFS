@@ -27,9 +27,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         protected BaseContentCryptor(IKeyCryptor keyCryptor, IChunkFactory chunkFactory)
         {
-            this.keyCryptor = keyCryptor;
-            this.chunkFactory = chunkFactory;
-            this.secureRandom = RandomNumberGenerator.Create();
+            keyCryptor = keyCryptor;
+            chunkFactory = chunkFactory;
+            secureRandom = RandomNumberGenerator.Create();
         }
 
         public ICiphertextChunk EncryptChunk(ICleartextChunk cleartextChunk, long chunkNumber, IFileHeader fileHeader)

@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
 
         protected BaseVaultCreationRoutineStep(VaultCreationDataModel vaultCreationDataModel)
         {
-            this.vaultCreationDataModel = vaultCreationDataModel;
+            vaultCreationDataModel = vaultCreationDataModel;
         }
 
         public void Dispose()

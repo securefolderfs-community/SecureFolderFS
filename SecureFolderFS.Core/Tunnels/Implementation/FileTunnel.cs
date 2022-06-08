@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.Streams.Receiver;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Tunnels.Implementation
 {
@@ -20,9 +20,9 @@ namespace SecureFolderFS.Core.Tunnels.Implementation
 
         public FileTunnel(IFileOperations fileOperations, IFileStreamReceiver fileStreamReceiver, IPathReceiver pathReceiver)
         {
-            this._fileOperations = fileOperations;
-            this._fileStreamReceiver = fileStreamReceiver;
-            this._pathReceiver = pathReceiver;
+            _fileOperations = fileOperations;
+            _fileStreamReceiver = fileStreamReceiver;
+            _pathReceiver = pathReceiver;
         }
 
         public bool TransferFileToVault(string sourcePath, string destinationPath)

@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration
 
         public FromVaultPathVaultKeystoreGenerator(IFileOperations fileOperations)
         {
-            this._fileOperations = fileOperations;
+            _fileOperations = fileOperations;
         }
 
         public Stream GenerateVaultKeystore(string vaultPath, string keystoreFileName)

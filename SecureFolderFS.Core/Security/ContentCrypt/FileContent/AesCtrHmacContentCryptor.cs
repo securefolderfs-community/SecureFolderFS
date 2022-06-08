@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         public AesCtrHmacContentCryptor(MasterKey masterKey, IKeyCryptor keyCryptor, IChunkFactory chunkFactory)
             : base(keyCryptor, chunkFactory)
         {
-            this._masterKey = masterKey;
+            _masterKey = masterKey;
         }
 
         protected override ICiphertextChunk EncryptChunk(CleartextAesCtrHmacChunk cleartextChunk, long chunkNumber, AesCtrHmacFileHeader fileHeader)

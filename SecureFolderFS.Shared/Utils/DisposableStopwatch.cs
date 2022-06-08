@@ -11,8 +11,8 @@ namespace SecureFolderFS.Shared.Utils
 
         public DisposableStopwatch(Action<Stopwatch>? onFinishedCallback)
         {
-            this._onFinishedCallback = onFinishedCallback;
-            this._stopwatch = Stopwatch.StartNew();
+            _onFinishedCallback = onFinishedCallback;
+            _stopwatch = Stopwatch.StartNew();
         }
 
         public void Dispose()

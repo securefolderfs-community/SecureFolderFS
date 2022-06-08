@@ -1,8 +1,8 @@
 ﻿using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Backend.Services;
+using SecureFolderFS.Sdk.Services;
 using System;
 using System.Collections.Generic;
-using SecureFolderFS.Backend.Enums;
+using SecureFolderFS.Sdk.Enums;
 using System.Threading.Tasks;
 using Windows.Services.Store;
 using System.Diagnostics;

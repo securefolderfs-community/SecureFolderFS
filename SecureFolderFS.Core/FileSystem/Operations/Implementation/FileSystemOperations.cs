@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 
 namespace SecureFolderFS.Core.FileSystem.Operations.Implementation
@@ -15,9 +15,9 @@ namespace SecureFolderFS.Core.FileSystem.Operations.Implementation
 
         public FileSystemOperations(IDirectoryIdReceiver directoryIdReceiver, IFileOperations fileOperations, IDirectoryOperations directoryOperations)
         {
-            this._directoryIdReceiver = directoryIdReceiver;
-            this.DangerousFileOperations = fileOperations;
-            this.DangerousDirectoryOperations = directoryOperations;
+            _directoryIdReceiver = directoryIdReceiver;
+            DangerousFileOperations = fileOperations;
+            DangerousDirectoryOperations = directoryOperations;
         }
 
         public bool InitializeWithDirectory(ICiphertextPath ciphertextPath)

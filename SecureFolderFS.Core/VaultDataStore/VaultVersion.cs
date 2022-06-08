@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.VaultDataStore
         [JsonConstructor]
         internal VaultVersion(int version)
         {
-            this.Version = version;
+            Version = version;
         }
 
         internal bool SupportsVersion(int minVersion, int maxVersion = HIGHEST_VERSION)

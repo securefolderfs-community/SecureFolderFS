@@ -4,11 +4,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Backend.Dialogs;
-using SecureFolderFS.Backend.Enums;
-using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.ViewModels.Dialogs;
-using SecureFolderFS.Backend.ViewModels.Pages.SettingsDialog;
+using SecureFolderFS.Sdk.Dialogs;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog;
 using SecureFolderFS.WinUI.Views.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         public SettingsDialog()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();

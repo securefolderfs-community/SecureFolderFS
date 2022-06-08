@@ -1,7 +1,7 @@
 ﻿using DokanNet;
 using System.Collections.Generic;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         public FindFilesCallback(IFindFilesWithPatternCallback findFilesWithPatternCallback, HandlesCollection handles)
             : base(handles)
         {
-            this._findFilesWithPatternCallback = findFilesWithPatternCallback;
+            _findFilesWithPatternCallback = findFilesWithPatternCallback;
         }
 
         public NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)

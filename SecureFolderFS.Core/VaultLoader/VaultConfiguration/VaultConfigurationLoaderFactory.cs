@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultLoader.VaultConfiguration
 
         public VaultConfigurationLoaderFactory(VaultVersion vaultVersion)
         {
-            this._vaultVersion = vaultVersion;
+            _vaultVersion = vaultVersion;
         }
 
         public IVaultConfigurationLoader GetVaultConfigurationLoader()

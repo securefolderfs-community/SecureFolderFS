@@ -17,8 +17,8 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileName
 
         protected BaseNameCryptor(IKeyCryptor keyCryptor, MasterKey masterKey)
         {
-            this.keyCryptor = keyCryptor;
-            this.masterKey = masterKey;
+            keyCryptor = keyCryptor;
+            masterKey = masterKey;
         }
 
         public virtual string EncryptFileName(string cleartextName, DirectoryId directoryId)

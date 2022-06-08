@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Shared.Extensions;
 
@@ -21,10 +21,10 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
 
         public HandlesCollection(IVaultStorageReceiver vaultStorageReceiver)
         {
-            this._vaultStorageReceiver = vaultStorageReceiver;
+            _vaultStorageReceiver = vaultStorageReceiver;
 
-            this._openHandles = new Dictionary<long, HandleObject>();
-            this._handleGenerator = new HandleGenerator();
+            _openHandles = new Dictionary<long, HandleObject>();
+            _handleGenerator = new HandleGenerator();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Security;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.FileNames.Receivers
 {
@@ -16,8 +16,8 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
         protected BaseFileNameReceiver(ISecurity security, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            this.security = security;
-            this.fileSystemStatsTracker = fileSystemStatsTracker;
+            security = security;
+            fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public virtual string GetCleartextFileName(DirectoryId directoryId, string ciphertextFileName)
@@ -75,8 +75,8 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
             public FileNameWithDirectoryId(DirectoryId directoryId, string fileName)
             {
-                this._directoryId = directoryId;
-                this._fileName = fileName;
+                _directoryId = directoryId;
+                _fileName = fileName;
             }
 
             public override int GetHashCode()

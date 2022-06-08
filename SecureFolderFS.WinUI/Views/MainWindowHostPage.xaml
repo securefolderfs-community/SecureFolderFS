@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Backend.ViewModels.Sidebar"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Sidebar"
     Loaded="MainWindowHostPage_Loaded"
     mc:Ignorable="d">
 

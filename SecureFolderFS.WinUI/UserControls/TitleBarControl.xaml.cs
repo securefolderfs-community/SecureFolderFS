@@ -9,7 +9,7 @@ namespace SecureFolderFS.WinUI.UserControls
     {
         public TitleBarControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

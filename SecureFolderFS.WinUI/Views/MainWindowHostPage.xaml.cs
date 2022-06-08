@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.Models.Transitions;
-using SecureFolderFS.Backend.ViewModels;
-using SecureFolderFS.Backend.ViewModels.Sidebar;
+using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Models.Transitions;
+using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -25,9 +25,9 @@ namespace SecureFolderFS.WinUI.Views
 
         public MainWindowHostPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.ViewModel = new();
+            ViewModel = new();
 
             WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
         }

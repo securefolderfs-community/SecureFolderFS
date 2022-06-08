@@ -5,11 +5,11 @@ using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Backend.Dialogs;
-using SecureFolderFS.Backend.Enums;
-using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.ViewModels.Dialogs;
-using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.Dialogs;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.Views.VaultWizard;
 
@@ -32,7 +32,7 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         public VaultWizardDialog()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();

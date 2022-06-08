@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration
 
         public FromVaultPathVaultConfigurationGenerator(IFileOperations fileOperations)
         {
-            this._fileOperations = fileOperations;
+            _fileOperations = fileOperations;
         }
 
         public Stream GenerateVaultConfig(string vaultPath, string configFileName)

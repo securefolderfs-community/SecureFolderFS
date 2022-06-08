@@ -9,7 +9,7 @@
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Backend.ViewModels.Controls.FileSystemInfoBars"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars"
     Loaded="PreferencesSettingsPage_Loaded"
     mc:Ignorable="d">
 

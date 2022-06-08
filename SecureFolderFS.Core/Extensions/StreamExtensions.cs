@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Streams;
 

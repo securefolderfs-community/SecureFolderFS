@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Backend.Dialogs;
-using SecureFolderFS.Backend.Enums;
-using SecureFolderFS.Backend.Services;
-using SecureFolderFS.Backend.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.Dialogs;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.WinUI.Dialogs;
 using SecureFolderFS.WinUI.WindowViews;
 
@@ -18,7 +18,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
         public DialogService()
         {
-            this._dialogs = new()
+            _dialogs = new()
             {
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() }

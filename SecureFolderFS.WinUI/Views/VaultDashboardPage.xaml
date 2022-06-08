@@ -6,7 +6,7 @@
     xmlns:local="using:SecureFolderFS.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
-    xmlns:vm="using:SecureFolderFS.Backend.ViewModels.Dashboard.Navigation"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 

@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Storage
 {

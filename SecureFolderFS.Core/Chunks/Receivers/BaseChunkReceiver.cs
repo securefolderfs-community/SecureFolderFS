@@ -1,6 +1,6 @@
 ﻿using System;
 using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.Chunks.Receivers
 {
@@ -16,9 +16,9 @@ namespace SecureFolderFS.Core.Chunks.Receivers
 
         protected BaseChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            this.chunkReader = chunkReader;
-            this.chunkWriter = chunkWriter;
-            this.fileSystemStatsTracker = fileSystemStatsTracker;
+            chunkReader = chunkReader;
+            chunkWriter = chunkWriter;
+            fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public virtual ICleartextChunk GetChunk(long chunkNumber)

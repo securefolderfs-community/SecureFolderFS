@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
-using SecureFolderFS.Backend.Services;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -12,7 +12,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
         public ThreadingService()
         {
-            this._dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         }
 
         public Task ExecuteOnUiThreadAsync(Action action)

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.FileNames;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Paths.Receivers
 {
@@ -17,8 +17,8 @@ namespace SecureFolderFS.Core.Paths.Receivers
         public EncryptedUniformPathReceiver(VaultPath vaultPath, IDirectoryIdReceiver directoryIdReceiver, IFileNameReceiver fileNameReceiver)
             : base(vaultPath)
         {
-            this._directoryIdReceiver = directoryIdReceiver;
-            this._fileNameReceiver = fileNameReceiver;
+            _directoryIdReceiver = directoryIdReceiver;
+            _fileNameReceiver = fileNameReceiver;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.Paths.Receivers
 
         public override void Dispose()
         {
-            this._directoryIdReceiver.Dispose();
+            _directoryIdReceiver.Dispose();
         }
     }
 }

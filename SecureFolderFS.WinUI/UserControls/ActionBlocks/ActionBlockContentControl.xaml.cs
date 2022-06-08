@@ -10,7 +10,7 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
     {
         public ActionBlockContentControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public IconElement Icon

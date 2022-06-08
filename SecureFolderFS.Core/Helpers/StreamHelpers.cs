@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.Helpers

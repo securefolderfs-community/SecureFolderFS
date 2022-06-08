@@ -1,5 +1,5 @@
 ﻿using System;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.IO;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
 
         protected BaseDirectoryIdReceiver(IDirectoryIdReader directoryIdReader, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            this.directoryIdReader = directoryIdReader;
-            this.fileSystemStatsTracker = fileSystemStatsTracker;
+            directoryIdReader = directoryIdReader;
+            fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public virtual DirectoryId GetDirectoryId(string ciphertextPath)

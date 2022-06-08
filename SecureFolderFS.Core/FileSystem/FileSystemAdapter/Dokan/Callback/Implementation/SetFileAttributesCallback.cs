@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         public SetFileAttributesCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            this._fileSystemOperations = fileSystemOperations;
+            _fileSystemOperations = fileSystemOperations;
         }
 
         public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)

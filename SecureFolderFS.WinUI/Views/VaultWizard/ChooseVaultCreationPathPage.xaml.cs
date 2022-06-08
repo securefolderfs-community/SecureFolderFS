@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Backend.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using System;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -21,7 +21,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         public ChooseVaultCreationPathPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

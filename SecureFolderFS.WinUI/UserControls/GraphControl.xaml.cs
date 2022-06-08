@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
-using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Sdk.Models;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -18,7 +18,7 @@ namespace SecureFolderFS.WinUI.UserControls
 
         public GraphControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private async void RootButton_Loaded(object sender, RoutedEventArgs e)

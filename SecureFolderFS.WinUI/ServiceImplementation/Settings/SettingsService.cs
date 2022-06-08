@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 using Windows.Storage;
-using SecureFolderFS.Backend.Models;
-using SecureFolderFS.Backend.ViewModels;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.WinUI.Serialization;
 using SecureFolderFS.WinUI.Serialization.Implementation;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Backend.Services.Settings;
+using SecureFolderFS.Sdk.Services.Settings;
 using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings

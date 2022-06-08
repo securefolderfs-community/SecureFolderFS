@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.IO
 
         public DirectoryIdReader(IFileOperations fileOperations)
         {
-            this._fileOperations = fileOperations;
+            _fileOperations = fileOperations;
         }
 
         public DirectoryId ReadDirectoryId(string ciphertextPath)

@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Paths;
+﻿using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.FileSystem.Operations;
 
@@ -14,9 +14,9 @@ namespace SecureFolderFS.Core.Storage.Implementation
 
         public VaultStorageReceiver(IFileStreamReceiver fileStreamReceiver, IPathReceiver pathReceiver, IFileSystemOperations fileSystemOperations)
         {
-            this._fileStreamReceiver = fileStreamReceiver;
-            this._pathReceiver = pathReceiver;
-            this._fileSystemOperations = fileSystemOperations;
+            _fileStreamReceiver = fileStreamReceiver;
+            _pathReceiver = pathReceiver;
+            _fileSystemOperations = fileSystemOperations;
         }
 
         public IVaultFile OpenVaultFile(ICleartextPath cleartextPath)

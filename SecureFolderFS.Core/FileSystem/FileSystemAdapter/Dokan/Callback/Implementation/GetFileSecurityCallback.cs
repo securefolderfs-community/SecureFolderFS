@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Security.AccessControl;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Shared.Helpers;
 

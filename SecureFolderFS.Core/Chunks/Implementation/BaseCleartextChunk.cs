@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.Chunks.Implementation
 
         protected BaseCleartextChunk(byte[] cleartextChunkBuffer, int actualLength)
         {
-            this.buffer = cleartextChunkBuffer;
-            this.ActualLength = actualLength;
+            buffer = cleartextChunkBuffer;
+            ActualLength = actualLength;
         }
 
         public virtual void CopyTo(Span<byte> destinationBuffer, int offset, ref int positionInBuffer)

@@ -26,11 +26,11 @@ namespace SecureFolderFS.WinUI.Helpers
 
         private ThemeHelper(AppWindow appWindow)
         {
-            this._appWindow = appWindow;
-            this._uiSettings = new();
-            this._dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            this._themeChangedCallbacks = new();
-            this._uiSettings.ColorValuesChanged += Settings_ColorValuesChanged;
+            _appWindow = appWindow;
+            _uiSettings = new();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _themeChangedCallbacks = new();
+            _uiSettings.ColorValuesChanged += Settings_ColorValuesChanged;
         }
 
         public void UpdateTheme()

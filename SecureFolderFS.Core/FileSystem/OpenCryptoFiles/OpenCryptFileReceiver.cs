@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
 
@@ -21,10 +21,10 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 
         public OpenCryptFileReceiver(ISecurity security, ChunkReceiverFactory chunkReceiverFactory)
         {
-            this._security = security;
-            this._chunkReceiverFactory = chunkReceiverFactory;
+            _security = security;
+            _chunkReceiverFactory = chunkReceiverFactory;
 
-            this._openCryptFiles = new Dictionary<ICiphertextPath, OpenCryptFile>();
+            _openCryptFiles = new Dictionary<ICiphertextPath, OpenCryptFile>();
         }
 
         public OpenCryptFile GetOrCreate(ICiphertextPath ciphertextPath, IFileHeader fileHeader)

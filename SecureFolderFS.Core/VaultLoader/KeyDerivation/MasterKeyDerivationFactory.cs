@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultLoader.KeyDerivation
 
         public MasterKeyDerivationFactory(VaultVersion vaultVersion)
         {
-            this._vaultVersion = vaultVersion;
+            _vaultVersion = vaultVersion;
         }
 
         public IMasterKeyDerivation GetMasterKeyDerivation()

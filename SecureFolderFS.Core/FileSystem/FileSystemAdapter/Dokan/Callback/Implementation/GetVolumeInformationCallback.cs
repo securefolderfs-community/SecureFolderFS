@@ -14,9 +14,9 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         public GetVolumeInformationCallback(MountVolumeDataModel mountVolumeDataModel, HandlesCollection handles)
             : base(handles)
         {
-            this._mountVolumeDataModel = mountVolumeDataModel;
+            _mountVolumeDataModel = mountVolumeDataModel;
 
-            this._dokanFileSystemFeatures = mountVolumeDataModel.FileSystemFlags.ToDokanFileSystemFlags();
+            _dokanFileSystemFeatures = mountVolumeDataModel.FileSystemFlags.ToDokanFileSystemFlags();
         }
 
         public NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName, out uint maximumComponentLength, IDokanFileInfo info)

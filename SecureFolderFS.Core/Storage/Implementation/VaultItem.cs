@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Storage.Implementation
 {
@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.Storage.Implementation
 
         protected VaultItem(ICiphertextPath ciphertextPath, IFileSystemOperations fileSystemOperations)
         {
-            this.CiphertextPath = ciphertextPath;
-            this.fileSystemOperations = fileSystemOperations;
+            CiphertextPath = ciphertextPath;
+            fileSystemOperations = fileSystemOperations;
         }
 
         public abstract Task DeleteAsync(IProgress<float> progress, CancellationToken cancellationToken);

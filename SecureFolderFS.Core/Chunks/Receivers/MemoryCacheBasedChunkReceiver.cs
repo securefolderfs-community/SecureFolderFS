@@ -2,7 +2,7 @@
 using System.Runtime.Caching;
 using System.Collections.Specialized;
 using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.Chunks.Receivers
 {
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Chunks.Receivers
         public MemoryCacheBasedChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(chunkReader, chunkWriter, fileSystemStatsTracker)
         {
-            this._memoryCache = new MemoryCache("SecureFolderFS_chunkcache", new NameValueCollection(Constants.IO.MAX_CACHED_CHUNKS));
+            _memoryCache = new MemoryCache("SecureFolderFS_chunkcache", new NameValueCollection(Constants.IO.MAX_CACHED_CHUNKS));
         }
 
         public override ICleartextChunk GetChunk(long chunkNumber)

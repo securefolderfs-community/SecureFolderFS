@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Backend.ViewModels.Pages.DashboardPages;
+using SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,7 +23,7 @@ namespace SecureFolderFS.WinUI.Views
 
         public VaultMainDashboardPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             _graphClickSemaphore = new(1, 1);
         }
@@ -32,7 +32,7 @@ namespace SecureFolderFS.WinUI.Views
         {
             if (e.Parameter is VaultMainDashboardPageViewModel viewModel)
             {
-                this.ViewModel = viewModel;
+                ViewModel = viewModel;
 
                 Graphs.RestoreGraphsState();
             }

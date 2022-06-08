@@ -1,5 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Backend.Models.Transitions;
+using SecureFolderFS.Sdk.Models.Transitions;
 
 namespace SecureFolderFS.WinUI.Helpers
 {

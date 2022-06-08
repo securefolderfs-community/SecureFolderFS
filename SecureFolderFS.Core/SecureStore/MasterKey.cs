@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using SecureFolderFS.Sdk.SecureStore;
+using SecureFolderFS.Core.Sdk.SecureStore;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 
@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.SecureStore
 
         private MasterKey(SecretKey encryptionKey, SecretKey macKey)
         {
-            this._encryptionKey = encryptionKey;
-            this._macKey = macKey;
+            _encryptionKey = encryptionKey;
+            _macKey = macKey;
         }
 
         public bool AnyEmpty()

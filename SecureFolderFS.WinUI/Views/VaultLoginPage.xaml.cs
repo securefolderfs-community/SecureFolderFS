@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Backend.ViewModels.Pages;
+using SecureFolderFS.Sdk.ViewModels.Pages;
 using System.Text;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Core.PasswordRequest;
@@ -25,7 +25,7 @@ namespace SecureFolderFS.WinUI.Views
 
         public VaultLoginPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

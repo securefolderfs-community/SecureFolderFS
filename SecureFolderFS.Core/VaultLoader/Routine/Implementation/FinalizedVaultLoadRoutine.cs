@@ -27,8 +27,8 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 
         public FinalizedVaultLoadRoutine(VaultInstance vaultInstance, VaultLoadDataModel vaultLoadDataModel)
         {
-            this._vaultInstance = vaultInstance;
-            this._vaultLoadDataModel = vaultLoadDataModel;
+            _vaultInstance = vaultInstance;
+            _vaultLoadDataModel = vaultLoadDataModel;
         }
 
         public IOptionalVaultLoadRoutine ContinueWithOptionalRoutine()

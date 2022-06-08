@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Backend.Services.Settings;
+﻿using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.WinUI.Serialization;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings

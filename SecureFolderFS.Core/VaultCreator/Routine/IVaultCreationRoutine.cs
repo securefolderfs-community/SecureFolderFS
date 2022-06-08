@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.PasswordRequest;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
 using SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration;
 using SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration;

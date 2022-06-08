@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Core.UnsafeNative;
 using SecureFolderFS.Core.Helpers;
@@ -20,8 +20,8 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         private DirectoryHandle(IVaultFolder vaultFolder, IntPtr hFolder)
             : base(vaultFolder.CiphertextPath)
         {
-            this.VaultFolder = vaultFolder;
-            this._hFolder = hFolder;
+            VaultFolder = vaultFolder;
+            _hFolder = hFolder;
         }
 
         public static DirectoryHandle Open(ICiphertextPath ciphertextPath, IVaultStorageReceiver vaultStorageReceiver, FileMode mode, FileAccess access, FileShare share, FileOptions options)

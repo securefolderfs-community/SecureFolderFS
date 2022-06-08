@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Paths;
+﻿using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Storage;
 
 namespace SecureFolderFS.Core.Tunnels

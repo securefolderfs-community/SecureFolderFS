@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Paths;
+﻿using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Paths
 {
@@ -8,7 +8,7 @@ namespace SecureFolderFS.Core.Paths
 
         public CleartextPath(string rawPath)
         {
-            this.Path = rawPath;
+            Path = rawPath;
         }
     }
 }

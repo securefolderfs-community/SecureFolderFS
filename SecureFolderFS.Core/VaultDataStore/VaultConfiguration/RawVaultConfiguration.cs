@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
         private RawVaultConfiguration(string rawData, int version)
             : base(version)
         {
-            this.rawData = rawData;
+            rawData = rawData;
         }
 
         public static RawVaultConfiguration Load(Stream configFileStream)

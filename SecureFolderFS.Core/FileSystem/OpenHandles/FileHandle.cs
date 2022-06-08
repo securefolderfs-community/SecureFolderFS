@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Storage;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 using SecureFolderFS.Core.UnsafeNative;
 using SecureFolderFS.Core.Extensions;
 
@@ -20,8 +20,8 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         private FileHandle(IVaultFile vaultFile, ICleartextFileStream cleartextFileStream)
             : base(vaultFile.CiphertextPath)
         {
-            this.VaultFile = vaultFile;
-            this.CleartextFileStream = cleartextFileStream;
+            VaultFile = vaultFile;
+            CleartextFileStream = cleartextFileStream;
         }
 
         public bool SetFileTime(ref long ct, ref long lat, ref long lwt)

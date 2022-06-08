@@ -3,8 +3,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Sdk.Paths;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Streams;
 using SecureFolderFS.Core.Streams.Receiver;
 
 namespace SecureFolderFS.Core.Storage.Implementation
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Storage.Implementation
         public VaultFile(ICiphertextPath ciphertextPath, IFileSystemOperations fileSystemOperations, IFileStreamReceiver fileStreamReceiver)
             : base(ciphertextPath, fileSystemOperations)
         {
-            this._fileStreamReceiver = fileStreamReceiver;
+            _fileStreamReceiver = fileStreamReceiver;
         }
 
         public ICleartextFileStream OpenStream(FileMode mode, FileAccess access, FileShare share, FileOptions options)

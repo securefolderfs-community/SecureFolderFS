@@ -106,7 +106,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SecureFolderFS.Backend\SecureFolderFS.Backend.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="Dialogs\SettingsDialog.xaml">

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using SecureFolderFS.Sdk.Paths;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Receiver
 {
