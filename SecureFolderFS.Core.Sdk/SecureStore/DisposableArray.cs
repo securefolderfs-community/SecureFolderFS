@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Sdk.SecureStore
 
         protected DisposableArray(T[] bytes)
         {
-            bytes = bytes;
+            this.bytes = bytes;
         }
 
         public override bool Equals(DisposableArray<T>? other)

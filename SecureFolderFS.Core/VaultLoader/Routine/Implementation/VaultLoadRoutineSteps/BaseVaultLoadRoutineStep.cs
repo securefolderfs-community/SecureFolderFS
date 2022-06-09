@@ -11,8 +11,8 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
 
         protected BaseVaultLoadRoutineStep(VaultInstance vaultInstance, VaultLoadDataModel vaultLoadDataModel)
         {
-            vaultInstance = vaultInstance;
-            vaultLoadDataModel = vaultLoadDataModel;
+            this.vaultInstance = vaultInstance;
+            this.vaultLoadDataModel = vaultLoadDataModel;
         }
     }
 }

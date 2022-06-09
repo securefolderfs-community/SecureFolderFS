@@ -23,9 +23,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
         protected BaseHeaderCryptor(MasterKey masterKey, IKeyCryptor keyCryptor)
         {
-            masterKey = masterKey;
-            keyCryptor = keyCryptor;
-            secureRandom = RandomNumberGenerator.Create();
+            this.masterKey = masterKey;
+            this.keyCryptor = keyCryptor;
+            this.secureRandom = RandomNumberGenerator.Create();
         }
 
         public byte[] EncryptHeader(IFileHeader fileHeader)

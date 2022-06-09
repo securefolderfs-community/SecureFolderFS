@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
 
         protected BaseDokanOperationsCallback(HandlesCollection handles)
         {
-            handles = handles;
+            this.handles = handles;
         }
 
         protected bool CloseHandle(IDokanFileInfo info)

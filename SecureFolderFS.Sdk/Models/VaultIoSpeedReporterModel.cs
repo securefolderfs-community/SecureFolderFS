@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.Models
         private readonly List<long> _writeRates;
 
         private int _updateTimerInterval;
-        
+
         private long _readAmountBeforeFlush;
 
         private long _writeAmountBeforeFlush;
@@ -68,18 +68,16 @@ namespace SecureFolderFS.Sdk.Models
         {
             var now = DateTime.Now;
 
-            await ThreadingService.ExecuteOnUiThreadAsync(() =>
+            await ThreadingService.ExecuteOnUiThreadAsync();
+            ReadGraphModel?.AddPoint(new()
             {
-                ReadGraphModel?.AddPoint(new()
-                {
-                    Date = now,
-                    High = Convert.ToInt64(Math.Round(ByteSize.FromBytes(_readAmountBeforeFlush).MegaBytes))
-                });
-                WriteGraphModel?.AddPoint(new()
-                {
-                    Date = now,
-                    High = Convert.ToInt64(Math.Round(ByteSize.FromBytes(_writeAmountBeforeFlush).MegaBytes))
-                });
+                Date = now,
+                High = Convert.ToInt64(Math.Round(ByteSize.FromBytes(_readAmountBeforeFlush).MegaBytes))
+            });
+            WriteGraphModel?.AddPoint(new()
+            {
+                Date = now,
+                High = Convert.ToInt64(Math.Round(ByteSize.FromBytes(_writeAmountBeforeFlush).MegaBytes))
             });
 
             _readRates.AddWithOverflow(_readAmountBeforeFlush, Constants.Graphs.MAX_GRAPH_RATES);

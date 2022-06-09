@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Paths.Receivers
 
         protected BasePathReceiver(VaultPath vaultPath)
         {
-            vaultPath = vaultPath;
+            this.vaultPath = vaultPath;
         }
 
         public TRequestedPath FromCiphertextPath<TRequestedPath>(string ciphertextPath) where TRequestedPath : IPath

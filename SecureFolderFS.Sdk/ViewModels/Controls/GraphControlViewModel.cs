@@ -1,15 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     public sealed class GraphControlViewModel : ObservableObject, IGraphModel, IProgress<double>
     {
-        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
-
         public ObservableCollection<GraphPointModel> Data { get; }
 
         public bool IsExtended { get; set; }
@@ -57,10 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         public void Report(double value)
         {
-            _ = ThreadingService.ExecuteOnUiThreadAsync(() =>
-            {
-                GraphSubheader = $"{value.ToString("0.#")}mb/s";
-            });
+            GraphSubheader = $"{value.ToString("0.#")}mb/s";
         }
     }
 }

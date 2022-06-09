@@ -20,9 +20,9 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultKeystore
 
         protected BaseVaultKeystore(byte[] wrappedEncryptionKey, byte[] wrappedMacKey, byte[] salt)
         {
-            wrappedEncryptionKey = wrappedEncryptionKey;
-            wrappedMacKey = wrappedMacKey;
-            salt = salt;
+            this.wrappedEncryptionKey = wrappedEncryptionKey;
+            this.wrappedMacKey = wrappedMacKey;
+            this.salt = salt;
         }
 
         public virtual bool IsKeystoreValid()

@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         protected BaseDokanOperationsCallbackWithPath(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
             : base(handles)
         {
-            vaultPath = vaultPath;
-            pathReceiver = pathReceiver;
+            this.vaultPath = vaultPath;
+            this.pathReceiver = pathReceiver;
         }
 
         protected void ConstructFilePath(string fileName, out ICleartextPath cleartextPath)

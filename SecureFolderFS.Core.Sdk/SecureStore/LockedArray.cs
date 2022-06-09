@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.Sdk.SecureStore
         protected LockedArray(T[] bytes, bool preventDiskSwap) // TODO: Is `bytes` as parameter here safe? Pass `size` instead?
             : base(bytes)
         {
-            length = (uint)(Marshal.SizeOf(default(T)) * base.bytes.Length);
+            length = (uint)(Marshal.SizeOf(default(T)) * bytes.Length);
 
             InitializeInternal(preventDiskSwap);
         }

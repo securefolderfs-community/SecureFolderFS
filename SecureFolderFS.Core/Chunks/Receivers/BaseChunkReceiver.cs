@@ -16,9 +16,9 @@ namespace SecureFolderFS.Core.Chunks.Receivers
 
         protected BaseChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            chunkReader = chunkReader;
-            chunkWriter = chunkWriter;
-            fileSystemStatsTracker = fileSystemStatsTracker;
+            this.chunkReader = chunkReader;
+            this.chunkWriter = chunkWriter;
+            this.fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public virtual ICleartextChunk GetChunk(long chunkNumber)

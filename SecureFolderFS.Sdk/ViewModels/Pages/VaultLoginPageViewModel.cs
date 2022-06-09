@@ -53,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages
                     // TODO: Ask for the keystore file
                     // DoubleFA dfa = new();
                     // if (dfa.IsEnabledForVault(VaultModel)) dfa.AskForKeystore(); // ??
-                    IVaultKeystoreDiscoverer keystoreDiscoverer = null;
+                    IVaultKeystoreDiscoverer? keystoreDiscoverer = null;
 
                     step6 = step5.FindKeystoreFile(true, keystoreDiscoverer);
                 }

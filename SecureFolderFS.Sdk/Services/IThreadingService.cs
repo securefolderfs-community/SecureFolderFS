@@ -1,9 +1,11 @@
-﻿namespace SecureFolderFS.Sdk.Services
+﻿using SecureFolderFS.Shared.Utils;
+
+namespace SecureFolderFS.Sdk.Services
 {
     public interface IThreadingService
     {
-        Task ExecuteOnUiThreadAsync(Action action);
+        IAwaitable ExecuteOnUiThreadAsync();
 
-        Task<TResult?> ExecuteOnUiThreadAsync<TResult>(Func<TResult?> func);
+        Task ExecuteOnUiThreadAsync(Action action);
     }
 }

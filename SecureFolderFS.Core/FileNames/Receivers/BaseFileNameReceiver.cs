@@ -16,8 +16,8 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
         protected BaseFileNameReceiver(ISecurity security, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            security = security;
-            fileSystemStatsTracker = fileSystemStatsTracker;
+            this.security = security;
+            this.fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public virtual string GetCleartextFileName(DirectoryId directoryId, string ciphertextFileName)

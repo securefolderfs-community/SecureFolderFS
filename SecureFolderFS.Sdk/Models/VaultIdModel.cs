@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Models
 {
     [Serializable]
-    public sealed class VaultIdModel : IEquatable<VaultIdModel>
+    public sealed class VaultIdModel : IUid, IEquatable<VaultIdModel>
     {
         [JsonIgnore]
         private Guid Id { get; set; }
@@ -32,9 +33,24 @@ namespace SecureFolderFS.Sdk.Models
             return Id.Equals(other.Id);
         }
 
+        public bool Equals(IUid? other)
+        {
+            if (other is VaultIdModel vaultIdModel)
+            {
+                return Equals(vaultIdModel);
+            }
+
+            return false;
+        }
+
         public override bool Equals(object? obj)
         {
             return ReferenceEquals(this, obj) || obj is VaultIdModel other && Equals(other);
+        }
+
+        public override string ToString()
+        {
+            return GuidId;
         }
     }
 }

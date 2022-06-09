@@ -2,11 +2,10 @@
 using System.Linq;
 using SecureFolderFS.Core.Sdk.SecureStore;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.SecureStore
 {
-    internal sealed class MasterKey : UnknownStore<MasterKey>, ICopyable<MasterKey>
+    internal sealed class MasterKey : UnknownStore<MasterKey>
     {
         private readonly SecretKey _encryptionKey;
 
@@ -31,11 +30,6 @@ namespace SecureFolderFS.Core.SecureStore
         public SecretKey CreateMacKeyCopy()
         {
             return new SecretKey(_macKey.Key.CloneArray());
-        }
-
-        public MasterKey CreateCopy()
-        {
-            return Create(_encryptionKey, _macKey);
         }
 
         public override bool Equals(MasterKey? other)

@@ -108,7 +108,7 @@ namespace SecureFolderFS.WinUI.WindowViews
                 Closed += MainWindow_Closed;
 
                 // Enable the backdrop
-                var compositionSupportsSystemBackdrop = As<ICompositionSupportsSystemBackdrop>();
+                var compositionSupportsSystemBackdrop = this.As<ICompositionSupportsSystemBackdrop>();
                 _micaController.AddSystemBackdropTarget(compositionSupportsSystemBackdrop);
                 _micaController.SetSystemBackdropConfiguration(_systemBackdropConfiguration);
 
