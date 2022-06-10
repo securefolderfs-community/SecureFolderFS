@@ -1,5 +1,8 @@
 ﻿namespace SecureFolderFS.Sdk.Storage.Devices
 {
+    /// <summary>
+    /// Represents a drive on the machine.
+    /// </summary>
     public interface IDrive : IDevice
     {
         /// <summary>

@@ -15,13 +15,13 @@ namespace SecureFolderFS.Sdk.Storage.Devices
         /// <summary>
         /// Pings the device and waits for response.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The result is true if the device has responded, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The result is true if the device has responded and can be accessed, otherwise false.</returns>
         Task<bool> PingAsync();
 
         /// <summary>
         /// Gets the root storage of the device.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is successful, returns <see cref="IDeviceRoot"/>, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is successful, returns <see cref="IDeviceRoot"/>, otherwise null.</returns>
         Task<IDeviceRoot?> GetRootAsync();
     }
 }
