@@ -22,6 +22,11 @@ namespace SecureFolderFS.Core.SecureStore
             return _encryptionKey.Key.IsEmpty() || _macKey.Key.IsEmpty();
         }
 
+        public MasterKey CreateCopy()
+        {
+            return new(_encryptionKey.CreateCopy(), _macKey.CreateCopy());
+        }
+
         public SecretKey CreateEncryptionKeyCopy()
         {
             return new SecretKey(_encryptionKey.Key.CloneArray());

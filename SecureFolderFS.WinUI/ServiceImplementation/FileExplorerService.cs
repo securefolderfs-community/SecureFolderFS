@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
 using SecureFolderFS.Shared.Extensions;
@@ -11,6 +12,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class FileExplorerService : IFileExplorerService
     {
+        public async Task OpenAppFolderAsync()
+        {
+            await Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder);
+        }
+
         public async Task OpenPathInFileExplorerAsync(string path)
         {
             await Launcher.LaunchFolderPathAsync(path);

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.InternalModels;
 using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog
@@ -8,11 +9,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
+        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
+
         private IClipboardService ClipboardService { get; } = Ioc.Default.GetRequiredService<IClipboardService>();
 
-        public string AppVersion => ApplicationService.GetAppVersion().ToString();
+        public string AppVersion { get; }
 
-        public IRelayCommand CopyVersionCommand { get; }
+        public IAsyncRelayCommand CopyVersionCommand { get; }
 
         public IAsyncRelayCommand OpenGitHubRepositoryCommand { get; }
 
@@ -24,36 +27,41 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog
 
         public AboutSettingsPageViewModel()
         {
-            CopyVersionCommand = new RelayCommand(CopyVersion);
+            AppVersion = ApplicationService.GetAppVersion().ToString();
+
+            CopyVersionCommand = new AsyncRelayCommand(CopyVersionAsync);
             OpenGitHubRepositoryCommand = new AsyncRelayCommand(OpenGitHubRepository);
             OpenDiscordSocialCommand = new AsyncRelayCommand(OpenDiscordSocial);
             OpenPrivacyPolicyCommand = new AsyncRelayCommand(OpenPrivacyPolicy);
             OpenLogLocationCommand = new AsyncRelayCommand(OpenLogLocation);
         }
 
-        private void CopyVersion()
+        private async Task CopyVersionAsync()
         {
-            ClipboardService.SetData(AppVersion);
+            if (await ClipboardService.IsClipboardAvailableAsync())
+            {
+                await ClipboardService.SetClipboardDataAsync(new ClipboardTextItemModel(AppVersion));
+            }
         }
 
-        private async Task OpenGitHubRepository()
+        private Task OpenGitHubRepository()
         {
-            await ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS"));
+            return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS"));
         }
 
-        private async Task OpenDiscordSocial()
+        private Task OpenDiscordSocial()
         {
-            await ApplicationService.OpenUriAsync(new Uri("https://discord.com/invite/NrTxXpJ2Zj"));
+            return ApplicationService.OpenUriAsync(new Uri("https://discord.com/invite/NrTxXpJ2Zj"));
         }
 
-        private async Task OpenPrivacyPolicy()
+        private Task OpenPrivacyPolicy()
         {
-            await ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/PRIVACY.md"));
+            return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/PRIVACY.md"));
         }
 
-        private async Task OpenLogLocation()
+        private Task OpenLogLocation()
         {
-            await ApplicationService.OpenAppFolderAsync();
+            return FileExplorerService.OpenAppFolderAsync();
         }
     }
 }
