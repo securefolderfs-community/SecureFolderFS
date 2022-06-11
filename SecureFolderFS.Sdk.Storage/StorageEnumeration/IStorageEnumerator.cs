@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.Storage.StorageEnumerators
+namespace SecureFolderFS.Sdk.Storage.StorageEnumeration
 {
     /// <summary>
     /// Enumerates storage objects of given directory.
@@ -20,18 +20,21 @@ namespace SecureFolderFS.Sdk.Storage.StorageEnumerators
         /// <summary>
         /// Enumerates the <see cref="SourceFolder"/> for files.
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token of the action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IEnumerable{T}"/> of type <see cref="IFile"/> of all files discovered by the enumerator.</returns>
         Task<IEnumerable<IFile>> EnumerateFilesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Enumerates the <see cref="SourceFolder"/> for folders.
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token of the action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IEnumerable{T}"/> of type <see cref="IFolder"/> of all folders discovered by the enumerator.</returns>
         Task<IEnumerable<IFolder>> EnumerateFoldersAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Enumerates the <see cref="SourceFolder"/> for items.
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token of the action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IEnumerable{T}"/> of type <see cref="IBaseStorage"/> of all items discovered by the enumerator.</returns>
         Task<IEnumerable<IBaseStorage>> EnumerateStorageAsync(CancellationToken cancellationToken = default);
     }

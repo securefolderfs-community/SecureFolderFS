@@ -59,7 +59,6 @@ namespace SecureFolderFS.Sdk.Storage
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IEnumerable{T}"/> of type <see cref="IFile"/> of files in the directory.</returns>
         Task<IEnumerable<IFile>> GetFilesAsync();
 
-        
         /// <summary>
         /// Gets all folders in the current directory.
         /// </summary>
