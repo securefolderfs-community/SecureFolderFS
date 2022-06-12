@@ -17,39 +17,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
     public sealed class SidebarViewModel : ObservableObject, IInitializableSource<IDictionary<VaultIdModel, VaultViewModel>>, IRecipient<RemoveVaultRequestedMessage>, IRecipient<AddVaultRequestedMessage>
     {
-        private readonly SearchModel<SidebarItemViewModel> _sidebarSearchModel;
-
         private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
 
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
         public ObservableCollection<SidebarItemViewModel> SidebarItems { get; }
 
+        public SidebarSearchViewModel SearchViewModel { get; }
+
         private SidebarItemViewModel? _SelectedItem;
         public SidebarItemViewModel? SelectedItem
         {
             get => _SelectedItem;
             set => SetProperty(ref _SelectedItem, value);
-        }
-
-        private string? _SearchQuery;
-        public string? SearchQuery
-        {
-            get => _SearchQuery;
-            set
-            {
-                if (SetProperty(ref _SearchQuery, value))
-                {
-                    SearchQueryChanged(value);
-                }
-            }
-        }
-
-        private bool _NoItemsFoundLoad;
-        public bool NoItemsFoundLoad
-        {
-            get => _NoItemsFoundLoad;
-            set => SetProperty(ref _NoItemsFoundLoad, value);
         }
 
         public IAsyncRelayCommand CreateNewVaultCommand { get; }
@@ -59,16 +39,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         public SidebarViewModel()
         {
             SidebarItems = new();
-            CreateNewVaultCommand = new AsyncRelayCommand(CreateNewVault);
-            OpenSettingsCommand = new AsyncRelayCommand(OpenSettings);
-            _sidebarSearchModel = new()
-            {
-                Collection = SidebarItems,
-                FinderPredicate = (item, key) => item.VaultName!.ToLowerInvariant().Contains(key)
-            };
+            SearchViewModel = new(SidebarItems);
 
             WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
             WeakReferenceMessenger.Default.Register<AddVaultRequestedMessage>(this);
+
+            OpenSettingsCommand = new AsyncRelayCommand(OpenSettings);
+            CreateNewVaultCommand = new AsyncRelayCommand(CreateNewVault);
         }
 
         public void Receive(RemoveVaultRequestedMessage message)
@@ -104,20 +81,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         private async Task CreateNewVault()
         {
-            SearchQuery = string.Empty;
-
             var vaultWizardViewModel = new VaultWizardDialogViewModel();
-            await DialogService.ShowDialog(vaultWizardViewModel);
+            await DialogService.ShowDialogAsync(vaultWizardViewModel);
         }
 
         private async Task OpenSettings()
         {
-            await DialogService.ShowDialog(new SettingsDialogViewModel());
-        }
-
-        private void SearchQueryChanged(string? query)
-        {
-            NoItemsFoundLoad = !_sidebarSearchModel.SubmitQuery(query);
+            await DialogService.ShowDialogAsync(new SettingsDialogViewModel());
         }
     }
 }

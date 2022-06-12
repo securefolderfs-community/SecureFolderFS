@@ -14,11 +14,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class DialogService : IDialogService
     {
-        private readonly Dictionary<Type, Func<ContentDialog>> _dialogs;
+        private readonly IReadOnlyDictionary<Type, Func<ContentDialog>> _dialogs;
 
         public DialogService()
         {
-            _dialogs = new()
+            _dialogs = new Dictionary<Type, Func<ContentDialog>>()
             {
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() }
@@ -46,10 +46,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             return dialog;
         }
 
-        public Task<DialogResult> ShowDialog<TViewModel>(TViewModel viewModel)
+        public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel)
             where TViewModel : INotifyPropertyChanged
         {
-            return GetDialog<TViewModel>(viewModel).ShowAsync();
+            return GetDialog(viewModel).ShowAsync();
         }
     }
 }

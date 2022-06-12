@@ -2,6 +2,7 @@
 
 namespace SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation
 {
+    // TODO: Refactor
     public sealed class NavigationItemViewModel
     {
         public bool IsLeading { get; set; }

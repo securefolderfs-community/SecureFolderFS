@@ -1,21 +1,24 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Models.Search;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
-    public sealed class SidebarItemViewModel : ObservableObject, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
+    public sealed class SidebarItemViewModel : ObservableObject, ISearchResult, IContainable<string>, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         public VaultViewModel VaultViewModel { get; }
 
-        private string? _VaultName;
-        public string? VaultName
+        private string _VaultName;
+        public string VaultName
         {
             get => _VaultName;
             set => SetProperty(ref _VaultName, value);
@@ -70,6 +73,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         private void RemoveVault()
         {
             WeakReferenceMessenger.Default.Send(new RemoveVaultRequestedMessage(VaultViewModel.VaultIdModel));
+        }
+
+        public bool Contains(string? other)
+        {
+            if (other is null)
+                return false;
+
+            return VaultName.Contains(other, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -46,21 +46,12 @@
 
                 <NavigationView.AutoSuggestBox>
                     <AutoSuggestBox
+                        ItemsSource="{x:Bind ViewModel.SidebarViewModel.SearchViewModel.SearchItems}"
                         PlaceholderText="Search"
                         QueryIcon="Find"
-                        Text="{x:Bind ViewModel.SidebarViewModel.SearchQuery, Mode=TwoWay}" />
+                        TextChanged="SidebarSearchBox_TextChanged"
+                        QuerySubmitted="SidebarSearchBox_QuerySubmitted"/>
                 </NavigationView.AutoSuggestBox>
-
-                <NavigationView.PaneCustomContent>
-                    <Grid>
-                        <Grid x:Name="CustomContent" x:Load="{x:Bind ViewModel.SidebarViewModel.NoItemsFoundLoad, Mode=OneWay}">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Text="No vaults found" />
-                        </Grid>
-                    </Grid>
-                </NavigationView.PaneCustomContent>
 
                 <NavigationView.PaneFooter>
                     <Grid

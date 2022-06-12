@@ -9,6 +9,6 @@ namespace SecureFolderFS.Sdk.Services
     {
         IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel) where TViewModel : INotifyPropertyChanged;
 
-        Task<DialogResult> ShowDialog<TViewModel>(TViewModel viewModel) where TViewModel : INotifyPropertyChanged;
+        Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : INotifyPropertyChanged;
     }
 }

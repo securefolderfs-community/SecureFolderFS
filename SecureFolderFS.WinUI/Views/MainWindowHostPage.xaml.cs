@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Messages;
@@ -37,17 +38,40 @@ namespace SecureFolderFS.WinUI.Views
             ViewModel.SidebarViewModel.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
         }
 
+        private void NavigateToItem(VaultViewModel vaultViewModel)
+        {
+            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(vaultViewModel) { Transition = new EntranceTransitionModel() });
+        }
+
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is SidebarItemViewModel itemViewModel)
             {
-                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(itemViewModel.VaultViewModel) { Transition = new EntranceTransitionModel() });
+                NavigateToItem(itemViewModel.VaultViewModel);
             }
         }
 
         private void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.EnsureLateApplication();
+        }
+
+        private async void SidebarSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery(sender.Text);
+            }
+        }
+
+        private void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultName.Equals(args.ChosenSuggestion));
+            if (chosenItem is not null)
+            {
+                ViewModel.SidebarViewModel.SelectedItem = chosenItem;
+                NavigateToItem(chosenItem.VaultViewModel);
+            }
         }
     }
 }

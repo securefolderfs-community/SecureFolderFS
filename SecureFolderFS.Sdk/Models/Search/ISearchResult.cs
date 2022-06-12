@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SecureFolderFS.Sdk.Models.Search
+﻿namespace SecureFolderFS.Sdk.Models.Search
 {
+    /// <summary>
+    /// Serves as search result base.
+    /// </summary>
     public interface ISearchResult
     {
-
     }
 }
