@@ -4,9 +4,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.Dialogs;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog;
 using SecureFolderFS.WinUI.Views.Settings;
@@ -18,6 +18,7 @@ namespace SecureFolderFS.WinUI.Dialogs
 {
     public sealed partial class SettingsDialog : ContentDialog, IDialog<SettingsDialogViewModel>, IRecipient<SettingsNavigationRequestedMessage>
     {
+        /// <inheritdoc/>
         public SettingsDialogViewModel ViewModel
         {
             get => (SettingsDialogViewModel)DataContext;
@@ -29,6 +30,7 @@ namespace SecureFolderFS.WinUI.Dialogs
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
         
         public void Receive(SettingsNavigationRequestedMessage message)

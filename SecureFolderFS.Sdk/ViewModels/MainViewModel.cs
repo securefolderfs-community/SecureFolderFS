@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
@@ -26,14 +25,6 @@ namespace SecureFolderFS.Sdk.ViewModels
             {
                 InitializableSource = SidebarViewModel
             };
-        }
-
-        public void EnsureLateApplication()
-        {
-            AsyncExtensions.RunAndForget(() =>
-            {
-                SavedVaultsModel.Initialize();
-            });
         }
     }
 }

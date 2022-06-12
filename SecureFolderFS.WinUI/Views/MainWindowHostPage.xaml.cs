@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Models.Transitions;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using System.Linq;
+using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -53,7 +54,10 @@ namespace SecureFolderFS.WinUI.Views
 
         private void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.EnsureLateApplication();
+            AsyncExtensions.RunAndForget(() =>
+            {
+                ViewModel.SavedVaultsModel.Initialize();
+            });
         }
 
         private async void SidebarSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)

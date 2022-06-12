@@ -8,6 +8,9 @@ namespace SecureFolderFS.WinUI.Dispatching
     /// </summary>
     public interface IThreadDispatcher
     {
+        /// <summary>
+        /// Determines whether the current dispatcher has thread access.
+        /// </summary>
         bool HasThreadAccess { get; }
 
         /// <summary>

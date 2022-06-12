@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Dialogs;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.WinUI.Dialogs;
@@ -12,6 +12,7 @@ using SecureFolderFS.WinUI.WindowViews;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    /// <inheritdoc cref="IDialogService"/>
     internal sealed class DialogService : IDialogService
     {
         private readonly IReadOnlyDictionary<Type, Func<ContentDialog>> _dialogs;
@@ -25,6 +26,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             };
         }
 
+        /// <inheritdoc/>
         public IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel)
             where TViewModel : INotifyPropertyChanged
         {
@@ -46,6 +48,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             return dialog;
         }
 
+        /// <inheritdoc/>
         public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel)
             where TViewModel : INotifyPropertyChanged
         {

@@ -5,9 +5,9 @@ using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.Dialogs;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.WinUI.Helpers;
@@ -24,6 +24,7 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private bool _isBackAnimationState;
 
+        /// <inheritdoc/>
         public VaultWizardDialogViewModel ViewModel
         {
             get => (VaultWizardDialogViewModel)DataContext;
@@ -35,6 +36,7 @@ namespace SecureFolderFS.WinUI.Dialogs
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
         public async void Receive(VaultWizardNavigationRequestedMessage message)
