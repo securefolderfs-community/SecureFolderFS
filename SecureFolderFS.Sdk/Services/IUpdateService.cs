@@ -1,4 +1,6 @@
-﻿using SecureFolderFS.Sdk.Enums;
+﻿using System;
+using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.Services
 {

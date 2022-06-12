@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Sdk.Models;
+﻿using System.Collections.Generic;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels;
 
 namespace SecureFolderFS.Sdk.Services.Settings

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.Dialogs

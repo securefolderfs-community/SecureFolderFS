@@ -1,4 +1,7 @@
-﻿namespace SecureFolderFS.Sdk.Services
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace SecureFolderFS.Sdk.Services
 {
     public interface IFileExplorerService
     {

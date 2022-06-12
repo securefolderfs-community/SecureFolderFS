@@ -1,4 +1,6 @@
-﻿using SecureFolderFS.Sdk.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -8,7 +10,7 @@ namespace SecureFolderFS.Sdk.Services
     public interface IClipboardService
     {
         /// <summary>
-        /// Checks and requests for permission to access clipboard.
+        /// Checks and requests permission to access clipboard.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is granted returns true, otherwise false.</returns>
         Task<bool> IsClipboardAvailableAsync();

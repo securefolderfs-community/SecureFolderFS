@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Core.Instance;

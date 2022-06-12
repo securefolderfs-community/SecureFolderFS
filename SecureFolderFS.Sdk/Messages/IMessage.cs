@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Sdk.Messages
+﻿using System;
+
+namespace SecureFolderFS.Sdk.Messages
 {
     public interface IMessage
     {
@@ -11,6 +13,6 @@
 
     public interface IMessageWithSender : IMessage
     {
-        public Lazy<object?> Sender { get; }
+        Lazy<object?> Sender { get; }
     }
 }

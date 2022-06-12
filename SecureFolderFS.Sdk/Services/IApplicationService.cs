@@ -1,4 +1,7 @@
-﻿namespace SecureFolderFS.Sdk.Services
+﻿using System;
+using System.Threading.Tasks;
+
+namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
     /// A service to consume app related APIs.

@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Sdk.Models
+﻿using System;
+
+namespace SecureFolderFS.Sdk.Models
 {
     public sealed class GraphPointModel
     {

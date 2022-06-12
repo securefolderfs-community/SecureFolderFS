@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
@@ -7,6 +8,7 @@ using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog
 {

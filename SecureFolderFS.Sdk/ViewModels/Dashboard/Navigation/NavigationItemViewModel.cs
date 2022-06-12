@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation
+﻿using System;
+
+namespace SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation
 {
     public sealed class NavigationItemViewModel
     {

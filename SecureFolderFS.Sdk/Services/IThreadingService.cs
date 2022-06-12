@@ -1,4 +1,6 @@
-﻿using SecureFolderFS.Shared.Utils;
+﻿using System;
+using System.Threading.Tasks;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Services
 {

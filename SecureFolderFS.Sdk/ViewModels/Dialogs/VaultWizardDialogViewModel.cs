@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Messages;

@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Sdk.Extensions;
+﻿using System;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.Extensions;
 using System.Globalization;
 

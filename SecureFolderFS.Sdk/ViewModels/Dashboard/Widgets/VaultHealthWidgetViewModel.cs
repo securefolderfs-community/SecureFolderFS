@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dashboard.Widgets

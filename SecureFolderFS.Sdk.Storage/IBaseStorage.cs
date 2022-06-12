@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Storage.Enums;
 
 namespace SecureFolderFS.Sdk.Storage
 {
@@ -22,6 +23,14 @@ namespace SecureFolderFS.Sdk.Storage
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IFolder"/>, otherwise null.</returns>
         Task<IFolder?> GetParentAsync();
+
+        /// <summary>
+        /// Renames the storage object.
+        /// </summary>
+        /// <param name="newName">The name to apply.</param>
+        /// <param name="options">Determines how to handle the collision in case an object with the same name already exists.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
+        Task<bool> RenameAsync(string newName, NameCollisionOption options);
 
         /// <summary>
         /// Deletes the associated storage object.

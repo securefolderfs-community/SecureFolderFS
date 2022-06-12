@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Sdk.EventArguments
+﻿using System;
+
+namespace SecureFolderFS.Sdk.EventArguments
 {
     public sealed class SettingChangedEventArgs : EventArgs
     {

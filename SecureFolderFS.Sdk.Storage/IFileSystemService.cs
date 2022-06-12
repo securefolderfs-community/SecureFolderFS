@@ -5,10 +5,10 @@ namespace SecureFolderFS.Sdk.Storage
     public interface IFileSystemService
     {
         /// <summary>
-        /// Checks and requests for permission to access file system.
+        /// Checks and requests permission to access file system.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is granted returns true, otherwise false.</returns>
-        Task<bool> EnsureFileSystemIsAccessible();
+        Task<bool> IsFileSystemAccessible();
 
         /// <summary>
         /// Check if file exists at specified <paramref name="path"/>.

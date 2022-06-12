@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Models

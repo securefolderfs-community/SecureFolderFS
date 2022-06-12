@@ -1,4 +1,7 @@
 ﻿using SecureFolderFS.Shared.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SecureFolderFS.Sdk.Models
 {
