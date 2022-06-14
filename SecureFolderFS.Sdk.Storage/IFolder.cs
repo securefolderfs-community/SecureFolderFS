@@ -56,19 +56,19 @@ namespace SecureFolderFS.Sdk.Storage
         /// <summary>
         /// Gets all files in the current directory.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IEnumerable{T}"/> of type <see cref="IFile"/> of files in the directory.</returns>
-        Task<IEnumerable<IFile>> GetFilesAsync();
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFile"/> of files in the directory.</returns>
+        IAsyncEnumerable<IFile> GetFilesAsync();
 
         /// <summary>
         /// Gets all folders in the current directory.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IEnumerable{T}"/> of type <see cref="IFolder"/> of folders in the directory.</returns>
-        Task<IEnumerable<IFolder>> GetFoldersAsync();
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFolder"/> of folders in the directory.</returns>
+        IAsyncEnumerable<IFolder> GetFoldersAsync();
 
         /// <summary>
         /// Gets all items in the current directory.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IEnumerable{T}"/> of type <see cref="IBaseStorage"/> of items in the directory.</returns>
-        Task<IEnumerable<IBaseStorage>> GetStorageAsync();
+        /// <returns>Returns an async operation represented by <see cref="IEnumerable{T}"/> of type <see cref="IBaseStorage"/> of items in the directory.</returns>
+        IAsyncEnumerable<IBaseStorage> GetStorageAsync();
     }
 }

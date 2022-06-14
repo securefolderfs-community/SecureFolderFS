@@ -69,9 +69,9 @@ namespace SecureFolderFS.WinUI
 
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>()
-                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
-                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
-                .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
+                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!.GetSharingContext()))
+                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!.GetSharingContext()))
+                .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!.GetSharingContext()))
 
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
                 .AddSingleton<IConfidentialStorageService, ConfidentialStorageService>()

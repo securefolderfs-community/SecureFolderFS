@@ -5,7 +5,7 @@ using SecureFolderFS.Sdk.Models;
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
-    /// A service that interacts with system clipboard.
+    /// A service that interacts with the system clipboard.
     /// </summary>
     public interface IClipboardService
     {
