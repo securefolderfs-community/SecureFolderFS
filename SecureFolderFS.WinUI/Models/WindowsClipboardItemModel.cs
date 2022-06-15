@@ -24,16 +24,14 @@ namespace SecureFolderFS.WinUI.Models
         /// <inheritdoc/>
         public async Task<object?> GetDataAsync()
         {
-            switch (DataType)
+            return DataType switch
             {
-                case ClipboardDataType.Text:
-                    return await _dataPackageView.GetTextAsync();
-            }
-
-            return null;
+                ClipboardDataType.Text => await _dataPackageView.GetTextAsync(),
+                _ => null
+            };
         }
 
-        private ClipboardDataType GetDataType(DataPackageView dataPackageView)
+        private static ClipboardDataType GetDataType(DataPackageView dataPackageView)
         {
             if (dataPackageView.AvailableFormats.Contains(StandardDataFormats.Text))
             {

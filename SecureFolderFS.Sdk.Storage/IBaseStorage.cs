@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.Storage
         /// <summary>
         /// Gets the parent folder that contains this object.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IFolder"/>, otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IFolder"/> otherwise null.</returns>
         Task<IFolder?> GetParentAsync();
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.Storage
         /// </summary>
         /// <param name="newName">The name to apply.</param>
         /// <param name="options">Determines how to handle the collision in case an object with the same name already exists.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true otherwise false.</returns>
         Task<bool> RenameAsync(string newName, NameCollisionOption options);
 
         /// <summary>
