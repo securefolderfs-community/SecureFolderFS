@@ -1,38 +1,49 @@
 ﻿using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Core.Enums;
-using SecureFolderFS.WinUI.Serialization;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.WinUI.Storage;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {
-    internal sealed class PreferencesSettingsService : BaseJsonSettings, IPreferencesSettingsService
+    /// <inheritdoc cref="IPreferencesSettingsService"/>
+    internal sealed class PreferencesSettingsService : SettingsModel, IPreferencesSettingsService
     {
-        public PreferencesSettingsService(ISettingsSharingContext settingsSharingContext)
+        public PreferencesSettingsService(ISettingsServiceInternal settingsServiceInternal)
         {
-            RegisterSettingsContext(settingsSharingContext);
+            _ = settingsServiceInternal; // TODO: Use this parameter
+            FilePool = new CachingFilePool(null, null); // TODO: Add parameters
+            SettingsDatabase = new DictionarySettingsDatabaseModel(new JsonToStreamSerializer());
         }
 
+        /// <inheritdoc/>
+        protected override string SettingsStorageName { get; } = "user_settings2.json";
+
+        /// <inheritdoc/>
         public FileSystemAdapterType ActiveFileSystemAdapter
         {
-            get => (FileSystemAdapterType)Get<uint>(() => (uint)FileSystemAdapterType.DokanAdapter);
-            set => Set<uint>((uint)value);
+            get => (FileSystemAdapterType)GetSetting<uint>(() => (uint)FileSystemAdapterType.DokanAdapter);
+            set => SetSetting<uint>((uint)value);
         }
 
+        /// <inheritdoc/>
         public bool StartOnSystemStartup
         {
-            get => Get(() => false);
-            set => Set(value);
+            get => GetSetting(() => false);
+            set => SetSetting(value);
         }
 
+        /// <inheritdoc/>
         public bool ContinueOnLastVault
         {
-            get => Get(() => false);
-            set => Set(value);
+            get => GetSetting(() => false);
+            set => SetSetting(value);
         }
 
+        /// <inheritdoc/>
         public bool AutoOpenVaultFolder 
         { 
-            get => Get(() => false); 
-            set => Set(value);
+            get => GetSetting(() => false); 
+            set => SetSetting(value);
         }
     }
 }

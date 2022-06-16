@@ -1,8 +1,9 @@
 ﻿using SecureFolderFS.Core.Enums;
+using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.Services.Settings
 {
-    public interface IPreferencesSettingsService : IBaseSettingsService
+    public interface IPreferencesSettingsService : ISettingsModel
     {
         FileSystemAdapterType ActiveFileSystemAdapter { get; set; }
 

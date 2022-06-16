@@ -2,6 +2,9 @@
 
 namespace SecureFolderFS.Sdk.Storage
 {
+    /// <summary>
+    /// Provides an API layer for accessing the file system.
+    /// </summary>
     public interface IFileSystemService
     {
         /// <summary>
@@ -28,8 +31,8 @@ namespace SecureFolderFS.Sdk.Storage
         /// Creates all directories at specified <paramref name="folderName"/> path.
         /// </summary>
         /// <param name="folderName">The directory to create.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IFolder"/> for the created directory.</returns>
-        Task<IFolder> CreateDirectoryAsync(string folderName);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IFolder"/> of the created directory, otherwise null.</returns>
+        Task<IFolder?> CreateDirectoryAsync(string folderName);
 
         /// <summary>
         /// Gets the folder at the specified <paramref name="path"/>.

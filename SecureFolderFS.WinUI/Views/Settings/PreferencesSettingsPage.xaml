@@ -82,12 +82,12 @@
             <ucab:ActionBlockControl
                 Title="Start with system"
                 Description="Launch SecureFolderFS on system startup"
-                IsEnabled="False">
+                IsEnabled="True">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF71C;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" />
+                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.StartOnSystemStartup, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl

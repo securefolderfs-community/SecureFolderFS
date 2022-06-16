@@ -22,7 +22,6 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async IAsyncEnumerable<ISearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            await Task.CompletedTask;
             _ = cancellationToken;
 
             var splitQuery = query.ToLowerInvariant().Split(' ');
@@ -34,6 +33,8 @@ namespace SecureFolderFS.Sdk.AppModels
                     yield return item;
                 }
             }
+
+            await Task.CompletedTask;
         }
     }
 }

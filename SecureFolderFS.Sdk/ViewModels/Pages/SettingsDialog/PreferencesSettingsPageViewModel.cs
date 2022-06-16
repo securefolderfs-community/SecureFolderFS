@@ -25,6 +25,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog
             }
         }
 
+        public bool StartOnSystemStartup
+        {
+            get => PreferencesSettingsService.StartOnSystemStartup;
+            set
+            {
+                if (PreferencesSettingsService.StartOnSystemStartup != value)
+                    PreferencesSettingsService.StartOnSystemStartup = value;
+            }
+        }
+
         public PreferencesSettingsPageViewModel()
         {
             ActiveFileSystemInfoBarViewModel = new();

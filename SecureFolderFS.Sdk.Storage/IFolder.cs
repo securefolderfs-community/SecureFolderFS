@@ -13,31 +13,25 @@ namespace SecureFolderFS.Sdk.Storage
         /// Creates a new file with specified <paramref name="desiredName"/> in the current folder.
         /// </summary>
         /// <param name="desiredName">The name to create the file with.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns a <see cref="IFile"/> to the created object.</returns>
-        Task<IFile> CreateFileAsync(string desiredName);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns the created <see cref="IFile"/>, otherwise null.</returns>
+        Task<IFile?> CreateFileAsync(string desiredName);
 
-        /// <summary>
-        /// Creates a new file with specified <paramref name="desiredName"/> in the current folder.
-        /// </summary>
+        /// <inheritdoc cref="CreateFileAsync(string)"/>
         /// <param name="desiredName">The name to create the file with.</param>
         /// <param name="options">Determines how to handle the collision in case a file already exists with the <paramref name="desiredName"/> name.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns a <see cref="IFile"/> to the created object.</returns>
-        Task<IFile> CreateFileAsync(string desiredName, CreationCollisionOption options);
+        Task<IFile?> CreateFileAsync(string desiredName, CreationCollisionOption options);
 
         /// <summary>
         /// Creates a new folder with specified <paramref name="desiredName"/> in the current folder.
         /// </summary>
         /// <param name="desiredName">The name to create the folder with.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns a <see cref="IFolder"/> to the created object.</returns>
-        Task<IFolder> CreateFolderAsync(string desiredName);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns the created <see cref="IFolder"/>, otherwise null.</returns>
+        Task<IFolder?> CreateFolderAsync(string desiredName);
 
-        /// <summary>
-        /// Creates a new folder with specified <paramref name="desiredName"/> in the current folder.
-        /// </summary>
+        /// <inheritdoc cref="CreateFolderAsync(string)"/>
         /// <param name="desiredName">The name to create the folder with.</param>
         /// <param name="options">Determines how to handle the collision in case a folder already exists with the <paramref name="desiredName"/> name.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns a <see cref="IFile"/> to the created object.</returns>
-        Task<IFolder> CreateFolderAsync(string desiredName, CreationCollisionOption options);
+        Task<IFolder?> CreateFolderAsync(string desiredName, CreationCollisionOption options);
 
         /// <summary>
         /// Gets a file in the current directory by name.

@@ -9,6 +9,7 @@ using SecureFolderFS.WinUI.WindowViews;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.WinUI.ServiceImplementation.Settings;
 using SecureFolderFS.WinUI.Serialization;
 
@@ -70,10 +71,11 @@ namespace SecureFolderFS.WinUI
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>()
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!.GetSharingContext()))
-                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!.GetSharingContext()))
+                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!))
                 .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!.GetSharingContext()))
-
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
+
+                .AddSingleton<IFileSystemService, NativeFileSystemService>()
                 .AddSingleton<IConfidentialStorageService, ConfidentialStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IApplicationService, ApplicationService>()

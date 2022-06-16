@@ -17,14 +17,14 @@ namespace SecureFolderFS.Sdk.Storage
         /// Opens and returns a stream to the file.
         /// </summary>
         /// <param name="access">The file access to open the file with.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a <see cref="Stream"/>.</returns>
-        Task<Stream> OpenStreamAsync(FileAccess access);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a <see cref="Stream"/>, otherwise null.</returns>
+        Task<Stream?> OpenStreamAsync(FileAccess access);
 
         /// <inheritdoc cref="OpenStreamAsync(System.IO.FileAccess)"/>
         /// <param name="access">The file access to open the file with.</param>
         /// <param name="share">The file share to open the file with.</param>
         /// <remarks>The <paramref name="share"/> may not be supported on some platforms.</remarks>
-        Task<Stream> OpenStreamAsync(FileAccess access, FileShare share);
+        Task<Stream?> OpenStreamAsync(FileAccess access, FileShare share);
 
         /// <summary>
         /// Retrieves the thumbnail for the file, adjusted by <paramref name="requestedSize"/>.
