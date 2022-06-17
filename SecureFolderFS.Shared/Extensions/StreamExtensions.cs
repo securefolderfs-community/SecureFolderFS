@@ -11,7 +11,7 @@ namespace SecureFolderFS.Shared.Extensions
                 return memoryStreamImpl.ToArray();
 
             await using var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream);
+            await stream.CopyToAsync(memoryStream).ConfigureAwait(false);
             memoryStream.Position = 0;
 
             return memoryStream.ToArray();

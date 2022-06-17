@@ -1,13 +1,16 @@
-﻿using SecureFolderFS.Sdk.Services.Settings;
+﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.WinUI.Serialization;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {
-    internal sealed class GeneralSettingsService : BaseJsonSettings, IGeneralSettingsService
+    /// <inheritdoc cref="IGeneralSettingsService"/>
+    internal sealed class GeneralSettingsService : SharedSettingsModel, IGeneralSettingsService
     {
-        public GeneralSettingsService(ISettingsSharingContext settingsSharingContext)
+        public GeneralSettingsService(ISettingsDatabaseModel originSettingsDatabase, ISettingsModel originSettingsModel)
+            : base(originSettingsModel)
         {
-            RegisterSettingsContext(settingsSharingContext);
+            SettingsDatabase = originSettingsDatabase;
         }
     }
 }

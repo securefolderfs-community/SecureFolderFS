@@ -47,10 +47,12 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             try
             {
-                await semaphore.WaitAsync(cancellationToken);
-                await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read);
+                await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read).ConfigureAwait(false);
+                if (stream is null)
+                    return false;
 
-                var settings = await serializer.DeserializeAsync<Dictionary<string, object?>?>(stream, cancellationToken);
+                var settings = await serializer.DeserializeAsync<Dictionary<string, object?>?>(stream, cancellationToken).ConfigureAwait(false);
                 if (settings is null)
                     return false;
 
@@ -73,11 +75,13 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             try
             {
-                await semaphore.WaitAsync(cancellationToken);
-                await using var stream = await file.OpenStreamAsync(FileAccess.ReadWrite, FileShare.Read);
+                await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await using var stream = await file.OpenStreamAsync(FileAccess.ReadWrite, FileShare.Read).ConfigureAwait(false);
+                if (stream is null)
+                    return false;
 
-                var settingsStream = await serializer.SerializeAsync<IDictionary<string, object?>>(settingsCache, cancellationToken);
-                await settingsStream.CopyToAsync(stream, cancellationToken);
+                var settingsStream = await serializer.SerializeAsync<IDictionary<string, object?>>(settingsCache, cancellationToken).ConfigureAwait(false);
+                await settingsStream.CopyToAsync(stream, cancellationToken).ConfigureAwait(false);
 
                 return true;
             }

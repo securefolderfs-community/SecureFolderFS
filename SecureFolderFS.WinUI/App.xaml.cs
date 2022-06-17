@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using System;
 using System.Diagnostics;
+using System.IO;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
@@ -8,10 +9,13 @@ using SecureFolderFS.WinUI.ServiceImplementation;
 using SecureFolderFS.WinUI.WindowViews;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
+using Windows.Storage;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.WinUI.ServiceImplementation.Settings;
 using SecureFolderFS.WinUI.Serialization;
+using SecureFolderFS.WinUI.Storage.NativeStorage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,6 +49,13 @@ namespace SecureFolderFS.WinUI
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
+            // Get settings folder
+            var settingsFolder = new NativeFolder(Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SETTINGS_FOLDER_NAME));
+
+            // Configure IoC
+            ServiceProvider = ConfigureServices(settingsFolder);
+            Ioc.Default.ConfigureServices(ServiceProvider);
+
             _window = new MainWindow();
             _window.Activate();
         }
@@ -56,23 +67,19 @@ namespace SecureFolderFS.WinUI
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-            // Configure IoC
-            ServiceProvider = ConfigureServices();
-            Ioc.Default.ConfigureServices(ServiceProvider);
-
             // Start AppCenter
             // TODO: Start AppCenter
         }
 
-        private IServiceProvider ConfigureServices()
+        private IServiceProvider ConfigureServices(IFolder settingsFolder)
         {
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
-                .AddSingleton<ISettingsService, SettingsService>()
-                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!.GetSharingContext()))
-                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!))
-                .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => new((sp.GetRequiredService<ISettingsService>() as ISettingsServiceInternal)!.GetSharingContext()))
+                .AddSingleton<ISettingsService, SettingsService>(sp => new SettingsService(settingsFolder, sp.GetRequiredService<IFileSystemService>()))
+                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
+                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
+                .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => GetSettingsService(sp, (database, model) => new SecuritySettingsService(database, model)))
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
 
                 .AddSingleton<IFileSystemService, NativeFileSystemService>()
@@ -85,7 +92,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>();
 
-            return serviceCollection.BuildServiceProvider();
+            return serviceCollection.BuildServiceProvider(); // TODO: true?
         }
 
         private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
@@ -113,6 +120,15 @@ namespace SecureFolderFS.WinUI
 #if !DEBUG
             ExceptionHelpers.LogExceptionToFile(formattedException);
 #endif
+        }
+
+        private static TSettingsService GetSettingsService<TSettingsService>(IServiceProvider serviceProvider,
+            Func<ISettingsDatabaseModel, ISettingsModel, TSettingsService> initializer)
+            where TSettingsService : SharedSettingsModel
+        {
+            var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
+
+            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl!);
         }
     }
 }

@@ -35,11 +35,11 @@ namespace SecureFolderFS.WinUI.Storage
                 {
                     var item = _files[i];
                     var deleted = false;
-                    var exists = await _fileSystemService.FileExistsAsync(item.Path);
+                    var exists = await _fileSystemService.FileExistsAsync(item.Path).ConfigureAwait(false);
 
                     if (exists)
                     {
-                        deleted = await item.DeleteAsync(true);
+                        deleted = await item.DeleteAsync(true).ConfigureAwait(false);
                         result &= deleted;
                     }
 
@@ -62,7 +62,7 @@ namespace SecureFolderFS.WinUI.Storage
             if (file is not null)
                 return file;
 
-            file = await _folder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
+            file = await _folder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists).ConfigureAwait(false);
             if (file is not null)
                 _files.Add(file);
 

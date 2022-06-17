@@ -1,28 +1,24 @@
 ﻿using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.WinUI.Storage;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.WinUI.Serialization;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {
     /// <inheritdoc cref="IPreferencesSettingsService"/>
-    internal sealed class PreferencesSettingsService : SettingsModel, IPreferencesSettingsService
+    internal sealed class PreferencesSettingsService : SharedSettingsModel, IPreferencesSettingsService
     {
-        public PreferencesSettingsService(ISettingsServiceInternal settingsServiceInternal)
+        public PreferencesSettingsService(ISettingsDatabaseModel originSettingsDatabase, ISettingsModel originSettingsModel)
+            : base(originSettingsModel)
         {
-            _ = settingsServiceInternal; // TODO: Use this parameter
-            FilePool = new CachingFilePool(null, null); // TODO: Add parameters
-            SettingsDatabase = new DictionarySettingsDatabaseModel(new JsonToStreamSerializer());
+            SettingsDatabase = originSettingsDatabase;
         }
-
-        /// <inheritdoc/>
-        protected override string SettingsStorageName { get; } = "user_settings2.json";
 
         /// <inheritdoc/>
         public FileSystemAdapterType ActiveFileSystemAdapter
         {
-            get => (FileSystemAdapterType)GetSetting<uint>(() => (uint)FileSystemAdapterType.DokanAdapter);
-            set => SetSetting<uint>((uint)value);
+            get => (FileSystemAdapterType)GetSetting(() => (uint)FileSystemAdapterType.DokanAdapter);
+            set => SetSetting((uint)value);
         }
 
         /// <inheritdoc/>

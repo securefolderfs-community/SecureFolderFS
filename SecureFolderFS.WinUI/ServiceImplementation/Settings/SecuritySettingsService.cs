@@ -1,25 +1,30 @@
-﻿using SecureFolderFS.Sdk.Services.Settings;
+﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.WinUI.Serialization;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {
-    internal sealed class SecuritySettingsService : BaseJsonSettings, ISecuritySettingsService
+    /// <inheritdoc cref="ISecuritySettingsService"/>
+    internal sealed class SecuritySettingsService : SharedSettingsModel, ISecuritySettingsService
     {
-        public SecuritySettingsService(ISettingsSharingContext settingsSharingContext)
+        public SecuritySettingsService(ISettingsDatabaseModel originSettingsDatabase, ISettingsModel originSettingsModel)
+            : base(originSettingsModel)
         {
-            RegisterSettingsContext(settingsSharingContext);
+            SettingsDatabase = originSettingsDatabase;
         }
 
+        /// <inheritdoc/>
         public bool EnableAuthentication
         {
-            get => Get(() => false);
-            set => Set(value);
+            get => GetSetting(() => false);
+            set => SetSetting(value);
         }
 
+        /// <inheritdoc/>
         public bool AutomaticallyLockVaults
         {
-            get => Get(() => false);
-            set => Set(value);
+            get => GetSetting(() => false);
+            set => SetSetting(value);
         }
     }
 }

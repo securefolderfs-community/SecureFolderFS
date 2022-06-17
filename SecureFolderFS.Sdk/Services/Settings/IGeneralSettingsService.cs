@@ -1,6 +1,8 @@
-﻿namespace SecureFolderFS.Sdk.Services.Settings
+﻿using SecureFolderFS.Sdk.Models;
+
+namespace SecureFolderFS.Sdk.Services.Settings
 {
-    public interface IGeneralSettingsService : IBaseSettingsService
+    public interface IGeneralSettingsService : ISettingsModel
     {
     }
 }

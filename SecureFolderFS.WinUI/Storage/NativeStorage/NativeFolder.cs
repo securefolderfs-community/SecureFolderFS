@@ -24,13 +24,25 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         /// <inheritdoc/>
         public async Task<IFile?> CreateFileAsync(string desiredName, CreationCollisionOption options)
         {
-            _ = options;
-
             try
             {
                 var path = System.IO.Path.Combine(Path, desiredName);
-                await File.Create(path).DisposeAsync();
+                if (File.Exists(path))
+                {
+                    switch (options)
+                    {
+                        case CreationCollisionOption.GenerateUniqueName:
+                            return await CreateFileAsync($"{System.IO.Path.GetFileNameWithoutExtension(desiredName)} (1){System.IO.Path.GetExtension(desiredName)}").ConfigureAwait(false);
 
+                        case CreationCollisionOption.OpenIfExists:
+                            return new NativeFile(path);
+
+                        case CreationCollisionOption.FailIfExists:
+                            return null;
+                    }
+                }
+
+                await File.Create(path).DisposeAsync();
                 return new NativeFile(path);
             }
             catch (Exception)
@@ -48,13 +60,25 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         /// <inheritdoc/>
         public Task<IFolder?> CreateFolderAsync(string desiredName, CreationCollisionOption options)
         {
-            _ = options;
-
             try
             {
                 var path = System.IO.Path.Combine(Path, desiredName);
-                _ = Directory.CreateDirectory(path);
+                if (Directory.Exists(path))
+                {
+                    switch (options)
+                    {
+                        case CreationCollisionOption.GenerateUniqueName:
+                            return CreateFolderAsync($"{desiredName} (1)");
 
+                        case CreationCollisionOption.OpenIfExists:
+                            return Task.FromResult<IFolder?>(new NativeFolder(path));
+
+                        case CreationCollisionOption.FailIfExists:
+                            return Task.FromResult<IFolder?>(null);
+                    }
+                }
+
+                _ = Directory.CreateDirectory(path);
                 return Task.FromResult<IFolder?>(new NativeFolder(path));
             }
             catch (Exception)

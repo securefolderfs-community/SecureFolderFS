@@ -1,6 +1,8 @@
-﻿namespace SecureFolderFS.Sdk.Services.Settings
+﻿using SecureFolderFS.Sdk.Models;
+
+namespace SecureFolderFS.Sdk.Services.Settings
 {
-    public interface ISecuritySettingsService : IBaseSettingsService
+    public interface ISecuritySettingsService : ISettingsModel
     {
         bool EnableAuthentication { get; set; }
 

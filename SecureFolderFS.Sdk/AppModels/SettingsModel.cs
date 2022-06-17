@@ -10,17 +10,17 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <inheritdoc cref="ISettingsModel"/>
     public abstract class SettingsModel : ISettingsModel
     {
-        // TODO: Add `required` modifier
-        protected IFilePool FilePool { get; init; }
-        protected ISettingsDatabaseModel SettingsDatabase { get; init; }
+        protected IFilePool? FilePool { get; init; }
+
+        protected ISettingsDatabaseModel? SettingsDatabase { get; init; }
 
         /// <inheritdoc/>
-        public bool IsAvailable { get; protected set; }
+        public virtual bool IsAvailable { get; protected set; }
 
         /// <summary>
         /// Gets the name of the settings store.
         /// </summary>
-        protected abstract string SettingsStorageName { get; }
+        protected abstract string? SettingsStorageName { get; }
 
         /// <summary>
         /// Gets a value of a setting defined by <paramref name="settingName"/>.
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <returns>A requested setting. The value is determined by the availability of the setting in the storage or by the <paramref name="defaultValue"/>.</returns>
         protected virtual T? GetSetting<T>(Func<T?>? defaultValue, [CallerMemberName] string settingName = "")
         {
-            if (string.IsNullOrEmpty(settingName))
+            if (SettingsDatabase is null || string.IsNullOrEmpty(settingName))
                 return defaultValue is not null ? defaultValue() : default;
 
             return SettingsDatabase.GetValue(settingName, defaultValue);
@@ -46,30 +46,16 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <returns>If the setting has been updated, returns true otherwise false.</returns>
         protected virtual bool SetSetting<T>(T? value, [CallerMemberName] string settingName = "")
         {
-            if (string.IsNullOrEmpty(settingName))
+            if (SettingsDatabase is null || string.IsNullOrEmpty(settingName))
                 return false;
 
             return SettingsDatabase.SetValue(settingName, value);
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
-        {
-            var settingsFile = await FilePool.RequestFileAsync(SettingsStorageName, cancellationToken);
-            if (settingsFile is null)
-                return false;
-
-            return await SettingsDatabase.LoadFromFile(settingsFile, cancellationToken);
-        }
+        public abstract Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public virtual async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
-        {
-            var settingsFile = await FilePool.RequestFileAsync(SettingsStorageName, cancellationToken);
-            if (settingsFile is null)
-                return false;
-
-            return await SettingsDatabase.SaveToFile(settingsFile, cancellationToken);
-        }
+        public abstract Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default);
     }
 }

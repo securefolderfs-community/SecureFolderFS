@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public virtual async Task<TData?> DeserializeAsync<TData>(Stream serialized, CancellationToken cancellationToken = default)
         {
-            var buffer = await serialized.ReadAllBytesAsync();
+            var buffer = await serialized.ReadAllBytesAsync().ConfigureAwait(false);
             var rawSerialized = Encoding.UTF8.GetString(buffer);
             return JsonConvert.DeserializeObject<TData>(rawSerialized);
         }
