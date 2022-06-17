@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.StoragePool;
 
 namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {
     /// <inheritdoc cref="IFolder"/>
     internal sealed class NativeFolder : NativeBaseStorage, IFolder
     {
+        private IFilePool? _filePool;
+        private IFolderPool? _folderPool;
+
         public NativeFolder(string path)
             : base(path)
         {
@@ -110,10 +117,13 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IFile> GetFilesAsync()
+        public async IAsyncEnumerable<IFile> GetFilesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             foreach (var item in Directory.EnumerateFiles(Path))
             {
+                if (cancellationToken.IsCancellationRequested)
+                    yield break;
+
                 yield return new NativeFile(item);
             }
 
@@ -121,10 +131,13 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IFolder> GetFoldersAsync()
+        public async IAsyncEnumerable<IFolder> GetFoldersAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             foreach (var item in Directory.EnumerateDirectories(Path))
             {
+                if (cancellationToken.IsCancellationRequested)
+                    yield break;
+
                 yield return new NativeFolder(item);
             }
 
@@ -132,20 +145,37 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IBaseStorage> GetStorageAsync()
+        public async IAsyncEnumerable<IBaseStorage> GetStorageAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             foreach (var item in Directory.EnumerateFileSystemEntries(Path))
             {
+                if (cancellationToken.IsCancellationRequested)
+                    yield break;
+
                 if (File.Exists(item))
                     yield return new NativeFile(item);
 
                 if (Directory.Exists(item))
                     yield return new NativeFolder(item);
-
-                yield break;
             }
 
             await Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public IFilePool? GetFilePool()
+        {
+            var fileSystemService = Ioc.Default.GetService<IFileSystemService>();
+            if (fileSystemService is null)
+                return _filePool;
+
+            return _filePool ??= new CachingFilePool(this, fileSystemService);
+        }
+
+        /// <inheritdoc/>
+        public IFolderPool? GetFolderPool()
+        {
+            throw new NotSupportedException();
         }
 
         /// <inheritdoc/>

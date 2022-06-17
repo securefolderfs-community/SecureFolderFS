@@ -26,5 +26,13 @@ namespace SecureFolderFS.Shared.Utils
         /// <param name="cancellationToken">Cancellation token of the action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <typeparamref name="TData"/> of transformed <paramref name="serialized"/>.</returns>
         Task<TData?> DeserializeAsync<TData>(TSerialized serialized, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Ensures that the provided <paramref name="unknown"/> is in deserialized <typeparamref name="TData"/> form.
+        /// </summary>
+        /// <typeparam name="TData">The deserialized type.</typeparam>
+        /// <param name="unknown">The object that may or may not be deserialized.</param>
+        /// <returns>Returns <typeparamref name="TData"/> of the <paramref name="unknown"/> data object.</returns>
+        TData? EnsureDeserialized<TData>(object? unknown);
     }
 }

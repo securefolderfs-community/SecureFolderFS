@@ -12,7 +12,7 @@ namespace SecureFolderFS.Sdk.Models
 {
     public sealed class SavedVaultsModel : IRecipient<AddVaultRequestedMessage>, IRecipient<RemoveVaultRequestedMessage>, IRecipient<VaultSerializationRequestedMessage>
     {
-        private IConfidentialStorageService ConfidentialStorageService { get; } = Ioc.Default.GetRequiredService<IConfidentialStorageService>();
+        private ISecretSettingsService SecretSettingsService { get; } = Ioc.Default.GetRequiredService<ISecretSettingsService>();
 
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
@@ -27,10 +27,10 @@ namespace SecureFolderFS.Sdk.Models
 
         public void Initialize()
         {
-            if (InitializableSource is not null && (SettingsService.IsAvailable && ConfidentialStorageService.IsAvailable))
+            if (InitializableSource is not null && (SettingsService.IsAvailable && SecretSettingsService.IsAvailable))
             {
                 var savedVaults = SettingsService.SavedVaults;
-                var savedVaultModels = ConfidentialStorageService.SavedVaultModels;
+                var savedVaultModels = SecretSettingsService.SavedVaultModels;
 
                 foreach (var item in savedVaults.Keys)
                 {
@@ -43,40 +43,40 @@ namespace SecureFolderFS.Sdk.Models
 
         public void Receive(AddVaultRequestedMessage message)
         {
-            if (SettingsService.IsAvailable && ConfidentialStorageService.IsAvailable)
+            if (SettingsService.IsAvailable && SecretSettingsService.IsAvailable)
             {
                 var savedVaults = SettingsService.SavedVaults!.ToDictionary();
-                var savedVaultModels = ConfidentialStorageService.SavedVaultModels!.ToDictionary();
+                var savedVaultModels = SecretSettingsService.SavedVaultModels!.ToDictionary();
 
                 savedVaults.Add(message.Value.VaultIdModel, message.Value);
                 savedVaultModels.Add(message.Value.VaultIdModel, message.Value.VaultModel);
 
                 SettingsService.SavedVaults = savedVaults!;
-                ConfidentialStorageService.SavedVaultModels = savedVaultModels!;
+                SecretSettingsService.SavedVaultModels = savedVaultModels!;
             }
         }
 
         public void Receive(RemoveVaultRequestedMessage message)
         {
-            if (SettingsService.IsAvailable && ConfidentialStorageService.IsAvailable)
+            if (SettingsService.IsAvailable && SecretSettingsService.IsAvailable)
             {
                 var savedVaults = SettingsService.SavedVaults!.ToDictionary();
-                var savedVaultModels = ConfidentialStorageService.SavedVaultModels!.ToDictionary();
+                var savedVaultModels = SecretSettingsService.SavedVaultModels!.ToDictionary();
 
                 savedVaults.Remove(message.Value);
                 savedVaultModels.Remove(message.Value);
 
                 SettingsService.SavedVaults = savedVaults!;
-                ConfidentialStorageService.SavedVaultModels = savedVaultModels!;
+                SecretSettingsService.SavedVaultModels = savedVaultModels!;
             }
         }
 
         public void Receive(VaultSerializationRequestedMessage message)
         {
-            if (SettingsService.IsAvailable && ConfidentialStorageService.IsAvailable)
+            if (SettingsService.IsAvailable && SecretSettingsService.IsAvailable)
             {
                 var savedVaults = SettingsService.SavedVaults!.ToDictionary();
-                var savedVaultModels = ConfidentialStorageService.SavedVaultModels!.ToDictionary();
+                var savedVaultModels = SecretSettingsService.SavedVaultModels!.ToDictionary();
 
                 if (savedVaults.ContainsKey(message.Value.VaultIdModel))
                 {
@@ -89,7 +89,7 @@ namespace SecureFolderFS.Sdk.Models
                 }
 
                 SettingsService.SavedVaults = savedVaults!;
-                ConfidentialStorageService.SavedVaultModels = savedVaultModels!;
+                SecretSettingsService.SavedVaultModels = savedVaultModels!;
             }
         }
     }

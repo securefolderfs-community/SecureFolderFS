@@ -5,8 +5,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Sdk.Services.Settings;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.WinUI.Storage;
+using SecureFolderFS.Sdk.Storage.StoragePool;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {
@@ -15,10 +14,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
     /// </summary>
     internal sealed partial class SettingsService : SingleFileSettingsModel, ISettingsService
     {
-        public SettingsService(IFolder settingsFolder, IFileSystemService fileSystemService)
+        public SettingsService(IFilePool settingsFilePool)
         {
-            FilePool = new CachingFilePool(settingsFolder, fileSystemService);
-            SettingsDatabase = new DictionarySettingsDatabaseModel(new JsonToStreamSerializer());
+            FilePool = settingsFilePool;
+            SettingsDatabase = new DictionarySettingsDatabaseModel(JsonToStreamSerializer.Instance);
+            IsAvailable = true;
         }
 
         /// <inheritdoc/>

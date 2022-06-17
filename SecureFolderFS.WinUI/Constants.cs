@@ -12,7 +12,7 @@
 
             public const string USER_SETTINGS_FILE_NAME = "user_settings.json";
 
-            public const string CONFIDENTIAL_SETTINGS_FILE_NAME = "confidential_settings.json";
+            public const string SECRET_SETTINGS_FILE_NAME = "confidential_settings.json";
         }
 
         public static class Application

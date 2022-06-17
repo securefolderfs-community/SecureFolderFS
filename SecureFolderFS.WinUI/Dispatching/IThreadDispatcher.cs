@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.WinUI.Dispatching
 {
     /// <summary>
-    /// Interface that represents a thread dispatcher. 
+    /// Represents a thread dispatcher. 
     /// </summary>
     public interface IThreadDispatcher
     {

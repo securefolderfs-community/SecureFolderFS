@@ -10,6 +10,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
+    /// <inheritdoc cref="ISettingsDatabaseModel"/>
     public class DictionarySettingsDatabaseModel : ISettingsDatabaseModel
     {
         protected readonly IAsyncSerializer<Stream> serializer;
@@ -27,7 +28,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public virtual T? GetValue<T>(string key, Func<T?>? defaultValue)
         {
             if (settingsCache.TryGetValue(key, out var value))
-                return (T?)value;
+                return serializer.EnsureDeserialized<T>(value);
 
             var fallback = defaultValue is not null ? defaultValue() : default;
             settingsCache[key] = fallback;
@@ -80,7 +81,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (stream is null)
                     return false;
 
-                var settingsStream = await serializer.SerializeAsync<IDictionary<string, object?>>(settingsCache, cancellationToken).ConfigureAwait(false);
+                await using var settingsStream = await serializer.SerializeAsync<IDictionary<string, object?>>(settingsCache, cancellationToken).ConfigureAwait(false);
                 await settingsStream.CopyToAsync(stream, cancellationToken).ConfigureAwait(false);
 
                 return true;

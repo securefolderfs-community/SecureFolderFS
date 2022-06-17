@@ -20,7 +20,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public Task<IFolder?> GetParentAsync()
+        public virtual Task<IFolder?> GetParentAsync()
         {
             var parentPath = System.IO.Path.GetDirectoryName(Path);
             if (string.IsNullOrEmpty(parentPath))

@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using System.Linq;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -52,12 +53,18 @@ namespace SecureFolderFS.WinUI.Views
             }
         }
 
-        private async void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            await settingsService.LoadSettingsAsync();
+            var secretSettingsService = Ioc.Default.GetRequiredService<ISecretSettingsService>();
+            var threadingService = Ioc.Default.GetRequiredService<IThreadingService>();
 
-            ViewModel.SavedVaultsModel.Initialize();
+            _ = secretSettingsService.LoadSettingsAsync();
+            _ = settingsService.LoadSettingsAsync().ContinueWith(async _ =>
+            {
+                await threadingService.ExecuteOnUiThreadAsync();
+                ViewModel.SavedVaultsModel.Initialize();
+            });
         }
 
         private async void SidebarSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)

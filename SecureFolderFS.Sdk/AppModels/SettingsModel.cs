@@ -10,8 +10,14 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <inheritdoc cref="ISettingsModel"/>
     public abstract class SettingsModel : ISettingsModel
     {
+        /// <summary>
+        /// Gets the <see cref="IFilePool"/> where settings files are stored.
+        /// </summary>
         protected IFilePool? FilePool { get; init; }
 
+        /// <summary>
+        /// Gets the <see cref="ISettingsDatabaseModel"/> where settings are stored.
+        /// </summary>
         protected ISettingsDatabaseModel? SettingsDatabase { get; init; }
 
         /// <inheritdoc/>

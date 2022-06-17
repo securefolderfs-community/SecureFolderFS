@@ -50,6 +50,7 @@ namespace SecureFolderFS.WinUI
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             // Get settings folder
+            // TODO: Not ideal, use abstractions instead of getting hard implementation
             var settingsFolder = new NativeFolder(Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SETTINGS_FOLDER_NAME));
 
             // Configure IoC
@@ -76,14 +77,14 @@ namespace SecureFolderFS.WinUI
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
-                .AddSingleton<ISettingsService, SettingsService>(sp => new SettingsService(settingsFolder, sp.GetRequiredService<IFileSystemService>()))
+                .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder.GetFilePool()!))
+                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder.GetFilePool()!))
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
                 .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => GetSettingsService(sp, (database, model) => new SecuritySettingsService(database, model)))
-                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
 
+                .AddSingleton<ISecretSettingsService, SecretSettingsService>(_ => new SecretSettingsService(settingsFolder.GetFilePool()!))
                 .AddSingleton<IFileSystemService, NativeFileSystemService>()
-                .AddSingleton<IConfidentialStorageService, ConfidentialStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
