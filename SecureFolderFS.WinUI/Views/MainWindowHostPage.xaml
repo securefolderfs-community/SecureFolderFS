@@ -69,7 +69,7 @@
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
-                            Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.CreateNewVaultCommand}"
+                            Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand}"
                             Style="{ThemeResource AccentButtonStyle}"
                             Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
@@ -88,7 +88,7 @@
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
-                            Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.CreateNewVaultCommand}"
+                            Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand}"
                             Style="{ThemeResource AccentButtonStyle}"
                             Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='invert'}">
                             <FontIcon FontSize="16" Glyph="&#xECC8;" />

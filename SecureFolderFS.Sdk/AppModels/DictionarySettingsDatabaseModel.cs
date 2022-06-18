@@ -82,6 +82,11 @@ namespace SecureFolderFS.Sdk.AppModels
                     return false;
 
                 await using var settingsStream = await serializer.SerializeAsync<IDictionary<string, object?>>(settingsCache, cancellationToken).ConfigureAwait(false);
+
+                // Overwrite existing content
+                stream.SetLength(0L);
+
+                // Write settings
                 await settingsStream.CopyToAsync(stream, cancellationToken).ConfigureAwait(false);
 
                 return true;

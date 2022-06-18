@@ -14,19 +14,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
-        public IAsyncRelayCommand CreateNewVaultCommand { get; }
+        public IAsyncRelayCommand AddNewVaultCommand { get; }
 
         public IAsyncRelayCommand OpenSettingsCommand { get; }
 
         public SidebarFooterViewModel()
         {
             OpenSettingsCommand = new AsyncRelayCommand(OpenSettingsAsync);
-            CreateNewVaultCommand = new AsyncRelayCommand(CreateNewVaultAsync);
+            AddNewVaultCommand = new AsyncRelayCommand(AddNewVaultAsync);
         }
 
-        private async Task CreateNewVaultAsync()
+        private async Task AddNewVaultAsync()
         {
             await DialogService.ShowDialogAsync(new VaultWizardDialogViewModel());
+            await SettingsService.SaveSettingsAsync();
         }
 
         private async Task OpenSettingsAsync()
