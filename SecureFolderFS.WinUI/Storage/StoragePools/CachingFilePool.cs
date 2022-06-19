@@ -5,7 +5,7 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.StoragePool;
 
-namespace SecureFolderFS.WinUI.Storage
+namespace SecureFolderFS.WinUI.Storage.StoragePools
 {
     /// <inheritdoc cref="IFilePool"/>
     internal sealed class CachingFilePool : IFilePool
@@ -28,7 +28,7 @@ namespace SecureFolderFS.WinUI.Storage
         {
             try
             {
-                await _semaphore.WaitAsync(cancellationToken);
+                await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
                 var result = true;
 
                 for (int i = 0; i < _files.Count; i++)

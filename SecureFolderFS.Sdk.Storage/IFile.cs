@@ -31,6 +31,6 @@ namespace SecureFolderFS.Sdk.Storage
         /// </summary>
         /// <param name="requestedSize">The size to get the thumbnail with.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task<Stream> GetThumbnailStreamAsync(uint requestedSize);
+        Task<Stream> GetThumbnailStreamAsync(uint requestedSize); // TODO: Return IImage nullable
     }
 }

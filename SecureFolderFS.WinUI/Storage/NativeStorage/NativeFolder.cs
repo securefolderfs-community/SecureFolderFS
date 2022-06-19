@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.StoragePool;
+using SecureFolderFS.WinUI.Storage.StoragePools;
 
 namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {
@@ -49,7 +50,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
                     }
                 }
 
-                await File.Create(path).DisposeAsync();
+                await File.Create(path).DisposeAsync().ConfigureAwait(false);
                 return new NativeFile(path);
             }
             catch (Exception)
@@ -165,9 +166,12 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         /// <inheritdoc/>
         public IFilePool? GetFilePool()
         {
+            if (_filePool is not null)
+                return _filePool;
+
             var fileSystemService = Ioc.Default.GetService<IFileSystemService>();
             if (fileSystemService is null)
-                return _filePool;
+                return null;
 
             return _filePool ??= new CachingFilePool(this, fileSystemService);
         }

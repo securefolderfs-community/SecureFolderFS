@@ -21,7 +21,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         /// <inheritdoc/>
         public Task<Stream?> OpenStreamAsync(FileAccess access)
         {
-            return OpenStreamAsync(access, FileShare.ReadWrite | FileShare.Delete);
+            return OpenStreamAsync(access, FileShare.None);
         }
 
         /// <inheritdoc/>
@@ -73,7 +73,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         /// <inheritdoc/>
         public override Task<bool> DeleteAsync(bool permanently)
         {
-            _ = permanently;
+            _ = permanently; // TODO: Use this parameter
 
             try
             {

@@ -28,13 +28,6 @@ namespace SecureFolderFS.Sdk.Storage
         Task<bool> DirectoryExistsAsync(string path);
 
         /// <summary>
-        /// Creates all directories at specified <paramref name="folderName"/> path.
-        /// </summary>
-        /// <param name="folderName">The directory to create.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IFolder"/> of the created directory, otherwise null.</returns>
-        Task<IFolder?> CreateDirectoryAsync(string folderName);
-
-        /// <summary>
         /// Gets the folder at the specified <paramref name="path"/>.
         /// </summary>
         /// <param name="path">The path to the folder.</param>

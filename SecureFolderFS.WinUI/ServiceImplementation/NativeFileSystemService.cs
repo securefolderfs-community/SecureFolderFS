@@ -34,20 +34,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IFolder?> CreateDirectoryAsync(string folderName)
-        {
-            try
-            {
-                _ = Directory.CreateDirectory(folderName);
-                return Task.FromResult<IFolder?>(new NativeFolder(folderName));
-            }
-            catch (Exception)
-            {
-                return Task.FromResult<IFolder?>(null);
-            }
-        }
-
-        /// <inheritdoc/>
         public Task<IFolder?> GetFolderFromPathAsync(string path)
         {
             if (Directory.Exists(path))

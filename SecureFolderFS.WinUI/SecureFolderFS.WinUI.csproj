@@ -195,7 +195,4 @@
   <ItemGroup>
     <PRIResource Remove="ResourceDictionaries\**" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Storage\WindowsStorage\" />
-  </ItemGroup>
 </Project>
