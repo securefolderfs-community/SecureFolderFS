@@ -19,27 +19,28 @@ using System;
 
 namespace SecureFolderFS.WinUI.UserControls
 {
-    public sealed partial class NavigationControl : UserControl,
+    [Obsolete("This class has been deprecated and should no longer be used. Use NavigationControl instead.")]
+    public sealed partial class NavigationControlDeprecated : UserControl,
         IRecipient<VaultLockedMessage>,
-        IRecipient<NavigationRequestedMessage>,
+        IRecipient<VaultNavigationRequestedMessage>,
         IRecipient<RemoveVaultRequestedMessage>,
         IRecipient<AddVaultRequestedMessage>
     {
         private Dictionary<VaultIdModel, BasePageViewModel?> NavigationDestinations { get; }
 
-        public NavigationControl()
+        public NavigationControlDeprecated()
         {
             InitializeComponent();
 
             NavigationDestinations = new();
 
-            WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(this);
+            WeakReferenceMessenger.Default.Register<VaultNavigationRequestedMessage>(this);
             WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
             WeakReferenceMessenger.Default.Register<AddVaultRequestedMessage>(this);
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
-        public async void Receive(NavigationRequestedMessage message)
+        public async void Receive(VaultNavigationRequestedMessage message)
         {
             await Navigate(message.VaultViewModel, message.Value, message.Transition);
         }
@@ -78,7 +79,7 @@ namespace SecureFolderFS.WinUI.UserControls
 
             await Navigate(PageViewModel, transition);
 
-            WeakReferenceMessenger.Default.Send(new NavigationFinishedMessage(PageViewModel));
+            WeakReferenceMessenger.Default.Send(new VaultNavigationFinishedMessage(PageViewModel));
         }
 
         private async Task Navigate(VaultViewModel vaultViewModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
@@ -104,7 +105,7 @@ namespace SecureFolderFS.WinUI.UserControls
 
             await Navigate(PageViewModel, transition);
 
-            WeakReferenceMessenger.Default.Send(new NavigationFinishedMessage(PageViewModel));
+            WeakReferenceMessenger.Default.Send(new VaultNavigationFinishedMessage(PageViewModel));
         }
 
         private async Task Navigate(BasePageViewModel basePageViewModel, TransitionModel? transition = null)

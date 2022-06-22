@@ -42,7 +42,7 @@ namespace SecureFolderFS.WinUI.Views
 
         private void NavigateToItem(VaultViewModel vaultViewModel)
         {
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(vaultViewModel) { Transition = new EntranceTransitionModel() });
+            WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(vaultViewModel) { Transition = new EntranceTransitionModel() });
         }
 
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

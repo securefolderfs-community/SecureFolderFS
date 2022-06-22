@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
                 if (SidebarItems.FirstOrDefault() is SidebarItemViewModel itemToSelect)
                 {
                     SelectedItem = itemToSelect;
-                    WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(itemToSelect.VaultViewModel) { Transition = new SuppressTransitionModel() });
+                    WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(itemToSelect.VaultViewModel) { Transition = new SuppressTransitionModel() });
                 }
             });
         }

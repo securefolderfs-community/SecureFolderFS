@@ -101,7 +101,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages
 
             VaultViewModel.VaultModel.LastOpened = DateTime.Now;
             WeakReferenceMessenger.Default.Send(new VaultSerializationRequestedMessage(VaultViewModel));
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(VaultViewModel, vaultDashboardPageViewModel));
+            WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(VaultViewModel, vaultDashboardPageViewModel));
 
             vaultDashboardPageViewModel.InitializeWithRoutine(finalizedVaultLoadRoutine);
 

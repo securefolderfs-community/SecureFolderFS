@@ -1,18 +1,9 @@
-﻿using System;
-
-namespace SecureFolderFS.Sdk.Messages
+﻿namespace SecureFolderFS.Sdk.Messages
 {
+    /// <summary>
+    /// Represents a message sent by the messenger.
+    /// </summary>
     public interface IMessage
     {
-    }
-
-    public interface IMessage<T> : IMessage
-    {
-        T? Value { get; }
-    }
-
-    public interface IMessageWithSender : IMessage
-    {
-        Lazy<object?> Sender { get; }
     }
 }

@@ -9,10 +9,8 @@ using SecureFolderFS.Sdk.Storage.StoragePool;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {
-    /// <summary>
-    /// TODO
-    /// </summary>
-    internal sealed partial class SettingsService : SingleFileSettingsModel, ISettingsService
+    /// <inheritdoc cref="ISettingsService"/>
+    internal sealed class SettingsService : SingleFileSettingsModel, ISettingsService
     {
         public SettingsService(IFilePool settingsFilePool)
         {
@@ -35,11 +33,5 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
         {
             return SettingsDatabase!;
         }
-    }
-
-    /// <inheritdoc cref="SettingsService"/>
-    internal sealed partial class SettingsService// : IGeneralSettingsService
-    {
-
     }
 }
