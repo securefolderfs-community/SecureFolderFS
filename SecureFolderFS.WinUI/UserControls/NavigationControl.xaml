@@ -8,6 +8,6 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Frame />
+        <Frame x:Name="ContentFrame" />
     </Grid>
 </UserControl>

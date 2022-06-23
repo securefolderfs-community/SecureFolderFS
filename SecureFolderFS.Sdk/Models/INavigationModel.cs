@@ -7,6 +7,6 @@ namespace SecureFolderFS.Sdk.Models
     {
         void ResetNavigation();
 
-        void ResetNavigation<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged, IEquatable<TViewModel>;
+        IEquatable<INotifyPropertyChanged> PopLastViewModel();
     }
 }

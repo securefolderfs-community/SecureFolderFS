@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         private void RegisterNavigation(TViewModel viewModel)
         {
-
+            
         }
 
         public void ResetNavigation()
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.AppModels
             throw new NotImplementedException();
         }
 
-        public void ResetNavigation<TViewModel1>(TViewModel1 viewModel) where TViewModel1 : class, INotifyPropertyChanged, IEquatable<TViewModel1>
+        public IEquatable<INotifyPropertyChanged> PopLastViewModel()
         {
             throw new NotImplementedException();
         }

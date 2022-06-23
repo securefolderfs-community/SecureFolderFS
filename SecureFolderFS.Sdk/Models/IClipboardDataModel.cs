@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Gets the item data.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns object that represents item data, otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns object that represents item data, otherwise null.</returns>
         Task<object?> GetDataAsync();
     }
 }

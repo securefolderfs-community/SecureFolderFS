@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
@@ -51,10 +51,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
             set => SetProperty(ref _CloseButtonText, value);
         }
 
-        public ICommand? PrimaryButtonClickCommand { get; protected init; }
+        public IRelayCommand? PrimaryButtonClickCommand { get; protected init; }
 
-        public ICommand? SecondaryButtonClickCommand { get; protected init; }
+        public IRelayCommand? SecondaryButtonClickCommand { get; protected init; }
 
-        public ICommand? CloseButtonClickCommand { get; protected init; }
+        public IRelayCommand? CloseButtonClickCommand { get; protected init; }
     }
 }
