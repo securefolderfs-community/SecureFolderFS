@@ -27,16 +27,19 @@ namespace SecureFolderFS.WinUI.Views.Settings
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is PreferencesSettingsPageViewModel viewModel)
-            {
                 ViewModel = viewModel;
-            }
 
             base.OnNavigatedTo(e);
         }
 
         private void PreferencesSettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.ActiveFileSystemInfoBarViewModel.ConfigureFileSystem(ViewModel.ActiveFileSystemAdapter);
+            ViewModel.BannerViewModel.UpdateAdapterStatus();
+        }
+
+        private void FileSystemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.BannerViewModel.UpdateAdapterStatus();
         }
     }
 }

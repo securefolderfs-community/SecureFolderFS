@@ -1,15 +1,9 @@
-﻿using System;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.Enums;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Settings;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
 {
@@ -17,46 +11,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
     {
         private ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
 
-        private IUpdateService UpdateService { get; } = Ioc.Default.GetRequiredService<IUpdateService>();
-
-        private IApplicationSettingsService ApplicationSettingsService { get; } = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
+        public UpdateBannerViewModel BannerViewModel { get; }
 
         public ObservableCollection<AppLanguageModel> AppLanguages { get; }
-
-        public InfoBarViewModel VersionInfoBar { get; }
-
-        private string? _UpdateStatusText;
-        public string? UpdateStatusText
-        {
-            get => _UpdateStatusText;
-            set => SetProperty(ref _UpdateStatusText, value);
-        }
-
-        private bool _IsUpdateSupported;
-        public bool IsUpdateSupported
-        {
-            get => _IsUpdateSupported;
-            set => SetProperty(ref _IsUpdateSupported, value);
-        }
 
         private bool _IsRestartRequired;
         public bool IsRestartRequired
         {
             get => _IsRestartRequired;
             set => SetProperty(ref _IsRestartRequired, value);
-        }
-
-        private DateTime _UpdateLastChecked;
-        public DateTime UpdateLastChecked
-        {
-            get => _UpdateLastChecked;
-            set
-            {
-                if (SetProperty(ref _UpdateLastChecked, value) && ApplicationSettingsService.IsAvailable)
-                {
-                    ApplicationSettingsService.UpdateLastChecked = value;
-                }
-            }
         }
 
         private int _SelectedLanguageIndex;
@@ -74,41 +37,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
             }
         }
 
-        public IAsyncRelayCommand CheckForUpdatesCommand { get; }
-
         public GeneralSettingsPageViewModel()
         {
-            if (ApplicationSettingsService.IsAvailable)
-            {
-                UpdateLastChecked = ApplicationSettingsService.UpdateLastChecked;
-            }
-            VersionInfoBar = new();
+            BannerViewModel = new();
             AppLanguages = new(LocalizationService.GetLanguages());
-            _UpdateStatusText = "Latest version installed";
-            _IsUpdateSupported = false;
-
-            CheckForUpdatesCommand = new AsyncRelayCommand(CheckForUpdates);            
-        }
-
-        public async Task ConfigureUpdates()
-        {
-            var updatingAppSupported = await UpdateService.AreAppUpdatesSupportedAsync(); 
-
-            if (!updatingAppSupported)
-            {
-                IsUpdateSupported = false;
-                VersionInfoBar.IsOpen = true;
-                VersionInfoBar.Message = "Updates are not supported for the sideloaded version.";
-                VersionInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
-                VersionInfoBar.CanBeClosed = false;
-            }
-        }
-
-        private async Task CheckForUpdates()
-        {
-            UpdateLastChecked = DateTime.Now;
-
-            Debug.WriteLine(await UpdateService.IsNewUpdateAvailableAsync());
         }
     }
 }

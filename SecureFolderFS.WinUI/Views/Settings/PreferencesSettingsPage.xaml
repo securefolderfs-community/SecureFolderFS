@@ -9,7 +9,7 @@
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Settings.InfoBars"
     Loaded="PreferencesSettingsPage_Loaded"
     mc:Ignorable="d">
 
@@ -58,7 +58,10 @@
                 </StackPanel>
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
-                <ComboBox VerticalAlignment="Center" SelectedIndex="{x:Bind ViewModel.ActiveFileSystemAdapter, Mode=TwoWay, Converter={StaticResource GenericEnumConverter}}">
+                <ComboBox
+                    VerticalAlignment="Center"
+                    SelectedIndex="{x:Bind ViewModel.BannerViewModel.PreferredFileSystemAdapter, Mode=TwoWay, Converter={StaticResource GenericEnumConverter}}"
+                    SelectionChanged="FileSystemComboBox_SelectionChanged">
                     <ComboBox.Items>
                         <ComboBoxItem Content="Dokany" />
                     </ComboBox.Items>
@@ -69,7 +72,7 @@
                 <ContentControl
                     HorizontalContentAlignment="Stretch"
                     VerticalContentAlignment="Stretch"
-                    Content="{x:Bind ViewModel.ActiveFileSystemInfoBarViewModel.InfoBarViewModel, Mode=OneWay}">
+                    Content="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel, Mode=OneWay}">
                     <ContentControl.ContentTemplateSelector>
                         <ts:FileSystemInfoBarTemplateSelector DokanyNotAvailableInfoBarTemplate="{StaticResource DokanyNotAvailableInfoBarTemplate}" />
                     </ContentControl.ContentTemplateSelector>
@@ -82,7 +85,7 @@
             <ucab:ActionBlockControl
                 Title="Start with system"
                 Description="Launch SecureFolderFS on system startup"
-                IsEnabled="True">
+                IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF71C;" />
                 </ucab:ActionBlockControl.Icon>
@@ -98,7 +101,7 @@
                     <FontIcon Glyph="&#xE7E8;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" />
+                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.ContinueOnLastVault, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
@@ -109,7 +112,7 @@
                     <FontIcon Glyph="&#xED25;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" />
+                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.OpenFolderOnUnlock, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>

@@ -15,7 +15,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public FileSystemAdapterType ActiveFileSystemAdapter
+        public FileSystemAdapterType PreferredFileSystemAdapter
         {
             get => (FileSystemAdapterType)GetSetting(() => (uint)FileSystemAdapterType.DokanAdapter);
             set => SetSetting((uint)value);
@@ -30,6 +30,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 
         /// <inheritdoc/>
         public bool ContinueOnLastVault
+        {
+            get => GetSetting(() => false);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public bool OpenFolderOnUnlock
         {
             get => GetSetting(() => false);
             set => SetSetting(value);

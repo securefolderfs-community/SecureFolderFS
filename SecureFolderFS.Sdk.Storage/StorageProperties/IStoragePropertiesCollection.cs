@@ -21,6 +21,11 @@ namespace SecureFolderFS.Sdk.Storage.StorageProperties
         DateTime DateModified { get; }
 
         /// <summary>
+        /// Gets the size taken by the storage object on the drive, in bytes. The value is null, if the size cannot be fetched.
+        /// </summary>
+        ulong? Size { get; }
+
+        /// <summary>
         /// Requests and reads all properties of an storage object.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token of the action.</param>

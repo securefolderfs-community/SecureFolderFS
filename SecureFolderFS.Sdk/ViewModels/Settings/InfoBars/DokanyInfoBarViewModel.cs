@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars
+namespace SecureFolderFS.Sdk.ViewModels.Settings.InfoBars
 {
     public sealed class DokanyInfoBarViewModel : InfoBarViewModel
     {

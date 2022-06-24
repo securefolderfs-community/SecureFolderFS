@@ -33,10 +33,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
             AppVersion = ApplicationService.GetAppVersion().ToString();
 
             CopyVersionCommand = new AsyncRelayCommand(CopyVersionAsync);
-            OpenGitHubRepositoryCommand = new AsyncRelayCommand(OpenGitHubRepository);
-            OpenDiscordSocialCommand = new AsyncRelayCommand(OpenDiscordSocial);
-            OpenPrivacyPolicyCommand = new AsyncRelayCommand(OpenPrivacyPolicy);
-            OpenLogLocationCommand = new AsyncRelayCommand(OpenLogLocation);
+            OpenGitHubRepositoryCommand = new AsyncRelayCommand(OpenGitHubRepositoryAsync);
+            OpenDiscordSocialCommand = new AsyncRelayCommand(OpenDiscordSocialAsync);
+            OpenPrivacyPolicyCommand = new AsyncRelayCommand(OpenPrivacyPolicyAsync);
+            OpenLogLocationCommand = new AsyncRelayCommand(OpenLogLocationAsync);
         }
 
         private async Task CopyVersionAsync()
@@ -47,22 +47,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
             }
         }
 
-        private Task OpenGitHubRepository()
+        private Task OpenGitHubRepositoryAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS"));
         }
 
-        private Task OpenDiscordSocial()
+        private Task OpenDiscordSocialAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://discord.com/invite/NrTxXpJ2Zj"));
         }
 
-        private Task OpenPrivacyPolicy()
+        private Task OpenPrivacyPolicyAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/PRIVACY.md"));
         }
 
-        private Task OpenLogLocation()
+        private Task OpenLogLocationAsync()
         {
             return FileExplorerService.OpenAppFolderAsync();
         }

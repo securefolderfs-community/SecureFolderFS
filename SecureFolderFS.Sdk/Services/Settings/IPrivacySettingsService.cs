@@ -10,6 +10,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         /// <summary>
         /// Determines whether to lock all unlocked vaults when the system is locked.
         /// </summary>
-        bool VaultAutoLock { get; set; }
+        bool AutoLockVaults { get; set; }
+
+        /// <summary>
+        /// Determines whether to use telemetry.
+        /// </summary>
+        bool IsTelemetryEnabled { get; set; }
     }
 }

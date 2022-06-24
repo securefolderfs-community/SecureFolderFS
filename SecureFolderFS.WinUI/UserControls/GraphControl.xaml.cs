@@ -29,6 +29,16 @@ namespace SecureFolderFS.WinUI.UserControls
             ControlLoaded = true;
         }
 
+        private void RootButton_Click(object sender, RoutedEventArgs e)
+        {
+            Click?.Invoke(sender, e);
+        }
+
+        public void Dispose()
+        {
+            CartesianChart?.Dispose();
+        }
+
         public bool ControlLoaded
         {
             get => (bool)GetValue(ControlLoadedProperty);
@@ -90,16 +100,5 @@ namespace SecureFolderFS.WinUI.UserControls
         }
         public static readonly DependencyProperty ChartSecondaryColorProperty =
             DependencyProperty.Register(nameof(ChartSecondaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(null));
-
-
-        public void Dispose()
-        {
-            CartesianChart?.Dispose();
-        }
-
-        private void RootButton_Click(object sender, RoutedEventArgs e)
-        {
-            Click?.Invoke(sender, e);
-        }
     }
 }

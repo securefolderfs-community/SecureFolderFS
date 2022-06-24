@@ -41,7 +41,7 @@
     <None Remove="Views\Settings\AboutSettingsPage.xaml" />
     <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
     <None Remove="Views\Settings\PreferencesSettingsPage.xaml" />
-    <None Remove="Views\Settings\SecuritySettingsPage.xaml" />
+    <None Remove="Views\Settings\PrivacySettingsPage.xaml" />
     <None Remove="Views\VaultDashboardPage.xaml" />
     <None Remove="Views\VaultDashboardPropertiesPage.xaml" />
     <None Remove="Views\VaultLoginPage.xaml" />
@@ -140,7 +140,7 @@
       <Page Update="Views\Settings\PreferencesSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\Settings\SecuritySettingsPage.xaml">
+    <Page Update="Views\Settings\PrivacySettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\Settings\GeneralSettingsPage.xaml">

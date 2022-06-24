@@ -21,9 +21,9 @@
         <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
                 <Image
+                    Margin="0,0,0,-10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Margin="0 0 0 -10"
                     Source="/Assets/AppAssets/AppTitle.svg" />
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
@@ -68,6 +68,7 @@
         <TeachingTip
             x:Name="VersionCopiedTeachingTip"
             Title="Copied to clipboard"
+            Grid.Row="0"
             IsLightDismissEnabled="True"
             PreferredPlacement="Bottom"
             Target="{x:Bind VersionButton}">

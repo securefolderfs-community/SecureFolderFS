@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services.Settings;
-using SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars;
-using SecureFolderFS.Core.Enums;
+using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
 {
@@ -10,35 +9,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
     {
         private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
 
-        public ActiveFileSystemInfoBarViewModel ActiveFileSystemInfoBarViewModel { get; }
-
-        public FileSystemAdapterType ActiveFileSystemAdapter
-        {
-            get => PreferencesSettingsService.ActiveFileSystemAdapter;
-            set
-            {
-                if (PreferencesSettingsService.ActiveFileSystemAdapter != value)
-                {
-                    PreferencesSettingsService.ActiveFileSystemAdapter = value;
-
-                    ActiveFileSystemInfoBarViewModel.ConfigureFileSystem(value);
-                }
-            }
-        }
+        public FileSystemBannerViewModel BannerViewModel { get; }
 
         public bool StartOnSystemStartup
         {
             get => PreferencesSettingsService.StartOnSystemStartup;
-            set
-            {
-                if (PreferencesSettingsService.StartOnSystemStartup != value)
-                    PreferencesSettingsService.StartOnSystemStartup = value;
-            }
+            set => PreferencesSettingsService.StartOnSystemStartup = value;
+        }
+
+        public bool ContinueOnLastVault
+        {
+            get => PreferencesSettingsService.ContinueOnLastVault;
+            set => PreferencesSettingsService.ContinueOnLastVault = value;
+        }
+
+        public bool OpenFolderOnUnlock
+        {
+            get => PreferencesSettingsService.OpenFolderOnUnlock;
+            set => PreferencesSettingsService.OpenFolderOnUnlock = value;
         }
 
         public PreferencesSettingsPageViewModel()
         {
-            ActiveFileSystemInfoBarViewModel = new();
+            BannerViewModel = new();
         }
     }
 }

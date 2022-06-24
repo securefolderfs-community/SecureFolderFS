@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars;
+using SecureFolderFS.Sdk.ViewModels.Settings.InfoBars;
 
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {

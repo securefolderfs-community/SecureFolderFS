@@ -4,6 +4,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Services
 {
+    [Obsolete("This service has been deprecated. Use SynchronizationContext instead for thread manipulation.")]
     public interface IThreadingService
     {
         IAwaitable ExecuteOnUiThreadAsync();

@@ -1,14 +1,18 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Enums;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Helpers;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Settings.InfoBars;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars
+namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 {
-    public sealed class ActiveFileSystemInfoBarViewModel : ObservableObject
+    public sealed class FileSystemBannerViewModel : ObservableObject
     {
-        private DokanyInfoBarViewModel? _dokanyInfoBarViewModel;
+        private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
 
         private InfoBarViewModel? _InfoBarViewModel;
         public InfoBarViewModel? InfoBarViewModel
@@ -17,18 +21,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars
             set => SetProperty(ref _InfoBarViewModel, value);
         }
 
-        public void ConfigureFileSystem(FileSystemAdapterType adapter)
+        public FileSystemAdapterType PreferredFileSystemAdapter
         {
-            switch (adapter)
+            get => PreferencesSettingsService.PreferredFileSystemAdapter;
+            set => PreferencesSettingsService.PreferredFileSystemAdapter = value;
+        }
+
+        public void UpdateAdapterStatus()
+        {
+            switch (PreferredFileSystemAdapter)
             {
                 case FileSystemAdapterType.DokanAdapter:
                 {
                     var result = FileSystemAvailabilityHelpers.IsDokanyAvailable();
                     if (result != FileSystemAvailabilityErrorType.FileSystemAvailable)
                     {
-                        _dokanyInfoBarViewModel ??= new DokanyInfoBarViewModel();
-
-                        InfoBarViewModel = _dokanyInfoBarViewModel;
+                        InfoBarViewModel = new DokanyInfoBarViewModel();
                         InfoBarViewModel.IsOpen = true;
                         InfoBarViewModel.InfoBarSeverity = InfoBarSeverityType.Error;
                         InfoBarViewModel.CanBeClosed = false;
@@ -47,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars
                 }
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(PreferredFileSystemAdapter));
             }
         }
     }

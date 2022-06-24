@@ -9,9 +9,9 @@ namespace SecureFolderFS.Sdk.Services.Settings
     public interface IPreferencesSettingsService : ISettingsModel
     {
         /// <summary>
-        /// Determines the type of the file system provider to use.
+        /// Determines the type of the preferred file system provider to use.
         /// </summary>
-        FileSystemAdapterType ActiveFileSystemAdapter { get; set; }
+        FileSystemAdapterType PreferredFileSystemAdapter { get; set; }
 
         /// <summary>
         /// Determines whether to launch SecureFolderFS on system startup.
@@ -22,5 +22,10 @@ namespace SecureFolderFS.Sdk.Services.Settings
         /// Determines whether to continue on the previously selected vault.
         /// </summary>
         bool ContinueOnLastVault { get; set; }
+
+        /// <summary>
+        /// Determines whether to open the vault root folder when it is unlocked.
+        /// </summary>
+        bool OpenFolderOnUnlock { get; set; }
     }
 }

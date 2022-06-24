@@ -60,7 +60,7 @@ namespace SecureFolderFS.WinUI.Dialogs
             {
                 { typeof(GeneralSettingsPageViewModel), typeof(GeneralSettingsPage) },
                 { typeof(PreferencesSettingsPageViewModel), typeof(PreferencesSettingsPage) },
-                { typeof(PrivacySettingsPageViewModel), typeof(SecuritySettingsPage) },
+                { typeof(PrivacySettingsPageViewModel), typeof(PrivacySettingsPage) },
                 { typeof(AboutSettingsPageViewModel), typeof(AboutSettingsPage) }
             };
         }

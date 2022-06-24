@@ -14,9 +14,16 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public bool VaultAutoLock
+        public bool AutoLockVaults
         {
             get => GetSetting(() => false);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public bool IsTelemetryEnabled
+        {
+            get => GetSetting(() => false); // TODO: Enable as default
             set => SetSetting(value);
         }
     }

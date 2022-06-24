@@ -10,7 +10,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SecuritySettingsPage : Page
+    public sealed partial class PrivacySettingsPage : Page
     {
         public PrivacySettingsPageViewModel ViewModel
         {
@@ -18,7 +18,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
             set => DataContext = value;
         }
 
-        public SecuritySettingsPage()
+        public PrivacySettingsPage()
         {
             InitializeComponent();
         }

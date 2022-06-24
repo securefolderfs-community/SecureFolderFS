@@ -36,7 +36,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            _ = ViewModel.ConfigureUpdates();
+            _ = ViewModel.BannerViewModel.ConfigureUpdates();
         }
     }
 }

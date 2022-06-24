@@ -14,6 +14,11 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             InitializeComponent();
         }
 
+        private void Expander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
+        {
+            ExpanderExpandingCommand?.Execute(null);
+        }
+
         public IRelayCommand ClickCommand
         {
             get => (IRelayCommand)GetValue(ClickCommandProperty);
@@ -102,10 +107,5 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         }
         public static readonly DependencyProperty AdditionalActionElementProperty =
             DependencyProperty.Register(nameof(AdditionalActionElement), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
-
-        private void Expander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
-        {
-            ExpanderExpandingCommand?.Execute(null);
-        }
     }
 }
