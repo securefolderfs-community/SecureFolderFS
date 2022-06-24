@@ -42,7 +42,7 @@
                 SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectionChanged="Sidebar_SelectionChanged">
 
-                <uc:NavigationControlDeprecated PageViewModel="{x:Bind ViewModel.ActivePageViewModel, Mode=TwoWay}" />
+                <uc:NavigationControlDeprecated PageViewModel="{x:Bind ViewModel.CurrentPageViewModel, Mode=TwoWay}" />
 
                 <NavigationView.AutoSuggestBox>
                     <AutoSuggestBox

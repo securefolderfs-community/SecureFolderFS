@@ -9,10 +9,11 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog
+namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
 {
-    public sealed class GeneralSettingsPageViewModel : BaseSettingsDialogPageViewModel
+    public sealed class GeneralSettingsPageViewModel : ObservableObject
     {
         private ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
 

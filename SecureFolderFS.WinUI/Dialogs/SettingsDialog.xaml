@@ -44,10 +44,10 @@
                         <FontIcon Glyph="&#xE90F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Security  -->
+                <!--  Privacy  -->
                 <NavigationViewItem
-                    AutomationProperties.Name="Security"
-                    Content="Security"
+                    AutomationProperties.Name="Privacy"
+                    Content="Privacy"
                     Tag="2">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEA18;" />

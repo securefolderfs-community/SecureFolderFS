@@ -6,7 +6,7 @@ using SecureFolderFS.Sdk.Models;
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
-    /// A service that manages dialogs.
+    /// A service that manages and opens dialogs.
     /// </summary>
     public interface IDialogService
     {

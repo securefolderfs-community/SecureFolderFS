@@ -1,11 +1,12 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.ViewModels.Controls.FileSystemInfoBars;
 using SecureFolderFS.Core.Enums;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog
+namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
 {
-    public sealed class PreferencesSettingsPageViewModel : BaseSettingsDialogPageViewModel
+    public sealed class PreferencesSettingsPageViewModel : ObservableObject
     {
         private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
 

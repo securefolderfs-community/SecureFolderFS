@@ -82,7 +82,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder.GetFilePool()!))
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
-                .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => GetSettingsService(sp, (database, model) => new SecuritySettingsService(database, model)))
+                .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
 
                 .AddSingleton<ISecretSettingsService, SecretSettingsService>(_ => new SecretSettingsService(settingsFolder.GetFilePool()!))
                 .AddSingleton<IFileSystemService, NativeFileSystemService>()

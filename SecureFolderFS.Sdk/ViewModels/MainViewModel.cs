@@ -11,12 +11,7 @@ namespace SecureFolderFS.Sdk.ViewModels
 
         public SavedVaultsModel SavedVaultsModel { get; }
 
-        private BasePageViewModel? _ActivePageViewModel;
-        public BasePageViewModel? ActivePageViewModel
-        {
-            get => _ActivePageViewModel;
-            set => SetProperty(ref _ActivePageViewModel, value);
-        }
+        public BasePageViewModel? CurrentPageViewModel { get; set; }
 
         public MainViewModel()
         {

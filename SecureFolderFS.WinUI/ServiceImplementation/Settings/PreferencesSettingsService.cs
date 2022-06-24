@@ -34,12 +34,5 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
             get => GetSetting(() => false);
             set => SetSetting(value);
         }
-
-        /// <inheritdoc/>
-        public bool AutoOpenVaultFolder 
-        { 
-            get => GetSetting(() => false); 
-            set => SetSetting(value);
-        }
     }
 }

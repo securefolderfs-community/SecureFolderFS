@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog;
+using SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -12,9 +12,9 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// </summary>
     public sealed partial class SecuritySettingsPage : Page
     {
-        public SecuritySettingsPageViewModel ViewModel
+        public PrivacySettingsPageViewModel ViewModel
         {
-            get => (SecuritySettingsPageViewModel)DataContext;
+            get => (PrivacySettingsPageViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -25,7 +25,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is SecuritySettingsPageViewModel viewModel)
+            if (e.Parameter is PrivacySettingsPageViewModel viewModel)
             {
                 ViewModel = viewModel;
             }

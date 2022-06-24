@@ -49,11 +49,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 
         private async Task BrowseForFolder()
         {
-            var path = await FileExplorerService.PickSingleFileAsync(new List<string>() { Path.GetExtension(SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME) });
-            if (!string.IsNullOrEmpty(path))
-            {
-                PathSourceText = path;
-            }
+            var file = await FileExplorerService.PickSingleFileAsync(new List<string>() { Path.GetExtension(SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME) });
+            PathSourceText = file?.Path ?? PathSourceText;
         }
 
         private bool CheckAvailability(string? path)

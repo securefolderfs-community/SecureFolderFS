@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog
+namespace SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages
 {
-    public sealed class AboutSettingsPageViewModel : BaseSettingsDialogPageViewModel
+    public sealed class AboutSettingsPageViewModel : ObservableObject
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 

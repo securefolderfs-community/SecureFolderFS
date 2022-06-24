@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -8,7 +9,7 @@ using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Models.Transitions;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Pages.SettingsDialog;
+using SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages;
 using SecureFolderFS.WinUI.Views.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -35,13 +36,13 @@ namespace SecureFolderFS.WinUI.Dialogs
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        private BaseSettingsDialogPageViewModel GetViewModelForTag(int tag)
+        private ObservableObject GetViewModelForTag(int tag)
         {
             return tag switch
             {
                 0 => new GeneralSettingsPageViewModel(),
                 1 => new PreferencesSettingsPageViewModel(),
-                2 => new SecuritySettingsPageViewModel(),
+                2 => new PrivacySettingsPageViewModel(),
                 3 => new AboutSettingsPageViewModel(),
                 _ => new GeneralSettingsPageViewModel()
             };
@@ -59,7 +60,7 @@ namespace SecureFolderFS.WinUI.Dialogs
             {
                 { typeof(GeneralSettingsPageViewModel), typeof(GeneralSettingsPage) },
                 { typeof(PreferencesSettingsPageViewModel), typeof(PreferencesSettingsPage) },
-                { typeof(SecuritySettingsPageViewModel), typeof(SecuritySettingsPage) },
+                { typeof(PrivacySettingsPageViewModel), typeof(SecuritySettingsPage) },
                 { typeof(AboutSettingsPageViewModel), typeof(AboutSettingsPage) }
             };
         }
