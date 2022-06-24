@@ -209,7 +209,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public override Task<bool> DeleteAsync(bool permanently)
+        public override Task<bool> DeleteAsync(bool permanently, CancellationToken cancellationToken = default)
         {
             _ = permanently;
 

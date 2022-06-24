@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.StorageProperties;
 
 namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {
@@ -12,6 +15,9 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
 
         /// <inheritdoc/>
         public string Name { get; protected set; }
+
+        /// <inheritdoc/>
+        public IStoragePropertiesCollection? Properties => throw new NotSupportedException();
 
         protected NativeBaseStorage(string path)
         {
@@ -33,6 +39,6 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         public abstract Task<bool> RenameAsync(string newName, NameCollisionOption options);
 
         /// <inheritdoc/>
-        public abstract Task<bool> DeleteAsync(bool permanently);
+        public abstract Task<bool> DeleteAsync(bool permanently, CancellationToken cancellationToken = default);
     }
 }

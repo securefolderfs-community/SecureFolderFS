@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.Storage
 {
@@ -19,6 +21,11 @@ namespace SecureFolderFS.Sdk.Storage
         string Name { get; }
 
         /// <summary>
+        /// Gets the collection of properties for this storage object.
+        /// </summary>
+        IStoragePropertiesCollection? Properties { get; }
+
+        /// <summary>
         /// Gets the parent folder that contains this object.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IFolder"/> otherwise null.</returns>
@@ -36,7 +43,8 @@ namespace SecureFolderFS.Sdk.Storage
         /// Deletes the associated storage object.
         /// </summary>
         /// <param name="permanently">Determines if the object should be sent to Recycle Bin.</param>
+        /// <param name="cancellationToken">Cancellation token of the action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true otherwise false.</returns>
-        Task<bool> DeleteAsync(bool permanently);
+        Task<bool> DeleteAsync(bool permanently, CancellationToken cancellationToken = default);
     }
 }

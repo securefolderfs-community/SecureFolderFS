@@ -25,13 +25,13 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets the current clipboard data.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted returns <see cref="IClipboardDataModel"/>, otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted, returns <see cref="IClipboardDataModel"/>, otherwise null.</returns>
         Task<IClipboardDataModel?> RequestClipboardDataAsync();
 
         /// <summary>
         /// Gets the whole clipboard data.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted returns <see cref="IEnumerable{T}"/> of type <see cref="IClipboardDataModel"/>, otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted, returns <see cref="IEnumerable{T}"/> of type <see cref="IClipboardDataModel"/>, otherwise null.</returns>
         Task<IEnumerable<IClipboardDataModel>?> RequestFullClipboardDataAsync();
     }
 }

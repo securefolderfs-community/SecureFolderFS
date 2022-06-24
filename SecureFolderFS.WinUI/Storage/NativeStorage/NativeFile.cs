@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
@@ -71,7 +72,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public override Task<bool> DeleteAsync(bool permanently)
+        public override Task<bool> DeleteAsync(bool permanently, CancellationToken cancellationToken = default)
         {
             _ = permanently; // TODO: Use this parameter
 

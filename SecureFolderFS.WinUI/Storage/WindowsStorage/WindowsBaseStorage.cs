@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.StorageProperties;
 using NameCollisionOption = SecureFolderFS.Sdk.Storage.Enums.NameCollisionOption;
 
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
@@ -18,6 +20,9 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         /// <inheritdoc/>
         public string Name { get; protected set; }
 
+        /// <inheritdoc/>
+        public IStoragePropertiesCollection? Properties => throw new NotSupportedException();
+
         protected WindowsBaseStorage(TStorage storage)
         {
             this.storage = storage;
@@ -31,6 +36,10 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
             try
             {
                 await storage.RenameAsync(newName, (Windows.Storage.NameCollisionOption)(byte)options);
+
+                Path = storage.Path;
+                Name = storage.Name;
+
                 return true;
             }
             catch (Exception)
@@ -40,11 +49,11 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> DeleteAsync(bool permanently)
+        public virtual async Task<bool> DeleteAsync(bool permanently, CancellationToken cancellationToken = default)
         {
             try
             {
-                await storage.DeleteAsync(permanently ? StorageDeleteOption.PermanentDelete : StorageDeleteOption.Default);
+                await storage.DeleteAsync(permanently ? StorageDeleteOption.PermanentDelete : StorageDeleteOption.Default).AsTask(cancellationToken).ConfigureAwait(false);
                 return true;
             }
             catch (Exception)
