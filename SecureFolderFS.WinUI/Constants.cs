@@ -10,9 +10,11 @@
 
             public const string APPLICATION_SETTINGS_FILENAME = "application_settings.json";
 
-            public const string USER_SETTINGS_FILE_NAME = "user_settings.json";
+            public const string VAULTS_SETTINGS_FILENAME = "vaults_settings.json";
 
-            public const string SECRET_SETTINGS_FILE_NAME = "confidential_settings.json";
+            public const string USER_SETTINGS_FILENAME = "user_settings.json";
+
+            public const string SECRET_SETTINGS_FILENAME = "confidential_settings.json";
         }
 
         public static class Application

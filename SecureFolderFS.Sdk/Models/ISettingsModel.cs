@@ -9,7 +9,7 @@ namespace SecureFolderFS.Sdk.Models
     public interface ISettingsModel
     {
         /// <summary>
-        /// Determines whether settings are available.
+        /// Determines whether the settings store is available.
         /// </summary>
         bool IsAvailable { get; }
 

@@ -13,15 +13,17 @@ namespace SecureFolderFS.Sdk.Models
         /// Adds provided <see cref="vault"/> to the saved vaults list.
         /// </summary>
         /// <param name="vault">The vault to add.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task AddVaultAsync(IVaultModel vault);
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
+        Task<bool> AddVaultAsync(IVaultModel vault, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Removes provided <see cref="vault"/> from the saved vaults list.
         /// </summary>
         /// <param name="vault">The vault to remove.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task RemoveVaultAsync(IVaultModel vault);
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
+        Task<bool> RemoveVaultAsync(IVaultModel vault, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Initializes and gets all saved vaults.

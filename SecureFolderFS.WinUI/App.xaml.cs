@@ -78,8 +78,9 @@ namespace SecureFolderFS.WinUI
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
-                .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder.GetFilePool()!))
-                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder.GetFilePool()!))
+                .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder.GetFilePool()))
+                .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder.GetFilePool()))
+                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder.GetFilePool()))
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
                 .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
@@ -129,7 +130,6 @@ namespace SecureFolderFS.WinUI
             where TSettingsService : SharedSettingsModel
         {
             var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
-
             return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl!);
         }
 

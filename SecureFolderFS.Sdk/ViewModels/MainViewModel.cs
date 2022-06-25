@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.ViewModels
 {
     public sealed class MainViewModel : ObservableObject
     {
-        public IVaultCollectionModel VaultCollection { get; }
+        private IVaultCollectionModel VaultCollection { get; }
 
         public SidebarViewModel SidebarViewModel { get; }
 

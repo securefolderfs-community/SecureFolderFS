@@ -12,15 +12,15 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
     /// <inheritdoc cref="ISettingsService"/>
     internal sealed class SettingsService : SingleFileSettingsModel, ISettingsService
     {
-        public SettingsService(IFilePool settingsFilePool)
+        public SettingsService(IFilePool? settingsFilePool)
         {
             FilePool = settingsFilePool;
             SettingsDatabase = new DictionarySettingsDatabaseModel(JsonToStreamSerializer.Instance);
-            IsAvailable = true;
+            IsAvailable = settingsFilePool is not null;
         }
 
         /// <inheritdoc/>
-        protected override string? SettingsStorageName { get; } = Constants.LocalSettings.USER_SETTINGS_FILE_NAME;
+        protected override string? SettingsStorageName { get; } = Constants.LocalSettings.USER_SETTINGS_FILENAME;
 
         /// <inheritdoc/>
         public Dictionary<VaultIdModel, VaultViewModel> SavedVaults

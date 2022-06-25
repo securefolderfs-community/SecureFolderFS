@@ -20,7 +20,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        protected override string? SettingsStorageName { get; } = Constants.LocalSettings.SECRET_SETTINGS_FILE_NAME;
+        protected override string? SettingsStorageName { get; } = Constants.LocalSettings.SECRET_SETTINGS_FILENAME;
 
         /// <inheritdoc/>
         public Dictionary<VaultIdModel, VaultModelDeprecated> SavedVaultModels

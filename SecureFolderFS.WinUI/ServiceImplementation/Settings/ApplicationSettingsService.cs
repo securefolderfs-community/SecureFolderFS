@@ -8,13 +8,14 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
     /// <inheritdoc cref="IApplicationSettingsService"/>
     internal sealed class ApplicationSettingsService : SingleFileSettingsModel, IApplicationSettingsService
     {
-        public ApplicationSettingsService(IFilePool settingsFilePool)
+        public ApplicationSettingsService(IFilePool? settingsFilePool)
         {
             FilePool = settingsFilePool;
             SettingsDatabase = new DictionarySettingsDatabaseModel(JsonToStreamSerializer.Instance);
-            IsAvailable = true;
+            IsAvailable = settingsFilePool is not null;
         }
 
+        /// <inheritdoc/>
         protected override string? SettingsStorageName { get; } = Constants.LocalSettings.APPLICATION_SETTINGS_FILENAME;
 
         /// <inheritdoc/>
