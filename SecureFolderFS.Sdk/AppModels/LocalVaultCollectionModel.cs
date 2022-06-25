@@ -26,6 +26,8 @@ namespace SecureFolderFS.Sdk.AppModels
 
             VaultsSettingsService.SavedVaults ??= new();
             VaultsSettingsService.SavedVaults.Add(vaultModel);
+            await VaultsSettingsService.SaveSettingsAsync(cancellationToken);
+
             return true;
         }
 
@@ -40,6 +42,8 @@ namespace SecureFolderFS.Sdk.AppModels
                 return false;
 
             VaultsSettingsService.SavedVaults.RemoveAt(indexToRemove);
+            await VaultsSettingsService.SaveSettingsAsync(cancellationToken);
+
             return true;
         }
 

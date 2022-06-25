@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages
 
         public IRelayCommand OpenVaultPropertiesCommand { get; }
 
-        public VaultMainDashboardPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
+        public VaultMainDashboardPageViewModel(IMessenger messenger, VaultViewModelDeprecated vaultViewModel)
             : base(messenger, vaultViewModel, VaultDashboardPageType.MainDashboardPage)
         {
             VaultHealthWidgetViewModel = new();

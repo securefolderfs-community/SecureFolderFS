@@ -13,7 +13,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 
         public BaseVaultWizardPageViewModel? CurrentPageViewModel { get; set; }
 
-        public VaultViewModel? VaultViewModel { get; set; }
+        public VaultViewModelDeprecated? VaultViewModel { get; set; }
 
         public VaultWizardDialogViewModel()
         {

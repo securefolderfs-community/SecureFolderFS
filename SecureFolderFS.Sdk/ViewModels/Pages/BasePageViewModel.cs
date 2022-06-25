@@ -9,9 +9,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages
     {
         public IMessenger Messenger { get; }
 
-        protected VaultViewModel VaultViewModel { get; }
+        protected VaultViewModelDeprecated VaultViewModel { get; }
 
-        protected BasePageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
+        protected BasePageViewModel(IMessenger messenger, VaultViewModelDeprecated vaultViewModel)
         {
             Messenger = messenger;
             VaultViewModel = vaultViewModel;

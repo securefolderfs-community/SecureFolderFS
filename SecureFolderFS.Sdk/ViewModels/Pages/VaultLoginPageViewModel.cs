@@ -22,7 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages
 
         public IRelayCommand UnlockVaultCommand { get; }
 
-        public VaultLoginPageViewModel(VaultViewModel vaultModel)
+        public VaultLoginPageViewModel(VaultViewModelDeprecated vaultModel)
             : base(new WeakReferenceMessenger(), vaultModel)
         {
             _VaultName = vaultModel.VaultName;
@@ -99,7 +99,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages
 
             var vaultDashboardPageViewModel = new VaultDashboardPageViewModel(Messenger, VaultViewModel);
 
-            VaultViewModel.VaultModel.LastOpened = DateTime.Now;
+            VaultViewModel.VaultModelDeprecated.LastOpened = DateTime.Now;
             WeakReferenceMessenger.Default.Send(new VaultSerializationRequestedMessage(VaultViewModel));
             WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(VaultViewModel, vaultDashboardPageViewModel));
 

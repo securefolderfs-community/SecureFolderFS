@@ -3,14 +3,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Models.Search;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="ISearchModel"/>
     internal sealed class SidebarSearchModel<TItem> : ISearchModel
-        where TItem : class, ISearchResult, IContainable<string>
+        where TItem : class, IContainable<string>
     {
         private readonly IEnumerable<TItem> _items;
 
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ISearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<object> SearchAsync(string query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             _ = cancellationToken;
 

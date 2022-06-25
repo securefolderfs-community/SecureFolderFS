@@ -8,9 +8,9 @@ namespace SecureFolderFS.Sdk.Messages
     {
         public TransitionModel? Transition { get; init; }
 
-        public VaultViewModel VaultViewModel { get; }
+        public VaultViewModelDeprecated VaultViewModel { get; }
 
-        public VaultNavigationRequestedMessage(VaultViewModel vaultModel, BasePageViewModel? value = null)
+        public VaultNavigationRequestedMessage(VaultViewModelDeprecated vaultModel, BasePageViewModel? value = null)
             : base(value)
         {
             VaultViewModel = vaultModel;

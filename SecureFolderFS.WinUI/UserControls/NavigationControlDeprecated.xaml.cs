@@ -23,8 +23,8 @@ namespace SecureFolderFS.WinUI.UserControls
     public sealed partial class NavigationControlDeprecated : UserControl,
         IRecipient<VaultLockedMessage>,
         IRecipient<VaultNavigationRequestedMessage>,
-        IRecipient<RemoveVaultRequestedMessage>,
-        IRecipient<AddVaultRequestedMessage>
+        IRecipient<RemoveVaultRequestedMessageDeprecated>,
+        IRecipient<AddVaultRequestedMessageDeprecated>
     {
         private Dictionary<VaultIdModel, BasePageViewModel?> NavigationDestinations { get; }
 
@@ -35,8 +35,8 @@ namespace SecureFolderFS.WinUI.UserControls
             NavigationDestinations = new();
 
             WeakReferenceMessenger.Default.Register<VaultNavigationRequestedMessage>(this);
-            WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
-            WeakReferenceMessenger.Default.Register<AddVaultRequestedMessage>(this);
+            WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessageDeprecated>(this);
+            WeakReferenceMessenger.Default.Register<AddVaultRequestedMessageDeprecated>(this);
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
@@ -45,7 +45,7 @@ namespace SecureFolderFS.WinUI.UserControls
             await Navigate(message.VaultViewModel, message.Value, message.Transition);
         }
 
-        public void Receive(RemoveVaultRequestedMessage message)
+        public void Receive(RemoveVaultRequestedMessageDeprecated message)
         {
             NavigationDestinations.Remove(message.Value, out var viewModel);
             viewModel?.Dispose();
@@ -56,7 +56,7 @@ namespace SecureFolderFS.WinUI.UserControls
             }
         }
 
-        public void Receive(AddVaultRequestedMessage message)
+        public void Receive(AddVaultRequestedMessageDeprecated message)
         {
             NavigationDestinations.AddOrSet(message.Value.VaultIdModel);
         }
@@ -82,7 +82,7 @@ namespace SecureFolderFS.WinUI.UserControls
             WeakReferenceMessenger.Default.Send(new VaultNavigationFinishedMessage(PageViewModel));
         }
 
-        private async Task Navigate(VaultViewModel vaultViewModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
+        private async Task Navigate(VaultViewModelDeprecated vaultViewModel, BasePageViewModel? basePageViewModel, TransitionModel? transition = null)
         {
             if (basePageViewModel is null)
             {

@@ -31,8 +31,6 @@ namespace SecureFolderFS.Sdk.AppModels
                 return serializer.EnsureDeserialized<T>(value);
 
             var fallback = defaultValue is not null ? defaultValue() : default;
-            settingsCache[key] = fallback;
-
             return fallback;
         }
 

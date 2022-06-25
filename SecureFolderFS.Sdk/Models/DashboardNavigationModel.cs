@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.Models
             NavigationDestinations = new();
         }
 
-        private BaseDashboardPageViewModel? NavigateToPage(VaultDashboardPageType vaultDashboardPageType, VaultViewModel vaultViewModel)
+        private BaseDashboardPageViewModel? NavigateToPage(VaultDashboardPageType vaultDashboardPageType, VaultViewModelDeprecated vaultViewModel)
         {
             BaseDashboardPageViewModel? baseDashboardPageViewModel;
             switch (vaultDashboardPageType)

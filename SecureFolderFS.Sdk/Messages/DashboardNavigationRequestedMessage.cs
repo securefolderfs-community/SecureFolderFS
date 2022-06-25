@@ -11,14 +11,14 @@ namespace SecureFolderFS.Sdk.Messages
 
         public VaultDashboardPageType VaultDashboardPageType { get; }
 
-        public VaultViewModel VaultViewModel { get; }
+        public VaultViewModelDeprecated VaultViewModel { get; }
 
-        public DashboardNavigationRequestedMessage(VaultDashboardPageType vaultDashboardPageType, VaultViewModel vaultViewModel)
+        public DashboardNavigationRequestedMessage(VaultDashboardPageType vaultDashboardPageType, VaultViewModelDeprecated vaultViewModel)
             : this(vaultDashboardPageType, vaultViewModel, null)
         {
         }
 
-        public DashboardNavigationRequestedMessage(VaultDashboardPageType vaultDashboardPageType, VaultViewModel vaultViewModel, BaseDashboardPageViewModel? value)
+        public DashboardNavigationRequestedMessage(VaultDashboardPageType vaultDashboardPageType, VaultViewModelDeprecated vaultViewModel, BaseDashboardPageViewModel? value)
             : base(value)
         {
             VaultDashboardPageType = vaultDashboardPageType;

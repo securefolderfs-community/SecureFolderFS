@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages
 {
     public sealed class VaultDashboardPropertiesPageViewModel : BaseDashboardPageViewModel
     {
-        public VaultDashboardPropertiesPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
+        public VaultDashboardPropertiesPageViewModel(IMessenger messenger, VaultViewModelDeprecated vaultViewModel)
             : base(messenger, vaultViewModel, VaultDashboardPageType.DashboardPropertiesPage)
         {
             base.NavigationItemViewModel = new()

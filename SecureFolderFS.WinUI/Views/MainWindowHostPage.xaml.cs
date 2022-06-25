@@ -18,7 +18,7 @@ namespace SecureFolderFS.WinUI.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    internal sealed partial class MainWindowHostPage : Page, IRecipient<RemoveVaultRequestedMessage>
+    internal sealed partial class MainWindowHostPage : Page
     {
         public MainViewModel ViewModel
         {
@@ -31,16 +31,9 @@ namespace SecureFolderFS.WinUI.Views
             InitializeComponent();
 
             ViewModel = new();
-
-            WeakReferenceMessenger.Default.Register(this);
         }
 
-        public void Receive(RemoveVaultRequestedMessage message)
-        {
-            ViewModel.SidebarViewModel.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
-        }
-
-        private void NavigateToItem(VaultViewModel vaultViewModel)
+        private void NavigateToItem(VaultViewModelDeprecated vaultViewModel)
         {
             WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(vaultViewModel) { Transition = new EntranceTransitionModel() });
         }
@@ -49,7 +42,7 @@ namespace SecureFolderFS.WinUI.Views
         {
             if (args.SelectedItem is SidebarItemViewModel itemViewModel)
             {
-                NavigateToItem(itemViewModel.VaultViewModel);
+                NavigateToItem(itemViewModel.VaultViewModelDeprecated);
             }
         }
 
@@ -63,7 +56,8 @@ namespace SecureFolderFS.WinUI.Views
             _ = settingsService.LoadSettingsAsync().ContinueWith(async _ =>
             {
                 await threadingService.ExecuteOnUiThreadAsync();
-                ViewModel.SavedVaultsModel.Initialize();
+                await ViewModel.InitAsync();
+                //ViewModel.SavedVaultsModel.Initialize(); // TODO: Remove
             });
         }
 
@@ -77,11 +71,11 @@ namespace SecureFolderFS.WinUI.Views
 
         private void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModelDeprecated.VaultName.Equals(args.ChosenSuggestion));
             if (chosenItem is not null)
             {
                 ViewModel.SidebarViewModel.SelectedItem = chosenItem;
-                NavigateToItem(chosenItem.VaultViewModel);
+                NavigateToItem(chosenItem.VaultViewModelDeprecated);
             }
         }
     }

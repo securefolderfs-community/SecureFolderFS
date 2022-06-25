@@ -11,13 +11,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages
     {
         protected IMessenger Messenger { get; }
 
-        protected VaultViewModel VaultViewModel { get; }
+        protected VaultViewModelDeprecated VaultViewModel { get; }
 
         public VaultDashboardPageType VaultDashboardPageType { get; }
 
         public NavigationItemViewModel? NavigationItemViewModel { get; protected init; }
 
-        protected BaseDashboardPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel, VaultDashboardPageType vaultDashboardPageType)
+        protected BaseDashboardPageViewModel(IMessenger messenger, VaultViewModelDeprecated vaultViewModel, VaultDashboardPageType vaultDashboardPageType)
         {
             Messenger = messenger;
             VaultViewModel = vaultViewModel;

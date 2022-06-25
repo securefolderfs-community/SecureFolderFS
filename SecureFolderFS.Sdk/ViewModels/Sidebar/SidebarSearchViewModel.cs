@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models.Search;
+using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             SearchItems.Clear();
             await foreach (var item in SearchModel.SearchAsync(query))
             {
-                SearchItems.Add((item as SidebarItemViewModel)!.VaultName);
+                SearchItems.Add((item as SidebarItemViewModel)!.VaultViewModelDeprecated.VaultName);
             }
         }
     }

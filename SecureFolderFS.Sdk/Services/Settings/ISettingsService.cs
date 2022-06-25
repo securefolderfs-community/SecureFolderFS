@@ -8,6 +8,6 @@ namespace SecureFolderFS.Sdk.Services.Settings
     public interface ISettingsService : ISettingsModel
     {
         [Obsolete("This property has been deprecated. Use IVaultsSettingsService.SavedVaults instead.")]
-        Dictionary<VaultIdModel, VaultViewModel> SavedVaults { get; set; }
+        Dictionary<VaultIdModel, VaultViewModelDeprecated> SavedVaults { get; set; }
     }
 }

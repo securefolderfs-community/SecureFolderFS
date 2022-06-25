@@ -23,10 +23,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
         protected override string? SettingsStorageName { get; } = Constants.LocalSettings.USER_SETTINGS_FILENAME;
 
         /// <inheritdoc/>
-        public Dictionary<VaultIdModel, VaultViewModel> SavedVaults
+        public Dictionary<VaultIdModel, VaultViewModelDeprecated> SavedVaults
         {
-            get => GetSetting<List<KeyValuePair<VaultIdModel, VaultViewModel>>>(() => new())!.ToDictionary()!;
-            set => SetSetting<List<KeyValuePair<VaultIdModel, VaultViewModel>>>(value.ToList());
+            get => GetSetting<List<KeyValuePair<VaultIdModel, VaultViewModelDeprecated>>>(() => new())!.ToDictionary()!;
+            set => SetSetting<List<KeyValuePair<VaultIdModel, VaultViewModelDeprecated>>>(value.ToList());
         }
 
         internal ISettingsDatabaseModel GetDatabaseModel()

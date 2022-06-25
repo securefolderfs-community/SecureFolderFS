@@ -18,7 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages
 
         public BaseDashboardPageViewModel? CurrentPage { get; private set; }
 
-        public VaultDashboardPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
+        public VaultDashboardPageViewModel(IMessenger messenger, VaultViewModelDeprecated vaultViewModel)
             : base(messenger, vaultViewModel)
         {
             NavigationBreadcrumbViewModel = new();

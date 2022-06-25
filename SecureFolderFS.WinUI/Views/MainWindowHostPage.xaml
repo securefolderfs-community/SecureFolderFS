@@ -122,8 +122,8 @@
                     <DataTemplate x:DataType="vm:SidebarItemViewModel">
                         <NavigationViewItem
                             Height="64"
-                            AutomationProperties.Name="{x:Bind VaultName, Mode=OneWay}"
-                            ToolTipService.ToolTip="{x:Bind VaultName, Mode=OneWay}">
+                            AutomationProperties.Name="{x:Bind VaultViewModelDeprecated.VaultName, Mode=OneWay}"
+                            ToolTipService.ToolTip="{x:Bind VaultViewModelDeprecated.VaultName, Mode=OneWay}">
                             <NavigationViewItem.Icon>
                                 <FontIcon Glyph="&#xF540;" />
                             </NavigationViewItem.Icon>
@@ -143,7 +143,7 @@
                                         Grid.Row="0"
                                         Grid.Column="0"
                                         FontWeight="SemiBold"
-                                        Text="{x:Bind VaultName, Mode=OneWay}"
+                                        Text="{x:Bind VaultViewModelDeprecated.VaultName, Mode=OneWay}"
                                         TextTrimming="CharacterEllipsis" />
 
                                     <!--  Last opened  -->
@@ -152,7 +152,7 @@
                                         Grid.Column="0"
                                         FontSize="14"
                                         Opacity="0.8"
-                                        Text="{x:Bind VaultViewModel.VaultModel.LastOpened, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                                        Text="{x:Bind VaultViewModelDeprecated.VaultModelDeprecated.LastOpened, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                                 </Grid>
                             </NavigationViewItem.Content>
                             <NavigationViewItem.ContextFlyout>

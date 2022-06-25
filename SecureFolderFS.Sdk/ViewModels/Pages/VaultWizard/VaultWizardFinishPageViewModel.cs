@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             DialogViewModel.PrimaryButtonEnabled = true;
             VaultName = DialogViewModel.VaultViewModel!.VaultName;
 
-            WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessage(DialogViewModel.VaultViewModel));
+            WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessageDeprecated(DialogViewModel.VaultViewModel));
         }
     }
 }

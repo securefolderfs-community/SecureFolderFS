@@ -8,7 +8,8 @@ using SecureFolderFS.Core.Instance;
 namespace SecureFolderFS.Sdk.ViewModels
 {
     [Serializable]
-    public sealed class VaultViewModel : ObservableObject
+    [Obsolete("This class has been deprecated. Use VaultViewModel instead.")]
+    public sealed class VaultViewModelDeprecated : ObservableObject
     {
         // TODO: Vault Health, Vault Properties?
 
@@ -16,7 +17,8 @@ namespace SecureFolderFS.Sdk.ViewModels
         public IVaultInstance? VaultInstance { get; set; }
 
         [JsonIgnore]
-        public VaultModelDeprecated VaultModel { get; set; }
+        [Obsolete("This property should no longer be used. The type replacement is IVaultModel.")]
+        public VaultModelDeprecated VaultModelDeprecated { get; set; }
 
         public VaultIdModel VaultIdModel { get; }
 
@@ -24,12 +26,13 @@ namespace SecureFolderFS.Sdk.ViewModels
 
         public string VaultName { get; }
 
-        public VaultViewModel(VaultIdModel vaultIdModel, string vaultRootPath)
+        [Obsolete("This constructor has been deprecated in favor of VaultViewModel(IVaultModel).")]
+        public VaultViewModelDeprecated(VaultIdModel vaultIdModel, string vaultRootPath)
         {
             VaultIdModel = vaultIdModel;
             VaultRootPath = vaultRootPath;
             VaultName = Path.GetFileName(vaultRootPath);
-            VaultModel = new(vaultIdModel);
+            VaultModelDeprecated = new(vaultIdModel);
         }
     }
 }

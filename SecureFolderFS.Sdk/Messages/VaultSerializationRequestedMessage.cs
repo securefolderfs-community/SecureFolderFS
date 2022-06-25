@@ -2,9 +2,9 @@
 
 namespace SecureFolderFS.Sdk.Messages
 {
-    public sealed class VaultSerializationRequestedMessage : ValueMessage<VaultViewModel>
+    public sealed class VaultSerializationRequestedMessage : ValueMessage<VaultViewModelDeprecated>
     {
-        public VaultSerializationRequestedMessage(VaultViewModel value)
+        public VaultSerializationRequestedMessage(VaultViewModelDeprecated value)
             : base(value)
         {
         }

@@ -11,18 +11,18 @@ using SecureFolderFS.Sdk.Services.Settings;
 namespace SecureFolderFS.Sdk.Models
 {
     [Obsolete("This class has been deprecated. Use IVaultCollectionModel instead.")]
-    public sealed class SavedVaultsModel : IRecipient<AddVaultRequestedMessage>, IRecipient<RemoveVaultRequestedMessage>, IRecipient<VaultSerializationRequestedMessage>
+    public sealed class SavedVaultsModel : IRecipient<AddVaultRequestedMessageDeprecated>, IRecipient<RemoveVaultRequestedMessageDeprecated>, IRecipient<VaultSerializationRequestedMessage>
     {
         private ISecretSettingsService SecretSettingsService { get; } = Ioc.Default.GetRequiredService<ISecretSettingsService>();
 
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
-        internal IInitializableSource<IDictionary<VaultIdModel, VaultViewModel>>? InitializableSource { get; init; }
+        internal IInitializableSource<IDictionary<VaultIdModel, VaultViewModelDeprecated>>? InitializableSource { get; init; }
 
         public SavedVaultsModel()
         {
-            WeakReferenceMessenger.Default.Register<AddVaultRequestedMessage>(this);
-            WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessage>(this);
+            WeakReferenceMessenger.Default.Register<AddVaultRequestedMessageDeprecated>(this);
+            WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessageDeprecated>(this);
             WeakReferenceMessenger.Default.Register<VaultSerializationRequestedMessage>(this);
         }
 
@@ -35,14 +35,14 @@ namespace SecureFolderFS.Sdk.Models
 
                 foreach (var item in savedVaults.Keys)
                 {
-                    savedVaults[item].VaultModel = savedVaultModels.TryGetValue(item, out var model) ? model : new(item);
+                    savedVaults[item].VaultModelDeprecated = savedVaultModels.TryGetValue(item, out var model) ? model : new(item);
                 }
 
                 InitializableSource.Initialize(savedVaults);
             }
         }
 
-        public void Receive(AddVaultRequestedMessage message)
+        public void Receive(AddVaultRequestedMessageDeprecated message)
         {
             if (SettingsService.IsAvailable && SecretSettingsService.IsAvailable)
             {
@@ -50,14 +50,14 @@ namespace SecureFolderFS.Sdk.Models
                 var savedVaultModels = SecretSettingsService.SavedVaultModels!.ToDictionary();
 
                 savedVaults.Add(message.Value.VaultIdModel, message.Value);
-                savedVaultModels.Add(message.Value.VaultIdModel, message.Value.VaultModel);
+                savedVaultModels.Add(message.Value.VaultIdModel, message.Value.VaultModelDeprecated);
 
                 SettingsService.SavedVaults = savedVaults!;
                 SecretSettingsService.SavedVaultModels = savedVaultModels!;
             }
         }
 
-        public void Receive(RemoveVaultRequestedMessage message)
+        public void Receive(RemoveVaultRequestedMessageDeprecated message)
         {
             if (SettingsService.IsAvailable && SecretSettingsService.IsAvailable)
             {
@@ -85,7 +85,7 @@ namespace SecureFolderFS.Sdk.Models
                 }
                 if (savedVaultModels.ContainsKey(message.Value.VaultIdModel))
                 {
-                    savedVaultModels[message.Value.VaultIdModel] = message.Value.VaultModel;
+                    savedVaultModels[message.Value.VaultIdModel] = message.Value.VaultModelDeprecated;
 
                 }
 
