@@ -16,14 +16,14 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Loads all persisted settings and prepares them for use.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
         Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Writes and persists all unsaved settings.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
         Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default);
     }

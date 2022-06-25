@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
     /// Serves as the base dialog view model containing reusable,
     /// and optional boilerplate code for every dialog.
     /// </summary>
-    public abstract class BaseDialogViewModel : ObservableObject
+    public abstract class DialogViewModel : ObservableObject
     {
         private string? _Title;
         public string? Title

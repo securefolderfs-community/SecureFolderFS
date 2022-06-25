@@ -4,11 +4,12 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.WinUI.Models;
+using SecureFolderFS.WinUI.AppModels;
 using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    /// <inheritdoc cref="IClipboardService"/>
     internal sealed class ClipboardService : IClipboardService
     {
         /// <inheritdoc/>
@@ -35,10 +36,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             return GetFullClipboardDataInternalAsync();
         }
 
-        private async Task<bool> SetClipboardDataInternalAsync(IClipboardDataModel data)
+        private static async Task<bool> SetClipboardDataInternalAsync(IClipboardDataModel data)
         {
             var dataPackage = new DataPackage();
-
             switch (data.DataType)
             {
                 case ClipboardDataType.Text:
@@ -55,13 +55,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             return true;
         }
 
-        private IClipboardDataModel? GetClipboardDataInternal()
+        private static IClipboardDataModel? GetClipboardDataInternal()
         {
             var data = Clipboard.GetContent();
             return data is not null ? new WindowsClipboardItemModel(data) : null;
         }
 
-        private async Task<IEnumerable<IClipboardDataModel>?> GetFullClipboardDataInternalAsync()
+        private static async Task<IEnumerable<IClipboardDataModel>?> GetFullClipboardDataInternalAsync()
         {
             var historyResult = await Clipboard.GetHistoryItemsAsync();
             if (historyResult.Status == ClipboardHistoryItemsResultStatus.Success)

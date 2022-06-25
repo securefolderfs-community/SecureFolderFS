@@ -1,7 +1,7 @@
 ﻿namespace SecureFolderFS.Sdk.Models.Search
 {
     /// <summary>
-    /// Serves as search result base.
+    /// Represents a search result.
     /// </summary>
     public interface ISearchResult
     {

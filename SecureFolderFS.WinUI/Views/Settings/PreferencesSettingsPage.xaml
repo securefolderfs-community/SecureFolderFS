@@ -27,7 +27,7 @@
                         <HyperlinkButton
                             Margin="0,-16,0,0"
                             HorizontalAlignment="Right"
-                            Command="{x:Bind OpenInstallationLinkCommand}"
+                            Command="{x:Bind OpenWebsiteCommand}"
                             Content="Open website" />
                     </Grid>
                 </InfoBar.Content>

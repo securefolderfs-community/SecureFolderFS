@@ -2,7 +2,7 @@
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    public sealed class SettingsDialogViewModel : BaseDialogViewModel
+    public sealed class SettingsDialogViewModel : DialogViewModel
     {
         public IMessenger Messenger { get; }
 

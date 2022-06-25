@@ -122,12 +122,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\VaultDashboardPage.xaml">
+    <Page Update="Views\Vault\VaultDashboardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\VaultLoginPage.xaml">
+    <Page Update="Views\Vault\VaultLoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -187,12 +187,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\VaultDashboardPropertiesPage.xaml">
+    <Page Update="Views\Vault\VaultDashboardPropertiesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\VaultMainDashboardPage.xaml">
+    <Page Update="Views\Vault\VaultMainDashboardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

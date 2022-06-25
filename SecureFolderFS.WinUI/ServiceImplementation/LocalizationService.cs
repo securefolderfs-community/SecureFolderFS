@@ -24,8 +24,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
         public AppLanguageModel? GetActiveLanguage()
         {
-            var languages = GetLanguages();
-
+            var languages = GetLanguages().ToArray();
             return languages.FirstOrDefault(item => item.Id == ApplicationLanguages.PrimaryLanguageOverride) ?? languages.FirstOrDefault();
         }
 

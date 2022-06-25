@@ -36,7 +36,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             }
 
             var contentDialog = initializer();
-
             if (contentDialog is not IDialog<TViewModel> dialog)
             {
                 throw new NotSupportedException($"The dialog does not implement {typeof(IDialog<TViewModel>)}.");

@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.Storage
         /// Deletes the associated storage object.
         /// </summary>
         /// <param name="permanently">Determines if the object should be sent to Recycle Bin.</param>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true otherwise false.</returns>
         Task<bool> DeleteAsync(bool permanently, CancellationToken cancellationToken = default);
     }

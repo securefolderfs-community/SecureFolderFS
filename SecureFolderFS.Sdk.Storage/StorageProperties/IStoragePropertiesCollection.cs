@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.Storage.StorageProperties
         /// <summary>
         /// Requests and reads all properties of an storage object.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is successful, returns <see cref="IEnumerable{T}"/> of type <see cref="IStorageProperty"/>, otherwise null.</returns>
         Task<IEnumerable<IStorageProperty>?> GetStoragePropertiesAsync(CancellationToken cancellationToken = default);
     }

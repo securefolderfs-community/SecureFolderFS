@@ -5,7 +5,8 @@ using Newtonsoft.Json;
 namespace SecureFolderFS.Sdk.Models
 {
     [Serializable]
-    public sealed class VaultModel : ObservableObject
+    [Obsolete("This class has been deprecated. Use IVaultModel instead.")]
+    public sealed class VaultModelDeprecated : ObservableObject
     {
         [JsonIgnore]
         public VaultIdModel VaultIdModel { get; }
@@ -24,7 +25,7 @@ namespace SecureFolderFS.Sdk.Models
             set => SetProperty(ref _LastScanned, value);
         }
 
-        public VaultModel(VaultIdModel vaultIdModel)
+        public VaultModelDeprecated(VaultIdModel vaultIdModel)
         {
             VaultIdModel = vaultIdModel;
         }

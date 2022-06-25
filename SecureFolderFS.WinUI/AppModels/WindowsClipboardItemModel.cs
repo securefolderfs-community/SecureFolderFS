@@ -5,7 +5,7 @@ using Windows.ApplicationModel.DataTransfer;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 
-namespace SecureFolderFS.WinUI.Models
+namespace SecureFolderFS.WinUI.AppModels
 {
     /// <inheritdoc cref="IClipboardDataModel"/>
     internal sealed class WindowsClipboardItemModel : IClipboardDataModel

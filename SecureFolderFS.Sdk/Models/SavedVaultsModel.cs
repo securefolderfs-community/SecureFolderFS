@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Utils;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Shared.Extensions;
@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Services.Settings;
 
 namespace SecureFolderFS.Sdk.Models
 {
+    [Obsolete("This class has been deprecated. Use IVaultCollectionModel instead.")]
     public sealed class SavedVaultsModel : IRecipient<AddVaultRequestedMessage>, IRecipient<RemoveVaultRequestedMessage>, IRecipient<VaultSerializationRequestedMessage>
     {
         private ISecretSettingsService SecretSettingsService { get; } = Ioc.Default.GetRequiredService<ISecretSettingsService>();

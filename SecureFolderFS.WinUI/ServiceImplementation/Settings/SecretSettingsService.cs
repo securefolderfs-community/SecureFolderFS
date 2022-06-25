@@ -5,7 +5,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.Storage.StoragePool;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.WinUI.Models;
+using SecureFolderFS.WinUI.AppModels;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {
@@ -23,10 +23,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
         protected override string? SettingsStorageName { get; } = Constants.LocalSettings.SECRET_SETTINGS_FILE_NAME;
 
         /// <inheritdoc/>
-        public Dictionary<VaultIdModel, VaultModel> SavedVaultModels
+        public Dictionary<VaultIdModel, VaultModelDeprecated> SavedVaultModels
         {
-            get => GetSetting<List<KeyValuePair<VaultIdModel, VaultModel>>>(() => new())!.ToDictionary()!;
-            set => SetSetting<List<KeyValuePair<VaultIdModel, VaultModel>>>(value.ToList());
+            get => GetSetting<List<KeyValuePair<VaultIdModel, VaultModelDeprecated>>>(() => new())!.ToDictionary()!;
+            set => SetSetting<List<KeyValuePair<VaultIdModel, VaultModelDeprecated>>>(value.ToList());
         }
     }
 }

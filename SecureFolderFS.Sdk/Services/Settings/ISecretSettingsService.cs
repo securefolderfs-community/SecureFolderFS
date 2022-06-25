@@ -9,6 +9,6 @@ namespace SecureFolderFS.Sdk.Services.Settings
     /// </summary>
     public interface ISecretSettingsService : ISettingsModel
     {
-        Dictionary<VaultIdModel, VaultModel> SavedVaultModels { get; set; }
+        Dictionary<VaultIdModel, VaultModelDeprecated> SavedVaultModels { get; set; }
     }
 }

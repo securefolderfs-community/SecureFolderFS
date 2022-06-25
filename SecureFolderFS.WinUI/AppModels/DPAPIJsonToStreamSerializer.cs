@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Shared.Extensions;
 
-namespace SecureFolderFS.WinUI.Models
+namespace SecureFolderFS.WinUI.AppModels
 {
     /// <summary>
     /// Uses <see cref="Stream"/> to serialize/deserialize JSON with DPAPI encryption layer.

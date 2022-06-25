@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-
 using static SecureFolderFS.WinUI.UnsafeNative.UnsafeNativeDataModels;
 
 namespace SecureFolderFS.WinUI.UnsafeNative

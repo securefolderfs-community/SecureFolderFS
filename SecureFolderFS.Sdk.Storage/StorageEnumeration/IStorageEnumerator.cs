@@ -19,21 +19,21 @@ namespace SecureFolderFS.Sdk.Storage.StorageEnumeration
         /// <summary>
         /// Enumerates the <see cref="SourceFolder"/> for files.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFile"/> of all files discovered by the enumerator.</returns>
         IAsyncEnumerable<IFile> EnumerateFilesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Enumerates the <see cref="SourceFolder"/> for folders.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFolder"/> of all folders discovered by the enumerator.</returns>
         IAsyncEnumerable<IFolder> EnumerateFoldersAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Enumerates the <see cref="SourceFolder"/> for items.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IBaseStorage"/> of all items discovered by the enumerator.</returns>
         IAsyncEnumerable<IBaseStorage> EnumerateStorageAsync(CancellationToken cancellationToken = default);
     }

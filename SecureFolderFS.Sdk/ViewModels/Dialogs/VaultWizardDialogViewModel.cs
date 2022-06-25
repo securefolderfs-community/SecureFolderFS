@@ -7,7 +7,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    public sealed class VaultWizardDialogViewModel : BaseDialogViewModel, IRecipient<VaultWizardNavigationRequestedMessage>
+    public sealed class VaultWizardDialogViewModel : DialogViewModel, IRecipient<VaultWizardNavigationRequestedMessage>
     {
         public IMessenger Messenger { get; }
 

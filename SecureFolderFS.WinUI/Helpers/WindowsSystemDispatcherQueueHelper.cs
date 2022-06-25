@@ -27,7 +27,7 @@ namespace SecureFolderFS.WinUI.Helpers
                 options.threadType = DQTYPE_THREAD_CURRENT;
                 options.apartmentType = DQTAT_COM_STA;
 
-                UnsafeNativeApis.CreateDispatcherQueueController(options, ref _dispatcherQueueController!);
+                _ = UnsafeNativeApis.CreateDispatcherQueueController(options, ref _dispatcherQueueController!);
             }
         }
     }

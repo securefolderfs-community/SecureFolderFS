@@ -5,8 +5,6 @@ namespace SecureFolderFS.Sdk.Services
 {
     public interface ITelemetryService
     {
-        bool IsTelemetryEnabled { get; }
-
         Task EnableTelemetry();
 
         Task DisableTelemetry();

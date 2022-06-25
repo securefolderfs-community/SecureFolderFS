@@ -8,8 +8,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class AppCenterTelemetryService : ITelemetryService
     {
-        public bool IsTelemetryEnabled { get; private set; }
-
         public async Task EnableTelemetry()
         {
             if (!AppCenter.Configured)

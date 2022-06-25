@@ -11,14 +11,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.InfoBars
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
-        public IAsyncRelayCommand OpenInstallationLinkCommand { get; }
+        public IAsyncRelayCommand OpenWebsiteCommand { get; }
 
         public DokanyInfoBarViewModel()
         {
-            OpenInstallationLinkCommand = new AsyncRelayCommand(OpenInstallationLink);
+            OpenWebsiteCommand = new AsyncRelayCommand(OpenWebsiteAsync);
         }
 
-        private async Task OpenInstallationLink()
+        private async Task OpenWebsiteAsync()
         {
             await ApplicationService.OpenUriAsync(new Uri(Constants.FileSystems.DOKANY_EXTERNAL_LINK));
         }

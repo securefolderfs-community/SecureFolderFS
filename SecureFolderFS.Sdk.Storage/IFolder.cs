@@ -52,21 +52,21 @@ namespace SecureFolderFS.Sdk.Storage
         /// <summary>
         /// Gets all files in the current directory.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFile"/> of files in the directory.</returns>
         IAsyncEnumerable<IFile> GetFilesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets all folders in the current directory.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFolder"/> of folders in the directory.</returns>
         IAsyncEnumerable<IFolder> GetFoldersAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets all items in the current directory.
         /// </summary>
-        /// <param name="cancellationToken">Cancellation token of the action.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IEnumerable{T}"/> of type <see cref="IBaseStorage"/> of items in the directory.</returns>
         IAsyncEnumerable<IBaseStorage> GetStorageAsync(CancellationToken cancellationToken = default);
 

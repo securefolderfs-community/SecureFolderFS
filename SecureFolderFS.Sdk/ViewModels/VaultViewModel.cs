@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels
         public IVaultInstance? VaultInstance { get; set; }
 
         [JsonIgnore]
-        public VaultModel VaultModel { get; set; }
+        public VaultModelDeprecated VaultModel { get; set; }
 
         public VaultIdModel VaultIdModel { get; }
 

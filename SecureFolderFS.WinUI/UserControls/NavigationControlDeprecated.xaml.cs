@@ -11,8 +11,8 @@ using SecureFolderFS.Sdk.Models.Transitions;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Pages;
 using SecureFolderFS.WinUI.Helpers;
-using SecureFolderFS.WinUI.Views;
 using System;
+using SecureFolderFS.WinUI.Views.Vault;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
