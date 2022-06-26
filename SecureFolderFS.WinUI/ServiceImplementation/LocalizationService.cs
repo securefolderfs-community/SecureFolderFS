@@ -4,38 +4,46 @@ using SecureFolderFS.Sdk.Services;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.Globalization;
+using SecureFolderFS.Sdk.AppModels;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    /// <inheritdoc cref="ILocalizationService"/>
     internal sealed class LocalizationService : ILocalizationService
     {
-        private static readonly ResourceLoader IndependentLoader = new();
+        private List<ILanguageModel>? _languageCache;
+        private readonly ResourceLoader _resourceLoader;
 
-        private AppLanguageModel? _CurrentAppLanguage;
-        public AppLanguageModel CurrentAppLanguage
+        public LocalizationService()
         {
-            get => _CurrentAppLanguage ??= new(ApplicationLanguages.PrimaryLanguageOverride);
+            _resourceLoader = new();
+            CurrentLanguage = new AppLanguageModel(ApplicationLanguages.PrimaryLanguageOverride);
         }
 
-        public string LocalizeFromResourceKey(string resourceKey)
+        /// <inheritdoc/>
+        public ILanguageModel CurrentLanguage { get; }
+
+        /// <inheritdoc/>
+        public string? LocalizeString(string resourceKey)
         {
-            return IndependentLoader.GetString(resourceKey);
+            return _resourceLoader.GetString(resourceKey);
         }
 
-        public AppLanguageModel? GetActiveLanguage()
+        /// <inheritdoc/>
+        public void SetCurrentLanguage(ILanguageModel language)
         {
-            var languages = GetLanguages().ToArray();
-            return languages.FirstOrDefault(item => item.Id == ApplicationLanguages.PrimaryLanguageOverride) ?? languages.FirstOrDefault();
+            ApplicationLanguages.PrimaryLanguageOverride = language.LanguageTag;
         }
 
-        public void SetActiveLanguage(AppLanguageModel language)
+        /// <inheritdoc/>
+        public IEnumerable<ILanguageModel> GetLanguages()
         {
-            ApplicationLanguages.PrimaryLanguageOverride = language.Id;
-        }
+            _languageCache ??= ApplicationLanguages.ManifestLanguages
+                .Select(item => new AppLanguageModel(item))
+                .Cast<ILanguageModel>()
+                .ToList();
 
-        public IEnumerable<AppLanguageModel> GetLanguages()
-        {
-            return ApplicationLanguages.ManifestLanguages.Select(item => new AppLanguageModel(item));
+            return _languageCache;
         }
     }
 }

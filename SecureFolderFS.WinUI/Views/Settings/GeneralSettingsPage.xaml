@@ -84,10 +84,10 @@
                     <FontIcon Glyph="&#xF2B7;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ComboBox ItemsSource="{x:Bind ViewModel.AppLanguages}" SelectedIndex="{x:Bind ViewModel.SelectedLanguageIndex, Mode=TwoWay}">
+                    <ComboBox ItemsSource="{x:Bind ViewModel.LanguageSettingViewModel.Languages}" SelectionChanged="AppLanguage_SelectionChanged">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="m:AppLanguageModel">
-                                <TextBlock Text="{x:Bind Name}" />
+                            <DataTemplate x:DataType="m:ILanguageModel">
+                                <TextBlock Text="{x:Bind FriendlyName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -37,6 +38,14 @@ namespace SecureFolderFS.WinUI.Views.Settings
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             _ = ViewModel.BannerViewModel.ConfigureUpdates();
+        }
+
+        private void AppLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is ILanguageModel language)
+            {
+                ViewModel.LanguageSettingViewModel.UpdateCurrentLanguage(language);
+            }
         }
     }
 }
