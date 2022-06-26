@@ -22,9 +22,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task OpenPathInFileExplorerAsync(string path)
+        public async Task OpenInFileExplorerAsync(IFolder folder)
         {
-            await Launcher.LaunchFolderPathAsync(path);
+            await Launcher.LaunchFolderPathAsync(folder.Path);
         }
 
         /// <inheritdoc/>

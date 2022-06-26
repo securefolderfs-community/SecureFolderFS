@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.Models
         Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Writes and persists all unsaved settings.
+        /// Writes and persists all settings.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>

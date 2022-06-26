@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
@@ -7,23 +6,24 @@ using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    [Serializable]
+    /// <inheritdoc cref="IVaultModel"/>
     public sealed class VaultModel : IVaultModel
     {
-        [JsonIgnore]
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
         /// <inheritdoc/>
-        [JsonIgnore]
         public IFolder Folder { get; }
 
         /// <inheritdoc/>
-        [JsonIgnore]
+        public string VaultName { get; }
+
+        /// <inheritdoc/>
         public IDisposable? FolderLock { get; }
 
         public VaultModel(IFolder folder)
         {
             Folder = folder;
+            VaultName = folder.Name;
         }
 
         /// <inheritdoc/>

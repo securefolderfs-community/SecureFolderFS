@@ -34,12 +34,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.CompletedTask;
         }
 
-        public override Task SecondaryButtonClick(IEventDispatchFlag? flag)
-        {
-            Messenger.Send(new PasswordClearRequestedMessage());
-            return Task.CompletedTask;
-        }
-
         public override void Dispose()
         {
             _step7.Dispose();

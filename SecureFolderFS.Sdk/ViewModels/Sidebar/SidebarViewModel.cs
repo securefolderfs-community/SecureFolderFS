@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,19 +6,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Models.Transitions;
-using SecureFolderFS.Sdk.Utils;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
-    public sealed class SidebarViewModel : ObservableObject, 
-        IAsyncInitialize, 
-        IInitializableSource<IDictionary<VaultIdModel, VaultViewModelDeprecated>>, 
-        IRecipient<RemoveVaultRequestedMessageDeprecated>, 
-        IRecipient<AddVaultRequestedMessageDeprecated>,
-        IRecipient<AddVaultMessage>,
-        IRecipient<RemoveVaultMessage>
+    public sealed class SidebarViewModel : ObservableObject, IAsyncInitialize, IRecipient<AddVaultMessage>, IRecipient<RemoveVaultMessage>
     {
         private IVaultCollectionModel VaultCollectionModel { get; }
 
@@ -43,8 +34,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             SearchViewModel = new(SidebarItems);
             FooterViewModel = new();
 
-            WeakReferenceMessenger.Default.Register<RemoveVaultRequestedMessageDeprecated>(this);
-            WeakReferenceMessenger.Default.Register<AddVaultRequestedMessageDeprecated>(this);
+            WeakReferenceMessenger.Default.Register<AddVaultMessage>(this);
+            WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
         }
 
         /// <inheritdoc/>
@@ -54,40 +45,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             {
                 SidebarItems.Add(new(item));
             }
-        }
-
-        /// <inheritdoc/>
-        public void Receive(RemoveVaultRequestedMessageDeprecated message)
-        {
-            var itemToRemove = SidebarItems.FirstOrDefault(item => item.VaultViewModelDeprecated.VaultIdModel.Equals(message.Value));
-            if (itemToRemove is not null)
-            {
-                SidebarItems.Remove(itemToRemove);
-                SelectedItem = SidebarItems.FirstOrDefault();
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Receive(AddVaultRequestedMessageDeprecated message)
-        {
-            SidebarItems.Add(new(message.Value));
-        }
-
-        void IInitializableSource<IDictionary<VaultIdModel, VaultViewModelDeprecated>>.Initialize(IDictionary<VaultIdModel, VaultViewModelDeprecated> param)
-        {
-            _ = ThreadingService.ExecuteOnUiThreadAsync(() =>
-            {
-                foreach (var item in param.Values)
-                {
-                    SidebarItems.Add(new(item));
-                }
-
-                if (SidebarItems.FirstOrDefault() is SidebarItemViewModel itemToSelect)
-                {
-                    SelectedItem = itemToSelect;
-                    WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(itemToSelect.VaultViewModelDeprecated) { Transition = new SuppressTransitionModel() });
-                }
-            });
         }
 
         /// <inheritdoc/>
@@ -105,6 +62,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
                 return;
 
             SidebarItems.Remove(itemToRemove);
+            SelectedItem = SidebarItems.FirstOrDefault();
+
             await VaultCollectionModel.RemoveVaultAsync(message.VaultModel);
         }
     }

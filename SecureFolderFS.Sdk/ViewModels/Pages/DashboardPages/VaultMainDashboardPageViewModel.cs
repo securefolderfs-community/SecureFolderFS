@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models.Transitions;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Dashboard.Widgets;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages
@@ -13,6 +14,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages
     public sealed class VaultMainDashboardPageViewModel : BaseDashboardPageViewModel
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
+
+        private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
         public VaultHealthWidgetViewModel VaultHealthWidgetViewModel { get; }
 
@@ -29,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages
         {
             VaultHealthWidgetViewModel = new();
             GraphsWidgetViewModel = new();
-            base.NavigationItemViewModel = new()
+            NavigationItemViewModel = new()
             {
                 Index = 0,
                 NavigationAction = first => Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.MainDashboardPage, VaultViewModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToRight) }),
@@ -46,7 +49,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages
         {
             if (VaultViewModel.VaultInstance is not null)
             {
-                await FileExplorerService.OpenPathInFileExplorerAsync(VaultViewModel.VaultInstance.SecureFolderFSInstance.MountLocation);
+                var folder = await FileSystemService.GetFolderFromPathAsync(VaultViewModel.VaultInstance.SecureFolderFSInstance.MountLocation);
+                if (folder is null)
+                    return;
+
+                await FileExplorerService.OpenInFileExplorerAsync(folder);
             }
         }
 

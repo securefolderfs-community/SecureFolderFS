@@ -19,9 +19,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
         protected override string? SettingsStorageName { get; } = Constants.LocalSettings.VAULTS_SETTINGS_FILENAME;
 
         /// <inheritdoc/>
-        public List<VaultModel>? SavedVaults
+        public List<string>? VaultPaths
         {
-            get => GetSetting(() => new List<VaultModel>());
+            get => GetSetting(() => new List<string>());
             set => SetSetting(value);
         }
     }

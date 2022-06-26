@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using ByteSizeLib;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
-
-using Timer = System.Timers.Timer;
 
 namespace SecureFolderFS.Sdk.Models
 {
@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.Models
     {
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
-        private readonly Timer _updateTimer;
+        private ITimerService TimerService { get; } = Ioc.Default.GetRequiredService<ITimerService>();
 
         private readonly List<long> _readRates;
 
@@ -41,9 +41,9 @@ namespace SecureFolderFS.Sdk.Models
             WriteGraphProgress = writeGraphProgress;
             _readRates = new() { 0 };
             _writeRates = new() { 0 };
-            _updateTimer = new();
-            _updateTimer.Interval = 250d; // 0.25s
-            _updateTimer.Elapsed += UpdateTimer_Elapsed;
+
+            TimerService.SetInterval(250); // 0.25s
+            TimerService.OnTickAsync = TimerServiceOnTickAsync;
         }
 
         public override void AddBytesRead(long amount)
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.Models
 
         public void Start()
         {
-            _updateTimer.Start();
+            _ = TimerService.StartTimerAsync(default);
         }
 
         private void CalculateRates()
@@ -67,7 +67,7 @@ namespace SecureFolderFS.Sdk.Models
             WriteGraphProgress?.Report(ByteSize.FromBytes(_writeRates.Where(x => x != 0).AtLeast(() => 0).Average()).MegaBytes);
         }
 
-        private async void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        private async Task TimerServiceOnTickAsync(CancellationToken cancellationToken)
         {
             var now = DateTime.Now;
 
@@ -99,8 +99,7 @@ namespace SecureFolderFS.Sdk.Models
 
         public override void Dispose()
         {
-            _updateTimer.Stop();
-            _updateTimer.Elapsed -= UpdateTimer_Elapsed;
+            TimerService.Dispose();
         }
     }
 }

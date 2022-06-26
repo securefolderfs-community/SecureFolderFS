@@ -16,11 +16,11 @@ namespace SecureFolderFS.Sdk.Services
         Task OpenAppFolderAsync();
 
         /// <summary>
-        /// Opens file explorer on provided <paramref name="path"/>.
+        /// Opens provided <paramref name="folder"/> in file explorer.
         /// </summary>
-        /// <param name="path">The path to open.</param>
+        /// <param name="folder">The folder to open file explorer in.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task OpenPathInFileExplorerAsync(string path);
+        Task OpenInFileExplorerAsync(IFolder folder);
 
         /// <summary>
         /// Awaits the user input and picks single file from the file explorer dialog.

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard

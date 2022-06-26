@@ -52,16 +52,21 @@ namespace SecureFolderFS.Sdk.AppModels
                     return false;
 
                 var settings = await serializer.DeserializeAsync<Dictionary<string, object?>?>(stream, cancellationToken).ConfigureAwait(false);
-                if (settings is null)
-                    return false;
-
                 settingsCache.Clear();
+
+                if (settings is null) // No settings saved, set cache to empty and return true.
+                    return true;
+
                 foreach (var item in settings)
                 {
                     settingsCache[item.Key] = item.Value;
                 }
 
                 return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
             finally
             {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.AppModels;
@@ -19,12 +20,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             SearchModel = new SidebarSearchModel<SidebarItemViewModel>(sidebarItems);
         }
 
-        public async Task SubmitQuery(string query)
+        public async Task SubmitQuery(string query, CancellationToken cancellationToken = default)
         {
             SearchItems.Clear();
-            await foreach (var item in SearchModel.SearchAsync(query))
+            await foreach (var item in SearchModel.SearchAsync(query, cancellationToken))
             {
-                SearchItems.Add((item as SidebarItemViewModel)!.VaultViewModelDeprecated.VaultName);
+                if (item is SidebarItemViewModel sidebarItem)
+                {
+                    SearchItems.Add(sidebarItem.VaultModel.VaultName);
+                }
             }
         }
     }

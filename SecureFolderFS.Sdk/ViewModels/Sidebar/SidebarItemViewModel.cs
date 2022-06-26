@@ -17,8 +17,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         public IVaultModel VaultModel { get; }
 
-        public VaultViewModelDeprecated VaultViewModelDeprecated { get; }
-
         private bool _CanRemoveVault = true;
         public bool CanRemoveVault
         {
@@ -29,18 +27,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         public IRelayCommand RemoveVaultCommand { get; }
 
         public IAsyncRelayCommand ShowInFileExplorerCommand { get; }
-
-        public SidebarItemViewModel(VaultViewModelDeprecated vaultModel)
-        {
-            VaultViewModelDeprecated = vaultModel;
-            CanRemoveVault = true;
-
-            ShowInFileExplorerCommand = new AsyncRelayCommand(ShowInFileExplorerAsync);
-            RemoveVaultCommand = new RelayCommand(RemoveVault);
-
-            WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
-            WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
-        }
 
         public SidebarItemViewModel(IVaultModel vaultModel)
         {
@@ -53,33 +39,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         /// <inheritdoc/>
         public void Receive(VaultUnlockedMessage message)
         {
-            if (message.Value.VaultIdModel.Equals(VaultViewModelDeprecated.VaultIdModel))
-                CanRemoveVault = false;
+            // TODO: Update CanRemoveVault
         }
 
         /// <inheritdoc/>
         public void Receive(VaultLockedMessage message)
         {
-            if (message.Value.VaultIdModel.Equals(VaultViewModelDeprecated.VaultIdModel))
-                CanRemoveVault = true;
+            // TODO: Update CanRemoveVault
         }
 
         private void RemoveVault()
         {
-            WeakReferenceMessenger.Default.Send(new RemoveVaultRequestedMessageDeprecated(VaultViewModelDeprecated.VaultIdModel));
+            WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(VaultModel));
         }
 
         private Task ShowInFileExplorerAsync()
         {
-            return FileExplorerService.OpenPathInFileExplorerAsync(VaultViewModelDeprecated.VaultRootPath);
+            return FileExplorerService.OpenInFileExplorerAsync(VaultModel.Folder);
         }
 
+        /// <inheritdoc/>
         public bool Contains(string? other)
         {
             if (other is null)
                 return false;
 
-            return VaultViewModelDeprecated.VaultName.Contains(other, StringComparison.OrdinalIgnoreCase);
+            return VaultModel.VaultName.Contains(other, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

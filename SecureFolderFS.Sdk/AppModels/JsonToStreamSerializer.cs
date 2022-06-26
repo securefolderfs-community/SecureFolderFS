@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.AppModels
             var buffer = await serialized.ReadAllBytesAsync().ConfigureAwait(false);
             var rawSerialized = Encoding.UTF8.GetString(buffer);
 
-            return JsonConvert.DeserializeObject<TData>(rawSerialized);
+            return JsonConvert.DeserializeObject<TData?>(rawSerialized);
         }
 
         /// <inheritdoc/>

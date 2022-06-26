@@ -5,7 +5,7 @@ using SecureFolderFS.Sdk.Storage;
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
-    /// A model that represents a saved vault.
+    /// A model that represents a vault.
     /// </summary>
     public interface IVaultModel : IEquatable<IVaultModel>
     {
@@ -13,6 +13,11 @@ namespace SecureFolderFS.Sdk.Models
         /// Gets the folder of the vault.
         /// </summary>
         IFolder Folder { get; }
+
+        /// <summary>
+        /// Gets the name of the vault.
+        /// </summary>
+        string VaultName { get; }
 
         /// <summary>
         /// Gets the lock that restricts the deletion of the folder.

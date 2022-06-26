@@ -37,8 +37,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages
                 return;
             }
 
-            // TODO: PasswordClearRequestedMessage
-
             IFinalizedVaultLoadRoutine finalizedVaultLoadRoutine;
             try
             {

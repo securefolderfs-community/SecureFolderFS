@@ -42,7 +42,7 @@ namespace SecureFolderFS.WinUI.Views
         {
             if (args.SelectedItem is SidebarItemViewModel itemViewModel)
             {
-                NavigateToItem(itemViewModel.VaultViewModelDeprecated);
+                NavigateToItem(itemViewModel.VaultModel);
             }
         }
 
@@ -57,7 +57,10 @@ namespace SecureFolderFS.WinUI.Views
             {
                 await threadingService.ExecuteOnUiThreadAsync();
                 await ViewModel.InitAsync();
-                //ViewModel.SavedVaultsModel.Initialize(); // TODO: Remove
+
+                ViewModel.SidebarViewModel.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
+                if (ViewModel.SidebarViewModel.SelectedItem is not null)
+                    WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(ViewModel.SidebarViewModel.SelectedItem.VaultModel) { Transition = new SuppressTransitionModel() });
             });
         }
 
@@ -71,11 +74,11 @@ namespace SecureFolderFS.WinUI.Views
 
         private void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModelDeprecated.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultModel.VaultName.Equals(args.ChosenSuggestion));
             if (chosenItem is not null)
             {
                 ViewModel.SidebarViewModel.SelectedItem = chosenItem;
-                NavigateToItem(chosenItem.VaultViewModelDeprecated);
+                NavigateToItem(chosenItem.VaultModel);
             }
         }
     }

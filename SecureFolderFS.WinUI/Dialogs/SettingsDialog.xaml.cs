@@ -19,8 +19,6 @@ namespace SecureFolderFS.WinUI.Dialogs
 {
     public sealed partial class SettingsDialog : ContentDialog, IDialog<SettingsDialogViewModel>
     {
-        private bool _navigationInitialized;
-
         /// <inheritdoc/>
         public SettingsDialogViewModel ViewModel
         {
@@ -50,10 +48,8 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private void EnsureNavigationInitialized()
         {
-            if (_navigationInitialized)
+            if (Navigation.ViewModelAssociation is not null)
                 return;
-
-            _navigationInitialized = true;
 
             ViewModel.Messenger.Register(Navigation);
             Navigation.ViewModelAssociation = new()

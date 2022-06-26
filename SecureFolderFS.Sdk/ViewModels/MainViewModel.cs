@@ -15,23 +15,17 @@ namespace SecureFolderFS.Sdk.ViewModels
 
         public SidebarViewModel SidebarViewModel { get; }
 
-        public SavedVaultsModel SavedVaultsModel { get; }
-
         public BasePageViewModel? CurrentPageViewModel { get; set; }
 
         public MainViewModel()
         {
             VaultCollection = new LocalVaultCollectionModel();
             SidebarViewModel = new(VaultCollection);
-            SavedVaultsModel = new()
-            {
-                InitializableSource = SidebarViewModel
-            };
         }
 
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await SidebarViewModel.InitAsync(cancellationToken);
+            return SidebarViewModel.InitAsync(cancellationToken);
         }
     }
 }

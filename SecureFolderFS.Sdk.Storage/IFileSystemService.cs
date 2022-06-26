@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Storage.Enums;
 
 namespace SecureFolderFS.Sdk.Storage
 {
@@ -40,5 +43,29 @@ namespace SecureFolderFS.Sdk.Storage
         /// <param name="path">The path to the file.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="IFile"/> otherwise null.</returns>
         Task<IFile?> GetFileFromPathAsync(string path);
+
+        /// <summary>
+        /// Copies the storage object to the <paramref name="destinationFolder"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of storage to copy.</typeparam>
+        /// <param name="source">The storage object to copy.</param>
+        /// <param name="destinationFolder">The destination folder to copy the storage object to.</param>
+        /// <param name="options">Determines how to handle the collision in case an object with the same name already exists.</param>
+        /// <param name="progress">Reports the progress of the operation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <typeparamref name="TSource"/> of the copied object, otherwise null.</returns>
+        Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage;
+
+        /// <summary>
+        /// Moves the storage object to the <paramref name="destinationFolder"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of storage to move.</typeparam>
+        /// <param name="source">The storage object to move.</param>
+        /// <param name="destinationFolder">The destination folder to move the storage object to.</param>
+        /// <param name="options">Determines how to handle the collision in case an object with the same name already exists.</param>
+        /// <param name="progress">Reports the progress of the operation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <typeparamref name="TSource"/> of the moved object, otherwise null.</returns>
+        Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage;
     }
 }

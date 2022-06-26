@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.WinUI.Storage.WindowsStorage;
+using NameCollisionOption = SecureFolderFS.Sdk.Storage.Enums.NameCollisionOption;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -57,6 +59,20 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             {
                 return null;
             }
+        }
+
+        /// <inheritdoc/>
+        public Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options,
+            IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc/>
+        public Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options,
+            IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage
+        {
+            throw new NotSupportedException();
         }
     }
 }

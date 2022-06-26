@@ -15,10 +15,8 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SetPasswordPage : Page, IRecipient<PasswordClearRequestedMessage>, IDisposable
+    public sealed partial class SetPasswordPage : Page, IDisposable
     {
-        private bool _continueIgnore;
-
         public SetPasswordPageViewModel ViewModel
         {
             get => (SetPasswordPageViewModel)DataContext;
@@ -35,36 +33,13 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             if (e.Parameter is SetPasswordPageViewModel viewModel)
             {
                 ViewModel = viewModel;
-                ViewModel.Messenger.Register<PasswordClearRequestedMessage>(this);
                 ViewModel.InitializeWithPassword = () => new(Encoding.UTF8.GetBytes(FirstPassword.Password));
             }
 
             // Always false since passwords are not preserved
             ViewModel.DialogViewModel.PrimaryButtonEnabled = false;
-            ClearPasswords();
 
             base.OnNavigatedTo(e);
-        }
-        
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            ViewModel.Messenger.Unregister<PasswordClearRequestedMessage>(this);
-
-            _continueIgnore = true;
-            ClearPasswords();
-
-            base.OnNavigatingFrom(e);
-        }
-
-        public void Receive(PasswordClearRequestedMessage message)
-        {
-            ClearPasswords();
-        }
-
-        private void ClearPasswords()
-        {
-            FirstPassword.Password = string.Empty;
-            SecondPassword.Password = string.Empty;
         }
 
         private bool CanContinue()
@@ -74,21 +49,11 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         private void FirstPassword_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            if (_continueIgnore)
-            {
-                return;
-            }
-
             ViewModel.DialogViewModel.PrimaryButtonEnabled = CanContinue();
         }
 
         private void SecondPassword_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            if (_continueIgnore)
-            {
-                return;
-            }
-
             ViewModel.DialogViewModel.PrimaryButtonEnabled = CanContinue();
         }
 
