@@ -1,6 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -10,7 +10,6 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Models.Transitions;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages;
-using SecureFolderFS.WinUI.Views.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,7 +33,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        private ObservableObject GetViewModelForTag(int tag)
+        private INotifyPropertyChanged GetViewModelForTag(int tag)
         {
             return tag switch
             {
@@ -46,34 +45,15 @@ namespace SecureFolderFS.WinUI.Dialogs
             };
         }
 
-        private void EnsureNavigationInitialized()
-        {
-            if (Navigation.ViewModelAssociation is not null)
-                return;
-
-            ViewModel.Messenger.Register(Navigation);
-            Navigation.ViewModelAssociation = new()
-            {
-                { typeof(GeneralSettingsPageViewModel), typeof(GeneralSettingsPage) },
-                { typeof(PreferencesSettingsPageViewModel), typeof(PreferencesSettingsPage) },
-                { typeof(PrivacySettingsPageViewModel), typeof(PrivacySettingsPage) },
-                { typeof(AboutSettingsPageViewModel), typeof(AboutSettingsPage) }
-            };
-        }
-
-        private void Navigation_Loaded(object sender, RoutedEventArgs e)
-        {
-            EnsureNavigationInitialized();
-        }
-
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            EnsureNavigationInitialized();
+            if (!ViewModel.Messenger.IsRegistered<NavigationRequestedMessage>(Navigation))
+                ViewModel.Messenger.Register(Navigation);
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
-            var viewModel = GetViewModelForTag(tag);
-            ViewModel.Messenger.Send(new NavigationRequestedMessage(viewModel, new EntranceTransitionModel())); // TODO: Just for testing.
-            //Navigation.Navigate(viewModel, new EntranceTransitionModel()); // EntranceNavigationTransitionInfo
+            var viewModel =  GetViewModelForTag(tag);
+
+            Navigation.Navigate(viewModel, new EntranceTransitionModel());
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

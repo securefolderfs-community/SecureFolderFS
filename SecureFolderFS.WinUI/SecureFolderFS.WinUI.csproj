@@ -82,7 +82,7 @@
     <None Update="Assets\AppAssets\GreenShield.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Page Update="UserControls\NavigationControl.xaml">
+    <Page Update="UserControls\Navigation\NavigationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UserControls\Widgets\GraphsWidget.xaml">
