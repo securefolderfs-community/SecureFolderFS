@@ -9,13 +9,13 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class SetPasswordPageViewModel : BaseVaultWizardPageViewModel
+    public sealed class VaultWizardPasswordViewModel : BaseVaultWizardPageViewModel
     {
         private readonly IVaultCreationRoutineStep7 _step7;
 
         public Func<DisposablePassword>? InitializeWithPassword { get; set; }
 
-        public SetPasswordPageViewModel(IVaultCreationRoutineStep7 step7, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardPasswordViewModel(IVaultCreationRoutineStep7 step7, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
             _step7 = step7;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 
             var step9 = _step7.InitializeKeystoreData(InitializeWithPassword!()).ContinueKeystoreFileInitialization();
 
-            NextViewModel = new ChooseEncryptionPageViewModel(step9, Messenger, DialogViewModel);
+            NextViewModel = new VaultWizardEncryptionViewModel(step9, Messenger, DialogViewModel);
 
             Messenger.Send(new VaultWizardNavigationRequestedMessage(NextViewModel));
 

@@ -1,8 +1,10 @@
-﻿using Microsoft.UI.Xaml.Media.Animation;
+﻿using System;
+using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Models.Transitions;
 
 namespace SecureFolderFS.WinUI.Helpers
 {
+    [Obsolete("This class has been deprecated.")]
     internal static class ConversionHelpers
     {
         public static NavigationTransitionInfo? ToNavigationTransitionInfo(TransitionModel? transitionModel)

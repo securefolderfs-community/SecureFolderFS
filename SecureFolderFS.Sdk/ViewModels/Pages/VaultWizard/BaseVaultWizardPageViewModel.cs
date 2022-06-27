@@ -9,19 +9,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
     public abstract class BaseVaultWizardPageViewModel : ObservableObject, IDisposable
     {
-        public IMessenger Messenger { get; }
+        protected IMessenger Messenger { get; }
 
-        protected BaseVaultWizardPageViewModel? NextViewModel { get; set; }
-
-        public VaultWizardDialogViewModel DialogViewModel { get; }
-
-        public bool CanGoBack { get; protected init; }
+        protected VaultWizardDialogViewModel DialogViewModel { get; }
 
         protected BaseVaultWizardPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
         {
             Messenger = messenger;
             DialogViewModel = dialogViewModel;
-            CanGoBack = true;
         }
 
         public virtual void ReturnToViewModel() { }

@@ -17,9 +17,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class SetPasswordPage : Page, IDisposable
     {
-        public SetPasswordPageViewModel ViewModel
+        public VaultWizardPasswordViewModel ViewModel
         {
-            get => (SetPasswordPageViewModel)DataContext;
+            get => (VaultWizardPasswordViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -30,7 +30,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is SetPasswordPageViewModel viewModel)
+            if (e.Parameter is VaultWizardPasswordViewModel viewModel)
             {
                 ViewModel = viewModel;
                 ViewModel.InitializeWithPassword = () => new(Encoding.UTF8.GetBytes(FirstPassword.Password));

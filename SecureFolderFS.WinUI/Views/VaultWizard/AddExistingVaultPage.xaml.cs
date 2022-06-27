@@ -13,9 +13,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class AddExistingVaultPage : Page, IDisposable
     {
-        public AddExistingVaultPageViewModel ViewModel
+        public VaultWizardAddExistingViewModel ViewModel
         {
-            get => (AddExistingVaultPageViewModel)DataContext;
+            get => (VaultWizardAddExistingViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is AddExistingVaultPageViewModel viewModel)
+            if (e.Parameter is VaultWizardAddExistingViewModel viewModel)
             {
                 ViewModel = viewModel;
             }

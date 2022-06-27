@@ -2,12 +2,12 @@
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    public sealed class VaultWizardDialogViewModel : DialogViewModel, IRecipient<VaultWizardNavigationRequestedMessage>
+    public sealed class VaultWizardDialogViewModel : DialogViewModel, IRecipient<NavigationRequestedMessage<BaseVaultWizardPageViewModel>>
     {
         public IMessenger Messenger { get; }
 
@@ -15,28 +15,37 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 
         public VaultViewModelDeprecated? VaultViewModel { get; set; }
 
+        public IRelayCommand GoBackCommand { get; }
+
         public VaultWizardDialogViewModel()
         {
             Messenger = new WeakReferenceMessenger();
             Messenger.Register(this);
 
-            PrimaryButtonClickCommand = new AsyncRelayCommand<IEventDispatchFlag?>(PrimaryButtonClick);
-            SecondaryButtonClickCommand = new AsyncRelayCommand<IEventDispatchFlag?>(SecondaryButtonClick);
+            PrimaryButtonClickCommand = new AsyncRelayCommand<IEventDispatchFlag?>(PrimaryButtonClickAsync);
+            SecondaryButtonClickCommand = new AsyncRelayCommand<IEventDispatchFlag?>(SecondaryButtonClickAsync);
+            GoBackCommand = new RelayCommand(GoBack);
         }
 
-        private Task PrimaryButtonClick(IEventDispatchFlag? flag)
+        /// <inheritdoc/>
+        public void Receive(NavigationRequestedMessage<BaseVaultWizardPageViewModel> message)
+        {
+            CurrentPageViewModel = message.ViewModel;
+        }
+
+        private Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
         {
             return CurrentPageViewModel?.PrimaryButtonClick(flag) ?? Task.CompletedTask;
         }
 
-        private Task SecondaryButtonClick(IEventDispatchFlag? flag)
+        private Task SecondaryButtonClickAsync(IEventDispatchFlag? flag)
         {
             return CurrentPageViewModel?.SecondaryButtonClick(flag) ?? Task.CompletedTask;
         }
 
-        void IRecipient<VaultWizardNavigationRequestedMessage>.Receive(VaultWizardNavigationRequestedMessage message)
+        private void GoBack()
         {
-            CurrentPageViewModel = message.Value;
+            Messenger.Send(new BackNavigationRequestedMessage());
         }
     }
 }

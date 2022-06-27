@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -11,7 +12,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class ChooseVaultCreationPathPageViewModel : BaseVaultWizardPageViewModel // TODO: Refactor
+    public sealed class VaultWizardCreationPathViewModel : BaseVaultWizardPageViewModel // TODO: Refactor
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
@@ -28,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 
         public IAsyncRelayCommand BrowseForFolderCommand { get; }
 
-        public ChooseVaultCreationPathPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardCreationPathViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
             DialogViewModel.PrimaryButtonEnabled = false;
@@ -58,7 +59,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
                 .AddEncryptionAlgorithmBuilder();
 
             DialogViewModel.VaultViewModel = new(new(), PathSourceText!);
-            NextViewModel = new SetPasswordPageViewModel(step7, Messenger, DialogViewModel);
+            NextViewModel = new VaultWizardPasswordViewModel(step7, Messenger, DialogViewModel);
             Messenger.Send(new VaultWizardNavigationRequestedMessage(NextViewModel));
 
             return Task.CompletedTask;

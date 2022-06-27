@@ -67,7 +67,8 @@
                 Padding="8"
                 Background="Transparent"
                 BorderThickness="0"
-                Click="GoBack_Click">
+                Click="GoBack_Click"
+                Command="{x:Bind ViewModel.GoBackCommand, Mode=OneWay}">
                 <AnimatedIcon>
                     <AnimatedIcon.Source>
                         <animvis:AnimatedBackVisualSource />

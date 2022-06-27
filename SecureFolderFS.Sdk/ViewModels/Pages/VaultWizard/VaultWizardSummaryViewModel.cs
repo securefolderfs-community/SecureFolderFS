@@ -3,11 +3,11 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardFinishPageViewModel : BaseVaultWizardPageViewModel
+    public sealed class VaultWizardSummaryViewModel : BaseVaultWizardPageViewModel
     {
         public string VaultName { get; }
 
-        public VaultWizardFinishPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardSummaryViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
             CanGoBack = false;

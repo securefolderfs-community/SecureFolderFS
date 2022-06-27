@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.WinUI.Serialization;
+using SecureFolderFS.WinUI.AppModels;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.Settings
 {

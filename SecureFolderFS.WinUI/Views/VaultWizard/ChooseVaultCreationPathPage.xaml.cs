@@ -13,9 +13,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class ChooseVaultCreationPathPage : Page, IDisposable
     {
-        public ChooseVaultCreationPathPageViewModel ViewModel
+        public VaultWizardCreationPathViewModel ViewModel
         {
-            get => (ChooseVaultCreationPathPageViewModel)DataContext;
+            get => (VaultWizardCreationPathViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is ChooseVaultCreationPathPageViewModel viewModel)
+            if (e.Parameter is VaultWizardCreationPathViewModel viewModel)
             {
                 ViewModel = viewModel;
             }

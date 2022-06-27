@@ -9,7 +9,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class ChooseEncryptionPageViewModel : BaseVaultWizardPageViewModel
+    public sealed class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel
     {
         private readonly IVaultCreationRoutineStep9 _step9;
 
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             set => SetProperty(ref _SelectedFileNameEncryptionIndex, value);
         }
 
-        public ChooseEncryptionPageViewModel(IVaultCreationRoutineStep9 step9, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardEncryptionViewModel(IVaultCreationRoutineStep9 step9, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
             _step9 = step9;
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
                 .Finalize()
                 .Deploy();
 
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardFinishPageViewModel(Messenger, DialogViewModel)));
+            Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardSummaryViewModel(Messenger, DialogViewModel)));
 
             return Task.CompletedTask;
         }

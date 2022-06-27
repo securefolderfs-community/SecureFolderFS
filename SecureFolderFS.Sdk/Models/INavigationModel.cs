@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Models
 {
-    public interface INavigationModel
+    public interface INavigationModel // TODO: Still used?
     {
         void ResetNavigation();
 

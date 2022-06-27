@@ -13,7 +13,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class AddExistingVaultPageViewModel : BaseVaultWizardPageViewModel // TODO: Refactor
+    public sealed class VaultWizardAddExistingViewModel : BaseVaultWizardPageViewModel // TODO: Refactor
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 
         public IAsyncRelayCommand BrowseForFolderCommand { get; }
 
-        public AddExistingVaultPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardAddExistingViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
             DialogViewModel.PrimaryButtonEnabled = false;
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             flag?.NoForwarding();
             
             DialogViewModel.VaultViewModel = new(new(), Path.GetDirectoryName(PathSourceText!)!);
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardFinishPageViewModel(Messenger, DialogViewModel)));
+            Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardSummaryViewModel(Messenger, DialogViewModel)));
 
             return Task.CompletedTask;
         }

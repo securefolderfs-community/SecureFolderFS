@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 
-namespace SecureFolderFS.WinUI.Serialization
+namespace SecureFolderFS.WinUI.AppModels
 {
     /// <summary>
     /// Manages a settings node of shared settings.

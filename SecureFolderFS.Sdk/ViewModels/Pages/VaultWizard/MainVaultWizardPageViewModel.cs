@@ -1,17 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardMainPageViewModel : BaseVaultWizardPageViewModel
+    public sealed class MainVaultWizardPageViewModel : BaseVaultWizardPageViewModel
     {
         public IRelayCommand AddExistingVaultCommand { get; }
 
         public IRelayCommand CreateNewVaultCommand { get; }
 
-        public VaultWizardMainPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public MainVaultWizardPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
             AddExistingVaultCommand = new RelayCommand(AddExistingVault);
@@ -20,12 +20,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 
         private void AddExistingVault()
         {
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new AddExistingVaultPageViewModel(Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardAddExistingViewModel(Messenger, DialogViewModel)));
         }
 
         private void CreateNewVault()
         {
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new ChooseVaultCreationPathPageViewModel(Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardCreationPathViewModel(Messenger, DialogViewModel)));
         }
     }
 }

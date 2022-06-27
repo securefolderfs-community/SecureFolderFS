@@ -14,6 +14,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
+        private IVaultsSettingsService VaultsSettingsService { get; } = Ioc.Default.GetRequiredService<IVaultsSettingsService>();
+
         public IAsyncRelayCommand AddNewVaultCommand { get; }
 
         public IAsyncRelayCommand OpenSettingsCommand { get; }
@@ -27,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         private async Task AddNewVaultAsync()
         {
             await DialogService.ShowDialogAsync(new VaultWizardDialogViewModel());
-            await SettingsService.SaveSettingsAsync();
+            await VaultsSettingsService.SaveSettingsAsync();
         }
 
         private async Task OpenSettingsAsync()

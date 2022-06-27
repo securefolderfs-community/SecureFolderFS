@@ -41,7 +41,7 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         public async void Receive(VaultWizardNavigationRequestedMessage message)
         {
-            if (message.Value is VaultWizardMainPageViewModel)
+            if (message.Value is MainVaultWizardPageViewModel)
             {
                 await NavigateAsync(message.Value, new SuppressNavigationTransitionInfo());
             }
@@ -55,27 +55,27 @@ namespace SecureFolderFS.WinUI.Dialogs
         {
             switch (viewModel)
             {
-                case VaultWizardMainPageViewModel:
+                case MainVaultWizardPageViewModel:
                     ContentFrame.Navigate(typeof(VaultWizardMainPage), viewModel, transition);
                     break;
 
-                case AddExistingVaultPageViewModel:
+                case VaultWizardAddExistingViewModel:
                     ContentFrame.Navigate(typeof(AddExistingVaultPage), viewModel, transition);
                     break;
 
-                case ChooseVaultCreationPathPageViewModel:
+                case VaultWizardCreationPathViewModel:
                     ContentFrame.Navigate(typeof(ChooseVaultCreationPathPage), viewModel, transition);
                     break;
 
-                case SetPasswordPageViewModel:
+                case VaultWizardPasswordViewModel:
                     ContentFrame.Navigate(typeof(SetPasswordPage), viewModel, transition);
                     break;
 
-                case ChooseEncryptionPageViewModel:
+                case VaultWizardEncryptionViewModel:
                     ContentFrame.Navigate(typeof(ChooseEncryptionPage), viewModel, transition);
                     break;
 
-                case VaultWizardFinishPageViewModel:
+                case VaultWizardSummaryViewModel:
                     ContentFrame.Navigate(typeof(VaultWizardFinishPage), viewModel, transition);
                     break;
             }
@@ -87,32 +87,32 @@ namespace SecureFolderFS.WinUI.Dialogs
         {
             switch (viewModel)
             {
-                case VaultWizardMainPageViewModel:
+                case MainVaultWizardPageViewModel:
                     TitleText.Text = "Add new vault";
                     PrimaryButtonText = string.Empty;
                     break;
 
-                case AddExistingVaultPageViewModel:
+                case VaultWizardAddExistingViewModel:
                     TitleText.Text = "Add existing vault";
                     PrimaryButtonText = "Continue";
                     break;
 
-                case ChooseVaultCreationPathPageViewModel:
+                case VaultWizardCreationPathViewModel:
                     TitleText.Text = "Create new vault";
                     PrimaryButtonText = "Continue";
                     break;
 
-                case SetPasswordPageViewModel:
+                case VaultWizardPasswordViewModel:
                     TitleText.Text = "Set password";
                     PrimaryButtonText = "Continue";
                     break;
 
-                case ChooseEncryptionPageViewModel:
+                case VaultWizardEncryptionViewModel:
                     TitleText.Text = "Choose encryption";
                     PrimaryButtonText = "Continue";
                     break;
 
-                case VaultWizardFinishPageViewModel:
+                case VaultWizardSummaryViewModel:
                     TitleText.Text = "Summary";
                     PrimaryButtonText = "Close";
                     SecondaryButtonText = string.Empty;
@@ -147,7 +147,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         private void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Messenger.Register<VaultWizardNavigationRequestedMessage>(this);
-            ViewModel.Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardMainPageViewModel(ViewModel.Messenger, ViewModel)));
+            ViewModel.Messenger.Send(new VaultWizardNavigationRequestedMessage(new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel)));
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

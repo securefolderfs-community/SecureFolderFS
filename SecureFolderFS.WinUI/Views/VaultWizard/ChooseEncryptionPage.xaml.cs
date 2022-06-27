@@ -13,9 +13,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class ChooseEncryptionPage : Page, IDisposable
     {
-        public ChooseEncryptionPageViewModel ViewModel
+        public VaultWizardEncryptionViewModel ViewModel
         {
-            get => (ChooseEncryptionPageViewModel)DataContext;
+            get => (VaultWizardEncryptionViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is ChooseEncryptionPageViewModel viewModel)
+            if (e.Parameter is VaultWizardEncryptionViewModel viewModel)
             {
                 ViewModel = viewModel;
             }

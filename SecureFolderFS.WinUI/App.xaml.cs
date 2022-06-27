@@ -13,8 +13,8 @@ using Windows.Storage;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.WinUI.AppModels;
 using SecureFolderFS.WinUI.ServiceImplementation.Settings;
-using SecureFolderFS.WinUI.Serialization;
 using SecureFolderFS.WinUI.Storage.NativeStorage;
 using SecureFolderFS.WinUI.Storage.WindowsStorage;
 
@@ -127,8 +127,7 @@ namespace SecureFolderFS.WinUI
         }
 
         private static TSettingsService GetSettingsService<TSettingsService>(IServiceProvider serviceProvider,
-            Func<ISettingsDatabaseModel, ISettingsModel, TSettingsService> initializer)
-            where TSettingsService : SharedSettingsModel
+            Func<ISettingsDatabaseModel, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
         {
             var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
             return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl!);

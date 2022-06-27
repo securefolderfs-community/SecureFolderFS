@@ -18,9 +18,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class VaultWizardFinishPage : Page, IDisposable
     {
-        public VaultWizardFinishPageViewModel ViewModel
+        public VaultWizardSummaryViewModel ViewModel
         {
-            get => (VaultWizardFinishPageViewModel)DataContext;
+            get => (VaultWizardSummaryViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -36,7 +36,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardFinishPageViewModel viewModel)
+            if (e.Parameter is VaultWizardSummaryViewModel viewModel)
             {
                 ViewModel = viewModel;
             }

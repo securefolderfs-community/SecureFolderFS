@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.Models
         Task<DialogResult> ShowAsync();
 
         /// <summary>
-        /// Hides the dialog if open.
+        /// Hides the dialog if it is open.
         /// </summary>
         void Hide();
     }

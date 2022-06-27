@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using SecureFolderFS.Sdk.Models.Transitions;
 
 namespace SecureFolderFS.Sdk.Messages.Navigation
 {
@@ -15,23 +14,17 @@ namespace SecureFolderFS.Sdk.Messages.Navigation
         /// </summary>
         public TViewModel ViewModel { get; }
 
-        /// <summary>
-        /// Gets the transition that is applied when navigating.
-        /// </summary>
-        public TransitionModel? Transition { get; }
-
-        public NavigationRequestedMessage(TViewModel viewModel, TransitionModel? transition = null)
+        public NavigationRequestedMessage(TViewModel viewModel)
         {
             ViewModel = viewModel;
-            Transition = transition;
         }
     }
 
     /// <inheritdoc cref="NavigationRequestedMessage{TViewModel}"/>
     public class NavigationRequestedMessage : NavigationRequestedMessage<INotifyPropertyChanged>
     {
-        public NavigationRequestedMessage(INotifyPropertyChanged viewModel, TransitionModel? transition = null)
-            : base(viewModel, transition)
+        public NavigationRequestedMessage(INotifyPropertyChanged viewModel)
+            : base(viewModel)
         {
         }
     }
