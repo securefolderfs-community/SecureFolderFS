@@ -3,12 +3,12 @@
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
-    /// Represents a single language model.
+    /// Represents a language.
     /// </summary>
     public interface ILanguageModel
     {
         /// <summary>
-        /// Gets the language tag associated with the culture.
+        /// Gets the unique language tag associated with the culture.
         /// </summary>
         string LanguageTag { get; }
 

@@ -11,10 +11,10 @@ using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
 using Windows.Storage;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.WinUI.AppModels;
-using SecureFolderFS.WinUI.ServiceImplementation.Settings;
+using SecureFolderFS.WinUI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.WinUI.Storage.NativeStorage;
 using SecureFolderFS.WinUI.Storage.WindowsStorage;
 
@@ -79,12 +79,12 @@ namespace SecureFolderFS.WinUI
 
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder.GetFilePool()))
+                .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder.GetFilePool()))
                 .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder.GetFilePool()))
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder.GetFilePool()))
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
                 .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
-                .AddSingleton<ISecretSettingsService, SecretSettingsService>(_ => new SecretSettingsService(settingsFolder.GetFilePool()!))
 
                 .AddTransient<ITimerService, TimerService>()
                 .AddSingleton<IFileSystemService, NativeFileSystemService>()

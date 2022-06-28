@@ -7,7 +7,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
-        <Frame x:Name="ContentFrame" x:FieldModifier="protected" />
-    </Grid>
+    <Frame x:Name="ContentFrame" x:FieldModifier="protected" />
 </UserControl>

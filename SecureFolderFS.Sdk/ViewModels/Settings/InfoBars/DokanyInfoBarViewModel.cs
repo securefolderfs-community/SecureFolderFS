@@ -18,9 +18,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.InfoBars
             OpenWebsiteCommand = new AsyncRelayCommand(OpenWebsiteAsync);
         }
 
-        private async Task OpenWebsiteAsync()
+        private Task OpenWebsiteAsync()
         {
-            await ApplicationService.OpenUriAsync(new Uri(Constants.FileSystems.DOKANY_EXTERNAL_LINK));
+            return ApplicationService.OpenUriAsync(new Uri(Constants.FileSystems.DOKANY_EXTERNAL_LINK));
         }
     }
 }

@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Settings.InfoBars;
 

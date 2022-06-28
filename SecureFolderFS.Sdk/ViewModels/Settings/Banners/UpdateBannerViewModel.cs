@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 
 namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
-    /// A service to consume app related APIs.
+    /// A service that interacts with common app related APIs.
     /// </summary>
     public interface IApplicationService
     {

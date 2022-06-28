@@ -1,0 +1,92 @@
+﻿<Page
+    x:Class="SecureFolderFS.WinUI.Views.Vault.VaultOverviewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
+    xmlns:ucw="using:SecureFolderFS.WinUI.UserControls.Widgets"
+    NavigationCacheMode="Disabled"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <Grid RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!--  Vault Health  -->
+            <uc:VaultHealthControl
+                Grid.Row="0"
+                OpenVaultHealthCommand="{x:Bind ViewModel.VaultHealthWidgetViewModel.OpenVaultHealthCommand, Mode=OneWay}"
+                StartScanningCommand="{x:Bind ViewModel.VaultHealthWidgetViewModel.StartScanningCommand, Mode=OneWay}"
+                VaultHealthLastCheckedDate="{x:Bind ViewModel.VaultHealthWidgetViewModel.VaultHealthLastCheckedDate, Mode=OneWay}"
+                VaultHealthState="{x:Bind ViewModel.VaultHealthWidgetViewModel.VaultHealthState, Mode=OneWay}" />
+
+            <InfoBar Grid.Row="1" Visibility="Collapsed" />
+
+            <!--  Read/Write Graphs  -->
+            <ucw:GraphsWidget
+                x:Name="Graphs"
+                Grid.Row="2"
+                ReadGraphData="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.Data, Mode=OneWay}"
+                ReadGraphIsExtended="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.IsExtended, Mode=TwoWay}"
+                ReadGraphLoaded="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.IsReady, Mode=TwoWay}"
+                ReadGraphSubheader="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
+                WriteGraphData="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.Data, Mode=OneWay}"
+                WriteGraphIsExtended="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.IsExtended, Mode=TwoWay}"
+                WriteGraphLoaded="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.IsReady, Mode=TwoWay}"
+                WriteGraphSubheader="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
+
+            <!--  Vault options  -->
+            <StackPanel Grid.Row="3" Spacing="4">
+                <!--  Open in File Explorer  -->
+                <ucab:ActionBlockControl
+                    Title="View vault"
+                    ClickCommand="{x:Bind ViewModel.ShowInFileExplorerCommand}"
+                    Description="Show this vault in File Explorer"
+                    IsClickable="True">
+                    <ucab:ActionBlockControl.Icon>
+                        <FontIcon Glyph="&#xEC50;" />
+                    </ucab:ActionBlockControl.Icon>
+                    <ucab:ActionBlockControl.ActionElement>
+                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                    </ucab:ActionBlockControl.ActionElement>
+                </ucab:ActionBlockControl>
+
+                <!--  Lock vault  -->
+                <ucab:ActionBlockControl
+                    Title="Lock vault"
+                    ClickCommand="{x:Bind ViewModel.LockVaultCommand}"
+                    Description="Securely lock this vault and close the dashboard"
+                    IsClickable="True">
+                    <ucab:ActionBlockControl.Icon>
+                        <FontIcon Glyph="&#xE72E;" />
+                    </ucab:ActionBlockControl.Icon>
+                    <ucab:ActionBlockControl.ActionElement>
+                        <FontIcon FontSize="14" Glyph="&#xE7E8;" />
+                    </ucab:ActionBlockControl.ActionElement>
+                </ucab:ActionBlockControl>
+
+                <!--  Vault information  -->
+                <ucab:ActionBlockControl
+                    Title="Vault properties"
+                    ClickCommand="{x:Bind ViewModel.OpenVaultPropertiesCommand}"
+                    Description="View information about this vault"
+                    IsClickable="True">
+                    <ucab:ActionBlockControl.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </ucab:ActionBlockControl.Icon>
+                    <ucab:ActionBlockControl.ActionElement>
+                        <FontIcon FontSize="14" Glyph="&#xE76C;" />
+                    </ucab:ActionBlockControl.ActionElement>
+                </ucab:ActionBlockControl>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

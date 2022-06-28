@@ -3,6 +3,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.WinUI.Helpers
 {
+    /// <inheritdoc cref="IEventDispatchFlag"/>
     internal sealed class EventDispatchFlagHelper : IEventDispatchFlag
     {
         private readonly Action _flagCallback;
@@ -12,6 +13,7 @@ namespace SecureFolderFS.WinUI.Helpers
             _flagCallback = flagCallback;
         }
 
+        /// <inheritdoc/>
         public void NoForwarding()
         {
             _flagCallback();

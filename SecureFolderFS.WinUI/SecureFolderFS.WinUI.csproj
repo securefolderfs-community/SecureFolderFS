@@ -46,12 +46,12 @@
     <None Remove="Views\VaultDashboardPropertiesPage.xaml" />
     <None Remove="Views\VaultLoginPage.xaml" />
     <None Remove="Views\VaultMainDashboardPage.xaml" />
-    <None Remove="Views\VaultWizard\AddExistingVaultPage.xaml" />
-    <None Remove="Views\VaultWizard\ChooseEncryptionPage.xaml" />
-    <None Remove="Views\VaultWizard\ChooseVaultCreationPathPage.xaml" />
-    <None Remove="Views\VaultWizard\SetPasswordPage.xaml" />
-    <None Remove="Views\VaultWizard\VaultWizardFinishPage.xaml" />
-    <None Remove="Views\VaultWizard\VaultWizardMainPage.xaml" />
+    <None Remove="Views\VaultWizard\AddExistingWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\CreationPathWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\EncryptionWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\MainWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\PasswordWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,9 +97,9 @@
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
-    <PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.58" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
+    <PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.61" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -149,22 +149,22 @@
     <Page Update="Views\Settings\AboutSettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\VaultWizard\ChooseEncryptionPage.xaml">
+    <Page Update="Views\VaultWizard\EncryptionWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\VaultWizard\SetPasswordPage.xaml">
+    <Page Update="Views\VaultWizard\PasswordWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\VaultWizard\VaultWizardFinishPage.xaml">
+    <Page Update="Views\VaultWizard\SummaryWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\VaultWizard\ChooseVaultCreationPathPage.xaml">
+    <Page Update="Views\VaultWizard\CreationPathWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\VaultWizard\AddExistingVaultPage.xaml">
+    <Page Update="Views\VaultWizard\AddExistingWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\VaultWizard\VaultWizardMainPage.xaml">
+    <Page Update="Views\VaultWizard\MainWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Dialogs\VaultWizardDialog.xaml">
@@ -187,12 +187,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Vault\VaultDashboardPropertiesPage.xaml">
+    <Page Update="Views\Vault\VaultPropertiesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Vault\VaultMainDashboardPage.xaml">
+    <Page Update="Views\Vault\VaultOverviewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

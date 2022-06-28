@@ -60,11 +60,11 @@ namespace SecureFolderFS.WinUI.Dialogs
                     break;
 
                 case VaultWizardAddExistingViewModel:
-                    ContentFrame.Navigate(typeof(AddExistingVaultPage), viewModel, transition);
+                    ContentFrame.Navigate(typeof(AddExistingPage), viewModel, transition);
                     break;
 
                 case VaultWizardCreationPathViewModel:
-                    ContentFrame.Navigate(typeof(ChooseVaultCreationPathPage), viewModel, transition);
+                    ContentFrame.Navigate(typeof(CreationPathPage), viewModel, transition);
                     break;
 
                 case VaultWizardPasswordViewModel:

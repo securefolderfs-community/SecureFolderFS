@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
-        private IVaultsSettingsService VaultsSettingsService { get; } = Ioc.Default.GetRequiredService<IVaultsSettingsService>();
+        private ISavedVaultsService VaultsSettingsService { get; } = Ioc.Default.GetRequiredService<ISavedVaultsService>();
 
         public IAsyncRelayCommand AddNewVaultCommand { get; }
 

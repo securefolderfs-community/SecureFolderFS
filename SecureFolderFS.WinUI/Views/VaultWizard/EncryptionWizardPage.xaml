@@ -1,0 +1,34 @@
+﻿<Page
+    x:Class="SecureFolderFS.WinUI.Views.VaultWizard.EncryptionWizardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Views.VaultWizard"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="464"
+    mc:Ignorable="d">
+
+    <Grid RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Spacing="4">
+            <TextBlock Text="Data encryption" />
+            <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedDataEncryptionIndex, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <ComboBoxItem Content="XChaCha20-Poly1305 (Default)" />
+                <ComboBoxItem Content="AES-GCM" />
+                <ComboBoxItem Content="AES-CTR + HMAC-SHA256" />
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Spacing="4">
+            <TextBlock Text="File name encryption" />
+            <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedFileNameEncryptionIndex, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <ComboBoxItem Content="AES-SIV (Default)" />
+                <ComboBoxItem Content="None" />
+            </ComboBox>
+        </StackPanel>
+    </Grid>
+</Page>

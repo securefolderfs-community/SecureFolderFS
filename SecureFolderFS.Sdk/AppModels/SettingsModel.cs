@@ -24,11 +24,6 @@ namespace SecureFolderFS.Sdk.AppModels
         public virtual bool IsAvailable { get; protected set; }
 
         /// <summary>
-        /// Gets the name of the settings store.
-        /// </summary>
-        protected abstract string? SettingsStorageName { get; }
-
-        /// <summary>
         /// Gets a value of a setting defined by <paramref name="settingName"/>.
         /// </summary>
         /// <typeparam name="T">The type of value.</typeparam>

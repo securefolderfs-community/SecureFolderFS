@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
 
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.AppModels
         private bool _vaultsLoaded;
         private readonly List<IVaultModel> _vaults;
 
-        private IVaultsSettingsService VaultsSettingsService { get; } = Ioc.Default.GetRequiredService<IVaultsSettingsService>();
+        private ISavedVaultsService VaultsSettingsService { get; } = Ioc.Default.GetRequiredService<ISavedVaultsService>();
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
