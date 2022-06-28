@@ -1,37 +1,20 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
+﻿using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardCreationPathViewModel : BaseVaultWizardPageViewModel // TODO: Refactor
+    public sealed class VaultWizardCreationPathViewModel : VaultWizardPathSelectionBaseViewModel<IFolder>
     {
-        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
-
-        private string? _PathSourceText;
-        public string? PathSourceText
-        {
-            get => _PathSourceText;
-            set
-            {
-                if (SetProperty(ref _PathSourceText, value))
-                    DialogViewModel.PrimaryButtonEnabled = CheckAvailability(value);
-            }
-        }
-
-        public IAsyncRelayCommand BrowseForFolderCommand { get; }
+        private VaultWizardPasswordViewModel? _nextViewModel;
 
         public VaultWizardCreationPathViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            DialogViewModel.PrimaryButtonEnabled = false;
-            BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
         }
 
         public override Task PrimaryButtonClick(IEventDispatchFlag? flag)
@@ -39,22 +22,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             // Cancel the confirm button
             flag?.NoForwarding();
 
-            // We've already got the next view model
-            if (NextViewModel is not null)
+            // We've already initialized the data
+            if (_nextViewModel is not null)
             {
-                Messenger.Send(new VaultWizardNavigationRequestedMessage(NextViewModel));
+                Messenger.Send(new NavigationRequestedMessage<VaultWizardPasswordViewModel>(_nextViewModel));
                 return Task.CompletedTask;
             }
 
             // Continue with initialization
             var step7 = VaultRoutines.NewVaultCreationRoutine()
                 .EstablishRoutine()
-                .SetVaultPath(new(PathSourceText))
+                .SetVaultPath(new(SelectedLocation!.Path))
                 .AddFileOperations()
                 .CreateConfigurationFile()
                 .CreateKeystoreFile()
                 .CreateContentFolder()
                 .AddEncryptionAlgorithmBuilder();
+
+            _nextViewModel = new(SelectedLocation, step7, Messenger, DialogViewModel);
+
 
             DialogViewModel.VaultViewModel = new(new(), PathSourceText!);
             NextViewModel = new VaultWizardPasswordViewModel(step7, Messenger, DialogViewModel);
@@ -63,25 +49,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.CompletedTask;
         }
 
-        public override void ReturnToViewModel()
+        public override Task<bool> SetLocation(IFolder storage)
         {
-            DialogViewModel.PrimaryButtonEnabled = CheckAvailability(PathSourceText);
+            LocationPath = storage.Path;
+            SelectedLocation = storage;
+            DialogViewModel.PrimaryButtonEnabled = true;
+
+            return Task.FromResult(true);
         }
 
-        private async Task BrowseForFolder()
+        protected override async Task BrowseLocationAsync()
         {
             var folder = await FileExplorerService.PickSingleFolderAsync();
-            PathSourceText = folder?.Path ?? PathSourceText;
-        }
-
-        private static bool CheckAvailability(string? path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                return false;
-            }
-
-            return Directory.Exists(path);
+            if (folder is not null)
+                await SetLocation(folder);
         }
     }
 }

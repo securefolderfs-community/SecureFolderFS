@@ -23,12 +23,15 @@
             </Grid.ColumnDefinitions>
 
             <TextBox
+                x:Name="TextInput"
                 Grid.Column="0"
+                LostFocus="TextInput_LostFocus"
                 PlaceholderText="Vault path"
-                Text="{x:Bind ViewModel.PathSourceText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                Text="{x:Bind ViewModel.LocationPath, Mode=OneWay}"
+                TextChanged="TextInput_TextChanged" />
             <Button
                 Grid.Column="1"
-                Command="{x:Bind ViewModel.BrowseForFolderCommand}"
+                Command="{x:Bind ViewModel.BrowseLocationCommand}"
                 Content="Browse" />
         </Grid>
     </Grid>

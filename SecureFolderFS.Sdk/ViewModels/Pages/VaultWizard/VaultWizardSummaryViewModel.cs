@@ -1,4 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
@@ -7,14 +10,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
     {
         public string VaultName { get; }
 
-        public VaultWizardSummaryViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardSummaryViewModel(IFolder vaultFolder, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            CanGoBack = false;
             DialogViewModel.PrimaryButtonEnabled = true;
-            VaultName = DialogViewModel.VaultViewModel!.VaultName;
 
-            WeakReferenceMessenger.Default.Send(new AddVaultRequestedMessageDeprecated(DialogViewModel.VaultViewModel));
+            var vaultModel = new VaultModel(vaultFolder);
+            VaultName = vaultModel.VaultName;
+            WeakReferenceMessenger.Default.Send(new AddVaultMessage(vaultModel));
         }
     }
 }

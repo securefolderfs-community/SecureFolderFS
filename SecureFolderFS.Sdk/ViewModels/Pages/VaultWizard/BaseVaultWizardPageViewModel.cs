@@ -19,8 +19,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             DialogViewModel = dialogViewModel;
         }
 
-        public virtual void ReturnToViewModel() { }
-
         public virtual Task PrimaryButtonClick(IEventDispatchFlag? flag) => Task.CompletedTask;
 
         public virtual Task SecondaryButtonClick(IEventDispatchFlag? flag) => Task.CompletedTask;

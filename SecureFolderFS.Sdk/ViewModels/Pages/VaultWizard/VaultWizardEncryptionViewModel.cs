@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.VaultCreator.Routine;
+using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
     public sealed class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel
     {
+        private readonly IFolder _vaultFolder;
         private readonly IVaultCreationRoutineStep9 _step9;
 
         private int _SelectedDataEncryptionIndex;
@@ -27,11 +29,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             set => SetProperty(ref _SelectedFileNameEncryptionIndex, value);
         }
 
-        public VaultWizardEncryptionViewModel(IVaultCreationRoutineStep9 step9, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardEncryptionViewModel(IFolder vaultFolder, IVaultCreationRoutineStep9 step9, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
+            _vaultFolder = vaultFolder;
             _step9 = step9;
-            CanGoBack = false;
 
             DialogViewModel.PrimaryButtonEnabled = true;
             DialogViewModel.SecondaryButtonText = null; // Don't show the option to cancel the dialog
@@ -54,15 +56,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
                 1 => FileNameCipherScheme.None,
                 _ => throw new ArgumentOutOfRangeException(nameof(SelectedFileNameEncryptionIndex))
             };
-
             _step9.SetContentCipherScheme(contentCipher)
                 .SetFileNameCipherScheme(nameCipher)
                 .ContinueConfigurationFileInitialization()
                 .Finalize()
                 .Deploy();
 
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardSummaryViewModel(Messenger, DialogViewModel)));
-
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(_vaultFolder, Messenger, DialogViewModel)));
             return Task.CompletedTask;
         }
 

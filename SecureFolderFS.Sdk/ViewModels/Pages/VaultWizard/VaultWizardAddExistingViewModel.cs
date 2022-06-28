@@ -1,74 +1,55 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
+using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardAddExistingViewModel : BaseVaultWizardPageViewModel // TODO: Refactor
+    public sealed class VaultWizardAddExistingViewModel : VaultWizardPathSelectionBaseViewModel<IFolder>
     {
-        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
-
-        private string? _PathSourceText;
-        public string? PathSourceText
-        {
-            get => _PathSourceText;
-            set
-            {
-                if (SetProperty(ref _PathSourceText, value))
-                    DialogViewModel.PrimaryButtonEnabled = CheckAvailability(value);
-            }
-        }
-
-        public IAsyncRelayCommand BrowseForFolderCommand { get; }
-
         public VaultWizardAddExistingViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            DialogViewModel.PrimaryButtonEnabled = false;
-            BrowseForFolderCommand = new AsyncRelayCommand(BrowseForFolder);
         }
 
         public override Task PrimaryButtonClick(IEventDispatchFlag? flag)
         {
             flag?.NoForwarding();
-            
-            DialogViewModel.VaultViewModel = new(new(), Path.GetDirectoryName(PathSourceText!)!);
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(new VaultWizardSummaryViewModel(Messenger, DialogViewModel)));
 
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(SelectedLocation!, Messenger, DialogViewModel)));
             return Task.CompletedTask;
         }
 
-        private async Task BrowseForFolder()
+        public override async Task<bool> SetLocation(IFolder storage)
         {
-            var file = await FileExplorerService.PickSingleFileAsync(new List<string>() { Path.GetExtension(SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME) });
-            PathSourceText = file?.Path ?? PathSourceText;
+            var file = await storage.GetFileAsync(SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME);
+            if (file is null)
+                return false;
+
+            await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read);
+            var vaultConfig = RawVaultConfiguration.Load(stream);
+            var isSupported = VaultVersion.IsVersionSupported(vaultConfig);
+            if (isSupported)
+            {
+                LocationPath = storage.Path;
+                SelectedLocation = storage;
+                DialogViewModel.PrimaryButtonEnabled = true;
+                return true;
+            }
+
+            return false;
         }
 
-        private bool CheckAvailability(string? path)
+        protected override async Task BrowseLocationAsync()
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                return false;
-            }
-
-            path = Path.Combine(Path.GetDirectoryName(path)!, SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME);
-            if (File.Exists(path))
-            {
-                using var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-                var rawVaultConfiguration = RawVaultConfiguration.Load(fileStream);
-                return VaultVersion.IsVersionSupported((VaultVersion)rawVaultConfiguration);
-            }
-            
-            return false;
+            var folder = await FileExplorerService.PickSingleFolderAsync();
+            if (folder is not null)
+                await SetLocation(folder);
         }
     }
 }
