@@ -1,21 +1,36 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Core.Instance;
 using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault
 {
-    public class VaultViewModel : ObservableObject
+    /// <summary>
+    /// Represents the view model of an unlocked vault.
+    /// </summary>
+    public sealed class VaultViewModel : ObservableObject
     {
+        /// <summary>
+        /// Gets the vault model associated with the vault.
+        /// </summary>
         public IVaultModel VaultModel { get; }
 
-        public VaultHealthViewModel VaultHealthViewModel { get; }
+        /// <summary>
+        /// Gets the vault health model used to report status on the vault.
+        /// </summary>
+        public IVaultHealthModel VaultHealthModel { get; }
 
-        public string VaultName { get; }
+        /// <summary>
+        /// Gets the instance of the encrypting file system associated with this vault.
+        /// </summary>
+        [Obsolete("Use IEncryptedFileSystemService (maybe?)")]
+        public IVaultInstance? VaultInstance { get; }
 
-        public VaultViewModel(IVaultModel vaultModel)
+        public VaultViewModel(IVaultModel vaultModel, IVaultInstance vaultInstance, IVaultHealthModel vaultHealthModel)
         {
             VaultModel = vaultModel;
-            VaultHealthViewModel = new();
-            VaultName = vaultModel.Folder.Name;
+            VaultInstance = vaultInstance;
+            VaultHealthModel = vaultHealthModel;
         }
     }
 }

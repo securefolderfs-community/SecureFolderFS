@@ -2,14 +2,14 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Models.Transitions;
+using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.ViewModels.Dashboard.Widgets;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.Dashboard
+namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
     public sealed class VaultOverviewPageViewModel : BaseDashboardPageViewModel
     {
@@ -17,35 +17,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Dashboard
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
-        public VaultHealthWidgetViewModel VaultHealthWidgetViewModel { get; }
-
-        public GraphsWidgetViewModel GraphsWidgetViewModel { get; }
+        public WidgetsListViewModel WidgetsViewModel { get; }
 
         public IAsyncRelayCommand ShowInFileExplorerCommand { get; }
 
-        public IRelayCommand LockVaultCommand { get; }
+        public IAsyncRelayCommand LockVaultCommand { get; }
 
         public IRelayCommand OpenVaultPropertiesCommand { get; }
 
-        public VaultOverviewPageViewModel(IMessenger messenger, VaultViewModelDeprecated vaultViewModel)
-            : base(messenger, vaultViewModel, VaultDashboardPageType.MainDashboardPage)
+        public VaultOverviewPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
+            : base(messenger, vaultViewModel)
         {
-            VaultHealthWidgetViewModel = new();
-            GraphsWidgetViewModel = new();
-            NavigationItemViewModel = new()
-            {
-                Index = 0,
-                NavigationAction = first => Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.MainDashboardPage, VaultViewModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToRight) }),
-                SectionName = vaultViewModel.VaultName
-            };
-            GraphsWidgetViewModel.StartReporting();
+            WidgetsViewModel = new();
 
-            ShowInFileExplorerCommand = new AsyncRelayCommand(ShowInFileExplorer);
-            LockVaultCommand = new RelayCommand(LockVault);
+            ShowInFileExplorerCommand = new AsyncRelayCommand(OpenFolderAsync);
+            LockVaultCommand = new AsyncRelayCommand(LockVaultAsync);
             OpenVaultPropertiesCommand = new RelayCommand(OpenVaultProperties);
         }
 
-        private async Task ShowInFileExplorer()
+        private async Task OpenFolderAsync()
         {
             if (VaultViewModel.VaultInstance is not null)
             {
@@ -57,7 +47,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Dashboard
             }
         }
 
-        private void LockVault()
+        private async Task LockVaultAsync()
         {
             VaultViewModel.VaultInstance?.Dispose();
             VaultViewModel.VaultInstance = null;
@@ -67,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Dashboard
 
         private void OpenVaultProperties()
         {
-            Messenger.Send(new DashboardNavigationRequestedMessage(VaultDashboardPageType.DashboardPropertiesPage, VaultViewModel) { Transition = new SlideTransitionModel(SlideTransitionDirection.ToLeft)});
+            Messenger.Send(new NavigationRequestedMessage(new VaultPropertiesPageViewModel(Messenger, VaultViewModel)));
         }
     }
 }

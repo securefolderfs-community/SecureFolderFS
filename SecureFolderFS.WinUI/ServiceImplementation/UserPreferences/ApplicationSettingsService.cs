@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Storage.StoragePool;
-using System;
 using SecureFolderFS.Sdk.Services.UserPreferences;
+using System;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {

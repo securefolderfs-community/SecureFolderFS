@@ -14,6 +14,12 @@ namespace SecureFolderFS.Shared.Extensions
             list.Add(item);
         }
 
+        public static void AddIfNotPresent<T>(this ICollection<T> collection, T item)
+        {
+            if (!collection.Contains(item))
+                collection.Add(item);
+        }
+
         public static void EnumeratedAdd<T>(this ICollection<T> collection, IEnumerable<T> source)
         {
             foreach (var item in source)

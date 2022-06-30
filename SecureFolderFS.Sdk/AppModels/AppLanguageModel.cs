@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Shared.Extensions;
+﻿using System;
 using System.Globalization;
 using SecureFolderFS.Sdk.Models;
 
@@ -20,7 +20,12 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             LanguageTag = languageTag;
             Culture = new(languageTag);
-            FriendlyName = Culture.NativeName.FirstToUpper();
+            FriendlyName = FormatFriendlyName(Culture.NativeName);
+        }
+
+        private static string FormatFriendlyName(string unformatted)
+        {
+            return string.Concat(unformatted[0].ToString().ToUpperInvariant(), unformatted.AsSpan(1));
         }
     }
 }

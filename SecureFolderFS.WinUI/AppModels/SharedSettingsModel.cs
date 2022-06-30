@@ -8,7 +8,7 @@ namespace SecureFolderFS.WinUI.AppModels
     /// <summary>
     /// Manages a settings node of shared settings.
     /// </summary>
-    internal abstract class SharedSettingsModel : SettingsModel
+    internal abstract class SharedSettingsModel : SingleFileSettingsModel
     {
         protected readonly ISettingsModel originSettingsModel;
 

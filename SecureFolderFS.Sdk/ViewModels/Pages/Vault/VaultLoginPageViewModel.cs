@@ -1,54 +1,49 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery;
 using SecureFolderFS.Core.VaultLoader.Routine;
+using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages
+namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
-    public sealed class VaultLoginPageViewModel : BasePageViewModel
+    public sealed class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
-        private string? _VaultName;
-        public string? VaultName
-        {
-            get => _VaultName;
-            set => SetProperty(ref _VaultName, value);
-        }
+        private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
-        public IRelayCommand UnlockVaultCommand { get; }
+        public IAsyncRelayCommand UnlockVaultCommand { get; }
 
-        public VaultLoginPageViewModel(VaultViewModelDeprecated vaultModel)
+        public VaultLoginPageViewModel(IVaultModel vaultModel)
             : base(new WeakReferenceMessenger(), vaultModel)
         {
-            _VaultName = vaultModel.VaultName;
-
-            UnlockVaultCommand = new RelayCommand<DisposablePassword?>(UnlockVault);
+            UnlockVaultCommand = new AsyncRelayCommand<DisposablePassword?>(UnlockVaultAsync);
         }
 
-        private void UnlockVault(DisposablePassword? password)
+        private async Task UnlockVaultAsync(DisposablePassword? password)
         {
             if (password is null || password.Length == 0)
-            {
                 return;
-            }
 
             IFinalizedVaultLoadRoutine finalizedVaultLoadRoutine;
             try
             {
                 var step5 = VaultRoutines.NewVaultLoadRoutine()
                     .EstablishRoutine()
-                    .AddVaultPath(new(VaultViewModel.VaultRootPath))
+                    .AddVaultPath(new(VaultModel.Folder.Path))
                     .AddFileOperations()
                     .FindConfigurationFile()
                     .ContinueConfigurationFileInitialization();
 
                 IVaultLoadRoutineStep6 step6;
-                if (!File.Exists(Path.Combine(VaultViewModel.VaultRootPath!, SecureFolderFS.Core.Constants.VAULT_KEYSTORE_FILENAME)))
+                if (!await FileSystemService.FileExistsAsync(Path.Combine(VaultModel.Folder.Path, SecureFolderFS.Core.Constants.VAULT_KEYSTORE_FILENAME)))
                 {
                     // TODO: Ask for the keystore file
                     // DoubleFA dfa = new();
@@ -95,15 +90,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages
                 password.Dispose();
             }
 
-            var vaultDashboardPageViewModel = new VaultDashboardPageViewModel(Messenger, VaultViewModel);
+            // Ensure vault instance
+            var vaultInstance = finalizedVaultLoadRoutine.ContinueWithOptionalRoutine()
+                .EstablishOptionalRoutine()
+                .AddFileSystemStatsTracker(null /* TODO: Add stats tracker */)
+                .Finalize()
+                .Deploy();
 
-            VaultViewModel.VaultModelDeprecated.LastOpened = DateTime.Now;
-            WeakReferenceMessenger.Default.Send(new VaultSerializationRequestedMessage(VaultViewModel));
-            WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(VaultViewModel, vaultDashboardPageViewModel));
+            var vaultViewModel = new VaultViewModel(VaultModel, vaultInstance, null);
+            var vaultDashboard = new VaultDashboardPageViewModel(vaultViewModel, Messenger, VaultModel);
 
-            vaultDashboardPageViewModel.InitializeWithRoutine(finalizedVaultLoadRoutine);
-
-            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultViewModel));
+            _ = vaultDashboard.InitAsync();
+            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(vaultDashboard));
         }
     }
 }

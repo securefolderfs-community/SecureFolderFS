@@ -7,8 +7,8 @@ using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using System.Linq;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,6 +36,11 @@ namespace SecureFolderFS.WinUI.Views
         private void NavigateToItem(VaultViewModelDeprecated vaultViewModel)
         {
             WeakReferenceMessenger.Default.Send(new VaultNavigationRequestedMessage(vaultViewModel) { Transition = new EntranceTransitionModel() });
+        }
+
+        private void NavigateToItem(IVaultModel vaultModel)
+        {
+            Navigation.NavigationCache.FirstOrDefault(x => vaultModel.Equals(x));// TODO
         }
 
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

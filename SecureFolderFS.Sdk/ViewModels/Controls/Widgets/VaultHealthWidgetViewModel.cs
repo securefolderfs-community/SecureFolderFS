@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dashboard.Widgets
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
     public sealed class VaultHealthWidgetViewModel : BaseWidgetViewModel
     {

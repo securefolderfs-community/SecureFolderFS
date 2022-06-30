@@ -1,7 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dashboard.Widgets
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
     public sealed class GraphsWidgetViewModel : BaseWidgetViewModel
     {

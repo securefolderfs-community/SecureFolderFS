@@ -15,14 +15,14 @@ namespace SecureFolderFS.Sdk.Models
         IFolder Folder { get; }
 
         /// <summary>
-        /// Gets the name of the vault.
-        /// </summary>
-        string VaultName { get; }
-
-        /// <summary>
         /// Gets the lock that restricts the deletion of the folder.
         /// </summary>
         IDisposable? FolderLock { get; }
+
+        /// <summary>
+        /// Gets the name of the vault.
+        /// </summary>
+        string VaultName { get; }
 
         /// <summary>
         /// Determines if <see cref="Folder"/> is still valid.

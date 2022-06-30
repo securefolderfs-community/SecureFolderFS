@@ -1,75 +1,31 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Sdk.Messages;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Models.Transitions;
-using SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages;
-using SecureFolderFS.Core.VaultLoader.Routine;
+using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages
+namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
-    public sealed class VaultDashboardPageViewModel : BasePageViewModel, IRecipient<DashboardNavigationFinishedMessage>
+    public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IAsyncInitialize
     {
-        public NavigationBreadcrumbViewModel NavigationBreadcrumbViewModel { get; }
+        private VaultViewModel VaultViewModel { get; }
 
-        public DashboardNavigationModel DashboardNavigationModel { get; }
-
-        public BaseDashboardPageViewModel? CurrentPage { get; private set; }
-
-        public VaultDashboardPageViewModel(IMessenger messenger, VaultViewModelDeprecated vaultViewModel)
-            : base(messenger, vaultViewModel)
+        public VaultDashboardPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger, IVaultModel vaultModel)
+            : base(messenger, vaultModel)
         {
-            NavigationBreadcrumbViewModel = new();
-            DashboardNavigationModel = new(Messenger);
-
-            Messenger.Register<DashboardNavigationFinishedMessage>(this);
-            Messenger.Register<DashboardNavigationFinishedMessage>(NavigationBreadcrumbViewModel);
-            Messenger.Register<DashboardNavigationRequestedMessage>(DashboardNavigationModel);
-            Messenger.Register<VaultLockedMessage>(DashboardNavigationModel);
+            VaultViewModel = vaultViewModel;
         }
 
-        public void InitializeWithRoutine(IFinalizedVaultLoadRoutine finalizedVaultLoadRoutine)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (CurrentPage is VaultMainDashboardPageViewModel viewModel)
-            {
-                finalizedVaultLoadRoutine = finalizedVaultLoadRoutine.ContinueWithOptionalRoutine()
-                    .EstablishOptionalRoutine()
-                    .AddFileSystemStatsTracker(viewModel.GraphsWidgetViewModel.VaultIoSpeedReporterModel)
-                    .Finalize();
+            if (VaultViewModel.VaultInstance is null)
+                return;
 
-                VaultViewModel.VaultInstance = finalizedVaultLoadRoutine.Deploy();
-                AsyncExtensions.RunAndForget(() =>
-                {
-                    VaultViewModel.VaultInstance.SecureFolderFSInstance.StartFileSystem();
-                });
-            }
-        }
-
-        public void StartNavigation()
-        {
-            Messenger.Send(new DashboardNavigationRequestedMessage(CurrentPage?.VaultDashboardPageType ?? VaultDashboardPageType.MainDashboardPage, VaultViewModel, CurrentPage)
+            await Task.Run(() =>
             {
-                Transition = CurrentPage is null ? new ContinuumTransitionModel() : new SuppressTransitionModel()
+                VaultViewModel.VaultInstance.SecureFolderFSInstance.StartFileSystem();
             });
-        }
-
-        public void Receive(DashboardNavigationFinishedMessage message)
-        {
-            CurrentPage = message.Value;
-        }
-
-        public override void Cleanup()
-        {
-            CurrentPage?.Cleanup();
-            base.Cleanup();
-        }
-
-        public override void Dispose()
-        {
-            CurrentPage?.Dispose();
-            base.Dispose();
         }
     }
 }

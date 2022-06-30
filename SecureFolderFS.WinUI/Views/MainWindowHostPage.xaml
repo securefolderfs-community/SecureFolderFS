@@ -7,6 +7,7 @@
     xmlns:local="using:SecureFolderFS.WinUI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:uc2="using:SecureFolderFS.WinUI.UserControls.Navigation"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Sidebar"
     Loaded="MainWindowHostPage_Loaded"
@@ -42,7 +43,7 @@
                 SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectionChanged="Sidebar_SelectionChanged">
 
-                <uc:NavigationControlDeprecated PageViewModel="{x:Bind ViewModel.CurrentPageViewModel, Mode=TwoWay}" />
+                <uc2:VaultNavigationControl x:Name="Navigation" />
 
                 <NavigationView.AutoSuggestBox>
                     <AutoSuggestBox
