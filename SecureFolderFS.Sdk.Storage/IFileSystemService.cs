@@ -6,7 +6,7 @@ using SecureFolderFS.Sdk.Storage.Enums;
 namespace SecureFolderFS.Sdk.Storage
 {
     /// <summary>
-    /// Provides an API layer for accessing the file system.
+    /// Provides an abstract layer for accessing the file system.
     /// </summary>
     public interface IFileSystemService
     {
@@ -43,6 +43,13 @@ namespace SecureFolderFS.Sdk.Storage
         /// <param name="path">The path to the file.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="IFile"/> otherwise null.</returns>
         Task<IFile?> GetFileFromPathAsync(string path);
+
+        /// <summary>
+        /// Locks the provided <paramref name="folder"/> and prevents the deletion of it.
+        /// </summary>
+        /// <param name="folder">The folder to lock.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a <see cref="IDisposable"/> lock handle to the folder, otherwise false.</returns>
+        Task<IDisposable?> LockFolderAsync(IFolder folder);
 
         /// <summary>
         /// Copies the storage object to the <paramref name="destinationFolder"/>.

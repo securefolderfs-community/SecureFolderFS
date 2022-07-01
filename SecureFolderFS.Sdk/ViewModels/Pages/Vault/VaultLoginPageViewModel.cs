@@ -8,8 +8,10 @@ using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery;
 using SecureFolderFS.Core.VaultLoader.Routine;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 
@@ -19,18 +21,42 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
     {
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
+        private IVaultUnlockingService VaultUnlockingService { get; } = Ioc.Default.GetRequiredService<IVaultUnlockingService>();
+
         public IAsyncRelayCommand UnlockVaultCommand { get; }
 
         public VaultLoginPageViewModel(IVaultModel vaultModel)
             : base(new WeakReferenceMessenger(), vaultModel)
         {
-            UnlockVaultCommand = new AsyncRelayCommand<DisposablePassword?>(UnlockVaultAsync);
+            UnlockVaultCommand = new AsyncRelayCommand<IPasswordModel?>(UnlockVaultAsync);
         }
 
-        private async Task UnlockVaultAsync(DisposablePassword? password)
+        private async Task UnlockVaultAsync(IPasswordModel? password)
         {
-            if (password is null || password.Length == 0)
+            if (password is null)
                 return;
+
+            using (password)
+            {
+                // Try set the lock
+                await VaultModel.LockFolderAsync();
+
+                // Set the vault folder
+                await VaultUnlockingService.SetVaultFolderAsync(VaultModel.Folder);
+
+                // Get the keystore stream
+                var keystoreStream = await GetKeystoreStreamAsync();
+                if (keystoreStream is null)
+                    return;
+
+                // Set the keystore stream
+                await VaultUnlockingService.SetKeystoreStreamAsync(keystoreStream, JsonToStreamSerializer.Instance);
+
+                // Unlock the vault
+                var unlockedVaultModel = await VaultUnlockingService.UnlockAsync(password);
+
+
+            }
 
             IFinalizedVaultLoadRoutine finalizedVaultLoadRoutine;
             try
@@ -102,6 +128,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
             _ = vaultDashboard.InitAsync();
             WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(vaultDashboard));
+        }
+
+        private async Task<Stream?> GetKeystoreStreamAsync()
+        {
+
         }
     }
 }

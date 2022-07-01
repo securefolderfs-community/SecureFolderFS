@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.Storage
         string Path { get; }
 
         /// <summary>
-        /// The name of the storage object.
+        /// Gets the name of the storage object.
         /// </summary>
         string Name { get; }
 
@@ -26,13 +26,13 @@ namespace SecureFolderFS.Sdk.Storage
         IStoragePropertiesCollection? Properties { get; }
 
         /// <summary>
-        /// Gets the parent folder that contains this object.
+        /// Gets the parent folder that contains this storage object.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IFolder"/> otherwise null.</returns>
         Task<IFolder?> GetParentAsync();
 
         /// <summary>
-        /// Renames the storage object.
+        /// Renames the associated storage object to <paramref name="newName"/>.
         /// </summary>
         /// <param name="newName">The name to apply.</param>
         /// <param name="options">Determines how to handle the collision in case an object with the same name already exists.</param>

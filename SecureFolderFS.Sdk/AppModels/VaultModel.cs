@@ -15,10 +15,10 @@ namespace SecureFolderFS.Sdk.AppModels
         public IFolder Folder { get; }
 
         /// <inheritdoc/>
-        public string VaultName { get; }
+        public IDisposable? FolderLock { get; private set; }
 
         /// <inheritdoc/>
-        public IDisposable? FolderLock { get; }
+        public string VaultName { get; }
 
         public VaultModel(IFolder folder)
         {
@@ -33,6 +33,18 @@ namespace SecureFolderFS.Sdk.AppModels
                 return false;
 
             return other.Folder.Path.Equals(Folder.Path);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> LockFolderAsync()
+        {
+            var folderLock = await FileSystemService.LockFolderAsync(Folder);
+            if (folderLock is null)
+                return false;
+
+            FolderLock?.Dispose();
+            FolderLock = folderLock;
+            return true;
         }
 
         /// <inheritdoc/>

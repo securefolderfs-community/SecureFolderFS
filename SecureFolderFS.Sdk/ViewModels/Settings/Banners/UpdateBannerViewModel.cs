@@ -12,9 +12,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 {
     public sealed class UpdateBannerViewModel : ObservableObject
     {
-        private IUpdateService UpdateService { get; } = Ioc.Default.GetRequiredService<IUpdateService>();
-
         private IApplicationSettingsService ApplicationSettingsService { get; } = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
+
+        private IUpdateService UpdateService { get; } = Ioc.Default.GetRequiredService<IUpdateService>();
 
         public InfoBarViewModel UpdateInfoBar { get; }
 
