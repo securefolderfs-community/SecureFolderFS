@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Dashboard;
+using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,6 +28,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
             _graphClickSemaphore = new(1, 1);
         }
 
+        /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultOverviewPageViewModel viewModel)
@@ -39,6 +40,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
             base.OnNavigatedTo(e);
         }
 
+        /// <inheritdoc/>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             _graphClickSemaphore.Dispose();

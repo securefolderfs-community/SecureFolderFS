@@ -28,7 +28,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         {
             InitializeComponent();
 
-            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].RegisterForThemeChangedCallback(nameof(VaultWizardFinishPage), _ =>
+            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].RegisterForThemeChangedCallback(nameof(SummaryWizardPage), _ =>
             {
                 CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);
             });
@@ -37,9 +37,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultWizardSummaryViewModel viewModel)
-            {
                 ViewModel = viewModel;
-            }
 
             base.OnNavigatedTo(e);
         }
@@ -56,8 +54,8 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         public void Dispose()
         {
-            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].UnregisterForThemeChangedCallback(nameof(VaultWizardFinishPage));
-            ViewModel.Dispose();
+            // TODO: Check if disposed
+            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].UnregisterForThemeChangedCallback(nameof(SummaryWizardPage));
         }
     }
 }

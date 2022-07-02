@@ -5,7 +5,7 @@ namespace SecureFolderFS.Sdk.Models
     /// <summary>
     /// Represents a password that can be cleared with <see cref="IDisposable"/>.
     /// </summary>
-    public interface IPasswordModel : IDisposable
+    public interface IPassword : IDisposable
     {
         /// <summary>
         /// Retrieves the password as a UTF8 byte array.

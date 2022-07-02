@@ -40,11 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
                 .AddEncryptionAlgorithmBuilder();
 
             _nextViewModel = new(SelectedLocation, step7, Messenger, DialogViewModel);
-
-
-            DialogViewModel.VaultViewModel = new(new(), PathSourceText!);
-            NextViewModel = new VaultWizardPasswordViewModel(step7, Messenger, DialogViewModel);
-            Messenger.Send(new VaultWizardNavigationRequestedMessage(NextViewModel));
+            Messenger.Send(new NavigationRequestedMessage<VaultWizardPasswordViewModel>(_nextViewModel));
 
             return Task.CompletedTask;
         }

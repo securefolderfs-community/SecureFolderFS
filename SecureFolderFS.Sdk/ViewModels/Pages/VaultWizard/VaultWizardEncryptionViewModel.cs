@@ -10,7 +10,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel
+    public sealed class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel, IDisposable
     {
         private readonly IFolder _vaultFolder;
         private readonly IVaultCreationRoutineStep9 _step9;
@@ -66,7 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.CompletedTask;
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             _step9.Dispose();
         }

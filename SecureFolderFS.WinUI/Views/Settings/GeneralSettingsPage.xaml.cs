@@ -25,12 +25,11 @@ namespace SecureFolderFS.WinUI.Views.Settings
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is GeneralSettingsPageViewModel viewModel)
-            {
                 ViewModel = viewModel;
-            }
 
             base.OnNavigatedTo(e);
         }
@@ -43,9 +42,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
         private void AppLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender is ComboBox comboBox && comboBox.SelectedItem is ILanguageModel language)
-            {
                 ViewModel.LanguageSettingViewModel.UpdateCurrentLanguage(language);
-            }
         }
     }
 }

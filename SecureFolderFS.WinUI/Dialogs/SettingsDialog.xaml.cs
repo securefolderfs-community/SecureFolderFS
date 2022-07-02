@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Models.Transitions;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages;
+using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -48,12 +48,12 @@ namespace SecureFolderFS.WinUI.Dialogs
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (!ViewModel.Messenger.IsRegistered<NavigationRequestedMessage>(Navigation))
-                ViewModel.Messenger.Register(Navigation);
+                ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
-            var viewModel =  GetViewModelForTag(tag);
+            var viewModel = GetViewModelForTag(tag);
 
-            Navigation.Navigate(viewModel, new EntranceTransitionModel());
+            Navigation.Navigate(viewModel, new EntranceNavigationTransitionInfo());
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

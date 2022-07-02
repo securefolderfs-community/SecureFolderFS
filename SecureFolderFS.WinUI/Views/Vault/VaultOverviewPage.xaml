@@ -23,10 +23,10 @@
             <!--  Vault Health  -->
             <uc:VaultHealthControl
                 Grid.Row="0"
-                OpenVaultHealthCommand="{x:Bind ViewModel.VaultHealthWidgetViewModel.OpenVaultHealthCommand, Mode=OneWay}"
-                StartScanningCommand="{x:Bind ViewModel.VaultHealthWidgetViewModel.StartScanningCommand, Mode=OneWay}"
-                VaultHealthLastCheckedDate="{x:Bind ViewModel.VaultHealthWidgetViewModel.VaultHealthLastCheckedDate, Mode=OneWay}"
-                VaultHealthState="{x:Bind ViewModel.VaultHealthWidgetViewModel.VaultHealthState, Mode=OneWay}" />
+                OpenVaultHealthCommand="{x:Bind ViewModel.WidgetsViewModel.HealthWidget.OpenVaultHealthCommand, Mode=OneWay}"
+                StartScanningCommand="{x:Bind ViewModel.WidgetsViewModel.HealthWidget.StartScanningCommand, Mode=OneWay}"
+                VaultHealthLastCheckedDate="{x:Bind ViewModel.WidgetsViewModel.HealthWidget.VaultHealthLastCheckedDate, Mode=OneWay}"
+                VaultHealthState="{x:Bind ViewModel.WidgetsViewModel.HealthWidget.VaultHealthState, Mode=OneWay}" />
 
             <InfoBar Grid.Row="1" Visibility="Collapsed" />
 
@@ -34,21 +34,21 @@
             <ucw:GraphsWidget
                 x:Name="Graphs"
                 Grid.Row="2"
-                ReadGraphData="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.Data, Mode=OneWay}"
-                ReadGraphIsExtended="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.IsExtended, Mode=TwoWay}"
-                ReadGraphLoaded="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.IsReady, Mode=TwoWay}"
-                ReadGraphSubheader="{x:Bind ViewModel.GraphsWidgetViewModel.ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
-                WriteGraphData="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.Data, Mode=OneWay}"
-                WriteGraphIsExtended="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.IsExtended, Mode=TwoWay}"
-                WriteGraphLoaded="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.IsReady, Mode=TwoWay}"
-                WriteGraphSubheader="{x:Bind ViewModel.GraphsWidgetViewModel.WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
+                ReadGraphData="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.Data, Mode=OneWay}"
+                ReadGraphIsExtended="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.IsExtended, Mode=TwoWay}"
+                ReadGraphLoaded="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.IsReady, Mode=TwoWay}"
+                ReadGraphSubheader="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
+                WriteGraphData="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.Data, Mode=OneWay}"
+                WriteGraphIsExtended="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.IsExtended, Mode=TwoWay}"
+                WriteGraphLoaded="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.IsReady, Mode=TwoWay}"
+                WriteGraphSubheader="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
 
             <!--  Vault options  -->
             <StackPanel Grid.Row="3" Spacing="4">
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
                     Title="View vault"
-                    ClickCommand="{x:Bind ViewModel.ShowInFileExplorerCommand}"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.ShowInFileExplorerCommand}"
                     Description="Show this vault in File Explorer"
                     IsClickable="True">
                     <ucab:ActionBlockControl.Icon>
@@ -62,7 +62,7 @@
                 <!--  Lock vault  -->
                 <ucab:ActionBlockControl
                     Title="Lock vault"
-                    ClickCommand="{x:Bind ViewModel.LockVaultCommand}"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand}"
                     Description="Securely lock this vault and close the dashboard"
                     IsClickable="True">
                     <ucab:ActionBlockControl.Icon>
@@ -76,7 +76,7 @@
                 <!--  Vault information  -->
                 <ucab:ActionBlockControl
                     Title="Vault properties"
-                    ClickCommand="{x:Bind ViewModel.OpenVaultPropertiesCommand}"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand}"
                     Description="View information about this vault"
                     IsClickable="True">
                     <ucab:ActionBlockControl.Icon>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -7,7 +6,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public abstract class BaseVaultWizardPageViewModel : ObservableObject, IDisposable
+    public abstract class BaseVaultWizardPageViewModel : ObservableObject
     {
         protected IMessenger Messenger { get; }
 
@@ -22,7 +21,5 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         public virtual Task PrimaryButtonClick(IEventDispatchFlag? flag) => Task.CompletedTask;
 
         public virtual Task SecondaryButtonClick(IEventDispatchFlag? flag) => Task.CompletedTask;
-
-        public virtual void Dispose() { }
     }
 }

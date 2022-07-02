@@ -7,16 +7,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public abstract class BaseVaultPageViewModel : ObservableObject, IDisposable
     {
-        protected IMessenger Messenger { get; }
-
         protected IVaultModel VaultModel { get; }
 
-        protected BaseVaultPageViewModel(IMessenger messenger, IVaultModel vaultModel)
+        protected IMessenger Messenger { get; }
+
+        protected BaseVaultPageViewModel(IVaultModel vaultModel, IMessenger messenger)
         {
-            Messenger = messenger;
             VaultModel = vaultModel;
+            Messenger = messenger;
         }
 
+        /// <inheritdoc/>
         public virtual void Dispose() { }
     }
 }

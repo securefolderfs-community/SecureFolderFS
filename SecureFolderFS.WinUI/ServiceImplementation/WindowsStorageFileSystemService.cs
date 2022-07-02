@@ -62,6 +62,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public Task<IDisposable?> LockFolderAsync(IFolder folder)
+        {
+            return Task.FromResult<IDisposable?>(null); // TODO: Implement
+        }
+
+        /// <inheritdoc/>
         public Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options,
             IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage
         {

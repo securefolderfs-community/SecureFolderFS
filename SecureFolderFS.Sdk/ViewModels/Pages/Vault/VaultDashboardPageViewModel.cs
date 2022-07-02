@@ -1,31 +1,17 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
-    public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IAsyncInitialize
+    public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel
     {
-        private VaultViewModel VaultViewModel { get; }
+        public VaultViewModel VaultViewModel { get; }
 
-        public VaultDashboardPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger, IVaultModel vaultModel)
-            : base(messenger, vaultModel)
+        public VaultDashboardPageViewModel(IUnlockedVaultModel unlockedVaultModel, IVaultModel vaultModel, IMessenger messenger)
+            : base(vaultModel, messenger)
         {
-            VaultViewModel = vaultViewModel;
-        }
-
-        public async Task InitAsync(CancellationToken cancellationToken = default)
-        {
-            if (VaultViewModel.VaultInstance is null)
-                return;
-
-            await Task.Run(() =>
-            {
-                VaultViewModel.VaultInstance.SecureFolderFSInstance.StartFileSystem();
-            });
+            VaultViewModel = new(unlockedVaultModel, vaultModel);
         }
     }
 }
