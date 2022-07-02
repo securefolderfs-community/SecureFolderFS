@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Pages.SettingsPages;
+using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.WinUI.Views.Settings;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation

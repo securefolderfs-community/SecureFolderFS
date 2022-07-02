@@ -27,9 +27,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is AboutSettingsPageViewModel viewModel)
-            {
                 ViewModel = viewModel;
-            }
 
             base.OnNavigatedTo(e);
         }

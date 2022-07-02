@@ -1,7 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using System;
 using System.Linq;
@@ -28,6 +26,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultWizardPasswordViewModel viewModel)
@@ -35,9 +34,6 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
                 ViewModel = viewModel;
                 ViewModel.InitializeWithPassword = () => new(Encoding.UTF8.GetBytes(FirstPassword.Password));
             }
-
-            // Always false since passwords are not preserved
-            ViewModel.DialogViewModel.PrimaryButtonEnabled = false;
 
             base.OnNavigatedTo(e);
         }
@@ -49,12 +45,12 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         private void FirstPassword_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            ViewModel.DialogViewModel.PrimaryButtonEnabled = CanContinue();
+            ViewModel.PrimaryButtonEnabled = CanContinue();
         }
 
         private void SecondPassword_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            ViewModel.DialogViewModel.PrimaryButtonEnabled = CanContinue();
+            ViewModel.PrimaryButtonEnabled = CanContinue();
         }
 
         public void Dispose()

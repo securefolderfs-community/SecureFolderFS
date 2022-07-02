@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             DialogViewModel.SecondaryButtonText = null; // Don't show the option to cancel the dialog
         }
 
-        public override Task PrimaryButtonClick(IEventDispatchFlag? flag)
+        public override Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
         {
             flag?.NoForwarding();
 

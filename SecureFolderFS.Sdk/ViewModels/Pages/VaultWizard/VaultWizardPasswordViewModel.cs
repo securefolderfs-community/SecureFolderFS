@@ -10,21 +10,32 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardPasswordViewModel : BaseVaultWizardPageViewModel
+    public sealed class VaultWizardPasswordViewModel : BaseVaultWizardPageViewModel, IDisposable
     {
         private readonly IFolder _vaultFolder;
         private readonly IVaultCreationRoutineStep7 _step7;
 
-        public Func<DisposablePassword>? InitializeWithPassword { get; set; }
+        public Func<DisposablePassword>? InitializeWithPassword { get; set; } // TODO: Use IPassword
+
+        /// <inheritdoc cref="DialogViewModel.PrimaryButtonEnabled"/>
+        public bool PrimaryButtonEnabled
+        {
+            get => DialogViewModel.PrimaryButtonEnabled;
+            set => DialogViewModel.PrimaryButtonEnabled = value;
+        }
 
         public VaultWizardPasswordViewModel(IFolder vaultFolder, IVaultCreationRoutineStep7 step7, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
             _vaultFolder = vaultFolder;
             _step7 = step7;
+
+            // Always false since passwords are not preserved
+            DialogViewModel.PrimaryButtonEnabled = false;
         }
 
-        public override Task PrimaryButtonClick(IEventDispatchFlag? flag)
+        /// <inheritdoc/>
+        public override Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
         {
             flag?.NoForwarding();
 
@@ -36,7 +47,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.CompletedTask;
         }
 
-        public override void Dispose()
+        /// <inheritdoc/>
+        public void Dispose()
         {
             _step7.Dispose();
         }

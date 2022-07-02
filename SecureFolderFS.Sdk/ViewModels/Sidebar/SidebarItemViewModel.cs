@@ -11,7 +11,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
-    public sealed class SidebarItemViewModel : ObservableObject, IContainable<string>, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
+    public sealed class SidebarItemViewModel : ObservableObject, IContainable<string>//, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
@@ -36,17 +36,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             ShowInFileExplorerCommand = new AsyncRelayCommand(ShowInFileExplorerAsync);
         }
 
-        /// <inheritdoc/>
-        public void Receive(VaultUnlockedMessage message)
-        {
-            // TODO: Update CanRemoveVault
-        }
+        ///// <inheritdoc/>
+        //public void Receive(VaultUnlockedMessage message)
+        //{
+        //    // TODO: Update CanRemoveVault
+        //}
 
-        /// <inheritdoc/>
-        public void Receive(VaultLockedMessage message)
-        {
-            // TODO: Update CanRemoveVault
-        }
+        ///// <inheritdoc/>
+        //public void Receive(VaultLockedMessage message)
+        //{
+        //    // TODO: Update CanRemoveVault
+        //}
 
         private void RemoveVault()
         {

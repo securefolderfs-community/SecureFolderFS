@@ -18,8 +18,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             DialogViewModel = dialogViewModel;
         }
 
-        public virtual Task PrimaryButtonClick(IEventDispatchFlag? flag) => Task.CompletedTask;
+        public virtual Task PrimaryButtonClickAsync(IEventDispatchFlag? flag) => Task.CompletedTask;
 
-        public virtual Task SecondaryButtonClick(IEventDispatchFlag? flag) => Task.CompletedTask;
+        public virtual Task SecondaryButtonClickAsync(IEventDispatchFlag? flag) => Task.CompletedTask;
     }
 }

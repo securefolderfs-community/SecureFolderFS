@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         {
         }
 
-        public override Task PrimaryButtonClick(IEventDispatchFlag? flag)
+        public override Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
         {
             flag?.NoForwarding();
 

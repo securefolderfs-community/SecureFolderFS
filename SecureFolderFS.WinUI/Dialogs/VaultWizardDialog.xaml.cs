@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
@@ -38,50 +39,6 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
-
-        public async void Receive(VaultWizardNavigationRequestedMessage message)
-        {
-            if (message.Value is MainVaultWizardPageViewModel)
-            {
-                await NavigateAsync(message.Value, new SuppressNavigationTransitionInfo());
-            }
-            else
-            {
-                await NavigateAsync(message.Value, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
-            }
-        }
-
-        private async Task NavigateAsync(BaseVaultWizardPageViewModel viewModel, NavigationTransitionInfo transition)
-        {
-            switch (viewModel)
-            {
-                case MainVaultWizardPageViewModel:
-                    ContentFrame.Navigate(typeof(VaultWizardMainPage), viewModel, transition);
-                    break;
-
-                case VaultWizardAddExistingViewModel:
-                    ContentFrame.Navigate(typeof(AddExistingPage), viewModel, transition);
-                    break;
-
-                case VaultWizardCreationPathViewModel:
-                    ContentFrame.Navigate(typeof(CreationPathPage), viewModel, transition);
-                    break;
-
-                case VaultWizardPasswordViewModel:
-                    ContentFrame.Navigate(typeof(SetPasswordPage), viewModel, transition);
-                    break;
-
-                case VaultWizardEncryptionViewModel:
-                    ContentFrame.Navigate(typeof(ChooseEncryptionPage), viewModel, transition);
-                    break;
-
-                case VaultWizardSummaryViewModel:
-                    ContentFrame.Navigate(typeof(VaultWizardFinishPage), viewModel, transition);
-                    break;
-            }
-
-            await FinalizeNavigationAnimationAsync(viewModel);
-        }
 
         private async Task FinalizeNavigationAnimationAsync(BaseVaultWizardPageViewModel viewModel)
         {
@@ -146,20 +103,20 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Messenger.Register<VaultWizardNavigationRequestedMessage>(this);
-            ViewModel.Messenger.Send(new VaultWizardNavigationRequestedMessage(new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel)));
+            ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
+            ViewModel.Messenger.Register<BackNavigationRequestedMessage>(Navigation);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var handledCallback = new EventDispatchFlagHelper(() => args.Cancel = true);
-            ViewModel.PrimaryButtonClickCommand?.Execute(handledCallback);
+            var eventDispatchFlag = new EventDispatchFlagHelper(() => args.Cancel = true);
+            ViewModel.PrimaryButtonClickCommand?.Execute(eventDispatchFlag);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var handledCallback = new EventDispatchFlagHelper(() => args.Cancel = true);
-            ViewModel.SecondaryButtonClickCommand?.Execute(handledCallback);
+            var eventDispatchFlag = new EventDispatchFlagHelper(() => args.Cancel = true);
+            ViewModel.SecondaryButtonClickCommand?.Execute(eventDispatchFlag);
         }
 
         private async void GoBack_Click(object sender, RoutedEventArgs e)
@@ -178,7 +135,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         {
             if (!args.Cancel)
             {
-                (ContentFrame.Content as IDisposable)?.Dispose();
+                Navigation.Dispose();
             }
         }
     }

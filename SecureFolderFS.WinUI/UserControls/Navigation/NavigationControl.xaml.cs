@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using System;
+using Microsoft.UI.Xaml.Controls;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -9,7 +10,7 @@ using SecureFolderFS.Sdk.Messages.Navigation;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
-    public abstract partial class NavigationControl : UserControl, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>
+    public abstract partial class NavigationControl : UserControl, IDisposable, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>
     {
         protected NavigationControl()
         {
@@ -29,5 +30,11 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         }
 
         public abstract void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo) where TViewModel : class, INotifyPropertyChanged;
+
+        /// <inheritdoc/>
+        public virtual void Dispose()
+        {
+            (ContentFrame.Content as IDisposable)?.Dispose();
+        }
     }
 }

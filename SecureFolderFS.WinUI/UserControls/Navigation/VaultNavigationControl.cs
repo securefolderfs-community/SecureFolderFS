@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Pages;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.WinUI.Views.Vault;
 

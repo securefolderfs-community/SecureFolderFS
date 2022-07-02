@@ -33,12 +33,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 
         private Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
         {
-            return CurrentPageViewModel?.PrimaryButtonClick(flag) ?? Task.CompletedTask;
+            return CurrentPageViewModel?.PrimaryButtonClickAsync(flag) ?? Task.CompletedTask;
         }
 
         private Task SecondaryButtonClickAsync(IEventDispatchFlag? flag)
         {
-            return CurrentPageViewModel?.SecondaryButtonClick(flag) ?? Task.CompletedTask;
+            return CurrentPageViewModel?.SecondaryButtonClickAsync(flag) ?? Task.CompletedTask;
         }
 
         private void GoBack()

@@ -5,7 +5,7 @@ using SecureFolderFS.Sdk.Enums;
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
-    /// Represents a dialog.
+    /// Represents a dialog with <typeparamref name="TViewModel"/> view model.
     /// </summary>
     /// <typeparam name="TViewModel">The view model type related to dialog.</typeparam>
     public interface IDialog<TViewModel>

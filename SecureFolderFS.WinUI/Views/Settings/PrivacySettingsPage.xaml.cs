@@ -26,9 +26,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is PrivacySettingsPageViewModel viewModel)
-            {
                 ViewModel = viewModel;
-            }
 
             base.OnNavigatedTo(e);
         }
