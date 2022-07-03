@@ -33,7 +33,6 @@
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <None Remove="UserControls\GraphControl.xaml" />
     <None Remove="UserControls\NavigationControl.xaml" />
-    <None Remove="UserControls\NavigationControlDeprecated.xaml" />
     <None Remove="UserControls\TitleBarControl.xaml" />
     <None Remove="UserControls\VaultHealthControl.xaml" />
     <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
@@ -168,9 +167,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Dialogs\VaultWizardDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\NavigationControlDeprecated.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UserControls\ActionBlocks\ActionBlockContentControl.xaml">

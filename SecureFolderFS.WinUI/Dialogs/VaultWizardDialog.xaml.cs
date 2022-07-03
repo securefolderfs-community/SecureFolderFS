@@ -19,10 +19,9 @@ using SecureFolderFS.WinUI.Views.VaultWizard;
 
 namespace SecureFolderFS.WinUI.Dialogs
 {
-    public sealed partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<VaultWizardNavigationRequestedMessage>
+    public sealed partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationRequestedMessage<BaseVaultWizardPageViewModel>>
     {
         private bool _hasNavigationAnimatedOnLoaded;
-
         private bool _isBackAnimationState;
 
         /// <inheritdoc/>
@@ -39,6 +38,12 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
+
+        /// <inheritdoc/>
+        public async void Receive(NavigationRequestedMessage<BaseVaultWizardPageViewModel> message)
+        {
+            await FinalizeNavigationAnimationAsync(message.ViewModel);
+        }
 
         private async Task FinalizeNavigationAnimationAsync(BaseVaultWizardPageViewModel viewModel)
         {
@@ -83,14 +88,14 @@ namespace SecureFolderFS.WinUI.Dialogs
                 return;
             }
 
-            if (!_isBackAnimationState && viewModel.CanGoBack && ContentFrame.CanGoBack)
+            if (!_isBackAnimationState && Navigation.CanGoBack)
             {
                 _isBackAnimationState = true;
                 GoBack.Visibility = Visibility.Visible;
                 await ShowBackButtonStoryboard.BeginAsync();
                 ShowBackButtonStoryboard.Stop();
             }
-            else if (_isBackAnimationState && !(viewModel.CanGoBack && ContentFrame.CanGoBack))
+            else if (_isBackAnimationState && !Navigation.CanGoBack)
             {
                 _isBackAnimationState = false;
                 await HideBackButtonStoryboard.BeginAsync();
@@ -98,13 +103,15 @@ namespace SecureFolderFS.WinUI.Dialogs
                 GoBack.Visibility = Visibility.Collapsed;
             }
 
-            GoBack.Visibility = viewModel.CanGoBack && ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            GoBack.Visibility = Navigation.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
         {
+            // Register order is important!
             ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
             ViewModel.Messenger.Register<BackNavigationRequestedMessage>(Navigation);
+            ViewModel.Messenger.Register(this);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -122,9 +129,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             if (!args.Cancel)
-            {
                 Navigation.Dispose();
-            }
         }
     }
 }

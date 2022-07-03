@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -47,13 +48,14 @@ namespace SecureFolderFS.WinUI.UserControls
             DependencyProperty.Register(nameof(ControlLoaded), typeof(bool), typeof(GraphControl), new PropertyMetadata(false));
 
 
-        public ObservableCollection<GraphPointModel> Data
+        // TODO: Make it independent of GraphPointViewModel. Maybe use IList?
+        public ObservableCollection<GraphPointViewModel> Data
         {
-            get => (ObservableCollection<GraphPointModel>)GetValue(DataProperty);
+            get => (ObservableCollection<GraphPointViewModel>)GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register(nameof(Data), typeof(ObservableCollection<GraphPointModel>), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Data), typeof(ObservableCollection<GraphPointViewModel>), typeof(GraphControl), new PropertyMetadata(null));
 
 
         public string GraphHeader

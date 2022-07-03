@@ -15,7 +15,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         }
 
         /// <inheritdoc/>
-        public FileSystemAdapterType PreferredFileSystemAdapter
+        public FileSystemAdapterType PreferredFileSystem
         {
             get => (FileSystemAdapterType)GetSetting(() => (uint)FileSystemAdapterType.DokanAdapter);
             set => SetSetting((uint)value);

@@ -48,11 +48,10 @@ namespace SecureFolderFS.WinUI
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs args)
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             // Get settings folder
-            // TODO: Not ideal, use abstractions instead of getting hard implementation
-            var settingsFolder = await GetSettingsFolderAsync();
+            var settingsFolder = new NativeFolder(Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SETTINGS_FOLDER_NAME));
 
             // Configure IoC
             ServiceProvider = ConfigureServices(settingsFolder);
@@ -130,21 +129,6 @@ namespace SecureFolderFS.WinUI
         {
             var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
             return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl!);
-        }
-
-        private static async Task<IFolder> GetSettingsFolderAsync()
-        {
-            const bool USE_NATIVE_STORAGE = true;
-
-            if (USE_NATIVE_STORAGE)
-            {
-                return new NativeFolder(Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SETTINGS_FOLDER_NAME));
-            }
-            else
-            {
-                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(Constants.LocalSettings.SETTINGS_FOLDER_NAME, CreationCollisionOption.OpenIfExists);
-                return new WindowsStorageFolder(folder);
-            }
         }
     }
 }

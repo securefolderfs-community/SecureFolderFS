@@ -10,6 +10,8 @@ using SecureFolderFS.Sdk.Models.Transitions;
 using SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages;
 using SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages;
+using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
+using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.Helpers;
 
@@ -21,7 +23,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class VaultDashboardPage : Page, IRecipient<DashboardNavigationFinishedMessage>, IRecipient<VaultLockedMessage>
+    public sealed partial class VaultDashboardPage : Page //, IRecipient<VaultLockedMessage>
     {
         public VaultDashboardPageViewModel ViewModel
         {
@@ -34,17 +36,12 @@ namespace SecureFolderFS.WinUI.Views.Vault
             InitializeComponent();
         }
 
-        public void Receive(DashboardNavigationFinishedMessage message)
-        {
-            NavigatePage(message.Value, message.Transition);
-        }
-
-        public async void Receive(VaultLockedMessage message)
-        {
-            // Await and change the visibility so the page doesn't prevail on the lock animation
-            await Task.Delay(100);
-            Visibility = Visibility.Collapsed;
-        }
+        //public async void Receive(VaultLockedMessage message)
+        //{
+        //    // Await and change the visibility so the page doesn't prevail on the lock animation
+        //    await Task.Delay(100);
+        //    Visibility = Visibility.Collapsed;
+        //}
 
         private void NavigatePage(BaseDashboardPageViewModel baseDashboardPageViewModel, TransitionModel? transition = null)
         {
@@ -84,12 +81,12 @@ namespace SecureFolderFS.WinUI.Views.Vault
             base.OnNavigatingFrom(e);
         }
 
-        private void BreadcrumbBar_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
-        {
-            if (args.Item is NavigationItemViewModel itemViewModel)
-            {
-                itemViewModel.NavigationAction?.Invoke(ViewModel.NavigationBreadcrumbViewModel.DashboardNavigationItems.FirstOrDefault());
-            }
-        }
+        //private void BreadcrumbBar_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
+        //{
+        //    if (args.Item is NavigationItemViewModel itemViewModel)
+        //    {
+        //        itemViewModel.NavigationAction?.Invoke(ViewModel.NavigationBreadcrumbViewModel.DashboardNavigationItems.FirstOrDefault());
+        //    }
+        //}
     }
 }
