@@ -16,7 +16,5 @@
         /// </summary>
         /// <param name="amount">The amount, in bytes.</param>
         void NotifyBytesWritten(long amount);
-
-        // TODO: More statistics can be added as we go
     }
 }

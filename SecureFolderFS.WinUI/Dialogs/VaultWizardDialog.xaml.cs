@@ -119,18 +119,6 @@ namespace SecureFolderFS.WinUI.Dialogs
             ViewModel.SecondaryButtonClickCommand?.Execute(eventDispatchFlag);
         }
 
-        private async void GoBack_Click(object sender, RoutedEventArgs e)
-        {
-            ContentFrame.GoBack();
-
-            if ((ContentFrame.Content as Page)?.DataContext is BaseVaultWizardPageViewModel viewModel)
-            {
-                ViewModel.CurrentPageViewModel = viewModel;
-                viewModel.ReturnToViewModel();
-                await FinalizeNavigationAnimationAsync(viewModel);
-            }
-        }
-
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             if (!args.Cancel)

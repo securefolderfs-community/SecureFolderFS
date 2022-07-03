@@ -86,7 +86,6 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
                 .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
 
-                .AddTransient<ITimerService, TimerService>()
                 .AddSingleton<IFileSystemService, NativeFileSystemService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
