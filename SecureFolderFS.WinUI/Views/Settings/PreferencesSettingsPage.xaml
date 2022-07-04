@@ -60,7 +60,7 @@
             <uc:BannerControl.RightSide>
                 <ComboBox
                     VerticalAlignment="Center"
-                    SelectedIndex="{x:Bind ViewModel.BannerViewModel.PreferredFileSystemAdapter, Mode=TwoWay, Converter={StaticResource GenericEnumConverter}}"
+                    SelectedIndex="{x:Bind ViewModel.BannerViewModel.PreferredFileSystem, Mode=TwoWay, Converter={StaticResource GenericEnumConverter}}"
                     SelectionChanged="FileSystemComboBox_SelectionChanged">
                     <ComboBox.Items>
                         <ComboBoxItem Content="Dokany" />

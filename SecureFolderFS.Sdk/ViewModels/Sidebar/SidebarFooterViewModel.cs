@@ -29,7 +29,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         private async Task AddNewVaultAsync()
         {
             await DialogService.ShowDialogAsync(new VaultWizardDialogViewModel());
-            await VaultsSettingsService.SaveSettingsAsync();
         }
 
         private async Task OpenSettingsAsync()

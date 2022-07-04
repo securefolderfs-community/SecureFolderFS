@@ -28,18 +28,18 @@ namespace SecureFolderFS.WinUI.Storage.StoragePools
         {
             try
             {
-                await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await _semaphore.WaitAsync(cancellationToken);
                 var result = true;
 
                 for (int i = 0; i < _files.Count; i++)
                 {
                     var item = _files[i];
                     var deleted = false;
-                    var exists = await _fileSystemService.FileExistsAsync(item.Path).ConfigureAwait(false);
+                    var exists = await _fileSystemService.FileExistsAsync(item.Path);
 
                     if (exists)
                     {
-                        deleted = await item.DeleteAsync(true).ConfigureAwait(false);
+                        deleted = await item.DeleteAsync(true);
                         result &= deleted;
                     }
 
@@ -62,7 +62,7 @@ namespace SecureFolderFS.WinUI.Storage.StoragePools
             if (file is not null)
                 return file;
 
-            file = await _folder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists).ConfigureAwait(false);
+            file = await _folder.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
             if (file is not null)
                 _files.Add(file);
 

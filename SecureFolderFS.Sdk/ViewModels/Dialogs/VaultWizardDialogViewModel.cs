@@ -7,7 +7,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    public sealed class VaultWizardDialogViewModel : DialogViewModel, IRecipient<NavigationRequestedMessage<BaseVaultWizardPageViewModel>>
+    public sealed class VaultWizardDialogViewModel : DialogViewModel, IRecipient<NavigationRequestedMessage>
     {
         public IMessenger Messenger { get; }
 
@@ -26,9 +26,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         }
 
         /// <inheritdoc/>
-        public void Receive(NavigationRequestedMessage<BaseVaultWizardPageViewModel> message)
+        public void Receive(NavigationRequestedMessage message)
         {
-            CurrentPageViewModel = message.ViewModel;
+            CurrentPageViewModel = message.ViewModel as BaseVaultWizardPageViewModel;
         }
 
         private Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)

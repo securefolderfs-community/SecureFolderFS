@@ -1,19 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Models.Transitions;
-using SecureFolderFS.Sdk.ViewModels.Dashboard.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages;
-using SecureFolderFS.Sdk.ViewModels.Pages.DashboardPages;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Shared.Utils;
-using SecureFolderFS.WinUI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,43 +32,23 @@ namespace SecureFolderFS.WinUI.Views.Vault
         //    Visibility = Visibility.Collapsed;
         //}
 
-        private void NavigatePage(BaseDashboardPageViewModel baseDashboardPageViewModel, TransitionModel? transition = null)
-        {
-            var transitionInfo = ConversionHelpers.ToNavigationTransitionInfo(transition);
-            switch (baseDashboardPageViewModel)
-            {
-                case VaultMainDashboardPageViewModel:
-                    ContentFrame.Navigate(typeof(VaultMainDashboardPage), baseDashboardPageViewModel, transitionInfo ?? new SuppressNavigationTransitionInfo());
-                    break;
-
-                case VaultDashboardPropertiesPageViewModel:
-                    ContentFrame.Navigate(typeof(VaultDashboardPropertiesPage), baseDashboardPageViewModel, transitionInfo ?? new SuppressNavigationTransitionInfo());
-                    break;
-            }
-        }
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultDashboardPageViewModel viewModel)
-            {
                 ViewModel = viewModel;
-                ViewModel.Messenger.Register<DashboardNavigationFinishedMessage>(this);
-                ViewModel.Messenger.Register<VaultLockedMessage>(this);
-                ViewModel.StartNavigation();
-            }
 
             base.OnNavigatedTo(e);
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            (ViewModel as ICleanable)?.Cleanup();
+        //protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        //{
+        //    (ViewModel as ICleanable)?.Cleanup();
 
-            ViewModel.Messenger.Unregister<DashboardNavigationFinishedMessage>(this);
-            ViewModel.Messenger.Unregister<VaultLockedMessage>(this);
+        //    ViewModel.Messenger.Unregister<DashboardNavigationFinishedMessage>(this);
+        //    ViewModel.Messenger.Unregister<VaultLockedMessage>(this);
 
-            base.OnNavigatingFrom(e);
-        }
+        //    base.OnNavigatingFrom(e);
+        //}
 
         //private void BreadcrumbBar_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
         //{

@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<bool> LockFolderAsync()
         {
-            var folderLock = await FileSystemService.LockFolderAsync(Folder);
+            var folderLock = await FileSystemService.ObtainLockAsync(Folder);
             if (folderLock is null)
                 return false;
 

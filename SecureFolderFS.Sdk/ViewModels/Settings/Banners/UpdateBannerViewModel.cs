@@ -66,7 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
             LastChecked = DateTime.Now;
             OnPropertyChanged(nameof(LastChecked));
 
-            var isNewUpdateAvailable = await UpdateService.IsNewUpdateAvailableAsync().ConfigureAwait(false);
+            var isNewUpdateAvailable = await UpdateService.IsNewUpdateAvailableAsync();
             if (isNewUpdateAvailable)
             {
                 _ = UpdateService.UpdateAppAsync(null);

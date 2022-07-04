@@ -171,24 +171,6 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
             DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
 
 
-        public bool ReadGraphLoaded
-        {
-            get => (bool)GetValue(ReadGraphLoadedProperty);
-            set => SetValue(ReadGraphLoadedProperty, value);
-        }
-        public static readonly DependencyProperty ReadGraphLoadedProperty =
-            DependencyProperty.Register(nameof(ReadGraphLoaded), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
-
-
-        public bool WriteGraphLoaded
-        {
-            get => (bool)GetValue(WriteGraphLoadedProperty);
-            set => SetValue(WriteGraphLoadedProperty, value);
-        }
-        public static readonly DependencyProperty WriteGraphLoadedProperty =
-            DependencyProperty.Register(nameof(WriteGraphLoaded), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
-
-
         // TODO: Make it independent of GraphPointViewModel. Maybe use IList?
         public ObservableCollection<GraphPointViewModel> ReadGraphData
         {

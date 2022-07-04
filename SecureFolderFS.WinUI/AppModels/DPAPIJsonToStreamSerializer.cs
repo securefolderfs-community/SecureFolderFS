@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI.AppModels
         /// <inheritdoc/>
         public override async Task<TData?> DeserializeAsync<TData>(Stream serialized, CancellationToken cancellationToken = default) where TData : default
         {
-            var buffer = await DecryptDataFromStreamAsync(serialized, DataProtectionScope.CurrentUser).ConfigureAwait(false);
+            var buffer = await DecryptDataFromStreamAsync(serialized, DataProtectionScope.CurrentUser);
             var rawSerialized = Encoding.UTF8.GetString(buffer);
 
             return JsonConvert.DeserializeObject<TData?>(rawSerialized);
@@ -34,7 +34,7 @@ namespace SecureFolderFS.WinUI.AppModels
 
         private static async Task<byte[]> DecryptDataFromStreamAsync(Stream stream, DataProtectionScope scope)
         {
-            var encryptedBuffer = await stream.ReadAllBytesAsync().ConfigureAwait(false);
+            var encryptedBuffer = await stream.ReadAllBytesAsync();
 
             if (encryptedBuffer.IsEmpty())
                 return encryptedBuffer;

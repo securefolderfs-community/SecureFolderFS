@@ -94,7 +94,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IFile> GetFilesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var files = await storage.GetFilesAsync().AsTask(cancellationToken).ConfigureAwait(false);
+            var files = await storage.GetFilesAsync().AsTask(cancellationToken);
             if (files is null)
                 yield break;
 
@@ -110,7 +110,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IFolder> GetFoldersAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var folders = await storage.GetFoldersAsync().AsTask(cancellationToken).ConfigureAwait(false);
+            var folders = await storage.GetFoldersAsync().AsTask(cancellationToken);
             if (folders is null)
                 yield break;
 
@@ -126,7 +126,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IBaseStorage> GetStorageAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var items = await storage.GetItemsAsync().AsTask(cancellationToken).ConfigureAwait(false);
+            var items = await storage.GetItemsAsync().AsTask(cancellationToken);
             if (items is null)
                 yield break;
 

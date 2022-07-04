@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             // We've already initialized the data
             if (_nextViewModel is not null)
             {
-                Messenger.Send(new NavigationRequestedMessage<VaultWizardPasswordViewModel>(_nextViewModel));
+                Messenger.Send(new NavigationRequestedMessage(_nextViewModel));
                 return Task.CompletedTask;
             }
 
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
                 .AddEncryptionAlgorithmBuilder();
 
             _nextViewModel = new(SelectedLocation, step7, Messenger, DialogViewModel);
-            Messenger.Send(new NavigationRequestedMessage<VaultWizardPasswordViewModel>(_nextViewModel));
+            Messenger.Send(new NavigationRequestedMessage(_nextViewModel));
 
             return Task.CompletedTask;
         }

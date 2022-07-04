@@ -9,7 +9,7 @@ namespace SecureFolderFS.Shared.Extensions
         {
             try
             {
-                _ = Task.Run(action).ConfigureAwait(false);
+                _ = Task.Run(action);
             }
             catch { }
         }

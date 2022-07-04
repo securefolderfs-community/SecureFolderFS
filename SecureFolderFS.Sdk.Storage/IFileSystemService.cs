@@ -45,11 +45,11 @@ namespace SecureFolderFS.Sdk.Storage
         Task<IFile?> GetFileFromPathAsync(string path);
 
         /// <summary>
-        /// Locks the provided <paramref name="folder"/> and prevents the deletion of it.
+        /// Locks the provided storage object and prevents the deletion of it.
         /// </summary>
-        /// <param name="folder">The folder to lock.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a <see cref="IDisposable"/> lock handle to the folder, otherwise false.</returns>
-        Task<IDisposable?> LockFolderAsync(IFolder folder);
+        /// <param name="storage">The storage object to lock.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a <see cref="IDisposable"/> lock handle to <paramref name="storage"/>, otherwise false.</returns>
+        Task<IDisposable?> ObtainLockAsync(IBaseStorage storage);
 
         /// <summary>
         /// Copies the storage object to the <paramref name="destinationFolder"/>.

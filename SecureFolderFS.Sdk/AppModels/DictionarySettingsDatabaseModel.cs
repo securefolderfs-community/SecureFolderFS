@@ -11,7 +11,7 @@ using SecureFolderFS.Shared.Utils;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="ISettingsDatabaseModel"/>
-    public class DictionarySettingsDatabaseModel : ISettingsDatabaseModel
+    public class DictionarySettingsDatabaseModel : ISettingsDatabaseModel, ISingleFileSerializationModel
     {
         protected readonly IAsyncSerializer<Stream> serializer;
         protected readonly SemaphoreSlim semaphore;
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public virtual T? GetValue<T>(string key, Func<T?>? defaultValue)
         {
             if (settingsCache.TryGetValue(key, out var value))
-                return serializer.EnsureDeserialized<T>(value);
+                return (T?)value;
 
             var fallback = defaultValue is not null ? defaultValue() : default;
             return fallback;
@@ -42,16 +42,16 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> LoadFromFile(IFile file, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> LoadAsync(IFile file, CancellationToken cancellationToken = default)
         {
             try
             {
-                await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-                await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read).ConfigureAwait(false);
+                await semaphore.WaitAsync(cancellationToken);
+                await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read);
                 if (stream is null)
                     return false;
 
-                var settings = await serializer.DeserializeAsync<Dictionary<string, object?>?>(stream, cancellationToken).ConfigureAwait(false);
+                var settings = await serializer.DeserializeAsync<Dictionary<string, object?>?>(stream, cancellationToken);
                 settingsCache.Clear();
 
                 if (settings is null) // No settings saved, set cache to empty and return true.
@@ -75,22 +75,22 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> SaveToFile(IFile file, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> SaveAsync(IFile file, CancellationToken cancellationToken = default)
         {
             try
             {
-                await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-                await using var stream = await file.OpenStreamAsync(FileAccess.ReadWrite, FileShare.Read).ConfigureAwait(false);
+                await semaphore.WaitAsync(cancellationToken);
+                await using var stream = await file.OpenStreamAsync(FileAccess.ReadWrite, FileShare.Read);
                 if (stream is null)
                     return false;
 
-                await using var settingsStream = await serializer.SerializeAsync<IDictionary<string, object?>>(settingsCache, cancellationToken).ConfigureAwait(false);
+                await using var settingsStream = await serializer.SerializeAsync<IDictionary<string, object?>>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
                 stream.SetLength(0L);
 
                 // Write settings
-                await settingsStream.CopyToAsync(stream, cancellationToken).ConfigureAwait(false);
+                await settingsStream.CopyToAsync(stream, cancellationToken);
 
                 return true;
             }

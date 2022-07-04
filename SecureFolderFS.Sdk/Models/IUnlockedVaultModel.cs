@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.Models
         IFileSystemService VaultFileSystem { get; }
 
         /// <summary>
-        /// Locks the vault, invalidates active resources and restricts vault file system access.
+        /// Locks the vault, invalidates associated resources and restricts vault file system access.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task LockAsync();

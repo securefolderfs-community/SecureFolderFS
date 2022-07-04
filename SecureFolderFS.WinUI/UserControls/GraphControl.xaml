@@ -35,24 +35,21 @@
             <TextBlock
                 Grid.Row="0"
                 Opacity="0.8"
-                Text="{x:Bind GraphHeader, Mode=OneWay}"
-                Visibility="{x:Bind ControlLoaded, Mode=OneWay}" />
+                Text="{x:Bind GraphHeader, Mode=OneWay}" />
 
             <!--  Subheader (big)  -->
             <TextBlock
                 Grid.Row="1"
                 FontSize="24"
                 FontWeight="SemiBold"
-                Text="{x:Bind GraphSubheader, Mode=OneWay}"
-                Visibility="{x:Bind ControlLoaded, Mode=OneWay}" />
+                Text="{x:Bind GraphSubheader, Mode=OneWay}" />
 
             <!--  Load progress  -->
             <ProgressRing
                 x:Name="LoadProgress"
                 Grid.Row="2"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                x:Load="{x:Bind ControlLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
+                VerticalAlignment="Center" />
 
             <!--  Chart  -->
             <sf:SfCartesianChart

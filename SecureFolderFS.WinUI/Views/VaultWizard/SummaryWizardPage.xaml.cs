@@ -54,7 +54,6 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         public void Dispose()
         {
-            // TODO: Check if disposed
             ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].UnregisterForThemeChangedCallback(nameof(SummaryWizardPage));
         }
     }

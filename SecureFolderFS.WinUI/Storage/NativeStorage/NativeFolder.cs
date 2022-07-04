@@ -40,7 +40,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
                     switch (options)
                     {
                         case CreationCollisionOption.GenerateUniqueName:
-                            return await CreateFileAsync($"{System.IO.Path.GetFileNameWithoutExtension(desiredName)} (1){System.IO.Path.GetExtension(desiredName)}").ConfigureAwait(false);
+                            return await CreateFileAsync($"{System.IO.Path.GetFileNameWithoutExtension(desiredName)} (1){System.IO.Path.GetExtension(desiredName)}");
 
                         case CreationCollisionOption.OpenIfExists:
                             return new NativeFile(path);
@@ -50,7 +50,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
                     }
                 }
 
-                await File.Create(path).DisposeAsync().ConfigureAwait(false);
+                await File.Create(path).DisposeAsync();
                 return new NativeFile(path);
             }
             catch (Exception)

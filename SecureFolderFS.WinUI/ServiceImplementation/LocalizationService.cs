@@ -11,12 +11,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     /// <inheritdoc cref="ILocalizationService"/>
     internal sealed class LocalizationService : ILocalizationService
     {
+        private static readonly ResourceLoader ResourceLoader = new();
         private List<ILanguageModel>? _languageCache;
-        private readonly ResourceLoader _resourceLoader;
 
         public LocalizationService()
         {
-            _resourceLoader = new();
             CurrentLanguage = new AppLanguageModel(ApplicationLanguages.PrimaryLanguageOverride);
         }
 
@@ -26,7 +25,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public string? LocalizeString(string resourceKey)
         {
-            return _resourceLoader.GetString(resourceKey);
+            return ResourceLoader.GetString(resourceKey);
         }
 
         /// <inheritdoc/>

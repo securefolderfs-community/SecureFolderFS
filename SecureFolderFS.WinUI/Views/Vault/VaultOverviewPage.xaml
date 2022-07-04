@@ -35,12 +35,10 @@
                 x:Name="Graphs"
                 Grid.Row="2"
                 ReadGraphData="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.Data, Mode=OneWay}"
-                ReadGraphIsExtended="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.IsExtended, Mode=TwoWay}"
-                ReadGraphLoaded="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.IsReady, Mode=TwoWay}"
+                ReadGraphIsExtended="False"
                 ReadGraphSubheader="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
                 WriteGraphData="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.Data, Mode=OneWay}"
-                WriteGraphIsExtended="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.IsExtended, Mode=TwoWay}"
-                WriteGraphLoaded="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.IsReady, Mode=TwoWay}"
+                WriteGraphIsExtended="False"
                 WriteGraphSubheader="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
 
             <!--  Vault options  -->

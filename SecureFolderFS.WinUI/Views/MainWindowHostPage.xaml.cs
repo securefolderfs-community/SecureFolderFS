@@ -5,10 +5,12 @@ using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using System.Linq;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,7 +37,8 @@ namespace SecureFolderFS.WinUI.Views
 
         private void NavigateToItem(IVaultModel vaultModel)
         {
-            Navigation.NavigationCache.FirstOrDefault(x => vaultModel.Equals(x));// TODO
+            var item = Navigation.NavigationCache.FirstOrDefault(x => vaultModel.Equals(x)) ?? new VaultLoginPageViewModel(vaultModel); // TODO
+            Navigation.Navigate(item, new EntranceNavigationTransitionInfo());
         }
 
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -48,6 +51,8 @@ namespace SecureFolderFS.WinUI.Views
 
         private void MainWindowHostPage_Loaded(object sender, RoutedEventArgs e)
         {
+            WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(Navigation);
+
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
             var threadingService = Ioc.Default.GetRequiredService<IThreadingService>();
 
@@ -58,7 +63,7 @@ namespace SecureFolderFS.WinUI.Views
 
                 ViewModel.SidebarViewModel.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
                 if (ViewModel.SidebarViewModel.SelectedItem is not null)
-                    WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(ViewModel.SidebarViewModel.SelectedItem.VaultModel));
+                    WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(new VaultLoginPageViewModel(ViewModel.SidebarViewModel.SelectedItem.VaultModel)));
             });
         }
 

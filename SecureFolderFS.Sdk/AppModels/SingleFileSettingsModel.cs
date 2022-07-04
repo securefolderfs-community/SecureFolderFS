@@ -15,27 +15,27 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
         {
-            if (FilePool is null || SettingsDatabase is null || string.IsNullOrEmpty(SettingsStorageName))
+            if (FilePool is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
                 return false;
 
-            var settingsFile = await FilePool.RequestFileAsync(SettingsStorageName, cancellationToken).ConfigureAwait(false);
+            var settingsFile = await FilePool.RequestFileAsync(SettingsStorageName, cancellationToken);
             if (settingsFile is null)
                 return false;
 
-            return await SettingsDatabase.LoadFromFile(settingsFile, cancellationToken).ConfigureAwait(false);
+            return await serializationModel.LoadAsync(settingsFile, cancellationToken);
         }
 
         /// <inheritdoc/>
         public override async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
         {
-            if (FilePool is null || SettingsDatabase is null || string.IsNullOrEmpty(SettingsStorageName))
+            if (FilePool is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
                 return false;
 
-            var settingsFile = await FilePool.RequestFileAsync(SettingsStorageName, cancellationToken).ConfigureAwait(false);
+            var settingsFile = await FilePool.RequestFileAsync(SettingsStorageName, cancellationToken);
             if (settingsFile is null)
                 return false;
 
-            return await SettingsDatabase.SaveToFile(settingsFile, cancellationToken).ConfigureAwait(false);
+            return await serializationModel.SaveAsync(settingsFile, cancellationToken);
         }
     }
 }

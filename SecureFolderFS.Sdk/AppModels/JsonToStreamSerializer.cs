@@ -3,7 +3,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 
@@ -35,22 +34,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public virtual async Task<TData?> DeserializeAsync<TData>(Stream serialized, CancellationToken cancellationToken = default)
         {
-            var buffer = await serialized.ReadAllBytesAsync().ConfigureAwait(false);
+            var buffer = await serialized.ReadAllBytesAsync();
             var rawSerialized = Encoding.UTF8.GetString(buffer);
 
             return JsonConvert.DeserializeObject<TData?>(rawSerialized);
-        }
-
-        /// <inheritdoc/>
-        public virtual TData? EnsureDeserialized<TData>(object? unknown)
-        {
-            return unknown switch
-            {
-                null => default,
-                TData data => data,
-                JToken jtoken => jtoken.ToObject<TData?>(),
-                _ => default
-            };
         }
     }
 }

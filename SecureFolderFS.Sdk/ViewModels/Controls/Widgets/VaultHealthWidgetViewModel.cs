@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 
@@ -38,6 +40,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         private void OpenVaultHealth()
         {
 
+        }
+
+        public override Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
         }
     }
 }

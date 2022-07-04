@@ -26,6 +26,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         /// <inheritdoc/>
         public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
         {
+            transitionInfo ??= new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
             var pageType = viewModel switch
             {
                 MainVaultWizardPageViewModel => typeof(MainWizardPage),

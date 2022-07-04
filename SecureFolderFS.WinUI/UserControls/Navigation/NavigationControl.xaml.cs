@@ -20,7 +20,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         /// <inheritoc/>
         public virtual void Receive(NavigationRequestedMessage message)
         {
-            Navigate(message.ViewModel, new SuppressNavigationTransitionInfo());
+            Navigate(message.ViewModel, null);
         }
 
         /// <inheritoc/>

@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage.StoragePool;
+using SecureFolderFS.WinUI.AppModels;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {
@@ -11,7 +12,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         public SavedVaultsService(IFilePool? settingsFilePool)
         {
             FilePool = settingsFilePool;
-            SettingsDatabase = new DictionarySettingsDatabaseModel(JsonToStreamSerializer.Instance);
+            SettingsDatabase = new DictionarySettingsDatabaseModel(new SavedVaultsJsonToStreamSerializer());
             IsAvailable = settingsFilePool is not null;
         }
 
@@ -21,7 +22,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         /// <inheritdoc/>
         public List<string>? VaultPaths
         {
-            get => GetSetting(() => new List<string>());
+            get => GetSetting<List<string>?>(null);
             set => SetSetting(value);
         }
     }

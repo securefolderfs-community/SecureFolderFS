@@ -15,7 +15,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
             {
                 GeneralSettingsPageViewModel => typeof(GeneralSettingsPage),
                 PreferencesSettingsPageViewModel => typeof(PreferencesSettingsPage),
-                PrivacySettingsPageViewModel => typeof(PreferencesSettingsPage),
+                PrivacySettingsPageViewModel => typeof(PrivacySettingsPage),
                 AboutSettingsPageViewModel => typeof(AboutSettingsPage),
                 _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
             };

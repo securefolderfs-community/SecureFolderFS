@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
@@ -10,7 +11,7 @@ namespace SecureFolderFS.Sdk.Services
     /// <summary>
     /// Represents a per-vault service used for the unlock routine.
     /// </summary>
-    public interface IVaultUnlockingService
+    public interface IVaultUnlockingService : IDisposable
     {
         /// <summary>
         /// Sets the root <see cref="IFolder"/> of the vault.

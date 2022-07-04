@@ -54,7 +54,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IDisposable?> LockFolderAsync(IFolder folder)
+        public Task<IDisposable?> ObtainLockAsync(IBaseStorage storage)
         {
             return Task.FromResult<IDisposable?>(null); // TODO: Implement
         }

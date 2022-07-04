@@ -23,10 +23,9 @@ namespace SecureFolderFS.WinUI.UserControls
 
         private async void RootButton_Loaded(object sender, RoutedEventArgs e)
         {
-            await Task.Delay(100);
+            await Task.Delay(25);
             _ = FindName("CartesianChart"); // Realize the chart and load it to view
             await Task.Delay(25);
-            ControlLoaded = true;
         }
 
         private void RootButton_Click(object sender, RoutedEventArgs e)
@@ -38,15 +37,6 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             CartesianChart?.Dispose();
         }
-
-        public bool ControlLoaded
-        {
-            get => (bool)GetValue(ControlLoadedProperty);
-            set => SetValue(ControlLoadedProperty, value);
-        }
-        public static readonly DependencyProperty ControlLoadedProperty =
-            DependencyProperty.Register(nameof(ControlLoaded), typeof(bool), typeof(GraphControl), new PropertyMetadata(false));
-
 
         // TODO: Make it independent of GraphPointViewModel. Maybe use IList?
         public ObservableCollection<GraphPointViewModel> Data

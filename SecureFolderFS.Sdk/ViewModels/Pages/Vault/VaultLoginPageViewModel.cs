@@ -16,6 +16,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
     {
         private IVaultUnlockingService VaultUnlockingService { get; } = Ioc.Default.GetRequiredService<IVaultUnlockingService>();
 
+        public string VaultName => VaultModel.VaultName;
+
         public IAsyncRelayCommand UnlockVaultCommand { get; }
 
         public VaultLoginPageViewModel(IVaultModel vaultModel)
@@ -53,9 +55,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 unlockedVaultModel = await VaultUnlockingService.UnlockAsync(password, cancellationToken);
                 if (unlockedVaultModel is null)
                     return; // TODO: Report incorrect password
-
-                // Remove the vault lock
-                VaultModel.FolderLock?.Dispose();
             }
 
             WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(new VaultDashboardPageViewModel(unlockedVaultModel, VaultModel, Messenger)));

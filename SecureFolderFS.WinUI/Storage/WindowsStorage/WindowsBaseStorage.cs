@@ -53,7 +53,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         {
             try
             {
-                await storage.DeleteAsync(permanently ? StorageDeleteOption.PermanentDelete : StorageDeleteOption.Default).AsTask(cancellationToken).ConfigureAwait(false);
+                await storage.DeleteAsync(permanently ? StorageDeleteOption.PermanentDelete : StorageDeleteOption.Default).AsTask(cancellationToken);
                 return true;
             }
             catch (Exception)

@@ -21,15 +21,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
             set => SetProperty(ref _InfoBarViewModel, value);
         }
 
-        public FileSystemAdapterType PreferredFileSystemAdapter
+        public FileSystemAdapterType PreferredFileSystem
         {
-            get => PreferencesSettingsService.PreferredFileSystemAdapter;
-            set => PreferencesSettingsService.PreferredFileSystemAdapter = value;
+            get => PreferencesSettingsService.PreferredFileSystem;
+            set => PreferencesSettingsService.PreferredFileSystem = value;
         }
 
         public void UpdateAdapterStatus()
         {
-            switch (PreferredFileSystemAdapter)
+            switch (PreferredFileSystem)
             {
                 case FileSystemAdapterType.DokanAdapter:
                 {
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
                 }
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(PreferredFileSystemAdapter));
+                    throw new ArgumentOutOfRangeException(nameof(PreferredFileSystem));
             }
         }
     }

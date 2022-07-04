@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Sdk.Models
 {
@@ -27,21 +24,5 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="value">The value to be stored.</param>
         /// <returns>If the value has been updated in the database, returns true otherwise false.</returns>
         bool SetValue<T>(string key, T? value);
-
-        /// <summary>
-        /// Loads the database from <paramref name="file"/>.
-        /// </summary>
-        /// <param name="file">The file to load the database from.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>If database was successfully loaded, returns true otherwise false.</returns>
-        Task<bool> LoadFromFile(IFile file, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Saves the database to <paramref name="file"/>.
-        /// </summary>
-        /// <param name="file">The database file.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>If database was successfully saved, returns true otherwise false.</returns>
-        Task<bool> SaveToFile(IFile file, CancellationToken cancellationToken = default);
     }
 }

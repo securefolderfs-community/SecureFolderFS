@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI.Animations;
@@ -6,20 +7,18 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.WinUI.Helpers;
-using SecureFolderFS.WinUI.Views.VaultWizard;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.WinUI.Dialogs
 {
-    public sealed partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationRequestedMessage<BaseVaultWizardPageViewModel>>
+    public sealed partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>
     {
         private bool _hasNavigationAnimatedOnLoaded;
         private bool _isBackAnimationState;
@@ -40,9 +39,15 @@ namespace SecureFolderFS.WinUI.Dialogs
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
         /// <inheritdoc/>
-        public async void Receive(NavigationRequestedMessage<BaseVaultWizardPageViewModel> message)
+        public async void Receive(NavigationRequestedMessage message)
         {
-            await FinalizeNavigationAnimationAsync(message.ViewModel);
+            await FinalizeNavigationAnimationAsync((message.ViewModel as BaseVaultWizardPageViewModel)!);
+        }
+
+        /// <inheritdoc/>
+        public async void Receive(BackNavigationRequestedMessage message)
+        {
+            await FinalizeNavigationAnimationAsync(ViewModel.CurrentPageViewModel!);
         }
 
         private async Task FinalizeNavigationAnimationAsync(BaseVaultWizardPageViewModel viewModel)
@@ -85,10 +90,8 @@ namespace SecureFolderFS.WinUI.Dialogs
             {
                 _hasNavigationAnimatedOnLoaded = true;
                 GoBack.Visibility = Visibility.Collapsed;
-                return;
             }
-
-            if (!_isBackAnimationState && Navigation.CanGoBack)
+            else if (!_isBackAnimationState && Navigation.CanGoBack)
             {
                 _isBackAnimationState = true;
                 GoBack.Visibility = Visibility.Visible;
@@ -106,12 +109,17 @@ namespace SecureFolderFS.WinUI.Dialogs
             GoBack.Visibility = Navigation.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
+        private async void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
         {
             // Register order is important!
             ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
             ViewModel.Messenger.Register<BackNavigationRequestedMessage>(Navigation);
-            ViewModel.Messenger.Register(this);
+            ViewModel.Messenger.Register<NavigationRequestedMessage>(this);
+            ViewModel.Messenger.Register<BackNavigationRequestedMessage>(this);
+
+            var viewModel = new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel);
+            Navigation.Navigate(viewModel, new SuppressNavigationTransitionInfo());
+            await FinalizeNavigationAnimationAsync(viewModel);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
