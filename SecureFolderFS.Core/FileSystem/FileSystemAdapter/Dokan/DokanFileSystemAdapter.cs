@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.AccessControl;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using DokanNet.Logging;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback;
 
@@ -259,16 +260,19 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
             DokanOptions options = DokanOptions.CaseSensitive | DokanOptions.FixedDrive | DokanOptions.CurrentSession;
             ILogger dokanLogger = new NullLogger();
 
-            this.Mount(
-                mountLocation,
-                options,
-                Constants.FileSystem.Dokan.THREAD_COUNT,
-                Constants.FileSystem.Dokan.DOKAN_VERSION,
-                new TimeSpan(10000),
-                uncName: Constants.FileSystem.UNC_NAME,
-                allocationUnitSize: Constants.FileSystem.Dokan.ALLOC_UNIT_SIZE,
-                sectorSize: Constants.FileSystem.Dokan.SECTOR_SIZE,
-                logger: dokanLogger);
+            _ = Task.Run(() =>
+            {
+                this.Mount(
+                    mountLocation,
+                    options,
+                    Constants.FileSystem.Dokan.THREAD_COUNT,
+                    Constants.FileSystem.Dokan.DOKAN_VERSION,
+                    new TimeSpan(10000),
+                    uncName: Constants.FileSystem.UNC_NAME,
+                    allocationUnitSize: Constants.FileSystem.Dokan.ALLOC_UNIT_SIZE,
+                    sectorSize: Constants.FileSystem.Dokan.SECTOR_SIZE,
+                    logger: dokanLogger);
+            });
         }
 
         public bool StopFileSystem(string mountLocation)

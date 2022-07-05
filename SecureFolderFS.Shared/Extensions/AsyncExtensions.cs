@@ -1,17 +1,18 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Shared.Extensions
 {
     public static class AsyncExtensions
     {
-        public static void RunAndForget(Action action)
+        public static IEnumerable<Task> CombineAsyncInitialize(CancellationToken cancellationToken, params IAsyncInitialize[] items)
         {
-            try
+            foreach (var item in items)
             {
-                _ = Task.Run(action);
+                yield return item.InitAsync(cancellationToken);
             }
-            catch { }
         }
     }
 }

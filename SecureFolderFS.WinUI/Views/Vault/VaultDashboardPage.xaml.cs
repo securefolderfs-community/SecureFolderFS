@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
+using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Shared.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -36,6 +38,8 @@ namespace SecureFolderFS.WinUI.Views.Vault
         {
             if (e.Parameter is VaultDashboardPageViewModel viewModel)
                 ViewModel = viewModel;
+
+            Navigation.Navigate(ViewModel.CurrentPage, new EntranceNavigationTransitionInfo());
 
             base.OnNavigatedTo(e);
         }

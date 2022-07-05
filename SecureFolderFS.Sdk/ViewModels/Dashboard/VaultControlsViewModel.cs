@@ -42,7 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dashboard
         private async Task LockVaultAsync()
         {
             await _vaultViewModel.UnlockedVaultModel.LockAsync();
-            WeakReferenceMessenger.Default.Send(new VaultLoginPageViewModel(_vaultViewModel.VaultModel));
+            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(new VaultLoginPageViewModel(_vaultViewModel.VaultModel)));
         }
 
         private void OpenProperties()

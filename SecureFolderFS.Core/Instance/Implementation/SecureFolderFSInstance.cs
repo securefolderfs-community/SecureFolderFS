@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Exceptions;
+﻿using System.Threading.Tasks;
+using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Helpers;

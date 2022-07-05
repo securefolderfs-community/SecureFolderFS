@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Core.Instance;
 using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.VaultLoader.Routine;
@@ -54,21 +55,31 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         {
             _ = _step8 ?? throw new InvalidOperationException("The keystore was has not been set yet.");
 
+            IVaultInstance? vaultInstance = null;
             try
             {
-                var vaultInstance = _step8.DeriveMasterKeyFromPassword(new DisposablePassword(password.GetPassword()))
+                vaultInstance = _step8.DeriveMasterKeyFromPassword(new DisposablePassword(password.GetPassword()))
                     .ContinueInitializationWithMasterKey()
                     .VerifyVaultConfiguration()
                     .ContinueInitialization()
                     .Finalize()
                     .Deploy();
 
+                if (vaultInstance is not null)
+                    vaultInstance.SecureFolderFSInstance.StartFileSystem();
+
+                await Task.Delay(100); // Wait for the file system to get started
+
                 var rootFolder = await FileSystemService.GetFolderFromPathAsync(vaultInstance.SecureFolderFSInstance.MountLocation);
-                return new VaultInstanceUnlockedVaultModel(vaultInstance, _vaultFolder!);
+                return new VaultInstanceUnlockedVaultModel(vaultInstance, rootFolder!);
             }
             catch (Exception)
             {
                 return null;
+            }
+            finally
+            {
+
             }
         }
 

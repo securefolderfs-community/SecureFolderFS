@@ -22,6 +22,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+
+
             // We don't want to await it, since it's an async based timer
             _ = VaultLiveStatisticsModel.InitAsync(cancellationToken);
             await Task.CompletedTask;

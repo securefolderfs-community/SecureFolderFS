@@ -3,7 +3,7 @@
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
-    /// Represents a password that can be cleared with <see cref="IDisposable"/>.
+    /// Represents a password that can be cleared using <see cref="IDisposable"/>.
     /// </summary>
     public interface IPassword : IDisposable, IEquatable<IPassword>
     {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Shared.Utils
 {
     /// <summary>
-    /// Allows a class to be initialized asynchronously.
+    /// Allows an object to be initialized asynchronously.
     /// </summary>
     public interface IAsyncInitialize
     {

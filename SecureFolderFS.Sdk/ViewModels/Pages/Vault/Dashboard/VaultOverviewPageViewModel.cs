@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
 using SecureFolderFS.Sdk.ViewModels.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -16,6 +18,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
         {
             WidgetsViewModel = new();
             VaultControlsViewModel = new(messenger, vaultViewModel);
+        }
+
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            await WidgetsViewModel.InitAsync(cancellationToken);
         }
     }
 }
