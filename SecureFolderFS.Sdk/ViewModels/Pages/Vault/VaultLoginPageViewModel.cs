@@ -31,6 +31,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             if (password is null)
                 return;
 
+            if (!await VaultModel.IsAccessibleAsync())
+                return; // TODO: Report the issue
+
             // Try set the lock
             _ = await VaultModel.LockFolderAsync();
 
@@ -70,6 +73,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
             // TODO: Get the stream another way
             return null;
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            VaultUnlockingService.Dispose();
         }
     }
 }

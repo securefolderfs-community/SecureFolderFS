@@ -20,6 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
             VaultControlsViewModel = new(messenger, vaultViewModel);
         }
 
+        /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             await WidgetsViewModel.InitAsync(cancellationToken);

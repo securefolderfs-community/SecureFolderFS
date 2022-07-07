@@ -5,16 +5,22 @@ using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
-    public abstract class BaseVaultPageViewModel : ObservableObject, IDisposable
+    public abstract class BaseVaultPageViewModel : ObservableObject, IEquatable<BaseVaultPageViewModel>, IDisposable
     {
-        protected IVaultModel VaultModel { get; }
-
         protected IMessenger Messenger { get; }
+
+        public IVaultModel VaultModel { get; }
 
         protected BaseVaultPageViewModel(IVaultModel vaultModel, IMessenger messenger)
         {
             VaultModel = vaultModel;
             Messenger = messenger;
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(BaseVaultPageViewModel? other)
+        {
+            return VaultModel.Equals(other?.VaultModel);
         }
 
         /// <inheritdoc/>

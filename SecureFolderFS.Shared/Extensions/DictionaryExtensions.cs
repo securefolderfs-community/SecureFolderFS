@@ -62,7 +62,7 @@ namespace SecureFolderFS.Shared.Extensions
             return false;
         }
 
-        public static void AddOrSet<TKey, TValue>(this IDictionary<TKey, TValue?> dictionary, TKey key, TValue? value = default)
+        public static void AddOrSet<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue? value = default)
         {
             if (!dictionary.TryAdd(key, value))
             {

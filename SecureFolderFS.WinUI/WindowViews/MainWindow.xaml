@@ -5,12 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:views="using:SecureFolderFS.WinUI.Views"
+    xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     mc:Ignorable="d">
 
     <!--  UI Root  -->
-    <views:MainWindowHostPage
-        x:Name="HostPage"
-        HorizontalContentAlignment="Stretch"
-        VerticalContentAlignment="Stretch" />
+    <uc:MainWindowHostControl x:Name="HostControl" />
 </Window>

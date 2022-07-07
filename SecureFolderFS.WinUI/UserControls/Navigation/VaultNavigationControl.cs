@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.WinUI.Views.Vault;
 
@@ -10,7 +10,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
     /// <inheritdoc cref="NavigationControl"/>
     internal sealed class VaultNavigationControl : NavigationControl
     {
-        public List<BaseVaultPageViewModel> NavigationCache { get; }
+        public Dictionary<IVaultModel, BaseVaultPageViewModel> NavigationCache { get; }
 
         public VaultNavigationControl()
         {
@@ -20,11 +20,11 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         /// <inheritdoc/>
         public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
         {
-            if (viewModel is BaseVaultPageViewModel pageViewModel && NavigationCache.FirstOrDefault(x => pageViewModel.Equals(x)) is null)
-            {
-                // TODO: This is just a test code
-                NavigationCache.Add(pageViewModel);
-            }
+            if (viewModel is not BaseVaultPageViewModel pageViewModel)
+                throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");
+
+            // Set or update the view model for individual page
+            NavigationCache[pageViewModel.VaultModel] = pageViewModel;
 
             var pageType = viewModel switch
             {

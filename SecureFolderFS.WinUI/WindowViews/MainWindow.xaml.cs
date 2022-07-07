@@ -6,7 +6,7 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.WinUI.Helpers;
-using SecureFolderFS.WinUI.Views;
+using SecureFolderFS.WinUI.UserControls;
 using WinRT;
 using WinRT.Interop;
 
@@ -36,7 +36,6 @@ namespace SecureFolderFS.WinUI.WindowViews
             Instance = this;
 
             InitializeComponent();
-
             EnsureEarlyWindow();
         }
 
@@ -62,7 +61,7 @@ namespace SecureFolderFS.WinUI.WindowViews
             else
             {
                 ExtendsContentIntoTitleBar = true;
-                SetTitleBar(HostPage.CustomTitleBar);
+                SetTitleBar(HostControl.CustomTitleBar);
             }
 
             // Set mica material
@@ -78,14 +77,10 @@ namespace SecureFolderFS.WinUI.WindowViews
                 themeHelper.RegisterForThemeChangedCallback(nameof(MainWindow), _ =>
                 {
                     if (_systemBackdropConfiguration is not null)
-                    {
                         SetBackdropConfiguration(_systemBackdropConfiguration);
-                    }
 
                     if (!_isMicaSupported)
-                    {
-                        (Content as MainWindowHostPage)!.Background = (Brush)App.Current.Resources["ApplicationPageBackgroundThemeBrush"];
-                    }
+                        (Content as MainWindowHostControl)!.Background = (Brush)App.Current.Resources["ApplicationPageBackgroundThemeBrush"];
                 });
             }
 
@@ -118,7 +113,7 @@ namespace SecureFolderFS.WinUI.WindowViews
                 return true;
             }
 
-            (Content as MainWindowHostPage)!.Background = (Brush)App.Current.Resources["ApplicationPageBackgroundThemeBrush"];
+            (Content as MainWindowHostControl)!.Background = (Brush)App.Current.Resources["ApplicationPageBackgroundThemeBrush"];
 
             return false; // Mica not supported
         }
@@ -130,7 +125,7 @@ namespace SecureFolderFS.WinUI.WindowViews
                 ElementTheme.Dark => SystemBackdropTheme.Dark,
                 ElementTheme.Light => SystemBackdropTheme.Light,
                 ElementTheme.Default => SystemBackdropTheme.Default,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(SystemBackdropConfiguration.Theme))
             };
         }
 

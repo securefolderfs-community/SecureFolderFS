@@ -12,7 +12,5 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
         /// Gets or sets saved vaults by the user.
         /// </summary>
         List<string>? VaultPaths { get; set; }
-
-        // TODO: We can add more settings in the future (vault layout, etc.)
     }
 }
