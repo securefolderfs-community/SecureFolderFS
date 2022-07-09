@@ -26,6 +26,7 @@ namespace SecureFolderFS.WinUI.UserControls
             await Task.Delay(25);
             _ = FindName("CartesianChart"); // Realize the chart and load it to view
             await Task.Delay(25);
+            GraphLoaded = true;
         }
 
         private void RootButton_Click(object sender, RoutedEventArgs e)
@@ -91,5 +92,13 @@ namespace SecureFolderFS.WinUI.UserControls
         }
         public static readonly DependencyProperty ChartSecondaryColorProperty =
             DependencyProperty.Register(nameof(ChartSecondaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(null));
+
+        public bool GraphLoaded
+        {
+            get => (bool)GetValue(GraphLoadedProperty);
+            private set => SetValue(GraphLoadedProperty, value);
+        }
+        public static readonly DependencyProperty GraphLoadedProperty =
+            DependencyProperty.Register(nameof(GraphLoaded), typeof(bool), typeof(GraphControl), new PropertyMetadata(false));
     }
 }

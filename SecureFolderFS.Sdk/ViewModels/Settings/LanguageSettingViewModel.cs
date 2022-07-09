@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 
 namespace SecureFolderFS.Sdk.ViewModels.Settings
 {
@@ -12,7 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings
 
         private ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
 
-        public ObservableCollection<ILanguageModel> Languages { get; }
+        public ObservableCollection<LanguageViewModel> Languages { get; }
 
         private bool _IsRestartRequired;
         public bool IsRestartRequired
@@ -23,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings
 
         public LanguageSettingViewModel()
         {
-            Languages = new(LocalizationService.GetLanguages());
+            Languages = new(LocalizationService.GetLanguages().Select(x => new LanguageViewModel(x)));
             _activeLanguage = LocalizationService.CurrentLanguage;
         }
 

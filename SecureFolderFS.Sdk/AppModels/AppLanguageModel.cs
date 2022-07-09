@@ -11,7 +11,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public string LanguageTag { get; }
 
         /// <inheritdoc/>
-        public string FriendlyName { get; }
+        public string Name { get; }
 
         /// <inheritdoc/>
         public CultureInfo Culture { get; }
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             LanguageTag = languageTag;
             Culture = new(languageTag);
-            FriendlyName = FormatFriendlyName(Culture.NativeName);
+            Name = FormatFriendlyName(Culture.NativeName);
         }
 
         private static string FormatFriendlyName(string unformatted)

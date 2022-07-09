@@ -14,7 +14,6 @@
     </UserControl.Resources>
 
     <Button
-        x:Name="RootButton"
         Height="264"
         Padding="12"
         HorizontalAlignment="Stretch"
@@ -49,7 +48,8 @@
                 x:Name="LoadProgress"
                 Grid.Row="2"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center" />
+                VerticalAlignment="Center"
+                x:Load="{x:Bind GraphLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
 
             <!--  Chart  -->
             <sf:SfCartesianChart

@@ -13,9 +13,9 @@ namespace SecureFolderFS.Sdk.Models
         string LanguageTag { get; }
 
         /// <summary>
-        /// Gets the friendly name representation of the language.
+        /// Gets the name representation of the language.
         /// </summary>
-        string FriendlyName { get; }
+        string Name { get; }
 
         /// <summary>
         /// Gets the <see cref="CultureInfo"/> of the language.

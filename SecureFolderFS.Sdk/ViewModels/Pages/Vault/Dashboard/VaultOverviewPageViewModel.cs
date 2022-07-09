@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
-using SecureFolderFS.Sdk.ViewModels.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard

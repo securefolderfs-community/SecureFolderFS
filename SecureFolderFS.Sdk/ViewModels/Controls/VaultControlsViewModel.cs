@@ -9,7 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dashboard
+namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     public sealed class VaultControlsViewModel : ObservableObject
     {

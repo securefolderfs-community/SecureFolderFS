@@ -4,11 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.Settings"
-    xmlns:m="using:SecureFolderFS.Sdk.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
@@ -86,7 +86,7 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ComboBox ItemsSource="{x:Bind ViewModel.LanguageSettingViewModel.Languages}" SelectionChanged="AppLanguage_SelectionChanged">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="m:ILanguageModel">
+                            <DataTemplate x:DataType="vm:LanguageViewModel">
                                 <TextBlock Text="{x:Bind FriendlyName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
