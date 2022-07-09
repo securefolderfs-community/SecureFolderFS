@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.Storage
         /// Locks the provided storage object and prevents the deletion of it.
         /// </summary>
         /// <param name="storage">The storage object to lock.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a <see cref="IDisposable"/> lock handle to <paramref name="storage"/>, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a lock handle to <paramref name="storage"/> represented with <see cref="IDisposable"/>, otherwise null.</returns>
         Task<IDisposable?> ObtainLockAsync(IBaseStorage storage);
 
         /// <summary>

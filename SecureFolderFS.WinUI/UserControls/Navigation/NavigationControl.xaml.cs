@@ -10,6 +10,9 @@ using SecureFolderFS.Sdk.Messages.Navigation;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
+    /// <summary>
+    /// The base class to manage navigation of pages using messages.
+    /// </summary>
     public abstract partial class NavigationControl : UserControl, IDisposable, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>
     {
         protected NavigationControl()

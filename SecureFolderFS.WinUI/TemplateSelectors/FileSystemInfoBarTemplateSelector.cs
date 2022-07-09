@@ -4,7 +4,7 @@ using SecureFolderFS.Sdk.ViewModels.Settings.InfoBars;
 
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {
-    internal sealed class FileSystemInfoBarTemplateSelector : BaseTemplateSelector<InfoBarViewModel>
+    internal sealed class FileSystemInfoBarTemplateSelector : GenericTemplateSelector<InfoBarViewModel>
     {
         public DataTemplate? DokanyNotAvailableInfoBarTemplate { get; set; }
 

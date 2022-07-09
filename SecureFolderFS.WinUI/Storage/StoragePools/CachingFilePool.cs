@@ -39,7 +39,7 @@ namespace SecureFolderFS.WinUI.Storage.StoragePools
 
                     if (exists)
                     {
-                        deleted = await item.DeleteAsync(true);
+                        deleted = await item.DeleteAsync(true, cancellationToken);
                         result &= deleted;
                     }
 

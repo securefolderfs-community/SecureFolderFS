@@ -31,6 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             if (password is null)
                 return;
 
+            // Check if the folder is accessible
             if (!await VaultModel.IsAccessibleAsync())
                 return; // TODO: Report the issue
 
@@ -60,7 +61,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                     return; // TODO: Report incorrect password
             }
 
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(new VaultDashboardPageViewModel(unlockedVaultModel, VaultModel, Messenger)));
+            var dashboardViewModel = new VaultDashboardPageViewModel(unlockedVaultModel, VaultModel, Messenger);
+            _ = dashboardViewModel.CurrentPage.InitAsync(default);
+
+            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardViewModel));
         }
 
         private static async Task<Stream?> GetKeystoreStreamAsync(IFolder vaultFolder, CancellationToken cancellationToken)

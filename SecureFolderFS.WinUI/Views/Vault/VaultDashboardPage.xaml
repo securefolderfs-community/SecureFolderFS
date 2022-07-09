@@ -7,8 +7,29 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
+    xmlns:uc2="using:SecureFolderFS.WinUI.UserControls.BreadcrumbBar"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="StandardBreadcrumbItem" x:DataType="uc2:OrderedBreadcrumbBarItem">
+            <TextBlock
+                FontSize="24"
+                FontWeight="SemiBold"
+                Opacity="0.8"
+                Text="{x:Bind Name, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"
+                ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}" />
+        </DataTemplate>
+        <DataTemplate x:Key="LeadingBreadcrumbItem" x:DataType="uc2:OrderedBreadcrumbBarItem">
+            <TextBlock
+                FontSize="24"
+                FontWeight="SemiBold"
+                Text="{x:Bind Name, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"
+                ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}" />
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid Padding="32,16" RowSpacing="24">
         <Grid.RowDefinitions>
@@ -17,7 +38,20 @@
         </Grid.RowDefinitions>
 
         <!--  Navigation breadcrumb  -->
-        <BreadcrumbBar Grid.Row="0" />
+        <BreadcrumbBar
+            x:Name="Breadcrumb"
+            Grid.Row="0"
+            ItemsSource="{x:Bind BreadcrumbItems}">
+            <BreadcrumbBar.ItemTemplate>
+                <DataTemplate x:DataType="uc2:OrderedBreadcrumbBarItem">
+                    <BreadcrumbBarItem DataContext="{Binding}">
+                        <BreadcrumbBarItem.ContentTemplateSelector>
+                            <ts:OrderedBreadcrumbBarItemTemplateSelector LeadingItemTemplate="{StaticResource LeadingBreadcrumbItem}" StandardItemTemplate="{StaticResource StandardBreadcrumbItem}" />
+                        </BreadcrumbBarItem.ContentTemplateSelector>
+                    </BreadcrumbBarItem>
+                </DataTemplate>
+            </BreadcrumbBar.ItemTemplate>
+        </BreadcrumbBar>
 
         <!--  Content  -->
         <uc:VaultDashboardNavigationControl x:Name="Navigation" Grid.Row="1" />

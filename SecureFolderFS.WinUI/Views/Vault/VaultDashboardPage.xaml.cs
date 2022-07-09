@@ -1,7 +1,9 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using System.Collections.ObjectModel;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
+using SecureFolderFS.WinUI.UserControls.BreadcrumbBar;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,6 +15,8 @@ namespace SecureFolderFS.WinUI.Views.Vault
     /// </summary>
     public sealed partial class VaultDashboardPage : Page //, IRecipient<VaultLockedMessage>
     {
+        public ObservableCollection<OrderedBreadcrumbBarItem> BreadcrumbItems { get; }
+
         public VaultDashboardPageViewModel ViewModel
         {
             get => (VaultDashboardPageViewModel)DataContext;
@@ -22,6 +26,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
         public VaultDashboardPage()
         {
             InitializeComponent();
+            BreadcrumbItems = new();
         }
 
         //public async void Receive(VaultLockedMessage message)
@@ -37,19 +42,10 @@ namespace SecureFolderFS.WinUI.Views.Vault
                 ViewModel = viewModel;
 
             Navigation.Navigate(ViewModel.CurrentPage, new EntranceNavigationTransitionInfo());
+            BreadcrumbItems.Add(new(ViewModel.VaultModel.VaultName, true));
 
             base.OnNavigatedTo(e);
         }
-
-        //protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        //{
-        //    (ViewModel as ICleanable)?.Cleanup();
-
-        //    ViewModel.Messenger.Unregister<DashboardNavigationFinishedMessage>(this);
-        //    ViewModel.Messenger.Unregister<VaultLockedMessage>(this);
-
-        //    base.OnNavigatingFrom(e);
-        //}
 
         //private void BreadcrumbBar_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
         //{
