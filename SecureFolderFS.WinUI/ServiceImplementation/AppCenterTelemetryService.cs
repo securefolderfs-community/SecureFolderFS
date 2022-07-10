@@ -3,28 +3,35 @@ using Microsoft.AppCenter.Analytics;
 using SecureFolderFS.Sdk.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Crashes;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    /// <inheritdoc cref="ITelemetryService"/>
     internal sealed class AppCenterTelemetryService : ITelemetryService
     {
-        public async Task EnableTelemetry()
+        /// <inheritdoc/>
+        public async Task<bool> IsEnabledAsync()
         {
-            if (!AppCenter.Configured)
-            {
-                AppCenter.Start();
-            }
-            else
-            {
-                await AppCenter.SetEnabledAsync(true);
-            }
+            return await AppCenter.IsEnabledAsync();
         }
 
-        public async Task DisableTelemetry()
+        /// <inheritdoc/>
+        public async Task EnableTelemetryAsync()
+        {
+            if (!AppCenter.Configured)
+                AppCenter.Start(typeof(Analytics), typeof(Crashes));
+                
+            await AppCenter.SetEnabledAsync(true);
+        }
+
+        /// <inheritdoc/>
+        public async Task DisableTelemetryAsync()
         {
             await AppCenter.SetEnabledAsync(false);
         }
 
+        /// <inheritdoc/>
         public void ReportTelemetry(string name, IDictionary<string, string>? properties = null)
         {
             Analytics.TrackEvent(name, properties);

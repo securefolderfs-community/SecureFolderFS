@@ -1,11 +1,11 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.Services.UserPreferences
 {
-    public interface IApplicationSettingsService
+    /// <summary>
+    /// A service for storing application configuration and settings.
+    /// </summary>
+    public interface IApplicationSettingsService : ISettingsModel
     {
-        bool IsAvailable { get; }
-
-        DateTime UpdateLastChecked { get; set; }
     }
 }

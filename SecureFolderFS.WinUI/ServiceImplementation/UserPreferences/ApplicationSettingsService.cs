@@ -1,7 +1,6 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Storage.StoragePool;
 using SecureFolderFS.Sdk.Services.UserPreferences;
-using System;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {
@@ -17,12 +16,5 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 
         /// <inheritdoc/>
         protected override string? SettingsStorageName { get; } = Constants.LocalSettings.APPLICATION_SETTINGS_FILENAME;
-
-        /// <inheritdoc/>
-        public DateTime UpdateLastChecked
-        {
-            get => GetSetting<DateTime>(() => new());
-            set => SetSetting<DateTime>(value);
-        }
     }
 }

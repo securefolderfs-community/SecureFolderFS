@@ -31,15 +31,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             where TViewModel : INotifyPropertyChanged
         {
             if (!_dialogs.TryGetValue(typeof(TViewModel), out var initializer))
-            {
                 throw new ArgumentException($"{typeof(TViewModel)} does not have an appropriate dialog associated with it.");
-            }
 
             var contentDialog = initializer();
             if (contentDialog is not IDialog<TViewModel> dialog)
-            {
                 throw new NotSupportedException($"The dialog does not implement {typeof(IDialog<TViewModel>)}.");
-            }
 
             dialog.ViewModel = viewModel;
             contentDialog.XamlRoot = MainWindow.Instance!.Content.XamlRoot;

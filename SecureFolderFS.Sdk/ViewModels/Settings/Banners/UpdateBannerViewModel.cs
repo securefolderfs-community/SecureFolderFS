@@ -12,7 +12,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 {
     public sealed class UpdateBannerViewModel : ObservableObject
     {
-        private IApplicationSettingsService ApplicationSettingsService { get; } = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
+        private IGeneralSettingsService GeneralSettingsService { get; } = Ioc.Default.GetRequiredService<IGeneralSettingsService>();
 
         private IUpdateService UpdateService { get; } = Ioc.Default.GetRequiredService<IUpdateService>();
 
@@ -20,8 +20,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 
         public DateTime LastChecked
         {
-            get => ApplicationSettingsService.UpdateLastChecked;
-            set => ApplicationSettingsService.UpdateLastChecked = value;
+            get => GeneralSettingsService.UpdateLastChecked;
+            set => GeneralSettingsService.UpdateLastChecked = value;
         }
 
         private string? _UpdateText;
@@ -50,8 +50,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 
         public async Task ConfigureUpdates()
         {
-            var updatesSupported = await UpdateService.AreAppUpdatesSupportedAsync();
-            if (!updatesSupported)
+            var updatesSupported = await UpdateService.IsSupportedAsync();
+            var isInitialized = updatesSupported && await UpdateService.InitializeAsync();
+
+            if (!updatesSupported || !isInitialized)
             {
                 AreUpdatesSupported = false;
                 UpdateInfoBar.IsOpen = true;
@@ -66,11 +68,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
             LastChecked = DateTime.Now;
             OnPropertyChanged(nameof(LastChecked));
 
-            var isNewUpdateAvailable = await UpdateService.IsNewUpdateAvailableAsync();
-            if (isNewUpdateAvailable)
-            {
-                _ = UpdateService.UpdateAppAsync(null);
-            }
+            var isUpdateAvailable = await UpdateService.IsUpdateAvailableAsync();
+            if (isUpdateAvailable)
+                _ = UpdateService.UpdateAsync(null);
         }
     }
 }

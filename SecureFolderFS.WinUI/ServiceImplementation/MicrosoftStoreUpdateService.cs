@@ -5,51 +5,53 @@ using System.Collections.Generic;
 using SecureFolderFS.Sdk.Enums;
 using System.Threading.Tasks;
 using Windows.Services.Store;
-using System.Diagnostics;
+using System.Threading;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    /// <inheritdoc cref="IUpdateService"/>
     internal sealed class MicrosoftStoreUpdateService : IUpdateService
     {
         private StoreContext? _storeContext;
-
         private IEnumerable<StorePackageUpdate>? _updates;
 
-        public async Task<bool> AreAppUpdatesSupportedAsync()
+        /// <inheritdoc/>
+        public Task<bool> IsSupportedAsync()
         {
-            _storeContext ??= await Task.Run(StoreContext.GetDefault);
-
-            return false;
+            return Task.FromResult(false);
         }
 
-        public async Task<bool> IsNewUpdateAvailableAsync()
+        /// <inheritdoc/>
+        public async Task<bool> InitializeAsync()
         {
-            _ = _storeContext ?? throw new InvalidOperationException($"{nameof(_storeContext)} was not initialized.");
+            _storeContext ??= await Task.Run(StoreContext.GetDefault);
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> IsUpdateAvailableAsync()
+        {
+            AssertInitialized();
 
             try
             {
-                _updates = await _storeContext.GetAppAndOptionalStorePackageUpdatesAsync();
+                _updates = await _storeContext!.GetAppAndOptionalStorePackageUpdatesAsync();
+                return !_updates.IsEmpty();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.WriteLine(ex);
+                return false;
             }
-
-            return !_updates.IsEmpty();
         }
 
-        public async Task<AppUpdateResult> UpdateAppAsync(IProgress<double>? progress)
+        /// <inheritdoc/>
+        public async Task<AppUpdateResult> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
         {
-            _ = _storeContext ?? throw new InvalidOperationException($"{nameof(_storeContext)} was not initialized.");
-            _ = _updates ?? throw new InvalidOperationException($"{nameof(_updates)} was not initialized.");
+            AssertInitialized();
 
-            var operation = _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
-            operation.Progress = (asyncInfo, update) =>
-            {
-                progress?.Report(update.PackageDownloadProgress);
-            };
-
-            var result = await operation;
+            var operation = _storeContext!.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
+            operation.Progress = (asyncInfo, update) => progress?.Report(update.PackageDownloadProgress);
+            var result = await operation.AsTask(cancellationToken);
 
             return result.OverallState switch
             {
@@ -64,6 +66,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 StorePackageUpdateState.ErrorWiFiRequired => AppUpdateResult.FailedNetworkError,
                 _ => AppUpdateResult.FailedUnknownError
             };
+        }
+
+        private void AssertInitialized()
+        {
+            _ = _storeContext ?? throw new InvalidOperationException($"{nameof(_storeContext)} was not initialized.");
         }
     }
 }

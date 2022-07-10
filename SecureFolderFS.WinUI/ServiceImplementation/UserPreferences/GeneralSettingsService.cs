@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.WinUI.AppModels;
+using System;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {
@@ -11,6 +12,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
             : base(originSettingsModel)
         {
             SettingsDatabase = originSettingsDatabase;
+        }
+
+        /// <inheritdoc/>
+        public DateTime UpdateLastChecked
+        {
+            get => GetSetting<DateTime>(() => new());
+            set => SetSetting<DateTime>(value);
         }
     }
 }
