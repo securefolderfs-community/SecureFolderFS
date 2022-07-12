@@ -26,24 +26,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             set => SetProperty(ref _IsOpen, value);
         }
 
-        private bool _CanBeClosed;
+        private bool _CanBeClosed = true;
         public bool CanBeClosed
         {
             get => _CanBeClosed;
             set => SetProperty(ref _CanBeClosed, value);
         }
 
-        private InfoBarSeverityType _InfoBarSeverity;
+        private InfoBarSeverityType _InfoBarSeverity = InfoBarSeverityType.Information;
         public InfoBarSeverityType InfoBarSeverity
         {
             get => _InfoBarSeverity;
             set => SetProperty(ref _InfoBarSeverity, value);
-        }
-
-        public InfoBarViewModel()
-        {
-            _CanBeClosed = true;
-            _InfoBarSeverity = InfoBarSeverityType.Information;
         }
     }
 }

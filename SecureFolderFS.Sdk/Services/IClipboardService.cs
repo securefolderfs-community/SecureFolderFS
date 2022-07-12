@@ -20,18 +20,18 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="data">The data to upload to clipboard.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
-        Task<bool> SetClipboardDataAsync(IClipboardDataModel data);
+        Task<bool> SetClipboardDataAsync(IClipboardItemModel data);
 
         /// <summary>
         /// Gets the current clipboard data.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted, returns <see cref="IClipboardDataModel"/>, otherwise null.</returns>
-        Task<IClipboardDataModel?> RequestClipboardDataAsync();
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted, returns <see cref="IClipboardItemModel"/>, otherwise null.</returns>
+        Task<IClipboardItemModel?> RequestClipboardDataAsync();
 
         /// <summary>
         /// Gets the whole clipboard data.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted, returns <see cref="IEnumerable{T}"/> of type <see cref="IClipboardDataModel"/>, otherwise null.</returns>
-        Task<IEnumerable<IClipboardDataModel>?> RequestFullClipboardDataAsync();
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted, returns <see cref="IEnumerable{T}"/> of type <see cref="IClipboardItemModel"/>, otherwise null.</returns>
+        Task<IEnumerable<IClipboardItemModel>?> RequestFullClipboardDataAsync();
     }
 }

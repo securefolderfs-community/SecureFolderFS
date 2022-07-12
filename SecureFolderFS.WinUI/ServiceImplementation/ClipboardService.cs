@@ -19,24 +19,24 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<bool> SetClipboardDataAsync(IClipboardDataModel data)
+        public Task<bool> SetClipboardDataAsync(IClipboardItemModel data)
         {
             return SetClipboardDataInternalAsync(data);
         }
 
         /// <inheritdoc/>
-        public Task<IClipboardDataModel?> RequestClipboardDataAsync()
+        public Task<IClipboardItemModel?> RequestClipboardDataAsync()
         {
             return Task.FromResult(GetClipboardDataInternal());
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<IClipboardDataModel>?> RequestFullClipboardDataAsync()
+        public Task<IEnumerable<IClipboardItemModel>?> RequestFullClipboardDataAsync()
         {
             return GetFullClipboardDataInternalAsync();
         }
 
-        private static async Task<bool> SetClipboardDataInternalAsync(IClipboardDataModel data)
+        private static async Task<bool> SetClipboardDataInternalAsync(IClipboardItemModel data)
         {
             var dataPackage = new DataPackage();
             switch (data.DataType)
@@ -55,18 +55,18 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             return true;
         }
 
-        private static IClipboardDataModel? GetClipboardDataInternal()
+        private static IClipboardItemModel? GetClipboardDataInternal()
         {
             var data = Clipboard.GetContent();
             return data is not null ? new WindowsClipboardItemModel(data) : null;
         }
 
-        private static async Task<IEnumerable<IClipboardDataModel>?> GetFullClipboardDataInternalAsync()
+        private static async Task<IEnumerable<IClipboardItemModel>?> GetFullClipboardDataInternalAsync()
         {
             var historyResult = await Clipboard.GetHistoryItemsAsync();
             if (historyResult.Status == ClipboardHistoryItemsResultStatus.Success)
             {
-                var clipboardHistoryItems = new List<IClipboardDataModel>();
+                var clipboardHistoryItems = new List<IClipboardItemModel>();
                 foreach (var item in historyResult.Items)
                 {
                     clipboardHistoryItems.Add(new WindowsClipboardItemModel(item.Content));

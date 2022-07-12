@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.WinUI.AppModels
 {
+    /// <inheritdoc cref="IUnlockedVaultModel"/>
     internal sealed class VaultInstanceUnlockedVaultModel : IUnlockedVaultModel
     {
         private readonly IVaultInstance _vaultInstance;
@@ -19,6 +20,7 @@ namespace SecureFolderFS.WinUI.AppModels
         {
             _vaultInstance = vaultInstance;
             RootFolder = rootFolder;
+            VaultFileSystem = null!; // TODO: Implement VaultFileSystem
         }
 
         /// <inheritdoc/>

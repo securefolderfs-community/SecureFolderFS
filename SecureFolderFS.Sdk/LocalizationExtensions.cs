@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 
-namespace SecureFolderFS.Sdk.Extensions
+namespace SecureFolderFS.Sdk
 {
     public static class LocalizationExtensions
     {

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using SecureFolderFS.Shared.Utils;
 
@@ -15,17 +14,16 @@ namespace SecureFolderFS.Sdk.ViewModels
 
         public SidebarViewModel SidebarViewModel { get; }
 
-        public BaseVaultPageViewModel? CurrentPageViewModel { get; set; }
-
         public MainViewModel()
         {
             VaultCollection = new LocalVaultCollectionModel();
             SidebarViewModel = new(VaultCollection);
         }
 
-        public Task InitAsync(CancellationToken cancellationToken = default)
+        /// <inheritdoc/>
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return SidebarViewModel.InitAsync(cancellationToken);
+            await SidebarViewModel.InitAsync(cancellationToken);
         }
     }
 }

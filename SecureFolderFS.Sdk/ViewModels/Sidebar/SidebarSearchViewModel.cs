@@ -26,9 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             await foreach (var item in SearchModel.SearchAsync(query, cancellationToken))
             {
                 if (item is SidebarItemViewModel sidebarItem)
-                {
                     SearchItems.Add(sidebarItem.VaultModel.VaultName);
-                }
             }
         }
     }

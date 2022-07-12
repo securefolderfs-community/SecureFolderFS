@@ -6,7 +6,7 @@ namespace SecureFolderFS.Sdk.Models
     /// <summary>
     /// Represents clipboard item data.
     /// </summary>
-    public interface IClipboardDataModel
+    public interface IClipboardItemModel
     {
         /// <summary>
         /// Gets the type of the clipboard data.

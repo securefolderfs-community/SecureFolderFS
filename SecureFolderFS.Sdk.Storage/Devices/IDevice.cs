@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Storage.StorageProperties;
 
 namespace SecureFolderFS.Sdk.Storage.Devices
 {
@@ -11,6 +12,11 @@ namespace SecureFolderFS.Sdk.Storage.Devices
         /// Gets the name of the device.
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Gets the collection of properties for this device.
+        /// </summary>
+        IStoragePropertiesCollection? Properties { get; }
 
         /// <summary>
         /// Pings the device and waits for response.

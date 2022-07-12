@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
-    public abstract class BaseVaultPageViewModel : ObservableObject, IEquatable<BaseVaultPageViewModel>, IDisposable
+    public abstract class BaseVaultPageViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         protected IMessenger Messenger { get; }
 
@@ -18,10 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         }
 
         /// <inheritdoc/>
-        public bool Equals(BaseVaultPageViewModel? other)
-        {
-            return VaultModel.Equals(other?.VaultModel);
-        }
+        public abstract Task InitAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
         public virtual void Dispose() { }

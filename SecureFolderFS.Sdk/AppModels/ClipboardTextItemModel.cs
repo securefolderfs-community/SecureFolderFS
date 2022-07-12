@@ -4,8 +4,8 @@ using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="IClipboardDataModel"/>
-    internal sealed class ClipboardTextItemModel : IClipboardDataModel
+    /// <inheritdoc cref="IClipboardItemModel"/>
+    internal sealed class ClipboardTextItemModel : IClipboardItemModel
     {
         private readonly string _text;
 

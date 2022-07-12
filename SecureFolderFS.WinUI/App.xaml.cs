@@ -16,7 +16,6 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.WinUI.AppModels;
 using SecureFolderFS.WinUI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.WinUI.Storage.NativeStorage;
-using SecureFolderFS.WinUI.Storage.WindowsStorage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -125,6 +124,7 @@ namespace SecureFolderFS.WinUI
 #endif
         }
 
+        // Terrible.
         private static TSettingsService GetSettingsService<TSettingsService>(IServiceProvider serviceProvider,
             Func<ISettingsDatabaseModel, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
         {

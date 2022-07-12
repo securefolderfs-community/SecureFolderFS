@@ -22,6 +22,13 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Checks if the given vault is supported.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the vault is supported, returns true, otherwise false.</returns>
+        Task<bool> IsSupportedAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Sets the <see cref="Stream"/> to keystore containing serialized configuration.
         /// </summary>
         /// <param name="stream">The stream that contains the keystore.</param>
@@ -31,12 +38,12 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> SetKeystoreStreamAsync(Stream stream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Unlocks the vault using the provided <paramref name="password"/>.
+        /// Unlocks and initializes the vault using the provided <paramref name="password"/>.
         /// </summary>
         /// <exception cref="IOException"></exception> // TODO: Add exceptions
         /// <param name="password">The password to unlock the vault with.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, the value is <see cref="IUnlockedVaultModel"/>, otherwise null.</returns>
-        Task<IUnlockedVaultModel?> UnlockAsync(IPassword password, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, the value is <see cref="IUnlockedVaultModel"/> of the vault instance, otherwise null.</returns>
+        Task<IUnlockedVaultModel?> UnlockAndStartAsync(IPassword password, CancellationToken cancellationToken = default);
     }
 }

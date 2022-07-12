@@ -15,6 +15,12 @@ namespace SecureFolderFS.Sdk.Storage.Devices
         Task<object?> GetUnknownRootAsync();
 
         /// <summary>
+        /// Tries to get root of the device represented by a folder with limited access.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IFolder"/> that represents the root directory of the device, otherwise null.</returns>
+        Task<IFolder?> GetRootAsFolderAsync();
+
+        /// <summary>
         /// Tries to get root of the device as a collection of storage objects.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IEnumerable{T}"/> of type <see cref="IBaseStorage"/>, otherwise null.</returns>

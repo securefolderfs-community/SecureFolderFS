@@ -153,7 +153,7 @@
                                         Grid.Column="0"
                                         FontSize="14"
                                         Opacity="0.8"
-                                        Text="LAST-OPENED" />
+                                        Text="Undefined" />
                                 </Grid>
                             </NavigationViewItem.Content>
                             <NavigationViewItem.ContextFlyout>

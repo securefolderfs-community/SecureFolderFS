@@ -11,9 +11,7 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
         protected override DataTemplate? SelectTemplateCore(InfoBarViewModel? item, DependencyObject container)
         {
             if (item is DokanyInfoBarViewModel)
-            {
                 return DokanyNotAvailableInfoBarTemplate;
-            }
 
             return base.SelectTemplateCore(item, container);
         }

@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace SecureFolderFS.Sdk.Models
+namespace SecureFolderFS.Shared.Utils
 {
     /// <summary>
-    /// Represents a password that can be cleared using <see cref="IDisposable"/>.
+    /// Represents a password that can be cleared.
     /// </summary>
-    public interface IPassword : IDisposable, IEquatable<IPassword>
+    public interface IPassword : IDisposable
     {
         /// <summary>
         /// Retrieves the password as a UTF8 byte array.

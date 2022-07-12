@@ -7,8 +7,8 @@ using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.WinUI.AppModels
 {
-    /// <inheritdoc cref="IClipboardDataModel"/>
-    internal sealed class WindowsClipboardItemModel : IClipboardDataModel
+    /// <inheritdoc cref="IClipboardItemModel"/>
+    internal sealed class WindowsClipboardItemModel : IClipboardItemModel
     {
         private readonly DataPackageView _dataPackageView;
 

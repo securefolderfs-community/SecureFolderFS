@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.WinUI.AppModels
 {

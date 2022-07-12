@@ -5,8 +5,56 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Vault.Login"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+
+        <DataTemplate x:Key="AuthenticateDataTemplate" x:DataType="vm:LoginKeystoreSelectionViewModel">
+            <StackPanel Spacing="24">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="Provide keystore to continue" />
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind SelectKeystoreCommand}"
+                    Content="Authenticate"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LoginDataTemplate" x:DataType="vm:LoginCredentialsViewModel">
+            <StackPanel Spacing="24">
+                <!--  Password Control  -->
+                <StackPanel Width="400" Spacing="8">
+                    <TextBlock Opacity="0.8" Text="Enter password" />
+                    <PasswordBox
+                        x:Name="VaultPasswordBox"
+                        MinWidth="300"
+                        IsPasswordRevealButtonEnabled="True"
+                        KeyUp="VaultPasswordBox_KeyUp"
+                        Loaded="VaultPasswordBox_Loaded"
+                        PlaceholderText="Password" />
+                </StackPanel>
+
+                <!--  Login  -->
+                <Button
+                    x:Name="ContinueButton"
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Click="ContinueButton_Click"
+                    Content="Unlock"
+                    Loaded="ContinueButton_Loaded"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
 
     <ScrollViewer>
         <Grid>
@@ -40,36 +88,17 @@
                 <!--  Image  -->
                 <Image Grid.Row="1" />
 
-                <!--  Password and login  -->
-                <StackPanel Grid.Row="1" Spacing="24">
-                    <!--  Password Control  -->
-                    <StackPanel Width="400" Spacing="8">
-                        <TextBlock Opacity="0.8" Text="Enter password" />
-                        <PasswordBox
-                            x:Name="VaultPasswordBox"
-                            MinWidth="300"
-                            IsPasswordRevealButtonEnabled="True"
-                            KeyUp="VaultPasswordBox_KeyUp"
-                            PlaceholderText="Password" />
-                    </StackPanel>
-
-                    <!--  Login  -->
-                    <Button
-                        x:Name="ContinueButton"
-                        Padding="24,6"
-                        HorizontalAlignment="Center"
-                        Click="ContinueButton_Click"
-                        Content="Unlock"
-                        Style="{ThemeResource AccentButtonStyle}" />
-                </StackPanel>
+                <!--  Input  -->
+                <ContentControl
+                    Grid.Row="2"
+                    HorizontalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Content="{x:Bind ViewModel.LoginOptionViewModel, Mode=OneWay}">
+                    <ContentControl.ContentTemplateSelector>
+                        <ts:LoginMethodTemplateSelector AuthenticateDataTemplate="{StaticResource AuthenticateDataTemplate}" LoginDataTemplate="{StaticResource LoginDataTemplate}" />
+                    </ContentControl.ContentTemplateSelector>
+                </ContentControl>
             </Grid>
-
-            <InfoBar
-                Title="Password is incorrect."
-                Margin="32"
-                VerticalAlignment="Bottom"
-                IsOpen="False"
-                Severity="Error" />
         </Grid>
     </ScrollViewer>
 </Page>

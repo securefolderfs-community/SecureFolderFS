@@ -57,35 +57,30 @@
                 Grid.Row="2"
                 Margin="0,8,0,0"
                 x:DeferLoadStrategy="Lazy">
-                <sf:SfCartesianChart.PrimaryAxis>
+                <sf:SfCartesianChart.XAxes>
                     <sf:DateTimeAxis ShowGridLines="False" Visibility="Collapsed" />
-                </sf:SfCartesianChart.PrimaryAxis>
-                <sf:SfCartesianChart.SecondaryAxis>
+                </sf:SfCartesianChart.XAxes>
+                <sf:SfCartesianChart.YAxes>
                     <sf:NumericalAxis
                         Minimum="0"
+                        MinorTickLineSize="8"
                         ShowGridLines="False"
-                        SmallTickLineSize="8"
                         TickLineSize="0" />
-                </sf:SfCartesianChart.SecondaryAxis>
+                </sf:SfCartesianChart.YAxes>
 
                 <sf:SfCartesianChart.Series>
                     <sf:AreaSeries
                         ItemsSource="{x:Bind Data, Mode=OneWay}"
-                        Palette="Custom"
                         Stroke="{x:Bind ChartStroke, Mode=OneWay}"
                         StrokeThickness="1"
                         XBindingPath="Date"
                         YBindingPath="High">
-                        <sf:AreaSeries.ColorModel>
-                            <sf:ChartColorModel>
-                                <sf:ChartColorModel.CustomBrushes>
-                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                        <GradientStop Offset="0" Color="{x:Bind ChartPrimaryColor}" />
-                                        <GradientStop Offset="1" Color="{x:Bind ChartSecondaryColor}" />
-                                    </LinearGradientBrush>
-                                </sf:ChartColorModel.CustomBrushes>
-                            </sf:ChartColorModel>
-                        </sf:AreaSeries.ColorModel>
+                        <sf:AreaSeries.PaletteBrushes>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Offset="0" Color="{x:Bind ChartPrimaryColor}" />
+                                <GradientStop Offset="1" Color="{x:Bind ChartSecondaryColor}" />
+                            </LinearGradientBrush>
+                        </sf:AreaSeries.PaletteBrushes>
                     </sf:AreaSeries>
                 </sf:SfCartesianChart.Series>
             </sf:SfCartesianChart>

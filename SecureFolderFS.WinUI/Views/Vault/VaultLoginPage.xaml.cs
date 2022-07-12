@@ -5,8 +5,8 @@ using Microsoft.UI.Xaml.Navigation;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
-using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
+using SecureFolderFS.Sdk.ViewModels.Vault.Login;
 using SecureFolderFS.WinUI.AppModels;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -19,6 +19,9 @@ namespace SecureFolderFS.WinUI.Views.Vault
     /// </summary>
     public sealed partial class VaultLoginPage : Page
     {
+        private Button? _continueButton;
+        private PasswordBox? _vaultPasswordBox;
+
         public VaultLoginPageViewModel ViewModel
         {
             get => (VaultLoginPageViewModel)DataContext;
@@ -40,22 +43,38 @@ namespace SecureFolderFS.WinUI.Views.Vault
 
         private async void VaultPasswordBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter && ContinueButton.IsEnabled)
+            if ((_continueButton?.IsEnabled ?? false) && e.Key == VirtualKey.Enter)
             {
-                ContinueButton.IsEnabled = false;
+                if (_vaultPasswordBox is null || _continueButton?.DataContext is not LoginCredentialsViewModel viewModel)
+                    return;
+
+                _continueButton.IsEnabled = false;
                 await Task.Delay(50); // Wait for UI to update.
-                var securePassword = new SecurePassword(Encoding.UTF8.GetBytes(VaultPasswordBox.Password));
-                ViewModel.UnlockVaultCommand.Execute(securePassword);
-                ContinueButton.IsEnabled = true;
+                var securePassword = new SecurePassword(Encoding.UTF8.GetBytes(_vaultPasswordBox.Password));
+                viewModel.UnlockVaultCommand.Execute(securePassword);
+                _continueButton.IsEnabled = true;
             }
         }
 
         private void ContinueButton_Click(object sender, RoutedEventArgs e)
         {
-            ContinueButton.IsEnabled = false;
-            var securePassword = new SecurePassword(Encoding.UTF8.GetBytes(VaultPasswordBox.Password));
-            ViewModel.UnlockVaultCommand.Execute(securePassword);
-            ContinueButton.IsEnabled = true;
+            if (_vaultPasswordBox is null || _continueButton?.DataContext is not LoginCredentialsViewModel viewModel)
+                return;
+
+            _continueButton.IsEnabled = false;
+            var securePassword = new SecurePassword(Encoding.UTF8.GetBytes(_vaultPasswordBox.Password));
+            viewModel.UnlockVaultCommand.Execute(securePassword);
+            _continueButton.IsEnabled = true;
+        }
+
+        private void ContinueButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            _continueButton = sender as Button;
+        }
+
+        private void VaultPasswordBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            _vaultPasswordBox = sender as PasswordBox;
         }
     }
 }

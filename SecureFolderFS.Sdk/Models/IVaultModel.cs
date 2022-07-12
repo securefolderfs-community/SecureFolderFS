@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.Models
         Task<bool> LockFolderAsync();
 
         /// <summary>
-        /// Determines if <see cref="Folder"/> is still valid.
+        /// Determines if <see cref="Folder"/> is valid and can be accessed.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and the folder is accessible, returns true, otherwise false.</returns>
         Task<bool> IsAccessibleAsync();

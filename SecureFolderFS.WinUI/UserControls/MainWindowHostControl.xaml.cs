@@ -39,6 +39,8 @@ namespace SecureFolderFS.WinUI.UserControls
 
             // Navigate
             Navigation.Navigate(destination, new EntranceNavigationTransitionInfo());
+
+            _ = destination.InitAsync();
         }
 
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

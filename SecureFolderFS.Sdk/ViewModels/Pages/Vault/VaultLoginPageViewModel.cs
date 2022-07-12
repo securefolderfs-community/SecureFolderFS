@@ -1,88 +1,50 @@
-﻿using System.IO;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.ViewModels.Vault.Login;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public sealed class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
-        private IVaultUnlockingService VaultUnlockingService { get; } = Ioc.Default.GetRequiredService<IVaultUnlockingService>();
+        private IKeystoreModel? _keystoreModel;
 
         public string VaultName => VaultModel.VaultName;
 
-        public IAsyncRelayCommand UnlockVaultCommand { get; }
+        private ObservableObject _LoginOptionViewModel;
+        public ObservableObject LoginOptionViewModel
+        {
+            get => _LoginOptionViewModel;
+            set => SetProperty(ref _LoginOptionViewModel, value);
+        }
 
         public VaultLoginPageViewModel(IVaultModel vaultModel)
             : base(vaultModel, new WeakReferenceMessenger())
         {
-            UnlockVaultCommand = new AsyncRelayCommand<IPassword?>(UnlockVaultAsync);
-        }
-
-        private async Task UnlockVaultAsync(IPassword? password, CancellationToken cancellationToken = default)
-        {
-            if (password is null)
-                return;
-
-            // Check if the folder is accessible
-            if (!await VaultModel.IsAccessibleAsync())
-                return; // TODO: Report the issue
-
-            // Try set the lock
-            _ = await VaultModel.LockFolderAsync();
-
-            IUnlockedVaultModel? unlockedVaultModel;
-            using (VaultModel.FolderLock)
-            using (password)
-            {
-                // Set the vault folder
-                if (!await VaultUnlockingService.SetVaultFolderAsync(VaultModel.Folder, cancellationToken))
-                    return; // TODO: Report the issue
-
-                // Get the keystore stream
-                var keystoreStream = await GetKeystoreStreamAsync(VaultModel.Folder, cancellationToken);
-                if (keystoreStream is null)
-                    return;
-
-                // Set the keystore stream
-                if (!await VaultUnlockingService.SetKeystoreStreamAsync(keystoreStream, JsonToStreamSerializer.Instance, cancellationToken))
-                    return; // TODO: Report the issue
-
-                // Unlock the vault
-                unlockedVaultModel = await VaultUnlockingService.UnlockAsync(password, cancellationToken);
-                if (unlockedVaultModel is null)
-                    return; // TODO: Report incorrect password
-            }
-
-            var dashboardViewModel = new VaultDashboardPageViewModel(unlockedVaultModel, VaultModel, Messenger);
-            _ = dashboardViewModel.CurrentPage.InitAsync(default);
-
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardViewModel));
-        }
-
-        private static async Task<Stream?> GetKeystoreStreamAsync(IFolder vaultFolder, CancellationToken cancellationToken)
-        {
-            _ = cancellationToken; // TODO: Cancellation token here will be used later
-
-            var keystoreFile = await vaultFolder.GetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME);
-            if (keystoreFile is not null)
-                return await keystoreFile.OpenStreamAsync(FileAccess.Read, FileShare.Read);
-
-            // TODO: Get the stream another way
-            return null;
         }
 
         /// <inheritdoc/>
-        public override void Dispose()
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            VaultUnlockingService.Dispose();
+            bool is2faEnabled = false; // TODO: Just for testing, implement the real code later
+
+            if (is2faEnabled || await VaultModel.Folder.GetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME) is not IFile keystoreFile)
+            {
+                // TODO: Recognize the option in that view model
+                LoginOptionViewModel = new LoginKeystoreSelectionViewModel();
+            }
+            else
+            {
+                _keystoreModel ??= new FileKeystoreModel(keystoreFile, JsonToStreamSerializer.Instance);
+                var unlockingModel = new VaultUnlockingModel(VaultModel, _keystoreModel);
+                await unlockingModel.InitAsync(cancellationToken);
+                LoginOptionViewModel = new LoginCredentialsViewModel(Messenger, VaultModel, unlockingModel);
+            }
         }
     }
 }
