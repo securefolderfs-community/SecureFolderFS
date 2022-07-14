@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 
@@ -9,6 +10,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize
     {
+        private IWidgetsContextModel WidgetsContextModel { get; }
+
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
         // TODO: Remove later in favor of WidgetsListViewModel.Widgets
@@ -16,8 +19,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         public GraphsWidgetViewModel? GraphsWidget { get; private set; }
 
-        public WidgetsListViewModel()
+        public WidgetsListViewModel(IWidgetsContextModel widgetsContextModel)
         {
+            WidgetsContextModel = widgetsContextModel;
             Widgets = new();
         }
 
@@ -27,8 +31,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
             // TODO: Load widgets from config
 
-            HealthWidget = new();
-            GraphsWidget = new();
+            // TODO: Add IWidgetsContextModel
+            HealthWidget = new(WidgetsContextModel);
+            GraphsWidget = new(WidgetsContextModel);
 
             await Task.WhenAll(AsyncExtensions.CombineAsyncInitialize(cancellationToken, GraphsWidget, HealthWidget));
         }

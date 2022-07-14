@@ -1,10 +1,17 @@
-﻿namespace SecureFolderFS.Sdk.Services.UserPreferences
+﻿using System.Collections.Generic;
+using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Sdk.Models;
+
+namespace SecureFolderFS.Sdk.Services.UserPreferences
 {
     /// <summary>
     /// A service to manage settings of saved vaults.
     /// </summary>
-    public interface IVaultsSettingsService
+    public interface IVaultsSettingsService : ISettingsModel
     {
-        // TODO: Add widget layout
+        /// <summary>
+        /// Gets or sets the contexts associated with each vault.
+        /// </summary>
+        Dictionary<string, VaultContextDataModel>? VaultContexts { get; set; }
     }
 }

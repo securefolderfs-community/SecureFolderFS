@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
@@ -26,7 +27,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         public IRelayCommand OpenVaultHealthCommand { get; }
 
-        public VaultHealthWidgetViewModel()
+        public VaultHealthWidgetViewModel(IWidgetsContextModel widgetsContextModel)
+            : base(widgetsContextModel)
         {
             StartScanningCommand = new RelayCommand(StartScanning);
             OpenVaultHealthCommand = new RelayCommand(OpenVaultHealth);

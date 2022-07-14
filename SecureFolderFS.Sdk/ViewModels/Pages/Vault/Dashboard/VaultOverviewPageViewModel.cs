@@ -16,7 +16,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
         public VaultOverviewPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
             : base(messenger, vaultViewModel)
         {
-            WidgetsViewModel = new();
+            // TODO: Add IWidgetsContextModel
+            WidgetsViewModel = new(null);
             VaultControlsViewModel = new(messenger, vaultViewModel);
         }
 

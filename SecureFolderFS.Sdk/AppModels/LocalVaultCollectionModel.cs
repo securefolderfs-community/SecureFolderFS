@@ -11,12 +11,9 @@ using SecureFolderFS.Shared.Extensions;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultCollectionModel"/>
-    public sealed class LocalVaultCollectionModel : IVaultCollectionModel
+    public sealed class LocalVaultCollectionModel : BaseSerializedDataModel<ISavedVaultsService>, IVaultCollectionModel
     {
-        private bool _vaultsLoaded;
         private readonly List<IVaultModel> _vaults;
-
-        private ISavedVaultsService VaultsSettingsService { get; } = Ioc.Default.GetRequiredService<ISavedVaultsService>();
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
@@ -34,10 +31,10 @@ namespace SecureFolderFS.Sdk.AppModels
             if (vault is not VaultModel vaultModel)
                 return false;
 
-            VaultsSettingsService.VaultPaths ??= new();
-            VaultsSettingsService.VaultPaths.Add(vaultModel.Folder.Path);
+            SettingsService.VaultPaths ??= new();
+            SettingsService.VaultPaths.Add(vaultModel.Folder.Path);
 
-            await VaultsSettingsService.SaveSettingsAsync(cancellationToken);
+            await SettingsService.SaveSettingsAsync(cancellationToken);
 
             return true;
         }
@@ -45,15 +42,15 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<bool> RemoveVaultAsync(IVaultModel vault, CancellationToken cancellationToken = default)
         {
-            if (!await EnsureSettingsLoaded(cancellationToken) || VaultsSettingsService.VaultPaths is null)
+            if (!await EnsureSettingsLoaded(cancellationToken) || SettingsService.VaultPaths is null)
                 return false;
 
-            var indexToRemove = VaultsSettingsService.VaultPaths.FindIndex(x => vault.Folder.Path.Equals(x));
+            var indexToRemove = SettingsService.VaultPaths.FindIndex(x => vault.Folder.Path.Equals(x));
             if (indexToRemove == -1)
                 return false;
 
-            VaultsSettingsService.VaultPaths.RemoveAt(indexToRemove);
-            await VaultsSettingsService.SaveSettingsAsync(cancellationToken);
+            SettingsService.VaultPaths.RemoveAt(indexToRemove);
+            await SettingsService.SaveSettingsAsync(cancellationToken);
 
             return true;
         }
@@ -61,10 +58,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async IAsyncEnumerable<IVaultModel> GetVaultsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            if (!await EnsureSettingsLoaded(cancellationToken) || VaultsSettingsService.VaultPaths is null)
+            if (!await EnsureSettingsLoaded(cancellationToken) || SettingsService.VaultPaths is null)
                 yield break;
 
-            if (VaultsSettingsService.VaultPaths.IsEmpty())
+            if (SettingsService.VaultPaths.IsEmpty())
                 yield break;
 
             if (!_vaults.IsEmpty())
@@ -75,7 +72,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 }
             }
 
-            foreach (var item in VaultsSettingsService.VaultPaths)
+            foreach (var item in SettingsService.VaultPaths)
             {
                 var folder = await FileSystemService.GetFolderFromPathAsync(item);
                 if (folder is not null)
@@ -86,12 +83,6 @@ namespace SecureFolderFS.Sdk.AppModels
                     yield return vaultModel;
                 }
             }
-        }
-
-        private async Task<bool> EnsureSettingsLoaded(CancellationToken cancellationToken)
-        {
-            _vaultsLoaded |= !_vaultsLoaded && await VaultsSettingsService.LoadSettingsAsync(cancellationToken);
-            return _vaultsLoaded;
         }
     }
 }

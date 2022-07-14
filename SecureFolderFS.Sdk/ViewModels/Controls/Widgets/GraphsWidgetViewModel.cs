@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
@@ -12,7 +13,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         public VaultLiveStatisticsModel VaultLiveStatisticsModel { get; }
 
-        public GraphsWidgetViewModel()
+        public GraphsWidgetViewModel(IWidgetsContextModel widgetsContextModel)
+            : base(widgetsContextModel)
         {
             ReadGraphViewModel = new();
             WriteGraphViewModel = new();

@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.Storage.StorageEnumeration
     public interface IStorageSearcher
     {
         /// <summary>
-        /// Gets the folder that's being searched in.
+        /// Gets the folder that is being searched in.
         /// </summary>
         IFolder SourceFolder { get; }
 

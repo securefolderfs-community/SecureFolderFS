@@ -1,6 +1,4 @@
 ﻿using System;
-using Windows.Foundation;
-using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI;
 using Microsoft.UI.Composition;

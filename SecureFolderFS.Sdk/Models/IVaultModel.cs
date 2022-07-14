@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.Models
         IFolder Folder { get; }
 
         /// <summary>
-        /// Gets or sets the lock that restricts the deletion of the folder.
+        /// Gets or sets the lock that restricts deletion of the folder.
         /// </summary>
         IDisposable? FolderLock { get; }
 
