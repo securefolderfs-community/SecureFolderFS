@@ -27,8 +27,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         public IRelayCommand OpenVaultHealthCommand { get; }
 
-        public VaultHealthWidgetViewModel(IWidgetsContextModel widgetsContextModel)
-            : base(widgetsContextModel)
+        public VaultHealthWidgetViewModel(IWidgetModel widgetModel)
+            : base(widgetModel)
         {
             StartScanningCommand = new RelayCommand(StartScanning);
             OpenVaultHealthCommand = new RelayCommand(OpenVaultHealth);

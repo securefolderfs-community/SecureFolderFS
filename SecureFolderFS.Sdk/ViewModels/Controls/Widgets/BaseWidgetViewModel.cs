@@ -12,19 +12,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     /// </summary>
     public abstract class BaseWidgetViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
-        protected IWidgetsContextModel WidgetsContextModel { get; }
+        protected IWidgetModel WidgetModel { get; }
 
-        protected BaseWidgetViewModel(IWidgetsContextModel widgetsContextModel)
+        protected BaseWidgetViewModel(IWidgetModel widgetModel)
         {
-            WidgetsContextModel = widgetsContextModel;
+            WidgetModel = widgetModel;
         }
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public virtual void Dispose()
-        {
-        }
+        public virtual void Dispose() { }
     }
 }
