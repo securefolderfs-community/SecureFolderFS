@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -25,15 +22,18 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<IWidgetModel?> GetWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
+        public async Task<IWidgetModel?> GetOrCreateWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
-            VaultsSettingsService.WidgetContexts ??= new();
-            VaultsSettingsService.WidgetContexts[VaultModel.Folder.Path].WidgetDataModels ??= new();
-
-            if (!VaultsSettingsService.WidgetContexts[VaultModel.Folder.Path].WidgetDataModels!.TryGetValue(widgetId, out var widgetDataModel))
+            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
                 return null;
 
-            return null;// TODO: widgetDataModel;
+            VaultsSettingsService.WidgetContexts ??= new();
+            VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels ??= new();
+
+            if (!VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!.TryGetValue(widgetId, out var widgetDataModel))
+                return null;
+
+            return null; // TODO: widgetDataModel;
         }
 
         /// <inheritdoc/>

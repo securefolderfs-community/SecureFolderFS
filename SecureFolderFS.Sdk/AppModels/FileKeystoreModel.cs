@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             _ = cancellationToken;
 
-            _keystoreStream ??= await _keystoreFile.OpenStreamAsync(FileAccess.Read, FileShare.Read);
+            _keystoreStream ??= await _keystoreFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
             return _keystoreStream;
         }
 

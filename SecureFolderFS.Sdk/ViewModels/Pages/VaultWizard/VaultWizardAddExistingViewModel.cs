@@ -5,12 +5,12 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardAddExistingViewModel : VaultWizardPathSelectionBaseViewModel<IFolder>
+    public sealed class VaultWizardAddExistingViewModel : VaultWizardPathSelectionBaseViewModel<ILocatableFolder>
     {
         public VaultWizardAddExistingViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.CompletedTask;
         }
 
-        public override async Task<bool> SetLocation(IFolder storage)
+        public override async Task<bool> SetLocation(ILocatableFolder storage)
         {
             var file = await storage.GetFileAsync(SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME);
             if (file is null)

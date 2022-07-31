@@ -3,7 +3,8 @@ using System.IO;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutineSteps
 {
@@ -14,13 +15,20 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
         {
         }
 
-        public IVaultLoadRoutineStep2 AddVaultPath(VaultPath vaultPath, string volumeName = null, string mountLocation = null)
+        public IVaultLoadRoutineStep2 SetFolder(IModifiableFolder vaultFolder, string volumeName = null, string mountLocation = null)
         {
-            ArgumentNullException.ThrowIfNull(vaultPath);
-            
-            vaultInstance.VaultPath = vaultPath;
-            vaultInstance.VolumeName = volumeName ?? Path.GetFileNameWithoutExtension(PathHelpers.EnsureNoTrailingPathSeparator(vaultPath.VaultRootPath));
+            vaultInstance.VaultFolder = vaultFolder;
+            vaultInstance.VolumeName = volumeName;
             vaultInstance.SecureFolderFSInstanceImpl.MountLocation = mountLocation;
+
+            if (string.IsNullOrEmpty(vaultInstance.VolumeName))
+            {
+                if (vaultFolder is not ILocatableFolder locatableVaultFolder)
+                    throw new ArgumentException($"Could not locate {nameof(vaultFolder)}");
+
+                vaultInstance.VolumeName = Path.GetFileNameWithoutExtension(PathHelpers.EnsureNoTrailingPathSeparator(locatableVaultFolder.Path));
+            }
+
 
             return new VaultLoadRoutineStep2(vaultInstance, vaultLoadDataModel);
         }

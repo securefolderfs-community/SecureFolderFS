@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -20,19 +20,19 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="folder">The folder to open file explorer in.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task OpenInFileExplorerAsync(IFolder folder);
+        Task OpenInFileExplorerAsync(ILocatableFolder folder);
 
         /// <summary>
         /// Awaits the user input and picks single file from the file explorer dialog.
         /// </summary>
         /// <param name="filter">The filter to apply when picking files.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been picked, returns <see cref="IFile"/>, otherwise null.</returns>
-        Task<IFile?> PickSingleFileAsync(IEnumerable<string>? filter);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been picked, returns <see cref="ILocatableFile"/>, otherwise null.</returns>
+        Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter);
 
         /// <summary>
         /// Awaits the user input and picks single folder from the file explorer dialog.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a folder has been picked, returns <see cref="IFolder"/>, otherwise null.</returns>
-        Task<IFolder?> PickSingleFolderAsync();
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a folder has been picked, returns <see cref="ILocatableFolder"/>, otherwise null.</returns>
+        Task<ILocatableFolder?> PickSingleFolderAsync();
     }
 }

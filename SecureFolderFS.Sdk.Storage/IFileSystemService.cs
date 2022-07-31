@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Sdk.Storage.StoragePool;
 
 namespace SecureFolderFS.Sdk.Storage
 {
@@ -15,6 +17,12 @@ namespace SecureFolderFS.Sdk.Storage
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is granted returns true, otherwise false.</returns>
         Task<bool> IsFileSystemAccessible();
+
+        /// <summary>
+        /// Gets file pool for the current folder.
+        /// </summary>
+        /// <returns>If successful, returns <see cref="IFilePool"/> for the folder, otherwise null.</returns>
+        Task<IFilePool?> GetFilePoolAsync();
 
         /// <summary>
         /// Check if file exists at specified <paramref name="path"/>.
@@ -34,22 +42,22 @@ namespace SecureFolderFS.Sdk.Storage
         /// Gets the folder at the specified <paramref name="path"/>.
         /// </summary>
         /// <param name="path">The path to the folder.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If folder is found and access is granted, returns <see cref="IFolder"/> otherwise null.</returns>
-        Task<IFolder?> GetFolderFromPathAsync(string path);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If folder is found and access is granted, returns <see cref="ILocatableFolder"/> otherwise null.</returns>
+        Task<ILocatableFolder?> GetFolderFromPathAsync(string path);
 
         /// <summary>
         /// Gets the file at the specified <paramref name="path"/>.
         /// </summary>
         /// <param name="path">The path to the file.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="IFile"/> otherwise null.</returns>
-        Task<IFile?> GetFileFromPathAsync(string path);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="ILocatableFile"/> otherwise null.</returns>
+        Task<ILocatableFile?> GetFileFromPathAsync(string path);
 
         /// <summary>
         /// Locks the provided storage object and prevents the deletion of it.
         /// </summary>
         /// <param name="storage">The storage object to lock.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a lock handle to <paramref name="storage"/> represented with <see cref="IDisposable"/>, otherwise null.</returns>
-        Task<IDisposable?> ObtainLockAsync(IBaseStorage storage);
+        Task<IDisposable?> ObtainLockAsync(IStorable storage);
 
         /// <summary>
         /// Copies the storage object to the <paramref name="destinationFolder"/>.
@@ -61,7 +69,7 @@ namespace SecureFolderFS.Sdk.Storage
         /// <param name="progress">Reports the progress of the operation.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <typeparamref name="TSource"/> of the copied object, otherwise null.</returns>
-        Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage;
+        Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IStorable;
 
         /// <summary>
         /// Moves the storage object to the <paramref name="destinationFolder"/>.
@@ -73,6 +81,6 @@ namespace SecureFolderFS.Sdk.Storage
         /// <param name="progress">Reports the progress of the operation.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <typeparamref name="TSource"/> of the moved object, otherwise null.</returns>
-        Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage;
+        Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IStorable;
     }
 }

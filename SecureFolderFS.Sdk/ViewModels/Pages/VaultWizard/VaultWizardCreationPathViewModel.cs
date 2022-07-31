@@ -4,11 +4,12 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardCreationPathViewModel : VaultWizardPathSelectionBaseViewModel<IFolder>
+    public sealed class VaultWizardCreationPathViewModel : VaultWizardPathSelectionBaseViewModel<ILocatableFolder>
     {
         private VaultWizardPasswordViewModel? _nextViewModel;
 
@@ -45,7 +46,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.CompletedTask;
         }
 
-        public override Task<bool> SetLocation(IFolder storage)
+        public override Task<bool> SetLocation(ILocatableFolder storage)
         {
             LocationPath = storage.Path;
             SelectedLocation = storage;

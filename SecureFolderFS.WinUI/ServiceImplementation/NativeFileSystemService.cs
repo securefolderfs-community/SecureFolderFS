@@ -54,21 +54,21 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IDisposable?> ObtainLockAsync(IBaseStorage storage)
+        public Task<IDisposable?> ObtainLockAsync(IStorable storage)
         {
             return Task.FromResult<IDisposable?>(null); // TODO: Implement
         }
 
         /// <inheritdoc/>
         public async Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null,
-            CancellationToken cancellationToken = default) where TSource : IBaseStorage
+            CancellationToken cancellationToken = default) where TSource : IStorable
         {
             try
             {
                 var destinationPath = Path.Combine(destinationFolder.Path, source.Name);
                 if (source is IFile sourceFile)
                 {
-                    return (TSource)(IBaseStorage)await Task.Run(() =>
+                    return (TSource)(IStorable)await Task.Run(() =>
                     {
                         File.Copy(sourceFile.Path, destinationPath, options == NameCollisionOption.ReplaceExisting);
                         return new NativeFile(destinationPath);
@@ -89,14 +89,14 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
         /// <inheritdoc/>
         public async Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null,
-            CancellationToken cancellationToken = default) where TSource : IBaseStorage
+            CancellationToken cancellationToken = default) where TSource : IStorable
         {
             try
             {
                 var destinationPath = Path.Combine(destinationFolder.Path, source.Name);
                 if (source is IFile sourceFile)
                 {
-                    return (TSource)(IBaseStorage)await Task.Run(() =>
+                    return (TSource)(IStorable)await Task.Run(() =>
                     {
                         File.Move(sourceFile.Path, destinationPath, options == NameCollisionOption.ReplaceExisting);
                         return new NativeFile(destinationPath);

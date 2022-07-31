@@ -9,7 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
     public abstract class VaultWizardPathSelectionBaseViewModel<TStorage> : BaseVaultWizardPageViewModel
-        where TStorage : class, IBaseStorage
+        where TStorage : class, IStorable
     {
         protected IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 

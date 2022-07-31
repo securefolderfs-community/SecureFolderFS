@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.Storage.Devices
         /// <summary>
         /// Tries to get root of the device as a collection of storage objects.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IEnumerable{T}"/> of type <see cref="IBaseStorage"/>, otherwise null.</returns>
-        Task<IEnumerable<IBaseStorage>?> GetStorageRootAsync();
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="IEnumerable{T}"/> of type <see cref="IStorable"/>, otherwise null.</returns>
+        Task<IEnumerable<IStorable>?> GetStorageRootAsync();
     }
 }

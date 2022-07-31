@@ -62,21 +62,21 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IDisposable?> ObtainLockAsync(IBaseStorage storage)
+        public Task<IDisposable?> ObtainLockAsync(IStorable storage)
         {
             return Task.FromResult<IDisposable?>(null); // TODO: Implement
         }
 
         /// <inheritdoc/>
         public Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options,
-            IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage
+            IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IStorable
         {
             throw new NotSupportedException();
         }
 
         /// <inheritdoc/>
         public Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options,
-            IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IBaseStorage
+            IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IStorable
         {
             throw new NotSupportedException();
         }

@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.AppModels
@@ -28,11 +29,11 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken))
                 return false;
 
-            if (vault is not VaultModel vaultModel)
+            if (vault.Folder is not ILocatableFolder vaultFolder)
                 return false;
 
             SettingsService.VaultPaths ??= new();
-            SettingsService.VaultPaths.Add(vaultModel.Folder.Path);
+            SettingsService.VaultPaths.Add(vaultFolder.Path);
 
             await SettingsService.SaveSettingsAsync(cancellationToken);
 
@@ -45,7 +46,10 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken) || SettingsService.VaultPaths is null)
                 return false;
 
-            var indexToRemove = SettingsService.VaultPaths.FindIndex(x => vault.Folder.Path.Equals(x));
+            if (vault.Folder is not ILocatableFolder vaultFolder)
+                return false;
+
+            var indexToRemove = SettingsService.VaultPaths.FindIndex(x => vaultFolder.Path.Equals(x));
             if (indexToRemove == -1)
                 return false;
 
@@ -77,7 +81,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 var folder = await FileSystemService.GetFolderFromPathAsync(item);
                 if (folder is not null)
                 {
-                    var vaultModel = new VaultModel(folder);
+                    var vaultModel = new LocalVaultModel(folder);
                     _vaults.Add(vaultModel);
 
                     yield return vaultModel;

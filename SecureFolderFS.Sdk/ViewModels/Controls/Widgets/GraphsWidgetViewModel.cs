@@ -13,8 +13,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         public VaultLiveStatisticsModel VaultLiveStatisticsModel { get; }
 
-        public GraphsWidgetViewModel(IWidgetsContextModel widgetsContextModel)
-            : base(widgetsContextModel)
+        public GraphsWidgetViewModel(IWidgetModel widgetModel)
+            : base(widgetModel)
         {
             ReadGraphViewModel = new();
             WriteGraphViewModel = new();

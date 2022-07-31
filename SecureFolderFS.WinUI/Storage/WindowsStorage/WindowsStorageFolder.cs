@@ -124,7 +124,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IBaseStorage> GetStorageAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<IStorable> GetStorageAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var items = await storage.GetItemsAsync().AsTask(cancellationToken);
             if (items is null)

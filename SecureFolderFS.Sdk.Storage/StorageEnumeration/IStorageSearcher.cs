@@ -50,8 +50,8 @@ namespace SecureFolderFS.Sdk.Storage.StorageEnumeration
         /// </summary>
         /// <param name="searchPattern">The pattern to use when searching for items.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IBaseStorage"/> that contains found items.</returns>
-        IAsyncEnumerable<IBaseStorage> FindStorageAsync(string searchPattern, CancellationToken cancellationToken = default);
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IStorable"/> that contains found items.</returns>
+        IAsyncEnumerable<IStorable> FindStorageAsync(string searchPattern, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Finds items in the <see cref="SourceFolder"/>.
@@ -59,7 +59,7 @@ namespace SecureFolderFS.Sdk.Storage.StorageEnumeration
         /// <param name="searchPattern">The pattern to use when searching for items.</param>
         /// <param name="predicate">The predicate to apply for every item found.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IBaseStorage"/> that contains found items.</returns>
-        IAsyncEnumerable<IBaseStorage> FindStorageAsync(string searchPattern, Func<IBaseStorage, bool>? predicate, CancellationToken cancellationToken = default);
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IStorable"/> that contains found items.</returns>
+        IAsyncEnumerable<IStorable> FindStorageAsync(string searchPattern, Func<IStorable, bool>? predicate, CancellationToken cancellationToken = default);
     }
 }

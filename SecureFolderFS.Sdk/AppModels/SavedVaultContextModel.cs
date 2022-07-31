@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -23,7 +24,10 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken))
                 return null;
 
-            if (SettingsService.VaultContexts is null || !SettingsService.VaultContexts.TryGetValue(VaultModel.Folder.Path, out var vaultContext))
+            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
+                return null;
+
+            if (SettingsService.VaultContexts is null || !SettingsService.VaultContexts.TryGetValue(vaultFolder.Path, out var vaultContext))
                 return null;
 
             return vaultContext.LastAccessedDate;
@@ -35,13 +39,17 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken))
                 return false;
 
-            SettingsService.VaultContexts ??= new();
+            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
+                return false;
 
-            if (SettingsService.VaultContexts.TryGetValue(VaultModel.Folder.Path, out var vaultContext))
+            SettingsService.VaultContexts ??= new();
+            if (SettingsService.VaultContexts.TryGetValue(vaultFolder.Path, out var vaultContext))
+            {
                 vaultContext.LastAccessedDate = value;
+            }
             else
             {
-                SettingsService.VaultContexts[VaultModel.Folder.Path] = new(value);
+                SettingsService.VaultContexts[vaultFolder.Path] = new(value);
             }
 
             return await SettingsService.SaveSettingsAsync(cancellationToken);

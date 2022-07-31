@@ -29,10 +29,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         {
             //await Task.WhenAll(Widgets.Select(x => x.InitAsync(cancellationToken)));
 
+            WidgetsContextModel.GetOrCreateWidgetAsync()
+
             // TODO: Load widgets from config
 
             // TODO: Add IWidgetsContextModel
-            HealthWidget = new(WidgetsContextModel);
+            HealthWidget = new();
             GraphsWidget = new(WidgetsContextModel);
 
             await Task.WhenAll(AsyncExtensions.CombineAsyncInitialize(cancellationToken, GraphsWidget, HealthWidget));

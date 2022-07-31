@@ -16,8 +16,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
         public string VaultName => VaultModel.VaultName;
 
-        private ObservableObject _LoginOptionViewModel;
-        public ObservableObject LoginOptionViewModel
+        private ObservableObject? _LoginOptionViewModel;
+        public ObservableObject? LoginOptionViewModel
         {
             get => _LoginOptionViewModel;
             set => SetProperty(ref _LoginOptionViewModel, value);

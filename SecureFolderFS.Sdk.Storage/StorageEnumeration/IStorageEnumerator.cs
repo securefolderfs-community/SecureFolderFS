@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.Storage.StorageEnumeration
         /// Enumerates the <see cref="SourceFolder"/> for items.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IBaseStorage"/> of all items discovered by the enumerator.</returns>
-        IAsyncEnumerable<IBaseStorage> EnumerateStorageAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IStorable"/> of all items discovered by the enumerator.</returns>
+        IAsyncEnumerable<IStorable> EnumerateStorageAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.Models
     /// <summary>
     /// A model that represents a vault.
     /// </summary>
-    public interface IVaultModel : IEquatable<IVaultModel>
+    public interface IVaultModel
     {
         /// <summary>
         /// Gets the folder of the vault.

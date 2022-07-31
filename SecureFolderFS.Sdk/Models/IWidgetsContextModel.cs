@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Models
@@ -19,7 +20,7 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="widgetId">The id of a widget.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, the value is <see cref="IWidgetModel"/>, otherwise null.</returns>
-        Task<IWidgetModel?> GetWidgetAsync(string widgetId, CancellationToken cancellationToken = default);
+        Task<IWidgetModel?> GetOrCreateWidgetAsync(string widgetId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Removes persisted widget model identified by <paramref name="widgetId"/>.
@@ -28,5 +29,12 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true, otherwise false.</returns>
         Task<bool> RemoveWidgetAsync(string widgetId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets all persisted widgets.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IWidgetModel"/> of items in the directory.</returns>
+        IAsyncEnumerable<IWidgetModel> GetWidgetsAsync(CancellationToken cancellationToken = default);
     }
 }

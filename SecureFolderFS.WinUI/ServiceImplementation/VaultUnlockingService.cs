@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Instance;
-using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
@@ -12,6 +11,7 @@ using SecureFolderFS.Core.VaultLoader.Routine;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
 
@@ -19,20 +19,20 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class VaultUnlockingService : IVaultUnlockingService
     {
-        private IFolder? _vaultFolder;
+        private IModifiableFolder? _vaultFolder;
         private IVaultLoadRoutineStep3? _step3;
         private IVaultLoadRoutineStep8? _step8;
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
         /// <inheritdoc/>
-        public Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
         {
             _vaultFolder = folder;
 
             _step3 = VaultRoutines.NewVaultLoadRoutine()
                 .EstablishRoutine()
-                .AddVaultPath(new(folder.Path))
+                .SetFolder(folder)
                 .AddFileOperations();
 
             return Task.FromResult(true);
@@ -78,7 +78,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             IVaultInstance? vaultInstance = null;
             try
             {
-                vaultInstance = _step8.DeriveMasterKeyFromPassword(new DisposablePassword(password.GetPassword()))
+                vaultInstance = _step8.DeriveMasterKeyFromPassword(password)
                     .ContinueInitializationWithMasterKey()
                     .VerifyVaultConfiguration()
                     .ContinueInitialization()

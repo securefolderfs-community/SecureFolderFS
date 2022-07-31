@@ -8,8 +8,8 @@ using NameCollisionOption = SecureFolderFS.Sdk.Storage.Enums.NameCollisionOption
 
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
-    /// <inheritdoc cref="IBaseStorage"/>
-    internal abstract class WindowsBaseStorage<TStorage> : IBaseStorage
+    /// <inheritdoc cref="IStorable"/>
+    internal abstract class WindowsBaseStorage<TStorage> : IStorable
         where TStorage : class, IStorageItem
     {
         protected readonly TStorage storage;

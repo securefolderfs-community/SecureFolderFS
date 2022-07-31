@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.WinUI.AppModels
@@ -14,18 +13,9 @@ namespace SecureFolderFS.WinUI.AppModels
         }
 
         /// <inheritdoc/>
-        public byte[]? GetPassword()
+        public byte[] GetPassword()
         {
             return _password;
-        }
-
-        /// <inheritdoc/>
-        public bool Equals(IPassword? other)
-        {
-            if (other is null || other.GetPassword() is not byte[] otherPassword)
-                return false;
-
-            return _password.SequenceEqual(otherPassword);
         }
 
         /// <inheritdoc/>
