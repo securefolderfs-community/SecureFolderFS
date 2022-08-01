@@ -1,9 +1,8 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
@@ -14,12 +13,9 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
         {
         }
 
-        public IVaultCreationRoutineStep8 InitializeKeystoreData(DisposablePassword disposablePassword)
+        public IVaultCreationRoutineStep8 InitializeKeystoreData(IPassword password)
         {
-            ArgumentNullException.ThrowIfNull(disposablePassword);
-            ArgumentNullException.ThrowIfNull(disposablePassword.Password);
-
-            using (disposablePassword)
+            using (password)
             {
                 using SecretKey encKey = new SecretKey(new byte[Constants.Security.KeyChains.ENCRYPTIONKEY_LENGTH]);
                 using SecretKey macKey = new SecretKey(new byte[Constants.Security.KeyChains.MACKEY_LENGTH]);
@@ -29,7 +25,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
                 StrongFillKeys(encKey, macKey, salt);
 
                 // Derive key-encryption-key (KEK)
-                byte[] kek = vaultCreationDataModel.KeyCryptor.Argon2idCrypt.Argon2idHash(disposablePassword?.Password, salt);
+                byte[] kek = vaultCreationDataModel.KeyCryptor.Argon2idCrypt.Argon2idHash(password.GetPassword(), salt);
 
                 // Wrap keys
                 byte[] wrappedEncryptionKey = vaultCreationDataModel.KeyCryptor.Rfc3394KeyWrap.Rfc3394WrapKey(encKey, kek);

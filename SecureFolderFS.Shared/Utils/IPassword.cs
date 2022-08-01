@@ -10,7 +10,7 @@ namespace SecureFolderFS.Shared.Utils
         /// <summary>
         /// Retrieves the password as a UTF8 byte array.
         /// </summary>
-        /// <returns>Returns a password in bytes, the result is null if it has been disposed.</returns>
+        /// <returns>Returns a password in bytes, the array is empty if disposed.</returns>
         byte[] GetPassword();
     }
 }

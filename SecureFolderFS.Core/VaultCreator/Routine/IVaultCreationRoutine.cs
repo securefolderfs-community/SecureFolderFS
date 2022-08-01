@@ -1,12 +1,11 @@
 ﻿using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.PasswordRequest;
-using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
 using SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration;
 using SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Shared.Utils;
 using System;
-using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine
 {
@@ -23,7 +22,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine
 
     public interface IVaultCreationRoutineStep1 : IDisposable
     {
-        IVaultCreationRoutineStep2 SetVaultPath(VaultPath vaultPath);
+        IVaultCreationRoutineStep2 SetVaultFolder(ILocatableFolder vaultFolder);
     }
 
     public interface IVaultCreationRoutineStep2 : IDisposable
@@ -53,7 +52,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine
 
     public interface IVaultCreationRoutineStep7 : IDisposable
     {
-        IVaultCreationRoutineStep8 InitializeKeystoreData(DisposablePassword disposablePassword);
+        IVaultCreationRoutineStep8 InitializeKeystoreData(IPassword password);
     }
 
     public interface IVaultCreationRoutineStep8 : IDisposable

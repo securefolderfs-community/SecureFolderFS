@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -33,13 +35,30 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!.TryGetValue(widgetId, out var widgetDataModel))
                 return null;
 
-            return null; // TODO: widgetDataModel;
+            return new LocalWidgetModel(VaultsSettingsService, widgetDataModel);
         }
 
         /// <inheritdoc/>
         public Task<bool> RemoveWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public async IAsyncEnumerable<IWidgetModel> GetWidgetsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            if (VaultModel.Folder is not ILocatableFolder vaultFolder) 
+                yield break;
+
+            VaultsSettingsService.WidgetContexts ??= new();
+            VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels ??= new();
+
+            foreach (var item in VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!)
+            {
+                yield return new LocalWidgetModel(VaultsSettingsService, item.Value);
+            }
+
+            await Task.CompletedTask;
         }
     }
 }

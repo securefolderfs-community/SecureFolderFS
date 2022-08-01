@@ -1,6 +1,5 @@
 ﻿using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Paths;
-using System;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
@@ -11,12 +10,9 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
         {
         }
 
-        public IVaultCreationRoutineStep2 SetVaultPath(VaultPath vaultPath)
+        public IVaultCreationRoutineStep2 SetVaultFolder(ILocatableFolder vaultFolder)
         {
-            ArgumentNullException.ThrowIfNull(vaultPath);
-
-            vaultCreationDataModel.VaultPath = vaultPath;
-
+            vaultCreationDataModel.VaultPath = new(vaultFolder.Path);
             return new VaultCreationRoutineStep2(vaultCreationDataModel);
         }
     }
