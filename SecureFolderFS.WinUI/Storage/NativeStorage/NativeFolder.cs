@@ -21,6 +21,28 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
+        public Task<IFile> GetFileAsync(string fileName)
+        {
+            var path = System.IO.Path.Combine(Path, fileName);
+
+            if (!File.Exists(path))
+                throw new FileNotFoundException();
+
+            return Task.FromResult<IFile>(new NativeFile(path));
+        }
+
+        /// <inheritdoc/>
+        public Task<IFolder> GetFolderAsync(string folderName)
+        {
+            var path = System.IO.Path.Combine(Path, folderName);
+
+            if (!File.Exists(path))
+                throw new FileNotFoundException();
+
+            return Task.FromResult<IFolder>(new NativeFolder(path));
+        }
+
+        /// <inheritdoc/>
         public async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             foreach (var item in Directory.EnumerateFileSystemEntries(Path))

@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Storage.Enums;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -15,10 +16,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
         {
-            if (!IsAvailable || FilePool is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
+            if (!IsAvailable || SettingsFolder is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
                 return false;
 
-            var settingsFile = await FilePool.RequestFileAsync(SettingsStorageName, cancellationToken);
+            var settingsFile = await SettingsFolder.CreateFileAsync(SettingsStorageName, CreationCollisionOption.OpenIfExists, cancellationToken);
             if (settingsFile is null)
                 return false;
 
@@ -28,10 +29,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
         {
-            if (!IsAvailable || FilePool is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
+            if (!IsAvailable || SettingsFolder is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
                 return false;
 
-            var settingsFile = await FilePool.RequestFileAsync(SettingsStorageName, cancellationToken);
+            var settingsFile = await SettingsFolder.CreateFileAsync(SettingsStorageName, CreationCollisionOption.OpenIfExists, cancellationToken);
             if (settingsFile is null)
                 return false;
 

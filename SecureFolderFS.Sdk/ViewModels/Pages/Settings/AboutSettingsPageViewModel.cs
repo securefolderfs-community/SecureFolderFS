@@ -42,9 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
         private async Task CopyVersionAsync()
         {
             if (await ClipboardService.IsClipboardAvailableAsync())
-            {
                 await ClipboardService.SetClipboardDataAsync(new ClipboardTextItemModel(AppVersion));
-            }
         }
 
         private Task OpenGitHubRepositoryAsync()

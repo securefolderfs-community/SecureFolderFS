@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
@@ -55,7 +56,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         private Task ShowInFileExplorerAsync()
         {
-            return FileExplorerService.OpenInFileExplorerAsync(VaultModel.Folder);
+            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
+                return Task.CompletedTask;
+
+            return FileExplorerService.OpenInFileExplorerAsync(vaultFolder);
         }
 
         /// <inheritdoc/>

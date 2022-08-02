@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine
 
     public interface IVaultLoadRoutineStep1
     {
-        IVaultLoadRoutineStep2 SetFolder(IModifiableFolder vaultFolder, string volumeName = null, string mountLocation = null);
+        IVaultLoadRoutineStep2 SetFolder(IFolder vaultFolder, string volumeName = null, string mountLocation = null);
     }
 
     public interface IVaultLoadRoutineStep2

@@ -3,6 +3,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.WinUI.AppModels
 {
+    /// <inheritdoc cref="IPassword"/>
     internal sealed class SecurePassword : IPassword
     {
         private readonly byte[] _password;

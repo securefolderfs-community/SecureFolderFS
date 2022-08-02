@@ -11,7 +11,6 @@ using SecureFolderFS.Core.VaultLoader.Routine;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
 
@@ -19,14 +18,14 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class VaultUnlockingService : IVaultUnlockingService
     {
-        private IModifiableFolder? _vaultFolder;
+        private IFolder? _vaultFolder;
         private IVaultLoadRoutineStep3? _step3;
         private IVaultLoadRoutineStep8? _step8;
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
         /// <inheritdoc/>
-        public Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
+        public Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
             _vaultFolder = folder;
 
@@ -48,7 +47,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             if (configFile is null)
                 return false;
 
-            await using var configStream = await configFile.OpenStreamAsync(FileAccess.Read, FileShare.Read);
+            await using var configStream = await configFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
             if (configStream is null)
                 return false;
             

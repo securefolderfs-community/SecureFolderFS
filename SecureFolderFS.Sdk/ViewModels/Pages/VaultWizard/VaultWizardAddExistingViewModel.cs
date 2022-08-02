@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             if (file is null)
                 return false;
 
-            await using var stream = await file.OpenStreamAsync(FileAccess.Read, FileShare.Read);
+            await using var stream = await file.OpenStreamAsync(FileAccess.Read);
             var vaultConfig = RawVaultConfiguration.Load(stream);
             var isSupported = VaultVersion.IsVersionSupported(vaultConfig);
             if (isSupported)

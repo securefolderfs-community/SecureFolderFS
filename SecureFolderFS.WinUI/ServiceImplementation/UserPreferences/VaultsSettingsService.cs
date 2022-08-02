@@ -2,18 +2,18 @@
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services.UserPreferences;
-using SecureFolderFS.Sdk.Storage.StoragePool;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {
     /// <inheritdoc cref="IVaultsSettingsService"/>
     internal sealed class VaultsSettingsService : SingleFileSettingsModel, IVaultsSettingsService
     {
-        public VaultsSettingsService(IFilePool? settingsFilePool)
+        public VaultsSettingsService(IModifiableFolder? settingsFolder)
         {
-            FilePool = settingsFilePool;
+            SettingsFolder = settingsFolder;
             SettingsDatabase = new DictionarySettingsDatabaseModel(JsonToStreamSerializer.Instance);
-            IsAvailable = settingsFilePool is not null;
+            IsAvailable = settingsFolder is not null;
         }
 
         /// <inheritdoc/>
@@ -24,6 +24,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         {
             get => GetSetting<Dictionary<string, VaultContextDataModel>?>(() => null);
             set => SetSetting<Dictionary<string, VaultContextDataModel>?>(value);
+        }
+
+        public Dictionary<string, WidgetsContextDataModel>? WidgetContexts
+        {
+            get => GetSetting<Dictionary<string, WidgetsContextDataModel>?>(() => null);
+            set => SetSetting<Dictionary<string, WidgetsContextDataModel>?>(value);
         }
     }
 }

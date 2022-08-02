@@ -1,9 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
@@ -14,30 +14,35 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
-        // TODO: Remove later in favor of WidgetsListViewModel.Widgets
-        public VaultHealthWidgetViewModel? HealthWidget { get; private set; }
-
-        public GraphsWidgetViewModel? GraphsWidget { get; private set; }
-
         public WidgetsListViewModel(IWidgetsContextModel widgetsContextModel)
         {
             WidgetsContextModel = widgetsContextModel;
             Widgets = new();
         }
 
+        /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            //await Task.WhenAll(Widgets.Select(x => x.InitAsync(cancellationToken)));
+            await foreach (var item in WidgetsContextModel.GetWidgetsAsync(cancellationToken))
+            {
+                var widgetViewModel = GetWidgetForModel(item);
+                _ = widgetViewModel.InitAsync(cancellationToken);
+            }
+        }
 
-            WidgetsContextModel.GetOrCreateWidgetAsync()
+        private BaseWidgetViewModel GetWidgetForModel(IWidgetModel widgetModel)
+        {
+            switch (widgetModel.WidgetId)
+            {
+                case Constants.Widgets.HEALTH_WIDGET_ID:
+                    return new VaultHealthWidgetViewModel(widgetModel);
 
-            // TODO: Load widgets from config
+                case Constants.Widgets.GRAPHS_WIDGET_ID:
+                    return new GraphsWidgetViewModel(widgetModel);
 
-            // TODO: Add IWidgetsContextModel
-            HealthWidget = new();
-            GraphsWidget = new(WidgetsContextModel);
-
-            await Task.WhenAll(AsyncExtensions.CombineAsyncInitialize(cancellationToken, GraphsWidget, HealthWidget));
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(widgetModel.WidgetId));
+            }
         }
     }
 }

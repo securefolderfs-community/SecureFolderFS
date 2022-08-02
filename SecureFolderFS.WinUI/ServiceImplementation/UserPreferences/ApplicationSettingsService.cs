@@ -1,17 +1,17 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Storage.StoragePool;
 using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {
     /// <inheritdoc cref="IApplicationSettingsService"/>
     internal sealed class ApplicationSettingsService : SingleFileSettingsModel, IApplicationSettingsService
     {
-        public ApplicationSettingsService(IFilePool? settingsFilePool)
+        public ApplicationSettingsService(IModifiableFolder? settingsFolder)
         {
-            FilePool = settingsFilePool;
+            SettingsFolder = settingsFolder;
             SettingsDatabase = new DictionarySettingsDatabaseModel(JsonToStreamSerializer.Instance);
-            IsAvailable = settingsFilePool is not null;
+            IsAvailable = settingsFolder is not null;
         }
 
         /// <inheritdoc/>

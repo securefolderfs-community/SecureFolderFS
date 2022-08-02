@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -36,7 +37,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         private async Task ShowInFileExplorerAsync()
         {
-            await FileExplorerService.OpenInFileExplorerAsync(_vaultViewModel.UnlockedVaultModel.RootFolder);
+            if (_vaultViewModel.UnlockedVaultModel.RootFolder is not ILocatableFolder rootFolder)
+                return;
+
+            await FileExplorerService.OpenInFileExplorerAsync(rootFolder);
         }
 
         private async Task LockVaultAsync()

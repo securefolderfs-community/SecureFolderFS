@@ -3,7 +3,7 @@ using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Core.Tunnels;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Core.Instance
 {
@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.Instance
     /// </summary>
     public interface IVaultInstance : IDisposable
     {
-        IModifiableFolder VaultFolder { get; }
+        IFolder VaultFolder { get; }
 
         string VolumeName { get; }
 

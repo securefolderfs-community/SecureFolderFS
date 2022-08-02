@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.VaultCreator.Routine;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Storage;
@@ -15,7 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         private readonly IFolder _vaultFolder;
         private readonly IVaultCreationRoutineStep7 _step7;
 
-        public Func<DisposablePassword>? InitializeWithPassword { get; set; } // TODO: Use IPassword
+        public Func<IPassword>? InitializeWithPassword { get; set; }
 
         /// <inheritdoc cref="DialogViewModel.PrimaryButtonEnabled"/>
         public bool PrimaryButtonEnabled

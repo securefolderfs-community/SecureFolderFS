@@ -14,6 +14,11 @@
 
         public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
 
+        public static class FileSystemId
+        {
+            public const string DOKAN_ID = "DOKANY";
+        }
+
         internal static class FileSystem
         {
             public const int INVALID_FILE_ATTRIBUTES = -0x1;

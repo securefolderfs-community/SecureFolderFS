@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.WinUI.AppModels;
 
@@ -15,10 +14,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         }
 
         /// <inheritdoc/>
-        public FileSystemAdapterType PreferredFileSystem
+        public string PreferredFileSystemId
         {
-            get => (FileSystemAdapterType)GetSetting(() => (uint)FileSystemAdapterType.DokanAdapter);
-            set => SetSetting((uint)value);
+            get => GetSetting(() => string.Empty);
+            set => SetSetting(value);
         }
 
         /// <inheritdoc/>

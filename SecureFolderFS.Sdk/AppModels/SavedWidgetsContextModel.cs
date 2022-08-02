@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!.TryGetValue(widgetId, out var widgetDataModel))
                 return null;
 
-            return new LocalWidgetModel(VaultsSettingsService, widgetDataModel);
+            return new LocalWidgetModel(widgetId, VaultsSettingsService, widgetDataModel);
         }
 
         /// <inheritdoc/>
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
             foreach (var item in VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!)
             {
-                yield return new LocalWidgetModel(VaultsSettingsService, item.Value);
+                yield return new LocalWidgetModel(item.Key, VaultsSettingsService, item.Value);
             }
 
             await Task.CompletedTask;

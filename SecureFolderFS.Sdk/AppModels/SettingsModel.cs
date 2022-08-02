@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Storage.StoragePool;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -11,9 +11,9 @@ namespace SecureFolderFS.Sdk.AppModels
     public abstract class SettingsModel : ISettingsModel
     {
         /// <summary>
-        /// Gets the <see cref="IFilePool"/> where setting files are stored.
+        /// Gets the <see cref="IModifiableFolder"/> where settings files are stored.
         /// </summary>
-        protected IFilePool? FilePool { get; init; }
+        protected IModifiableFolder? SettingsFolder { get; init; }
 
         /// <summary>
         /// Gets the <see cref="ISettingsDatabaseModel"/> where settings are stored.

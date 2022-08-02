@@ -1,16 +1,17 @@
 ﻿using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Core.Tunnels;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Core.Instance.Implementation
 {
     internal sealed class VaultInstance : IVaultInstance
     {
-        public IModifiableFolder VaultFolder { get; internal set; }
+        public IFolder VaultFolder { get; internal set; }
 
         public string VolumeName { get; internal set; }
 
@@ -25,6 +26,8 @@ namespace SecureFolderFS.Core.Instance.Implementation
         public IFolderTunnel FolderTunnel { get; internal set; }
 
         public IVaultStorageReceiver VaultStorageReceiver { get; internal set; }
+
+        internal VaultPath VaultPath { get; set; }
 
         internal SecureFolderFSInstance SecureFolderFSInstanceImpl { get; set; }
 

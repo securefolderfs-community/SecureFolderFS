@@ -32,10 +32,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultOverviewPageViewModel viewModel)
-            {
                 ViewModel = viewModel;
-                Graphs.RestoreGraphsState();
-            }
 
             base.OnNavigatedTo(e);
         }
@@ -44,7 +41,6 @@ namespace SecureFolderFS.WinUI.Views.Vault
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             _graphClickSemaphore.Dispose();
-            Graphs?.Dispose();
 
             base.OnNavigatingFrom(e);
         }

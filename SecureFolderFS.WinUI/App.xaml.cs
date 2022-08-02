@@ -13,6 +13,7 @@ using Windows.Storage;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.WinUI.AppModels;
 using SecureFolderFS.WinUI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.WinUI.Storage.NativeStorage;
@@ -50,7 +51,9 @@ namespace SecureFolderFS.WinUI
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             // Get settings folder
-            var settingsFolder = new NativeFolder(Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SETTINGS_FOLDER_NAME));
+            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SETTINGS_FOLDER_NAME);
+            _ = Directory.CreateDirectory(settingsFolderPath);
+            var settingsFolder = new NativeFolder(settingsFolderPath);
 
             // Configure IoC
             ServiceProvider = ConfigureServices(settingsFolder);
@@ -71,20 +74,21 @@ namespace SecureFolderFS.WinUI
             // TODO: Start AppCenter
         }
 
-        private IServiceProvider ConfigureServices(IFolder settingsFolder)
+        private IServiceProvider ConfigureServices(IModifiableFolder settingsFolder)
         {
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
-                .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder.GetFilePool()))
-                .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder.GetFilePool()))
-                .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder.GetFilePool()))
-                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder.GetFilePool()))
+                .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
+                .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder))
+                .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
+                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder))
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
                 .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
 
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
+                .AddSingleton<IVaultService, VaultService>()
                 .AddSingleton<IFileSystemService, NativeFileSystemService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IApplicationService, ApplicationService>()

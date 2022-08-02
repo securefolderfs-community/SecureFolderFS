@@ -33,7 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             // Continue with initialization
             var step7 = VaultRoutines.NewVaultCreationRoutine()
                 .EstablishRoutine()
-                .SetVaultPath(new(SelectedLocation!.Path))
+                .SetVaultFolder(SelectedLocation)
                 .AddFileOperations()
                 .CreateConfigurationFile()
                 .CreateKeystoreFile()

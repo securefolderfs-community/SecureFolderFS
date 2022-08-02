@@ -5,44 +5,73 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:ucw="using:SecureFolderFS.WinUI.UserControls.Widgets"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <!--  Vault Health  -->
+        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:VaultHealthWidgetViewModel">
+            <uc:VaultHealthControl
+                OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
+                StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
+                VaultHealthLastCheckedDate="{x:Bind VaultHealthLastCheckedDate, Mode=OneWay}"
+                VaultHealthState="{x:Bind VaultHealthState, Mode=OneWay}" />
+        </DataTemplate>
+
+        <!--  Resource Graphs  -->
+        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
+            <ucw:GraphsWidget
+                ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}"
+                ReadGraphIsExtended="False"
+                ReadGraphSubheader="{x:Bind ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
+                WriteGraphData="{x:Bind WriteGraphViewModel.Data, Mode=OneWay}"
+                WriteGraphIsExtended="False"
+                WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
+        </DataTemplate>
+    </Page.Resources>
+
     <ScrollViewer>
+        <!--  Make it a stack panel  -->
         <Grid RowSpacing="8">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <!--  Vault Health  -->
-            <uc:VaultHealthControl
-                Grid.Row="0"
-                OpenVaultHealthCommand="{x:Bind ViewModel.WidgetsViewModel.HealthWidget.OpenVaultHealthCommand, Mode=OneWay}"
-                StartScanningCommand="{x:Bind ViewModel.WidgetsViewModel.HealthWidget.StartScanningCommand, Mode=OneWay}"
-                VaultHealthLastCheckedDate="{x:Bind ViewModel.WidgetsViewModel.HealthWidget.VaultHealthLastCheckedDate, Mode=OneWay}"
-                VaultHealthState="{x:Bind ViewModel.WidgetsViewModel.HealthWidget.VaultHealthState, Mode=OneWay}" />
-
-            <InfoBar Grid.Row="1" Visibility="Collapsed" />
-
-            <!--  Read/Write Graphs  -->
-            <ucw:GraphsWidget
-                x:Name="Graphs"
-                Grid.Row="2"
-                ReadGraphData="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.Data, Mode=OneWay}"
-                ReadGraphIsExtended="False"
-                ReadGraphSubheader="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
-                WriteGraphData="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.Data, Mode=OneWay}"
-                WriteGraphIsExtended="False"
-                WriteGraphSubheader="{x:Bind ViewModel.WidgetsViewModel.GraphsWidget.WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
+            <!--  Widgets  -->
+            <ListView Grid.Row="0" ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets}">
+                <!--  Remove Reveal Highlight Effect  -->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <!--  Spacing  -->
+                        <Setter Property="Margin" Value="4" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter
+                                        x:Name="Root"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch"
+                                        RevealBackground="{ThemeResource GridViewItemRevealBackground}"
+                                        RevealBorderBrush="{ThemeResource GridViewItemRevealBorderBrush}"
+                                        RevealBorderThickness="0" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplateSelector>
+                    <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+                </ListView.ItemTemplateSelector>
+            </ListView>
 
             <!--  Vault options  -->
-            <StackPanel Grid.Row="3" Spacing="4">
+            <StackPanel Grid.Row="1" Spacing="4">
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
                     Title="View vault"

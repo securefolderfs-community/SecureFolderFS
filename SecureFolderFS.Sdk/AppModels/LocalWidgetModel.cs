@@ -11,8 +11,12 @@ namespace SecureFolderFS.Sdk.AppModels
         private readonly ISettingsModel _widgetsStore;
         private readonly WidgetDataModel _widgetDataModel;
 
-        public LocalWidgetModel(ISettingsModel widgetsStore, WidgetDataModel widgetDataModel)
+        /// <inheritdoc/>
+        public string WidgetId { get; }
+
+        public LocalWidgetModel(string widgetId, ISettingsModel widgetsStore, WidgetDataModel widgetDataModel)
         {
+            WidgetId = widgetId;
             _widgetsStore = widgetsStore;
             _widgetDataModel = widgetDataModel;
         }

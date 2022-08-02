@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.WinUI.Storage.WindowsStorage;
-using NameCollisionOption = SecureFolderFS.Sdk.Storage.Enums.NameCollisionOption;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -34,7 +33,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> GetFolderFromPathAsync(string path)
+        public async Task<ILocatableFolder?> GetFolderFromPathAsync(string path)
         {
             try
             {
@@ -48,7 +47,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFile?> GetFileFromPathAsync(string path)
+        public async Task<ILocatableFile?> GetFileFromPathAsync(string path)
         {
             try
             {
@@ -65,20 +64,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public Task<IDisposable?> ObtainLockAsync(IStorable storage)
         {
             return Task.FromResult<IDisposable?>(null); // TODO: Implement
-        }
-
-        /// <inheritdoc/>
-        public Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options,
-            IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IStorable
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc/>
-        public Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options,
-            IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IStorable
-        {
-            throw new NotSupportedException();
         }
     }
 }

@@ -9,6 +9,11 @@ namespace SecureFolderFS.Sdk.Models
     public interface IWidgetModel
     {
         /// <summary>
+        /// Gets the unique id associated with this widget.
+        /// </summary>
+        string WidgetId { get; }
+
+        /// <summary>
         /// Gets the data associated with <paramref name="key"/>.
         /// </summary>
         /// <param name="key">The key to associate the data with.</param>

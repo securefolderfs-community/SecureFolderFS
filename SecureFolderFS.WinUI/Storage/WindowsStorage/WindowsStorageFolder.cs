@@ -22,6 +22,20 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
+        public async Task<IFile> GetFileAsync(string fileName)
+        {
+            var file = await storage.GetFileAsync(fileName);
+            return new WindowsStorageFile(file);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IFolder> GetFolderAsync(string folderName)
+        {
+            var folder = await storage.GetFolderAsync(folderName);
+            return new WindowsStorageFolder(folder);
+        }
+
+        /// <inheritdoc/>
         public async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var items = await storage.GetItemsAsync().AsTask(cancellationToken);

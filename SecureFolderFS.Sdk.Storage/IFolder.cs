@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage.Enums;
 
 namespace SecureFolderFS.Sdk.Storage
@@ -9,6 +10,20 @@ namespace SecureFolderFS.Sdk.Storage
     /// </summary>
     public interface IFolder : IStorable
     {
+        /// <summary>
+        /// Gets a file in the current directory by name.
+        /// </summary>
+        /// <param name="fileName">The name of the file.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="IFile"/> otherwise null.</returns>
+        Task<IFile> GetFileAsync(string fileName);
+
+        /// <summary>
+        /// Gets a folder in the current directory by name.
+        /// </summary>
+        /// <param name="folderName">The name of the folder.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If folder is found and access is granted, returns <see cref="IFolder"/> otherwise null.</returns>
+        Task<IFolder> GetFolderAsync(string folderName);
+
         /// <summary>
         /// Gets all items of this directory.
         /// </summary>

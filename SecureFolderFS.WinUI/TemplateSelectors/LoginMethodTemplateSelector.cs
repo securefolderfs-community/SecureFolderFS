@@ -6,16 +6,16 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
 {
     internal sealed class LoginMethodTemplateSelector : GenericTemplateSelector<ObservableObject>
     {
-        public DataTemplate? AuthenticateDataTemplate { get; set; }
+        public DataTemplate? AuthenticateTemplate { get; set; }
 
-        public DataTemplate? LoginDataTemplate { get; set; }
+        public DataTemplate? LoginTemplate { get; set; }
 
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
         {
             if (item is LoginKeystoreSelectionViewModel)
-                return AuthenticateDataTemplate;
+                return AuthenticateTemplate;
             else if (item is LoginCredentialsViewModel)
-                return LoginDataTemplate;
+                return LoginTemplate;
 
             return base.SelectTemplateCore(item, container);
         }

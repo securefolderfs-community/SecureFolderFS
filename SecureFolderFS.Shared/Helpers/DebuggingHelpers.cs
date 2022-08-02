@@ -5,6 +5,8 @@ namespace SecureFolderFS.Shared.Helpers
 {
     public static class DebuggingHelpers
     {
+        private const bool DEBUG_LOGGING = true;
+
         public static void PrintEnumerable(IEnumerable enumerable)
         {
             if (!CanLog()) return;
@@ -54,7 +56,7 @@ namespace SecureFolderFS.Shared.Helpers
             return false;
 #endif
 
-            return Constants.ENABLE_DEBUG_LOGGING;
+            return DEBUG_LOGGING;
         }
     }
 }

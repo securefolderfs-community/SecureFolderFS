@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using System;
 using System.Linq;
 using System.Text;
+using SecureFolderFS.WinUI.AppModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,7 +33,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             if (e.Parameter is VaultWizardPasswordViewModel viewModel)
             {
                 ViewModel = viewModel;
-                ViewModel.InitializeWithPassword = () => new(Encoding.UTF8.GetBytes(FirstPassword.Password));
+                ViewModel.InitializeWithPassword = () => new SecurePassword(Encoding.UTF8.GetBytes(FirstPassword.Password));
             }
 
             base.OnNavigatedTo(e);

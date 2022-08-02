@@ -14,7 +14,7 @@
     <Page.Resources>
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
 
-        <DataTemplate x:Key="AuthenticateDataTemplate" x:DataType="vm:LoginKeystoreSelectionViewModel">
+        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreSelectionViewModel">
             <StackPanel Spacing="24">
                 <TextBlock
                     HorizontalAlignment="Center"
@@ -29,7 +29,7 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="LoginDataTemplate" x:DataType="vm:LoginCredentialsViewModel">
+        <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginCredentialsViewModel">
             <StackPanel Spacing="24">
                 <!--  Password Control  -->
                 <StackPanel Width="400" Spacing="8">
@@ -95,7 +95,7 @@
                     HorizontalContentAlignment="Center"
                     Content="{x:Bind ViewModel.LoginOptionViewModel, Mode=OneWay}">
                     <ContentControl.ContentTemplateSelector>
-                        <ts:LoginMethodTemplateSelector AuthenticateDataTemplate="{StaticResource AuthenticateDataTemplate}" LoginDataTemplate="{StaticResource LoginDataTemplate}" />
+                        <ts:LoginMethodTemplateSelector AuthenticateTemplate="{StaticResource AuthenticateTemplate}" LoginTemplate="{StaticResource LoginTemplate}" />
                     </ContentControl.ContentTemplateSelector>
                 </ContentControl>
             </Grid>

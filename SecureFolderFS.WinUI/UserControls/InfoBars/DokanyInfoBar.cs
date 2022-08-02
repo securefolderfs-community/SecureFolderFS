@@ -5,22 +5,22 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 
-namespace SecureFolderFS.Sdk.ViewModels.Settings.InfoBars
+namespace SecureFolderFS.WinUI.UserControls.InfoBars
 {
-    public sealed class DokanyInfoBarViewModel : InfoBarViewModel
+    internal sealed class DokanyInfoBar : InfoBarViewModel
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
         public IAsyncRelayCommand OpenWebsiteCommand { get; }
 
-        public DokanyInfoBarViewModel()
+        public DokanyInfoBar()
         {
             OpenWebsiteCommand = new AsyncRelayCommand(OpenWebsiteAsync);
         }
 
         private Task OpenWebsiteAsync()
         {
-            return ApplicationService.OpenUriAsync(new Uri(Constants.FileSystems.DOKANY_EXTERNAL_LINK));
+            return ApplicationService.OpenUriAsync(new Uri(Sdk.Constants.FileSystems.DOKANY_EXTERNAL_LINK));
         }
     }
 }

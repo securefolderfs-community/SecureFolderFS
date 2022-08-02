@@ -17,5 +17,11 @@ namespace SecureFolderFS.Core.Exceptions
         {
             FileSystemAvailabilityErrorType = fileSystemAvailabilityErrorType;
         }
+
+        public UnavailableFileSystemAdapterException(string message)
+            : base(message)
+        {
+            
+        }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.WinUI.Storage.NativeStorage;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
@@ -36,83 +35,27 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IFolder?> GetFolderFromPathAsync(string path)
+        public Task<ILocatableFolder?> GetFolderFromPathAsync(string path)
         {
             if (Directory.Exists(path))
-                return Task.FromResult<IFolder?>(new NativeFolder(path));
+                return Task.FromResult<ILocatableFolder?>(new NativeFolder(path));
 
-            return Task.FromResult<IFolder?>(null);
+            return Task.FromResult<ILocatableFolder?>(null);
         }
 
         /// <inheritdoc/>
-        public Task<IFile?> GetFileFromPathAsync(string path)
+        public Task<ILocatableFile?> GetFileFromPathAsync(string path)
         {
             if (File.Exists(path))
-                return Task.FromResult<IFile?>(new NativeFile(path));
+                return Task.FromResult<ILocatableFile?>(new NativeFile(path));
 
-            return Task.FromResult<IFile?>(null);
+            return Task.FromResult<ILocatableFile?>(null);
         }
 
         /// <inheritdoc/>
         public Task<IDisposable?> ObtainLockAsync(IStorable storage)
         {
             return Task.FromResult<IDisposable?>(null); // TODO: Implement
-        }
-
-        /// <inheritdoc/>
-        public async Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null,
-            CancellationToken cancellationToken = default) where TSource : IStorable
-        {
-            try
-            {
-                var destinationPath = Path.Combine(destinationFolder.Path, source.Name);
-                if (source is IFile sourceFile)
-                {
-                    return (TSource)(IStorable)await Task.Run(() =>
-                    {
-                        File.Copy(sourceFile.Path, destinationPath, options == NameCollisionOption.ReplaceExisting);
-                        return new NativeFile(destinationPath);
-                    }, cancellationToken);
-                }
-                else if (source is IFolder)
-                {
-                    throw new NotSupportedException();
-                }
-
-                throw new ArgumentException("The source type is invalid.", nameof(TSource));
-            }
-            catch (Exception)
-            {
-                return default;
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null,
-            CancellationToken cancellationToken = default) where TSource : IStorable
-        {
-            try
-            {
-                var destinationPath = Path.Combine(destinationFolder.Path, source.Name);
-                if (source is IFile sourceFile)
-                {
-                    return (TSource)(IStorable)await Task.Run(() =>
-                    {
-                        File.Move(sourceFile.Path, destinationPath, options == NameCollisionOption.ReplaceExisting);
-                        return new NativeFile(destinationPath);
-                    }, cancellationToken);
-                }
-                else if (source is IFolder)
-                {
-                    throw new NotSupportedException();
-                }
-
-                throw new ArgumentException("The source type is invalid.", nameof(TSource));
-            }
-            catch (Exception)
-            {
-                return default;
-            }
         }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Sdk.Storage.StoragePool;
 
 namespace SecureFolderFS.Sdk.Storage
 {
@@ -17,12 +14,6 @@ namespace SecureFolderFS.Sdk.Storage
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is granted returns true, otherwise false.</returns>
         Task<bool> IsFileSystemAccessible();
-
-        /// <summary>
-        /// Gets file pool for the current folder.
-        /// </summary>
-        /// <returns>If successful, returns <see cref="IFilePool"/> for the folder, otherwise null.</returns>
-        Task<IFilePool?> GetFilePoolAsync();
 
         /// <summary>
         /// Check if file exists at specified <paramref name="path"/>.
@@ -58,29 +49,5 @@ namespace SecureFolderFS.Sdk.Storage
         /// <param name="storage">The storage object to lock.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a lock handle to <paramref name="storage"/> represented with <see cref="IDisposable"/>, otherwise null.</returns>
         Task<IDisposable?> ObtainLockAsync(IStorable storage);
-
-        /// <summary>
-        /// Copies the storage object to the <paramref name="destinationFolder"/>.
-        /// </summary>
-        /// <typeparam name="TSource">The type of storage to copy.</typeparam>
-        /// <param name="source">The storage object to copy.</param>
-        /// <param name="destinationFolder">The destination folder to copy the storage object to.</param>
-        /// <param name="options">Determines how to handle the collision in case an object with the same name already exists.</param>
-        /// <param name="progress">Reports the progress of the operation.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <typeparamref name="TSource"/> of the copied object, otherwise null.</returns>
-        Task<TSource?> CopyAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IStorable;
-
-        /// <summary>
-        /// Moves the storage object to the <paramref name="destinationFolder"/>.
-        /// </summary>
-        /// <typeparam name="TSource">The type of storage to move.</typeparam>
-        /// <param name="source">The storage object to move.</param>
-        /// <param name="destinationFolder">The destination folder to move the storage object to.</param>
-        /// <param name="options">Determines how to handle the collision in case an object with the same name already exists.</param>
-        /// <param name="progress">Reports the progress of the operation.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <typeparamref name="TSource"/> of the moved object, otherwise null.</returns>
-        Task<TSource?> MoveAsync<TSource>(TSource source, IFolder destinationFolder, NameCollisionOption options, IProgress<double>? progress = null, CancellationToken cancellationToken = default) where TSource : IStorable;
     }
 }
