@@ -7,22 +7,16 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    public sealed class VaultWizardDialogViewModel : DialogViewModel, IRecipient<NavigationRequestedMessage>
+    public sealed partial class VaultWizardDialogViewModel : DialogViewModel, IRecipient<NavigationRequestedMessage>
     {
         public IMessenger Messenger { get; }
 
         public BaseVaultWizardPageViewModel? CurrentPageViewModel { get; set; }
 
-        public IRelayCommand GoBackCommand { get; }
-
         public VaultWizardDialogViewModel()
         {
             Messenger = new WeakReferenceMessenger();
             Messenger.Register(this);
-
-            PrimaryButtonClickCommand = new AsyncRelayCommand<IEventDispatchFlag?>(PrimaryButtonClickAsync);
-            SecondaryButtonClickCommand = new AsyncRelayCommand<IEventDispatchFlag?>(SecondaryButtonClickAsync);
-            GoBackCommand = new RelayCommand(GoBack);
         }
 
         /// <inheritdoc/>
@@ -31,16 +25,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
             CurrentPageViewModel = message.ViewModel as BaseVaultWizardPageViewModel;
         }
 
+        [RelayCommand]
         private Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
         {
             return CurrentPageViewModel?.PrimaryButtonClickAsync(flag) ?? Task.CompletedTask;
         }
 
+        [RelayCommand]
         private Task SecondaryButtonClickAsync(IEventDispatchFlag? flag)
         {
             return CurrentPageViewModel?.SecondaryButtonClickAsync(flag) ?? Task.CompletedTask;
         }
 
+        [RelayCommand]
         private void GoBack()
         {
             Messenger.Send(new BackNavigationRequestedMessage());

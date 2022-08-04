@@ -53,14 +53,14 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
             FileSystemAdapterChoice.SelectedItem = ViewModel.BannerViewModel.FileSystemAdapters
                 .FirstOrDefault(x =>
-                    x.FileSystemInfoModel.FileSystemId.Equals(ViewModel.BannerViewModel.PreferredFileSystemId));
+                    x.FileSystemInfoModel.Id.Equals(ViewModel.BannerViewModel.PreferredFileSystemId));
 
             FileSystemAdapterChoice.SelectedItem ??= await GetSupportedAdapter();
         }
 
         private async void FileSystemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.BannerViewModel.PreferredFileSystemId = ViewModel.BannerViewModel.FileSystemAdapters[FileSystemAdapterChoice.SelectedIndex].FileSystemInfoModel.FileSystemId;
+            ViewModel.BannerViewModel.PreferredFileSystemId = ViewModel.BannerViewModel.FileSystemAdapters[FileSystemAdapterChoice.SelectedIndex].FileSystemInfoModel.Id;
             await UpdateAdapterStatus((FileSystemAdapterChoice.SelectedItem as FileSystemAdapterItemViewModel)?.FileSystemInfoModel);
         }
 
@@ -76,7 +76,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
             }
             else if (!fileSystemAdapterResult.IsSuccess)
             {
-                FileSystemInfoBar = fileSystemAdapter.FileSystemId switch
+                FileSystemInfoBar = fileSystemAdapter.Id switch
                 {
                     Core.Constants.FileSystemId.DOKAN_ID => new DokanyInfoBar(),
                     _ => null

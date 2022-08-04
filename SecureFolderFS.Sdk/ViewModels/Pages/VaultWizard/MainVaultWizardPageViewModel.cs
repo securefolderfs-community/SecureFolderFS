@@ -5,24 +5,20 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class MainVaultWizardPageViewModel : BaseVaultWizardPageViewModel
+    public sealed partial class MainVaultWizardPageViewModel : BaseVaultWizardPageViewModel
     {
-        public IRelayCommand AddExistingVaultCommand { get; }
-
-        public IRelayCommand CreateNewVaultCommand { get; }
-
         public MainVaultWizardPageViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            AddExistingVaultCommand = new RelayCommand(AddExistingVault);
-            CreateNewVaultCommand = new RelayCommand(CreateNewVault);
         }
 
+        [RelayCommand]
         private void AddExistingVault()
         {
             Messenger.Send(new NavigationRequestedMessage(new VaultWizardAddExistingViewModel(Messenger, DialogViewModel)));
         }
 
+        [RelayCommand]
         private void CreateNewVault()
         {
             Messenger.Send(new NavigationRequestedMessage(new VaultWizardCreationPathViewModel(Messenger, DialogViewModel)));

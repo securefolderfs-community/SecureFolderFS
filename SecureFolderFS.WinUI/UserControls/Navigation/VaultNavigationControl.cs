@@ -35,5 +35,10 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
 
             ContentFrame.Navigate(pageType, viewModel, transitionInfo);
         }
+
+        public void ClearContent()
+        {
+            ContentFrame.Content = null;
+        }
     }
 }

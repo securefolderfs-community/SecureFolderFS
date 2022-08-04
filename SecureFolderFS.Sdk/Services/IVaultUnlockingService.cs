@@ -22,13 +22,6 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Checks if the given vault is supported.
-        /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the vault is supported, returns true, otherwise false.</returns>
-        Task<bool> IsSupportedAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Sets the <see cref="Stream"/> to keystore containing serialized configuration.
         /// </summary>
         /// <param name="stream">The stream that contains the keystore.</param>

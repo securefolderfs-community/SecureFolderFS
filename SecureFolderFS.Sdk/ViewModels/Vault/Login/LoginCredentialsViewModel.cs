@@ -1,32 +1,37 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault.Login
 {
-    public sealed class LoginCredentialsViewModel : ObservableObject, IAsyncInitialize
+    public sealed partial class LoginCredentialsViewModel : ObservableObject, IAsyncInitialize
     {
         private readonly IMessenger _messenger;
         private readonly IVaultModel _vaultModel;
         private readonly IUnlockingModel<IUnlockedVaultModel> _unlockingModel;
+        private readonly IAsyncValidator<IFolder> _vaultValidator;
 
-        public IAsyncRelayCommand UnlockVaultCommand { get; }
+        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         public LoginCredentialsViewModel(IMessenger messenger, IVaultModel vaultModel, IUnlockingModel<IUnlockedVaultModel> unlockingModel)
         {
             _messenger = messenger;
             _vaultModel = vaultModel;
             _unlockingModel = unlockingModel;
-            UnlockVaultCommand = new AsyncRelayCommand<IPassword?>(UnlockVaultAsync);
+            _vaultValidator = VaultService.GetVaultValidator();
         }
 
-        private async Task UnlockVaultAsync(IPassword? password, CancellationToken cancellationToken = default)
+        [RelayCommand]
+        private async Task UnlockVaultAsync(IPassword? password, CancellationToken cancellationToken)
         {
             if (password is null)
                 return;
@@ -40,7 +45,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.Login
             if (unlockedVaultModel is null)
                 return; // TODO: Report the issue
 
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(new VaultDashboardPageViewModel(unlockedVaultModel, _vaultModel, _messenger)));
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultModel, _vaultModel, _messenger);
+            _ = dashboardPage.InitAsync(cancellationToken);
+            
+            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardPage));
         }
 
         /// <inheritdoc/>
@@ -50,7 +58,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.Login
             await _unlockingModel.InitAsync(cancellationToken); // TODO: This should be called only once!
 
             // Check if the vault is supported
-            if (!await _unlockingModel.IsSupportedAsync(cancellationToken))
+            var vaultValidationResult = await _vaultValidator.ValidateAsync(_vaultModel.Folder, cancellationToken);
+            if (!vaultValidationResult.IsSuccess)
                 return; // TODO: Report the issue
         }
     }

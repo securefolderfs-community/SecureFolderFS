@@ -6,6 +6,7 @@ using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 
@@ -21,7 +22,7 @@ namespace SecureFolderFS.WinUI.AppModels
             if (configFile is null)
                 return new CommonResult(new FileNotFoundException());
 
-            await using var configStream = await configFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
+            await using var configStream = await configFile.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             if (configStream is null)
                 return new CommonResult(new UnauthorizedAccessException());
 

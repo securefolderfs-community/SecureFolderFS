@@ -19,11 +19,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             return (IFolder)await destination.CreateCopyOfAsync(source, collisionOption, cancellationToken);
         }
 
-        public static async Task<Stream?> TryOpenStreamAsync(this IFile file, FileAccess access, CancellationToken cancellationToken = default)
+        public static async Task<Stream?> TryOpenStreamAsync(this IFile file, FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
         {
             try
             {
-                return await file.OpenStreamAsync(access, cancellationToken);
+                return await file.OpenStreamAsync(access, share, cancellationToken);
             }
             catch (Exception)
             {

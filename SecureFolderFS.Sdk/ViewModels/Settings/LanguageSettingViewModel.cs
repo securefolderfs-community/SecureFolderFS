@@ -8,31 +8,27 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 
 namespace SecureFolderFS.Sdk.ViewModels.Settings
 {
-    public sealed class LanguageSettingViewModel : ObservableObject
+    public sealed partial class LanguageSettingViewModel : ObservableObject
     {
-        private readonly ILanguageModel _activeLanguage;
-
         private ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
 
         public ObservableCollection<LanguageViewModel> Languages { get; }
 
+        public ILanguageModel ActiveLanguage { get; }
+
+        [ObservableProperty]
         private bool _IsRestartRequired;
-        public bool IsRestartRequired
-        {
-            get => _IsRestartRequired;
-            set => SetProperty(ref _IsRestartRequired, value);
-        }
 
         public LanguageSettingViewModel()
         {
             Languages = new(LocalizationService.GetLanguages().Select(x => new LanguageViewModel(x)));
-            _activeLanguage = LocalizationService.CurrentLanguage;
+            ActiveLanguage = LocalizationService.CurrentLanguage;
         }
 
         public void UpdateCurrentLanguage(ILanguageModel language)
         {
             LocalizationService.SetCurrentLanguage(language);
-            IsRestartRequired = !_activeLanguage.LanguageTag.Equals(LocalizationService.CurrentLanguage.LanguageTag);
+            IsRestartRequired = !ActiveLanguage.LanguageTag.Equals(LocalizationService.CurrentLanguage.LanguageTag);
         }
     }
 }

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -24,18 +25,19 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<IWidgetModel?> GetOrCreateWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
+        public Task<IWidgetModel?> GetOrCreateWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
             if (VaultModel.Folder is not ILocatableFolder vaultFolder)
-                return null;
+                return Task.FromResult<IWidgetModel?>(null);
 
             VaultsSettingsService.WidgetContexts ??= new();
+            VaultsSettingsService.WidgetContexts.AddIfNotPresent(vaultFolder.Path, new());
             VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels ??= new();
 
             if (!VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!.TryGetValue(widgetId, out var widgetDataModel))
-                return null;
+                return Task.FromResult<IWidgetModel?>(null);
 
-            return new LocalWidgetModel(widgetId, VaultsSettingsService, widgetDataModel);
+            return Task.FromResult<IWidgetModel?>(new LocalWidgetModel(widgetId, VaultsSettingsService, widgetDataModel));
         }
 
         /// <inheritdoc/>
@@ -51,6 +53,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 yield break;
 
             VaultsSettingsService.WidgetContexts ??= new();
+            VaultsSettingsService.WidgetContexts.AddIfNotPresent(vaultFolder.Path, new());
             VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels ??= new();
 
             foreach (var item in VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!)

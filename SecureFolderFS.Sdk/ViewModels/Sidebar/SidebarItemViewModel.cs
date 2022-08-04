@@ -8,33 +8,21 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
-    public sealed class SidebarItemViewModel : ObservableObject, IContainable<string>//, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
+    public sealed partial class SidebarItemViewModel : ObservableObject//, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         public IVaultModel VaultModel { get; }
 
+        [ObservableProperty]
         private bool _CanRemoveVault = true;
-        public bool CanRemoveVault
-        {
-            get => _CanRemoveVault;
-            set => SetProperty(ref _CanRemoveVault, value);
-        }
-
-        public IRelayCommand RemoveVaultCommand { get; }
-
-        public IAsyncRelayCommand ShowInFileExplorerCommand { get; }
 
         public SidebarItemViewModel(IVaultModel vaultModel)
         {
             VaultModel = vaultModel;
-
-            RemoveVaultCommand = new RelayCommand(RemoveVault);
-            ShowInFileExplorerCommand = new AsyncRelayCommand(ShowInFileExplorerAsync);
         }
 
         ///// <inheritdoc/>
@@ -49,26 +37,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         //    // TODO: Update CanRemoveVault
         //}
 
+        [RelayCommand]
         private void RemoveVault()
         {
             WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(VaultModel));
         }
 
+        [RelayCommand]
         private Task ShowInFileExplorerAsync()
         {
             if (VaultModel.Folder is not ILocatableFolder vaultFolder)
                 return Task.CompletedTask;
 
             return FileExplorerService.OpenInFileExplorerAsync(vaultFolder);
-        }
-
-        /// <inheritdoc/>
-        public bool Contains(string? other)
-        {
-            if (other is null)
-                return false;
-
-            return VaultModel.VaultName.Contains(other, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

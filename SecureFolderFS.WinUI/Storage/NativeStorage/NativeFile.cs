@@ -16,9 +16,9 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
+        public Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
         {
-            var stream = File.Open(Path, FileMode.Open, access);
+            var stream = File.Open(Path, FileMode.Open, access, share);
             return Task.FromResult<Stream>(stream);
         }
     }

@@ -16,7 +16,7 @@ namespace SecureFolderFS.WinUI.AppModels
         public string Name { get; } = "Dokany";
 
         /// <inheritdoc/>
-        public string FileSystemId { get; } = Core.Constants.FileSystemId.DOKAN_ID;
+        public string Id { get; } = Core.Constants.FileSystemId.DOKAN_ID;
 
         /// <inheritdoc/>
         public Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
@@ -24,6 +24,7 @@ namespace SecureFolderFS.WinUI.AppModels
             var result = FileSystemAvailabilityHelpers.IsDokanyAvailable();
             if (result != FileSystemAvailabilityErrorType.FileSystemAvailable)
             {
+                // TODO: Use translation strings
                 var message = result switch
                 {
                     FileSystemAvailabilityErrorType.ModuleNotAvailable or
@@ -37,6 +38,15 @@ namespace SecureFolderFS.WinUI.AppModels
             }
 
             return Task.FromResult<IResult>(new CommonResult());
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(IFileSystemInfoModel? other)
+        {
+            if (other is null)
+                return false;
+
+            return other.Id.Equals(Id);
         }
     }
 }

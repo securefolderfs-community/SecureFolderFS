@@ -18,10 +18,10 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
+        public async Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
         {
             var fileAccessMode = GetFileAccessMode(access);
-            var storageOpenOptions = GetStorageOpenOptions(FileShare.None);
+            var storageOpenOptions = GetStorageOpenOptions(share);
 
             var winrtStreamTask = storage.OpenAsync(fileAccessMode, storageOpenOptions).AsTask(cancellationToken);
             var winrtStream = await winrtStreamTask;

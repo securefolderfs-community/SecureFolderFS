@@ -1,18 +1,15 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    public sealed class GraphControlViewModel : ObservableObject
+    public sealed partial class GraphControlViewModel : ObservableObject, IProgress<double>
     {
         public ObservableCollection<GraphPointViewModel> Data { get; }
 
+        [ObservableProperty]
         private string? _GraphSubheader = "0mb/s";
-        public string? GraphSubheader
-        {
-            get => _GraphSubheader;
-            set => SetProperty(ref _GraphSubheader, value);
-        }
 
         public GraphControlViewModel()
         {
@@ -27,6 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             Data.Add(graphPoint);
         }
 
+        /// <inheritdoc/>
         public void Report(double value)
         {
             GraphSubheader = $"{value.ToString("0.#")}mb/s";

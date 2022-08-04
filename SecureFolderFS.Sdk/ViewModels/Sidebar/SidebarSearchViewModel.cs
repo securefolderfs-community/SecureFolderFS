@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         public SidebarSearchViewModel(IEnumerable<SidebarItemViewModel> sidebarItems)
         {
             SearchItems = new();
-            SearchModel = new SidebarSearchModel<SidebarItemViewModel>(sidebarItems);
+            SearchModel = new SidebarSearchModel(sidebarItems);
         }
 
         public async Task SubmitQuery(string query, CancellationToken cancellationToken = default)

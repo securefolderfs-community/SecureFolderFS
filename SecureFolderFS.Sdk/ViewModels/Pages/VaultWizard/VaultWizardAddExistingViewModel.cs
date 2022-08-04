@@ -1,10 +1,12 @@
 ﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 
@@ -17,6 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         {
         }
 
+        /// <inheritdoc/>
         public override Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
         {
             flag?.NoForwarding();
@@ -25,13 +28,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public override async Task<bool> SetLocation(ILocatableFolder storage)
         {
             var file = await storage.GetFileAsync(SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME);
             if (file is null)
                 return false;
 
-            await using var stream = await file.OpenStreamAsync(FileAccess.Read);
+            await using var stream = await file.TryOpenStreamAsync(FileAccess.Read, FileShare.Read);
             var vaultConfig = RawVaultConfiguration.Load(stream);
             var isSupported = VaultVersion.IsVersionSupported(vaultConfig);
             if (isSupported)
@@ -45,7 +49,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return false;
         }
 
-        protected override async Task BrowseLocationAsync()
+        /// <inheritdoc/>
+        protected override async Task BrowseLocationAsync(CancellationToken cancellationToken)
         {
             var folder = await FileExplorerService.PickSingleFolderAsync();
             if (folder is not null)

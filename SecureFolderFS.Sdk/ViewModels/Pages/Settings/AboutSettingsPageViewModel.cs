@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
 {
-    public sealed class AboutSettingsPageViewModel : ObservableObject
+    public sealed partial class AboutSettingsPageViewModel : ObservableObject
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
@@ -18,48 +18,37 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
 
         public string AppVersion { get; }
 
-        public IAsyncRelayCommand CopyVersionCommand { get; }
-
-        public IAsyncRelayCommand OpenGitHubRepositoryCommand { get; }
-
-        public IAsyncRelayCommand OpenDiscordSocialCommand { get; }
-
-        public IAsyncRelayCommand OpenPrivacyPolicyCommand { get; }
-
-        public IAsyncRelayCommand OpenLogLocationCommand { get; }
-
         public AboutSettingsPageViewModel()
         {
             AppVersion = ApplicationService.GetAppVersion().ToString();
-
-            CopyVersionCommand = new AsyncRelayCommand(CopyVersionAsync);
-            OpenGitHubRepositoryCommand = new AsyncRelayCommand(OpenGitHubRepositoryAsync);
-            OpenDiscordSocialCommand = new AsyncRelayCommand(OpenDiscordSocialAsync);
-            OpenPrivacyPolicyCommand = new AsyncRelayCommand(OpenPrivacyPolicyAsync);
-            OpenLogLocationCommand = new AsyncRelayCommand(OpenLogLocationAsync);
         }
 
+        [RelayCommand]
         private async Task CopyVersionAsync()
         {
             if (await ClipboardService.IsClipboardAvailableAsync())
                 await ClipboardService.SetClipboardDataAsync(new ClipboardTextItemModel(AppVersion));
         }
 
+        [RelayCommand]
         private Task OpenGitHubRepositoryAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS"));
         }
 
+        [RelayCommand]
         private Task OpenDiscordSocialAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://discord.com/invite/NrTxXpJ2Zj"));
         }
 
+        [RelayCommand]
         private Task OpenPrivacyPolicyAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/PRIVACY.md"));
         }
 
+        [RelayCommand]
         private Task OpenLogLocationAsync()
         {
             return FileExplorerService.OpenAppFolderAsync();

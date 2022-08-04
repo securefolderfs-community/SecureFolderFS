@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.AppModels
             try
             {
                 await semaphore.WaitAsync(cancellationToken);
-                await using var stream = await file.TryOpenStreamAsync(FileAccess.Read, cancellationToken);
+                await using var stream = await file.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
                 if (stream is null)
                     return false;
 
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Sdk.AppModels
             try
             {
                 await semaphore.WaitAsync(cancellationToken);
-                await using var stream = await file.TryOpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+                await using var stream = await file.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
                 if (stream is null)
                     return false;
 

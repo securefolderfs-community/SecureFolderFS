@@ -14,7 +14,6 @@ namespace SecureFolderFS.Sdk.AppModels
     {
         private readonly IVaultModel _vaultModel;
         private readonly IKeystoreModel _keystoreModel;
-        private bool _isInitialized;
 
         private IVaultUnlockingService VaultUnlockingService { get; } = Ioc.Default.GetRequiredService<IVaultUnlockingService>();
 
@@ -30,17 +29,7 @@ namespace SecureFolderFS.Sdk.AppModels
             // TODO: Maybe set the lock there?
 
             // Set the vault folder
-            _isInitialized = await VaultUnlockingService.SetVaultFolderAsync(_vaultModel.Folder, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> IsSupportedAsync(CancellationToken cancellationToken = default)
-        {
-            // If the vault folder wasn't initialized properly, we don't support it.
-            if (!_isInitialized)
-                return false;
-
-            return await VaultUnlockingService.IsSupportedAsync(cancellationToken);
+            await VaultUnlockingService.SetVaultFolderAsync(_vaultModel.Folder, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -53,7 +42,7 @@ namespace SecureFolderFS.Sdk.AppModels
             using (password)
             {
                 // Get the keystore
-                var keystoreStream = await _keystoreModel.GetKeystoreStreamAsync(cancellationToken);
+                await using var keystoreStream = await _keystoreModel.GetKeystoreStreamAsync(cancellationToken);
                 if (keystoreStream is null)
                     return null; // TODO: Report issue
 

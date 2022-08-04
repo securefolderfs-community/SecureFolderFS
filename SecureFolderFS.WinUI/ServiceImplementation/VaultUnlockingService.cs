@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Instance;
 using SecureFolderFS.Core.Routines;
-using SecureFolderFS.Core.VaultDataStore;
-using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 using SecureFolderFS.Core.VaultLoader.Routine;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -18,7 +16,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class VaultUnlockingService : IVaultUnlockingService
     {
-        private IFolder? _vaultFolder;
         private IVaultLoadRoutineStep3? _step3;
         private IVaultLoadRoutineStep8? _step8;
 
@@ -27,32 +24,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            _vaultFolder = folder;
-
             _step3 = VaultRoutines.NewVaultLoadRoutine()
                 .EstablishRoutine()
                 .SetFolder(folder)
                 .AddFileOperations();
 
             return Task.FromResult(true);
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> IsSupportedAsync(CancellationToken cancellationToken = default)
-        {
-            if (_vaultFolder is null)
-                return false;
-
-            var configFile = await _vaultFolder.GetFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME);
-            if (configFile is null)
-                return false;
-
-            await using var configStream = await configFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
-            if (configStream is null)
-                return false;
-            
-            var rawConfiguration = RawVaultConfiguration.Load(configStream);
-            return VaultVersion.IsVersionSupported(rawConfiguration);
         }
 
         /// <inheritdoc/>

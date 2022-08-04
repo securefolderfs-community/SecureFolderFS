@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -10,7 +11,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 
 namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 {
-    public sealed class UpdateBannerViewModel : ObservableObject
+    public sealed partial class UpdateBannerViewModel : ObservableObject
     {
         private IGeneralSettingsService GeneralSettingsService { get; } = Ioc.Default.GetRequiredService<IGeneralSettingsService>();
 
@@ -18,34 +19,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 
         public InfoBarViewModel UpdateInfoBar { get; }
 
+        [ObservableProperty]
+        private string? _UpdateText;
+
+        [ObservableProperty]
+        private bool _AreUpdatesSupported;
+
         public DateTime LastChecked
         {
             get => GeneralSettingsService.UpdateLastChecked;
             set => GeneralSettingsService.UpdateLastChecked = value;
         }
 
-        private string? _UpdateText;
-        public string? UpdateText
-        {
-            get => _UpdateText;
-            set => SetProperty(ref _UpdateText, value);
-        }
-
-        private bool _AreUpdatesSupported;
-        public bool AreUpdatesSupported
-        {
-            get => _AreUpdatesSupported;
-            set => SetProperty(ref _AreUpdatesSupported, value);
-        }
-
-        public IAsyncRelayCommand UpdateAppCommand { get; }
-
         public UpdateBannerViewModel()
         {
             UpdateInfoBar = new();
             UpdateText = "Latest version installed";
-
-            UpdateAppCommand = new AsyncRelayCommand(UpdateAppAsync);
         }
 
         public async Task ConfigureUpdates()
@@ -63,14 +52,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
             }
         }
 
-        private async Task UpdateAppAsync()
+        [RelayCommand]
+        private async Task UpdateAppAsync(CancellationToken cancellationToken)
         {
             LastChecked = DateTime.Now;
             OnPropertyChanged(nameof(LastChecked));
 
             var isUpdateAvailable = await UpdateService.IsUpdateAvailableAsync();
             if (isUpdateAvailable)
-                _ = UpdateService.UpdateAsync(null);
+                _ = UpdateService.UpdateAsync(null, cancellationToken);
         }
     }
 }

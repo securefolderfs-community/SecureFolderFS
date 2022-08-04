@@ -4,6 +4,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -11,13 +12,14 @@ using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
+using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.WinUI.UserControls
 {
-    public sealed partial class MainWindowHostControl : UserControl
+    public sealed partial class MainWindowHostControl : UserControl, IRecipient<RemoveVaultMessage>
     {
         public MainViewModel ViewModel
         {
@@ -29,6 +31,7 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             InitializeComponent();
             ViewModel = new();
+            WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
         }
 
         private void NavigateToItem(IVaultModel vaultModel)
@@ -61,7 +64,7 @@ namespace SecureFolderFS.WinUI.UserControls
                 await threadingService.ExecuteOnUiThreadAsync();
                 await ViewModel.InitAsync();
 
-                ViewModel.SidebarViewModel.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
+                Sidebar.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
             });
         }
 
@@ -71,7 +74,7 @@ namespace SecureFolderFS.WinUI.UserControls
             if (chosenItem is null)
                 return;
 
-            ViewModel.SidebarViewModel.SelectedItem = chosenItem;
+            Sidebar.SelectedItem  = chosenItem;
             NavigateToItem(chosenItem.VaultModel);
         }
 
@@ -79,6 +82,14 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
                 await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery(sender.Text);
+        }
+
+        public void Receive(RemoveVaultMessage message)
+        {
+            if (ViewModel.SidebarViewModel.SidebarItems.IsEmpty())
+                Navigation.ClearContent();
+
+            Navigation.NavigationCache.Remove(message.VaultModel);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Core.Enums;
@@ -10,24 +11,16 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel, IDisposable
+    public sealed partial class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel, IDisposable
     {
         private readonly IFolder _vaultFolder;
         private readonly IVaultCreationRoutineStep9 _step9;
 
+        [ObservableProperty]
         private int _SelectedDataEncryptionIndex;
-        public int SelectedDataEncryptionIndex
-        {
-            get => _SelectedDataEncryptionIndex;
-            set => SetProperty(ref _SelectedDataEncryptionIndex, value);
-        }
 
+        [ObservableProperty]
         private int _SelectedFileNameEncryptionIndex;
-        public int SelectedFileNameEncryptionIndex
-        {
-            get => _SelectedFileNameEncryptionIndex;
-            set => SetProperty(ref _SelectedFileNameEncryptionIndex, value);
-        }
 
         public VaultWizardEncryptionViewModel(IFolder vaultFolder, IVaultCreationRoutineStep9 step9, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)

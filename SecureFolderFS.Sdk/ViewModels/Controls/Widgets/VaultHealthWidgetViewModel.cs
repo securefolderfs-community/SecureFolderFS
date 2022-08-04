@@ -1,49 +1,38 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
-    public sealed class VaultHealthWidgetViewModel : BaseWidgetViewModel
+    public sealed partial class VaultHealthWidgetViewModel : BaseWidgetViewModel
     {
+        [ObservableProperty]
         private DateTime _VaultHealthLastCheckedDate;
-        public DateTime VaultHealthLastCheckedDate
-        {
-            get => _VaultHealthLastCheckedDate;
-            set => SetProperty(ref _VaultHealthLastCheckedDate, value);
-        }
 
+        [ObservableProperty]
         private VaultHealthState _VaultHealthState;
-        public VaultHealthState VaultHealthState
-        {
-            get => _VaultHealthState;
-            set => SetProperty(ref _VaultHealthState, value);
-        }
-
-        public IRelayCommand StartScanningCommand { get; }
-
-        public IRelayCommand OpenVaultHealthCommand { get; }
 
         public VaultHealthWidgetViewModel(IWidgetModel widgetModel)
             : base(widgetModel)
         {
-            StartScanningCommand = new RelayCommand(StartScanning);
-            OpenVaultHealthCommand = new RelayCommand(OpenVaultHealth);
         }
 
-        private void StartScanning()
+        [RelayCommand]
+        private Task StartScanningAsync()
         {
-
+            return Task.CompletedTask;
         }
 
+        [RelayCommand]
         private void OpenVaultHealth()
         {
-
         }
 
+        /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;

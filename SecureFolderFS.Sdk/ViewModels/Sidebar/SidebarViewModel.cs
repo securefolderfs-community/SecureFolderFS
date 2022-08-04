@@ -10,7 +10,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
-    public sealed class SidebarViewModel : ObservableObject, IAsyncInitialize, IRecipient<AddVaultMessage>, IRecipient<RemoveVaultMessage>
+    public sealed partial class SidebarViewModel : ObservableObject, IAsyncInitialize, IRecipient<AddVaultMessage>, IRecipient<RemoveVaultMessage>
     {
         private IVaultCollectionModel VaultCollectionModel { get; }
 
@@ -20,12 +20,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         public SidebarFooterViewModel FooterViewModel { get; }
 
+        [ObservableProperty]
         private SidebarItemViewModel? _SelectedItem;
-        public SidebarItemViewModel? SelectedItem
-        {
-            get => _SelectedItem;
-            set => SetProperty(ref _SelectedItem, value);
-        }
 
         public SidebarViewModel(IVaultCollectionModel vaultCollectionModel)
         {

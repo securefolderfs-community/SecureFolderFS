@@ -15,6 +15,6 @@ namespace SecureFolderFS.Sdk.Storage
         /// <param name="access">The file access to open the file with.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a <see cref="Stream"/>, otherwise null.</returns>
-        Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default);
+        Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default);
     }
 }

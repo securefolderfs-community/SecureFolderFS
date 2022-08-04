@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
@@ -27,7 +28,7 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             _ = cancellationToken;
 
-            _keystoreStream ??= await _keystoreFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
+            _keystoreStream ??= await _keystoreFile.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             return _keystoreStream;
         }
 

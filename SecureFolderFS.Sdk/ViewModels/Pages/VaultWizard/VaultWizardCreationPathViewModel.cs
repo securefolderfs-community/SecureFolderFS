@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 
@@ -46,6 +46,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public override Task<bool> SetLocation(ILocatableFolder storage)
         {
             LocationPath = storage.Path;
@@ -55,7 +56,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             return Task.FromResult(true);
         }
 
-        protected override async Task BrowseLocationAsync()
+        /// <inheritdoc/>
+        protected override async Task BrowseLocationAsync(CancellationToken cancellationToken)
         {
             var folder = await FileExplorerService.PickSingleFolderAsync();
             if (folder is not null)
