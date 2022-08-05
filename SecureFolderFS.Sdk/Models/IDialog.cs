@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.Models
     /// Represents a dialog with <typeparamref name="TViewModel"/> view model.
     /// </summary>
     /// <typeparam name="TViewModel">The view model type related to dialog.</typeparam>
-    public interface IDialog<TViewModel>
+    public interface IDialog<TViewModel> // TODO: This should not be in the .Models namespace
         where TViewModel : INotifyPropertyChanged
     {
         /// <summary>

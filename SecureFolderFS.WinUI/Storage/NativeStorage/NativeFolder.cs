@@ -21,7 +21,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public Task<IFile> GetFileAsync(string fileName)
+        public Task<IFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
         {
             var path = System.IO.Path.Combine(Path, fileName);
 
@@ -32,7 +32,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public Task<IFolder> GetFolderAsync(string folderName)
+        public Task<IFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
         {
             var path = System.IO.Path.Combine(Path, folderName);
 

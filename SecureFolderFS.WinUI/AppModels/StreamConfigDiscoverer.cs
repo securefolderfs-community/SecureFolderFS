@@ -3,21 +3,21 @@ using SecureFolderFS.Core.Discoverers;
 
 namespace SecureFolderFS.WinUI.AppModels
 {
-    /// <inheritdoc cref="IVaultKeystoreDiscoverer"/>
-    internal sealed class StreamKeystoreDiscoverer : IVaultKeystoreDiscoverer
+    /// <inheritdoc cref="IVaultConfigurationDiscoverer"/>
+    internal sealed class StreamConfigDiscoverer : IVaultConfigurationDiscoverer
     {
         private readonly Stream _foundStream;
 
-        public StreamKeystoreDiscoverer(Stream foundStream)
+        public StreamConfigDiscoverer(Stream foundStream)
         {
             _foundStream = foundStream;
         }
 
         /// <inheritdoc/>
-        public Stream DiscoverVaultKeystore(string vaultPath, string keystoreFileName)
+        public Stream DiscoverVaultConfig(string vaultPath, string configFileName)
         {
             _ = vaultPath;
-            _ = keystoreFileName;
+            _ = configFileName;
 
             return _foundStream;
         }

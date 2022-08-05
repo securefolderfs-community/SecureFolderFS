@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.VaultLoader.Discoverers.ConfigurationDiscovery;
-using SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery;
+﻿using SecureFolderFS.Core.Discoverers;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
 using SecureFolderFS.Sdk.Storage;

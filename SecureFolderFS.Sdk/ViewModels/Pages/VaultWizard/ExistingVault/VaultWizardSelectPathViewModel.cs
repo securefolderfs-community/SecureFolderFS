@@ -12,9 +12,9 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
-    public sealed class VaultWizardAddExistingViewModel : VaultWizardPathSelectionBaseViewModel<ILocatableFolder>
+    public sealed class VaultWizardSelectPathViewModel : VaultWizardPathSelectionBaseViewModel<ILocatableFolder>
     {
-        public VaultWizardAddExistingViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardSelectPathViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
         }

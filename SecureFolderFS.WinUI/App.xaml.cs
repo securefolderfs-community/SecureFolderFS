@@ -88,6 +88,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
 
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
+                .AddTransient<IVaultCreationService, VaultCreationService>()
                 .AddSingleton<IVaultService, VaultService>()
                 .AddSingleton<IFileSystemService, NativeFileSystemService>()
                 .AddSingleton<IDialogService, DialogService>()

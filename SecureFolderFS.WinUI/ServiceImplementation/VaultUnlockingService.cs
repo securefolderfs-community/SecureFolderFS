@@ -3,12 +3,12 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Core.Instance;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.VaultLoader.Routine;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
 
@@ -17,13 +17,17 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class VaultUnlockingService : IVaultUnlockingService
     {
         private IVaultLoadRoutineStep3? _step3;
+        private IVaultLoadRoutineStep5? _step5;
         private IVaultLoadRoutineStep8? _step8;
+        private IFolder? _folder;
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
         /// <inheritdoc/>
         public Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
+            _folder = folder;
+
             _step3 = VaultRoutines.NewVaultLoadRoutine()
                 .EstablishRoutine()
                 .SetFolder(folder)
@@ -33,12 +37,34 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<bool> SetKeystoreStreamAsync(Stream stream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
+        public async Task<bool> SetConfigurationAsync(IFile configurationFile, CancellationToken cancellationToken = default)
         {
             _ = _step3 ?? throw new InvalidOperationException("The vault folder has not been set yet.");
 
-            _step8 = _step3.FindConfigurationFile()
-                .ContinueConfigurationFileInitialization()
+            if (_folder is null)
+                return false;
+
+            var file = await _folder.GetFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            if (file is null)
+                return false;
+
+            await using var configStream = await file.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+            if (configStream is null)
+                return false;
+
+            _step5 = _step3
+                .FindConfigurationFile(true, new StreamConfigDiscoverer(configStream))
+                .ContinueConfigurationFileInitialization();
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> SetKeystoreStreamAsync(Stream stream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
+        {
+            _ = _step5 ?? throw new InvalidOperationException("The vault folder has not been set yet.");
+
+            _step8 = _step5
                 .FindKeystoreFile(true, new StreamKeystoreDiscoverer(stream))
                 .ContinueKeystoreFileInitialization()
                 .AddEncryptionAlgorithmBuilder();
@@ -51,10 +77,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         {
             _ = _step8 ?? throw new InvalidOperationException("The keystore has not been set yet.");
 
-            IVaultInstance? vaultInstance = null;
             try
             {
-                vaultInstance = _step8.DeriveMasterKeyFromPassword(password)
+                var vaultInstance = _step8.DeriveMasterKeyFromPassword(password)
                     .ContinueInitializationWithMasterKey()
                     .VerifyVaultConfiguration()
                     .ContinueInitialization()

@@ -11,6 +11,7 @@ namespace SecureFolderFS.Sdk.AppModels
     /// Represents a model used for unlocking vaults.
     /// </summary>
     public sealed class VaultUnlockingModel : IUnlockingModel<IUnlockedVaultModel>
+    // TODO: This is bad. IUnlockingModel is too simple to proxy routine for unlocking vaults. Create a new model that produces more detailed results (similar to IVaultCreationModel).
     {
         private readonly IVaultModel _vaultModel;
         private readonly IKeystoreModel _keystoreModel;
@@ -45,6 +46,14 @@ namespace SecureFolderFS.Sdk.AppModels
                 await using var keystoreStream = await _keystoreModel.GetKeystoreStreamAsync(cancellationToken);
                 if (keystoreStream is null)
                     return null; // TODO: Report issue
+
+                var configFile = await _vaultModel.Folder.GetFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+                if (configFile is null)
+                    return null;
+
+                // Set the config file
+                if (!await VaultUnlockingService.SetConfigurationAsync(configFile, cancellationToken))
+                    return null;
 
                 // Set the keystore stream
                 if (!await VaultUnlockingService.SetKeystoreStreamAsync(keystoreStream, JsonToStreamSerializer.Instance, cancellationToken))

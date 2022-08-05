@@ -1,11 +1,10 @@
 ﻿using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
-using SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration;
-using SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 using System;
+using SecureFolderFS.Core.Discoverers;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine
 {
@@ -32,17 +31,17 @@ namespace SecureFolderFS.Core.VaultCreator.Routine
 
     public interface IVaultCreationRoutineStep3 : IDisposable
     {
-        IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationGenerator vaultConfigurationGenerator = null);
+        IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationDiscoverer vaultConfigurationDiscoverer = null);
     }
 
     public interface IVaultCreationRoutineStep4 : IDisposable
     {
-        IVaultCreationRoutineStep5 CreateKeystoreFile(IVaultKeystoreGenerator vaultKeystoreGenerator = null);
+        IVaultCreationRoutineStep5 CreateKeystoreFile(IVaultKeystoreDiscoverer vaultKeystoreDiscoverer = null);
     }
 
     public interface IVaultCreationRoutineStep5 : IDisposable
     {
-        IVaultCreationRoutineStep6 CreateContentFolder();
+        IVaultCreationRoutineStep6 CreateContentFolder(); // TODO: This api should work with IModifiableFolder
     }
 
     public interface IVaultCreationRoutineStep6 : IDisposable

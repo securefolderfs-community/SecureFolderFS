@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using SecureFolderFS.Core.Discoverers;
 using SecureFolderFS.Core.FileSystem.Operations;
 
-namespace SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration
+namespace SecureFolderFS.Core.VaultCreator.Generators
 {
-    internal sealed class FromVaultPathVaultConfigurationGenerator : IVaultConfigurationGenerator
+    internal sealed class FromVaultPathVaultConfigurationGenerator : IVaultConfigurationDiscoverer
     {
         private readonly IFileOperations _fileOperations;
 
@@ -12,10 +13,9 @@ namespace SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration
             _fileOperations = fileOperations;
         }
 
-        public Stream GenerateVaultConfig(string vaultPath, string configFileName)
+        public Stream DiscoverVaultConfig(string vaultPath, string configFileName)
         {
-            string configPath = Path.Combine(vaultPath, configFileName);
-
+            var configPath = Path.Combine(vaultPath, configFileName);
             return _fileOperations.OpenFile(configPath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
         }
     }

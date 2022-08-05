@@ -1,21 +1,21 @@
 ﻿using System.IO;
 
-namespace SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration
+namespace SecureFolderFS.Core.Discoverers
 {
     /// <summary>
-    /// Provides module for generating the vault keystore file.
+    /// Provides module for discovering the vault keystore file.
     /// <br/>
     /// <br/>
     /// This API is exposed.
     /// </summary>
-    public interface IVaultKeystoreGenerator
+    public interface IVaultKeystoreDiscoverer
     {
         /// <summary>
-        /// Generates keystore file and opens a <see cref="Stream"/> to it.
+        /// Opens a <see cref="Stream"/> to keystore file.
         /// </summary>
         /// <param name="vaultPath">The vault path.</param>
         /// <param name="keystoreFileName">Possible filename of the vault keystore file.</param>
         /// <returns></returns>
-        Stream GenerateVaultKeystore(string vaultPath, string keystoreFileName);
+        Stream DiscoverVaultKeystore(string vaultPath, string keystoreFileName);
     }
 }

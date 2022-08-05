@@ -22,7 +22,15 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Sets the <see cref="Stream"/> to keystore containing serialized configuration.
+        /// Sets the <see cref="IFile"/> containing vault configuration.
+        /// </summary>
+        /// <param name="configurationFile">The file with vault configuration data.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the data from file was retrieved successfully, returns true, otherwise false.</returns>
+        Task<bool> SetConfigurationAsync(IFile configurationFile, CancellationToken cancellationToken = default); // TODO: Maybe make it stream?
+
+        /// <summary>
+        /// Sets the <see cref="Stream"/> to keystore containing serialized vault keys.
         /// </summary>
         /// <param name="stream">The stream that contains the keystore.</param>
         /// <param name="serializer">The serializer used to deserialize the keystore.</param>

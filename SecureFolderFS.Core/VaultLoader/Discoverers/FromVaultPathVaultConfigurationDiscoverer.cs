@@ -1,7 +1,8 @@
 ﻿using System.IO;
+using SecureFolderFS.Core.Discoverers;
 using SecureFolderFS.Core.FileSystem.Operations;
 
-namespace SecureFolderFS.Core.VaultLoader.Discoverers.ConfigurationDiscovery
+namespace SecureFolderFS.Core.VaultLoader.Discoverers
 {
     internal sealed class FromVaultPathVaultConfigurationDiscoverer : IVaultConfigurationDiscoverer
     {
@@ -12,10 +13,9 @@ namespace SecureFolderFS.Core.VaultLoader.Discoverers.ConfigurationDiscovery
             _fileOperations = fileOperations;
         }
 
-        public Stream OpenStreamToVaultConfig(string vaultPath, string configFileName)
+        public Stream DiscoverVaultConfig(string vaultPath, string configFileName)
         {
-            string configPath = Path.Combine(vaultPath, configFileName);
-
+            var configPath = Path.Combine(vaultPath, configFileName);
             return _fileOperations.OpenFile(configPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
     }

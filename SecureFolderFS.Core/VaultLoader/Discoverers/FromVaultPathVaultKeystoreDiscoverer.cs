@@ -1,7 +1,8 @@
 ﻿using System.IO;
+using SecureFolderFS.Core.Discoverers;
 using SecureFolderFS.Core.FileSystem.Operations;
 
-namespace SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery
+namespace SecureFolderFS.Core.VaultLoader.Discoverers
 {
     internal sealed class FromVaultPathVaultKeystoreDiscoverer : IVaultKeystoreDiscoverer
     {
@@ -12,10 +13,9 @@ namespace SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery
             _fileOperations = fileOperations;
         }
 
-        public Stream OpenStreamToVaultKeystore(string vaultPath, string keystoreFileName)
+        public Stream DiscoverVaultKeystore(string vaultPath, string keystoreFileName)
         {
-            string keystorePath = Path.Combine(vaultPath, keystoreFileName);
-
+            var keystorePath = Path.Combine(vaultPath, keystoreFileName);
             return _fileOperations.OpenFile(keystorePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
     }

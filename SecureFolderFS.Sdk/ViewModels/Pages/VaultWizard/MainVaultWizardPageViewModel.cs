@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         [RelayCommand]
         private void AddExistingVault()
         {
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardAddExistingViewModel(Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSelectPathViewModel(Messenger, DialogViewModel)));
         }
 
         [RelayCommand]
