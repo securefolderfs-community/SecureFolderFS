@@ -14,13 +14,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault
         public IUnlockedVaultModel UnlockedVaultModel { get; }
 
         /// <summary>
+        /// Gets the context model that represents all widgets in this vault.
+        /// </summary>
+        public IWidgetsContextModel WidgetsContextModel { get; }
+
+        /// <summary>
         /// Gets the vault model associated with the vault.
         /// </summary>
         public IVaultModel VaultModel { get; }
 
-        public VaultViewModel(IUnlockedVaultModel unlockedVaultModel, IVaultModel vaultModel)
+        public VaultViewModel(IUnlockedVaultModel unlockedVaultModel, IWidgetsContextModel widgetsContextModel, IVaultModel vaultModel)
         {
             UnlockedVaultModel = unlockedVaultModel;
+            WidgetsContextModel = widgetsContextModel;
             VaultModel = vaultModel;
         }
     }

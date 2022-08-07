@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace SecureFolderFS.Sdk.DataModels
 {
@@ -7,7 +8,8 @@ namespace SecureFolderFS.Sdk.DataModels
     {
         public DateTime LastAccessedDate { get; set; }
 
-        public VaultContextDataModel(DateTime lastAccessedDate)
+        [JsonConstructor]
+        public VaultContextDataModel(DateTime lastAccessedDate = default)
         {
             LastAccessedDate = lastAccessedDate;
         }

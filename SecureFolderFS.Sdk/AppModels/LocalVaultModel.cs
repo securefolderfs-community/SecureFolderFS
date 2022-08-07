@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
@@ -28,9 +29,9 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<bool> LockFolderAsync()
+        public async Task<bool> LockFolderAsync(CancellationToken cancellationToken = default)
         {
-            var folderLock = await FileSystemService.ObtainLockAsync(Folder);
+            var folderLock = await FileSystemService.ObtainLockAsync(Folder, cancellationToken);
             if (folderLock is null)
                 return false;
 
@@ -40,13 +41,13 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public Task<bool> IsAccessibleAsync()
+        public Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default)
         {
             if (Folder is not ILocatableFolder vaultFolder)
                 return Task.FromResult(false);
 
             // TODO: There can be additional measures added to determine if the Folder is still accessible.
-            return FileSystemService.DirectoryExistsAsync(vaultFolder.Path);
+            return FileSystemService.DirectoryExistsAsync(vaultFolder.Path, cancellationToken);
         }
     }
 }

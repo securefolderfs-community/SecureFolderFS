@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
@@ -15,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         [RelayCommand]
         private void AddExistingVault()
         {
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSelectPathViewModel(Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSelectLocationViewModel(Messenger, DialogViewModel)));
         }
 
         [RelayCommand]

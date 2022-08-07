@@ -14,8 +14,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 
         public VaultControlsViewModel VaultControlsViewModel { get; }
 
-        public VaultOverviewPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
-            : base(messenger, vaultViewModel)
+        public VaultOverviewPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
+            : base(vaultViewModel, messenger)
         {
             WidgetsViewModel = new(new SavedWidgetsContextModel(vaultViewModel.VaultModel));
             VaultControlsViewModel = new(messenger, vaultViewModel);

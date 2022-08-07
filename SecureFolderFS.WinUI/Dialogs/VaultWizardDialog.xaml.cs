@@ -59,7 +59,7 @@ namespace SecureFolderFS.WinUI.Dialogs
                     PrimaryButtonText = string.Empty;
                     break;
 
-                case VaultWizardSelectPathViewModel:
+                case VaultWizardSelectLocationViewModel:
                     TitleText.Text = "Add existing vault";
                     PrimaryButtonText = "Continue";
                     break;

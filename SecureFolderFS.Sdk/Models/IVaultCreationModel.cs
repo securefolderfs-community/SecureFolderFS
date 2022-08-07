@@ -20,6 +20,14 @@ namespace SecureFolderFS.Sdk.Models
         Task<IResult> SetFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Sets the <see cref="IKeystoreModel"/> to use for vault creation.
+        /// </summary>
+        /// <param name="keystoreModel">The keystore to set.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the action.</returns>
+        Task<IResult> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Sets the password used for the vault.
         /// </summary>
         /// <param name="password">An instance of <see cref="IPassword"/> to use.</param>
@@ -40,7 +48,7 @@ namespace SecureFolderFS.Sdk.Models
         /// Finalizes the creation routine.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the action.</returns>
-        Task<IResult> DeployAsync(CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of <see cref="IVaultModel"/> of the action.</returns>
+        Task<IResult<IVaultModel?>> DeployAsync(CancellationToken cancellationToken = default);
     }
 }

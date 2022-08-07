@@ -10,11 +10,11 @@ using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
+namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault
 {
-    public sealed class VaultWizardSelectPathViewModel : VaultWizardPathSelectionBaseViewModel<ILocatableFolder>
+    public sealed class VaultWizardSelectLocationViewModel : VaultWizardPathSelectionBaseViewModel<ILocatableFolder>
     {
-        public VaultWizardSelectPathViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardSelectLocationViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
         }

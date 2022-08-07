@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using SecureFolderFS.Sdk.DataModels;
+﻿using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.Services.UserPreferences
@@ -12,11 +11,11 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
         /// <summary>
         /// Gets or sets the vault contexts associated with each vault.
         /// </summary>
-        Dictionary<string, VaultContextDataModel>? VaultContexts { get; set; }
+        VaultContextDataModel GetVaultContextForId(string id);
 
         /// <summary>
         /// Gets or sets the widgets contexts associated with each vault.
         /// </summary>
-        Dictionary<string, WidgetsContextDataModel>? WidgetContexts { get; set; }
+        WidgetsContextDataModel GetWidgetsContextForId(string id);
     }
 }

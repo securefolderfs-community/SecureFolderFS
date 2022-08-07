@@ -93,7 +93,7 @@
                     Grid.Row="2"
                     HorizontalAlignment="Center"
                     HorizontalContentAlignment="Center"
-                    Content="{x:Bind ViewModel.LoginOptionViewModel, Mode=OneWay}">
+                    Content="{x:Bind ViewModel.LoginStrategyViewModel, Mode=OneWay}">
                     <ContentControl.ContentTemplateSelector>
                         <ts:LoginMethodTemplateSelector AuthenticateTemplate="{StaticResource AuthenticateTemplate}" LoginTemplate="{StaticResource LoginTemplate}" />
                     </ContentControl.ContentTemplateSelector>

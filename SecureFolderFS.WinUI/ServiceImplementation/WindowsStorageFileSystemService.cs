@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using SecureFolderFS.Sdk.Storage;
@@ -11,33 +12,33 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class WindowsStorageFileSystemService : IFileSystemService
     {
         /// <inheritdoc/>
-        public Task<bool> IsFileSystemAccessible()
+        public Task<bool> IsFileSystemAccessibleAsync(CancellationToken cancellationToken = default)
         {
             return Task.FromResult(true);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> FileExistsAsync(string path)
+        public async Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default)
         {
-            var file = await GetFileFromPathAsync(path);
-
+            var file = await GetFileFromPathAsync(path, cancellationToken);
             return file is not null;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DirectoryExistsAsync(string path)
+        public async Task<bool> DirectoryExistsAsync(string path, CancellationToken cancellationToken = default)
         {
-            var folder = await GetFolderFromPathAsync(path);
-
+            var folder = await GetFolderFromPathAsync(path, cancellationToken);
             return folder is not null;
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> GetFolderFromPathAsync(string path)
+        public async Task<ILocatableFolder?> GetFolderFromPathAsync(string path, CancellationToken cancellationToken = default)
         {
             try
             {
-                var folder = await StorageFolder.GetFolderFromPathAsync(path);
+                var folderTask = StorageFolder.GetFolderFromPathAsync(path).AsTask(cancellationToken);
+                var folder = await folderTask;
+                
                 return new WindowsStorageFolder(folder);
             }
             catch (Exception)
@@ -47,11 +48,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile?> GetFileFromPathAsync(string path)
+        public async Task<ILocatableFile?> GetFileFromPathAsync(string path, CancellationToken cancellationToken = default)
         {
             try
             {
-                var file = await StorageFile.GetFileFromPathAsync(path);
+                var fileTask = StorageFile.GetFileFromPathAsync(path).AsTask(cancellationToken);
+                var file = await fileTask;
+
                 return new WindowsStorageFile(file);
             }
             catch (Exception)
@@ -61,7 +64,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IDisposable?> ObtainLockAsync(IStorable storage)
+        public Task<IDisposable?> ObtainLockAsync(IStorable storage, CancellationToken cancellationToken = default)
         {
             return Task.FromResult<IDisposable?>(null); // TODO: Implement
         }

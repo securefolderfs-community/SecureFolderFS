@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.Services
     public interface IVaultUnlockingService : IDisposable
     {
         /// <summary>
-        /// Sets the root <see cref="IFolder"/> that represents the vault.
+        /// Sets the <see cref="IFolder"/> that represents the vault.
         /// </summary>
         /// <param name="folder">The folder of the vault to be set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
@@ -22,12 +22,12 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Sets the <see cref="IFile"/> containing vault configuration.
+        /// Sets the <see cref="Stream"/> containing vault configuration.
         /// </summary>
-        /// <param name="configurationFile">The file with vault configuration data.</param>
+        /// <param name="stream">The stream with vault configuration data.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the data from file was retrieved successfully, returns true, otherwise false.</returns>
-        Task<bool> SetConfigurationAsync(IFile configurationFile, CancellationToken cancellationToken = default); // TODO: Maybe make it stream?
+        Task<bool> SetConfigurationStreamAsync(Stream stream, CancellationToken cancellationToken = default); // TODO: Maybe make it stream?
 
         /// <summary>
         /// Sets the <see cref="Stream"/> to keystore containing serialized vault keys.
@@ -45,6 +45,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="password">The password to unlock the vault with.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, the value is <see cref="IUnlockedVaultModel"/> of the vault instance, otherwise null.</returns>
-        Task<IUnlockedVaultModel?> UnlockAndStartAsync(IPassword password, CancellationToken cancellationToken = default);
+        Task<IResult<IUnlockedVaultModel?>> UnlockAndStartAsync(IPassword password, CancellationToken cancellationToken = default);
     }
 }

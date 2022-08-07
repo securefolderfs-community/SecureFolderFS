@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -15,18 +16,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.Login
 {
     public sealed partial class LoginCredentialsViewModel : ObservableObject, IAsyncInitialize
     {
-        private readonly IMessenger _messenger;
-        private readonly IVaultModel _vaultModel;
-        private readonly IUnlockingModel<IUnlockedVaultModel> _unlockingModel;
         private readonly IAsyncValidator<IFolder> _vaultValidator;
+        private readonly IVaultUnlockingModel _vaultUnlockingModel;
+        private readonly IKeystoreModel _keystoreModel;
+        private readonly IVaultModel _vaultModel;
+        private readonly IMessenger _messenger;
 
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        public LoginCredentialsViewModel(IMessenger messenger, IVaultModel vaultModel, IUnlockingModel<IUnlockedVaultModel> unlockingModel)
+        public LoginCredentialsViewModel(IVaultUnlockingModel vaultUnlockingModel, IKeystoreModel keystoreModel, IVaultModel vaultModel, IMessenger messenger)
         {
-            _messenger = messenger;
+            _vaultUnlockingModel = vaultUnlockingModel;
+            _keystoreModel = keystoreModel;
             _vaultModel = vaultModel;
-            _unlockingModel = unlockingModel;
+            _messenger = messenger;
             _vaultValidator = VaultService.GetVaultValidator();
         }
 
@@ -37,15 +40,39 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.Login
                 return;
 
             // Check if the folder is accessible
-            if (!await _vaultModel.IsAccessibleAsync())
+            if (!await _vaultModel.IsAccessibleAsync(cancellationToken))
                 return; // TODO: Report the issue
 
-            // Unlock the vault
-            var unlockedVaultModel = await _unlockingModel.UnlockAsync(password, cancellationToken);
+            IUnlockedVaultModel? unlockedVaultModel;
+
+            _ = await _vaultModel.LockFolderAsync(cancellationToken);
+            using (_vaultModel.FolderLock)
+            using (_vaultUnlockingModel)
+            using (password)
+            {
+                var setFolderResult = await _vaultUnlockingModel.SetFolderAsync(_vaultModel.Folder, cancellationToken);
+                if (!setFolderResult.IsSuccess)
+                    return; // TODO: Report the issue
+
+                var setKeystoreResult = await _vaultUnlockingModel.SetKeystoreAsync(_keystoreModel, cancellationToken);
+                if (!setKeystoreResult.IsSuccess)
+                    return; // TODO: Report the issue
+
+                var unlockResult = await _vaultUnlockingModel.UnlockAsync(password, cancellationToken);
+                if (!unlockResult.IsSuccess)
+                    return; // TODO: Report the issue
+
+                unlockedVaultModel = unlockResult.Value;
+
+                // Don't forget to dispose the keystore after its been used
+                _keystoreModel.Dispose();
+            }
+
             if (unlockedVaultModel is null)
-                return; // TODO: Report the issue
+                throw new InvalidOperationException($"Invalid state. {nameof(unlockedVaultModel)} shouldn't be null.");
 
-            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultModel, _vaultModel, _messenger);
+            var vaultViewModel = new VaultViewModel(unlockedVaultModel, null, _vaultModel);
+            var dashboardPage = new VaultDashboardPageViewModel(vaultViewModel, _messenger);
             _ = dashboardPage.InitAsync(cancellationToken);
             
             WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardPage));
@@ -54,9 +81,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.Login
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // Initialize the unlocking model
-            await _unlockingModel.InitAsync(cancellationToken); // TODO: This should be called only once!
-
             // Check if the vault is supported
             var vaultValidationResult = await _vaultValidator.ValidateAsync(_vaultModel.Folder, cancellationToken);
             if (!vaultValidationResult.IsSuccess)

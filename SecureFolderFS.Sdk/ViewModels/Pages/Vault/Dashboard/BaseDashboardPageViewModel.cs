@@ -9,14 +9,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
     public abstract class BaseDashboardPageViewModel : ObservableObject, IAsyncInitialize
     {
-        protected IMessenger Messenger { get; }
-
         protected VaultViewModel VaultViewModel { get; }
 
-        protected BaseDashboardPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
+        protected IMessenger Messenger { get; }
+
+        protected BaseDashboardPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
         {
-            Messenger = messenger;
             VaultViewModel = vaultViewModel;
+            Messenger = messenger;
         }
 
         /// <inheritdoc/>

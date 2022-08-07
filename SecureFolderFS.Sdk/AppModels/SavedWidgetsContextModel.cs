@@ -30,12 +30,8 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultModel.Folder is not ILocatableFolder vaultFolder)
                 return Task.FromResult<IWidgetModel?>(null);
 
-            VaultsSettingsService.WidgetContexts ??= new();
-            VaultsSettingsService.WidgetContexts.AddIfNotPresent(vaultFolder.Path, new());
-            VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels ??= new();
-
-            if (!VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!.TryGetValue(widgetId, out var widgetDataModel))
-                return Task.FromResult<IWidgetModel?>(null);
+            var widgetsContext = VaultsSettingsService.GetWidgetsContextForId(vaultFolder.Path);
+            var widgetDataModel = widgetsContext.WidgetDataModels.GetOrCreate(widgetId, static () => new());
 
             return Task.FromResult<IWidgetModel?>(new LocalWidgetModel(widgetId, VaultsSettingsService, widgetDataModel));
         }
@@ -43,7 +39,13 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public Task<bool> RemoveWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
+                return Task.FromResult(false);
+
+            var widgetsContext = VaultsSettingsService.GetWidgetsContextForId(vaultFolder.Path);
+            var removed = widgetsContext.WidgetDataModels.Remove(widgetId);
+
+            return Task.FromResult(removed);
         }
 
         /// <inheritdoc/>
@@ -52,11 +54,8 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultModel.Folder is not ILocatableFolder vaultFolder) 
                 yield break;
 
-            VaultsSettingsService.WidgetContexts ??= new();
-            VaultsSettingsService.WidgetContexts.AddIfNotPresent(vaultFolder.Path, new());
-            VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels ??= new();
-
-            foreach (var item in VaultsSettingsService.WidgetContexts[vaultFolder.Path].WidgetDataModels!)
+            var widgetsContext = VaultsSettingsService.GetWidgetsContextForId(vaultFolder.Path);
+            foreach (var item in widgetsContext.WidgetDataModels)
             {
                 yield return new LocalWidgetModel(item.Key, VaultsSettingsService, item.Value);
             }

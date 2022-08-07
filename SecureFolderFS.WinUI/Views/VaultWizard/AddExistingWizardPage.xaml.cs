@@ -18,9 +18,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     {
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
-        public VaultWizardSelectPathViewModel ViewModel
+        public VaultWizardSelectLocationViewModel ViewModel
         {
-            get => (VaultWizardSelectPathViewModel)DataContext;
+            get => (VaultWizardSelectLocationViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -31,7 +31,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardSelectPathViewModel viewModel)
+            if (e.Parameter is VaultWizardSelectLocationViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

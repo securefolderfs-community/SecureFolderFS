@@ -17,9 +17,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 
         protected TStorage? SelectedLocation { get; set; }
 
-        [ObservableProperty]
-        private string? _LocationPath;
-
         /// <inheritdoc cref="DialogViewModel.PrimaryButtonEnabled"/>
         public bool PrimaryButtonEnabled
         {

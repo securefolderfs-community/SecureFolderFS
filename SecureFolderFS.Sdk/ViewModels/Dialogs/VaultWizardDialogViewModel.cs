@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using CommunityToolkit.Mvvm.Input;
@@ -11,7 +12,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
     {
         public IMessenger Messenger { get; }
 
-        public BaseVaultWizardPageViewModel? CurrentPageViewModel { get; set; }
+        [ObservableProperty]
+        private BaseVaultWizardPageViewModel? _CurrentPageViewModel;
+
+        [ObservableProperty]
+        private bool _IsBackVisible;
 
         public VaultWizardDialogViewModel()
         {

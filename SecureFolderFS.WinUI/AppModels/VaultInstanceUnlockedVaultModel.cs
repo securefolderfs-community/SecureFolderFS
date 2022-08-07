@@ -11,7 +11,7 @@ namespace SecureFolderFS.WinUI.AppModels
         private readonly IVaultInstance _vaultInstance;
 
         /// <inheritdoc/>
-        public IFolder RootFolder { get; }
+        public IFolder UnlockedFolder { get; }
 
         /// <inheritdoc/>
         public IFileSystemService VaultFileSystem { get; }
@@ -19,7 +19,7 @@ namespace SecureFolderFS.WinUI.AppModels
         public VaultInstanceUnlockedVaultModel(IVaultInstance vaultInstance, IFolder rootFolder)
         {
             _vaultInstance = vaultInstance;
-            RootFolder = rootFolder;
+            UnlockedFolder = rootFolder;
             VaultFileSystem = null!; // TODO: Implement VaultFileSystem
         }
 

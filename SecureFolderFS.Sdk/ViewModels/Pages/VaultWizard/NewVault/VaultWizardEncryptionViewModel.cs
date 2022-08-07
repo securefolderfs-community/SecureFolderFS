@@ -9,7 +9,7 @@ using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
+namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 {
     public sealed partial class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel, IDisposable
     {

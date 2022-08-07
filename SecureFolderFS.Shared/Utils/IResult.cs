@@ -22,7 +22,7 @@ namespace SecureFolderFS.Shared.Utils
     /// Represents a result of an action with data.
     /// </summary>
     /// <typeparam name="T">The type of data associated with the result.</typeparam>
-    public interface IResult<out T>
+    public interface IResult<out T> : IResult
     {
         /// <summary>
         /// Gets the value associated with the result.

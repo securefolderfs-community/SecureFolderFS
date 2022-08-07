@@ -26,6 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         public VaultWizardPasswordViewModel(IFolder vaultFolder, IVaultCreationRoutineStep7 step7, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
+
             _vaultFolder = vaultFolder;
             _step7 = step7;
 

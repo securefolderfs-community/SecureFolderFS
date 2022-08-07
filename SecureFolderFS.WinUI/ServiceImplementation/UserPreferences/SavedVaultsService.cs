@@ -13,7 +13,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         {
             SettingsFolder = settingsFolder;
             SettingsDatabase = new DictionarySettingsDatabaseModel(new SavedVaultsJsonToStreamSerializer());
-            IsAvailable = settingsFolder is not null;
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage;
 
@@ -27,13 +28,15 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Sets the <see cref="FolderLock"/> and locks the vault folder preventing the deletion of it.
         /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and the folder was locked, returns true otherwise false.</returns>
-        Task<bool> LockFolderAsync();
+        Task<bool> LockFolderAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Determines if <see cref="Folder"/> is valid and can be accessed.
         /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and the folder is accessible, returns true, otherwise false.</returns>
-        Task<bool> IsAccessibleAsync();
+        Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default);
     }
 }

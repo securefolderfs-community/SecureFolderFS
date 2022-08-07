@@ -30,7 +30,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
             var pageType = viewModel switch
             {
                 MainVaultWizardPageViewModel => typeof(MainWizardPage),
-                VaultWizardSelectPathViewModel => typeof(AddExistingWizardPage),
+                VaultWizardSelectLocationViewModel => typeof(AddExistingWizardPage),
                 VaultWizardCreationPathViewModel => typeof(CreationPathWizardPage),
                 VaultWizardPasswordViewModel => typeof(PasswordWizardPage),
                 VaultWizardEncryptionViewModel => typeof(EncryptionWizardPage),

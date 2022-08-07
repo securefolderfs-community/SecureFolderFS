@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 
@@ -13,11 +12,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
         public BaseDashboardPageViewModel CurrentPage { get; }
 
-        public VaultDashboardPageViewModel(IUnlockedVaultModel unlockedVaultModel, IVaultModel vaultModel, IMessenger messenger)
-            : base(vaultModel, messenger)
+        public VaultDashboardPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
+            : base(vaultViewModel.VaultModel, messenger)
         {
-            VaultViewModel = new(unlockedVaultModel, vaultModel);
-            CurrentPage = new VaultOverviewPageViewModel(Messenger, VaultViewModel);
+            VaultViewModel = vaultViewModel;
+            CurrentPage = new VaultOverviewPageViewModel(vaultViewModel, messenger);
         }
 
         /// <inheritdoc/>

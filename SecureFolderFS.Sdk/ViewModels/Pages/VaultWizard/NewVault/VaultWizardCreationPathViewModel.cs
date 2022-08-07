@@ -7,7 +7,7 @@ using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
+namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 {
     public sealed class VaultWizardCreationPathViewModel : VaultWizardPathSelectionBaseViewModel<ILocatableFolder>
     {
@@ -49,7 +49,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         /// <inheritdoc/>
         public override Task<bool> SetLocation(ILocatableFolder storage)
         {
-            LocationPath = storage.Path;
             SelectedLocation = storage;
             DialogViewModel.PrimaryButtonEnabled = true;
 

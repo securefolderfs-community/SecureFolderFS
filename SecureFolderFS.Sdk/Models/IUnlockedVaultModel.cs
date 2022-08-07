@@ -9,9 +9,9 @@ namespace SecureFolderFS.Sdk.Models
     public interface IUnlockedVaultModel
     {
         /// <summary>
-        /// Gets the root folder of the unlocked vault.
+        /// Gets the unlocked root folder of the vault.
         /// </summary>
-        IFolder RootFolder { get; }
+        IFolder UnlockedFolder { get; }
 
         /// <summary>
         /// Gets the <see cref="IFileSystemService"/> which allows access of vault files/folders.

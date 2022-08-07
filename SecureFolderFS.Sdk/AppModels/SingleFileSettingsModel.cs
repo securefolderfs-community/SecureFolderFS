@@ -16,20 +16,20 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
         {
-            if (!IsAvailable || SettingsFolder is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
+            if  (SettingsFolder is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
                 return false;
 
             var settingsFile = await SettingsFolder.CreateFileAsync(SettingsStorageName, CreationCollisionOption.OpenIfExists, cancellationToken);
             if (settingsFile is null)
                 return false;
 
-            return await serializationModel.LoadAsync(settingsFile, cancellationToken);
+            return IsAvailable = await serializationModel.LoadAsync(settingsFile, cancellationToken);
         }
 
         /// <inheritdoc/>
         public override async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
         {
-            if (!IsAvailable || SettingsFolder is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
+            if (SettingsFolder is null || SettingsDatabase is not ISingleFileSerializationModel serializationModel || string.IsNullOrEmpty(SettingsStorageName))
                 return false;
 
             var settingsFile = await SettingsFolder.CreateFileAsync(SettingsStorageName, CreationCollisionOption.OpenIfExists, cancellationToken);

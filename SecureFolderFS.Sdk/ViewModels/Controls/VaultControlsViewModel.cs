@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task ShowInFileExplorerAsync()
         {
-            if (_vaultViewModel.UnlockedVaultModel.RootFolder is not ILocatableFolder rootFolder)
+            if (_vaultViewModel.UnlockedVaultModel.UnlockedFolder is not ILocatableFolder rootFolder)
                 return;
 
             await FileExplorerService.OpenInFileExplorerAsync(rootFolder);
