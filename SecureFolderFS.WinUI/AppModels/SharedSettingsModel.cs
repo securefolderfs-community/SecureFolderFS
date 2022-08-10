@@ -12,8 +12,9 @@ namespace SecureFolderFS.WinUI.AppModels
     {
         protected readonly ISettingsModel originSettingsModel;
 
-        protected SharedSettingsModel(ISettingsModel originSettingsModel)
+        protected SharedSettingsModel(IDatabaseModel<string> originSettingsDatabase, ISettingsModel originSettingsModel)
         {
+            this.SettingsDatabase = originSettingsDatabase;
             this.originSettingsModel = originSettingsModel;
         }
 
@@ -24,13 +25,13 @@ namespace SecureFolderFS.WinUI.AppModels
         protected sealed override string? SettingsStorageName { get; } = null;
 
         /// <inheritdoc/>
-        public override Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
+        public sealed override Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
         {
             return originSettingsModel.LoadSettingsAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public override Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
+        public sealed override Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
         {
             return originSettingsModel.SaveSettingsAsync(cancellationToken);
         }

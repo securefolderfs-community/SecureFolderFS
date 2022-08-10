@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.Storage
         /// </summary>
         /// <param name="fileName">The name of the file.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="IFile"/> otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IFile"/>, otherwise an exception is thrown.</returns>
         Task<IFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default);
 
         /// <summary>

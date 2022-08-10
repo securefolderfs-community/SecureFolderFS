@@ -51,7 +51,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             if (_folder is null)
                 return new CommonResult(false);
 
-            var configFile = await _folder.CreateFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            var configFile = await _folder.TryCreateFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
             if (configFile is null)
                 return new CommonResult(false);
 

@@ -9,17 +9,18 @@ using SecureFolderFS.Shared.Extensions;
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {
     /// <inheritdoc cref="IVaultsSettingsService"/>
-    internal sealed class VaultsSettingsService : SingleFileSettingsModel, IVaultsSettingsService
+    internal sealed class VaultsSettingsService : MultipleFilesSettingsModel, IVaultsSettingsService
     {
         public VaultsSettingsService(IModifiableFolder? settingsFolder)
         {
             SettingsFolder = settingsFolder;
-            SettingsDatabase = new DictionarySettingsDatabaseModel(JsonToStreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
         protected override string? SettingsStorageName { get; } = Constants.LocalSettings.VAULTS_SETTINGS_FILENAME;
 
+        // TODO: Important!!! Use individual files!!!
+        // TODO: Also check other TODOs (with Important tag)
         [Obsolete("This property is obsolete. Use individual files to save separate contexts in separate files.")]
         public Dictionary<string, VaultContextDataModel>? VaultContexts
         {

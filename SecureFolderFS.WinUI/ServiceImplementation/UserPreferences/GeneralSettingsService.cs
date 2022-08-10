@@ -8,10 +8,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
     /// <inheritdoc cref="IGeneralSettingsService"/>
     internal sealed class GeneralSettingsService : SharedSettingsModel, IGeneralSettingsService
     {
-        public GeneralSettingsService(ISettingsDatabaseModel originSettingsDatabase, ISettingsModel originSettingsModel)
-            : base(originSettingsModel)
+        public GeneralSettingsService(IDatabaseModel<string> originSettingsDatabase, ISettingsModel originSettingsModel)
+            : base(originSettingsDatabase, originSettingsModel)
         {
-            SettingsDatabase = originSettingsDatabase;
         }
 
         /// <inheritdoc/>

@@ -12,7 +12,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         public SavedVaultsService(IModifiableFolder? settingsFolder)
         {
             SettingsFolder = settingsFolder;
-            SettingsDatabase = new DictionarySettingsDatabaseModel(new SavedVaultsJsonToStreamSerializer());
+            SettingsDatabase = new BaseDictionaryDatabaseModel(new SavedVaultsJsonToStreamSerializer());
         }
 
         /// <inheritdoc/>

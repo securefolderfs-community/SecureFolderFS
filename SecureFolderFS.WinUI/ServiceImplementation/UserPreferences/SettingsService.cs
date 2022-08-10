@@ -11,13 +11,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         public SettingsService(IModifiableFolder? settingsFolder)
         {
             SettingsFolder = settingsFolder;
-            SettingsDatabase = new DictionarySettingsDatabaseModel(JsonToStreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
         protected override string? SettingsStorageName { get; } = Constants.LocalSettings.USER_SETTINGS_FILENAME;
 
-        internal ISettingsDatabaseModel GetDatabaseModel()
+        internal IDatabaseModel<string> GetDatabaseModel()
         {
             return SettingsDatabase!;
         }

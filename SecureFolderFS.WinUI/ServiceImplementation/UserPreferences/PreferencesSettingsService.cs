@@ -7,17 +7,16 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
     /// <inheritdoc cref="IPreferencesSettingsService"/>
     internal sealed class PreferencesSettingsService : SharedSettingsModel, IPreferencesSettingsService
     {
-        public PreferencesSettingsService(ISettingsDatabaseModel originSettingsDatabase, ISettingsModel originSettingsModel)
-            : base(originSettingsModel)
+        public PreferencesSettingsService(IDatabaseModel<string> originSettingsDatabase, ISettingsModel originSettingsModel)
+            : base(originSettingsDatabase, originSettingsModel)
         {
-            SettingsDatabase = originSettingsDatabase;
         }
 
         /// <inheritdoc/>
-        public string PreferredFileSystemId
+        public string? PreferredFileSystemId
         {
-            get => GetSetting(() => string.Empty);
-            set => SetSetting(value);
+            get => GetSetting<string?>(() => null);
+            set => SetSetting<string?>(value);
         }
 
         /// <inheritdoc/>

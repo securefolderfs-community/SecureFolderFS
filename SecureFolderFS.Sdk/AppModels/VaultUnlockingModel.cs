@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await VaultUnlockingService.SetVaultFolderAsync(folder, cancellationToken))
                 return new CommonResult(false);
 
-            var configFile = await folder.GetFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            var configFile = await folder.TryGetFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             if (configFile is null)
                 return new CommonResult(false);
 

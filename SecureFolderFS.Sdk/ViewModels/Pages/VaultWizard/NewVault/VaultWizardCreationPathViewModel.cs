@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Utils;
 
@@ -35,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
                 return;
             }
 
-            var keystoreFile = await SelectedLocation!.CreateFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            var keystoreFile = await SelectedLocation!.TryCreateFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
             if (keystoreFile is null)
                 return; // TODO: Report issue
 

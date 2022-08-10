@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
@@ -39,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         private async Task DetermineLoginStrategyAsync(CancellationToken cancellationToken)
         {
             var is2faEnabled = false; // TODO: Just for testing, implement the real code later
-            if (is2faEnabled || await VaultModel.Folder.GetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
+            if (is2faEnabled || await VaultModel.Folder.TryGetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
             {
                 // TODO: Recognize the option in that view model
                 LoginStrategyViewModel = new LoginKeystoreSelectionViewModel();

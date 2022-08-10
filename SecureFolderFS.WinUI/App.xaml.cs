@@ -131,7 +131,7 @@ namespace SecureFolderFS.WinUI
 
         // Terrible.
         private static TSettingsService GetSettingsService<TSettingsService>(IServiceProvider serviceProvider,
-            Func<ISettingsDatabaseModel, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
+            Func<IDatabaseModel<string>, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
         {
             var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
             return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl!);

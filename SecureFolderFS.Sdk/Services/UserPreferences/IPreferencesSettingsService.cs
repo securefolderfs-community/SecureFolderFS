@@ -10,7 +10,7 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
         /// <summary>
         /// Determines the type of the preferred file system provider to use.
         /// </summary>
-        string PreferredFileSystemId { get; set; }
+        string? PreferredFileSystemId { get; set; }
 
         /// <summary>
         /// Determines whether to launch SecureFolderFS on system startup.

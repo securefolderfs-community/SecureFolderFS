@@ -7,10 +7,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
     /// <inheritdoc cref="IPrivacySettingsService"/>
     internal sealed class PrivacySettingsService : SharedSettingsModel, IPrivacySettingsService
     {
-        public PrivacySettingsService(ISettingsDatabaseModel originSettingsDatabase, ISettingsModel originSettingsModel)
-            : base(originSettingsModel)
+        public PrivacySettingsService(IDatabaseModel<string> originSettingsDatabase, ISettingsModel originSettingsModel)
+            : base(originSettingsDatabase, originSettingsModel)
         {
-            SettingsDatabase = originSettingsDatabase;
         }
 
         /// <inheritdoc/>
