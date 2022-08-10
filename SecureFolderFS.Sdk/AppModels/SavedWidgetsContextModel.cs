@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -12,10 +10,8 @@ using SecureFolderFS.Shared.Extensions;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IWidgetsContextModel"/>
-    public sealed class SavedWidgetsContextModel : IWidgetsContextModel
+    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVaultsSettingsService>, IWidgetsContextModel
     {
-        private IVaultsSettingsService VaultsSettingsService { get; } = Ioc.Default.GetRequiredService<IVaultsSettingsService>();
-
         /// <inheritdoc/>
         public IVaultModel VaultModel { get; }
 
@@ -25,39 +21,48 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public Task<IWidgetModel?> GetOrCreateWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
+        public async Task<bool> AddWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
+            if (!await EnsureSettingsLoaded(cancellationToken))
+                return false;
+
             if (VaultModel.Folder is not ILocatableFolder vaultFolder)
-                return Task.FromResult<IWidgetModel?>(null);
+                return false;
 
-            var widgetsContext = VaultsSettingsService.GetWidgetsContextForId(vaultFolder.Path);
-            var widgetDataModel = widgetsContext.WidgetDataModels.GetOrCreate(widgetId, static () => new());
+            var widgetsContext = SettingsService.GetWidgetsContextForId(vaultFolder.Path);
+            widgetsContext.WidgetDataModels.AddIfNotPresent(widgetId, static () => new());
 
-            return Task.FromResult<IWidgetModel?>(new LocalWidgetModel(widgetId, VaultsSettingsService, widgetDataModel));
+            return await SettingsService.SaveSettingsAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<bool> RemoveWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
+        public async Task<bool> RemoveWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
+            if (!await EnsureSettingsLoaded(cancellationToken))
+                return false;
+
             if (VaultModel.Folder is not ILocatableFolder vaultFolder)
-                return Task.FromResult(false);
+                return false;
 
-            var widgetsContext = VaultsSettingsService.GetWidgetsContextForId(vaultFolder.Path);
-            var removed = widgetsContext.WidgetDataModels.Remove(widgetId);
+            var widgetsContext = SettingsService.GetWidgetsContextForId(vaultFolder.Path);
+            widgetsContext.WidgetDataModels.Remove(widgetId);
 
-            return Task.FromResult(removed);
+            return await SettingsService.SaveSettingsAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public async IAsyncEnumerable<IWidgetModel> GetWidgetsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            if (!await EnsureSettingsLoaded(cancellationToken))
+                yield break;
+
             if (VaultModel.Folder is not ILocatableFolder vaultFolder) 
                 yield break;
 
-            var widgetsContext = VaultsSettingsService.GetWidgetsContextForId(vaultFolder.Path);
+            var widgetsContext = SettingsService.GetWidgetsContextForId(vaultFolder.Path);
             foreach (var item in widgetsContext.WidgetDataModels)
             {
-                yield return new LocalWidgetModel(item.Key, VaultsSettingsService, item.Value);
+                yield return new LocalWidgetModel(item.Key, SettingsService, item.Value);
             }
 
             await Task.CompletedTask;

@@ -39,10 +39,10 @@ namespace SecureFolderFS.Sdk.Models
         /// Sets the cipher scheme to be used for encryption.
         /// </summary>
         /// <param name="contentCipher">The content cipher scheme to use.</param>
-        /// <param name="filenameCipher">The filename cipher scheme to use.</param>
+        /// <param name="fileNameCipher">The filename cipher scheme to use.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the cipher scheme is supported and was properly set, returns true, otherwise false.</returns>
-        Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel filenameCipher, CancellationToken cancellationToken = default);
+        Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel fileNameCipher, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Finalizes the creation routine.

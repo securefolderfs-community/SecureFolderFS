@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -16,31 +17,35 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class FileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public async Task OpenAppFolderAsync()
+        public async Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
         {
-            await Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder);
+            await Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder).AsTask(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task OpenInFileExplorerAsync(ILocatableFolder folder)
+        public async Task OpenInFileExplorerAsync(ILocatableFolder folder, CancellationToken cancellationToken = default)
         {
-            await Launcher.LaunchFolderPathAsync(folder.Path);
+            await Launcher.LaunchFolderPathAsync(folder.Path).AsTask(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter)
+        public async Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
             WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.Hwnd);
 
             if (filter is not null)
+            {
                 filePicker.FileTypeFilter.EnumeratedAdd(filter);
+            }
             else
             {
                 filePicker.FileTypeFilter.Add("*");
             }
 
-            var file = await filePicker.PickSingleFileAsync();
+            var fileTask = filePicker.PickSingleFileAsync().AsTask(cancellationToken);
+            var file = await fileTask;
+
             if (file is null)
                 return null;
 
@@ -48,14 +53,16 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> PickSingleFolderAsync()
+        public async Task<ILocatableFolder?> PickSingleFolderAsync(CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance!.Hwnd);
 
             folderPicker.FileTypeFilter.Add("*");
 
-            var folder = await folderPicker.PickSingleFolderAsync();
+            var folderTask = folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
+            var folder = await folderTask;
+
             if (folder is null)
                 return null;
 

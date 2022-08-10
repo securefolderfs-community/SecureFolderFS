@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         private BaseVaultWizardPageViewModel? _CurrentPageViewModel;
 
         [ObservableProperty]
-        private bool _IsBackVisible;
+        private bool _CanGoBack;
 
         public VaultWizardDialogViewModel()
         {
@@ -31,15 +32,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         }
 
         [RelayCommand]
-        private Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
+        private Task PrimaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
         {
-            return CurrentPageViewModel?.PrimaryButtonClickAsync(flag) ?? Task.CompletedTask;
+            return CurrentPageViewModel?.PrimaryButtonClickAsync(flag, cancellationToken) ?? Task.CompletedTask;
         }
 
         [RelayCommand]
-        private Task SecondaryButtonClickAsync(IEventDispatchFlag? flag)
+        private Task SecondaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
         {
-            return CurrentPageViewModel?.SecondaryButtonClickAsync(flag) ?? Task.CompletedTask;
+            return CurrentPageViewModel?.SecondaryButtonClickAsync(flag, cancellationToken) ?? Task.CompletedTask;
         }
 
         [RelayCommand]

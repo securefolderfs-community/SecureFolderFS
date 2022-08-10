@@ -1,9 +1,8 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using System;
 using System.Linq;
 using System.Text;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.WinUI.AppModels;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -14,7 +13,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class PasswordWizardPage : Page, IDisposable
+    public sealed partial class PasswordWizardPage : Page
     {
         public VaultWizardPasswordViewModel ViewModel
         {
@@ -52,11 +51,6 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         private void SecondPassword_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             ViewModel.PrimaryButtonEnabled = CanContinue();
-        }
-
-        public void Dispose()
-        {
-            ViewModel.Dispose();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -18,8 +19,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             DialogViewModel = dialogViewModel;
         }
 
-        public virtual Task PrimaryButtonClickAsync(IEventDispatchFlag? flag) => Task.CompletedTask;
+        public virtual Task PrimaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken) => Task.CompletedTask;
 
-        public virtual Task SecondaryButtonClickAsync(IEventDispatchFlag? flag) => Task.CompletedTask;
+        public virtual Task SecondaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken) => Task.CompletedTask;
     }
 }

@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public Task<object?> GetDataAsync(string key, CancellationToken cancellationToken = default)
         {
-            if (_widgetDataModel.WidgetData?.TryGetValue(key, out var value) ?? false)
+            if (_widgetDataModel.WidgetData.TryGetValue(key, out var value))
                 return Task.FromResult<object?>(value);
 
             return Task.FromResult<object?>(null);
@@ -33,7 +33,6 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public Task<bool> SetDataAsync(string key, object? value, CancellationToken cancellationToken = default)
         {
-            _widgetDataModel.WidgetData ??= new();
             _widgetDataModel.WidgetData[key] = value;
 
             return _widgetsStore.SaveSettingsAsync(cancellationToken);

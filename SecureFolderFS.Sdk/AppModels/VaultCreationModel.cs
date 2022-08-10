@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
@@ -35,11 +36,11 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<IResult> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default)
         {
-            var keystoreStream = await keystoreModel.GetKeystoreStreamAsync(cancellationToken);
-            if (keystoreStream is null)
-                return new CommonResult(false);
+            var keystoreStreamResult = await keystoreModel.GetKeystoreStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            if (!keystoreStreamResult.IsSuccess || keystoreStreamResult.Value is null)
+                return keystoreStreamResult;
 
-            return await VaultCreationService.PrepareKeystoreAsync(keystoreStream, keystoreModel.KeystoreSerializer, cancellationToken);
+            return await VaultCreationService.PrepareKeystoreAsync(keystoreStreamResult.Value, keystoreModel.KeystoreSerializer, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -49,12 +50,12 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel filenameCipher, CancellationToken cancellationToken = default)
+        public async Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel fileNameCipher, CancellationToken cancellationToken = default)
         {
             if (!await VaultCreationService.SetContentCipherSchemeAsync(contentCipher, cancellationToken))
                 return false;
 
-            if (!await VaultCreationService.SetFilenameCipherSchemeAsync(filenameCipher, cancellationToken))
+            if (!await VaultCreationService.SetFileNameCipherSchemeAsync(fileNameCipher, cancellationToken))
                 return false;
 
             return true;
@@ -74,10 +75,10 @@ namespace SecureFolderFS.Sdk.AppModels
             IVaultModel vaultModel = new LocalVaultModel(_vaultFolder);
 
             // Set up widgets
-            IWidgetsContextModel widgetsContextModel = new SavedWidgetsContextModel(vaultModel);
+            IWidgetsContextModel widgetsContextModel = new SavedWidgetsContextModel(vaultModel); // TODO: Reuse it!
 
-            _ = await widgetsContextModel.GetOrCreateWidgetAsync(Constants.Widgets.HEALTH_WIDGET_ID, cancellationToken);
-            _ = await widgetsContextModel.GetOrCreateWidgetAsync(Constants.Widgets.GRAPHS_WIDGET_ID, cancellationToken);
+            await widgetsContextModel.AddWidgetAsync(Constants.Widgets.HEALTH_WIDGET_ID, cancellationToken);
+            await widgetsContextModel.AddWidgetAsync(Constants.Widgets.GRAPHS_WIDGET_ID, cancellationToken);
 
             return new CommonResult<IVaultModel?>(vaultModel);
         }

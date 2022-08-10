@@ -8,31 +8,30 @@
     Width="464"
     mc:Ignorable="d">
 
-    <Grid Padding="0,16,0,8" RowSpacing="8">
+    <Grid
+        Padding="0,16,0,8"
+        HorizontalAlignment="Center"
+        RowSpacing="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Select vault path" />
+        <TextBlock
+            Grid.Row="0"
+            FontSize="18"
+            Text="Select vault path" />
 
-        <Grid Grid.Row="1" ColumnSpacing="8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="1" Spacing="8">
+            <TextBlock
+                HorizontalAlignment="Center"
+                Opacity="0.8"
+                Text="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
 
-            <TextBox
-                x:Name="TextInput"
-                Grid.Column="0"
-                LostFocus="TextInput_LostFocus"
-                PlaceholderText="Vault path"
-                Text="{x:Bind ViewModel.LocationPath, Mode=OneWay}"
-                TextChanged="TextInput_TextChanged" />
             <Button
-                Grid.Column="1"
+                HorizontalAlignment="Center"
                 Command="{x:Bind ViewModel.BrowseLocationCommand}"
                 Content="Browse" />
-        </Grid>
+        </StackPanel>
     </Grid>
 </Page>

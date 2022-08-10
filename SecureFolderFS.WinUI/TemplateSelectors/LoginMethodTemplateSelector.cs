@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.ViewModels.Vault.Login;
+using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {

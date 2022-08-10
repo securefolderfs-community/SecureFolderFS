@@ -35,9 +35,7 @@ namespace SecureFolderFS.Sdk.AppModels
             SettingsService.VaultPaths ??= new();
             SettingsService.VaultPaths.Add(vaultFolder.Path);
 
-            await SettingsService.SaveSettingsAsync(cancellationToken);
-
-            return true;
+            return await SettingsService.SaveSettingsAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -54,9 +52,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 return false;
 
             SettingsService.VaultPaths.RemoveAt(indexToRemove);
-            await SettingsService.SaveSettingsAsync(cancellationToken);
-
-            return true;
+            return await SettingsService.SaveSettingsAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -78,7 +74,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
             foreach (var item in SettingsService.VaultPaths)
             {
-                var folder = await FileSystemService.GetFolderFromPathAsync(item);
+                var folder = await FileSystemService.GetFolderFromPathAsync(item, cancellationToken);
                 if (folder is not null)
                 {
                     var vaultModel = new LocalVaultModel(folder);

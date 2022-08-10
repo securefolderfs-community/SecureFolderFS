@@ -1,12 +1,10 @@
-﻿using System.IO;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Core.VaultDataStore;
-using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Utils;
 
@@ -14,47 +12,45 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault
 {
     public sealed class VaultWizardSelectLocationViewModel : VaultWizardPathSelectionBaseViewModel<ILocatableFolder>
     {
+        private readonly IVaultExistingCreationModel _vaultExistingCreationModel;
+
         public VaultWizardSelectLocationViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
+            _vaultExistingCreationModel = new VaultExistingCreationModel();
         }
 
         /// <inheritdoc/>
-        public override Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
+        public override async Task PrimaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
         {
             flag?.NoForwarding();
 
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(SelectedLocation!, Messenger, DialogViewModel)));
-            return Task.CompletedTask;
+            var deployResult = await _vaultExistingCreationModel.DeployAsync(cancellationToken);
+            if (!deployResult.IsSuccess || deployResult.Value is null)
+                return; // TODO: Report issue
+
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(deployResult.Value, Messenger, DialogViewModel)));
         }
 
         /// <inheritdoc/>
-        public override async Task<bool> SetLocation(ILocatableFolder storage)
+        public override async Task<bool> SetLocationAsync(ILocatableFolder storage, CancellationToken cancellationToken = default)
         {
-            var file = await storage.GetFileAsync(SecureFolderFS.Core.Constants.VAULT_CONFIGURATION_FILENAME);
-            if (file is null)
+            var setFolderResult = await _vaultExistingCreationModel.SetFolderAsync(storage, cancellationToken);
+            if (!setFolderResult.IsSuccess)
                 return false;
 
-            await using var stream = await file.TryOpenStreamAsync(FileAccess.Read, FileShare.Read);
-            var vaultConfig = RawVaultConfiguration.Load(stream);
-            var isSupported = VaultVersion.IsVersionSupported(vaultConfig);
-            if (isSupported)
-            {
-                LocationPath = storage.Path;
-                SelectedLocation = storage;
-                DialogViewModel.PrimaryButtonEnabled = true;
-                return true;
-            }
-
-            return false;
+            SelectedLocation = storage;
+            VaultName = storage.Name;
+            DialogViewModel.PrimaryButtonEnabled = true;
+            return true;
         }
 
         /// <inheritdoc/>
         protected override async Task BrowseLocationAsync(CancellationToken cancellationToken)
         {
-            var folder = await FileExplorerService.PickSingleFolderAsync();
+            var folder = await FileExplorerService.PickSingleFolderAsync(cancellationToken);
             if (folder is not null)
-                await SetLocation(folder);
+                await SetLocationAsync(folder, cancellationToken);
         }
     }
 }

@@ -8,14 +8,14 @@ namespace SecureFolderFS.Sdk.AppModels
     public abstract class BaseSerializedDataModel<TService>
         where TService : class, ISettingsModel
     {
-        protected internal bool settingsLoaded;
+        protected TService SettingsService { get; } = Ioc.Default.GetRequiredService<TService>();
 
-        protected internal TService SettingsService { get; } = Ioc.Default.GetRequiredService<TService>();
-
-        protected internal virtual async Task<bool> EnsureSettingsLoaded(CancellationToken cancellationToken)
+        protected virtual async Task<bool> EnsureSettingsLoaded(CancellationToken cancellationToken)
         {
-            settingsLoaded |= !settingsLoaded && await SettingsService.LoadSettingsAsync(cancellationToken);
-            return settingsLoaded;
+            if (!SettingsService.IsAvailable)
+                return await SettingsService.LoadSettingsAsync(cancellationToken);
+
+            return true;
         }
     }
 }

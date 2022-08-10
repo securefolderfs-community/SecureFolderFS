@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using SecureFolderFS.Sdk.Enums;
@@ -31,7 +32,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<IClipboardItemModel>?> RequestFullClipboardDataAsync()
+        public Task<IEnumerable<IClipboardItemModel>> RequestFullClipboardDataAsync()
         {
             return GetFullClipboardDataInternalAsync();
         }
@@ -61,12 +62,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             return data is not null ? new WindowsClipboardItemModel(data) : null;
         }
 
-        private static async Task<IEnumerable<IClipboardItemModel>?> GetFullClipboardDataInternalAsync()
+        private static async Task<IEnumerable<IClipboardItemModel>> GetFullClipboardDataInternalAsync()
         {
             var historyResult = await Clipboard.GetHistoryItemsAsync();
             if (historyResult.Status == ClipboardHistoryItemsResultStatus.Success)
             {
-                var clipboardHistoryItems = new List<IClipboardItemModel>();
+                var clipboardHistoryItems = new List<IClipboardItemModel>(historyResult.Items.Count);
                 foreach (var item in historyResult.Items)
                 {
                     clipboardHistoryItems.Add(new WindowsClipboardItemModel(item.Content));
@@ -75,7 +76,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 return clipboardHistoryItems;
             }
 
-            return null;
+            return Enumerable.Empty<IClipboardItemModel>();
         }
     }
 }

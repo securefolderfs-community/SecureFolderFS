@@ -27,14 +27,12 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultModel.Folder is not ILocatableFolder vaultFolder)
                 return null;
 
-            if (SettingsService.VaultContexts is null || !SettingsService.VaultContexts.TryGetValue(vaultFolder.Path, out var vaultContext))
-                return null;
-
+            var vaultContext = SettingsService.GetVaultContextForId(vaultFolder.Path);
             return vaultContext.LastAccessedDate;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SetLastAccessedDate(DateTime value, CancellationToken cancellationToken = default)
+        public async Task<bool> SetLastAccessedDate(DateTime? value, CancellationToken cancellationToken = default)
         {
             if (!await EnsureSettingsLoaded(cancellationToken))
                 return false;
@@ -42,15 +40,8 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultModel.Folder is not ILocatableFolder vaultFolder)
                 return false;
 
-            SettingsService.VaultContexts ??= new();
-            if (SettingsService.VaultContexts.TryGetValue(vaultFolder.Path, out var vaultContext))
-            {
-                vaultContext.LastAccessedDate = value;
-            }
-            else
-            {
-                SettingsService.VaultContexts[vaultFolder.Path] = new(value);
-            }
+            var vaultContext = SettingsService.GetVaultContextForId(vaultFolder.Path);
+            vaultContext.LastAccessedDate = value;
 
             return await SettingsService.SaveSettingsAsync(cancellationToken);
         }

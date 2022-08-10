@@ -3,6 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.WinUI.Views.VaultWizard;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation

@@ -1,67 +1,50 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.VaultCreator.Routine;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 {
-    public sealed partial class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel, IDisposable
+    public sealed partial class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel
     {
-        private readonly IFolder _vaultFolder;
-        private readonly IVaultCreationRoutineStep9 _step9;
+        private readonly IVaultCreationModel _vaultCreationModel;
 
         [ObservableProperty]
-        private int _SelectedDataEncryptionIndex;
+        private CipherItemViewModel? _ContentCipherItemViewModel;
 
         [ObservableProperty]
-        private int _SelectedFileNameEncryptionIndex;
+        private CipherItemViewModel? _FileNameCipherItemViewModel;
 
-        public VaultWizardEncryptionViewModel(IFolder vaultFolder, IVaultCreationRoutineStep9 step9, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardEncryptionViewModel(IVaultCreationModel vaultCreationModel, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            _vaultFolder = vaultFolder;
-            _step9 = step9;
+            _vaultCreationModel = vaultCreationModel;
 
             DialogViewModel.PrimaryButtonEnabled = true;
             DialogViewModel.SecondaryButtonText = null; // Don't show the option to cancel the dialog
         }
 
-        public override Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
+        /// <inheritdoc/>
+        public override async Task PrimaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
         {
             flag?.NoForwarding();
 
-            var contentCipher = SelectedDataEncryptionIndex switch
-            {
-                0 => ContentCipherScheme.XChaCha20_Poly1305,
-                1 => ContentCipherScheme.AES_GCM,
-                2 => ContentCipherScheme.AES_CTR_HMAC,
-                _ => throw new ArgumentOutOfRangeException(nameof(_SelectedDataEncryptionIndex))
-            };
-            var nameCipher = SelectedFileNameEncryptionIndex switch
-            {
-                0 => FileNameCipherScheme.AES_SIV,
-                1 => FileNameCipherScheme.None,
-                _ => throw new ArgumentOutOfRangeException(nameof(SelectedFileNameEncryptionIndex))
-            };
-            _step9.SetContentCipherScheme(contentCipher)
-                .SetFileNameCipherScheme(nameCipher)
-                .ContinueConfigurationFileInitialization()
-                .Finalize()
-                .Deploy();
+            ArgumentNullException.ThrowIfNull(ContentCipherItemViewModel);
+            ArgumentNullException.ThrowIfNull(FileNameCipherItemViewModel);
 
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(_vaultFolder, Messenger, DialogViewModel)));
-            return Task.CompletedTask;
-        }
+            if (!await _vaultCreationModel.SetCipherSchemeAsync(ContentCipherItemViewModel.CipherInfoModel, FileNameCipherItemViewModel.CipherInfoModel, cancellationToken))
+                return; // TODO: Report issue
 
-        public void Dispose()
-        {
-            _step9.Dispose();
+            var deployResult = await _vaultCreationModel.DeployAsync(cancellationToken);
+            if (!deployResult.IsSuccess || deployResult.Value is null)
+                return; // TODO: Report issue
+
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(deployResult.Value, Messenger, DialogViewModel)));
         }
     }
 }

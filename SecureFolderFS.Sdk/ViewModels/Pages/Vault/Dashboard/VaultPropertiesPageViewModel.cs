@@ -7,8 +7,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
     public sealed class VaultPropertiesPageViewModel : BaseDashboardPageViewModel
     {
-        public VaultPropertiesPageViewModel(IMessenger messenger, VaultViewModel vaultViewModel)
-            : base(messenger, vaultViewModel)
+        public VaultPropertiesPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
+            : base(vaultViewModel, messenger)
         {
         }
 

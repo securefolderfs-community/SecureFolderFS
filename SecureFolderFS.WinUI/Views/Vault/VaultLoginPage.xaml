@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Vault.Login"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 

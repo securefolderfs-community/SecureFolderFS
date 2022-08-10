@@ -17,10 +17,11 @@ namespace SecureFolderFS.Sdk.Models
         IAsyncSerializer<Stream> KeystoreSerializer { get; }
 
         /// <summary>
-        /// Tries to get the stream that holds the keystore data.
+        /// Tries to get the stream that holds the keystore data which can be deserialized using <see cref="KeystoreSerializer"/>.
         /// </summary>
+        /// <param name="access">Represents the access to give to the keystore stream.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns <see cref="Stream"/> that can be deserialized using <see cref="KeystoreSerializer"/>, otherwise null.</returns>
-        Task<Stream?> GetKeystoreStreamAsync(CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of <see cref="Stream"/> of the action.</returns>
+        Task<IResult<Stream?>> GetKeystoreStreamAsync(FileAccess access = FileAccess.Read, CancellationToken cancellationToken = default);
     }
 }

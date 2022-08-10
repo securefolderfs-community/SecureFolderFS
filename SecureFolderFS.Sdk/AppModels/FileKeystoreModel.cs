@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
@@ -24,12 +25,12 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<Stream?> GetKeystoreStreamAsync(CancellationToken cancellationToken = default)
+        public async Task<IResult<Stream?>> GetKeystoreStreamAsync(FileAccess access = FileAccess.Read, CancellationToken cancellationToken = default)
         {
             _ = cancellationToken;
 
-            _keystoreStream ??= await _keystoreFile.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-            return _keystoreStream;
+            _keystoreStream ??= await _keystoreFile.TryOpenStreamAsync(access, FileShare.Read, cancellationToken); // TODO: Use IResult properly
+            return new CommonResult<Stream?>(_keystoreStream);
         }
 
         /// <inheritdoc/>

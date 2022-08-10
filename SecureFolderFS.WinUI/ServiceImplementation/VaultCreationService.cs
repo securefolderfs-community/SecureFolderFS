@@ -106,18 +106,18 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<bool> SetFilenameCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default)
+        public Task<bool> SetFileNameCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default)
         {
             _ = _step10 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
 
-            var filenameCipherScheme = cipherScheme.Id switch
+            var fileNameCipherScheme = cipherScheme.Id switch
             {
                 Core.Constants.CipherId.NONE => FileNameCipherScheme.None,
                 Core.Constants.CipherId.AES_SIV => FileNameCipherScheme.AES_SIV,
                 _ => throw new ArgumentOutOfRangeException(nameof(cipherScheme.Id))
             };
 
-            _step11 = _step10.SetFileNameCipherScheme(filenameCipherScheme);
+            _step11 = _step10.SetFileNameCipherScheme(fileNameCipherScheme);
             return Task.FromResult(true);
         }
 

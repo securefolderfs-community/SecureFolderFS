@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private void OpenProperties()
         {
-            _messenger.Send(new NavigationRequestedMessage(new VaultPropertiesPageViewModel(_messenger, _vaultViewModel)));
+            _messenger.Send(new NavigationRequestedMessage(new VaultPropertiesPageViewModel(_vaultViewModel, _messenger)));
         }
     }
 }

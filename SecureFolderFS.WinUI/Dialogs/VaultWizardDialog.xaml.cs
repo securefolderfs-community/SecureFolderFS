@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI.Animations;
@@ -11,6 +10,8 @@ using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.WinUI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,

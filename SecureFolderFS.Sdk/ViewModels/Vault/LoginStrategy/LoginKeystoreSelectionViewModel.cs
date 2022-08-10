@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Services;
 
-namespace SecureFolderFS.Sdk.ViewModels.Vault.Login
+namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
     public sealed partial class LoginKeystoreSelectionViewModel : ObservableObject
     {

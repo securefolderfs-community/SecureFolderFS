@@ -20,6 +20,8 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<IResult> SetFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
+            // TODO: Maybe use IAsyncValidator<IFolder>
+
             if (!await VaultUnlockingService.SetVaultFolderAsync(folder, cancellationToken))
                 return new CommonResult(false);
 
@@ -38,13 +40,13 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default)
+        public async Task<IResult> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default)
         {
-            var keystoreStream = await keystoreModel.GetKeystoreStreamAsync(cancellationToken);
-            if (keystoreStream is null)
-                return false;
+            var keystoreStreamResult = await keystoreModel.GetKeystoreStreamAsync(FileAccess.Read, cancellationToken);
+            if (!keystoreStreamResult.IsSuccess || keystoreStreamResult.Value is null)
+                return new CommonResult(false);
 
-            return await VaultUnlockingService.SetKeystoreStreamAsync(keystoreStream, keystoreModel.KeystoreSerializer, cancellationToken);
+            return new CommonResult(await VaultUnlockingService.SetKeystoreStreamAsync(keystoreStreamResult.Value, keystoreModel.KeystoreSerializer, cancellationToken));
         }
 
         /// <inheritdoc/>

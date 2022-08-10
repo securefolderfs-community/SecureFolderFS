@@ -42,20 +42,33 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var items = await storage.GetItemsAsync().AsTask(cancellationToken);
-            if (items is null)
-                yield break;
-
-            foreach (var item in items)
+            if (kind == StorableKind.Files)
             {
-                if (cancellationToken.IsCancellationRequested)
-                    yield break;
+                var files = await storage.GetFilesAsync().AsTask(cancellationToken);
+                foreach (var item in files)
+                {
+                    yield return new WindowsStorageFile(item);
+                }
+            }
+            else if (kind == StorableKind.Folders)
+            {
+                var folders = await storage.GetFoldersAsync().AsTask(cancellationToken);
+                foreach (var item in folders)
+                {
+                    yield return new WindowsStorageFolder(item);
+                }
+            }
+            else
+            {
+                var items = await storage.GetItemsAsync().AsTask(cancellationToken);
+                foreach (var item in items)
+                {
+                    if (item is StorageFile storageFile)
+                        yield return new WindowsStorageFile(storageFile);
 
-                if (item is StorageFile storageFile)
-                    yield return new WindowsStorageFile(storageFile);
-
-                if (item is StorageFolder storageFolder)
-                    yield return new WindowsStorageFolder(storageFolder);
+                    if (item is StorageFolder storageFolder)
+                        yield return new WindowsStorageFolder(storageFolder);
+                }
             }
         }
 
@@ -79,9 +92,9 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         /// <inheritdoc/>
         public async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
         {
-            if (itemToCopy is WindowsStorable<StorageFile> storageFile)
+            if (itemToCopy is WindowsStorable<StorageFile> sourceFile)
             {
-                var copiedFileTask = storageFile.storage.CopyAsync(storage, itemToCopy.Name, GetWindowsNameCollisionOption(collisionOption)).AsTask(cancellationToken);
+                var copiedFileTask = sourceFile.storage.CopyAsync(storage, itemToCopy.Name, GetWindowsNameCollisionOption(collisionOption)).AsTask(cancellationToken);
                 var copiedFile = await copiedFileTask;
 
                 return new WindowsStorageFile(copiedFile);
@@ -93,10 +106,10 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         /// <inheritdoc/>
         public async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
         {
-            if (itemToMove is WindowsStorable<StorageFile> storageFile)
+            if (itemToMove is WindowsStorable<StorageFile> sourceFile)
             {
-                await storageFile.storage.MoveAsync(storage, itemToMove.Name, GetWindowsNameCollisionOption(collisionOption)).AsTask(cancellationToken);
-                return new WindowsStorageFile(storageFile.storage);
+                await sourceFile.storage.MoveAsync(storage, itemToMove.Name, GetWindowsNameCollisionOption(collisionOption)).AsTask(cancellationToken);
+                return new WindowsStorageFile(sourceFile.storage);
             }
 
             throw new ArgumentException($"Could not copy type {itemToMove.GetType()}");

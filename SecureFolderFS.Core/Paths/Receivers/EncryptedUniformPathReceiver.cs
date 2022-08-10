@@ -56,9 +56,9 @@ namespace SecureFolderFS.Core.Paths.Receivers
             var onlyPathAfterContent = path.Substring(vaultPath.VaultContentPath.Length, path.Length - vaultPath.VaultContentPath.Length);
             var correctPath = PathHelpers.EnsureTrailingPathSeparator(vaultPath.VaultContentPath);
 
-            foreach (var filename in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var fileName in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                correctPath += fileNameFunc(Path.Combine(correctPath, filename)) + '\\';
+                correctPath += fileNameFunc(Path.Combine(correctPath, fileName)) + '\\';
             }
 
             return !path.EndsWith('\\') ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;

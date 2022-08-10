@@ -1,13 +1,11 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
@@ -23,8 +21,6 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// </summary>
     public sealed partial class PreferencesSettingsPage : Page
     {
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
         public PreferencesSettingsPageViewModel ViewModel
         {
             get => (PreferencesSettingsPageViewModel)DataContext;
@@ -46,10 +42,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private async void PreferencesSettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await foreach (var item in VaultService.GetFileSystemsAsync())
-            {
-                ViewModel.BannerViewModel.FileSystemAdapters.Add(new(item));
-            }
+            await ViewModel.BannerViewModel.InitAsync();
 
             FileSystemAdapterChoice.SelectedItem = ViewModel.BannerViewModel.FileSystemAdapters
                 .FirstOrDefault(x =>

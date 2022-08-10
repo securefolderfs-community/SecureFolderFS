@@ -27,6 +27,6 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="value">The value to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and the value was set, returns true, otherwise false.</returns>
-        Task<bool> SetLastAccessedDate(DateTime value, CancellationToken cancellationToken = default);
+        Task<bool> SetLastAccessedDate(DateTime? value, CancellationToken cancellationToken = default);
     }
 }

@@ -39,6 +39,6 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of filename ciphers.</returns>
-        IAsyncEnumerable<ICipherInfoModel> GetFilenameCiphersAsync(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<ICipherInfoModel> GetFileNameCiphersAsync(CancellationToken cancellationToken = default);
     }
 }

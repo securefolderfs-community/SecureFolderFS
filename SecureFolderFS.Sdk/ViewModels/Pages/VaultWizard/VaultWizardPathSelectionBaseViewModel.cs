@@ -17,12 +17,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 
         protected TStorage? SelectedLocation { get; set; }
 
-        /// <inheritdoc cref="DialogViewModel.PrimaryButtonEnabled"/>
-        public bool PrimaryButtonEnabled
-        {
-            get => DialogViewModel.PrimaryButtonEnabled;
-            set => DialogViewModel.PrimaryButtonEnabled = value;
-        }
+        [ObservableProperty]
+        private string? _VaultName = "No folder selected";
 
         protected VaultWizardPathSelectionBaseViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
@@ -30,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             DialogViewModel.PrimaryButtonEnabled = false;
         }
 
-        public abstract Task<bool> SetLocation(TStorage storage);
+        public abstract Task<bool> SetLocationAsync(TStorage storage, CancellationToken cancellationToken = default);
 
         [RelayCommand]
         protected abstract Task BrowseLocationAsync(CancellationToken cancellationToken);

@@ -12,7 +12,7 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.ViewModels.Vault.Login
+namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
     public sealed partial class LoginCredentialsViewModel : ObservableObject, IAsyncInitialize
     {

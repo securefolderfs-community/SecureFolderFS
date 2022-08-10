@@ -1,18 +1,17 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Core.VaultCreator.Routine;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
+namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 {
-    public sealed class VaultWizardPasswordViewModel : BaseVaultWizardPageViewModel, IDisposable
+    public sealed class VaultWizardPasswordViewModel : BaseVaultWizardPageViewModel
     {
-        private readonly IFolder _vaultFolder;
-        private readonly IVaultCreationRoutineStep7 _step7;
+        private readonly IVaultCreationModel _vaultCreationModel;
 
         public Func<IPassword>? InitializeWithPassword { get; set; }
 
@@ -23,34 +22,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
             set => DialogViewModel.PrimaryButtonEnabled = value;
         }
 
-        public VaultWizardPasswordViewModel(IFolder vaultFolder, IVaultCreationRoutineStep7 step7, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
+        public VaultWizardPasswordViewModel(IVaultCreationModel vaultCreationModel, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-
-            _vaultFolder = vaultFolder;
-            _step7 = step7;
+            _vaultCreationModel = vaultCreationModel;
 
             // Always false since passwords are not preserved
             DialogViewModel.PrimaryButtonEnabled = false;
         }
 
         /// <inheritdoc/>
-        public override Task PrimaryButtonClickAsync(IEventDispatchFlag? flag)
+        public override async Task PrimaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
         {
             flag?.NoForwarding();
 
-            var step9 = _step7
-                .InitializeKeystoreData(InitializeWithPassword!())
-                .ContinueKeystoreFileInitialization();
+            if (!await _vaultCreationModel.SetPasswordAsync(InitializeWithPassword!(), cancellationToken))
+                return; // TODO: Report issue
 
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardEncryptionViewModel(_vaultFolder, step9, Messenger, DialogViewModel)));
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            _step7.Dispose();
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardEncryptionViewModel(_vaultCreationModel, Messenger, DialogViewModel)));
         }
     }
 }

@@ -45,15 +45,29 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            foreach (var item in Directory.EnumerateFileSystemEntries(Path))
+            if (kind == StorableKind.Files)
             {
-                if (cancellationToken.IsCancellationRequested)
-                    yield break;
-
-                if (File.Exists(item))
+                foreach (var item in Directory.EnumerateFiles(Path))
+                {
                     yield return new NativeFile(item);
-                else
+                }
+            }
+            else if (kind == StorableKind.Folders)
+            {
+                foreach (var item in Directory.EnumerateDirectories(Path))
+                {
                     yield return new NativeFolder(item);
+                }
+            }
+            else
+            {
+                foreach (var item in Directory.EnumerateFileSystemEntries(Path))
+                {
+                    if (File.Exists(item))
+                        yield return new NativeFile(item);
+                    else
+                        yield return new NativeFolder(item);
+                }
             }
 
             await Task.CompletedTask;
@@ -97,14 +111,14 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
                 else
                 {
                     var copiedFile = await CreateFileAsync(itemToCopy.Name, collisionOption, cancellationToken);
-                    await sourceFile.CopyContentsToAsync(copiedFile);
+                    await sourceFile.CopyContentsToAsync(copiedFile, cancellationToken);
 
                     return copiedFile;
                 }
             }
             else if (itemToCopy is IFolder sourceFolder)
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
 
             throw new ArgumentException($"Could not copy type {itemToCopy.GetType()}");
@@ -127,7 +141,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
                 else
                 {
                     var copiedFile = await CreateFileAsync(itemToMove.Name, collisionOption, cancellationToken);
-                    await sourceFile.CopyContentsToAsync(copiedFile);
+                    await sourceFile.CopyContentsToAsync(copiedFile, cancellationToken);
                     await source.DeleteAsync(itemToMove, true, cancellationToken);
 
                     return copiedFile;

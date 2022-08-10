@@ -18,7 +18,7 @@ namespace SecureFolderFS.WinUI.AppModels
         /// <inheritdoc/>
         public async Task<IResult> ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
         {
-            var configFile = await value.GetFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME);
+            var configFile = await value.GetFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             if (configFile is null)
                 return new CommonResult(new FileNotFoundException());
 
