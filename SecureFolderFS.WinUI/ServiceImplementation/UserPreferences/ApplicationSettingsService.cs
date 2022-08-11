@@ -10,7 +10,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         public ApplicationSettingsService(IModifiableFolder? settingsFolder)
         {
             SettingsFolder = settingsFolder;
-            SettingsDatabase = new BaseDictionaryDatabaseModel(JsonToStreamSerializer.Instance);
         }
 
         /// <inheritdoc/>

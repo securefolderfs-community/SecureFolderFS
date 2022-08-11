@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage.Enums;
@@ -16,12 +15,17 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             if (!await InitializeSettingsAsync(cancellationToken))
                 return false;
+
+            return await base.LoadSettingsAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public override Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
+        public override async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if (!await InitializeSettingsAsync(cancellationToken))
+                return false;
+
+            return await base.SaveSettingsAsync(cancellationToken);
         }
 
         private async Task<bool> InitializeSettingsAsync(CancellationToken cancellationToken)
@@ -29,13 +33,14 @@ namespace SecureFolderFS.Sdk.AppModels
             if (SettingsFolder is null || string.IsNullOrEmpty(SettingsStorageName))
                 return false;
 
-            if (SettingsDatabase is not null)
+            if (SettingsDatabase is null)
             {
-                var settingsFile = await SettingsFolder.TryCreateFileAsync(SettingsStorageName, CreationCollisionOption.OpenIfExists, cancellationToken);
-                if (settingsFile is null)
+                var settingsFolder = await SettingsFolder.TryCreateFolderAsync(SettingsStorageName, CreationCollisionOption.OpenIfExists, cancellationToken);
+                if (settingsFolder is not IModifiableFolder modifiableFolder)
                     return false;
 
-                SettingsDatabase = new SingleFileDatabaseModel(settingsFile, JsonToStreamSerializer.Instance);
+                SettingsDatabase = new MultipleFilesDatabaseModel(modifiableFolder, JsonToStreamSerializer.Instance);
+                IsAvailable = true;
             }
 
             return true;

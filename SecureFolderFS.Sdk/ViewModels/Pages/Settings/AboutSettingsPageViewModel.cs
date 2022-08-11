@@ -23,32 +23,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
             AppVersion = ApplicationService.GetAppVersion().ToString();
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task CopyVersionAsync()
         {
             if (await ClipboardService.IsClipboardAvailableAsync())
                 await ClipboardService.SetClipboardDataAsync(new ClipboardTextItemModel(AppVersion));
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenGitHubRepositoryAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS"));
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenDiscordSocialAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://discord.com/invite/NrTxXpJ2Zj"));
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenPrivacyPolicyAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/PRIVACY.md"));
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenLogLocationAsync()
         {
             return FileExplorerService.OpenAppFolderAsync();

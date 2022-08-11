@@ -32,12 +32,13 @@ namespace SecureFolderFS.Shared.Extensions
 
         public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
-            if (!dictionary.AddIfNotPresent(key, () => value))
+            if (!dictionary.ContainsKey(key))
             {
-                if (dictionary.Remove(key))
-                {
-                    dictionary.Add(key, value);
-                }
+                dictionary.Add(key, value);       
+            }
+            else
+            {
+                dictionary[key] = value;
             }
         }
     }

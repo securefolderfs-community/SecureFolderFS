@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,21 +24,21 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public virtual Task<Stream> SerializeAsync<TData>(TData data, CancellationToken cancellationToken = default)
+        public virtual Task<Stream> SerializeAsync(object? data, Type dataType, CancellationToken cancellationToken = default)
         {
-            var serialized = JsonConvert.SerializeObject(data, typeof(TData), Formatting.Indented, null);
+            var serialized = JsonConvert.SerializeObject(data, dataType, Formatting.Indented, null);
             var buffer = Encoding.UTF8.GetBytes(serialized);
 
             return Task.FromResult<Stream>(new MemoryStream(buffer));
         }
 
         /// <inheritdoc/>
-        public virtual async Task<TData?> DeserializeAsync<TData>(Stream serialized, CancellationToken cancellationToken = default)
+        public virtual async Task<object?> DeserializeAsync(Stream serialized, Type dataType, CancellationToken cancellationToken = default)
         {
             var buffer = await serialized.ReadAllBytesAsync();
             var rawSerialized = Encoding.UTF8.GetString(buffer);
 
-            return JsonConvert.DeserializeObject<TData?>(rawSerialized);
+            return JsonConvert.DeserializeObject(rawSerialized, dataType);
         }
     }
 }

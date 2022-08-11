@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -24,10 +23,8 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken))
                 return null;
 
-            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
-                return null;
+            var vaultContext = SettingsService.GetVaultContextForId(VaultModel.Folder.Id);
 
-            var vaultContext = SettingsService.GetVaultContextForId(vaultFolder.Path);
             return vaultContext.LastAccessedDate;
         }
 
@@ -37,10 +34,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken))
                 return false;
 
-            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
-                return false;
-
-            var vaultContext = SettingsService.GetVaultContextForId(vaultFolder.Path);
+            var vaultContext = SettingsService.GetVaultContextForId(VaultModel.Folder.Id);
             vaultContext.LastAccessedDate = value;
 
             return await SettingsService.SaveSettingsAsync(cancellationToken);

@@ -2,12 +2,15 @@
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.WinUI.Helpers;
 
 namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {
     /// <inheritdoc cref="IStorable"/>
     internal abstract class NativeStorable : ILocatableStorable
     {
+        private string? _computedId;
+
         /// <inheritdoc/>
         public string Path { get; protected set; }
 
@@ -15,13 +18,15 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         public string Name { get; protected set; }
 
         /// <inheritdoc/>
-        public string Id { get; protected set; }
+        public virtual string Id
+        {
+            get => _computedId ??= ChecksumHelpers.CalculateChecksumForPath(Path);
+        }
 
         protected NativeStorable(string path)
         {
             Path = path;
             Name = System.IO.Path.GetFileName(path);
-            Id = string.Empty;
         }
 
         /// <inheritdoc/>

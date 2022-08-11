@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.WinUI.Helpers;
 
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
@@ -10,6 +11,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
     internal abstract class WindowsStorable<TStorage> : ILocatableStorable
         where TStorage : class, IStorageItem
     {
+        private string? _computedId;
         internal readonly TStorage storage;
 
         /// <inheritdoc/>
@@ -19,14 +21,16 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         public string Name { get; protected set; }
 
         /// <inheritdoc/>
-        public string Id { get; protected set; }
+        public virtual string Id
+        {
+            get => _computedId ??= ChecksumHelpers.CalculateChecksumForPath(Path);
+        }
 
         protected WindowsStorable(TStorage storage)
         {
             this.storage = storage;
             this.Path = storage.Path;
             this.Name = storage.Name;
-            this.Id = string.Empty;
         }
 
         /// <inheritdoc/>

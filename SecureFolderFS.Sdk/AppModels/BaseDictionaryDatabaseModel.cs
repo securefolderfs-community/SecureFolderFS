@@ -11,11 +11,11 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <summary>
     /// Represents a dictionary-based database model.
     /// </summary>
-    public abstract class BaseDictionaryDatabaseModel : IDatabaseModel<string>
+    public abstract class BaseDictionaryDatabaseModel<TDictionaryValue> : IDatabaseModel<string>
     {
         protected readonly IAsyncSerializer<Stream> serializer;
         protected readonly SemaphoreSlim storageSemaphore;
-        protected readonly ConcurrentDictionary<string, object?> settingsCache;
+        protected readonly ConcurrentDictionary<string, TDictionaryValue> settingsCache;
 
         protected BaseDictionaryDatabaseModel(IAsyncSerializer<Stream> serializer)
         {
@@ -25,21 +25,10 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public virtual TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue)
-        {
-            if (settingsCache.TryGetValue(key, out var value))
-                return (TValue?)value;
-
-            var fallback = defaultValue is not null ? defaultValue() : default;
-            return fallback;
-        }
+        public abstract TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue);
 
         /// <inheritdoc/>
-        public virtual bool SetValue<TValue>(string key, TValue? value)
-        {
-            settingsCache[key] = value;
-            return true;
-        }
+        public abstract bool SetValue<TValue>(string key, TValue? value);
 
         /// <inheritdoc/>
         public abstract Task<bool> LoadAsync(CancellationToken cancellationToken = default);

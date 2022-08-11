@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,10 +13,10 @@ namespace SecureFolderFS.WinUI.AppModels
     internal sealed class SavedVaultsJsonToStreamSerializer : JsonToStreamSerializer
     {
         /// <inheritdoc/>
-        public override async Task<TData?> DeserializeAsync<TData>(Stream serialized, CancellationToken cancellationToken = default) where TData : default
+        public override async Task<object?> DeserializeAsync(Stream serialized, Type dataType, CancellationToken cancellationToken = default)
         {
             // A custom deserialization is needed, because the data returned is in JToken format
-            var deserialized = await base.DeserializeAsync<TData>(serialized, cancellationToken);
+            var deserialized = await base.DeserializeAsync(serialized, dataType, cancellationToken);
             if (deserialized is Dictionary<string, object> dictionary)
             {
                 var cleanedDictionary = new Dictionary<string, object>();
@@ -27,7 +28,7 @@ namespace SecureFolderFS.WinUI.AppModels
                         cleanedDictionary.Add(item.Key, item.Value);
                 }
 
-                return (TData?)(object)cleanedDictionary;
+                return cleanedDictionary;
             }
 
             return deserialized;

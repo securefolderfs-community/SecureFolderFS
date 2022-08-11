@@ -26,11 +26,8 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken))
                 return false;
 
-            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
-                return false;
-
-            var widgetsContext = SettingsService.GetWidgetsContextForId(vaultFolder.Path);
-            widgetsContext.WidgetDataModels.AddIfNotPresent(widgetId, static () => new());
+            var widgetsContext = SettingsService.GetWidgetsContextForId(VaultModel.Folder.Id);
+            widgetsContext.WidgetDataModels.AddOrReplace(widgetId, new());
 
             return await SettingsService.SaveSettingsAsync(cancellationToken);
         }
@@ -41,10 +38,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken))
                 return false;
 
-            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
-                return false;
-
-            var widgetsContext = SettingsService.GetWidgetsContextForId(vaultFolder.Path);
+            var widgetsContext = SettingsService.GetWidgetsContextForId(VaultModel.Folder.Id);
             widgetsContext.WidgetDataModels.Remove(widgetId);
 
             return await SettingsService.SaveSettingsAsync(cancellationToken);

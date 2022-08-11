@@ -5,12 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="BaseDictionaryDatabaseModel"/>
-    public sealed class SingleFileDatabaseModel : BaseDictionaryDatabaseModel
+    /// <inheritdoc cref="BaseDictionaryDatabaseModel{TDictionaryValue}"/>
+    public sealed class SingleFileDatabaseModel : BaseDictionaryDatabaseModel<object?>
     {
         private readonly IFile _databaseFile;
 
@@ -18,6 +19,25 @@ namespace SecureFolderFS.Sdk.AppModels
             : base(serializer)
         {
             _databaseFile = databaseFile;
+        }
+
+        /// <inheritdoc/>
+        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue) where TValue : default
+        {
+            if (settingsCache.TryGetValue(key, out var value))
+                return (TValue?)value;
+
+            var fallback = defaultValue is not null ? defaultValue() : default;
+            settingsCache[key] = fallback;
+
+            return fallback;
+        }
+
+        /// <inheritdoc/>
+        public override bool SetValue<TValue>(string key, TValue? value) where TValue : default
+        {
+            settingsCache[key] = value;
+            return true;
         }
 
         /// <inheritdoc/>
@@ -30,7 +50,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (stream is null)
                     return false;
 
-                var settings = await serializer.DeserializeAsync<Dictionary<string, object?>?>(stream, cancellationToken);
+                var settings = await serializer.DeserializeAsync<Stream, Dictionary<string, object?>?>(stream, cancellationToken);
                 settingsCache.Clear();
 
                 if (settings is null) // No settings saved, set cache to empty and return true.
@@ -63,7 +83,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (stream is null)
                     return false;
 
-                await using var settingsStream = await serializer.SerializeAsync<IDictionary<string, object?>>(settingsCache, cancellationToken);
+                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, object?>>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
                 stream.SetLength(0L);

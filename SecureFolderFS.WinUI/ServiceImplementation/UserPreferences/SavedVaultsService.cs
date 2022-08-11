@@ -10,9 +10,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
     internal sealed class SavedVaultsService : SingleFileSettingsModel, ISavedVaultsService
     {
         public SavedVaultsService(IModifiableFolder? settingsFolder)
+            : base(new SavedVaultsJsonToStreamSerializer())
         {
             SettingsFolder = settingsFolder;
-            SettingsDatabase = new BaseDictionaryDatabaseModel(new SavedVaultsJsonToStreamSerializer());
         }
 
         /// <inheritdoc/>

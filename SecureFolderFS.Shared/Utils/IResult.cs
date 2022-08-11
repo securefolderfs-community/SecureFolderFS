@@ -29,4 +29,15 @@ namespace SecureFolderFS.Shared.Utils
         /// </summary>
         T? Value { get; }
     }
+
+    /// <inheritdoc cref="IResult"/>
+    public interface IResultWithMessage : IResult
+    {
+        string? Message { get; }
+    }
+
+    /// <inheritdoc cref="IResult{T}"/>
+    public interface IResultWithMessage<out T> : IResultWithMessage, IResult<T>
+    {
+    }
 }
