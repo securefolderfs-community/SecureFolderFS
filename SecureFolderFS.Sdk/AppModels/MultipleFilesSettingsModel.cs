@@ -28,6 +28,7 @@ namespace SecureFolderFS.Sdk.AppModels
             return await base.SaveSettingsAsync(cancellationToken);
         }
 
+        // TODO: Initialize the database earlier, not there. And remove it from other model too
         private async Task<bool> InitializeSettingsAsync(CancellationToken cancellationToken)
         {
             if (SettingsFolder is null || string.IsNullOrEmpty(SettingsStorageName))

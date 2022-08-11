@@ -27,6 +27,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             {
                 var widgetViewModel = GetWidgetForModel(item);
                 _ = widgetViewModel.InitAsync(cancellationToken);
+
+                Widgets.Add(widgetViewModel);
             }
         }
 

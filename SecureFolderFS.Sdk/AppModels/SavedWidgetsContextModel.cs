@@ -4,13 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IWidgetsContextModel"/>
-    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVaultsSettingsService>, IWidgetsContextModel
+    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVautsWidgetsService>, IWidgetsContextModel
     {
         /// <inheritdoc/>
         public IVaultModel VaultModel { get; }
@@ -50,10 +49,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!await EnsureSettingsLoaded(cancellationToken))
                 yield break;
 
-            if (VaultModel.Folder is not ILocatableFolder vaultFolder) 
-                yield break;
-
-            var widgetsContext = SettingsService.GetWidgetsContextForId(vaultFolder.Path);
+            var widgetsContext = SettingsService.GetWidgetsContextForId(VaultModel.Folder.Id);
             foreach (var item in widgetsContext.WidgetDataModels)
             {
                 yield return new LocalWidgetModel(item.Key, SettingsService, item.Value);

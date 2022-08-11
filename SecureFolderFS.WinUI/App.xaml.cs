@@ -82,6 +82,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
                 .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder))
                 .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
+                .AddSingleton<IVautsWidgetsService, VautsWidgetsService>(_ => new VautsWidgetsService(settingsFolder))
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder))
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
@@ -99,7 +100,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>();
 
-            return serviceCollection.BuildServiceProvider(); // TODO: true?
+            return serviceCollection.BuildServiceProvider();
         }
 
         private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)

@@ -12,10 +12,5 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
         /// Gets or sets the vault contexts associated with each vault.
         /// </summary>
         VaultContextDataModel GetVaultContextForId(string id);
-
-        /// <summary>
-        /// Gets or sets the widgets contexts associated with each vault.
-        /// </summary>
-        WidgetsContextDataModel GetWidgetsContextForId(string id);
     }
 }

@@ -22,12 +22,5 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
             var vaultContext = GetSetting<VaultContextDataModel>(() => new(), id);
             return vaultContext!; // TODO: Ensure not null
         }
-
-        /// <inheritdoc/>
-        public WidgetsContextDataModel GetWidgetsContextForId(string id)
-        {
-            var widgetsContext = GetSetting<WidgetsContextDataModel>(() => new(), id);
-            return widgetsContext!; // TODO: Ensure not null
-        }
     }
 }
