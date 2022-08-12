@@ -16,9 +16,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         [ObservableProperty]
         private BaseVaultWizardPageViewModel? _CurrentPageViewModel;
 
-        [ObservableProperty]
-        private bool _CanGoBack;
-
         public VaultWizardDialogViewModel()
         {
             Messenger = new WeakReferenceMessenger();

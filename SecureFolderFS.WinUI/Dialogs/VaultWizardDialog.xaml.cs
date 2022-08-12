@@ -53,6 +53,8 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private async Task FinalizeNavigationAnimationAsync(BaseVaultWizardPageViewModel viewModel)
         {
+            var canGoBack = false;
+
             switch (viewModel)
             {
                 case MainVaultWizardPageViewModel:
@@ -63,11 +65,13 @@ namespace SecureFolderFS.WinUI.Dialogs
                 case VaultWizardSelectLocationViewModel:
                     TitleText.Text = "Add existing vault";
                     PrimaryButtonText = "Continue";
+                    canGoBack = true;
                     break;
 
                 case VaultWizardCreationPathViewModel:
                     TitleText.Text = "Create new vault";
                     PrimaryButtonText = "Continue";
+                    canGoBack = true;
                     break;
 
                 case VaultWizardPasswordViewModel:
@@ -92,14 +96,14 @@ namespace SecureFolderFS.WinUI.Dialogs
                 _hasNavigationAnimatedOnLoaded = true;
                 GoBack.Visibility = Visibility.Collapsed;
             }
-            else if (!_isBackAnimationState && Navigation.CanGoBack)
+            else if (!_isBackAnimationState && (Navigation.CanGoBack || canGoBack))
             {
                 _isBackAnimationState = true;
                 GoBack.Visibility = Visibility.Visible;
                 await ShowBackButtonStoryboard.BeginAsync();
                 ShowBackButtonStoryboard.Stop();
             }
-            else if (_isBackAnimationState && !Navigation.CanGoBack)
+            else if (_isBackAnimationState && (!Navigation.CanGoBack || !canGoBack))
             {
                 _isBackAnimationState = false;
                 await HideBackButtonStoryboard.BeginAsync();
@@ -107,7 +111,7 @@ namespace SecureFolderFS.WinUI.Dialogs
                 GoBack.Visibility = Visibility.Collapsed;
             }
 
-            GoBack.Visibility = Navigation.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            GoBack.Visibility = Navigation.CanGoBack && canGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)

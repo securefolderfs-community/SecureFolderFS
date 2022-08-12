@@ -20,7 +20,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
         public VaultWizardCreationPathViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
         {
-            dialogViewModel.CanGoBack = false;
             _vaultCreationModel = new VaultCreationModel();
         }
 

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -71,7 +72,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             if (unlockedVaultModel is null)
                 throw new InvalidOperationException($"Invalid state. {nameof(unlockedVaultModel)} shouldn't be null.");
 
-            var vaultViewModel = new VaultViewModel(unlockedVaultModel, null, _vaultModel);
+            var widgetsContextModel = new SavedWidgetsContextModel(_vaultModel); // TODO: Reuse the instance
+
+            var vaultViewModel = new VaultViewModel(unlockedVaultModel, widgetsContextModel, _vaultModel);
             var dashboardPage = new VaultDashboardPageViewModel(vaultViewModel, _messenger);
             _ = dashboardPage.InitAsync(cancellationToken);
             

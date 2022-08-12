@@ -17,8 +17,6 @@
             public const string SAVED_VAULTS_FILENAME = "saved_vaults.json";
 
             public const string USER_SETTINGS_FILENAME = "user_settings.json";
-
-            public const string SECRET_SETTINGS_FILENAME = "confidential_settings.json";
         }
 
         public static class Application

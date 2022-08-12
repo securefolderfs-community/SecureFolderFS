@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -17,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
         public VaultOverviewPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
             : base(vaultViewModel, messenger)
         {
-            WidgetsViewModel = new(new SavedWidgetsContextModel(vaultViewModel.VaultModel));
+            WidgetsViewModel = new(vaultViewModel.WidgetsContextModel);
             VaultControlsViewModel = new(messenger, vaultViewModel);
         }
 
