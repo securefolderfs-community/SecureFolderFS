@@ -38,7 +38,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async Task LockVaultAsync()
         {
             await _vaultViewModel.UnlockedVaultModel.LockAsync();
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(new VaultLoginPageViewModel(_vaultViewModel.VaultModel)));
+
+            var loginPageViewModel = new VaultLoginPageViewModel(_vaultViewModel.VaultModel);
+            _ = loginPageViewModel.InitAsync();
+
+            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(loginPageViewModel));
         }
 
         [RelayCommand]

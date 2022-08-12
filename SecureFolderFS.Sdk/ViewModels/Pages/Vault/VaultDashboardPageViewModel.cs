@@ -8,14 +8,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel
     {
-        private VaultViewModel VaultViewModel { get; }
-
         public BaseDashboardPageViewModel CurrentPage { get; }
 
         public VaultDashboardPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
             : base(vaultViewModel.VaultModel, messenger)
         {
-            VaultViewModel = vaultViewModel;
             CurrentPage = new VaultOverviewPageViewModel(vaultViewModel, messenger);
         }
 

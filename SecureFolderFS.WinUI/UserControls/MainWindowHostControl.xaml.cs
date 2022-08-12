@@ -38,12 +38,13 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             // Get the item from cache or create new instance
             if (!Navigation.NavigationCache.TryGetValue(vaultModel, out var destination))
+            {
                 destination = new VaultLoginPageViewModel(vaultModel);
+                _ = destination.InitAsync();
+            }
 
             // Navigate
             Navigation.Navigate(destination, new EntranceNavigationTransitionInfo());
-
-            _ = destination.InitAsync();
         }
 
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

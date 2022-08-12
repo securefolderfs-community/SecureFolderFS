@@ -33,7 +33,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 return (TValue?)value.Data;
 
             var fallback = defaultValue is not null ? defaultValue() : default;
-            settingsCache[key] = new(typeof(TValue), fallback, true); // The data needs to be saved
+            settingsCache[key] = new(typeof(TValue), fallback); // The data needs to be saved
 
             return fallback;
         }
@@ -44,12 +44,12 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             if (settingsCache.ContainsKey(key))
             {
-                settingsCache[key].Data = key;
+                settingsCache[key].Data = value;
                 settingsCache[key].IsDirty = true;
             }
             else
             {
-                settingsCache[key] = new(typeof(TValue), value);
+                settingsCache[key] = new(typeof(TValue), value); // The data needs to be saved
             }
 
             return true;
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Sdk.AppModels
                         var deserialized = await serializer.DeserializeAsync(dataStream, originalType, cancellationToken);
 
                         // Set settings cache
-                        settingsCache[dataFile.Name] = new(originalType, deserialized);
+                        settingsCache[dataFile.Name] = new(originalType, deserialized, false); // Data doesn't need to be saved
                     }
                     catch (Exception)
                     {
@@ -166,6 +166,9 @@ namespace SecureFolderFS.Sdk.AppModels
 
                         // Write contents
                         await typeStream.WriteAsync(typeBuffer, cancellationToken);
+
+                        // Setting saved, set IsDirty to false
+                        item.Value.IsDirty = false;
                     }
                     catch (Exception)
                     {
@@ -186,7 +189,7 @@ namespace SecureFolderFS.Sdk.AppModels
             }
         }
 
-        public record SettingValue(Type Type, object? Data, bool IsDirty = false)
+        public record SettingValue(Type Type, object? Data, bool IsDirty = true)
         {
             public object? Data { get; set; } = Data;
 
