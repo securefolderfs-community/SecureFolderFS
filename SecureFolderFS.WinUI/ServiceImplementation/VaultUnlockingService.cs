@@ -71,10 +71,16 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             try
             {
+                var vaultStatisticsBridge = new FileSystemStatsTrackerToVaultStatisticsModelBridge();
+
                 var vaultInstance = _step8.DeriveMasterKeyFromPassword(password)
                     .ContinueInitializationWithMasterKey()
                     .VerifyVaultConfiguration()
                     .ContinueInitialization()
+                    .Finalize()
+                    .ContinueWithOptionalRoutine()
+                    .EstablishOptionalRoutine()
+                    .AddFileSystemStatsTracker(vaultStatisticsBridge)
                     .Finalize()
                     .Deploy();
 
@@ -84,8 +90,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 vaultInstance.SecureFolderFSInstance.StartFileSystem();
                 await Task.Delay(100, cancellationToken); // Wait for the file system to start
 
-                var rootFolder = await FileSystemService.GetFolderFromPathAsync(vaultInstance.SecureFolderFSInstance.MountLocation);
-                return new CommonResult<IUnlockedVaultModel?>(new VaultInstanceUnlockedVaultModel(vaultInstance, rootFolder!));
+                var rootFolder = await FileSystemService.GetFolderFromPathAsync(vaultInstance.SecureFolderFSInstance.MountLocation, cancellationToken);
+                // TODO: Ensure rootFolder is not null
+                return new CommonResult<IUnlockedVaultModel?>(new VaultInstanceUnlockedVaultModel(vaultInstance, rootFolder, vaultStatisticsBridge));
             }
             catch (Exception ex)
             {

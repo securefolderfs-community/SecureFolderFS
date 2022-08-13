@@ -52,7 +52,10 @@
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid x:Name="GraphsGrid" ColumnSpacing="8">
+    <Grid
+        x:Name="GraphsGrid"
+        Margin="0,8,0,0"
+        ColumnSpacing="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ReadColumn" Width="*" />
             <ColumnDefinition x:Name="WriteColumn" Width="*" />

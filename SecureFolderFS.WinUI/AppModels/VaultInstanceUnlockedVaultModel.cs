@@ -14,13 +14,13 @@ namespace SecureFolderFS.WinUI.AppModels
         public IFolder UnlockedFolder { get; }
 
         /// <inheritdoc/>
-        public IFileSystemService VaultFileSystem { get; }
+        public IVaultStatisticsModel VaultStatisticsModel { get; }
 
-        public VaultInstanceUnlockedVaultModel(IVaultInstance vaultInstance, IFolder rootFolder)
+        public VaultInstanceUnlockedVaultModel(IVaultInstance vaultInstance, IFolder unlockedFolder, IVaultStatisticsModel vaultStatisticsModel)
         {
             _vaultInstance = vaultInstance;
-            UnlockedFolder = rootFolder;
-            VaultFileSystem = null!; // TODO: Implement VaultFileSystem
+            UnlockedFolder = unlockedFolder;
+            VaultStatisticsModel = vaultStatisticsModel;
         }
 
         /// <inheritdoc/>

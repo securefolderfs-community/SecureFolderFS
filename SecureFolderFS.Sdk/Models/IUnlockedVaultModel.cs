@@ -14,9 +14,9 @@ namespace SecureFolderFS.Sdk.Models
         IFolder UnlockedFolder { get; }
 
         /// <summary>
-        /// Gets the <see cref="IFileSystemService"/> which allows access of vault files/folders.
+        /// Gets the <see cref="IVaultStatisticsModel"/> which reports file system operations of the unlocked vault.
         /// </summary>
-        IFileSystemService VaultFileSystem { get; }
+        IVaultStatisticsModel VaultStatisticsModel { get; }
 
         /// <summary>
         /// Locks the vault, invalidates associated resources and restricts vault file system access.

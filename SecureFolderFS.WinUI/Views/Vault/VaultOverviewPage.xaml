@@ -49,7 +49,6 @@
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <!--  Spacing  -->
-                        <Setter Property="Margin" Value="4" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListViewItem">

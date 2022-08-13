@@ -1,20 +1,22 @@
-﻿namespace SecureFolderFS.Sdk.Models
+﻿using System;
+
+namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
     /// A model that reports statistics of ongoing vault operations.
     /// </summary>
-    public interface IVaultStatisticsModel
+    public interface IVaultStatisticsModel : IDisposable
     {
         /// <summary>
-        /// Reports the amount of read bytes per operation.
+        /// Sets <paramref name="callback"/> to be notified when bytes are read.
         /// </summary>
-        /// <param name="amount">The amount, in bytes.</param>
-        void NotifyBytesRead(long amount);
+        /// <param name="callback">The callback to invoke.</param>
+        void NotifyForBytesRead(Action<long> callback);
 
         /// <summary>
-        /// Reports the amount of written bytes per operation.
+        /// Sets <paramref name="callback"/> to be notified when bytes are written.
         /// </summary>
-        /// <param name="amount">The amount, in bytes.</param>
-        void NotifyBytesWritten(long amount);
+        /// <param name="callback">The callback to invoke.</param>
+        void NotifyForBytesWrite(Action<long> callback);
     }
 }

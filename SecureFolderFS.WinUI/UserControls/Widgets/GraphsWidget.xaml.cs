@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -22,7 +21,6 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
         public GraphsWidget()
         {
             InitializeComponent();
-
             _graphClickSemaphore = new(1, 1);
         }
 

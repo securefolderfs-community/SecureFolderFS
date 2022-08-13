@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
@@ -27,6 +29,10 @@ namespace SecureFolderFS.Sdk.AppModels
             var configurationResult = await VaultCreationService.PrepareConfigurationAsync(cancellationToken);
             if (!configurationResult.IsSuccess)
                 return configurationResult;
+
+            var readmeFile = await folder.TryCreateFileAsync(Constants.VaultReadme.VAULT_README_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            if (readmeFile is not null)
+                await readmeFile.WriteAllTextAsync(Constants.VaultReadme.VAULT_README_MESSAGE, cancellationToken);
 
             _vaultFolder = folder;
 

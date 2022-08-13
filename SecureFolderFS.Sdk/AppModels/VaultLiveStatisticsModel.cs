@@ -10,7 +10,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    public sealed class VaultLiveStatisticsModel : IVaultStatisticsModel, IAsyncInitialize
+    public sealed class VaultLiveStatisticsModel : IAsyncInitialize
     {
         private readonly PeriodicTimer _periodicTimer;
         private readonly List<long> _readRates;

@@ -34,14 +34,16 @@
             <TextBlock
                 Grid.Row="0"
                 Opacity="0.8"
-                Text="{x:Bind GraphHeader, Mode=OneWay}" />
+                Text="{x:Bind GraphHeader, Mode=OneWay}"
+                Visibility="{x:Bind GraphLoaded, Mode=OneWay}" />
 
             <!--  Subheader (big)  -->
             <TextBlock
                 Grid.Row="1"
                 FontSize="24"
                 FontWeight="SemiBold"
-                Text="{x:Bind GraphSubheader, Mode=OneWay}" />
+                Text="{x:Bind GraphSubheader, Mode=OneWay}"
+                Visibility="{x:Bind GraphLoaded, Mode=OneWay}" />
 
             <!--  Load progress  -->
             <ProgressRing
@@ -74,13 +76,13 @@
                         Stroke="{x:Bind ChartStroke, Mode=OneWay}"
                         StrokeThickness="1"
                         XBindingPath="Date"
-                        YBindingPath="High">
-                        <sf:AreaSeries.PaletteBrushes>
+                        YBindingPath="Value">
+                        <sf:AreaSeries.Fill>
                             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                                 <GradientStop Offset="0" Color="{x:Bind ChartPrimaryColor}" />
                                 <GradientStop Offset="1" Color="{x:Bind ChartSecondaryColor}" />
                             </LinearGradientBrush>
-                        </sf:AreaSeries.PaletteBrushes>
+                        </sf:AreaSeries.Fill>
                     </sf:AreaSeries>
                 </sf:SfCartesianChart.Series>
             </sf:SfCartesianChart>
