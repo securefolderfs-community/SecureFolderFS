@@ -96,14 +96,14 @@ namespace SecureFolderFS.WinUI.Dialogs
                 _hasNavigationAnimatedOnLoaded = true;
                 GoBack.Visibility = Visibility.Collapsed;
             }
-            else if (!_isBackAnimationState && (Navigation.CanGoBack || canGoBack))
+            else if (!_isBackAnimationState && (canGoBack && Navigation.CanGoBack))
             {
                 _isBackAnimationState = true;
                 GoBack.Visibility = Visibility.Visible;
                 await ShowBackButtonStoryboard.BeginAsync();
                 ShowBackButtonStoryboard.Stop();
             }
-            else if (_isBackAnimationState && (!Navigation.CanGoBack || !canGoBack))
+            else if (_isBackAnimationState && !(canGoBack && Navigation.CanGoBack))
             {
                 _isBackAnimationState = false;
                 await HideBackButtonStoryboard.BeginAsync();
@@ -111,7 +111,7 @@ namespace SecureFolderFS.WinUI.Dialogs
                 GoBack.Visibility = Visibility.Collapsed;
             }
 
-            GoBack.Visibility = Navigation.CanGoBack && canGoBack ? Visibility.Visible : Visibility.Collapsed;
+            GoBack.Visibility = canGoBack && Navigation.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
