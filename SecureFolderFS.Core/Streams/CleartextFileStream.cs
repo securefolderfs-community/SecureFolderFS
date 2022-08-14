@@ -294,9 +294,9 @@ namespace SecureFolderFS.Core.Streams
             _ciphertextFileStream.Unlock(position, length);
         }
 
-        SafeFileHandle IBaseFileStreamInternal.DangerousGetSafeFileHandle()
+        SafeFileHandle IBaseFileStreamInternal.DangerousGetInternalSafeFileHandle()
         {
-            return _ciphertextFileStream.AsBaseFileStreamInternal().DangerousGetSafeFileHandle();
+            return _ciphertextFileStream.AsBaseFileStreamInternal().DangerousGetInternalSafeFileHandle();
         }
 
         ICiphertextFileStream ICleartextFileStreamInternal.DangerousGetInternalCiphertextFileStream()

@@ -22,7 +22,7 @@ namespace SecureFolderFS.Core.Streams
             base.Dispose(disposing);
         }
 
-        SafeFileHandle IBaseFileStreamInternal.DangerousGetSafeFileHandle()
+        SafeFileHandle IBaseFileStreamInternal.DangerousGetInternalSafeFileHandle()
         {
             return SafeFileHandle;
         }

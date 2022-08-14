@@ -4,25 +4,22 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Storage;
+using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {
     internal sealed class HandlesCollection : IDisposable
     {
+        private readonly IFileStreamReceiver _fileStreamReceiver;
         private readonly Dictionary<long, HandleObject> _openHandles;
-
-        private readonly IVaultStorageReceiver _vaultStorageReceiver;
-
         private readonly HandleGenerator _handleGenerator;
 
         private bool _disposed;
 
-        public HandlesCollection(IVaultStorageReceiver vaultStorageReceiver)
+        public HandlesCollection(IFileStreamReceiver fileStreamReceiver)
         {
-            _vaultStorageReceiver = vaultStorageReceiver;
-
+            _fileStreamReceiver = fileStreamReceiver;
             _openHandles = new Dictionary<long, HandleObject>();
             _handleGenerator = new HandleGenerator();
         }
@@ -32,7 +29,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         {
             AssertNotDisposed();
 
-            var directoryHandle = DirectoryHandle.Open(ciphertextPath, _vaultStorageReceiver, mode, access, share, options);
+            var directoryHandle = DirectoryHandle.Open(ciphertextPath, mode, access, share, options);
             var handle = Constants.FileSystem.INVALID_HANDLE;
 
             if (directoryHandle is not null)
@@ -48,7 +45,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         {
             AssertNotDisposed();
 
-            var fileHandle = FileHandle.Open(ciphertextPath, _vaultStorageReceiver, mode, access, share, options);
+            var fileHandle = FileHandle.Open(ciphertextPath, _fileStreamReceiver, mode, access, share, options);
             var handle = Constants.FileSystem.INVALID_HANDLE;
 
             if (fileHandle is not null)

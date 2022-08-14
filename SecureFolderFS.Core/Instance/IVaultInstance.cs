@@ -1,6 +1,4 @@
 ﻿using System;
-using SecureFolderFS.Core.Storage;
-using SecureFolderFS.Core.Tunnels;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 using SecureFolderFS.Sdk.Storage;
@@ -24,11 +22,5 @@ namespace SecureFolderFS.Core.Instance
         ISecureFolderFSInstance SecureFolderFSInstance { get; }
 
         BaseVaultConfiguration BaseVaultConfiguration { get; }
-
-        IFileTunnel FileTunnel { get; }
-
-        IFolderTunnel FolderTunnel { get; }
-
-        IVaultStorageReceiver VaultStorageReceiver { get; }
     }
 }

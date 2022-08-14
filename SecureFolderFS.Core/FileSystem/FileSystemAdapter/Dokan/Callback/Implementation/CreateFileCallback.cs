@@ -231,22 +231,34 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
                     bool readWriteAttributes = currentAccess.HasFlag(Constants.FileSystem.Dokan.DATA_ACCESS);
                     bool readAccess = currentAccess.HasFlag(Constants.FileSystem.Dokan.DATA_WRITE_ACCESS);
-                    System.IO.FileAccess openAccess = readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
-                    info.Context = handles.OpenHandleToFile(foInformation.CiphertextPath, mode, openAccess, share, options);
+                    System.IO.FileAccess openAccess =
+                        readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
+                    info.Context =
+                        handles.OpenHandleToFile(foInformation.CiphertextPath, mode, openAccess, share, options);
+                    // TODO: Catch AlreadyExists exception
 
                     if (foInformation.PathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
                     {
                         returnStatus = DokanResult.AlreadyExists;
                     }
 
-                    if (mode == FileMode.CreateNew || mode == FileMode.Create || (!foInformation.PathExists && mode == FileMode.OpenOrCreate))
+                    if (mode == FileMode.CreateNew || mode == FileMode.Create ||
+                        (!foInformation.PathExists && mode == FileMode.OpenOrCreate))
                     {
                         // File was created...
                         FileAttributes newAttributes = attributes;
                         newAttributes |= FileAttributes.Archive; // Files are always created as Archive
-                                                                 // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
+                        // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
                         newAttributes &= ~FileAttributes.Normal;
-                        _fileSystemOperations.DangerousFileOperations.SetAttributes(foInformation.CiphertextPath.Path, newAttributes);
+                        _fileSystemOperations.DangerousFileOperations.SetAttributes(foInformation.CiphertextPath.Path,
+                            newAttributes);
+                    }
+                }
+                catch (IOException ioex)
+                {
+                    if (ioex.IsFileAlreadyExistsException())
+                    {
+                        return DokanResult.AlreadyExists;
                     }
                 }
                 catch (IntegrityException)

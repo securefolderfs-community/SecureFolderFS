@@ -1,12 +1,10 @@
 ﻿using SecureFolderFS.Core.Instance;
 using SecureFolderFS.Core.Instance.Implementation;
 using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
-using SecureFolderFS.Core.Storage.Implementation;
 using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers;
-using SecureFolderFS.Core.Tunnels.Implementation;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Paths.Receivers;
@@ -64,22 +62,14 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                 _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations);
             _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver = fileStreamReceiverFactory.GetFileStreamReceiver();
 
-            var vaultStorageReceiverFactory = new VaultStorageReceiverFactory(_vaultInstance.VaultVersion, _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver, _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations);
-            var vaultStorageReceiver = vaultStorageReceiverFactory.GetVaultStorageReceiver();
-            _vaultInstance.VaultStorageReceiver = vaultStorageReceiver;
-
-            var fileSystemTunnelsFactory = new FileSystemTunnelsFactory(_vaultInstance.VaultVersion, _vaultInstance.FileOperations, _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver, _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver);
-            _vaultInstance.FileTunnel = fileSystemTunnelsFactory.GetFileTunnel();
-            _vaultInstance.FolderTunnel = fileSystemTunnelsFactory.GetFolderTunnel();
-
             var fileSystemAdapterFactory = new FileSystemAdapterFactory(
                 _vaultInstance.VaultVersion,
                 _optionalVaultLoadRoutine.FileSystemAdapterType,
                 _optionalVaultLoadRoutine.MountVolumeDataModel,
                 _vaultInstance.Security.ContentCryptor,
+                _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver,
                 _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations,
                 _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver,
-                _vaultInstance.VaultStorageReceiver,
                 _optionalVaultLoadRoutine.StorageEnumerator,
                 _vaultInstance.VaultPath);
 
