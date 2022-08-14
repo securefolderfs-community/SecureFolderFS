@@ -49,5 +49,14 @@ namespace SecureFolderFS.Sdk.AppModels
             // TODO: There can be additional measures added to determine if the Folder is still accessible.
             return FileSystemService.DirectoryExistsAsync(vaultFolder.Path, cancellationToken);
         }
+
+        /// <inheritdoc/>
+        public bool Equals(IVaultModel? other)
+        {
+            if (other is null)
+                return false;
+
+            return Folder.Id.Equals(other.Folder.Id);
+        }
     }
 }

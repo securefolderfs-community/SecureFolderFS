@@ -9,7 +9,7 @@ using SecureFolderFS.Shared.Extensions;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IWidgetsContextModel"/>
-    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVautsWidgetsService>, IWidgetsContextModel
+    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVaultsWidgetsService>, IWidgetsContextModel
     {
         /// <inheritdoc/>
         public IVaultModel VaultModel { get; }

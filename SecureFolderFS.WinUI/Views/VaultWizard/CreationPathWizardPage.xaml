@@ -19,6 +19,7 @@
 
         <TextBlock
             Grid.Row="0"
+            HorizontalAlignment="Center"
             FontSize="18"
             Text="Select vault path" />
 

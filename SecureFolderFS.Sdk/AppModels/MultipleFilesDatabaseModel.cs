@@ -19,6 +19,12 @@ namespace SecureFolderFS.Sdk.AppModels
 
         private readonly IModifiableFolder _databaseFolder;
 
+        /// <summary>
+        /// Gets or sets a value that determines whether or not to flush settings that are unchanged in memory.
+        /// Setting to true is recommended if you don't expect others to modify the settings files.
+        /// </summary>
+        public bool FlushOnlyChangedValues { get; set; }
+
         public MultipleFilesDatabaseModel(IModifiableFolder databaseFolder, IAsyncSerializer<Stream> serializer)
             : base(serializer)
         {
@@ -125,7 +131,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     try
                     {
                         // Don't save settings whose value didn't change
-                        if (!item.Value.IsDirty)
+                        if (FlushOnlyChangedValues && !item.Value.IsDirty)
                             continue;
 
                         var dataFile = await _databaseFolder.TryCreateFileAsync(item.Key, CreationCollisionOption.OpenIfExists, cancellationToken);

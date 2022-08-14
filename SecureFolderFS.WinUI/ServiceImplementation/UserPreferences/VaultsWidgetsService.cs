@@ -5,10 +5,10 @@ using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {
-    /// <inheritdoc cref="IVautsWidgetsService"/>
-    internal sealed class VautsWidgetsService : MultipleFilesSettingsModel, IVautsWidgetsService
+    /// <inheritdoc cref="IVaultsWidgetsService"/>
+    internal sealed class VaultsWidgetsService : MultipleFilesSettingsModel, IVaultsWidgetsService
     {
-        public VautsWidgetsService(IModifiableFolder? settingsFolder)
+        public VaultsWidgetsService(IModifiableFolder? settingsFolder)
         {
             SettingsFolder = settingsFolder;
         }

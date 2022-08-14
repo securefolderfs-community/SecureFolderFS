@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -42,6 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             var loginPageViewModel = new VaultLoginPageViewModel(_vaultViewModel.VaultModel);
             _ = loginPageViewModel.InitAsync();
 
+            WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_vaultViewModel.VaultModel));
             WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(loginPageViewModel));
         }
 

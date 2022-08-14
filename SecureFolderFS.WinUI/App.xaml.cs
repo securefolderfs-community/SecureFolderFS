@@ -82,7 +82,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
                 .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder))
                 .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
-                .AddSingleton<IVautsWidgetsService, VautsWidgetsService>(_ => new VautsWidgetsService(settingsFolder))
+                .AddSingleton<IVaultsWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder))
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))

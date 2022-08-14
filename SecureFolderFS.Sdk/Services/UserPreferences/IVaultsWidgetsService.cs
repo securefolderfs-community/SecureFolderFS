@@ -6,7 +6,7 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
     /// <summary>
     /// A service to manage widgets of saved vaults.
     /// </summary>
-    public interface IVautsWidgetsService : ISettingsModel
+    public interface IVaultsWidgetsService : ISettingsModel
     {
         /// <summary>
         /// Gets or sets the widgets contexts associated with each vault.
