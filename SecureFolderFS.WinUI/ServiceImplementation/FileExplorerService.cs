@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.WinUI.Storage.WindowsStorage;
 using SecureFolderFS.WinUI.WindowViews;
+using WinUIEx;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -32,7 +33,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public async Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
-            WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.Hwnd);
+            WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.GetWindowHandle());
 
             if (filter is not null)
             {
@@ -56,7 +57,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public async Task<ILocatableFolder?> PickSingleFolderAsync(CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
-            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance!.Hwnd);
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance!.GetWindowHandle());
 
             folderPicker.FileTypeFilter.Add("*");
 
