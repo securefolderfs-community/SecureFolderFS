@@ -20,7 +20,7 @@ namespace SecureFolderFS.WinUI.AppModels
         }
 
         /// <inheritdoc/>
-        public void NotifyForBytesWrite(Action<long> callback)
+        public void NotifyForBytesWritten(Action<long> callback)
         {
             if (_disposed)
                 return;

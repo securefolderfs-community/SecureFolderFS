@@ -17,6 +17,6 @@ namespace SecureFolderFS.Sdk.Models
         /// Sets <paramref name="callback"/> to be notified when bytes are written.
         /// </summary>
         /// <param name="callback">The callback to invoke.</param>
-        void NotifyForBytesWrite(Action<long> callback);
+        void NotifyForBytesWritten(Action<long> callback);
     }
 }

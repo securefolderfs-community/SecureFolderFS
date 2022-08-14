@@ -24,7 +24,18 @@ namespace SecureFolderFS.WinUI.UserControls
         private async void RootButton_Loaded(object sender, RoutedEventArgs e)
         {
             await Task.Delay(25);
-            _ = FindName("CartesianChart"); // Realize the chart and load it to view
+            try
+            {
+                _ = FindName("CartesianChart"); // Realize the chart and load it to view
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+            }
+        }
+
+        private async void CartesianChart_Loaded(object sender, RoutedEventArgs e)
+        {
             await Task.Delay(25);
             GraphLoaded = true;
         }

@@ -15,7 +15,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
-    public sealed partial class LoginCredentialsViewModel : ObservableObject, IAsyncInitialize
+    public sealed partial class LoginCredentialsViewModel : BaseLoginStrategyViewModel, IAsyncInitialize
     {
         private readonly IAsyncValidator<IFolder> _vaultValidator;
         private readonly IVaultUnlockingModel _vaultUnlockingModel;
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 
                 unlockedVaultModel = unlockResult.Value;
 
-                // Don't forget to dispose the keystore after its been used
+                // Don't forget to dispose the keystore after it's been used
                 _keystoreModel.Dispose();
             }
 
@@ -88,6 +88,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             var vaultValidationResult = await _vaultValidator.ValidateAsync(_vaultModel.Folder, cancellationToken);
             if (!vaultValidationResult.IsSuccess)
                 return; // TODO: Report the issue
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            _keystoreModel.Dispose();
+            _vaultUnlockingModel.Dispose();
         }
     }
 }

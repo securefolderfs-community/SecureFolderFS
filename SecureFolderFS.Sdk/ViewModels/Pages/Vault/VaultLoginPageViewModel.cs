@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
@@ -8,6 +6,8 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         private string? _VaultName;
 
         [ObservableProperty]
-        private ObservableObject? _LoginStrategyViewModel;
+        private BaseLoginStrategyViewModel? _LoginStrategyViewModel;
 
         public VaultLoginPageViewModel(IVaultModel vaultModel)
             : base(vaultModel, new WeakReferenceMessenger())

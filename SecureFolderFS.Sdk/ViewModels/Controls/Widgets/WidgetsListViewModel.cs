@@ -10,20 +10,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize
     {
-        private IWidgetsContextModel WidgetsContextModel { get; }
+        private readonly IWidgetsContextModel _widgetsContextModel;
+        private readonly IUnlockedVaultModel _unlockedVaultModel;
 
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
-        public WidgetsListViewModel(IWidgetsContextModel widgetsContextModel)
+        public WidgetsListViewModel(IUnlockedVaultModel unlockedVaultModel, IWidgetsContextModel widgetsContextModel)
         {
-            WidgetsContextModel = widgetsContextModel;
+            _unlockedVaultModel = unlockedVaultModel;
+            _widgetsContextModel = widgetsContextModel;
             Widgets = new();
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in WidgetsContextModel.GetWidgetsAsync(cancellationToken))
+            await foreach (var item in _widgetsContextModel.GetWidgetsAsync(cancellationToken))
             {
                 var widgetViewModel = GetWidgetForModel(item);
                 _ = widgetViewModel.InitAsync(cancellationToken);
@@ -40,7 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                     return new VaultHealthWidgetViewModel(widgetModel);
 
                 case Constants.Widgets.GRAPHS_WIDGET_ID:
-                    return new GraphsWidgetViewModel(widgetModel);
+                    return new GraphsWidgetViewModel(_unlockedVaultModel.VaultStatisticsModel, widgetModel);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(widgetModel.WidgetId));

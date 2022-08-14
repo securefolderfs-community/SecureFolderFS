@@ -1,9 +1,6 @@
 ﻿using System;
-using System.IO;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
-using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
 using SecureFolderFS.Core.VaultLoader.KeyDerivation;
 using SecureFolderFS.Core.VaultLoader.VaultKeystore;
 
@@ -18,16 +15,13 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
 
         public IVaultLoadRoutineStep7 ContinueKeystoreFileInitialization()
         {
-            using (vaultLoadDataModel.VaultKeystoreStream)
-            {
-                var vaultKeystoreLoaderFactory = new VaultKeystoreLoaderFactory(vaultInstance.VaultVersion);
-                IVaultKeystoreLoader vaultKeystoreLoader = vaultKeystoreLoaderFactory.GetVaultKeystoreLoader();
-                vaultLoadDataModel.BaseVaultKeystore = vaultKeystoreLoader.LoadVaultKeystore(vaultLoadDataModel.VaultKeystoreStream);
+            var vaultKeystoreLoaderFactory = new VaultKeystoreLoaderFactory(vaultInstance.VaultVersion);
+            var vaultKeystoreLoader = vaultKeystoreLoaderFactory.GetVaultKeystoreLoader();
+            vaultLoadDataModel.BaseVaultKeystore = vaultKeystoreLoader.LoadVaultKeystore(vaultLoadDataModel.VaultKeystoreStream);
 
-                if (!vaultLoadDataModel.BaseVaultKeystore.IsKeystoreValid())
-                {
-                    throw new ArgumentException("The keystore is invalid.");
-                }
+            if (!vaultLoadDataModel.BaseVaultKeystore.IsKeystoreValid())
+            {
+                throw new ArgumentException("The keystore is invalid.");
             }
 
             var masterKeyDerivationFactory = new MasterKeyDerivationFactory(vaultInstance.VaultVersion);

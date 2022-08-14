@@ -36,7 +36,8 @@ namespace SecureFolderFS.Core.Extensions
 
         public static string ReadToEnd(this Stream stream)
         {
-            using var streamReader = new StreamReader(stream, Encoding.UTF8);
+            stream.Seek(0, SeekOrigin.Begin);
+            using var streamReader = new StreamReader(stream, Encoding.UTF8, leaveOpen: true);
 
             return streamReader.ReadToEnd();
         }

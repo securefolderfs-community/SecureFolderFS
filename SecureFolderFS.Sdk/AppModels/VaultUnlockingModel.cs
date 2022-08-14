@@ -1,20 +1,21 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultUnlockingModel"/>
     public sealed class VaultUnlockingModel : IVaultUnlockingModel
     {
+        private Stream? _configStream;
+
         private IVaultUnlockingService VaultUnlockingService { get; } = Ioc.Default.GetRequiredService<IVaultUnlockingService>();
 
         /// <inheritdoc/>
@@ -29,11 +30,11 @@ namespace SecureFolderFS.Sdk.AppModels
             if (configFile is null)
                 return new CommonResult(false);
 
-            await using var configStream = await configFile.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-            if (configStream is null)
+            _configStream = await configFile.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+            if (_configStream is null)
                 return new CommonResult(false);
 
-            if (!await VaultUnlockingService.SetConfigurationStreamAsync(configStream, cancellationToken))
+            if (!await VaultUnlockingService.SetConfigurationStreamAsync(_configStream, cancellationToken))
                 return new CommonResult(false);
 
             return new CommonResult();
@@ -58,6 +59,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Dispose()
         {
+            _configStream?.Dispose();
             VaultUnlockingService.Dispose();
         }
     }

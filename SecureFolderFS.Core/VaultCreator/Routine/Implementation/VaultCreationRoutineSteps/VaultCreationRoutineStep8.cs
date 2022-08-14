@@ -11,12 +11,8 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
 
         public IVaultCreationRoutineStep9 ContinueKeystoreFileInitialization()
         {
-            using (vaultCreationDataModel.VaultKeystoreStream)
-            {
-                vaultCreationDataModel.BaseVaultKeystore.WriteKeystore(vaultCreationDataModel.VaultKeystoreStream);
-
-                return new VaultCreationRoutineStep9(vaultCreationDataModel);
-            }
+            vaultCreationDataModel.BaseVaultKeystore.WriteKeystore(vaultCreationDataModel.VaultKeystoreStream);
+            return new VaultCreationRoutineStep9(vaultCreationDataModel);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 
 namespace SecureFolderFS.Sdk.Messages
 {
@@ -10,9 +10,9 @@ namespace SecureFolderFS.Sdk.Messages
         /// <summary>
         /// Gets the login option view model to change the view to.
         /// </summary>
-        public ObservableObject ViewModel { get; }
+        public BaseLoginStrategyViewModel ViewModel { get; }
 
-        public ChangeLoginOptionMessage(ObservableObject viewModel)
+        public ChangeLoginOptionMessage(BaseLoginStrategyViewModel viewModel)
         {
             ViewModel = viewModel;
         }

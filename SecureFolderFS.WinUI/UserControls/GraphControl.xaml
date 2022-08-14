@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.Charts"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    x:Name="Graph"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -58,7 +59,8 @@
                 x:Name="CartesianChart"
                 Grid.Row="2"
                 Margin="0,8,0,0"
-                x:DeferLoadStrategy="Lazy">
+                x:DeferLoadStrategy="Lazy"
+                Loaded="CartesianChart_Loaded">
                 <sf:SfCartesianChart.XAxes>
                     <sf:DateTimeAxis ShowGridLines="False" Visibility="Collapsed" />
                 </sf:SfCartesianChart.XAxes>
@@ -71,9 +73,10 @@
                 </sf:SfCartesianChart.YAxes>
 
                 <sf:SfCartesianChart.Series>
+                    <!--  Must use Binding instead of x:Bind due to x:DeferLoadStrategy="Lazy" breaking compiled bindings when loaded  -->
                     <sf:AreaSeries
-                        ItemsSource="{x:Bind Data, Mode=OneWay}"
-                        Stroke="{x:Bind ChartStroke, Mode=OneWay}"
+                        ItemsSource="{Binding Data, ElementName=Graph, Mode=OneWay}"
+                        Stroke="{Binding ChartStroke, ElementName=Graph, Mode=OneWay}"
                         StrokeThickness="1"
                         XBindingPath="Date"
                         YBindingPath="Value">
