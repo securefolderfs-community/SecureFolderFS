@@ -6,6 +6,7 @@ using SecureFolderFS.WinUI.Dispatching;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    /// <inheritdoc cref="IThreadingService"/>
     internal sealed class ThreadingService : IThreadingService
     {
         private readonly IThreadDispatcher _threadDispatcher;
@@ -15,11 +16,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             _threadDispatcher = new DispatcherQueueDispatcher();
         }
 
+        /// <inheritdoc/>
         public IAwaitable ExecuteOnUiThreadAsync()
         {
             return new UiThreadAwaitable(_threadDispatcher);
         }
 
+        /// <inheritdoc/>
         public Task ExecuteOnUiThreadAsync(Action action)
         {
             return _threadDispatcher.DispatchAsync(action);
