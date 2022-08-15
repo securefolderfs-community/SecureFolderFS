@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="SecureFolderFS.WinUI.Views.VaultWizard.EncryptionWizardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Views.VaultWizard"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard"
+    Width="464"
+    Loaded="EncryptionWizardPage_Loaded"
+    mc:Ignorable="d">
+
+    <Grid RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Spacing="4">
+            <TextBlock Text="Data encryption" />
+            <ComboBox
+                ItemsSource="{x:Bind ContentCiphers}"
+                SelectedIndex="0"
+                SelectedItem="{x:Bind ViewModel.ContentCipherItemViewModel, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CipherItemViewModel">
+                        <TextBlock Text="{x:Bind Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Spacing="4">
+            <TextBlock Text="File name encryption" />
+            <ComboBox
+                ItemsSource="{x:Bind FileNameCiphers}"
+                SelectedIndex="0"
+                SelectedItem="{x:Bind ViewModel.FileNameCipherItemViewModel, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CipherItemViewModel">
+                        <TextBlock Text="{x:Bind Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+    </Grid>
+</Page>

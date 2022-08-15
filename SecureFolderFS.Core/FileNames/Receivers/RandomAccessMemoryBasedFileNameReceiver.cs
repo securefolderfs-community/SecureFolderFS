@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Security;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Helpers;
 
 namespace SecureFolderFS.Core.FileNames.Receivers
@@ -18,8 +18,8 @@ namespace SecureFolderFS.Core.FileNames.Receivers
         public RandomAccessMemoryBasedFileNameReceiver(ISecurity security, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(security, fileSystemStatsTracker)
         {
-            this._ciphertextFileNames = new Dictionary<FileNameWithDirectoryId, string>();
-            this._cleartextFileNames = new Dictionary<FileNameWithDirectoryId, string>();
+            _ciphertextFileNames = new Dictionary<FileNameWithDirectoryId, string>();
+            _cleartextFileNames = new Dictionary<FileNameWithDirectoryId, string>();
         }
 
         public override string GetCleartextFileName(DirectoryId directoryId, string ciphertextFileName)

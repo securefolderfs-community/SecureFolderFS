@@ -1,17 +1,19 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Shared.Extensions
 {
     public static class AsyncExtensions
     {
-        public static void RunAndForget(Action action)
+        public static async Task<IReadOnlyList<T>> ToListAsync<T>(this IAsyncEnumerable<T> asyncEnumerable)
         {
-            try
+            var list = new List<T>();
+            await foreach (var item in asyncEnumerable)
             {
-                _ = Task.Run(action).ConfigureAwait(false);
+                list.Add(item);
             }
-            catch { }
+
+            return list;
         }
     }
 }

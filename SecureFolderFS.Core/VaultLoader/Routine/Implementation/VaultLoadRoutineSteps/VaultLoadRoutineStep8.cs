@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Core.PasswordRequest;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutineSteps
 {
@@ -11,9 +11,9 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
         {
         }
 
-        public IVaultLoadRoutineStep9 DeriveMasterKeyFromPassword(DisposablePassword disposablePassword)
+        public IVaultLoadRoutineStep9 DeriveMasterKeyFromPassword(IPassword password)
         {
-            vaultLoadDataModel.MasterKey = vaultLoadDataModel.MasterKeyDerivation.DeriveMasterKey(disposablePassword, vaultLoadDataModel.BaseVaultKeystore, vaultLoadDataModel.KeyCryptor);
+            vaultLoadDataModel.MasterKey = vaultLoadDataModel.MasterKeyDerivation.DeriveMasterKey(password, vaultLoadDataModel.BaseVaultKeystore, vaultLoadDataModel.KeyCryptor);
 
             return new VaultLoadRoutineStep9(vaultInstance, vaultLoadDataModel);
         }

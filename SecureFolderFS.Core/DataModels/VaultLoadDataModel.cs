@@ -25,8 +25,6 @@ namespace SecureFolderFS.Core.DataModels
 
         public void Cleanup()
         {
-            VaultConfigurationStream?.Dispose();
-            VaultKeystoreStream?.Dispose();
             MasterKey?.Dispose();
         }
     }

@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration;
+using SecureFolderFS.Core.Discoverers;
+using SecureFolderFS.Core.VaultCreator.Generators;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
@@ -10,10 +11,10 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
         {
         }
 
-        public IVaultCreationRoutineStep5 CreateKeystoreFile(IVaultKeystoreGenerator vaultKeystoreGenerator = null)
+        public IVaultCreationRoutineStep5 CreateKeystoreFile(IVaultKeystoreDiscoverer vaultKeystoreDiscoverer = null)
         {
-            vaultKeystoreGenerator ??= new FromVaultPathVaultKeystoreGenerator(vaultCreationDataModel.FileOperations);
-            vaultCreationDataModel.VaultKeystoreStream = vaultKeystoreGenerator.GenerateVaultKeystore(vaultCreationDataModel.VaultPath.VaultRootPath, Constants.VAULT_KEYSTORE_FILENAME);
+            vaultKeystoreDiscoverer ??= new FromVaultPathVaultKeystoreGenerator(vaultCreationDataModel.FileOperations);
+            vaultCreationDataModel.VaultKeystoreStream = vaultKeystoreDiscoverer.DiscoverVaultKeystore(vaultCreationDataModel.VaultPath.VaultRootPath, Constants.VAULT_KEYSTORE_FILENAME);
 
             return new VaultCreationRoutineStep5(vaultCreationDataModel);
         }

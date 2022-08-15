@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultLoader.VaultKeystore
 
         public VaultKeystoreLoaderFactory(VaultVersion vaultVersion)
         {
-            this._vaultVersion = vaultVersion;
+            _vaultVersion = vaultVersion;
         }
 
         public IVaultKeystoreLoader GetVaultKeystoreLoader()

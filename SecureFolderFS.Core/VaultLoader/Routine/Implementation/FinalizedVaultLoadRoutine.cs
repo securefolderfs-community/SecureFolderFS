@@ -1,15 +1,10 @@
-﻿using System.IO;
-using SecureFolderFS.Core.Instance;
+﻿using SecureFolderFS.Core.Instance;
 using SecureFolderFS.Core.Instance.Implementation;
 using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
-using SecureFolderFS.Core.Storage.Implementation;
 using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers;
-using SecureFolderFS.Core.Paths.DirectoryMetadata;
-using SecureFolderFS.Core.Storage;
-using SecureFolderFS.Core.Tunnels.Implementation;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Paths.Receivers;
@@ -27,8 +22,8 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 
         public FinalizedVaultLoadRoutine(VaultInstance vaultInstance, VaultLoadDataModel vaultLoadDataModel)
         {
-            this._vaultInstance = vaultInstance;
-            this._vaultLoadDataModel = vaultLoadDataModel;
+            _vaultInstance = vaultInstance;
+            _vaultLoadDataModel = vaultLoadDataModel;
         }
 
         public IOptionalVaultLoadRoutine ContinueWithOptionalRoutine()
@@ -48,7 +43,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
             var openCryptFileReceiver = new OpenCryptFileReceiver(_vaultInstance.Security, chunkReceiverFactory);
             
             var directoryIdReceiverFactory = new DirectoryIdReceiverFactory(_vaultInstance.VaultVersion, _optionalVaultLoadRoutine.DirectoryIdCachingStrategy, _vaultInstance.FileOperations, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker);
-            IDirectoryIdReceiver directoryIdReceiver = directoryIdReceiverFactory.GetDirectoryIdReceiver(directoryIdReceiverFactory.GetDirectoryIdReader());
+            var directoryIdReceiver = directoryIdReceiverFactory.GetDirectoryIdReceiver(directoryIdReceiverFactory.GetDirectoryIdReader());
 
             var fileNameReceiverFactory = new FileNameReceiverFactory(_vaultInstance.VaultVersion, _vaultInstance.Security, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker, _optionalVaultLoadRoutine.FileNameCachingStrategy);
             var fileNameReceiver = fileNameReceiverFactory.GetFileNameReceiver();
@@ -67,22 +62,14 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                 _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations);
             _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver = fileStreamReceiverFactory.GetFileStreamReceiver();
 
-            var vaultStorageReceiverFactory = new VaultStorageReceiverFactory(_vaultInstance.VaultVersion, _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver, _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations);
-            IVaultStorageReceiver vaultStorageReceiver = vaultStorageReceiverFactory.GetVaultStorageReceiver();
-            _vaultInstance.VaultStorageReceiver = vaultStorageReceiver;
-
-            var fileSystemTunnelsFactory = new FileSystemTunnelsFactory(_vaultInstance.VaultVersion, _vaultInstance.FileOperations, _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver, _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver);
-            _vaultInstance.FileTunnel = fileSystemTunnelsFactory.GetFileTunnel();
-            _vaultInstance.FolderTunnel = fileSystemTunnelsFactory.GetFolderTunnel();
-
-            FileSystemAdapterFactory fileSystemAdapterFactory = new FileSystemAdapterFactory(
+            var fileSystemAdapterFactory = new FileSystemAdapterFactory(
                 _vaultInstance.VaultVersion,
                 _optionalVaultLoadRoutine.FileSystemAdapterType,
                 _optionalVaultLoadRoutine.MountVolumeDataModel,
                 _vaultInstance.Security.ContentCryptor,
+                _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver,
                 _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations,
                 _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver,
-                _vaultInstance.VaultStorageReceiver,
                 _optionalVaultLoadRoutine.StorageEnumerator,
                 _vaultInstance.VaultPath);
 
@@ -90,7 +77,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 
             _vaultLoadDataModel.Cleanup();
 
-            return _vaultInstance as IVaultInstance;
+            return _vaultInstance;
         }
     }
 }

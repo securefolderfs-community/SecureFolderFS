@@ -17,12 +17,10 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static IEnumerable<T> AtLeast<T>(this IEnumerable<T> enumerable, Func<T> item)
+        public static IEnumerable<T> IfEmptyThenAppend<T>(this IEnumerable<T> enumerable, T item)
         {
             if (enumerable.IsEmpty())
-            {
-                return enumerable.Append(item());
-            }
+                return enumerable.Append(item);
 
             return enumerable;
         }

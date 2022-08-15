@@ -1,26 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Backend.Services;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.WinUI.Storage.WindowsStorage;
 using SecureFolderFS.WinUI.WindowViews;
+using WinUIEx;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    /// <inheritdoc cref="IFileExplorerService"/>
     internal sealed class FileExplorerService : IFileExplorerService
     {
-        public async Task OpenPathInFileExplorerAsync(string path)
+        /// <inheritdoc/>
+        public async Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
         {
-            await Launcher.LaunchFolderPathAsync(path);
+            await Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder).AsTask(cancellationToken);
         }
 
-        public async Task<string?> PickSingleFileAsync(IEnumerable<string>? filter)
+        /// <inheritdoc/>
+        public async Task OpenInFileExplorerAsync(ILocatableFolder folder, CancellationToken cancellationToken = default)
+        {
+            await Launcher.LaunchFolderPathAsync(folder.Path).AsTask(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
-
-            WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.Hwnd);
+            WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.GetWindowHandle());
 
             if (filter is not null)
             {
@@ -31,22 +44,30 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 filePicker.FileTypeFilter.Add("*");
             }
 
-            var file = await filePicker.PickSingleFileAsync();
+            var fileTask = filePicker.PickSingleFileAsync().AsTask(cancellationToken);
+            var file = await fileTask;
 
-            return file?.Path;
+            if (file is null)
+                return null;
+
+            return new WindowsStorageFile(file);
         }
 
-        public async Task<string?> PickSingleFolderAsync()
+        /// <inheritdoc/>
+        public async Task<ILocatableFolder?> PickSingleFolderAsync(CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
-
-            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance!.Hwnd);
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance!.GetWindowHandle());
 
             folderPicker.FileTypeFilter.Add("*");
 
-            var folder = await folderPicker.PickSingleFolderAsync();
+            var folderTask = folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
+            var folder = await folderTask;
 
-            return folder?.Path;
+            if (folder is null)
+                return null;
+
+            return new WindowsStorageFolder(folder);
         }
     }
 }

@@ -38,9 +38,9 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
         protected internal BaseVaultConfiguration(int version, ContentCipherScheme contentCipherScheme, FileNameCipherScheme fileNameCipherScheme, byte[] hmacSha256Mac)
             : base(version)
         {
-            this.ContentCipherScheme = contentCipherScheme;
-            this.FileNameCipherScheme = fileNameCipherScheme;
-            this.HmacSha256Mac = hmacSha256Mac;
+            ContentCipherScheme = contentCipherScheme;
+            FileNameCipherScheme = fileNameCipherScheme;
+            HmacSha256Mac = hmacSha256Mac;
         }
 
         internal abstract void WriteConfiguration(Stream destinationStream);

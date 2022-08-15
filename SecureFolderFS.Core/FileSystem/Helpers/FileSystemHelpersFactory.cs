@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
 
         public FileSystemHelpersFactory(FileSystemAdapterType fileSystemAdapterType)
         {
-            this._fileSystemAdapterType = fileSystemAdapterType;
+            _fileSystemAdapterType = fileSystemAdapterType;
         }
 
         public IFileSystemHelpers GetFileSystemHelpers()

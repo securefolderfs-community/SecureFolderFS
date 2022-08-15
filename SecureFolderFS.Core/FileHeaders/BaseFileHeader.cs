@@ -10,8 +10,8 @@ namespace SecureFolderFS.Core.FileHeaders
 
         protected BaseFileHeader(byte[] nonce, byte[] contentKey)
         {
-            this.Nonce = nonce;
-            this.ContentKey = contentKey;
+            Nonce = nonce;
+            ContentKey = contentKey;
         }
 
         public virtual void Dispose()

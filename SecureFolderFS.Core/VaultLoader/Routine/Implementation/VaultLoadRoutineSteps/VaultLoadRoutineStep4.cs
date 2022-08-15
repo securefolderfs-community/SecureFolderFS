@@ -16,12 +16,8 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
 
         public IVaultLoadRoutineStep5 ContinueConfigurationFileInitialization()
         {
-            RawVaultConfiguration rawVaultConfiguration;
-            using (vaultLoadDataModel.VaultConfigurationStream)
-            {
-                rawVaultConfiguration = RawVaultConfiguration.Load(vaultLoadDataModel.VaultConfigurationStream);
-            }
-
+            var rawVaultConfiguration = RawVaultConfiguration.Load(vaultLoadDataModel.VaultConfigurationStream);
+            
             vaultInstance.VaultVersion = new VaultVersion(rawVaultConfiguration);
             if (!VaultVersion.IsVersionSupported(vaultInstance.VaultVersion.Version))
             {

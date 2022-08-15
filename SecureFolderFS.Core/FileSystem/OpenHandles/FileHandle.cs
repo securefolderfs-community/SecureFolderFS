@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Sdk.Paths;
-using SecureFolderFS.Core.Storage;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Streams;
 using SecureFolderFS.Core.UnsafeNative;
 using SecureFolderFS.Core.Extensions;
+using SecureFolderFS.Core.Streams.Receiver;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {
@@ -13,39 +12,31 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
     {
         private bool _disposed;
 
-        public IVaultFile VaultFile { get; }
-
         public ICleartextFileStream CleartextFileStream { get; }
 
-        private FileHandle(IVaultFile vaultFile, ICleartextFileStream cleartextFileStream)
-            : base(vaultFile.CiphertextPath)
+        private FileHandle(ICleartextFileStream cleartextFileStream)
         {
-            this.VaultFile = vaultFile;
-            this.CleartextFileStream = cleartextFileStream;
+            CleartextFileStream = cleartextFileStream;
         }
 
         public bool SetFileTime(ref long ct, ref long lat, ref long lwt)
         {
             AssertNotDisposed();
 
-            var hFile = CleartextFileStream.AsBaseFileStreamInternal().DangerousGetSafeFileHandle();
+            var hFile = CleartextFileStream.AsBaseFileStreamInternal().DangerousGetInternalSafeFileHandle();
             return UnsafeNativeApis.SetFileTime(hFile, ref ct, ref lat, ref lwt);
         }
 
-        public static FileHandle Open(ICiphertextPath ciphertextPath, IVaultStorageReceiver vaultStorageReceiver, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+        public static FileHandle Open(ICiphertextPath ciphertextPath, IFileStreamReceiver fileStreamReceiver, FileMode mode, FileAccess access, FileShare share, FileOptions options)
         {
-            var vaultFile = vaultStorageReceiver.OpenVaultFile(ciphertextPath);
-            var cleartextFileStream = vaultFile.OpenStream(mode, access, share, options);
-
-            return new FileHandle(vaultFile, cleartextFileStream);
+            var cleartextFileStream = fileStreamReceiver.OpenFileStreamToCleartextFile(ciphertextPath, mode, access, share, options);
+            return new FileHandle(cleartextFileStream);
         }
 
         private void AssertNotDisposed()
         {
             if (_disposed)
-            {
                 throw new ObjectDisposedException(GetType().FullName);
-            }
         }
 
         public override void Dispose()

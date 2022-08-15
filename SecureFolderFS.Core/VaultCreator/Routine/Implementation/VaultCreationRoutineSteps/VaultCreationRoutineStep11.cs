@@ -14,7 +14,6 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
 
         public IVaultCreationRoutineStep12 ContinueConfigurationFileInitialization()
         {
-            using (vaultCreationDataModel.VaultConfigurationStream)
             using (vaultCreationDataModel.MacKey)
             {
                 const int version = VaultVersion.HIGHEST_VERSION;

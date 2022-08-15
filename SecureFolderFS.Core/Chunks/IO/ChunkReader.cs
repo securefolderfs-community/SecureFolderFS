@@ -1,7 +1,7 @@
 ﻿using System;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.FileHeaders;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Streams.Management;
 
 namespace SecureFolderFS.Core.Chunks.IO
@@ -22,11 +22,11 @@ namespace SecureFolderFS.Core.Chunks.IO
 
         public ChunkReader(ISecurity security, IFileHeader fileHeader, IChunkFactory chunkFactory, CiphertextStreamsManager ciphertextStreamsManager, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            this._security = security;
-            this._fileHeader = fileHeader;
-            this._chunkFactory = chunkFactory;
-            this._ciphertextStreamsManager = ciphertextStreamsManager;
-            this._fileSystemStatsTracker = fileSystemStatsTracker;
+            _security = security;
+            _fileHeader = fileHeader;
+            _chunkFactory = chunkFactory;
+            _ciphertextStreamsManager = ciphertextStreamsManager;
+            _fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public ICleartextChunk ReadChunk(long chunkNumber)

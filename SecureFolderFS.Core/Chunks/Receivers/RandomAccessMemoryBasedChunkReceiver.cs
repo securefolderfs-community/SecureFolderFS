@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Chunks.Receivers
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Chunks.Receivers
         public RandomAccessMemoryBasedChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(chunkReader, chunkWriter, fileSystemStatsTracker)
         {
-            this._chunks = new Dictionary<long, ICleartextChunk>();
+            _chunks = new Dictionary<long, ICleartextChunk>();
         }
 
         public override ICleartextChunk GetChunk(long chunkNumber)

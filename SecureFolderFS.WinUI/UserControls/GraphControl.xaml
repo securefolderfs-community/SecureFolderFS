@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sf="using:Syncfusion.UI.Xaml.Charts"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    x:Name="Graph"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -14,7 +15,6 @@
     </UserControl.Resources>
 
     <Button
-        x:Name="RootButton"
         Height="264"
         Padding="12"
         HorizontalAlignment="Stretch"
@@ -36,7 +36,7 @@
                 Grid.Row="0"
                 Opacity="0.8"
                 Text="{x:Bind GraphHeader, Mode=OneWay}"
-                Visibility="{x:Bind ControlLoaded, Mode=OneWay}" />
+                Visibility="{x:Bind GraphLoaded, Mode=OneWay}" />
 
             <!--  Subheader (big)  -->
             <TextBlock
@@ -44,7 +44,7 @@
                 FontSize="24"
                 FontWeight="SemiBold"
                 Text="{x:Bind GraphSubheader, Mode=OneWay}"
-                Visibility="{x:Bind ControlLoaded, Mode=OneWay}" />
+                Visibility="{x:Bind GraphLoaded, Mode=OneWay}" />
 
             <!--  Load progress  -->
             <ProgressRing
@@ -52,43 +52,40 @@
                 Grid.Row="2"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                x:Load="{x:Bind ControlLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
+                x:Load="{x:Bind GraphLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
 
             <!--  Chart  -->
             <sf:SfCartesianChart
                 x:Name="CartesianChart"
                 Grid.Row="2"
                 Margin="0,8,0,0"
-                x:DeferLoadStrategy="Lazy">
-                <sf:SfCartesianChart.PrimaryAxis>
+                x:DeferLoadStrategy="Lazy"
+                Loaded="CartesianChart_Loaded">
+                <sf:SfCartesianChart.XAxes>
                     <sf:DateTimeAxis ShowGridLines="False" Visibility="Collapsed" />
-                </sf:SfCartesianChart.PrimaryAxis>
-                <sf:SfCartesianChart.SecondaryAxis>
+                </sf:SfCartesianChart.XAxes>
+                <sf:SfCartesianChart.YAxes>
                     <sf:NumericalAxis
                         Minimum="0"
+                        MinorTickLineSize="8"
                         ShowGridLines="False"
-                        SmallTickLineSize="8"
                         TickLineSize="0" />
-                </sf:SfCartesianChart.SecondaryAxis>
+                </sf:SfCartesianChart.YAxes>
 
                 <sf:SfCartesianChart.Series>
+                    <!--  Must use Binding instead of x:Bind due to x:DeferLoadStrategy="Lazy" breaking compiled bindings when loaded  -->
                     <sf:AreaSeries
-                        ItemsSource="{x:Bind Data, Mode=OneWay}"
-                        Palette="Custom"
-                        Stroke="{x:Bind ChartStroke, Mode=OneWay}"
+                        ItemsSource="{Binding Data, ElementName=Graph, Mode=OneWay}"
+                        Stroke="{Binding ChartStroke, ElementName=Graph, Mode=OneWay}"
                         StrokeThickness="1"
                         XBindingPath="Date"
-                        YBindingPath="High">
-                        <sf:AreaSeries.ColorModel>
-                            <sf:ChartColorModel>
-                                <sf:ChartColorModel.CustomBrushes>
-                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                        <GradientStop Offset="0" Color="{x:Bind ChartPrimaryColor}" />
-                                        <GradientStop Offset="1" Color="{x:Bind ChartSecondaryColor}" />
-                                    </LinearGradientBrush>
-                                </sf:ChartColorModel.CustomBrushes>
-                            </sf:ChartColorModel>
-                        </sf:AreaSeries.ColorModel>
+                        YBindingPath="Value">
+                        <sf:AreaSeries.Fill>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Offset="0" Color="{x:Bind ChartPrimaryColor}" />
+                                <GradientStop Offset="1" Color="{x:Bind ChartSecondaryColor}" />
+                            </LinearGradientBrush>
+                        </sf:AreaSeries.Fill>
                     </sf:AreaSeries>
                 </sf:SfCartesianChart.Series>
             </sf:SfCartesianChart>

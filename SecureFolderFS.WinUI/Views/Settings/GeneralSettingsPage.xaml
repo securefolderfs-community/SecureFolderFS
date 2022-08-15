@@ -4,11 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.Settings"
-    xmlns:m="using:SecureFolderFS.Backend.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
@@ -34,7 +34,7 @@
                             VerticalAlignment="Center"
                             FontSize="18"
                             FontWeight="SemiBold"
-                            Text="{x:Bind ViewModel.UpdateStatusText}" />
+                            Text="{x:Bind ViewModel.BannerViewModel.UpdateText, Mode=OneWay}" />
                         <StackPanel
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
@@ -46,13 +46,13 @@
                             <TextBlock
                                 FontSize="11"
                                 Opacity="0.8"
-                                Text="{x:Bind ViewModel.UpdateLastChecked, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                                Text="{x:Bind ViewModel.BannerViewModel.LastChecked, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                         </StackPanel>
                     </StackPanel>
                 </uc:BannerControl.LeftSide>
                 <uc:BannerControl.RightSide>
                     <Grid>
-                        <Button Command="{x:Bind ViewModel.CheckForUpdatesCommand}" IsEnabled="{x:Bind ViewModel.IsUpdateSupported, Mode=OneWay}">
+                        <Button Command="{x:Bind ViewModel.BannerViewModel.UpdateAppCommand}" IsEnabled="{x:Bind ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon
                                     VerticalAlignment="Center"
@@ -69,10 +69,10 @@
                 <uc:BannerControl.AdditionalBottomContent>
                     <!--  Version InfoBar  -->
                     <InfoBar
-                        IsClosable="{x:Bind ViewModel.VersionInfoBar.CanBeClosed, Mode=OneWay}"
-                        IsOpen="{x:Bind ViewModel.VersionInfoBar.IsOpen, Mode=OneWay}"
-                        Message="{x:Bind ViewModel.VersionInfoBar.Message, Mode=OneWay}"
-                        Severity="{x:Bind ViewModel.VersionInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
+                        IsClosable="{x:Bind ViewModel.BannerViewModel.UpdateInfoBar.CanBeClosed, Mode=OneWay}"
+                        IsOpen="{x:Bind ViewModel.BannerViewModel.UpdateInfoBar.IsOpen, Mode=OneWay}"
+                        Message="{x:Bind ViewModel.BannerViewModel.UpdateInfoBar.Message, Mode=OneWay}"
+                        Severity="{x:Bind ViewModel.BannerViewModel.UpdateInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
                 </uc:BannerControl.AdditionalBottomContent>
             </uc:BannerControl>
         </StackPanel>
@@ -84,10 +84,13 @@
                     <FontIcon Glyph="&#xF2B7;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ComboBox ItemsSource="{x:Bind ViewModel.AppLanguages}" SelectedIndex="{x:Bind ViewModel.SelectedLanguageIndex, Mode=TwoWay}">
+                    <ComboBox
+                        ItemsSource="{x:Bind ViewModel.LanguageSettingViewModel.Languages}"
+                        SelectedIndex="0"
+                        SelectionChanged="AppLanguage_SelectionChanged">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="m:AppLanguageModel">
-                                <TextBlock Text="{x:Bind Name}" />
+                            <DataTemplate x:DataType="vm:LanguageViewModel">
+                                <TextBlock Text="{x:Bind FriendlyName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -110,16 +113,13 @@
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="Configure settings">
+            <ucab:ActionBlockControl Title="Configure settings" IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE713;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
-                    <StackPanel Margin="-16">
-                        <ucab:ActionBlockControl
-                            Title="Import settings"
-                            IsClickable="True"
-                            IsEnabled="False">
+                    <StackPanel Margin="-16" Spacing="1">
+                        <ucab:ActionBlockControl Title="Import settings" IsClickable="True">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xE8B5;" />
                             </ucab:ActionBlockControl.Icon>
@@ -127,10 +127,7 @@
                                 <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                             </ucab:ActionBlockControl.ActionElement>
                         </ucab:ActionBlockControl>
-                        <ucab:ActionBlockControl
-                            Title="Export settings"
-                            IsClickable="True"
-                            IsEnabled="False">
+                        <ucab:ActionBlockControl Title="Export settings" IsClickable="True">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xEDE2;" />
                             </ucab:ActionBlockControl.Icon>

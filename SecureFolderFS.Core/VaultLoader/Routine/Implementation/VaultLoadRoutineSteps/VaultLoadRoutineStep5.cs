@@ -1,7 +1,8 @@
 ﻿using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.Discoverers;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery;
+using SecureFolderFS.Core.VaultLoader.Discoverers;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutineSteps
 {
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
         {
             vaultLoadDataModel.VaultKeystoreStream = VaultHelpers.FindVaultFile(
                () => new FromVaultPathVaultKeystoreDiscoverer(vaultInstance.FileOperations),
-               vaultFileDiscoverer => vaultFileDiscoverer.OpenStreamToVaultKeystore(vaultInstance.VaultPath.VaultRootPath, Constants.VAULT_KEYSTORE_FILENAME),
+               vaultFileDiscoverer => vaultFileDiscoverer.DiscoverVaultKeystore(vaultInstance.VaultPath.VaultRootPath, Constants.VAULT_KEYSTORE_FILENAME),
                useExternalDiscoverer,
                vaultKeystoreDiscoverer);
 

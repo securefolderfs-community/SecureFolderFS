@@ -14,6 +14,24 @@
 
         public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
 
+        public static class FileSystemId
+        {
+            public const string DOKAN_ID = "DOKANY";
+        }
+
+        public static class CipherId
+        {
+            public const string NONE = "None";
+
+            public const string AES_CTR_HMAC = "AES-CTR_HMAC";
+
+            public const string AES_GCM = "AES-GCM";
+
+            public const string XCHACHA20_POLY1305 = "XChaCha20-Poly1305";
+
+            public const string AES_SIV = "AES-SIV";
+        }
+
         internal static class FileSystem
         {
             public const int INVALID_FILE_ATTRIBUTES = -0x1;

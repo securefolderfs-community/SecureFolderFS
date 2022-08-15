@@ -1,12 +1,11 @@
 ﻿using System;
-using SecureFolderFS.Sdk.SecureStore;
+using SecureFolderFS.Core.Sdk.SecureStore;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.SecureStore
 {
-    internal sealed class SecretKey : IDisposable, ICopyable<SecretKey>
+    internal sealed class SecretKey : IDisposable
     {
         private readonly LockedArray<byte> _internal;
 

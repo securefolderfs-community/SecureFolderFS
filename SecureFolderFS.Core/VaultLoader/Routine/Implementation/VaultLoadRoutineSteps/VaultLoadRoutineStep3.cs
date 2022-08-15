@@ -1,7 +1,8 @@
 ﻿using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.Discoverers;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Core.VaultLoader.Discoverers.ConfigurationDiscovery;
+using SecureFolderFS.Core.VaultLoader.Discoverers;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutineSteps
 {
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
         {
             vaultLoadDataModel.VaultConfigurationStream = VaultHelpers.FindVaultFile(
                 () => new FromVaultPathVaultConfigurationDiscoverer(vaultInstance.FileOperations),
-                vaultFileDiscoverer => vaultFileDiscoverer.OpenStreamToVaultConfig(vaultInstance.VaultPath.VaultRootPath, Constants.VAULT_CONFIGURATION_FILENAME),
+                vaultFileDiscoverer => vaultFileDiscoverer.DiscoverVaultConfig(vaultInstance.VaultPath.VaultRootPath, Constants.VAULT_CONFIGURATION_FILENAME),
                 useExternalDiscoverer,
                 vaultConfigurationDiscoverer);
 

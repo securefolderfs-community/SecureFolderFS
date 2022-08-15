@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Enums;
+﻿using System;
+using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.UnsafeNative;
 
@@ -20,22 +21,28 @@ namespace SecureFolderFS.Core.Helpers
             try
             {
                 dokanVersion = UnsafeNativeApis.DokanVersion();
-                dokanDriverVersion = UnsafeNativeApis.DokanDriverVersion();
+                if (dokanVersion <= 0)
+                    return FileSystemAvailabilityErrorType.ModuleNotAvailable;
             }
-            catch
+            catch (Exception)
             {
-                return FileSystemAvailabilityErrorType.ModuleNotAvailable | FileSystemAvailabilityErrorType.DriverNotAvailable;
+                return FileSystemAvailabilityErrorType.ModuleNotAvailable;
+            }
+
+            try
+            {
+                dokanDriverVersion = UnsafeNativeApis.DokanDriverVersion();
+                if (dokanDriverVersion <= 0)
+                    return FileSystemAvailabilityErrorType.DriverNotAvailable;
+            }
+            catch (Exception)
+            {
+                return FileSystemAvailabilityErrorType.DriverNotAvailable;
             }
 
             var error = FileSystemAvailabilityErrorType.None;
-            error |= dokanVersion == 0 ? FileSystemAvailabilityErrorType.ModuleNotAvailable : error;
-            error |= dokanDriverVersion == 0 ? FileSystemAvailabilityErrorType.DriverNotAvailable : error;
-
-            if (error == FileSystemAvailabilityErrorType.None)
-            {
-                error |= dokanVersion > Constants.FileSystem.Dokan.DOKAN_MAX_VERSION ? FileSystemAvailabilityErrorType.VersionTooHigh : error;
-                error |= dokanVersion < Constants.FileSystem.Dokan.DOKAN_VERSION ? FileSystemAvailabilityErrorType.VersionTooLow : error;
-            }
+            error |= dokanVersion > Constants.FileSystem.Dokan.DOKAN_MAX_VERSION ? FileSystemAvailabilityErrorType.VersionTooHigh : error;
+            error |= dokanVersion < Constants.FileSystem.Dokan.DOKAN_VERSION ? FileSystemAvailabilityErrorType.VersionTooLow : error;
 
             return error == FileSystemAvailabilityErrorType.None ? FileSystemAvailabilityErrorType.FileSystemAvailable : error;
         }

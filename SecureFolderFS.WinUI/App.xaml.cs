@@ -1,16 +1,22 @@
 ﻿using Microsoft.UI.Xaml;
 using System;
 using System.Diagnostics;
+using System.IO;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using SecureFolderFS.Backend.Services;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.WinUI.ServiceImplementation;
 using SecureFolderFS.WinUI.WindowViews;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
-using SecureFolderFS.Backend.Services.Settings;
-using SecureFolderFS.WinUI.ServiceImplementation.Settings;
-using SecureFolderFS.WinUI.Serialization;
+using Windows.Storage;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.WinUI.AppModels;
+using SecureFolderFS.WinUI.ServiceImplementation.UserPreferences;
+using SecureFolderFS.WinUI.Storage.NativeStorage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,7 +38,7 @@ namespace SecureFolderFS.WinUI
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             EnsureEarlyApp();
         }
@@ -44,6 +50,15 @@ namespace SecureFolderFS.WinUI
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
+            // Get settings folder
+            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SETTINGS_FOLDER_NAME);
+            _ = Directory.CreateDirectory(settingsFolderPath);
+            var settingsFolder = new NativeFolder(settingsFolderPath);
+
+            // Configure IoC
+            ServiceProvider = ConfigureServices(settingsFolder);
+            Ioc.Default.ConfigureServices(ServiceProvider);
+
             _window = new MainWindow();
             _window.Activate();
         }
@@ -55,26 +70,28 @@ namespace SecureFolderFS.WinUI
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-            // Configure IoC
-            ServiceProvider = ConfigureServices();
-            Ioc.Default.ConfigureServices(ServiceProvider);
-
             // Start AppCenter
             // TODO: Start AppCenter
         }
 
-        private IServiceProvider ConfigureServices()
+        private IServiceProvider ConfigureServices(IModifiableFolder settingsFolder)
         {
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
-                .AddSingleton<ISettingsService, SettingsService>()
-                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
-                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
-                .AddSingleton<ISecuritySettingsService, SecuritySettingsService>(sp => new(sp.GetRequiredService<ISettingsService>().GetSharingContext<ISettingsSharingContext>()))
+                .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
+                .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder))
+                .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
+                .AddSingleton<IVaultsWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
+                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder))
+                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
+                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
+                .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
 
-                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
-                .AddSingleton<IConfidentialStorageService, ConfidentialStorageService>()
+                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
+                .AddTransient<IVaultCreationService, VaultCreationService>()
+                .AddSingleton<IVaultService, VaultService>()
+                .AddSingleton<IFileSystemService, NativeFileSystemService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
@@ -111,6 +128,14 @@ namespace SecureFolderFS.WinUI
 #if !DEBUG
             ExceptionHelpers.LogExceptionToFile(formattedException);
 #endif
+        }
+
+        // Terrible.
+        private static TSettingsService GetSettingsService<TSettingsService>(IServiceProvider serviceProvider,
+            Func<IDatabaseModel<string>, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
+        {
+            var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
+            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl!);
         }
     }
 }

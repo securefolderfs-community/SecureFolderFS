@@ -52,7 +52,10 @@
         </Storyboard>
     </UserControl.Resources>
 
-    <Grid x:Name="GraphsGrid" ColumnSpacing="8">
+    <Grid
+        x:Name="GraphsGrid"
+        Margin="0,8,0,0"
+        ColumnSpacing="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ReadColumn" Width="*" />
             <ColumnDefinition x:Name="WriteColumn" Width="*" />
@@ -64,7 +67,6 @@
             Grid.Column="0"
             ChartPrimaryColor="#4C00AED4"
             Click="ReadGraph_Click"
-            ControlLoaded="{x:Bind ReadGraphLoaded, Mode=TwoWay}"
             Data="{x:Bind ReadGraphData, Mode=OneWay}"
             GraphHeader="Read speeds"
             GraphSubheader="{x:Bind ReadGraphSubheader, Mode=OneWay}">
@@ -82,7 +84,6 @@
             Grid.Column="1"
             ChartPrimaryColor="#4C008d74"
             Click="WriteGraph_Click"
-            ControlLoaded="{x:Bind WriteGraphLoaded, Mode=TwoWay}"
             Data="{x:Bind WriteGraphData, Mode=OneWay}"
             GraphHeader="Write speeds"
             GraphSubheader="{x:Bind WriteGraphSubheader, Mode=OneWay}"

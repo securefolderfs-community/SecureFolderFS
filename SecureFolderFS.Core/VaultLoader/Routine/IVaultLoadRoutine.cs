@@ -1,9 +1,8 @@
-﻿using SecureFolderFS.Core.VaultLoader.Discoverers.ConfigurationDiscovery;
-using SecureFolderFS.Core.VaultLoader.Discoverers.KeystoreDiscovery;
+﻿using SecureFolderFS.Core.Discoverers;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.PasswordRequest;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine
 {
@@ -20,7 +19,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine
 
     public interface IVaultLoadRoutineStep1
     {
-        IVaultLoadRoutineStep2 AddVaultPath(VaultPath vaultPath, string volumeName = null, string mountLocation = null);
+        IVaultLoadRoutineStep2 SetFolder(IFolder vaultFolder, string volumeName = null, string mountLocation = null);
     }
 
     public interface IVaultLoadRoutineStep2
@@ -55,7 +54,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine
 
     public interface IVaultLoadRoutineStep8
     {
-        IVaultLoadRoutineStep9 DeriveMasterKeyFromPassword(DisposablePassword disposablePassword);
+        IVaultLoadRoutineStep9 DeriveMasterKeyFromPassword(IPassword password);
     }
 
     public interface IVaultLoadRoutineStep9

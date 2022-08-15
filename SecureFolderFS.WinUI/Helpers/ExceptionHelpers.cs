@@ -30,9 +30,7 @@ namespace SecureFolderFS.WinUI.Helpers
         public static void LogExceptionToFile(string? formattedException)
         {
             if (formattedException is null)
-            {
                 return;
-            }
 
             try
             {

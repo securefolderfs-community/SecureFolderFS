@@ -1,13 +1,9 @@
 ﻿using System;
 using System.IO;
-using SecureFolderFS.Sdk.Paths;
-using SecureFolderFS.Core.Storage;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.UnsafeNative;
-using SecureFolderFS.Core.Helpers;
 
 using FileAccess = DokanNet.FileAccess;
-using static SecureFolderFS.Core.UnsafeNative.UnsafeNativeDataModels;
-using System.Runtime.InteropServices;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {
@@ -15,16 +11,12 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
     {
         private readonly IntPtr _hFolder;
 
-        public IVaultFolder VaultFolder { get; }
-
-        private DirectoryHandle(IVaultFolder vaultFolder, IntPtr hFolder)
-            : base(vaultFolder.CiphertextPath)
+        private DirectoryHandle(IntPtr hFolder)
         {
-            this.VaultFolder = vaultFolder;
-            this._hFolder = hFolder;
+            _hFolder = hFolder;
         }
 
-        public static DirectoryHandle Open(ICiphertextPath ciphertextPath, IVaultStorageReceiver vaultStorageReceiver, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+        public static DirectoryHandle Open(ICiphertextPath ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
         {
             _ = mode;
 
@@ -48,8 +40,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
 
             //}
 
-            var vaultFolder = vaultStorageReceiver.OpenVaultFolder(ciphertextPath);
-            return new DirectoryHandle(vaultFolder, IntPtr.Zero);
+            return new DirectoryHandle(IntPtr.Zero);
         }
 
         public override void Dispose()

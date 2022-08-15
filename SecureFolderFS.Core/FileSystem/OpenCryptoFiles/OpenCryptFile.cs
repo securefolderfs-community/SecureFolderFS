@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Sdk.Paths;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Streams;
 using SecureFolderFS.Core.Streams.Management;
 using SecureFolderFS.Core.Extensions;
 using SecureFolderFS.Core.Streams;
@@ -31,12 +32,12 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 
         public OpenCryptFile(ICiphertextPath ciphertextPath, Func<IChunkReceiver> chunkReceiver, CiphertextStreamsManager ciphertextStreamsManager, Action<ICiphertextPath> openCryptFileClosedCallback)
         {
-            this._ciphertextPath = ciphertextPath;
-            this._chunkReceiver = chunkReceiver;
-            this._ciphertextStreamsManager = ciphertextStreamsManager;
-            this._openCryptFileClosedCallback = openCryptFileClosedCallback;
+            _ciphertextPath = ciphertextPath;
+            _chunkReceiver = chunkReceiver;
+            _ciphertextStreamsManager = ciphertextStreamsManager;
+            _openCryptFileClosedCallback = openCryptFileClosedCallback;
 
-            this._openedCleartextStreams = new Dictionary<ICleartextFileStream, long>();
+            _openedCleartextStreams = new Dictionary<ICleartextFileStream, long>();
         }
 
         public void Open(ICleartextFileStream cleartextFileStream, ICiphertextFileStream ciphertextFileStream)

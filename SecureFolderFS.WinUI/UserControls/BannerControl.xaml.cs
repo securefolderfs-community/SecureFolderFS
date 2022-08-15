@@ -10,7 +10,7 @@ namespace SecureFolderFS.WinUI.UserControls
     {
         public BannerControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public FrameworkElement LeftSide

@@ -2,27 +2,57 @@
 using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
-using SecureFolderFS.Backend.Services;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    /// <inheritdoc cref="IThreadingService"/>
     internal sealed class ThreadingService : IThreadingService
     {
         private readonly DispatcherQueue _dispatcherQueue;
 
         public ThreadingService()
         {
-            this._dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         }
 
+        /// <inheritdoc/>
+        public IAwaitable ExecuteOnUiThreadAsync()
+        {
+            return new UiThreadAwaitable(_dispatcherQueue);
+        }
+
+        /// <inheritdoc/>
         public Task ExecuteOnUiThreadAsync(Action action)
         {
             return _dispatcherQueue.EnqueueAsync(action);
         }
 
-        public Task<TResult?> ExecuteOnUiThreadAsync<TResult>(Func<TResult?> func)
+        private sealed class UiThreadAwaitable : IAwaitable
         {
-            return _dispatcherQueue.EnqueueAsync<TResult?>(func);
+            private readonly DispatcherQueue _dispatcherQueue;
+
+            public bool IsCompleted => _dispatcherQueue.HasThreadAccess;
+
+            public UiThreadAwaitable(DispatcherQueue dispatcherQueue)
+            {
+                _dispatcherQueue = dispatcherQueue;
+            }
+
+            public IAwaitable GetAwaiter()
+            {
+                return this;
+            }
+
+            public void GetResult()
+            {
+            }
+
+            public void OnCompleted(Action continuation)
+            {
+                _ = _dispatcherQueue.EnqueueAsync(continuation);
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Security;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.FileNames.Receivers
 {
@@ -75,8 +75,8 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
             public FileNameWithDirectoryId(DirectoryId directoryId, string fileName)
             {
-                this._directoryId = directoryId;
-                this._fileName = fileName;
+                _directoryId = directoryId;
+                _fileName = fileName;
             }
 
             public override int GetHashCode()

@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         public SetAllocationSizeCallback(ISetEndOfFileCallback setEndOfFileCallback, HandlesCollection handles)
             : base(handles)
         {
-            this._setEndOfFileCallback = setEndOfFileCallback;
+            _setEndOfFileCallback = setEndOfFileCallback;
         }
 
         public NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)

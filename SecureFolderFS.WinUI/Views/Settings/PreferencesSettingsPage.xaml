@@ -7,16 +7,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:uc2="using:SecureFolderFS.WinUI.UserControls.InfoBars"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Backend.ViewModels.Controls.FileSystemInfoBars"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Settings.Banners"
     Loaded="PreferencesSettingsPage_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
 
-        <DataTemplate x:Key="DokanyNotAvailableInfoBarTemplate" x:DataType="vm:DokanyInfoBarViewModel">
+        <DataTemplate x:Key="DokanyUnavailableInfoBarTemplate" x:DataType="uc2:DokanyInfoBar">
             <InfoBar
                 IsClosable="{x:Bind CanBeClosed, Mode=OneWay}"
                 IsOpen="{x:Bind IsOpen, Mode=OneWay}"
@@ -27,7 +28,7 @@
                         <HyperlinkButton
                             Margin="0,-16,0,0"
                             HorizontalAlignment="Right"
-                            Command="{x:Bind OpenInstallationLinkCommand}"
+                            Command="{x:Bind OpenWebsiteCommand}"
                             Content="Open website" />
                     </Grid>
                 </InfoBar.Content>
@@ -54,14 +55,20 @@
                     <TextBlock
                         FontSize="11"
                         Opacity="0.8"
-                        Text="Choose virtual file system type" />
+                        Text="Choose preferred virtual file system type" />
                 </StackPanel>
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
-                <ComboBox VerticalAlignment="Center" SelectedIndex="{x:Bind ViewModel.ActiveFileSystemAdapter, Mode=TwoWay, Converter={StaticResource GenericEnumConverter}}">
-                    <ComboBox.Items>
-                        <ComboBoxItem Content="Dokany" />
-                    </ComboBox.Items>
+                <ComboBox
+                    x:Name="FileSystemAdapterChoice"
+                    VerticalAlignment="Center"
+                    ItemsSource="{x:Bind ViewModel.BannerViewModel.FileSystemAdapters}"
+                    SelectionChanged="FileSystemComboBox_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:FileSystemAdapterItemViewModel">
+                            <TextBlock Text="{x:Bind Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </uc:BannerControl.RightSide>
             <uc:BannerControl.AdditionalBottomContent>
@@ -69,9 +76,9 @@
                 <ContentControl
                     HorizontalContentAlignment="Stretch"
                     VerticalContentAlignment="Stretch"
-                    Content="{x:Bind ViewModel.ActiveFileSystemInfoBarViewModel.InfoBarViewModel, Mode=OneWay}">
+                    Content="{x:Bind FileSystemInfoBar, Mode=OneWay}">
                     <ContentControl.ContentTemplateSelector>
-                        <ts:FileSystemInfoBarTemplateSelector DokanyNotAvailableInfoBarTemplate="{StaticResource DokanyNotAvailableInfoBarTemplate}" />
+                        <ts:FileSystemInfoBarTemplateSelector DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}" />
                     </ContentControl.ContentTemplateSelector>
                 </ContentControl>
             </uc:BannerControl.AdditionalBottomContent>
@@ -87,7 +94,7 @@
                     <FontIcon Glyph="&#xF71C;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" />
+                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.StartOnSystemStartup, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
@@ -98,7 +105,7 @@
                     <FontIcon Glyph="&#xE7E8;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" />
+                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.ContinueOnLastVault, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
@@ -109,7 +116,7 @@
                     <FontIcon Glyph="&#xED25;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" />
+                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.OpenFolderOnUnlock, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>

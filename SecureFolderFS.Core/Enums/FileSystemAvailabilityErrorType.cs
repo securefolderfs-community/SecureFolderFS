@@ -6,7 +6,7 @@ namespace SecureFolderFS.Core.Enums
     /// Defines types of possible file system availability errors
     /// </summary>
     [Flags]
-    public enum FileSystemAvailabilityErrorType : uint
+    public enum FileSystemAvailabilityErrorType : byte
     {
         /// <summary>
         /// Undetermined state.
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.Enums
         None = 0,
 
         /// <summary>
-        /// The file system and driver have been detected and ready to use
+        /// The file system and driver have been detected and ready to use.
         /// </summary>
         FileSystemAvailable = 1,
 

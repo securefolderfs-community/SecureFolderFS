@@ -7,6 +7,6 @@ namespace SecureFolderFS.Core.Streams.InternalStreams
     internal interface IBaseFileStreamInternal
     {
         [Obsolete("This method should not be used.")]
-        internal SafeFileHandle DangerousGetSafeFileHandle();
+        internal SafeFileHandle DangerousGetInternalSafeFileHandle();
     }
 }

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,8 +20,7 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
 
         public GraphsWidget()
         {
-            this.InitializeComponent();
-
+            InitializeComponent();
             _graphClickSemaphore = new(1, 1);
         }
 
@@ -170,40 +169,24 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
             DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
 
 
-        public bool ReadGraphLoaded
+        // TODO: Make it independent of GraphPointViewModel. Maybe use IList?
+        public ObservableCollection<GraphPointViewModel> ReadGraphData
         {
-            get => (bool)GetValue(ReadGraphLoadedProperty);
-            set => SetValue(ReadGraphLoadedProperty, value);
-        }
-        public static readonly DependencyProperty ReadGraphLoadedProperty =
-            DependencyProperty.Register(nameof(ReadGraphLoaded), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
-
-
-        public bool WriteGraphLoaded
-        {
-            get => (bool)GetValue(WriteGraphLoadedProperty);
-            set => SetValue(WriteGraphLoadedProperty, value);
-        }
-        public static readonly DependencyProperty WriteGraphLoadedProperty =
-            DependencyProperty.Register(nameof(WriteGraphLoaded), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
-
-
-        public ObservableCollection<GraphPointModel> ReadGraphData
-        {
-            get => (ObservableCollection<GraphPointModel>)GetValue(ReadGraphDataProperty);
+            get => (ObservableCollection<GraphPointViewModel>)GetValue(ReadGraphDataProperty);
             set => SetValue(ReadGraphDataProperty, value);
         }
         public static readonly DependencyProperty ReadGraphDataProperty =
-            DependencyProperty.Register(nameof(ReadGraphData), typeof(ObservableCollection<GraphPointModel>), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ReadGraphData), typeof(ObservableCollection<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
 
 
-        public ObservableCollection<GraphPointModel> WriteGraphData
+        // TODO: Make it independent of GraphPointViewModel. Maybe use IList?
+        public ObservableCollection<GraphPointViewModel> WriteGraphData
         {
-            get => (ObservableCollection<GraphPointModel>)GetValue(WriteGraphDataProperty);
+            get => (ObservableCollection<GraphPointViewModel>)GetValue(WriteGraphDataProperty);
             set => SetValue(WriteGraphDataProperty, value);
         }
         public static readonly DependencyProperty WriteGraphDataProperty =
-            DependencyProperty.Register(nameof(WriteGraphData), typeof(ObservableCollection<GraphPointModel>), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(WriteGraphData), typeof(ObservableCollection<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
 
 
         public string ReadGraphSubheader

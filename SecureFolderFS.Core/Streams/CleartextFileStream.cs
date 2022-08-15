@@ -6,11 +6,11 @@ using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Extensions;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.Streams
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.Streams
         public override long Position 
         {
             get => _Position;
-            set => this.Seek(value, SeekOrigin.Begin);
+            set => Seek(value, SeekOrigin.Begin);
         }
 
         public override bool CanRead => _ciphertextFileStream.CanRead;
@@ -67,15 +67,15 @@ namespace SecureFolderFS.Core.Streams
             ICiphertextPath ciphertextPath, FileMode mode, FileAccess access, FileShare share)
             //: base(ciphertextPath, mode, access, share)
         {
-            this._security = security;
-            this._fileSystemOperations = fileSystemOperations;
-            this._chunkFactory = chunkFactory;
-            this._ciphertextFileStream = ciphertextFileStream;
-            this._fileHeader = fileHeader;
-            this._isHeaderWritten = isHeaderWritten;
-            this._ciphertextPath = ciphertextPath;
+            _security = security;
+            _fileSystemOperations = fileSystemOperations;
+            _chunkFactory = chunkFactory;
+            _ciphertextFileStream = ciphertextFileStream;
+            _fileHeader = fileHeader;
+            _isHeaderWritten = isHeaderWritten;
+            _ciphertextPath = ciphertextPath;
 
-            this._Length = _security.ContentCryptor.FileContentCryptor.CalculateCleartextSize(_ciphertextFileStream.Length - _security.ContentCryptor.FileHeaderCryptor.HeaderSize);
+            _Length = _security.ContentCryptor.FileContentCryptor.CalculateCleartextSize(_ciphertextFileStream.Length - _security.ContentCryptor.FileHeaderCryptor.HeaderSize);
         }
 
         public override int Read(Span<byte> buffer)
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Core.Streams
                 return Constants.IO.FILE_EOF;
             }
 
-            var cleartextChunkSize = this._security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
+            var cleartextChunkSize = _security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
             var read = 0;
             var positionInBuffer = 0;
 
@@ -112,7 +112,7 @@ namespace SecureFolderFS.Core.Streams
         {
             ArgumentNullException.ThrowIfNull(buffer);
 
-            return this.Read(buffer.AsSpan(offset, Math.Min(count, buffer.Length - offset)));
+            return Read(buffer.AsSpan(offset, Math.Min(count, buffer.Length - offset)));
         }
 
         public override void Write(ReadOnlySpan<byte> buffer)
@@ -135,7 +135,7 @@ namespace SecureFolderFS.Core.Streams
         {
             ArgumentNullException.ThrowIfNull(buffer);
 
-            this.Write(buffer.AsSpan(offset, Math.Min(count, buffer.Length - offset)));
+            Write(buffer.AsSpan(offset, Math.Min(count, buffer.Length - offset)));
         }
 
         public override void SetLength(long value)
@@ -187,7 +187,7 @@ namespace SecureFolderFS.Core.Streams
 
             long actualPositionToSeek = BeginOfChunk(positionToSeek);
             _ciphertextFileStream.Position = actualPositionToSeek;
-            this._Position = positionToSeek;
+            _Position = positionToSeek;
 
             return _Position;
         }
@@ -218,7 +218,7 @@ namespace SecureFolderFS.Core.Streams
         {
             TryWriteHeader();
 
-            int cleartextChunkSize = this._security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
+            int cleartextChunkSize = _security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
             int written = 0;
             int positionInBuffer = 0;
 
@@ -294,9 +294,9 @@ namespace SecureFolderFS.Core.Streams
             _ciphertextFileStream.Unlock(position, length);
         }
 
-        SafeFileHandle IBaseFileStreamInternal.DangerousGetSafeFileHandle()
+        SafeFileHandle IBaseFileStreamInternal.DangerousGetInternalSafeFileHandle()
         {
-            return _ciphertextFileStream.AsBaseFileStreamInternal().DangerousGetSafeFileHandle();
+            return _ciphertextFileStream.AsBaseFileStreamInternal().DangerousGetInternalSafeFileHandle();
         }
 
         ICiphertextFileStream ICleartextFileStreamInternal.DangerousGetInternalCiphertextFileStream()

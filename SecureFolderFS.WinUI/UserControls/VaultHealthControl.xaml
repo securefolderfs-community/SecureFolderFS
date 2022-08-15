@@ -13,7 +13,7 @@
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:VaultHealthStateToStringConverter x:Key="VaultHealthStateToStringConverter" />
 
-        <DataTemplate x:Key="WithDetailedHealthDataTemplate" x:DataType="local:VaultHealthControl">
+        <DataTemplate x:Key="WithDetailedHealthTemplate" x:DataType="local:VaultHealthControl">
             <StackPanel>
                 <!--  Vault status  -->
                 <TextBlock
@@ -31,7 +31,7 @@
                     TextTrimming="CharacterEllipsis" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="WithoutDetailedHealthDataTemplate" x:DataType="local:VaultHealthControl">
+        <DataTemplate x:Key="WithoutDetailedHealthTemplate" x:DataType="local:VaultHealthControl">
             <Grid />
         </DataTemplate>
     </UserControl.Resources>
@@ -96,7 +96,7 @@
                         <AdaptiveTrigger MinWindowWidth="350" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithDetailedHealthDataTemplate}" />
+                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithDetailedHealthTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <!--  Small window  -->
@@ -105,7 +105,7 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithoutDetailedHealthDataTemplate}" />
+                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithoutDetailedHealthTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

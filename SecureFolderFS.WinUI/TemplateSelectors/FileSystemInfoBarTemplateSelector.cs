@@ -1,19 +1,17 @@
 ﻿using Microsoft.UI.Xaml;
-using SecureFolderFS.Backend.ViewModels.Controls;
-using SecureFolderFS.Backend.ViewModels.Controls.FileSystemInfoBars;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.WinUI.UserControls.InfoBars;
 
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {
-    internal sealed class FileSystemInfoBarTemplateSelector : BaseTemplateSelector<InfoBarViewModel>
+    internal sealed class FileSystemInfoBarTemplateSelector : GenericTemplateSelector<InfoBarViewModel>
     {
-        public DataTemplate? DokanyNotAvailableInfoBarTemplate { get; set; }
+        public DataTemplate? DokanyUnavailableInfoBarTemplate { get; set; }
 
         protected override DataTemplate? SelectTemplateCore(InfoBarViewModel? item, DependencyObject container)
         {
-            if (item is DokanyInfoBarViewModel)
-            {
-                return DokanyNotAvailableInfoBarTemplate;
-            }
+            if (item is DokanyInfoBar)
+                return DokanyUnavailableInfoBarTemplate;
 
             return base.SelectTemplateCore(item, container);
         }

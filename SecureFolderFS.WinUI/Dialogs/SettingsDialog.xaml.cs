@@ -1,23 +1,24 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Backend.Dialogs;
-using SecureFolderFS.Backend.Enums;
-using SecureFolderFS.Backend.Messages;
-using SecureFolderFS.Backend.ViewModels.Dialogs;
-using SecureFolderFS.Backend.ViewModels.Pages.SettingsDialog;
-using SecureFolderFS.WinUI.Views.Settings;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.WinUI.Dialogs
 {
-    public sealed partial class SettingsDialog : ContentDialog, IDialog<SettingsDialogViewModel>, IRecipient<SettingsNavigationRequestedMessage>
+    public sealed partial class SettingsDialog : ContentDialog, IDialog<SettingsDialogViewModel>
     {
+        /// <inheritdoc/>
         public SettingsDialogViewModel ViewModel
         {
             get => (SettingsDialogViewModel)DataContext;
@@ -26,66 +27,33 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         public SettingsDialog()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
+        /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
-        
-        public void Receive(SettingsNavigationRequestedMessage message)
-        {
-            Navigate(message.Value);
-        }
 
-        private void Navigate(BaseSettingsDialogPageViewModel viewModel)
+        private INotifyPropertyChanged GetViewModelForTag(int tag)
         {
-            switch (viewModel)
+            return tag switch
             {
-                case GeneralSettingsPageViewModel:
-                    ContentFrame.Navigate(typeof(GeneralSettingsPage), viewModel, new EntranceNavigationTransitionInfo());
-                    break;
-
-                case PreferencesSettingsPageViewModel:
-                    ContentFrame.Navigate(typeof(PreferencesSettingsPage), viewModel, new EntranceNavigationTransitionInfo());
-                    break;
-
-                case SecuritySettingsPageViewModel:
-                    ContentFrame.Navigate(typeof(SecuritySettingsPage), viewModel, new EntranceNavigationTransitionInfo());
-                    break;
-
-                case AboutSettingsPageViewModel:
-                    ContentFrame.Navigate(typeof(AboutSettingsPage), viewModel, new EntranceNavigationTransitionInfo());
-                    break;
-            }
-        }
-
-        private void SettingsDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Messenger.Register<SettingsNavigationRequestedMessage>(this);
+                0 => new GeneralSettingsPageViewModel(),
+                1 => new PreferencesSettingsPageViewModel(),
+                2 => new PrivacySettingsPageViewModel(),
+                3 => new AboutSettingsPageViewModel(),
+                _ => new GeneralSettingsPageViewModel()
+            };
         }
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
+            if (!ViewModel.Messenger.IsRegistered<NavigationRequestedMessage>(Navigation))
+                ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
+
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
+            var viewModel = GetViewModelForTag(tag);
 
-            switch (tag)
-            {
-                default:
-                case 0:
-                    Navigate(new GeneralSettingsPageViewModel());
-                    break;
-
-                case 1:
-                    Navigate(new PreferencesSettingsPageViewModel());
-                    break;
-
-                case 2:
-                    Navigate(new SecuritySettingsPageViewModel());
-                    break;
-
-                case 3:
-                    Navigate(new AboutSettingsPageViewModel());
-                    break;
-            }
+            Navigation.Navigate(viewModel, new EntranceNavigationTransitionInfo());
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

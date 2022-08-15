@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using SecureFolderFS.Core.UnsafeNative;
-using SecureFolderFS.Sdk.SecureStore;
+using SecureFolderFS.Core.Sdk.SecureStore;
 using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.SecureStore
@@ -23,9 +23,9 @@ namespace SecureFolderFS.Core.SecureStore
         [Pure]
         protected override bool InitializeLock()
         {
-            if (IsSupported() && this.handle.IsAllocated)
+            if (IsSupported() && handle.IsAllocated)
             {
-                IntPtr pBuffer = this.handle.AddrOfPinnedObject();
+                IntPtr pBuffer = handle.AddrOfPinnedObject();
                 UIntPtr cnt = new(length);
                 return UnsafeNativeApis.VirtualLock(pBuffer, cnt);
             }
@@ -37,9 +37,9 @@ namespace SecureFolderFS.Core.SecureStore
         {
             try
             {
-                if (IsSupported() && this.handle.IsAllocated)
+                if (IsSupported() && handle.IsAllocated)
                 {
-                    IntPtr pBuffer = this.handle.AddrOfPinnedObject();
+                    IntPtr pBuffer = handle.AddrOfPinnedObject();
                     UIntPtr cnt = new(length);
                     UnsafeNativeApis.RtlZeroMemory(pBuffer, cnt);
 

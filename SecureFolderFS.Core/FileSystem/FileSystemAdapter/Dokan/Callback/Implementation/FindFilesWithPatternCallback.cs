@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths;
 
@@ -22,8 +22,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         public FindFilesWithPatternCallback(IContentCryptor contentCryptor, IStorageEnumerator storageEnumerator, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            this._contentCryptor = contentCryptor;
-            this._storageEnumerator = storageEnumerator;
+            _contentCryptor = contentCryptor;
+            _storageEnumerator = storageEnumerator;
         }
 
         public NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files, IDokanFileInfo info)

@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
         {
             AssertNotBuilt();
 
-            this.XChaCha20Poly1305Crypt = xChaCha20Poly1305Crypt;
+            XChaCha20Poly1305Crypt = xChaCha20Poly1305Crypt;
             return this;
         }
 
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
         {
             AssertNotBuilt();
 
-            this.AesGcmCrypt = aesGcmCrypt;
+            AesGcmCrypt = aesGcmCrypt;
             return this;
         }
 
@@ -50,7 +50,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
         {
             AssertNotBuilt();
 
-            this.AesCtrCrypt = aesCtrCrypt;
+            AesCtrCrypt = aesCtrCrypt;
             return this;
         }
 
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
         {
             AssertNotBuilt();
 
-            this.AesSivCrypt = aesSivCrypt;
+            AesSivCrypt = aesSivCrypt;
             return this;
         }
 
@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
         {
             AssertNotBuilt();
 
-            this.Argon2idCrypt = argon2idCrypt;
+            Argon2idCrypt = argon2idCrypt;
             return this;
         }
 
@@ -74,7 +74,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
         {
             AssertNotBuilt();
 
-            this.HmacSha256Crypt = hmacSha256Crypt;
+            HmacSha256Crypt = hmacSha256Crypt;
             return this;
         }
 
@@ -82,7 +82,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
         {
             AssertNotBuilt();
 
-            this.Rfc3394KeyWrap = rfc3394KeyWrap;
+            Rfc3394KeyWrap = rfc3394KeyWrap;
             return this;
         }
 

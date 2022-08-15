@@ -6,53 +6,45 @@ using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.FileSystem.StorageEnumeration;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.Storage;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Streams.Receiver;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
 {
     internal sealed class FileSystemAdapterFactory
     {
         private readonly VaultVersion _vaultVersion;
-
         private readonly FileSystemAdapterType _fileSystemAdapterType;
-
         private readonly MountVolumeDataModel _mountVolumeDataModel;
-
         private readonly IContentCryptor _contentCryptor;
-
+        private readonly IFileStreamReceiver _fileStreamReceiver;
         private readonly IFileSystemOperations _fileSystemOperations;
-
         private readonly IPathReceiver _pathReceier;
-
-        private readonly IVaultStorageReceiver _vaultStorageReceiver;
-
         private readonly IStorageEnumerator _storageEnumerator;
-
         private readonly VaultPath _vaultPath;
 
         public FileSystemAdapterFactory(VaultVersion vaultVersion,
             FileSystemAdapterType fileSystemAdapterType,
             MountVolumeDataModel mountVolumeDataModel,
             IContentCryptor contentCryptor,
+            IFileStreamReceiver fileStreamReceiver,
             IFileSystemOperations fileSystemOperations,
             IPathReceiver pathReceier,
-            IVaultStorageReceiver vaultStorageReceiver,
             IStorageEnumerator storageEnumerator,
             VaultPath vaultPath)
         {
-            this._vaultVersion = vaultVersion;
-            this._fileSystemAdapterType = fileSystemAdapterType;
-            this._mountVolumeDataModel = mountVolumeDataModel;
-            this._contentCryptor = contentCryptor;
-            this._fileSystemOperations = fileSystemOperations;
-            this._pathReceier = pathReceier;
-            this._vaultStorageReceiver = vaultStorageReceiver;
-            this._storageEnumerator = storageEnumerator;
-            this._vaultPath = vaultPath;
+            _vaultVersion = vaultVersion;
+            _fileSystemAdapterType = fileSystemAdapterType;
+            _mountVolumeDataModel = mountVolumeDataModel;
+            _contentCryptor = contentCryptor;
+            _fileStreamReceiver = fileStreamReceiver;
+            _fileSystemOperations = fileSystemOperations;
+            _pathReceier = pathReceier;
+            _storageEnumerator = storageEnumerator;
+            _vaultPath = vaultPath;
         }
 
         public IFileSystemAdapter GetFileSystemAdapter()
@@ -69,7 +61,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
 
         public DokanFileSystemAdapter GetDokanFileSystemAdapter()
         {
-            var handles = new HandlesCollection(_vaultStorageReceiver);
+            var handles = new HandlesCollection(_fileStreamReceiver);
             var dokanOperationsCallbacksFactory = new DokanOperationsCallbacksFactory(
                 _vaultVersion,
                 _contentCryptor,

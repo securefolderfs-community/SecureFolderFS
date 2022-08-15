@@ -1,0 +1,104 @@
+﻿<Page
+    x:Class="SecureFolderFS.WinUI.Views.Vault.VaultLoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy"
+    NavigationCacheMode="Disabled"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+
+        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreSelectionViewModel">
+            <StackPanel Spacing="24">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="Provide keystore to continue" />
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind SelectKeystoreCommand}"
+                    Content="Authenticate"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginCredentialsViewModel">
+            <StackPanel Spacing="24">
+                <!--  Password Control  -->
+                <StackPanel Width="400" Spacing="8">
+                    <TextBlock Opacity="0.8" Text="Enter password" />
+                    <PasswordBox
+                        x:Name="VaultPasswordBox"
+                        MinWidth="300"
+                        IsPasswordRevealButtonEnabled="True"
+                        KeyUp="VaultPasswordBox_KeyUp"
+                        Loaded="VaultPasswordBox_Loaded"
+                        PlaceholderText="Password" />
+                </StackPanel>
+
+                <!--  Login  -->
+                <Button
+                    x:Name="ContinueButton"
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Click="ContinueButton_Click"
+                    Content="Unlock"
+                    Loaded="ContinueButton_Loaded"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <Grid>
+            <Grid
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                RowSpacing="32">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!--  Header  -->
+                <StackPanel Grid.Row="0" Spacing="6">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="26"
+                        FontWeight="SemiBold"
+                        Text="{x:Bind ViewModel.VaultName, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTipService.ToolTip="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="14"
+                        Opacity="0.8"
+                        Text="Vault is locked" />
+                </StackPanel>
+
+                <!--  Image  -->
+                <Image Grid.Row="1" />
+
+                <!--  Input  -->
+                <ContentControl
+                    Grid.Row="2"
+                    HorizontalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Content="{x:Bind ViewModel.LoginStrategyViewModel, Mode=OneWay}">
+                    <ContentControl.ContentTemplateSelector>
+                        <ts:LoginMethodTemplateSelector AuthenticateTemplate="{StaticResource AuthenticateTemplate}" LoginTemplate="{StaticResource LoginTemplate}" />
+                    </ContentControl.ContentTemplateSelector>
+                </ContentControl>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Page>

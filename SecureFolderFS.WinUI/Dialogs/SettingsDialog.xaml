@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Loaded="SettingsDialog_Loaded"
+    xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
@@ -44,10 +44,10 @@
                         <FontIcon Glyph="&#xE90F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Security  -->
+                <!--  Privacy  -->
                 <NavigationViewItem
-                    AutomationProperties.Name="Security"
-                    Content="Security"
+                    AutomationProperties.Name="Privacy"
+                    Content="Privacy"
                     Tag="2">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEA18;" />
@@ -66,7 +66,7 @@
 
             <!--  Display frame  -->
             <ScrollViewer Width="644">
-                <Frame x:Name="ContentFrame" />
+                <uc:SettingsNavigationControl x:Name="Navigation" />
             </ScrollViewer>
         </NavigationView>
 

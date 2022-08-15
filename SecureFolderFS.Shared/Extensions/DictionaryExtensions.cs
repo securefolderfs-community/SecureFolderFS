@@ -1,70 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SecureFolderFS.Shared.Extensions
 {
     public static class DictionaryExtensions
     {
-        public static bool AddIfNotPresent<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        public static bool AddIfNotPresent<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> value)
         {
             if (!dictionary.ContainsKey(key))
             {
-                dictionary.Add(key, value);
+                dictionary.Add(key, value());
                 return true;
             }
 
             return false;
+        }
+
+        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> value)
+        {
+            if (dictionary.TryGetValue(key, out var existingValue))
+            {
+                return existingValue;
+            }
+            else
+            {
+                var value2 = value();
+                dictionary.Add(key, value2);
+                return value2;
+            }
         }
 
         public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
-            if (!dictionary.AddIfNotPresent(key, value))
+            if (!dictionary.ContainsKey(key))
             {
-                if (dictionary.Remove(key))
-                {
-                    dictionary.Add(key, value);
-                }
+                dictionary.Add(key, value);       
             }
-        }
-
-
-        public static Dictionary<TKey, TValue?> ToDictionary<TKey, TValue>(this IDictionary<TKey, TValue?> dic)
-            where TKey : notnull
-        {
-            return Enumerable.ToDictionary(dic, kvp => kvp.Key, kvp => kvp.Value);
-        }
-
-        public static Dictionary<TKey, TValue?> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue?>> kvps)
-            where TKey : notnull
-        {
-            return Enumerable.ToDictionary(kvps, kvp => kvp.Key, kvp => kvp.Value);
-        }
-
-        public static bool SetAndGet<TKey, TValue>(this IDictionary<TKey, TValue?> dictionary, TKey key, out TValue? value,
-            Func<TValue> initializer)
-        {
-            if (!dictionary.TryGetValue(key, out value))
-            {
-                value = initializer();
-                dictionary.Add(key, value);
-
-                return true;
-            }
-            else if (dictionary[key] is null)
-            {
-                value ??= initializer();
-                dictionary[key] = value;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public static void AddOrSet<TKey, TValue>(this IDictionary<TKey, TValue?> dictionary, TKey key, TValue? value = default)
-        {
-            if (!dictionary.TryAdd(key, value))
+            else
             {
                 dictionary[key] = value;
             }

@@ -3,7 +3,7 @@ using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileNames.Receivers;
 using SecureFolderFS.Core.Security;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.FileNames.Factory
 {
@@ -19,10 +19,10 @@ namespace SecureFolderFS.Core.FileNames.Factory
 
         public FileNameReceiverFactory(VaultVersion vaultVersion, ISecurity security, IFileSystemStatsTracker fileSystemStatsTracker, FileNameCachingStrategy fileNameCachingStrategy)
         {
-            this._vaultVersion = vaultVersion;
-            this._security = security;
-            this._fileSystemStatsTracker = fileSystemStatsTracker;
-            this._fileNameCachingStrategy = fileNameCachingStrategy;
+            _vaultVersion = vaultVersion;
+            _security = security;
+            _fileSystemStatsTracker = fileSystemStatsTracker;
+            _fileNameCachingStrategy = fileNameCachingStrategy;
         }
 
         public IFileNameReceiver GetFileNameReceiver()

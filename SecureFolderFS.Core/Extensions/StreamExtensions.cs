@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Streams;
 
@@ -36,7 +36,8 @@ namespace SecureFolderFS.Core.Extensions
 
         public static string ReadToEnd(this Stream stream)
         {
-            using var streamReader = new StreamReader(stream, Encoding.UTF8);
+            stream.Seek(0, SeekOrigin.Begin);
+            using var streamReader = new StreamReader(stream, Encoding.UTF8, leaveOpen: true);
 
             return streamReader.ReadToEnd();
         }

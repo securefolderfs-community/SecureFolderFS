@@ -5,9 +5,9 @@ using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
-using SecureFolderFS.Sdk.Streams;
+using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Receiver
 {
@@ -25,10 +25,10 @@ namespace SecureFolderFS.Core.Streams.Receiver
 
         public FileStreamReceiver(ISecurity security, OpenCryptFileReceiver openCryptFileReceiver, IChunkFactory chunkFactory, IFileSystemOperations fileSystemOperations)
         {
-            this._security = security;
-            this._openCryptFileReceiver = openCryptFileReceiver;
-            this._chunkFactory = chunkFactory;
-            this._fileSystemOperations = fileSystemOperations;
+            _security = security;
+            _openCryptFileReceiver = openCryptFileReceiver;
+            _chunkFactory = chunkFactory;
+            _fileSystemOperations = fileSystemOperations;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

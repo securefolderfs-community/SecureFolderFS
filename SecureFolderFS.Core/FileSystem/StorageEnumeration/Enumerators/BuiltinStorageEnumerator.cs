@@ -16,9 +16,9 @@ namespace SecureFolderFS.Core.FileSystem.StorageEnumeration.Enumerators
 
         public BuiltinStorageEnumerator(IFileOperations fileOperations, IDirectoryOperations directoryOperations, IFileSystemHelpers fileSystemHelpers)
         {
-            this._fileOperations = fileOperations;
-            this._directoryOperations = directoryOperations;
-            this._fileSystemHelpers = fileSystemHelpers;
+            _fileOperations = fileOperations;
+            _directoryOperations = directoryOperations;
+            _fileSystemHelpers = fileSystemHelpers;
         }
 
         public IEnumerable<FileEnumerationInfo> EnumerateFileSystemEntries(string path, string searchPattern)

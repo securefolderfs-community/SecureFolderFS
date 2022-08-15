@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration;
+using SecureFolderFS.Core.Discoverers;
+using SecureFolderFS.Core.VaultCreator.Generators;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps
 {
@@ -10,11 +11,11 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
         {
         }
 
-        public IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationGenerator vaultConfigurationGenerator = null)
+        public IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationDiscoverer vaultConfigurationDiscoverer = null)
         {
-            vaultConfigurationGenerator ??= new FromVaultPathVaultConfigurationGenerator(vaultCreationDataModel.FileOperations);
+            vaultConfigurationDiscoverer ??= new FromVaultPathVaultConfigurationGenerator(vaultCreationDataModel.FileOperations);
 
-            vaultCreationDataModel.VaultConfigurationStream = vaultConfigurationGenerator.GenerateVaultConfig(vaultCreationDataModel.VaultPath.VaultRootPath, Constants.VAULT_CONFIGURATION_FILENAME);
+            vaultCreationDataModel.VaultConfigurationStream = vaultConfigurationDiscoverer.DiscoverVaultConfig(vaultCreationDataModel.VaultPath.VaultRootPath, Constants.VAULT_CONFIGURATION_FILENAME);
 
             return new VaultCreationRoutineStep4(vaultCreationDataModel);
         }

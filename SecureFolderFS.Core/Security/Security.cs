@@ -11,8 +11,8 @@ namespace SecureFolderFS.Core.Security
 
         public Security(IContentCryptor contentCryptor, IKeyCryptor keyCryptor)
         {
-            this.ContentCryptor = contentCryptor;
-            this.KeyCryptor = keyCryptor;
+            ContentCryptor = contentCryptor;
+            KeyCryptor = keyCryptor;
         }
 
         public void Dispose()

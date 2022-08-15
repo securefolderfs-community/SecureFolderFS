@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
 
         private HmacSha256Crypt(bool baseInstance)
         {
-            this._isBaseInstance = baseInstance;
+            _isBaseInstance = baseInstance;
         }
 
         internal static HmacSha256Crypt GetBaseInstance()

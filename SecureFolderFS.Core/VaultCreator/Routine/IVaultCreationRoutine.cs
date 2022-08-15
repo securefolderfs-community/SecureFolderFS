@@ -1,12 +1,10 @@
 ﻿using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.PasswordRequest;
-using SecureFolderFS.Sdk.Paths;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
-using SecureFolderFS.Core.VaultCreator.Generators.ConfigurationGeneration;
-using SecureFolderFS.Core.VaultCreator.Generators.KeystoreGeneration;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Shared.Utils;
 using System;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Discoverers;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine
 {
@@ -23,7 +21,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine
 
     public interface IVaultCreationRoutineStep1 : IDisposable
     {
-        IVaultCreationRoutineStep2 SetVaultPath(VaultPath vaultPath);
+        IVaultCreationRoutineStep2 SetVaultFolder(ILocatableFolder vaultFolder);
     }
 
     public interface IVaultCreationRoutineStep2 : IDisposable
@@ -33,17 +31,17 @@ namespace SecureFolderFS.Core.VaultCreator.Routine
 
     public interface IVaultCreationRoutineStep3 : IDisposable
     {
-        IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationGenerator vaultConfigurationGenerator = null);
+        IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationDiscoverer vaultConfigurationDiscoverer = null);
     }
 
     public interface IVaultCreationRoutineStep4 : IDisposable
     {
-        IVaultCreationRoutineStep5 CreateKeystoreFile(IVaultKeystoreGenerator vaultKeystoreGenerator = null);
+        IVaultCreationRoutineStep5 CreateKeystoreFile(IVaultKeystoreDiscoverer vaultKeystoreDiscoverer = null);
     }
 
     public interface IVaultCreationRoutineStep5 : IDisposable
     {
-        IVaultCreationRoutineStep6 CreateContentFolder();
+        IVaultCreationRoutineStep6 CreateContentFolder(); // TODO: This api should work with IModifiableFolder
     }
 
     public interface IVaultCreationRoutineStep6 : IDisposable
@@ -53,7 +51,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine
 
     public interface IVaultCreationRoutineStep7 : IDisposable
     {
-        IVaultCreationRoutineStep8 InitializeKeystoreData(DisposablePassword disposablePassword);
+        IVaultCreationRoutineStep8 InitializeKeystoreData(IPassword password);
     }
 
     public interface IVaultCreationRoutineStep8 : IDisposable

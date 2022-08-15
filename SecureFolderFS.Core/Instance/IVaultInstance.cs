@@ -1,9 +1,7 @@
 ﻿using System;
-using SecureFolderFS.Core.Storage;
-using SecureFolderFS.Core.Tunnels;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Core.Instance
 {
@@ -15,7 +13,7 @@ namespace SecureFolderFS.Core.Instance
     /// </summary>
     public interface IVaultInstance : IDisposable
     {
-        VaultPath VaultPath { get; }
+        IFolder VaultFolder { get; }
 
         string VolumeName { get; }
 
@@ -24,11 +22,5 @@ namespace SecureFolderFS.Core.Instance
         ISecureFolderFSInstance SecureFolderFSInstance { get; }
 
         BaseVaultConfiguration BaseVaultConfiguration { get; }
-
-        IFileTunnel FileTunnel { get; }
-
-        IFolderTunnel FolderTunnel { get; }
-
-        IVaultStorageReceiver VaultStorageReceiver { get; }
     }
 }

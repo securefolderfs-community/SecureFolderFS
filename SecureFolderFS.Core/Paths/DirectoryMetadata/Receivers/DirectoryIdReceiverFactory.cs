@@ -3,7 +3,7 @@ using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.IO;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.VaultDataStore;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
@@ -20,10 +20,10 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
 
         public DirectoryIdReceiverFactory(VaultVersion vaultVersion, DirectoryIdCachingStrategy directoryIdCachingStrategy, IFileOperations fileOperations, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            this._vaultVersion = vaultVersion;
-            this._directoryIdCachingStrategy = directoryIdCachingStrategy;
-            this._fileOperations = fileOperations;
-            this._fileSystemStatsTracker = fileSystemStatsTracker;
+            _vaultVersion = vaultVersion;
+            _directoryIdCachingStrategy = directoryIdCachingStrategy;
+            _fileOperations = fileOperations;
+            _fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public IDirectoryIdReader GetDirectoryIdReader()

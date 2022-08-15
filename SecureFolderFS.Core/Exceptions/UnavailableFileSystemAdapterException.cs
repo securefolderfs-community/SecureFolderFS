@@ -15,7 +15,13 @@ namespace SecureFolderFS.Core.Exceptions
         internal UnavailableFileSystemAdapterException(FileSystemAdapterType fileSystemAdapterType, FileSystemAvailabilityErrorType fileSystemAvailabilityErrorType)
             : base($"The file system adapter: {fileSystemAdapterType} is unavailable.")
         {
-            this.FileSystemAvailabilityErrorType = fileSystemAvailabilityErrorType;
+            FileSystemAvailabilityErrorType = fileSystemAvailabilityErrorType;
+        }
+
+        public UnavailableFileSystemAdapterException(string message)
+            : base(message)
+        {
+            
         }
     }
 }

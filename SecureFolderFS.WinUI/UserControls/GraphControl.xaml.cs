@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
-using SecureFolderFS.Backend.Models;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -18,33 +18,46 @@ namespace SecureFolderFS.WinUI.UserControls
 
         public GraphControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private async void RootButton_Loaded(object sender, RoutedEventArgs e)
         {
-            await Task.Delay(100);
-            _ = FindName("CartesianChart"); // Realize the chart and load it to view
             await Task.Delay(25);
-            ControlLoaded = true;
+            try
+            {
+                _ = FindName("CartesianChart"); // Realize the chart and load it to view
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+            }
         }
 
-        public bool ControlLoaded
+        private async void CartesianChart_Loaded(object sender, RoutedEventArgs e)
         {
-            get => (bool)GetValue(ControlLoadedProperty);
-            set => SetValue(ControlLoadedProperty, value);
+            await Task.Delay(25);
+            GraphLoaded = true;
         }
-        public static readonly DependencyProperty ControlLoadedProperty =
-            DependencyProperty.Register(nameof(ControlLoaded), typeof(bool), typeof(GraphControl), new PropertyMetadata(false));
 
-
-        public ObservableCollection<GraphPointModel> Data
+        private void RootButton_Click(object sender, RoutedEventArgs e)
         {
-            get => (ObservableCollection<GraphPointModel>)GetValue(DataProperty);
+            Click?.Invoke(sender, e);
+        }
+
+        public void Dispose()
+        {
+            CartesianChart?.Dispose();
+        }
+
+        // TODO: Make it independent of GraphPointViewModel. Maybe use IList?
+        public ObservableCollection<GraphPointViewModel> Data
+        {
+            get => (ObservableCollection<GraphPointViewModel>)GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register(nameof(Data), typeof(ObservableCollection<GraphPointModel>), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Data), typeof(ObservableCollection<GraphPointViewModel>), typeof(GraphControl), new PropertyMetadata(null));
 
 
         public string GraphHeader
@@ -91,15 +104,12 @@ namespace SecureFolderFS.WinUI.UserControls
         public static readonly DependencyProperty ChartSecondaryColorProperty =
             DependencyProperty.Register(nameof(ChartSecondaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(null));
 
-
-        public void Dispose()
+        public bool GraphLoaded
         {
-            CartesianChart?.Dispose();
+            get => (bool)GetValue(GraphLoadedProperty);
+            private set => SetValue(GraphLoadedProperty, value);
         }
-
-        private void RootButton_Click(object sender, RoutedEventArgs e)
-        {
-            Click?.Invoke(sender, e);
-        }
+        public static readonly DependencyProperty GraphLoadedProperty =
+            DependencyProperty.Register(nameof(GraphLoaded), typeof(bool), typeof(GraphControl), new PropertyMetadata(false));
     }
 }

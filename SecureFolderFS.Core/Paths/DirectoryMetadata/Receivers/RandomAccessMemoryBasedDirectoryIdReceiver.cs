@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.IO;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
         public RandomAccessMemoryBasedDirectoryIdReceiver(IDirectoryIdReader directoryIdReader, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(directoryIdReader, fileSystemStatsTracker)
         {
-            this._directoryIds = new Dictionary<string, DirectoryId>();
+            _directoryIds = new Dictionary<string, DirectoryId>();
         }
 
         public override DirectoryId GetDirectoryId(string ciphertextPath)

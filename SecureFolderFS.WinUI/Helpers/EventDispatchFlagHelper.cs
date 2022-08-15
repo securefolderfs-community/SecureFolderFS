@@ -1,17 +1,19 @@
-﻿using SecureFolderFS.Backend.Utils;
-using System;
+﻿using System;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.WinUI.Helpers
 {
+    /// <inheritdoc cref="IEventDispatchFlag"/>
     internal sealed class EventDispatchFlagHelper : IEventDispatchFlag
     {
         private readonly Action _flagCallback;
 
         public EventDispatchFlagHelper(Action flagCallback)
         {
-            this._flagCallback = flagCallback;
+            _flagCallback = flagCallback;
         }
 
+        /// <inheritdoc/>
         public void NoForwarding()
         {
             _flagCallback();

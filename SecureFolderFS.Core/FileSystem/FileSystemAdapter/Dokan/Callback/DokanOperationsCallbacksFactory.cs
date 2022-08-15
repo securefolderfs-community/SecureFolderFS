@@ -4,7 +4,7 @@ using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementa
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.FileSystem.StorageEnumeration;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security.ContentCrypt;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.Paths;
@@ -39,14 +39,14 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
             MountVolumeDataModel mountVolumeDataModel,
             HandlesCollection handles)
         {
-            this._vaultVersion = vaultVersion;
-            this._contentCryptor = contentCryptor;
-            this._storageEnumerator = storageEnumerator;
-            this._pathReceiver = pathReceiver;
-            this._fileSystemOperations = fileSystemOperations;
-            this._vaultPath = vaultPath;
-            this._mountVolumeDataModel = mountVolumeDataModel;
-            this._handles = handles;
+            _vaultVersion = vaultVersion;
+            _contentCryptor = contentCryptor;
+            _storageEnumerator = storageEnumerator;
+            _pathReceiver = pathReceiver;
+            _fileSystemOperations = fileSystemOperations;
+            _vaultPath = vaultPath;
+            _mountVolumeDataModel = mountVolumeDataModel;
+            _handles = handles;
         }
 
         public TCallback ForVersion<TCallback>(Func<TCallback> forVersion1, Func<TCallback> forVersion2 = null)

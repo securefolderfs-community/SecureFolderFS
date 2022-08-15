@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata
 
         private DirectoryId(byte[] id)
         {
-            this.Id = id;
+            Id = id;
         }
 
         public static DirectoryId CreateNew()

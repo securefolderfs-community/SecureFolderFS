@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
-using SecureFolderFS.Sdk.Tracking;
+using SecureFolderFS.Core.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.Chunks.IO
 {
@@ -20,10 +20,10 @@ namespace SecureFolderFS.Core.Chunks.IO
 
         public ChunkWriter(ISecurity security, IFileHeader fileHeader, CiphertextStreamsManager ciphertextStreamsManager, IFileSystemStatsTracker fileSystemStatsTracker)
         {
-            this._security = security;
-            this._fileHeader = fileHeader;
-            this._ciphertextStreamsManager = ciphertextStreamsManager;
-            this._fileSystemStatsTracker = fileSystemStatsTracker;
+            _security = security;
+            _fileHeader = fileHeader;
+            _ciphertextStreamsManager = ciphertextStreamsManager;
+            _fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
         public void WriteChunk(long chunkNumber, ICleartextChunk cleartextChunk)

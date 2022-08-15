@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Streams;
+﻿using SecureFolderFS.Core.Sdk.Streams;
 using System;
 
 namespace SecureFolderFS.Core.Streams.Management
@@ -13,8 +13,8 @@ namespace SecureFolderFS.Core.Streams.Management
 
         public CiphertextStreamsManager()
         {
-            this._readOnlyStreams = new StreamsManager<ICiphertextFileStream>();
-            this._readWriteStreams = new StreamsManager<ICiphertextFileStream>();
+            _readOnlyStreams = new StreamsManager<ICiphertextFileStream>();
+            _readWriteStreams = new StreamsManager<ICiphertextFileStream>();
         }
 
         public void AddStream(ICiphertextFileStream ciphertextFileStream)

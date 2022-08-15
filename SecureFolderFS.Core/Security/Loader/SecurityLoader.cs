@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.Security.Loader
 
         public SecurityLoader(IChunkFactory chunkFactory)
         {
-            this._chunkFactory = chunkFactory;
+            _chunkFactory = chunkFactory;
         }
 
         public ISecurity LoadSecurity(BaseVaultConfiguration vaultConfiguration, IKeyCryptor keyCryptor, MasterKey masterKeyCopy)

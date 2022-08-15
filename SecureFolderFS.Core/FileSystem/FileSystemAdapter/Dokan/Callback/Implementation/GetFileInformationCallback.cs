@@ -4,7 +4,7 @@ using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Sdk.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
@@ -18,8 +18,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         public GetFileInformationCallback(IContentCryptor contentCryptor, IStorageEnumerator storageEnumerator, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            this._contentCryptor = contentCryptor;
-            this._storageEnumerator = storageEnumerator;
+            _contentCryptor = contentCryptor;
+            _storageEnumerator = storageEnumerator;
         }
 
         public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)

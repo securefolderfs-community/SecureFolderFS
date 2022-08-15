@@ -13,8 +13,8 @@ namespace SecureFolderFS.Core.Security.KeyCrypt
 
         public KeyCryptFactory(VaultVersion vaultVersion, IEncryptionAlgorithmBuilder encryptionAlgorithmBuilder)
         {
-            this._vaultVersion = vaultVersion;
-            this._encryptionAlgorithmBuilder = encryptionAlgorithmBuilder;
+            _vaultVersion = vaultVersion;
+            _encryptionAlgorithmBuilder = encryptionAlgorithmBuilder;
         }
 
         public IKeyCryptor GetKeyCryptor()

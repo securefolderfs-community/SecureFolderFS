@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.SecureStore;
+﻿using SecureFolderFS.Core.Sdk.SecureStore;
 
 namespace SecureFolderFS.Core.SecureStore
 {
