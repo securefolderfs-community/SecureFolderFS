@@ -7,7 +7,6 @@ namespace SecureFolderFS.Sdk.Services
     /// <summary>
     /// A service to manage current thread execution.
     /// </summary>
-    [Obsolete("This service has been deprecated. Use SynchronizationContext instead for thread manipulation.")]
     public interface IThreadingService
     {
         /// <summary>

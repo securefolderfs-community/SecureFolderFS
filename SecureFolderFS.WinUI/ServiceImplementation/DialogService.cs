@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Windows.Foundation.Metadata;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
@@ -28,7 +29,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
         /// <inheritdoc/>
         public IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel)
-            where TViewModel : INotifyPropertyChanged
+            where TViewModel : class, INotifyPropertyChanged
         {
             if (!_dialogs.TryGetValue(typeof(TViewModel), out var initializer))
                 throw new ArgumentException($"{typeof(TViewModel)} does not have an appropriate dialog associated with it.");
@@ -38,14 +39,16 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 throw new NotSupportedException($"The dialog does not implement {typeof(IDialog<TViewModel>)}.");
 
             dialog.ViewModel = viewModel;
-            contentDialog.XamlRoot = MainWindow.Instance!.Content.XamlRoot;
+
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8))
+                contentDialog.XamlRoot = MainWindow.Instance!.Content.XamlRoot;
 
             return dialog;
         }
 
         /// <inheritdoc/>
         public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel)
-            where TViewModel : INotifyPropertyChanged
+            where TViewModel : class, INotifyPropertyChanged
         {
             return GetDialog(viewModel).ShowAsync();
         }

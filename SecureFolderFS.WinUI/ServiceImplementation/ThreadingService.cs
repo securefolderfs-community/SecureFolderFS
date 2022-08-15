@@ -1,42 +1,43 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CommunityToolkit.WinUI;
+using Microsoft.UI.Dispatching;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utils;
-using SecureFolderFS.WinUI.Dispatching;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="IThreadingService"/>
     internal sealed class ThreadingService : IThreadingService
     {
-        private readonly IThreadDispatcher _threadDispatcher;
+        private readonly DispatcherQueue _dispatcherQueue;
 
         public ThreadingService()
         {
-            _threadDispatcher = new DispatcherQueueDispatcher();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         }
 
         /// <inheritdoc/>
         public IAwaitable ExecuteOnUiThreadAsync()
         {
-            return new UiThreadAwaitable(_threadDispatcher);
+            return new UiThreadAwaitable(_dispatcherQueue);
         }
 
         /// <inheritdoc/>
         public Task ExecuteOnUiThreadAsync(Action action)
         {
-            return _threadDispatcher.DispatchAsync(action);
+            return _dispatcherQueue.EnqueueAsync(action);
         }
 
         private sealed class UiThreadAwaitable : IAwaitable
         {
-            private readonly IThreadDispatcher _threadDispatcher;
+            private readonly DispatcherQueue _dispatcherQueue;
 
-            public bool IsCompleted => _threadDispatcher.HasThreadAccess;
+            public bool IsCompleted => _dispatcherQueue.HasThreadAccess;
 
-            public UiThreadAwaitable(IThreadDispatcher threadDispatcher)
+            public UiThreadAwaitable(DispatcherQueue dispatcherQueue)
             {
-                _threadDispatcher = threadDispatcher;
+                _dispatcherQueue = dispatcherQueue;
             }
 
             public IAwaitable GetAwaiter()
@@ -50,7 +51,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             public void OnCompleted(Action continuation)
             {
-                _ = _threadDispatcher.DispatchAsync(continuation);
+                _ = _dispatcherQueue.EnqueueAsync(continuation);
             }
         }
     }

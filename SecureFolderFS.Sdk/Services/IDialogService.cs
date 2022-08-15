@@ -6,7 +6,7 @@ using SecureFolderFS.Sdk.Models;
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
-    /// A service that manages and opens dialogs.
+    /// A service to manage dialogs.
     /// </summary>
     public interface IDialogService
     {
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <typeparam name="TViewModel">The type of view model.</typeparam>
         /// <param name="viewModel">The view model of the dialog.</param>
         /// <returns>A new instance of <see cref="IDialog{TViewModel}"/> with associated <paramref name="viewModel"/>.</returns>
-        IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel) where TViewModel : INotifyPropertyChanged;
+        IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged;
 
         /// <summary>
         /// Creates and shows appropriate dialog derived from associated <paramref name="viewModel"/>.
@@ -24,6 +24,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <typeparam name="TViewModel">The type of view model.</typeparam>
         /// <param name="viewModel">The view model of the dialog.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="DialogResult"/> based on the selected option.</returns>
-        Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : INotifyPropertyChanged;
+        Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged;
     }
 }

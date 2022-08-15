@@ -21,8 +21,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         private long _currentWriteAmount;
         private int _updateTimeCount;
 
-        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
-
         public GraphControlViewModel ReadGraphViewModel { get; }
 
         public GraphControlViewModel WriteGraphViewModel { get; }
@@ -56,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                 _readRates.AddWithMaxCapacity(_currentReadAmount, Constants.Graphs.GRAPH_REFRESH_RATE);
                 _writeRates.AddWithMaxCapacity(_currentWriteAmount, Constants.Graphs.GRAPH_REFRESH_RATE);
 
-                await CalculateStatistics();
+                CalculateStatistics();
             }
         }
 
@@ -66,10 +64,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             _vaultStatisticsModel.NotifyForBytesWritten(x => _currentWriteAmount += x);
         }
 
-        private async Task CalculateStatistics()
+        private void CalculateStatistics()
         {
-            await ThreadingService.ExecuteOnUiThreadAsync();
-
             var read = Convert.ToInt64(ByteSize.FromBytes(_currentReadAmount).MegaBytes);
             var write = Convert.ToInt64(ByteSize.FromBytes(_currentWriteAmount).MegaBytes);
 
