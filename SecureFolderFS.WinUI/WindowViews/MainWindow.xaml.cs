@@ -48,7 +48,7 @@ namespace SecureFolderFS.WinUI.WindowViews
             themeHelper.UpdateTheme();
 
             // Set min size
-            base.MinHeight = 568;
+            base.MinHeight = 572;
             base.MinWidth = 648;
         }
     }
