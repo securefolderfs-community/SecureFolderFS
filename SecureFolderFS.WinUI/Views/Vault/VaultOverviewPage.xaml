@@ -35,14 +35,9 @@
         </DataTemplate>
     </Page.Resources>
 
-    <ScrollViewer>
-        <!--  Make it a stack panel  -->
-        <Grid RowSpacing="8">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-
+    <!--  Margins are to align the scrollbar to prevent overlap with content  -->
+    <ScrollViewer Margin="-12,0,-12,0">
+        <StackPanel Margin="12,0,12,0" Spacing="8">
             <!--  Widgets  -->
             <ListView Grid.Row="0" ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets}">
                 <!--  Remove Reveal Highlight Effect  -->
@@ -113,6 +108,6 @@
                     </ucab:ActionBlockControl.ActionElement>
                 </ucab:ActionBlockControl>
             </StackPanel>
-        </Grid>
+        </StackPanel>
     </ScrollViewer>
 </Page>
