@@ -24,6 +24,15 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
+        public async Task<bool> HasVaultsAsync(CancellationToken cancellationToken = default)
+        {
+            if (!await EnsureSettingsLoaded(cancellationToken))
+                return false;
+
+            return !SettingsService.VaultPaths.IsEmpty();
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> AddVaultAsync(IVaultModel vault, CancellationToken cancellationToken = default)
         {
             if (!await EnsureSettingsLoaded(cancellationToken))

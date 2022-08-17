@@ -8,12 +8,12 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
     public interface IPrivacySettingsService : ISettingsModel
     {
         /// <summary>
-        /// Determines whether to lock all unlocked vaults when the system is locked.
+        /// Gets or sets the value that determines whether to lock all unlocked vaults when the system is locked.
         /// </summary>
         bool AutoLockVaults { get; set; }
 
         /// <summary>
-        /// Determines whether to use telemetry.
+        /// Gets or sets the value that determines whether to use telemetry.
         /// </summary>
         bool IsTelemetryEnabled { get; set; }
     }

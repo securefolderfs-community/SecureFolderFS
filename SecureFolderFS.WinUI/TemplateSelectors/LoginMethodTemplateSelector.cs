@@ -13,9 +13,13 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
         {
             if (item is LoginKeystoreSelectionViewModel)
+            {
                 return AuthenticateTemplate;
+            }
             else if (item is LoginCredentialsViewModel)
+            {
                 return LoginTemplate;
+            }
 
             return base.SelectTemplateCore(item, container);
         }

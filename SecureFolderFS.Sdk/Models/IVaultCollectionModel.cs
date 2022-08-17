@@ -10,6 +10,13 @@ namespace SecureFolderFS.Sdk.Models
     public interface IVaultCollectionModel
     {
         /// <summary>
+        /// Checks whether there are any vaults saved.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is true if the store contains vaults, otherwise false.</returns>
+        Task<bool> HasVaultsAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Adds provided <see cref="vault"/> to the saved vaults list.
         /// </summary>
         /// <param name="vault">The vault to add.</param>

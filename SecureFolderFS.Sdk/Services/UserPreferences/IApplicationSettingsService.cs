@@ -7,5 +7,9 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
     /// </summary>
     public interface IApplicationSettingsService : ISettingsModel
     {
+        /// <summary>
+        /// Gets or sets the value that determines whether Out of Box Experience was shown.
+        /// </summary>
+        bool IsIntroduced { get; set; }
     }
 }

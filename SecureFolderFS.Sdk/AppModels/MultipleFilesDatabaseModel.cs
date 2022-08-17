@@ -68,7 +68,7 @@ namespace SecureFolderFS.Sdk.AppModels
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
 
-                var allFiles = await _databaseFolder.GetFilesAsync(cancellationToken).ToListAsync();
+                var allFiles = await _databaseFolder.GetFilesAsync(cancellationToken).ToListAsync(cancellationToken);
                 var nonTypeFiles = allFiles.Where(x => !x.Name.Contains(TYPE_FILE_SUFFIX, StringComparison.OrdinalIgnoreCase));
 
                 foreach (var dataFile in nonTypeFiles)

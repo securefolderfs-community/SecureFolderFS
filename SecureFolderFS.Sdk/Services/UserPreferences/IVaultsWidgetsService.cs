@@ -9,8 +9,9 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
     public interface IVaultsWidgetsService : ISettingsModel
     {
         /// <summary>
-        /// Gets or sets the widgets contexts associated with each vault.
+        /// Gets widget context identified by <paramref name="id"/>.
         /// </summary>
+        /// <param name="id">The id associated with a context.</param>
         WidgetsContextDataModel GetWidgetsContextForId(string id);
     }
 }

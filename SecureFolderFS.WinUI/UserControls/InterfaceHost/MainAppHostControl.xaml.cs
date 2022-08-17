@@ -1,37 +1,35 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Linq;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
-using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.AppHost;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using SecureFolderFS.Shared.Extensions;
+using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace SecureFolderFS.WinUI.UserControls
+namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
 {
-    public sealed partial class MainWindowHostControl : UserControl, IRecipient<RemoveVaultMessage>
+    public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>
     {
-        public MainViewModel ViewModel
-        {
-            get => (MainViewModel)DataContext;
-            set => DataContext = value;
-        }
-
-        public MainWindowHostControl()
+        public MainAppHostControl()
         {
             InitializeComponent();
-            ViewModel = new();
-            WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
+        }
+
+        /// <inheritdoc/>
+        public void Receive(RemoveVaultMessage message)
+        {
+            if (ViewModel.SidebarViewModel.SidebarItems.IsEmpty())
+                Navigation.ClearContent();
+
+            Navigation.NavigationCache.Remove(message.VaultModel);
         }
 
         private void NavigateToItem(IVaultModel vaultModel)
@@ -47,26 +45,19 @@ namespace SecureFolderFS.WinUI.UserControls
             Navigation.Navigate(destination, new EntranceNavigationTransitionInfo());
         }
 
+        private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            WeakReferenceMessenger.Default.Register(this);
+            WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(Navigation);
+
+            await ViewModel.InitAsync();
+            Sidebar.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
+        }
+
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is SidebarItemViewModel itemViewModel)
                 NavigateToItem(itemViewModel.VaultModel);
-        }
-
-        private void MainWindowHostControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(Navigation);
-
-            var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var threadingService = Ioc.Default.GetRequiredService<IThreadingService>();
-
-            _ = settingsService.LoadSettingsAsync().ContinueWith(async _ =>
-            {
-                await threadingService.ExecuteOnUiThreadAsync();
-                await ViewModel.InitAsync();
-
-                Sidebar.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
-            });
         }
 
         private void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -85,12 +76,12 @@ namespace SecureFolderFS.WinUI.UserControls
                 await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery(sender.Text);
         }
 
-        public void Receive(RemoveVaultMessage message)
+        public MainAppHostViewModel ViewModel
         {
-            if (ViewModel.SidebarViewModel.SidebarItems.IsEmpty())
-                Navigation.ClearContent();
-
-            Navigation.NavigationCache.Remove(message.VaultModel);
+            get => (MainAppHostViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
         }
+        public static readonly DependencyProperty ViewModelProperty =
+            DependencyProperty.Register(nameof(ViewModel), typeof(MainAppHostViewModel), typeof(MainAppHostControl), new PropertyMetadata(null));
     }
 }

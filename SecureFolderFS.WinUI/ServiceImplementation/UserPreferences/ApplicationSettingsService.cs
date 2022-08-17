@@ -14,5 +14,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 
         /// <inheritdoc/>
         protected override string? SettingsStorageName { get; } = Constants.LocalSettings.APPLICATION_SETTINGS_FILENAME;
+
+        /// <inheritdoc/>
+        public bool IsIntroduced
+        {
+            get => GetSetting(() => false);
+            set => SetSetting(value);
+        }
     }
 }

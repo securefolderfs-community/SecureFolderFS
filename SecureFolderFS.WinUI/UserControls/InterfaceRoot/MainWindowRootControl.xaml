@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.WinUI.UserControls.InterfaceRoot.MainWindowRootControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.UserControls.InterfaceRoot"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:uc2="using:SecureFolderFS.WinUI.UserControls.InterfaceHost"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.AppHost"
+    Loaded="MainWindowRootControl_Loaded"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainAppHostViewModel">
+            <uc2:MainAppHostControl ViewModel="{x:Bind}" />
+        </DataTemplate>
+        <DataTemplate x:Key="NoVaultsAppHostDataTemplate" x:DataType="vm:NoVaultsAppHostViewModel">
+            <uc2:NoVaultsAppHostControl ViewModel="{x:Bind}" />
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <!--  Root  -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--  Titlebar  -->
+        <uc:TitleBarControl
+            x:Name="CustomTitleBar"
+            Grid.Row="0"
+            x:FieldModifier="public" />
+
+        <!--  Main Content  -->
+        <ContentControl
+            Grid.Row="1"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            Content="{x:Bind ViewModel.AppContentViewModel, Mode=OneWay}">
+            <ContentControl.ContentTemplateSelector>
+                <ts:InterfaceHostTemplateSelector MainAppHostDataTemplate="{StaticResource MainAppHostDataTemplate}" NoVaultsAppHostDataTemplate="{StaticResource NoVaultsAppHostDataTemplate}" />
+            </ContentControl.ContentTemplateSelector>
+        </ContentControl>
+    </Grid>
+</UserControl>

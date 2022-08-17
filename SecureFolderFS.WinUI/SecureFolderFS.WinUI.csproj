@@ -33,6 +33,8 @@
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <None Remove="UserControls\GraphControl.xaml" />
+    <None Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
+    <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
     <None Remove="UserControls\MainWindowHostControl.xaml" />
     <None Remove="UserControls\NavigationControl.xaml" />
     <None Remove="UserControls\TitleBarControl.xaml" />
@@ -82,7 +84,13 @@
     <None Update="Assets\AppAssets\GreenShield.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Page Update="UserControls\MainWindowHostControl.xaml">
+    <Page Update="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="UserControls\InterfaceHost\MainAppHostControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="UserControls\InterfaceHost\MainWindowRootControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UserControls\Navigation\NavigationControl.xaml">

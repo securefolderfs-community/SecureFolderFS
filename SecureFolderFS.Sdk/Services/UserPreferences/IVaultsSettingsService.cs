@@ -9,8 +9,9 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
     public interface IVaultsSettingsService : ISettingsModel
     {
         /// <summary>
-        /// Gets or sets the vault contexts associated with each vault.
+        /// Gets vault context identified by <paramref name="id"/>.
         /// </summary>
+        /// <param name="id">The id associated with a context.</param>
         VaultContextDataModel GetVaultContextForId(string id);
     }
 }
