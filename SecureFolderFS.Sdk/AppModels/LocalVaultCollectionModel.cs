@@ -14,14 +14,9 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <inheritdoc cref="IVaultCollectionModel"/>
     public sealed class LocalVaultCollectionModel : BaseSerializedDataModel<ISavedVaultsService>, IVaultCollectionModel
     {
-        private readonly List<IVaultModel> _vaults;
+        private List<IVaultModel>? _vaults;
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
-
-        public LocalVaultCollectionModel()
-        {
-            _vaults = new();
-        }
 
         /// <inheritdoc/>
         public async Task<bool> HasVaultsAsync(CancellationToken cancellationToken = default)
@@ -40,6 +35,8 @@ namespace SecureFolderFS.Sdk.AppModels
 
             if (vault.Folder is not ILocatableFolder vaultFolder)
                 return false;
+
+            _vaults?.Add(vault);
 
             SettingsService.VaultPaths ??= new();
             SettingsService.VaultPaths.Add(vaultFolder.Path);
@@ -60,7 +57,9 @@ namespace SecureFolderFS.Sdk.AppModels
             if (indexToRemove == -1)
                 return false;
 
+            _vaults?.Remove(vault);
             SettingsService.VaultPaths.RemoveAt(indexToRemove);
+
             return await SettingsService.SaveSettingsAsync(cancellationToken);
         }
 
@@ -73,7 +72,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (SettingsService.VaultPaths.IsEmpty())
                 yield break;
 
-            if (!_vaults.IsEmpty())
+            if (_vaults is not null && !_vaults.IsEmpty())
             {
                 foreach (var item in _vaults)
                 {
@@ -81,6 +80,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 }
             }
 
+            _vaults ??= new();
             foreach (var item in SettingsService.VaultPaths)
             {
                 var folder = await FileSystemService.GetFolderFromPathAsync(item, cancellationToken);

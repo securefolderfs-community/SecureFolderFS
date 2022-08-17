@@ -36,45 +36,42 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             ViewModel.AppContentViewModel = message.ViewModel as ObservableObject;
         }
 
-        private async void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            _ = EnsureRootAsync();
+
+            WeakReferenceMessenger.Default.Register(this);
+        }
+
+        private async Task EnsureRootAsync()
         {
             var vaultCollectionModel = new LocalVaultCollectionModel();
             var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
-            var threadingService = Ioc.Default.GetRequiredService<IThreadingService>();
 
             // Small delay for Mica material to load
             await Task.Delay(1);
 
+            // Initialize
+            var result = await Task.WhenAll(applicationSettingsService.LoadSettingsAsync(), vaultCollectionModel.HasVaultsAsync());
+
             // Continue root initialization
-            _ = applicationSettingsService.LoadSettingsAsync()
-                .ContinueWith(_ =>
+            if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped
+            {
+                ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
+            }
+            else
+            {
+                if (result[1]) // Has vaults
                 {
-                    // Check if user was introduced
-                    // TODO: Implement introduction page view model
-                    //if (applicationSettingsService.IsIntroduced)
-                    //    ViewModel.AppContentViewModel = new AppViewModel(vaultCollectionModel);
-                })
-                .ContinueWith(async _ =>
+                    // Show main app screen
+                    ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
+                }
+                else // Doesn't have vaults
                 {
-                    await threadingService.ExecuteOnUiThreadAsync();
-
-                    // Determine which app screen to show
-                    if (ViewModel.AppContentViewModel is null)
-                    {
-                        if (await vaultCollectionModel.HasVaultsAsync())
-                        {
-                            // Show main app screen
-                            ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
-                        }
-                        else
-                        {
-                            // Show no vaults screen
-                            ViewModel.AppContentViewModel = new NoVaultsAppHostViewModel(vaultCollectionModel);
-                        }
-                    }
-                }).Unwrap();
-
-            WeakReferenceMessenger.Default.Register(this);
+                    // Show no vaults screen
+                    ViewModel.AppContentViewModel = new NoVaultsAppHostViewModel(vaultCollectionModel);
+                }
+            }
         }
     }
 }

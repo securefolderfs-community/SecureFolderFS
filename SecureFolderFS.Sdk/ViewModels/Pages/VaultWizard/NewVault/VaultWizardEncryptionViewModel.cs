@@ -44,6 +44,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
             if (!deployResult.IsSuccess || deployResult.Value is null)
                 return; // TODO: Report issue
 
+            // TODO: Handle adding vault to VaultCollectionModel here...
+
             Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(deployResult.Value, Messenger, DialogViewModel)));
         }
     }
