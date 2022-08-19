@@ -1,20 +1,13 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using System;
 using System.IO;
 using System.Linq;
-using System.Diagnostics;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Exceptions;
-using SecureFolderFS.Core.DataModels;
 using System.Runtime.InteropServices;
-using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Paths;
-
 using FileAccess = DokanNet.FileAccess;
-using static SecureFolderFS.Core.UnsafeNative.UnsafeNativeDataModels;
-using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -28,281 +21,168 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             _fileSystemOperations = fileSystemOperations;
         }
 
-        public NtStatus CreateFile(string fileName, FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
+        public NtStatus CreateFile(string fileName, FileAccess access, FileShare share, FileMode mode,
+            FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
-            // ATTENTION!
-            /* 
-                Calls to CreateFile with info.IsDirectory set to false,
-                may contain a fileName that points to a directory,
-                and vice versa
-            */
+            ConstructFilePath(fileName,  out ICiphertextPath ciphertextPath);
 
-            // Check for wildcard filenames (filename with metacharacters)
-            if (fileName.Contains('*') || fileName.Contains('?'))
-            {
-                // Return INVALID_NAME
-                return DokanResult.InvalidName;
-            }
+            var result = DokanResult.Success;
+            var filePath = ciphertextPath.Path;
 
-            var currentAccess = access;
-            var foInformation = GetFileObjectInformation(fileName);
-
-            if (!foInformation.PathIsDirectory
-                && (access.HasFlag(FileAccess.GenericWrite)
-                    || access.HasFlag(FileAccess.WriteData)
-                    || access.HasFlag(FileAccess.AppendData)))
-            {
-                currentAccess |= FileAccess.GenericRead; // TODO: Check if adding flags like that is safe
-                if (access.HasFlag(FileAccess.AppendData))
-                {
-                    currentAccess |= FileAccess.WriteData;
-                }
-            }
-
-            if ((!foInformation.PathIsDirectory
-                    && share.HasFlag(FileShare.Write))
-                || (foInformation.PathIsDirectory
-                    && access.HasFlag(FileAccess.Delete)))
-            {
-                share |= FileShare.Read;
-            }
-
-            if (options.HasFlag((FileOptions)FILE_OPTIONS.FILE_FLAG_NO_BUFFERING))
-            {
-                Debugger.Break();
-                options &= ~(FileOptions)FILE_OPTIONS.FILE_FLAG_NO_BUFFERING;
-            }
-
-            if (info.IsDirectory = (foInformation.PathExists ? foInformation.PathIsDirectory : info.IsDirectory))
-            {
-                return CreateDirectoryInternal(fileName, currentAccess, share, mode, options, attributes, foInformation, info);
-            }
-            else
-            {
-                return CreateFileInternal(fileName, access, share, mode, options, attributes, foInformation, info);
-            }
-        }
-
-        private NtStatus CreateDirectoryInternal(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
-        {
-            var returnStatus = DokanResult.Success;
-
-            if (mode == FileMode.CreateNew || mode == FileMode.OpenOrCreate)
+            if (info.IsDirectory)
             {
                 try
                 {
-                    if (mode == FileMode.CreateNew && foInformation.PathExists)
+                    switch (mode)
                     {
-                        return DokanResult.AlreadyExists;
-                    }
-                    else if (_fileSystemOperations.DangerousDirectoryOperations.CreateDirectory(foInformation.CiphertextPath.Path) is not null)
-                    {
-                        // The directory has been created successfully
+                        case FileMode.Open:
+                            if (!Directory.Exists(filePath))
+                            {
+                                try
+                                {
+                                    if (!File.GetAttributes(filePath).HasFlag(FileAttributes.Directory))
+                                        return DokanResult.NotADirectory;
+                                }
+                                catch (Exception)
+                                {
+                                    return DokanResult.FileNotFound;
+                                }
 
-                        if (!_fileSystemOperations.InitializeWithDirectory(foInformation.CiphertextPath, true))
-                        {
-                            // The directory could not be initialized
-                            returnStatus = DokanResult.PathNotFound;
-                        }
+                                return DokanResult.PathNotFound;
+                            }
+
+                            _ = new DirectoryInfo(filePath).EnumerateFileSystemInfos().Any(); // .Any() iterator moves by one - corresponds to FindNextFile
+                            break;
+
+                        case FileMode.CreateNew:
+                            if (Directory.Exists(filePath))
+                                return DokanResult.FileExists;
+
+                            try
+                            {
+                                _ = File.GetAttributes(filePath).HasFlag(FileAttributes.Directory);
+                                return DokanResult.AlreadyExists;
+                            }
+                            catch (IOException)
+                            {
+                            }
+
+                            // Create directory
+                            if (_fileSystemOperations.DangerousDirectoryOperations.CreateDirectory(filePath) is not null)
+                            {
+                                // The directory has been created successfully
+
+                                if (!_fileSystemOperations.InitializeWithDirectory(ciphertextPath, true))
+                                {
+                                    // The directory could not be initialized
+                                    return DokanResult.PathNotFound;
+                                }
+                            }
+                            break;
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    returnStatus = DokanResult.AccessDenied;
-                }
-                catch (IOException ioex) // TODO: Catch errors from CreateDirectory and InitializeWithDirectory
-                {
-                    returnStatus = GetNtStatusFromException(ioex);
+                    return DokanResult.AccessDenied;
                 }
             }
-            else if (mode == FileMode.Open)
+            else
             {
+                var pathExists = true;
+                var pathIsDirectory = false;
+
+                var readWriteAttributes = access.HasFlag(Constants.FileSystem.Dokan.DATA_ACCESS);
+                var readAccess = access.HasFlag(Constants.FileSystem.Dokan.DATA_WRITE_ACCESS);
+
                 try
                 {
-                    if (foInformation.PathExists)
-                    {
-                        // Will throw if unsuccessful and catch UnauthorizedAccessException to return DokanResult.AccessDenied
-                        _ = new DirectoryInfo(foInformation.CiphertextPath.Path).EnumerateFileSystemInfos().Any(); // .Any() iterator moves by one - corresponds to FindNextFile
-                    }
-                    else
-                    {
-                        if (foInformation.PathIsDirectory)
+                    pathExists = (Directory.Exists(filePath) || File.Exists(filePath));
+                    pathIsDirectory = pathExists && File.GetAttributes(filePath).HasFlag(FileAttributes.Directory);
+                }
+                catch (IOException)
+                {
+                }
+
+                switch (mode)
+                {
+                    case FileMode.Open:
+
+                        if (pathExists)
                         {
-                            return DokanResult.PathNotFound;
+                            // Check if driver only wants to read attributes, security info, or open directory
+                            if (readWriteAttributes || pathIsDirectory)
+                            {
+                                if (pathIsDirectory && (access & FileAccess.Delete) == FileAccess.Delete && (access & FileAccess.Synchronize) != FileAccess.Synchronize)
+                                    // It is a DeleteFile request on a directory
+                                    return DokanResult.AccessDenied;
+
+                                info.IsDirectory = pathIsDirectory;
+                                InvalidateContext(info); // Must invalidate before returning DokanResult.Success
+
+                                return DokanResult.Success;
+                            }
                         }
                         else
                         {
                             return DokanResult.FileNotFound;
                         }
-                    }
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    returnStatus = DokanResult.AccessDenied;
-                }
-            }
+                        break;
 
-            try
-            {
-                if (returnStatus == DokanResult.Success)
-                {
-                    if (mode == FileMode.Open)
-                    {
-                        InvalidateContext(info);
-                        return DokanResult.Success;
-                    }
+                    case FileMode.CreateNew:
+                        if (pathExists)
+                            return DokanResult.FileExists;
+                        break;
 
-                    info.Context = handles.OpenHandleToDirectory(foInformation.CiphertextPath, mode, currentAccess, share, options);
-
-                    if (IsContextInvalid(info))
-                    {
-                        int error = Marshal.GetLastWin32Error();
-                        returnStatus = ToNtStatusFromWin32Error(error);
-                    }
-                    else
-                    {
-                        // TODO: Longname?
-                    }
-
-                    //if (mode == FileMode.OpenOrCreate && foInformation.ActualAttributes != (FileAttributes)Constants.FileSystem.INVALID_FILE_ATTRIBUTES)
-                    //{
-                    //    return NtStatus.ObjectNameCollision;
-                    //}
-                }
-            }
-            catch (IOException ioex)
-            {
-                returnStatus = GetNtStatusFromException(ioex);
-            }
-
-            return returnStatus;
-        }
-
-        private NtStatus CreateFileInternal(string fileName, FileAccess currentAccess, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, FileObjectInformation foInformation, IDokanFileInfo info)
-        {
-            var returnStatus = DokanResult.Success;
-
-            if (foInformation.ActualAttributes != (FileAttributes)Constants.FileSystem.INVALID_FILE_ATTRIBUTES)
-            {
-                if ((mode == FileMode.Truncate || mode == FileMode.Create)
-                    && (foInformation.ActualAttributes.HasFlag(FileAttributes.Hidden)
-                        || foInformation.ActualAttributes.HasFlag(FileAttributes.System)))
-                {
-                    // Cannot truncate or overwrite a system or hidden file
-                    return DokanResult.AccessDenied;
+                    case FileMode.Truncate:
+                        if (!pathExists)
+                            return DokanResult.FileNotFound;
+                        break;
                 }
 
-                if (foInformation.ActualAttributes.HasFlag(FileAttributes.ReadOnly))
-                {
-                    if (options.HasFlag(FileOptions.DeleteOnClose))
-                    {
-                        // Cannot delete on close a read-only file
-                        return NtStatus.CannotDelete;
-                    }
-                    else if (currentAccess.HasFlag(FileAccess.GenericWrite) || mode == FileMode.Truncate)
-                    {
-                        // Don't overwrite read-only files
-                        return DokanResult.AccessDenied;
-                    }
-                }
-            }
-
-            if (foInformation.IsCoreFile)
-            {
-                returnStatus = DokanResult.Success;
-                InvalidateContext(info);
-            }
-            else
-            {
                 try
                 {
-                    if (!foInformation.PathExists && (mode == FileMode.Truncate || mode == FileMode.Open))
-                    {
-                        return DokanResult.FileNotFound;
-                    }
-                    else if (mode == FileMode.Truncate)
-                    {
-                        if (!currentAccess.HasFlag(FileAccess.GenericWrite))
-                        {
-                            Debugger.Break();
-                            return DokanResult.InvalidParameter;
-                        }
-                    }
+                    var openAccess = readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
+                    info.Context = handles.OpenHandleToFile(ciphertextPath, mode, openAccess, share, options);
 
-                    bool readWriteAttributes = currentAccess.HasFlag(Constants.FileSystem.Dokan.DATA_ACCESS);
-                    bool readAccess = currentAccess.HasFlag(Constants.FileSystem.Dokan.DATA_WRITE_ACCESS);
-                    System.IO.FileAccess openAccess =
-                        readAccess ? System.IO.FileAccess.Read : System.IO.FileAccess.ReadWrite;
-                    info.Context =
-                        handles.OpenHandleToFile(foInformation.CiphertextPath, mode, openAccess, share, options);
-                    // TODO: Catch AlreadyExists exception
+                    if (pathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
+                        result = DokanResult.AlreadyExists;
 
-                    if (foInformation.PathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
+                    var fileCreated = mode == FileMode.CreateNew || mode == FileMode.Create || (!pathExists && mode == FileMode.OpenOrCreate);
+                    if (fileCreated)
                     {
-                        returnStatus = DokanResult.AlreadyExists;
-                    }
+                        var attributes2 = attributes;
+                        attributes2 |= FileAttributes.Archive; // Files are always created with FileAttributes.Archive
 
-                    if (mode == FileMode.CreateNew || mode == FileMode.Create ||
-                        (!foInformation.PathExists && mode == FileMode.OpenOrCreate))
-                    {
-                        // File was created...
-                        FileAttributes newAttributes = attributes;
-                        newAttributes |= FileAttributes.Archive; // Files are always created as Archive
                         // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
-                        newAttributes &= ~FileAttributes.Normal;
-                        _fileSystemOperations.DangerousFileOperations.SetAttributes(foInformation.CiphertextPath.Path,
-                            newAttributes);
+                        attributes2 &= ~FileAttributes.Normal;
+                        File.SetAttributes(filePath, attributes2);
                     }
                 }
-                catch (IOException ioex)
+                catch (UnauthorizedAccessException) // Don't have access rights
                 {
-                    if (ioex.IsFileAlreadyExistsException())
+                    // Must invalidate here, because cleanup is not called
+                    CloseHandle(info);
+                    InvalidateContext(info);
+                    return DokanResult.AccessDenied;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    return DokanResult.PathNotFound;
+                }
+                catch (Exception ex)
+                {
+                    var hr = (uint)Marshal.GetHRForException(ex);
+                    switch (hr)
                     {
-                        return DokanResult.AlreadyExists;
+                        case 0x80070020: //Sharing violation
+                            return DokanResult.SharingViolation;
+                        default:
+                            throw;
                     }
                 }
-                catch (IntegrityException)
-                {
-                    return NtStatus.CrcError;
-                }
             }
 
-            return returnStatus;
-        }
-
-        private FileObjectInformation GetFileObjectInformation(string fileName)
-        {
-            ConstructFilePath(fileName, out var cleartextPath, out var ciphertextPath);
-            var isCoreFile = PathHelpers.IsCoreFile(fileName);
-
-            var actualAttributes = (FileAttributes)Constants.FileSystem.INVALID_FILE_ATTRIBUTES;
-            var pathExists = true;
-            var pathIsDirectory = false;
-
-            try
-            {
-                pathExists = _fileSystemOperations.DangerousFileOperations.Exists(ciphertextPath.Path) || _fileSystemOperations.DangerousDirectoryOperations.Exists(ciphertextPath.Path);
-
-                if (pathExists)
-                {
-                    actualAttributes = isCoreFile ? FileAttributes.Normal : _fileSystemOperations.DangerousFileOperations.GetAttributes(ciphertextPath.Path);
-                    pathIsDirectory = actualAttributes.HasFlag(FileAttributes.Directory);
-                }
-            }
-            catch (Exception)
-            {
-                // File state could not be determined.
-            }
-
-            return new FileObjectInformation()
-            {
-                CleartextPath = cleartextPath,
-                CiphertextPath = ciphertextPath,
-                ActualAttributes = actualAttributes,
-                IsCoreFile = isCoreFile,
-                PathExists = pathExists,
-                PathIsDirectory = pathIsDirectory
-            };
+            return result;
         }
     }
 }

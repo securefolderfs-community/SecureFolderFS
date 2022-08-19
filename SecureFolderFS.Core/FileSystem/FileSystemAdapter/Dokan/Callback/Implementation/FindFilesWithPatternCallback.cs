@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.Security.ContentCrypt;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Helpers;
@@ -17,13 +16,10 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IContentCryptor _contentCryptor;
 
-        private readonly IStorageEnumerator _storageEnumerator;
-
-        public FindFilesWithPatternCallback(IContentCryptor contentCryptor, IStorageEnumerator storageEnumerator, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public FindFilesWithPatternCallback(IContentCryptor contentCryptor, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
             : base(vaultPath, pathReceiver, handles)
         {
             _contentCryptor = contentCryptor;
-            _storageEnumerator = storageEnumerator;
         }
 
         public NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files, IDokanFileInfo info)
@@ -32,27 +28,27 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             {
                 ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
 
-                files = _storageEnumerator
-                    .EnumerateFileSystemEntries(ciphertextPath.Path, searchPattern)
-                    .Select<FileEnumerationInfo, FileInformation?>(item =>
+                files = new DirectoryInfo(ciphertextPath.Path)
+                    .EnumerateFileSystemInfos()
+                    .Select<FileSystemInfo, FileInformation?>(finfo =>
                     {
-                        if (PathHelpers.IsCoreFile(item.FileName))
-                        {
+                        if (PathHelpers.IsCoreFile(finfo.Name) || !DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, true))
                             return null;
-                        }
 
                         try
                         {
-                            var cleartextFileName = pathReceiver.GetCleartextFileName(Path.Combine(ciphertextPath.Path, item.FileName));
+                            var cleartextFileName = pathReceiver.GetCleartextFileName(finfo.FullName);
 
                             return new FileInformation()
                             {
                                 FileName = cleartextFileName,
-                                Attributes = item.Attributes,
-                                CreationTime = item.CreationTime,
-                                LastAccessTime = item.LastAccessTime,
-                                LastWriteTime = item.LastWriteTime,
-                                Length = item.IsFile ? _contentCryptor.FileContentCryptor.CalculateCleartextSize(item.Length - _contentCryptor.FileHeaderCryptor.HeaderSize) : item.Length
+                                Attributes = finfo.Attributes,
+                                CreationTime = finfo.CreationTime,
+                                LastAccessTime = finfo.LastAccessTime,
+                                LastWriteTime = finfo.LastWriteTime,
+                                Length = finfo is FileInfo fileInfo
+                                    ? _contentCryptor.FileContentCryptor.CalculateCleartextSize(fileInfo.Length - _contentCryptor.FileHeaderCryptor.HeaderSize)
+                                    : 0L
                             };
                         }
                         catch (CryptographicException)
@@ -64,8 +60,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                             return null;
                         }
                     })
-                    .Where(item => item is not null)
-                    .Select(item => (FileInformation)item!)
+                    .Where(x => x is not null)
+                    .Select(x => (FileInformation)x!)
                     .ToArray();
 
                 return DokanResult.Success;

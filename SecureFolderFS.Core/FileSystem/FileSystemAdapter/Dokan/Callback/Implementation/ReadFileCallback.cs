@@ -19,36 +19,29 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
-            if (info.IsDirectory)
-            {
-                bytesRead = 0;
-                return DokanResult.AccessDenied;
-            }
-
             ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-            long contextHandle = GetContextValue(info);
-            bool opened = false;
+
+            var contextHandle = Constants.FileSystem.INVALID_HANDLE;
+            var openedNewHandle = false;
+
+            if (IsContextInvalid(info) || handles.GetHandle(GetContextValue(info)) is not FileHandle fileHandle)
+            {
+                // Invalid handle...
+                contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
+                fileHandle = (FileHandle)handles.GetHandle(contextHandle);
+                openedNewHandle = true;
+            }
 
             try
             {
-                if (handles.GetHandle(contextHandle) is not FileHandle fileHandle)
-                {
-                    // Invalid handle...
-                    contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read,
-                        FileShare.Read, FileOptions.None);
-                    fileHandle = (FileHandle)handles.GetHandle(contextHandle);
-
-                    opened = true;
-                }
-
                 // Read file
-                if (opened)
+                if (openedNewHandle)
                 {
                     bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, offset);
                 }
                 else
                 {
-                    lock (fileHandle.CleartextFileStream)
+                    lock (fileHandle!.CleartextFileStream)
                     {
                         bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, offset);
                     }
@@ -81,7 +74,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             }
             finally
             {
-                if (opened)
+                if (openedNewHandle)
                 {
                     handles.Close(contextHandle);
                 }

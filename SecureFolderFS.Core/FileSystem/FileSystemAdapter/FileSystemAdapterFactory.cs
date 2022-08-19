@@ -5,7 +5,6 @@ using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security.ContentCrypt;
 using SecureFolderFS.Core.VaultDataStore;
@@ -23,7 +22,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
         private readonly IFileStreamReceiver _fileStreamReceiver;
         private readonly IFileSystemOperations _fileSystemOperations;
         private readonly IPathReceiver _pathReceier;
-        private readonly IStorageEnumerator _storageEnumerator;
         private readonly VaultPath _vaultPath;
 
         public FileSystemAdapterFactory(VaultVersion vaultVersion,
@@ -33,7 +31,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
             IFileStreamReceiver fileStreamReceiver,
             IFileSystemOperations fileSystemOperations,
             IPathReceiver pathReceier,
-            IStorageEnumerator storageEnumerator,
             VaultPath vaultPath)
         {
             _vaultVersion = vaultVersion;
@@ -43,7 +40,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
             _fileStreamReceiver = fileStreamReceiver;
             _fileSystemOperations = fileSystemOperations;
             _pathReceier = pathReceier;
-            _storageEnumerator = storageEnumerator;
             _vaultPath = vaultPath;
         }
 
@@ -65,7 +61,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
             var dokanOperationsCallbacksFactory = new DokanOperationsCallbacksFactory(
                 _vaultVersion,
                 _contentCryptor,
-                _storageEnumerator,
                 _pathReceier,
                 _fileSystemOperations,
                 _vaultPath,

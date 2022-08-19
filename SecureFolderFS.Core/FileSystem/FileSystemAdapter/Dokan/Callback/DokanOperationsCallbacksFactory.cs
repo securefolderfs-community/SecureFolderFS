@@ -3,7 +3,6 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security.ContentCrypt;
 using SecureFolderFS.Core.VaultDataStore;
@@ -16,8 +15,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         private readonly VaultVersion _vaultVersion;
 
         private readonly IContentCryptor _contentCryptor;
-
-        private readonly IStorageEnumerator _storageEnumerator;
 
         private readonly IPathReceiver _pathReceiver;
 
@@ -32,7 +29,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         public DokanOperationsCallbacksFactory(
             VaultVersion vaultVersion,
             IContentCryptor contentCryptor,
-            IStorageEnumerator storageEnumerator,
             IPathReceiver pathReceiver,
             IFileSystemOperations fileSystemOperations,
             VaultPath vaultPath,
@@ -41,7 +37,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         {
             _vaultVersion = vaultVersion;
             _contentCryptor = contentCryptor;
-            _storageEnumerator = storageEnumerator;
             _pathReceiver = pathReceiver;
             _fileSystemOperations = fileSystemOperations;
             _vaultPath = vaultPath;
@@ -109,7 +104,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         public IGetFileInformationCallback GetGetFileInformationCallback()
         {
             return ForVersion<IGetFileInformationCallback>(
-                forVersion1: () => new GetFileInformationCallback(_contentCryptor, _storageEnumerator, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new GetFileInformationCallback(_contentCryptor, _vaultPath, _pathReceiver, _handles));
         }
 
         public IFindFilesCallback GetFindFilesCallback(IFindFilesWithPatternCallback findFilesWithPatternCallback)
@@ -121,7 +116,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         public IFindFilesWithPatternCallback GetFindFilesWithPatternCallback()
         {
             return ForVersion<IFindFilesWithPatternCallback>(
-                forVersion1: () => new FindFilesWithPatternCallback(_contentCryptor, _storageEnumerator, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new FindFilesWithPatternCallback(_contentCryptor, _vaultPath, _pathReceiver, _handles));
         }
 
         public ISetFileAttributesCallback GetSetFileAttributesCallback()

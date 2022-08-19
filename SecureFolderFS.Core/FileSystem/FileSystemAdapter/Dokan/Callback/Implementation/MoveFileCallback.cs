@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             ConstructFilePath(oldName, out ICiphertextPath oldCiphertextPath);
             ConstructFilePath(newName, out ICiphertextPath newCiphertextPath);
 
-            handles.Close(GetContextValue(info));
+            CloseHandle(info);
             InvalidateContext(info);
 
             var newPathExists = info.IsDirectory
@@ -53,15 +53,11 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                         // Cannot replace directory destination - See MOVEFILE_REPLACE_EXISTING
                         return DokanResult.AccessDenied;
                     }
-                    else
-                    {
-                        if (_fileSystemOperations.PrepareFileForDeletion(newCiphertextPath))
-                        {
-                            _fileSystemOperations.DangerousFileOperations.DeleteFile(newCiphertextPath.Path);
-                            _fileSystemOperations.MoveFile(oldCiphertextPath, newCiphertextPath);
-                        }
-                    }
 
+                    // File
+                    _fileSystemOperations.DangerousFileOperations.DeleteFile(newCiphertextPath.Path);
+                    _fileSystemOperations.MoveFile(oldCiphertextPath, newCiphertextPath);
+                    
                     return DokanResult.Success;
                 }
                 else
@@ -103,7 +99,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     return DokanResult.DiskFull;
                 }
 
-                return DokanResult.Unsuccessful;
+                return DokanResult.AlreadyExists;
             }
         }
     }

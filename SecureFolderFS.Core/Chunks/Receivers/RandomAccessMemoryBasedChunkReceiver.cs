@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Linq;
 using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Shared.Extensions;
@@ -8,12 +8,12 @@ namespace SecureFolderFS.Core.Chunks.Receivers
 {
     internal sealed class RandomAccessMemoryBasedChunkReceiver : BaseChunkReceiver
     {
-        private readonly Dictionary<long, ICleartextChunk> _chunks;
+        private readonly ConcurrentDictionary<long, ICleartextChunk> _chunks;
 
         public RandomAccessMemoryBasedChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(chunkReader, chunkWriter, fileSystemStatsTracker)
         {
-            _chunks = new Dictionary<long, ICleartextChunk>();
+            _chunks = new();
         }
 
         public override ICleartextChunk GetChunk(long chunkNumber)
@@ -44,11 +44,10 @@ namespace SecureFolderFS.Core.Chunks.Receivers
                 var chunkNumberToRemove = _chunks.Keys.First();
                 base.SetChunk(chunkNumberToRemove, _chunks[chunkNumberToRemove]);
 
-                _chunks[chunkNumberToRemove].Dispose();
-                _chunks.Remove(chunkNumberToRemove);
+                _chunks.TryRemove(chunkNumberToRemove, out _);
             }
 
-            _chunks.AddOrReplace(chunkNumber, cleartextChunk);
+            _chunks[chunkNumber] = cleartextChunk;
         }
 
         public override void Flush()
@@ -58,8 +57,8 @@ namespace SecureFolderFS.Core.Chunks.Receivers
             foreach (var chunk in _chunks)
             {
                 chunkWriter.WriteChunk(chunk.Key, chunk.Value);
-                chunk.Value.Dispose();
             }
+
             _chunks.Clear();
         }
 

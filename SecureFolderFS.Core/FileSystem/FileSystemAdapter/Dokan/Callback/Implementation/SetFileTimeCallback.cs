@@ -50,13 +50,13 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
                 ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
 
-                if (creationTime is not null && creationTime.HasValue)
+                if (creationTime is not null)
                     _fileSystemOperations.DangerousFileOperations.SetCreationTime(ciphertextPath.Path, creationTime.Value);
 
-                if (lastAccessTime is not null && lastAccessTime.HasValue)
+                if (lastAccessTime is not null)
                     _fileSystemOperations.DangerousFileOperations.SetLastAccessTime(ciphertextPath.Path, lastAccessTime.Value);
 
-                if (lastWriteTime is not null && lastWriteTime.HasValue)
+                if (lastWriteTime is not null)
                     _fileSystemOperations.DangerousFileOperations.SetLastWriteTime(ciphertextPath.Path, lastWriteTime.Value);
 
                 return DokanResult.Success;

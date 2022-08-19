@@ -2,6 +2,5 @@
 {
     public interface ICleartextFileStream : IBaseFileStream
     {
-        bool CanBeDeleted();
     }
 }

@@ -8,15 +8,11 @@ namespace SecureFolderFS.Core.FileSystem.Operations
 
         IDirectoryOperations DangerousDirectoryOperations { get; }
 
-        bool InitializeWithDirectory(ICiphertextPath ciphertextPath);
-
         bool InitializeWithDirectory(ICiphertextPath ciphertextPath, bool skipExists);
 
         bool CanDeleteDirectory(ICiphertextPath ciphertextPath);
 
         bool PrepareDirectoryForDeletion(ICiphertextPath ciphertextPath);
-
-        bool PrepareFileForDeletion(ICiphertextPath ciphertextPath);
 
         void MoveFile(ICiphertextPath sourceCiphertextPath, ICiphertextPath destinationCiphertextPath);
 

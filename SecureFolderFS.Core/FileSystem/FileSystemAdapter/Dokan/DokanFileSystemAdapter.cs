@@ -91,7 +91,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
             return DokanResult.NotImplemented;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
             AssertNotDisposed();
@@ -105,7 +104,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
             return DokanResult.NotImplemented;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             AssertNotDisposed();

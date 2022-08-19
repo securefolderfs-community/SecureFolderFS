@@ -11,7 +11,6 @@ using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Extensions;
 using SecureFolderFS.Core.Sdk.Streams;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.Streams
 {
@@ -247,41 +246,6 @@ namespace SecureFolderFS.Core.Streams
 
             _Length = Math.Max(position + written, Length);
             _fileSystemOperations.DangerousFileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
-        }
-
-        public bool CanBeDeleted()
-        {
-            if (CompatibilityHelpers.IsPlatformOSX)
-            {
-                return true;
-            }
-
-            try
-            {
-                _ciphertextFileStream.Lock(0, _ciphertextFileStream.Length);
-            }
-            catch (IOException)
-            {
-                // The file is unavailable because it is:
-                // still being written to
-                // or being processed by another thread
-                // or does not exist
-                return false;
-            }
-            finally
-            {
-                try
-                {
-                    _ciphertextFileStream.Unlock(0, Length);
-                }
-                catch
-                {
-                    // Catch any errors caused by Unlock() (if Lock() had failed).
-                }
-            }
-
-            // File is not locked
-            return true;
         }
 
         public void Lock(long position, long length)

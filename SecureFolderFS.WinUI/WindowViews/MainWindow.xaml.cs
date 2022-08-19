@@ -13,13 +13,15 @@ namespace SecureFolderFS.WinUI.WindowViews
     /// </summary>
     public sealed partial class MainWindow : WindowEx
     {
-        public static MainWindow? Instance { get; private set; }
+#nullable disable
+        public static MainWindow Instance { get; private set; }
+#nullable restore
 
         public MainWindow()
         {
             Instance = this;
-
             InitializeComponent();
+
             EnsureEarlyWindow();
         }
 

@@ -17,9 +17,9 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
             this.handles = handles;
         }
 
-        protected bool CloseHandle(IDokanFileInfo info)
+        protected void CloseHandle(IDokanFileInfo info)
         {
-            return handles.Close(GetContextValue(info));
+            handles.Close(GetContextValue(info));
         }
 
         protected static bool IsContextInvalid(IDokanFileInfo info)

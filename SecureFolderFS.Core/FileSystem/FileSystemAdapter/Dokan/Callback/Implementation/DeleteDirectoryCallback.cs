@@ -18,11 +18,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
         {
-            if (!info.IsDirectory)
-            {
-                return DokanResult.NotADirectory;
-            }
-
             ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
             return _fileSystemOperations.CanDeleteDirectory(ciphertextPath) ? DokanResult.Success : DokanResult.DirectoryNotEmpty;
         }

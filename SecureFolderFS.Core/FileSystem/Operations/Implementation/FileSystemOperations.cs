@@ -20,11 +20,6 @@ namespace SecureFolderFS.Core.FileSystem.Operations.Implementation
             DangerousDirectoryOperations = directoryOperations;
         }
 
-        public bool InitializeWithDirectory(ICiphertextPath ciphertextPath)
-        {
-            return InitializeWithDirectory(ciphertextPath, false);
-        }
-
         public bool InitializeWithDirectory(ICiphertextPath ciphertextPath, bool skipExists)
         {
             if (skipExists || DangerousDirectoryOperations.Exists(ciphertextPath.Path))
@@ -62,13 +57,6 @@ namespace SecureFolderFS.Core.FileSystem.Operations.Implementation
         {
             var directoryIdPath = PathHelpers.AppendDirectoryIdPath(ciphertextPath.Path);
             _directoryIdReceiver.RemoveDirectoryId(directoryIdPath);
-
-            return true;
-        }
-
-        public bool PrepareFileForDeletion(ICiphertextPath ciphertextPath)
-        {
-            // TODO: Remove from filename cache
 
             return true;
         }

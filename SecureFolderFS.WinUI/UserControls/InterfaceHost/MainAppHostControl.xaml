@@ -14,7 +14,7 @@
 
     <UserControl.Resources>
         <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
-        <vc:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
     </UserControl.Resources>
 
     <NavigationView
@@ -66,6 +66,7 @@
                     </StackPanel>
                 </Button>
                 <Button
+                    x:Name="CompactAddVaultButton"
                     Grid.Column="0"
                     Height="36"
                     Margin="-16,16,0,0"
@@ -73,9 +74,9 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
+                    x:Load="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}"
                     Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand}"
-                    Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='invert'}">
+                    Style="{ThemeResource AccentButtonStyle}">
                     <FontIcon FontSize="16" Glyph="&#xECC8;" />
                 </Button>
 
@@ -113,32 +114,19 @@
                         <FontIcon Glyph="&#xF540;" />
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
+                        <StackPanel>
                             <!--  Vault name  -->
                             <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
                                 FontWeight="SemiBold"
                                 Text="{x:Bind VaultModel.VaultName, Mode=OneWay}"
                                 TextTrimming="CharacterEllipsis" />
 
                             <!--  Last opened  -->
                             <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="0"
                                 FontSize="14"
                                 Opacity="0.8"
                                 Text="Undefined" />
-                        </Grid>
+                        </StackPanel>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>

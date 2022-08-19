@@ -5,8 +5,6 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.StorageEnumeration;
-using SecureFolderFS.Core.FileSystem.StorageEnumeration.Enumerators;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Instance.Implementation;
 using SecureFolderFS.Core.Sdk.Tracking;
@@ -28,8 +26,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
         internal FileNameCachingStrategy FileNameCachingStrategy { get; private set; }
 
         internal FileSystemAdapterType FileSystemAdapterType { get; private set; }
-
-        internal IStorageEnumerator StorageEnumerator { get; private set; }
 
         internal MountVolumeDataModel MountVolumeDataModel { get; private set; }
 
@@ -96,14 +92,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
             return this;
         }
 
-        public IOptionalVaultLoadRoutineSteps AddStorageEnumerator(IStorageEnumerator storageEnumerator)
-        {
-            StorageEnumerator = storageEnumerator;
-            _instancedProperties.Add(nameof(StorageEnumerator));
-
-            return this;
-        }
-
         public IOptionalVaultLoadRoutineSteps AddMountVolumeDataModel(MountVolumeDataModel mountVolumeDataModel)
         {
             MountVolumeDataModel = mountVolumeDataModel;
@@ -116,7 +104,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
         {
             var fileSystemAdapterType = FileSystemAvailabilityHelpers.GetAvailableAdapter(FileSystemAdapterType.DokanAdapter);
             FileSystemAdapterType = InitializeIfNotInstantiated(FileSystemAdapterType, () => FileSystemAdapterType.DokanAdapter);
-            StorageEnumerator = InitializeIfNotInstantiated(StorageEnumerator, () => new BuiltinStorageEnumerator(_vaultInstance.FileOperations, _vaultInstance.DirectoryOperations, new FileSystemHelpersFactory(fileSystemAdapterType).GetFileSystemHelpers()));
             MountVolumeDataModel = InitializeIfNotInstantiated(MountVolumeDataModel, () => GetDefaultMountVolumeDataModel(_vaultInstance.VolumeName));
             ChunkCachingStrategy = InitializeIfNotInstantiated(ChunkCachingStrategy, () => ChunkCachingStrategy.RandomAccessMemoryCache);
             DirectoryIdCachingStrategy = InitializeIfNotInstantiated(DirectoryIdCachingStrategy, () => DirectoryIdCachingStrategy.RandomAccessMemoryCache);
@@ -146,7 +133,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                                          .AddFileNameCachingStrategy(FileNameCachingStrategy.RandomAccessMemoryCache)
                                          .AddFileSystemStatsTracker(null)
                                          .AddFileSystemAdapterType(fileSystemAdapterType)
-                                         .AddStorageEnumerator(new BuiltinStorageEnumerator(vaultInstance.FileOperations, vaultInstance.DirectoryOperations, new FileSystemHelpersFactory(fileSystemAdapterType).GetFileSystemHelpers()))
                                          .AddMountVolumeDataModel(GetDefaultMountVolumeDataModel(vaultInstance.VolumeName))
                                          .Finalize();
         }

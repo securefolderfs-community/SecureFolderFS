@@ -1,7 +1,6 @@
 ﻿using DokanNet;
 using System.Collections.Generic;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {

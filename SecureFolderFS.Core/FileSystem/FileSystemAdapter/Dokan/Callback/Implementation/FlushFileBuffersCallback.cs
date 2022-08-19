@@ -33,10 +33,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     return DokanResult.DiskFull;
                 }
             }
-            else
-            {
-                return DokanResult.InvalidHandle;
-            }
+            
+            return DokanResult.InvalidHandle;
         }
     }
 }

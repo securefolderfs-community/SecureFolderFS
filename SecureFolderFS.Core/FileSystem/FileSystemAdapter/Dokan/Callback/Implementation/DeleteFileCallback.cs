@@ -34,14 +34,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             {
                 return DokanResult.AccessDenied;
             }
-            else if (handles.GetHandle(GetContextValue(info)) is FileHandle fileHandle)
-            {
-                return fileHandle.CleartextFileStream.CanBeDeleted() ? DokanResult.Success : DokanResult.AccessDenied;
-            }
-            else
-            {
-                return DokanResult.InvalidHandle;
-            }
+
+            return DokanResult.Success;
         }
     }
 }

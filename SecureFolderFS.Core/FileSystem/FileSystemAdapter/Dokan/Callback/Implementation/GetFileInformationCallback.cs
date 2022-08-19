@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.FileSystem.StorageEnumeration;
 using SecureFolderFS.Core.Security.ContentCrypt;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
@@ -13,13 +12,10 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IContentCryptor _contentCryptor;
 
-        private readonly IStorageEnumerator _storageEnumerator;
-
-        public GetFileInformationCallback(IContentCryptor contentCryptor, IStorageEnumerator storageEnumerator, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public GetFileInformationCallback(IContentCryptor contentCryptor, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
             : base(vaultPath, pathReceiver, handles)
         {
             _contentCryptor = contentCryptor;
-            _storageEnumerator = storageEnumerator;
         }
 
         public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
@@ -27,45 +23,48 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             try
             {
                 ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-                FileEnumerationInfo fileEnumerationInfo = _storageEnumerator.GetFileInfo(ciphertextPath.Path);
 
+                FileSystemInfo finfo = new FileInfo(ciphertextPath.Path);
+                if (!finfo.Exists)
+                    finfo = new DirectoryInfo(ciphertextPath.Path);
+                
                 fileInfo = new FileInformation()
                 {
-                    FileName = fileEnumerationInfo.FileName,
-                    Attributes = fileEnumerationInfo.Attributes,
-                    CreationTime = fileEnumerationInfo.CreationTime,
-                    LastAccessTime = fileEnumerationInfo.LastAccessTime,
-                    LastWriteTime = fileEnumerationInfo.LastWriteTime,
-                    Length = fileEnumerationInfo.IsFile
-                        ? _contentCryptor.FileContentCryptor.CalculateCleartextSize(fileEnumerationInfo.Length - _contentCryptor.FileHeaderCryptor.HeaderSize)
-                        : fileEnumerationInfo.Length
+                    FileName = finfo.Name,
+                    Attributes = finfo.Attributes,
+                    CreationTime = finfo.CreationTime,
+                    LastAccessTime = finfo.LastAccessTime,
+                    LastWriteTime = finfo.LastWriteTime,
+                    Length = finfo is FileInfo fileInfo2
+                        ? _contentCryptor.FileContentCryptor.CalculateCleartextSize(fileInfo2.Length - _contentCryptor.FileHeaderCryptor.HeaderSize)
+                        : 0L
                 };
 
                 return DokanResult.Success;
             }
             catch (PathTooLongException)
             {
-                fileInfo = new FileInformation();
+                fileInfo = default;
                 return DokanResult.InvalidName;
             }
             catch (FileNotFoundException)
             {
-                fileInfo = new FileInformation();
+                fileInfo = default;
                 return DokanResult.FileNotFound;
             }
             catch (DirectoryNotFoundException)
             {
-                fileInfo = new FileInformation();
+                fileInfo = default;
                 return DokanResult.PathNotFound;
             }
             catch (UnauthorizedAccessException)
             {
-                fileInfo = new FileInformation();
+                fileInfo = default;
                 return DokanResult.AccessDenied;
             }
             catch (Exception)
             {
-                fileInfo = new FileInformation();
+                fileInfo = default;
                 return DokanResult.Unsuccessful;
             }
         }

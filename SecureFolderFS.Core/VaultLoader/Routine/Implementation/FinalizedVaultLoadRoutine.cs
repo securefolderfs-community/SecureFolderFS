@@ -70,7 +70,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                 _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver,
                 _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations,
                 _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver,
-                _optionalVaultLoadRoutine.StorageEnumerator,
                 _vaultInstance.VaultPath);
 
             _vaultInstance.SecureFolderFSInstanceImpl.FileSystemAdapter = fileSystemAdapterFactory.GetFileSystemAdapter();

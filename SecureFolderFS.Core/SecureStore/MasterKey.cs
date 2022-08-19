@@ -8,7 +8,6 @@ namespace SecureFolderFS.Core.SecureStore
     internal sealed class MasterKey : UnknownStore<MasterKey>
     {
         private readonly SecretKey _encryptionKey;
-
         private readonly SecretKey _macKey;
 
         private MasterKey(SecretKey encryptionKey, SecretKey macKey)

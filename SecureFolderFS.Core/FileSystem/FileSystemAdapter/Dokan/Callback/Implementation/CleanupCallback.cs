@@ -33,10 +33,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 }
                 else
                 {
-                    if (_fileSystemOperations.PrepareFileForDeletion(ciphertextPath))
-                    {
-                        _fileSystemOperations.DangerousFileOperations.DeleteFile(ciphertextPath.Path);
-                    }
+                    _fileSystemOperations.DangerousFileOperations.DeleteFile(ciphertextPath.Path);
                 }
             }
         }
