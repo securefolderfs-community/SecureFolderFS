@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SecureFolderFS.Core.FileHeaders
+﻿namespace SecureFolderFS.Core.FileHeaders
 {
     internal abstract class BaseFileHeader : IFileHeader
     {
@@ -12,12 +10,6 @@ namespace SecureFolderFS.Core.FileHeaders
         {
             Nonce = nonce;
             ContentKey = contentKey;
-        }
-
-        public virtual void Dispose()
-        {
-            Array.Clear(Nonce);
-            Array.Clear(ContentKey);
         }
     }
 }

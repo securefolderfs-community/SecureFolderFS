@@ -31,14 +31,14 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
         public override byte[] EncryptHeader(AesCtrHmacFileHeader fileHeader)
         {
-            using SecretKey encKey = masterKey.CreateEncryptionKeyCopy();
-            using SecretKey macKey = masterKey.CreateMacKeyCopy();
+            var encKey = masterKey.GetEncryptionKey();
+            var macKey = masterKey.GetMacKey();
 
             // Payload
-            byte[] ciphertextPayload = keyCryptor.AesCtrCrypt.AesCtrEncrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce);
+            var ciphertextPayload = keyCryptor.AesCtrCrypt.AesCtrEncrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce);
 
             // Mac
-            byte[] mac = CalculateFileHeaderMac(macKey, fileHeader.Nonce, ciphertextPayload);
+            var mac = CalculateFileHeaderMac(macKey, fileHeader.Nonce, ciphertextPayload);
 
             return AesCtrHmacFileHeader.ConstructCiphertextFileHeader(fileHeader.Nonce, ciphertextPayload, mac);
         }
@@ -47,8 +47,8 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         {
             AssertNotDisposed();
 
-            using SecretKey encKey = masterKey.CreateEncryptionKeyCopy();
-            using SecretKey macKey = masterKey.CreateMacKeyCopy();
+            var encKey = masterKey.GetEncryptionKey();
+            var macKey = masterKey.GetMacKey();
 
             var nonce = ciphertextFileHeader.Slice(0, AesCtrHmacFileHeader.HEADER_NONCE_SIZE);
             var ciphertextPayload = ciphertextFileHeader.Slice(AesCtrHmacFileHeader.HEADER_NONCE_SIZE, AesCtrHmacFileHeader.HEADER_CONTENTKEY_SIZE);

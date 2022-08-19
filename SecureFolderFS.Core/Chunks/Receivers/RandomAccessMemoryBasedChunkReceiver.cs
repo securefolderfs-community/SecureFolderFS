@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Chunks.Receivers
         public RandomAccessMemoryBasedChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(chunkReader, chunkWriter, fileSystemStatsTracker)
         {
-            _chunks = new();
+            _chunks = new(3, Constants.IO.MAX_CACHED_CHUNKS);
         }
 
         public override ICleartextChunk GetChunk(long chunkNumber)
@@ -66,7 +66,6 @@ namespace SecureFolderFS.Core.Chunks.Receivers
         {
             base.Dispose();
 
-            _chunks.Values.DisposeCollection();
             _chunks.Clear();
         }
     }

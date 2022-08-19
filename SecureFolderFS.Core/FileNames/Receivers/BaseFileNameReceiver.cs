@@ -9,10 +9,7 @@ namespace SecureFolderFS.Core.FileNames.Receivers
     internal abstract class BaseFileNameReceiver : IFileNameReceiver
     {
         protected readonly ISecurity security;
-
         protected readonly IFileSystemStatsTracker fileSystemStatsTracker;
-
-        private bool _disposed;
 
         protected BaseFileNameReceiver(ISecurity security, IFileSystemStatsTracker fileSystemStatsTracker)
         {
@@ -22,8 +19,6 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
         public virtual string GetCleartextFileName(DirectoryId directoryId, string ciphertextFileName)
         {
-            AssertNotDisposed();
-
             fileSystemStatsTracker?.AddFileNameAccess();
 
             var cleartextFileName = security.ContentCryptor.FileNameCryptor.DecryptFileName(
@@ -37,8 +32,6 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
         public virtual string GetCiphertextFileName(DirectoryId directoryId, string cleartextFileName)
         {
-            AssertNotDisposed();
-
             fileSystemStatsTracker?.AddFileNameAccess();
 
             var ciphertextFileName = PathHelpers.AppendExtension(security.ContentCryptor.FileNameCryptor.EncryptFileName(cleartextFileName, directoryId),
@@ -54,23 +47,9 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
         public abstract void SetCiphertextFileName(DirectoryId directoryId, string cleartextFileName, string ciphertextFileName);
 
-        protected void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
-        }
-
-        public virtual void Dispose()
-        {
-            _disposed = true;
-        }
-
-        protected internal sealed class FileNameWithDirectoryId
+        protected internal sealed class FileNameWithDirectoryId : IEquatable<FileNameWithDirectoryId>
         {
             private readonly DirectoryId _directoryId;
-
             private readonly string _fileName;
 
             public FileNameWithDirectoryId(DirectoryId directoryId, string fileName)
@@ -82,6 +61,14 @@ namespace SecureFolderFS.Core.FileNames.Receivers
             public override int GetHashCode()
             {
                 return HashCode.Combine(_directoryId, _fileName);
+            }
+
+            public bool Equals(FileNameWithDirectoryId other)
+            {
+                if (other is null)
+                    return false;
+
+                return other._directoryId.Equals(_directoryId);
             }
 
             public override bool Equals(object obj)

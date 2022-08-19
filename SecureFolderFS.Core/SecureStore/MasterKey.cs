@@ -26,14 +26,14 @@ namespace SecureFolderFS.Core.SecureStore
             return new(_encryptionKey.CreateCopy(), _macKey.CreateCopy());
         }
 
-        public SecretKey CreateEncryptionKeyCopy()
+        public SecretKey GetEncryptionKey()
         {
-            return new SecretKey(_encryptionKey.Key.CloneArray());
+            return _encryptionKey;
         }
 
-        public SecretKey CreateMacKeyCopy()
+        public SecretKey GetMacKey()
         {
-            return new SecretKey(_macKey.Key.CloneArray());
+            return _macKey;
         }
 
         public override bool Equals(MasterKey? other)

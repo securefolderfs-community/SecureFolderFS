@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
                 return false;
             }
 
-            using var macKey = masterKey.CreateMacKeyCopy();
+            var macKey = masterKey.GetMacKey();
             using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance();
 
             hmacSha256Crypt.InitializeHMAC(macKey);

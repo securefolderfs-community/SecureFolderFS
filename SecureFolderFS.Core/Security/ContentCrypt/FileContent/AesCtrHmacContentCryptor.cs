@@ -78,7 +78,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         private byte[] CalculateChunkMac(byte[] fileHeaderNonce, long chunkNumber, ReadOnlySpan<byte> chunkNonce, ReadOnlySpan<byte> ciphertextPayload)
         {
-            using var macKey = _masterKey.CreateMacKeyCopy();
+            var macKey = _masterKey.GetMacKey();
             var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
 
             using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance();

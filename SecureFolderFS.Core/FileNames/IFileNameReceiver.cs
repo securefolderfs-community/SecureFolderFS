@@ -1,9 +1,8 @@
-﻿using System;
-using SecureFolderFS.Core.Paths.DirectoryMetadata;
+﻿using SecureFolderFS.Core.Paths.DirectoryMetadata;
 
 namespace SecureFolderFS.Core.FileNames
 {
-    internal interface IFileNameReceiver : IDisposable
+    internal interface IFileNameReceiver
     {
         string GetCleartextFileName(DirectoryId directoryId, string ciphertextFileName);
 

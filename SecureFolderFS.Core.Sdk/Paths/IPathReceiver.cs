@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SecureFolderFS.Core.Sdk.Paths
+﻿namespace SecureFolderFS.Core.Sdk.Paths
 {
     /// <summary>
     /// Provides module for handling SecureFolderFS paths.
@@ -8,7 +6,7 @@ namespace SecureFolderFS.Core.Sdk.Paths
     /// <br/>
     /// This API is exposed.
     /// </summary>
-    public interface IPathReceiver : IDisposable
+    public interface IPathReceiver
     {
         /// <summary>
         /// Converts provided <paramref name="ciphertextPath"/> to implementation of <typeparamref name="TRequestedPath"/>.

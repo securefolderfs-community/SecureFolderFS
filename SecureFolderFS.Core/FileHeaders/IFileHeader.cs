@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace SecureFolderFS.Core.FileHeaders
+﻿namespace SecureFolderFS.Core.FileHeaders
 {
-    internal interface IFileHeader : IDisposable
+    internal interface IFileHeader
     {
     }
 }

@@ -6,8 +6,6 @@ namespace SecureFolderFS.Core.Chunks.Implementation
     {
         protected readonly byte[] buffer;
 
-        private bool _disposed;
-
         public bool NeedsFlush { get; private set; }
 
         public int ActualLength { get; private set; }
@@ -20,8 +18,6 @@ namespace SecureFolderFS.Core.Chunks.Implementation
 
         public virtual void CopyTo(Span<byte> destinationBuffer, int offset, ref int positionInBuffer)
         {
-            AssertNotDisposed();
-
             var writeCount = Math.Min(ActualLength - offset, destinationBuffer.Length - positionInBuffer);
             var destination = destinationBuffer.Slice(positionInBuffer);
             buffer.AsSpan(offset, writeCount).CopyTo(destination);
@@ -30,8 +26,6 @@ namespace SecureFolderFS.Core.Chunks.Implementation
 
         public virtual void CopyFrom(ReadOnlySpan<byte> sourceBuffer, int offset, ref int positionInBuffer)
         {
-            AssertNotDisposed();
-
             NeedsFlush = true;
 
             var readCount = Math.Min(buffer.Length - offset, sourceBuffer.Length - positionInBuffer);
@@ -44,8 +38,6 @@ namespace SecureFolderFS.Core.Chunks.Implementation
 
         public virtual void SetActualLength(int length)
         {
-            AssertNotDisposed();
-
             if (ActualLength > length)
             {
                 ActualLength = length;
@@ -55,23 +47,7 @@ namespace SecureFolderFS.Core.Chunks.Implementation
 
         public virtual ReadOnlySpan<byte> AsSpan()
         {
-            AssertNotDisposed();
-
             return buffer.AsSpan(0, ActualLength);
-        }
-
-        protected void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
-        }
-
-        public virtual void Dispose()
-        {
-            _disposed = true;
-            Array.Clear(buffer);
         }
     }
 }

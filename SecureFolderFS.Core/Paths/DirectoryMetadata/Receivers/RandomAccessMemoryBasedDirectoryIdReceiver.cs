@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Core.Paths.DirectoryMetadata.IO;
 using SecureFolderFS.Core.Sdk.Tracking;
-using SecureFolderFS.Core.Paths.DirectoryMetadata.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
 {
@@ -13,14 +12,12 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
         public RandomAccessMemoryBasedDirectoryIdReceiver(IDirectoryIdReader directoryIdReader, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(directoryIdReader, fileSystemStatsTracker)
         {
-            _directoryIds = new Dictionary<string, DirectoryId>();
+            _directoryIds = new(Constants.IO.MAX_CACHED_DIRECTORY_IDS);
         }
 
         public override DirectoryId GetDirectoryId(string ciphertextPath)
         {
-            AssertNotDisposed();
-
-            if (!_directoryIds.TryGetValue(ciphertextPath, out DirectoryId directoryId))
+            if (!_directoryIds.TryGetValue(ciphertextPath, out var directoryId))
             {
                 fileSystemStatsTracker?.AddDirectoryIdCacheMiss();
                 directoryId = base.GetDirectoryId(ciphertextPath);
@@ -48,14 +45,7 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
                 _directoryIds.Remove(directoryIdToRemove);
             }
 
-            _directoryIds.AddOrReplace(ciphertextPath, directoryId);
-        }
-
-        public override void Dispose()
-        {
-            _directoryIds.Clear();
-
-            base.Dispose();
+            _directoryIds[ciphertextPath] = directoryId;
         }
     }
 }

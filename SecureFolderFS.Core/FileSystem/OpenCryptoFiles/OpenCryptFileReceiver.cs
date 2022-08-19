@@ -39,9 +39,9 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
             }
 
             var ciphertextStreamsManager = new CiphertextStreamsManager();
-            //var chunkReceiver = GetChunkReceiverForCleartextFileStream(ciphertextStreamsManager, fileHeader);
+            var chunkReceiver = GetChunkReceiverForCleartextFileStream(ciphertextStreamsManager, fileHeader);
 
-            openCryptFile = new OpenCryptFile(ciphertextPath, () => GetChunkReceiverForCleartextFileStream(ciphertextStreamsManager, fileHeader), ciphertextStreamsManager, CloseCryptFile);
+            openCryptFile = new OpenCryptFile(ciphertextPath, chunkReceiver, ciphertextStreamsManager, CloseCryptFile);
             _openCryptFiles.Add(ciphertextPath, openCryptFile);
 
             return openCryptFile;

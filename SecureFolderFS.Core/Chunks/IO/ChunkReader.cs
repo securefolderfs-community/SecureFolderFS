@@ -78,7 +78,6 @@ namespace SecureFolderFS.Core.Chunks.IO
         public void Dispose()
         {
             _disposed = true;
-            _fileHeader?.Dispose();
             _ciphertextStreamsManager?.Dispose();
         }
     }

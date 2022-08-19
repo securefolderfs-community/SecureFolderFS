@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
         public override byte[] EncryptHeader(XChaCha20FileHeader fileHeader)
         {
-            using SecretKey encKey = masterKey.CreateEncryptionKeyCopy();
+            var encKey = masterKey.GetEncryptionKey();
 
             // Payload
             var ciphertextPayload = keyCryptor.XChaCha20Poly1305Crypt.XChaCha20Poly1305Encrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce, out byte[] tag);
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         {
             AssertNotDisposed();
 
-            using SecretKey encKey = masterKey.CreateEncryptionKeyCopy();
+            var encKey = masterKey.GetEncryptionKey();
 
             var nonce = ciphertextFileHeader.Slice(0, XChaCha20FileHeader.HEADER_NONCE_SIZE);
             var ciphertextPayload = ciphertextFileHeader.Slice(XChaCha20FileHeader.HEADER_NONCE_SIZE, XChaCha20FileHeader.HEADER_CONTENTKEY_SIZE);

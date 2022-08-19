@@ -25,11 +25,11 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileName
         {
             AssertNotDisposed();
 
-            using SecretKey encKey = masterKey.CreateEncryptionKeyCopy();
-            using SecretKey macKey = masterKey.CreateMacKeyCopy();
+            var encKey = masterKey.GetEncryptionKey();
+            var macKey = masterKey.GetMacKey();
 
-            byte[] cleartextFileNameBuffer = Encoding.UTF8.GetBytes(cleartextName);
-            byte[] ciphertextFileNameBuffer = EncryptFileName(cleartextFileNameBuffer, encKey, macKey, directoryId);
+            var cleartextFileNameBuffer = Encoding.UTF8.GetBytes(cleartextName);
+            var ciphertextFileNameBuffer = EncryptFileName(cleartextFileNameBuffer, encKey, macKey, directoryId);
 
             return EncodingHelpers.WithBase64UrlEncoding(Convert.ToBase64String(ciphertextFileNameBuffer));
         }
@@ -38,11 +38,11 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileName
         {
             AssertNotDisposed();
 
-            using SecretKey encKey = masterKey.CreateEncryptionKeyCopy();
-            using SecretKey macKey = masterKey.CreateMacKeyCopy();
+            var encKey = masterKey.GetEncryptionKey();
+            var macKey = masterKey.GetMacKey();
 
-            byte[] ciphertextFileNameBuffer = Convert.FromBase64String(EncodingHelpers.WithoutBase64UrlEncoding(ciphertextFileName));
-            byte[] cleartextFileNameBuffer = DecryptFileName(ciphertextFileNameBuffer, encKey, macKey, directoryId);
+            var ciphertextFileNameBuffer = Convert.FromBase64String(EncodingHelpers.WithoutBase64UrlEncoding(ciphertextFileName));
+            var cleartextFileNameBuffer = DecryptFileName(ciphertextFileNameBuffer, encKey, macKey, directoryId);
 
             return Encoding.UTF8.GetString(cleartextFileNameBuffer);
         }

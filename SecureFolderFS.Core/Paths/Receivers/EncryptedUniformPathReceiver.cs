@@ -11,7 +11,6 @@ namespace SecureFolderFS.Core.Paths.Receivers
     internal sealed class EncryptedUniformPathReceiver : BasePathReceiver, IPathReceiver
     {
         private readonly IDirectoryIdReceiver _directoryIdReceiver;
-
         private readonly IFileNameReceiver _fileNameReceiver;
 
         public EncryptedUniformPathReceiver(VaultPath vaultPath, IDirectoryIdReceiver directoryIdReceiver, IFileNameReceiver fileNameReceiver)
@@ -21,13 +20,11 @@ namespace SecureFolderFS.Core.Paths.Receivers
             _fileNameReceiver = fileNameReceiver;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         protected override ICiphertextPath CiphertextPathFromRawCleartextPath(string cleartextPath)
         {
             return new CiphertextPath(GetCorrectPath(cleartextPath, GetCiphertextFileName));
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         protected override ICleartextPath CleartextPathFromRawCiphertextPath(string ciphertextPath)
         {
             return new CleartextPath(GetCorrectPath(ciphertextPath, GetCleartextFileName));
@@ -62,11 +59,6 @@ namespace SecureFolderFS.Core.Paths.Receivers
             }
 
             return !path.EndsWith('\\') ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;
-        }
-
-        public override void Dispose()
-        {
-            _directoryIdReceiver.Dispose();
         }
     }
 }

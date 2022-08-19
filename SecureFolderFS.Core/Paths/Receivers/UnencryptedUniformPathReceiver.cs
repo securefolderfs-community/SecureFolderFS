@@ -31,9 +31,5 @@ namespace SecureFolderFS.Core.Paths.Receivers
         {
             return Path.GetFileName(cleartextFilePath);
         }
-
-        public override void Dispose()
-        {
-        }
     }
 }

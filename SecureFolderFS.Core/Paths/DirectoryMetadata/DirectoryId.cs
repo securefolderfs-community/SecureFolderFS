@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata
 {
-    internal sealed class DirectoryId 
+    internal sealed class DirectoryId : IEquatable<DirectoryId>
     {
         public byte[] Id { get; }
 
@@ -28,6 +29,14 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata
             stream.Read(buffer, 0, buffer.Length);
 
             return new DirectoryId(buffer);
+        }
+
+        public bool Equals(DirectoryId other)
+        {
+            if (other is null)
+                return false;
+
+            return other.Id.SequenceEqual(Id);
         }
     }
 }

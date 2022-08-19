@@ -2,7 +2,7 @@
 
 namespace SecureFolderFS.Core.Chunks
 {
-    internal interface ICleartextChunk : IDisposable
+    internal interface ICleartextChunk
     {
         int ActualLength { get; }
 

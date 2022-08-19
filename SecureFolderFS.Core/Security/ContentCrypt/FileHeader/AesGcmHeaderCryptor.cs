@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
         public override byte[] EncryptHeader(AesGcmFileHeader fileHeader)
         {
-            using SecretKey encKey = masterKey.CreateEncryptionKeyCopy();
+            var encKey = masterKey.GetEncryptionKey();
 
             // Payload
             var ciphertextPayload = keyCryptor.AesGcmCrypt.AesGcmEncrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce, out byte[] tag);
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         {
             AssertNotDisposed();
 
-            using SecretKey encKey = masterKey.CreateEncryptionKeyCopy();
+            var encKey = masterKey.GetEncryptionKey();
 
             try
             {

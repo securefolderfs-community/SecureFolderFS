@@ -145,7 +145,12 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                 VolumeName = volumeName,
                 SerialNumber = Constants.FileSystem.FILESYSTEM_SERIAL_NUMBER,
                 FileSystemName = Constants.FileSystem.FILESYSTEM_NAME,
-                FileSystemFlags = FileSystemFlags.CasePreservedNames | FileSystemFlags.CaseSensitiveSearch | FileSystemFlags.UnicodeOnDisk
+                FileSystemFlags = 
+                    FileSystemFlags.CasePreservedNames
+                    | FileSystemFlags.CaseSensitiveSearch
+                    | FileSystemFlags.PersistentAcls
+                    | FileSystemFlags.SupportsRemoteStorage
+                    | FileSystemFlags.UnicodeOnDisk
             };
         }
     }

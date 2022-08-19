@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using SecureFolderFS.Core.FileSystem.Operations;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata.IO
@@ -8,8 +7,6 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.IO
     {
         private readonly IFileOperations _fileOperations;
 
-        private bool _disposed;
-
         public DirectoryIdReader(IFileOperations fileOperations)
         {
             _fileOperations = fileOperations;
@@ -17,8 +14,6 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.IO
 
         public DirectoryId ReadDirectoryId(string ciphertextPath)
         {
-            AssertNotDisposed();
-
             if (string.IsNullOrEmpty(ciphertextPath))
             {
                 return DirectoryId.GetEmpty();
@@ -30,22 +25,9 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.IO
             }
             else
             {
-                using var fileStream = _fileOperations.OpenFile(ciphertextPath, FileMode.Open, FileAccess.Read);
+                using var fileStream = _fileOperations.OpenFile(ciphertextPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 return DirectoryId.FromFileStream(fileStream);
             }
-        }
-
-        private void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
-        }
-
-        public void Dispose()
-        {
-            _disposed = true;
         }
     }
 }

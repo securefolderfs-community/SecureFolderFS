@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace SecureFolderFS.Core.Paths.DirectoryMetadata
+﻿namespace SecureFolderFS.Core.Paths.DirectoryMetadata
 {
-    internal interface IDirectoryIdReceiver : IDisposable
+    internal interface IDirectoryIdReceiver
     {
         DirectoryId GetDirectoryId(string ciphertextPath);
 

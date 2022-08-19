@@ -18,11 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 
         private readonly ICiphertextPath _ciphertextPath;
 
-        // TODO: Make this instance, not Func! The reason it is Func right now, is that the Func will generate new instance each time it is called.
-        // So in turn, new instance is created for each CleartextFileStream - which as you can guess the performance could be improved so
-        // The cache is re-used between other streams. Unfortunately that doesn't work as good because it has some threading problems (?) and
-        // so, some chunks become corrupted. I'll leave it as it is for now, but in the future, fix the threading issue and re-use IChunkReceiver.
-        private readonly Func<IChunkReceiver> _chunkReceiver;
+        private readonly IChunkReceiver _chunkReceiver;
 
         private readonly CiphertextStreamsManager _ciphertextStreamsManager;
 
@@ -30,7 +26,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 
         private bool _disposed;
 
-        public OpenCryptFile(ICiphertextPath ciphertextPath, Func<IChunkReceiver> chunkReceiver, CiphertextStreamsManager ciphertextStreamsManager, Action<ICiphertextPath> openCryptFileClosedCallback)
+        public OpenCryptFile(ICiphertextPath ciphertextPath, IChunkReceiver chunkReceiver, CiphertextStreamsManager ciphertextStreamsManager, Action<ICiphertextPath> openCryptFileClosedCallback)
         {
             _ciphertextPath = ciphertextPath;
             _chunkReceiver = chunkReceiver;
@@ -88,7 +84,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
         private void FillCleartextFileStream(ICleartextFileStreamInternal cleartextFileStreamInternal)
         {
             cleartextFileStreamInternal.StreamClosedCallback = Close;
-            cleartextFileStreamInternal.ChunkReceiver = _chunkReceiver();
+            cleartextFileStreamInternal.ChunkReceiver = _chunkReceiver;
         }
 
         private void AssertNotDisposed()

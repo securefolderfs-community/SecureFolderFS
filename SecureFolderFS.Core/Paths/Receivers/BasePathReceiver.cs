@@ -75,7 +75,5 @@ namespace SecureFolderFS.Core.Paths.Receivers
         protected abstract ICleartextPath CleartextPathFromRawCiphertextPath(string ciphertextPath);
 
         protected abstract ICiphertextPath CiphertextPathFromRawCleartextPath(string cleartextPath);
-
-        public abstract void Dispose();
     }
 }

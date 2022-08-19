@@ -47,7 +47,6 @@ namespace SecureFolderFS.Core.Instance.Implementation
         public void Dispose()
         {
             FileSystemAdapter?.StopFileSystem(MountLocation);
-            PathReceiver?.Dispose();
             FileSystemStatsTracker?.Dispose();
             FileStreamReceiver?.Dispose();
             FileSystemAdapter?.Dispose();
