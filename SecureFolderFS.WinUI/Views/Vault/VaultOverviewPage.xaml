@@ -39,11 +39,11 @@
     <ScrollViewer Margin="-12,0,-12,0">
         <StackPanel Margin="12,0,12,0" Spacing="8">
             <!--  Widgets  -->
-            <ListView Grid.Row="0" ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets}">
+            <ListView ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets}">
                 <!--  Remove Reveal Highlight Effect  -->
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <!--  Spacing  -->
+                        <!--  Remove reveal  -->
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListViewItem">
@@ -65,7 +65,7 @@
             </ListView>
 
             <!--  Vault options  -->
-            <StackPanel Grid.Row="1" Spacing="4">
+            <StackPanel Spacing="4">
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
                     Title="View vault"
@@ -80,6 +80,20 @@
                     </ucab:ActionBlockControl.ActionElement>
                 </ucab:ActionBlockControl>
 
+                <!--  Vault properties  -->
+                <ucab:ActionBlockControl
+                    Title="Vault properties"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand}"
+                    Description="View information about this vault"
+                    IsClickable="True">
+                    <ucab:ActionBlockControl.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </ucab:ActionBlockControl.Icon>
+                    <ucab:ActionBlockControl.ActionElement>
+                        <FontIcon FontSize="14" Glyph="&#xE76C;" />
+                    </ucab:ActionBlockControl.ActionElement>
+                </ucab:ActionBlockControl>
+
                 <!--  Lock vault  -->
                 <ucab:ActionBlockControl
                     Title="Lock vault"
@@ -91,20 +105,6 @@
                     </ucab:ActionBlockControl.Icon>
                     <ucab:ActionBlockControl.ActionElement>
                         <FontIcon FontSize="14" Glyph="&#xE7E8;" />
-                    </ucab:ActionBlockControl.ActionElement>
-                </ucab:ActionBlockControl>
-
-                <!--  Vault information  -->
-                <ucab:ActionBlockControl
-                    Title="Vault properties"
-                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand}"
-                    Description="View information about this vault"
-                    IsClickable="True">
-                    <ucab:ActionBlockControl.Icon>
-                        <FontIcon Glyph="&#xE946;" />
-                    </ucab:ActionBlockControl.Icon>
-                    <ucab:ActionBlockControl.ActionElement>
-                        <FontIcon FontSize="14" Glyph="&#xE76C;" />
                     </ucab:ActionBlockControl.ActionElement>
                 </ucab:ActionBlockControl>
             </StackPanel>

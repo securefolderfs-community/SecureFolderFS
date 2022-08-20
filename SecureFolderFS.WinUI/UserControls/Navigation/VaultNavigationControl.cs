@@ -23,6 +23,10 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
             if (viewModel is not BaseVaultPageViewModel pageViewModel)
                 throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");
 
+            // Make sure we dispose the old value
+            if (NavigationCache.TryGetValue(pageViewModel.VaultModel, out var existing))
+                existing.Dispose();
+            
             // Set or update the view model for individual page
             NavigationCache[pageViewModel.VaultModel] = pageViewModel;
 

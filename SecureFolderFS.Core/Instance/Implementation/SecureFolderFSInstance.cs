@@ -39,14 +39,9 @@ namespace SecureFolderFS.Core.Instance.Implementation
             FileSystemAdapter.StartFileSystem(MountLocation);
         }
 
-        public void StopFileSystem()
-        {
-            FileSystemAdapter.StopFileSystem(MountLocation);
-        }
-
         public void Dispose()
         {
-            FileSystemAdapter?.StopFileSystem(MountLocation);
+            FileSystemAdapter?.Dispose();
             FileSystemStatsTracker?.Dispose();
             FileStreamReceiver?.Dispose();
             FileSystemAdapter?.Dispose();

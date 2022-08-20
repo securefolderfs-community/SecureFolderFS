@@ -8,7 +8,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
-    public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize
+    public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IWidgetsContextModel _widgetsContextModel;
         private readonly IUnlockedVaultModel _unlockedVaultModel;
@@ -46,6 +46,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(widgetModel.WidgetId));
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            foreach (var item in Widgets)
+            {
+                item.Dispose();
             }
         }
     }

@@ -10,7 +10,5 @@ namespace SecureFolderFS.Core.Instance
         IPathReceiver PathReceiver { get; }
 
         void StartFileSystem();
-
-        void StopFileSystem();
     }
 }

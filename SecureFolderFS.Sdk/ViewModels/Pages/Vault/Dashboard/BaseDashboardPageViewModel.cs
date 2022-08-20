@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -7,7 +8,7 @@ using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
-    public abstract class BaseDashboardPageViewModel : ObservableObject, IAsyncInitialize
+    public abstract class BaseDashboardPageViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         protected VaultViewModel VaultViewModel { get; }
 
@@ -21,5 +22,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
+
+        /// <inheritdoc/>
+        public virtual void Dispose() { }
     }
 }

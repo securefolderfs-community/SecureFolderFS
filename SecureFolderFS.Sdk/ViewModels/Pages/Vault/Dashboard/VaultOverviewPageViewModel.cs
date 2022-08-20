@@ -25,5 +25,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
         {
             await WidgetsViewModel.InitAsync(cancellationToken);
         }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            WidgetsViewModel.Dispose();
+        }
     }
 }

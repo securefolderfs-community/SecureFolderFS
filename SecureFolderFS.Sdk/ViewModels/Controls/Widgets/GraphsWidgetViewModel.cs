@@ -4,9 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ByteSizeLib;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
@@ -87,6 +85,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                 ReadGraphViewModel.Report(readRate);
                 WriteGraphViewModel.Report(writeRate);
             }
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            _periodicTimer.Dispose();
         }
     }
 }

@@ -21,5 +21,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         {
             await CurrentPage.InitAsync(cancellationToken);
         }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            CurrentPage.Dispose();
+        }
     }
 }

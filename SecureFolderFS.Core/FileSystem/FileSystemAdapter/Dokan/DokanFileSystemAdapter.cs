@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
 {
@@ -267,17 +266,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
                     opt.MountPoint = mountLocation;
                 });
 
-            _ = Task.Run(() =>
-            {
-                _dokanInstance = dokanBuilder.Build(this);
-            });
-        }
-
-        public bool StopFileSystem(string mountLocation)
-        {
-            AssertNotDisposed();
-
-            return _dokan.RemoveMountPoint(mountLocation);
+            _dokanInstance = dokanBuilder.Build(this);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -298,7 +287,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
             // Disposing of callbacks can be added here in the future
 
             // For now we are only disposing CreateFileCallback because it will also dispose OpenHandlesCollection.
-            // Not the best solution, but one that'll work.
+            // Not the best solution, but one that will work.
             CreateFileCallback?.Dispose();
         }
     }
