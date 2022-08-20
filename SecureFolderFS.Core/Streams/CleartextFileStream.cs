@@ -279,10 +279,10 @@ namespace SecureFolderFS.Core.Streams
             {
                 _isHeaderWritten = true;
 
-                byte[] headerBuffer = _security.ContentCryptor.FileHeaderCryptor.EncryptHeader(_fileHeader);
-                long savedPosition = _ciphertextFileStream.Position;
+                var headerBuffer = _security.ContentCryptor.FileHeaderCryptor.EncryptHeader(_fileHeader);
+                var savedPosition = _ciphertextFileStream.Position;
                 _ciphertextFileStream.Position = 0L;
-                _ciphertextFileStream.Write(headerBuffer, 0, headerBuffer.Length);
+                _ciphertextFileStream.Write(headerBuffer.AsSpan());
                 _ciphertextFileStream.Position = savedPosition + headerBuffer.Length;
 
                 return true;

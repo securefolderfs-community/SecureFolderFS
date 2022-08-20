@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SecureFolderFS.Core.Exceptions;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
@@ -147,7 +148,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     if (pathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
                         result = DokanResult.AlreadyExists;
 
-                    var fileCreated = mode == FileMode.CreateNew || mode == FileMode.Create || (!pathExists && mode == FileMode.OpenOrCreate);
+                    var fileCreated = mode == FileMode.CreateNew || mode == FileMode.Create ||
+                                      (!pathExists && mode == FileMode.OpenOrCreate);
                     if (fileCreated)
                     {
                         var attributes2 = attributes;
@@ -157,6 +159,13 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                         attributes2 &= ~FileAttributes.Normal;
                         File.SetAttributes(filePath, attributes2);
                     }
+                }
+                catch (IntegrityException)
+                {
+                    // Must invalidate here, because cleanup is not called
+                    CloseHandle(info);
+                    InvalidateContext(info);
+                    return NtStatus.CrcError;
                 }
                 catch (UnauthorizedAccessException) // Don't have access rights
                 {

@@ -7,7 +7,6 @@ using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.Paths;
-using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -20,52 +19,41 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
-            if (info.IsDirectory)
-            {
-                bytesWritten = 0;
-                return DokanResult.AccessDenied;
-            }
-
-            bool appendToFile = info.WriteToEndOfFile || offset == -1;
-            if (appendToFile && info.PagingIo)
-            {
-                // Paging IO to end, do nothing
-                bytesWritten = 0;
-                return DokanResult.Success;
-            }
-            else if (info.PagingIo)
-            {
-                // TODO: Adjust offset
-            }
-
             ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-            long contextHandle = GetContextValue(info);
-            bool opened = false;
+
+            var appendToFile = offset == -1;
+            var contextHandle = Constants.FileSystem.INVALID_HANDLE;
+            var openedNewHandle = false;
+
+            // Memory-mapped
+            if (IsContextInvalid(info) || handles.GetHandle(GetContextValue(info)) is not FileHandle fileHandle)
+            {
+                // Invalid handle...
+                contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
+                fileHandle = (FileHandle)handles.GetHandle(contextHandle);
+                openedNewHandle = true;
+            }
 
             try
             {
-                if (handles.GetHandle(contextHandle) is not FileHandle fileHandle)
+                // Align for Paging I/O
+                var alignedBytesToCopy = AlignSizeForPagingIo((int)bufferLength, offset, fileHandle.CleartextFileStream.Length, info);
+
+                // Align position for offset
+                var alignedPosition = appendToFile ? fileHandle.CleartextFileStream.Length : offset;
+
+                // Write
+                if (openedNewHandle)
                 {
-                    // Invalid handle...
-                    contextHandle = handles.OpenHandleToFile(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite,
-                        FileShare.Read, FileOptions.None);
-                    fileHandle = (FileHandle)handles.GetHandle(contextHandle);
-
-                    opened = true;
-                }
-
-                var correctOffset = !appendToFile ? offset : fileHandle.CleartextFileStream.Length;
-
-                // Write file
-                if (opened)
-                {
-                    bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, correctOffset);
+                    fileHandle.CleartextFileStream.Position = alignedPosition;
+                    bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, alignedBytesToCopy);
                 }
                 else
                 {
-                    lock (fileHandle.CleartextFileStream)
+                    lock (fileHandle.CleartextFileStream) // Protect from overlapped write
                     {
-                        bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, correctOffset);
+                        fileHandle.CleartextFileStream.Position = alignedPosition;
+                        bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, alignedBytesToCopy);
                     }
                 }
 
@@ -86,9 +74,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 bytesWritten = 0;
                 return DokanResult.InvalidHandle;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _ = ex;
                 bytesWritten = 0;
 
                 Debugger.Break();
@@ -96,11 +83,28 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             }
             finally
             {
-                if (opened)
+                if (openedNewHandle)
                 {
                     handles.Close(contextHandle);
                 }
             }
+        }
+
+        private static int AlignSizeForPagingIo(int bufferLength, long offset, long streamLength, IDokanFileInfo info)
+        {
+            if (info.PagingIo)
+            {
+                var longDistanceToEnd = streamLength - offset;
+                if (longDistanceToEnd > int.MaxValue)
+                    return bufferLength;
+
+                if (longDistanceToEnd < bufferLength)
+                    return (int)longDistanceToEnd;
+
+                return bufferLength;
+            }
+
+            return bufferLength;
         }
     }
 }

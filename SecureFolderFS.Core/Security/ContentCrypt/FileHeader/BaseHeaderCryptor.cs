@@ -46,7 +46,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             var savedPosition = ciphertextFileStream.Position;
 
             ciphertextFileStream.Position = 0L;
-            ciphertextFileStream.Read(buffer, 0, buffer.Length);
+            ciphertextFileStream.Read(buffer.AsSpan());
             ciphertextFileStream.Position = savedPosition;
 
             return buffer;

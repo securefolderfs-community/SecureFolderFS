@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace SecureFolderFS.Core.Sdk.Streams
 {
@@ -22,15 +23,13 @@ namespace SecureFolderFS.Core.Sdk.Streams
 
         int Read(Span<byte> buffer);
 
-        int Read(byte[] array, int offset, int count);
-
         void Write(ReadOnlySpan<byte> buffer);
-
-        void Write(byte[] array, int offset, int count);
 
         void Lock(long position, long length);
 
         void Unlock(long position, long length);
+
+        long Seek(long offset, SeekOrigin origin);
 
         void Close();
     }

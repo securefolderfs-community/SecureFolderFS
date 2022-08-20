@@ -8,33 +8,20 @@ namespace SecureFolderFS.Core.Helpers
 {
     internal static class StreamHelpers
     {
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public static unsafe int ReadToIntPtrBuffer(IBaseFileStream baseFileStream, IntPtr nativeBuffer, uint bufferLength, long offset)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe int ReadToIntPtrBuffer(IBaseFileStream stream, IntPtr nativeBuffer, int bytesToRead)
         {
-            if (offset >= baseFileStream.Length)
-            {
-                return Constants.IO.FILE_EOF;
-            }
-            else
-            {
-                baseFileStream.Position = offset;
-
-                var nativeBufferSpan = new Span<byte>(nativeBuffer.ToPointer(), (int)bufferLength);
-                var read = baseFileStream.Read(nativeBufferSpan);
-
-                return read;
-            }
+            var nativeBufferSpan = new Span<byte>(nativeBuffer.ToPointer(), bytesToRead);
+            return stream.Read(nativeBufferSpan);
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public static unsafe int WriteFromIntPtrBuffer(IBaseFileStream baseFileStream, IntPtr nativeBuffer, uint bufferLength, long offset)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe int WriteFromIntPtrBuffer(IBaseFileStream stream, IntPtr nativeBuffer, int bytesToWrite)
         {
-            baseFileStream.Position = offset;
+            var nativeBufferSpan = new ReadOnlySpan<byte>(nativeBuffer.ToPointer(), bytesToWrite);
+            stream.Write(nativeBufferSpan);
 
-            var nativeBufferSpan = new ReadOnlySpan<byte>(nativeBuffer.ToPointer(), (int)bufferLength);
-            baseFileStream.Write(nativeBufferSpan);
-
-            return (int)bufferLength;
+            return bytesToWrite;
         }
 
         public static void WriteToStream(string data, Stream destinationStream, Encoding encoding = null)

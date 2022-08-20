@@ -24,6 +24,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             var contextHandle = Constants.FileSystem.INVALID_HANDLE;
             var openedNewHandle = false;
 
+            // Memory-mapped
             if (IsContextInvalid(info) || handles.GetHandle(GetContextValue(info)) is not FileHandle fileHandle)
             {
                 // Invalid handle...
@@ -34,16 +35,27 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
             try
             {
+                // Check EOF
+                if (offset >= fileHandle.CleartextFileStream.Length)
+                {
+                    bytesRead = 0;
+                    return Constants.IO.FILE_EOF;
+                }
+                else
+                {
+                    fileHandle.CleartextFileStream.Position = offset;
+                }
+
                 // Read file
                 if (openedNewHandle)
                 {
-                    bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, offset);
+                    bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, (int)bufferLength);
                 }
                 else
                 {
                     lock (fileHandle!.CleartextFileStream)
                     {
-                        bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, bufferLength, offset);
+                        bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, (int)bufferLength);
                     }
                 }
                 
@@ -64,9 +76,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 bytesRead = 0;
                 return NtStatus.HandleNoLongerValid;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _ = ex;
                 bytesRead = 0;
 
                 Debugger.Break();
