@@ -37,15 +37,15 @@ namespace SecureFolderFS.Core.UnsafeNative
         [DllImport("kernel32.dll")]
         public static extern void RtlZeroMemory([Out] IntPtr ptr, [In] UIntPtr cnt);
 
-        [DllImport("dokan1.dll", ExactSpelling = true)]
+        [DllImport("dokan2.dll", ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I8)]
         public static extern long DokanNtStatusFromWin32([In][MarshalAs(UnmanagedType.U4)] uint Error);
 
-        [DllImport("dokan1.dll", ExactSpelling = true)] // TODO: When v2 releases, change to dokan2.dll
+        [DllImport("dokan2.dll", ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U8)]
         public static extern ulong DokanVersion();
 
-        [DllImport("dokan1.dll", ExactSpelling = true)]
+        [DllImport("dokan2.dll", ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U8)]
         public static extern ulong DokanDriverVersion();
     }

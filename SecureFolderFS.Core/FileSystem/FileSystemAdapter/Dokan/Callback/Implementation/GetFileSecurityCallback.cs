@@ -30,10 +30,20 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
 
                 security = info.IsDirectory
-                   ? new DirectoryInfo(ciphertextPath.Path).GetAccessControl()
-                   : new FileInfo(ciphertextPath.Path).GetAccessControl();
+                    ? new DirectoryInfo(ciphertextPath.Path).GetAccessControl()
+                    : new FileInfo(ciphertextPath.Path).GetAccessControl();
 
                 return DokanResult.Success;
+            }
+            catch (FileNotFoundException)
+            {
+                security = null;
+                return DokanResult.FileNotFound;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                security = null;
+                return DokanResult.PathNotFound;
             }
             catch (PathTooLongException)
             {

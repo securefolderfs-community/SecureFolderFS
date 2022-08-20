@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
         }
 
-        public NtStatus Mounted(IDokanFileInfo info)
+        public NtStatus Mounted(string mountPoint, IDokanFileInfo info)
         {
             return DokanResult.Success;
         }

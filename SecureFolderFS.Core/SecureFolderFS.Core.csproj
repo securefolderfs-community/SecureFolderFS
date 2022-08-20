@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DokanNet" Version="1.5.0" />
+    <PackageReference Include="DokanNet" Version="2.0.5.1" />
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.0" />
     <PackageReference Include="Miscreant" Version="0.3.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

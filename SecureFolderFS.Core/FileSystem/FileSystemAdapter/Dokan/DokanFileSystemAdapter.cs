@@ -1,18 +1,21 @@
 ﻿using DokanNet;
+using DokanNet.Logging;
+using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.AccessControl;
 using System.Runtime.CompilerServices;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
-using DokanNet.Logging;
-using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
 {
     internal sealed class DokanFileSystemAdapter : IDokanOperationsUnsafe, IFileSystemAdapter
     {
         private bool _disposed;
+
+        private DokanNet.Dokan _dokan;
+        private DokanNet.DokanInstance _dokanInstance;
 
         public ICreateFileCallback CreateFileCallback { get; init; }
 
@@ -230,11 +233,11 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
             return SetFileSecurityCallback.SetFileSecurity(fileName, security, sections, info);
         }
 
-        public NtStatus Mounted(IDokanFileInfo info)
+        public NtStatus Mounted(string mountPoint, IDokanFileInfo info)
         {
             AssertNotDisposed();
 
-            return MountedCallback.Mounted(info);
+            return MountedCallback.Mounted(mountPoint, info);
         }
 
         public NtStatus Unmounted(IDokanFileInfo info)
@@ -255,21 +258,18 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
         {
             AssertNotDisposed();
 
-            DokanOptions options = DokanOptions.CaseSensitive | DokanOptions.FixedDrive | DokanOptions.CurrentSession;
-            ILogger dokanLogger = new NullLogger();
+            _dokan = new(new NullLogger());
+            var dokanBuilder = new DokanInstanceBuilder(_dokan)
+                .ConfigureOptions(opt =>
+                {
+                    opt.Options = DokanOptions.CaseSensitive | DokanOptions.MountManager;
+                    opt.UNCName = Constants.FileSystem.UNC_NAME;
+                    opt.MountPoint = mountLocation;
+                });
 
             _ = Task.Run(() =>
             {
-                this.Mount(
-                    mountLocation,
-                    options,
-                    Constants.FileSystem.Dokan.THREAD_COUNT,
-                    Constants.FileSystem.Dokan.DOKAN_VERSION,
-                    new TimeSpan(10000),
-                    uncName: Constants.FileSystem.UNC_NAME,
-                    allocationUnitSize: Constants.FileSystem.Dokan.ALLOC_UNIT_SIZE,
-                    sectorSize: Constants.FileSystem.Dokan.SECTOR_SIZE,
-                    logger: dokanLogger);
+                _dokanInstance = dokanBuilder.Build(this);
             });
         }
 
@@ -277,9 +277,10 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
         {
             AssertNotDisposed();
 
-            return DokanNet.Dokan.RemoveMountPoint(mountLocation);
+            return _dokan.RemoveMountPoint(mountLocation);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AssertNotDisposed()
         {
             if (_disposed)
@@ -291,6 +292,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
         public void Dispose()
         {
             _disposed = true;
+            _dokanInstance?.Dispose();
+            _dokan?.Dispose();
 
             // Disposing of callbacks can be added here in the future
 

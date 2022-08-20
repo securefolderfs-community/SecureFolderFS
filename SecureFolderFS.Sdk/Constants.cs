@@ -20,7 +20,7 @@
 
         public static class FileSystems
         {
-            public const string DOKANY_EXTERNAL_LINK = "https://github.com/dokan-dev/dokany/releases/tag/v1.5.1.1000";
+            public const string DOKANY_EXTERNAL_LINK = "https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000";
         }
 
         public static class VaultReadme

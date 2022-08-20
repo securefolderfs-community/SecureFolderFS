@@ -34,8 +34,6 @@
 
         internal static class FileSystem
         {
-            public const int INVALID_FILE_ATTRIBUTES = -0x1;
-
             public const long INVALID_HANDLE = 0L;
 
             public const uint FILESYSTEM_SERIAL_NUMBER = 1137196800u;
@@ -48,17 +46,11 @@
 
             internal static class Dokan
             {
-                public const int DOKAN_VERSION = 151;
+                public const int DOKAN_VERSION = 205;
 
-                public const int DOKAN_MAX_VERSION = 200;
+                public const int DOKAN_MAX_VERSION = 210;
 
                 public const uint MAX_COMPONENT_LENGTH = 256;
-
-                public const int THREAD_COUNT = 5; // TODO: Too low?
-
-                public const int ALLOC_UNIT_SIZE = 512;
-
-                public const int SECTOR_SIZE = 512;
 
                 public const DokanNet.FileAccess DATA_ACCESS =
                                                           DokanNet.FileAccess.ReadData
@@ -82,10 +74,6 @@
             public const int DIRECTORY_ID_MAX_SIZE = 16;
 
             public const int FILE_EOF = 0;
-
-            public const int READ_BUFFER_SIZE = 4096;
-
-            public const int WRITE_BUFFER_SIZE = 4096;
 
             public const int MAX_CACHED_CHUNKS = 6;
 

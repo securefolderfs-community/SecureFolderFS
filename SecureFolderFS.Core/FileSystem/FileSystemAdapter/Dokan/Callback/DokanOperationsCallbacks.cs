@@ -118,7 +118,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
 
     internal interface IMountedCallback
     {
-        NtStatus Mounted(IDokanFileInfo info);
+        NtStatus Mounted(string mountPoint, IDokanFileInfo info);
     }
 
     internal interface IUnmountedCallback

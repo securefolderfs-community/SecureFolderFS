@@ -4,7 +4,6 @@ using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Sdk.Paths;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -26,8 +25,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
             ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-
-            Debug.WriteLine(ciphertextPath.Path);
 
             var result = DokanResult.Success;
             var filePath = ciphertextPath.Path;
