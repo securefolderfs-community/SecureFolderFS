@@ -4,7 +4,7 @@ using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 {
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         where TCleartextChunk : class, ICleartextChunk
         where TCiphertextChunk : class, ICiphertextChunk
     {
-        protected readonly IKeyCryptor keyCryptor;
+        protected readonly ICipherProvider keyCryptor;
 
         protected readonly IChunkFactory chunkFactory;
 
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         public abstract int ChunkFullCiphertextSize { get; }
 
-        protected BaseContentCryptor(IKeyCryptor keyCryptor, IChunkFactory chunkFactory)
+        protected BaseContentCryptor(ICipherProvider keyCryptor, IChunkFactory chunkFactory)
         {
             this.keyCryptor = keyCryptor;
             this.chunkFactory = chunkFactory;

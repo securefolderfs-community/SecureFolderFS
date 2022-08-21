@@ -4,7 +4,7 @@ using SecureFolderFS.Core.Chunks.Implementation;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 {
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         public override int ChunkFullCiphertextSize { get; } = CiphertextXChaCha20Chunk.CHUNK_FULL_CIPHERTEXT_SIZE;
 
-        public XChaCha20ContentCryptor(IKeyCryptor keyCryptor, IChunkFactory chunkFactory)
+        public XChaCha20ContentCryptor(ICipherProvider keyCryptor, IChunkFactory chunkFactory)
             : base(keyCryptor, chunkFactory)
         {
         }
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             Buffer.BlockCopy(fileHeader.Nonce, 0, beChunkNumberWithFileHeaderNonce, beChunkNumber.Length, fileHeader.Nonce.Length);
 
             // Payload
-            keyCryptor.XChaCha20Poly1305Crypt.XChaCha20Poly1305Encrypt2(
+            keyCryptor.XChaCha20Poly1305Crypt.Encrypt(
                 cleartextChunk.AsSpan(),
                 fileHeader.ContentKey,
                 fullCiphertextChunkSpan.Slice(0, CiphertextXChaCha20Chunk.CHUNK_NONCE_SIZE),
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             Buffer.BlockCopy(fileHeader.Nonce, 0, beChunkNumberWithFileHeaderNonce, beChunkNumber.Length, fileHeader.Nonce.Length);
 
             // Decrypt
-            var result = keyCryptor.XChaCha20Poly1305Crypt.XChaCha20Poly1305Decrypt2(
+            var result = keyCryptor.XChaCha20Poly1305Crypt.Decrypt(
                 ciphertextChunk.GetPayloadWithTagAsSpan(),
                 fileHeader.ContentKey,
                 ciphertextChunk.GetNonceAsSpan(),

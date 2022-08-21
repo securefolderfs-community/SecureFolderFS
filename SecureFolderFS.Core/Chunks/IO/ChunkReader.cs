@@ -60,7 +60,7 @@ namespace SecureFolderFS.Core.Chunks.IO
                 _chunkFactory.FromCiphertextChunkBuffer(ciphertextBufferMemory.Slice(0, read)),
                 chunkNumber,
                 _fileHeader,
-                Constants.Security.ALWAYS_CHECK_CHUNK_INTEGRITY);
+                true);
 
             _fileSystemStatsTracker?.AddBytesDecrypted(cleartextChunk.ActualLength);
 

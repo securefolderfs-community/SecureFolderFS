@@ -3,7 +3,7 @@ using System.Linq;
 using System.IO;
 using Newtonsoft.Json;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Helpers;
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
             return JsonConvert.DeserializeObject<VaultConfiguration>(rawVaultConfiguration.rawData);
         }
 
-        internal override bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey)
+        internal override bool Verify(ICipherProvider keyCryptor, MasterKey masterKey)
         {
             if (HmacSha256Mac.IsEmpty() || masterKey.AnyEmpty() || keyCryptor is null)
             {

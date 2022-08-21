@@ -6,7 +6,7 @@ using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 {
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         public override int ChunkFullCiphertextSize { get; } = CiphertextAesCtrHmacChunk.CHUNK_FULL_CIPHERTEXT_SIZE;
 
-        public AesCtrHmacContentCryptor(MasterKey masterKey, IKeyCryptor keyCryptor, IChunkFactory chunkFactory)
+        public AesCtrHmacContentCryptor(MasterKey masterKey, ICipherProvider keyCryptor, IChunkFactory chunkFactory)
             : base(keyCryptor, chunkFactory)
         {
             _masterKey = masterKey;

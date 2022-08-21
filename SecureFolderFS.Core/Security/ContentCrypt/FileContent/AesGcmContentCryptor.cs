@@ -5,7 +5,7 @@ using SecureFolderFS.Core.Chunks.Implementation;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 {
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         public override int ChunkFullCiphertextSize { get; } = CiphertextAesGcmChunk.CHUNK_FULL_CIPHERTEXT_SIZE;
 
-        public AesGcmContentCryptor(IKeyCryptor keyCryptor, IChunkFactory chunkFactory)
+        public AesGcmContentCryptor(ICipherProvider keyCryptor, IChunkFactory chunkFactory)
             : base(keyCryptor, chunkFactory)
         {
         }
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             Buffer.BlockCopy(fileHeader.Nonce, 0, beChunkNumberWithFileHeaderNonce, beChunkNumber.Length, fileHeader.Nonce.Length);
 
             // Payload
-            keyCryptor.AesGcmCrypt.AesGcmEncrypt2(
+            keyCryptor.AesGcmCrypt.Encrypt(
                 cleartextChunk.AsSpan(),
                 fileHeader.ContentKey,
                 fullCiphertextChunkSpan.Slice(0, CiphertextAesGcmChunk.CHUNK_NONCE_SIZE),
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
                 Buffer.BlockCopy(fileHeader.Nonce, 0, beChunkNumberWithFileHeaderNonce, beChunkNumber.Length, fileHeader.Nonce.Length);
 
                 // Decrypt
-                keyCryptor.AesGcmCrypt.AesGcmDecrypt2(
+                keyCryptor.AesGcmCrypt.Decrypt(
                     ciphertextChunk.GetPayloadAsSpan(),
                     fileHeader.ContentKey,
                     ciphertextChunk.GetNonceAsSpan(),

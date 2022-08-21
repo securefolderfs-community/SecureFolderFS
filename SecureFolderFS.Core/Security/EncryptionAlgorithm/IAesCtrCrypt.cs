@@ -2,7 +2,7 @@
 
 namespace SecureFolderFS.Core.Security.EncryptionAlgorithm
 {
-    public interface IAesCtrCrypt : IDisposable
+    public interface IAesCtrCrypt
     {
         byte[] AesCtrEncrypt(byte[] bytes, byte[] key, byte[] iv);
 

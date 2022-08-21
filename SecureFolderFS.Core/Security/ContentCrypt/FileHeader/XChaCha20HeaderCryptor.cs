@@ -2,7 +2,7 @@
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 {
@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
     {
         public override int HeaderSize { get; } = XChaCha20FileHeader.HEADER_SIZE;
 
-        public XChaCha20HeaderCryptor(MasterKey masterKey, IKeyCryptor keyCryptor)
+        public XChaCha20HeaderCryptor(MasterKey masterKey, ICipherProvider keyCryptor)
             : base(masterKey, keyCryptor)
         {
         }
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             var encKey = masterKey.GetEncryptionKey();
 
             // Payload
-            var ciphertextPayload = keyCryptor.XChaCha20Poly1305Crypt.XChaCha20Poly1305Encrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce, out byte[] tag);
+            var ciphertextPayload = cipherProvider.XChaCha20Poly1305Crypt.XChaCha20Poly1305Encrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce, out byte[] tag);
 
             return XChaCha20FileHeader.ConstructCiphertextFileHeader(fileHeader.Nonce, ciphertextPayload, tag);
         }
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             var ciphertextPayload = ciphertextFileHeader.Slice(XChaCha20FileHeader.HEADER_NONCE_SIZE, XChaCha20FileHeader.HEADER_CONTENTKEY_SIZE);
             var tag = ciphertextFileHeader.Slice(XChaCha20FileHeader.HEADER_NONCE_SIZE + XChaCha20FileHeader.HEADER_CONTENTKEY_SIZE, XChaCha20FileHeader.HEADER_TAG_SIZE);
 
-            var cleartextPayload = keyCryptor.XChaCha20Poly1305Crypt.XChaCha20Poly1305Decrypt(ciphertextPayload, encKey, nonce, tag);
+            var cleartextPayload = cipherProvider.XChaCha20Poly1305Crypt.Decrypt(ciphertextPayload, encKey, nonce, tag);
             if (cleartextPayload is null)
             {
                 throw UnauthenticFileHeaderException.ForXChaCha20();

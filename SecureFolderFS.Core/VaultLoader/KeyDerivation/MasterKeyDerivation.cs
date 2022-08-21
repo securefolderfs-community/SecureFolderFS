@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Shared.Utils;
 
@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.VaultLoader.KeyDerivation
 {
     internal sealed class MasterKeyDerivation : IMasterKeyDerivation
     {
-        public MasterKey DeriveMasterKey(IPassword password, BaseVaultKeystore vaultKeystore, IKeyCryptor keyCryptor)
+        public MasterKey DeriveMasterKey(IPassword password, BaseVaultKeystore vaultKeystore, ICipherProvider keyCryptor)
         {
             using (password)
             {

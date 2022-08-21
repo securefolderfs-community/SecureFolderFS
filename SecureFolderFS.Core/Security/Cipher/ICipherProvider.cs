@@ -1,9 +1,9 @@
 ﻿using System;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm;
 
-namespace SecureFolderFS.Core.Security.KeyCrypt
+namespace SecureFolderFS.Core.Security.Cipher
 {
-    internal interface IKeyCryptor : IDisposable
+    internal interface ICipherProvider : IDisposable
     {
         IArgon2idCrypt Argon2idCrypt { get; }
 

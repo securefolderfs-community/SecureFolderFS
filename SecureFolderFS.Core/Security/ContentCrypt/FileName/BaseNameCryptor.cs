@@ -3,19 +3,19 @@ using System.Text;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileName
 {
     internal abstract class BaseNameCryptor : IFileNameCryptor
     {
-        protected readonly IKeyCryptor keyCryptor;
+        protected readonly ICipherProvider keyCryptor;
 
         protected readonly MasterKey masterKey;
 
         private bool _disposed;
 
-        protected BaseNameCryptor(IKeyCryptor keyCryptor, MasterKey masterKey)
+        protected BaseNameCryptor(ICipherProvider keyCryptor, MasterKey masterKey)
         {
             this.keyCryptor = keyCryptor;
             this.masterKey = masterKey;

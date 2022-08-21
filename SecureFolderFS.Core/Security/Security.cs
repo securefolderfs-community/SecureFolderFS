@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.Security
 {
@@ -7,9 +7,9 @@ namespace SecureFolderFS.Core.Security
     {
         public IContentCryptor ContentCryptor { get; }
 
-        public IKeyCryptor KeyCryptor { get; }
+        public ICipherProvider KeyCryptor { get; }
 
-        public Security(IContentCryptor contentCryptor, IKeyCryptor keyCryptor)
+        public Security(IContentCryptor contentCryptor, ICipherProvider keyCryptor)
         {
             ContentCryptor = contentCryptor;
             KeyCryptor = keyCryptor;

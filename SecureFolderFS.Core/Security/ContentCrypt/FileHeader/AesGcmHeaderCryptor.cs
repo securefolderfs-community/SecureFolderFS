@@ -1,9 +1,9 @@
-﻿using System.Security.Cryptography;
-using SecureFolderFS.Core.Exceptions;
-using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
+using SecureFolderFS.Shared.Extensions;
+using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 {
@@ -11,8 +11,8 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
     {
         public override int HeaderSize { get; } = AesGcmFileHeader.HEADER_SIZE;
 
-        public AesGcmHeaderCryptor(MasterKey masterKey, IKeyCryptor keyCryptor)
-            : base(masterKey, keyCryptor)
+        public AesGcmHeaderCryptor(MasterKey masterKey, ICipherProvider cipherProvider)
+            : base(masterKey, cipherProvider)
         {
         }
 
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             var encKey = masterKey.GetEncryptionKey();
 
             // Payload
-            var ciphertextPayload = keyCryptor.AesGcmCrypt.AesGcmEncrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce, out byte[] tag);
+            var ciphertextPayload = cipherProvider.AesGcmCrypt.AesGcmEncryptDeprecated(fileHeader.ContentKey, encKey, fileHeader.Nonce, out byte[] tag);
 
             return AesGcmFileHeader.ConstructCiphertextFileHeader(fileHeader.Nonce, ciphertextPayload, tag);
         }
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
                 var ciphertextPayload = ciphertextFileHeader.Slice(AesGcmFileHeader.HEADER_NONCE_SIZE, AesGcmFileHeader.HEADER_CONTENTKEY_SIZE);
                 var tag = ciphertextFileHeader.Slice(AesGcmFileHeader.HEADER_NONCE_SIZE + AesGcmFileHeader.HEADER_CONTENTKEY_SIZE, AesGcmFileHeader.HEADER_TAG_SIZE);
 
-                var cleartextPayload = keyCryptor.AesGcmCrypt.AesGcmDecrypt(ciphertextPayload, encKey, nonce, tag);
+                var cleartextPayload = cipherProvider.AesGcmCrypt.AesGcmDecryptDeprecated(ciphertextPayload, encKey, nonce, tag);
 
                 return new AesGcmFileHeader(nonce, cleartextPayload);
             }

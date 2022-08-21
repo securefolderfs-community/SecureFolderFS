@@ -3,7 +3,7 @@ using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
 using SecureFolderFS.Core.VaultDataStore;
 
-namespace SecureFolderFS.Core.Security.KeyCrypt
+namespace SecureFolderFS.Core.Security.Cipher
 {
     internal sealed class KeyCryptFactory
     {
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.Security.KeyCrypt
             _encryptionAlgorithmBuilder = encryptionAlgorithmBuilder;
         }
 
-        public IKeyCryptor GetKeyCryptor()
+        public ICipherProvider GetKeyCryptor()
         {
             if (_encryptionAlgorithmBuilder is not EncryptionAlgorithmBuilder encryptionAlgorithmBuilderImpl)
             {
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.Security.KeyCrypt
 
             if (_vaultVersion.SupportsVersion(VaultVersion.V1))
             {
-                return new KeyCryptor()
+                return new CipherProvider()
                 {
                     Argon2idCrypt = encryptionAlgorithmBuilderImpl.Argon2idCrypt,
                     XChaCha20Poly1305Crypt = encryptionAlgorithmBuilderImpl.XChaCha20Poly1305Crypt,

@@ -3,7 +3,7 @@ using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Core.Security.ContentCrypt.FileContent;
 using SecureFolderFS.Core.Security.ContentCrypt.FileHeader;
 using SecureFolderFS.Core.Security.ContentCrypt.FileName;
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.Security.Loader
             _chunkFactory = chunkFactory;
         }
 
-        public ISecurity LoadSecurity(BaseVaultConfiguration vaultConfiguration, IKeyCryptor keyCryptor, MasterKey masterKeyCopy)
+        public ISecurity LoadSecurity(BaseVaultConfiguration vaultConfiguration, ICipherProvider keyCryptor, MasterKey masterKeyCopy)
         {
             IFileContentCryptor fileContentCryptor;
             IFileHeaderCryptor fileHeaderCryptor;
@@ -71,7 +71,7 @@ namespace SecureFolderFS.Core.Security.Loader
                     throw new UndefinedCipherSchemeException(nameof(FileNameCipherScheme));
             }
 
-            IContentCryptor contentCryptor = new ContentCryptor(fileContentCryptor, fileHeaderCryptor, fileNameCryptor);
+            ContentCrypt.IContentCryptor contentCryptor = new ContentCryptor(fileContentCryptor, fileHeaderCryptor, fileNameCryptor);
 
             Security security = new Security(contentCryptor, keyCryptor);
             return security;

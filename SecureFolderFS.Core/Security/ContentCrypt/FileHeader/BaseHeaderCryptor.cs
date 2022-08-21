@@ -1,10 +1,10 @@
-﻿using System;
-using System.Security.Cryptography;
-using SecureFolderFS.Core.FileHeaders;
+﻿using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
 using SecureFolderFS.Core.Sdk.Streams;
+using SecureFolderFS.Core.SecureStore;
+using SecureFolderFS.Core.Security.Cipher;
+using System;
+using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 {
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
     {
         protected readonly MasterKey masterKey;
 
-        protected readonly IKeyCryptor keyCryptor;
+        protected readonly ICipherProvider cipherProvider;
 
         protected readonly RandomNumberGenerator secureRandom;
 
@@ -21,10 +21,10 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
         public abstract int HeaderSize { get; }
 
-        protected BaseHeaderCryptor(MasterKey masterKey, IKeyCryptor keyCryptor)
+        protected BaseHeaderCryptor(MasterKey masterKey, ICipherProvider cipherProvider)
         {
             this.masterKey = masterKey;
-            this.keyCryptor = keyCryptor;
+            this.cipherProvider = cipherProvider;
             this.secureRandom = RandomNumberGenerator.Create();
         }
 

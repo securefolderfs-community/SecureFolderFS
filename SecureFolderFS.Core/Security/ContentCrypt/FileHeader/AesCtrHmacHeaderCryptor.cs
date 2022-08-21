@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Core.Exceptions;
 
@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
     {
         public override int HeaderSize { get; } = AesCtrHmacFileHeader.HEADER_SIZE;
 
-        public AesCtrHmacHeaderCryptor(MasterKey masterKey, IKeyCryptor keyCryptor)
+        public AesCtrHmacHeaderCryptor(MasterKey masterKey, ICipherProvider keyCryptor)
             : base(masterKey, keyCryptor)
         {
         }
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             var macKey = masterKey.GetMacKey();
 
             // Payload
-            var ciphertextPayload = keyCryptor.AesCtrCrypt.AesCtrEncrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce);
+            var ciphertextPayload = cipherProvider.AesCtrCrypt.AesCtrEncrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce);
 
             // Mac
             var mac = CalculateFileHeaderMac(macKey, fileHeader.Nonce, ciphertextPayload);
@@ -60,13 +60,13 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
                 throw UnauthenticFileHeaderException.ForAesCtrHmac();
             }
 
-            var cleartextPayload = keyCryptor.AesCtrCrypt.AesCtrDecrypt(ciphertextPayload, encKey, nonce);
+            var cleartextPayload = cipherProvider.AesCtrCrypt.AesCtrDecrypt(ciphertextPayload, encKey, nonce);
             return new AesCtrHmacFileHeader(nonce, cleartextPayload);
         }
 
         private byte[] CalculateFileHeaderMac(SecretKey macKey, byte[] fileHeaderNonce, byte[] ciphertextPayload)
         {
-            using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance();
+            using var hmacSha256Crypt = cipherProvider.HmacSha256Crypt.GetInstance();
             hmacSha256Crypt.InitializeHMAC(macKey);
             hmacSha256Crypt.Update(fileHeaderNonce);
             hmacSha256Crypt.DoFinal(ciphertextPayload);

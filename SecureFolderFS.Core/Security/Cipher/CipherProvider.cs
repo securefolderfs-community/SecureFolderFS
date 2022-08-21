@@ -1,8 +1,8 @@
 ﻿using SecureFolderFS.Core.Security.EncryptionAlgorithm;
 
-namespace SecureFolderFS.Core.Security.KeyCrypt
+namespace SecureFolderFS.Core.Security.Cipher
 {
-    internal sealed class KeyCryptor : IKeyCryptor
+    internal sealed class CipherProvider : ICipherProvider
     {
         private bool _disposed;
 
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Security.KeyCrypt
 
         public IAesSivCrypt AesSivCrypt { get; init; }
 
-        public IHmacSha256Crypt HmacSha256Crypt { get; init; }
+        public IHmacSha256Crypt HmacSha256Crypt { get; init; } // TODO: OPTIMIZE - use GetHmacInstance();
 
         public IRfc3394KeyWrap Rfc3394KeyWrap { get; init; }
 
@@ -25,13 +25,7 @@ namespace SecureFolderFS.Core.Security.KeyCrypt
             if (!_disposed)
             {
                 _disposed = true;
-                Argon2idCrypt?.Dispose();
-                XChaCha20Poly1305Crypt?.Dispose();
-                AesGcmCrypt?.Dispose();
-                AesCtrCrypt?.Dispose();
-                AesSivCrypt?.Dispose();
                 HmacSha256Crypt?.Dispose();
-                Rfc3394KeyWrap?.Dispose();
             }
         }
     }

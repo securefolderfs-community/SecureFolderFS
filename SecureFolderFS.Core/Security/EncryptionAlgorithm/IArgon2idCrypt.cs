@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace SecureFolderFS.Core.Security.EncryptionAlgorithm
+﻿namespace SecureFolderFS.Core.Security.EncryptionAlgorithm
 {
-    public interface IArgon2idCrypt : IDisposable
+    public interface IArgon2idCrypt
     {
         byte[] Argon2idHash(byte[] password, byte[] salt);
 

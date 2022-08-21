@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
 using SecureFolderFS.Core.VaultLoader.KeyDerivation;
 
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.DataModels
 
         public IMasterKeyDerivation MasterKeyDerivation { get; set; }
 
-        public IKeyCryptor KeyCryptor { get; set; }
+        public ICipherProvider KeyCryptor { get; set; }
 
         public MasterKey MasterKey { get; set; }
 
