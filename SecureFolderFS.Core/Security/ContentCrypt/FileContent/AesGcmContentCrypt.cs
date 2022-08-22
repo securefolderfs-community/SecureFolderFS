@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Shared.Extensions;
 using System;
+using System.Runtime.CompilerServices;
 using static SecureFolderFS.Core.Constants.Security.Chunks.AesGcm;
 using static SecureFolderFS.Core.Constants.Security.Headers.AesGcm;
 using static SecureFolderFS.Core.Extensions.SecurityExtensions.Content.AesGcmContentExtensions;
@@ -23,6 +24,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         }
 
         /// <inheritdoc/>
+        [SkipLocalsInit]
         public override void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
         {
             // Chunk nonce
@@ -45,6 +47,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         }
 
         /// <inheritdoc/>
+        [SkipLocalsInit]
         public override bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> cleartextChunk)
         {
             // Big Endian chunk number and file header nonce

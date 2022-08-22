@@ -39,6 +39,9 @@ namespace SecureFolderFS.Core.SecureStore
             _internal.Dispose();
         }
 
+        public static implicit operator ReadOnlySpan<byte>(SecretKey secretKey) => secretKey.Key;
+
+        [Obsolete("Key array should no longer be used. Use ReadOnlySpan<byte> conversion instead.")]
         public static implicit operator byte[](SecretKey secretKey) => secretKey.Key;
     }
 }

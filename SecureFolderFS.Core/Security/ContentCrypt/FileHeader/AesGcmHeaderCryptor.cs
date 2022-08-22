@@ -47,9 +47,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
             try
             {
-                var nonce = ciphertextFileHeader.Slice(0, AesGcmFileHeader.HEADER_NONCE_SIZE);
-                var ciphertextPayload = ciphertextFileHeader.Slice(AesGcmFileHeader.HEADER_NONCE_SIZE, AesGcmFileHeader.HEADER_CONTENTKEY_SIZE);
-                var tag = ciphertextFileHeader.Slice(AesGcmFileHeader.HEADER_NONCE_SIZE + AesGcmFileHeader.HEADER_CONTENTKEY_SIZE, AesGcmFileHeader.HEADER_TAG_SIZE);
+                var nonce = ciphertextFileHeader.SliceArray(0, AesGcmFileHeader.HEADER_NONCE_SIZE);
+                var ciphertextPayload = ciphertextFileHeader.SliceArray(AesGcmFileHeader.HEADER_NONCE_SIZE, AesGcmFileHeader.HEADER_CONTENTKEY_SIZE);
+                var tag = ciphertextFileHeader.SliceArray(AesGcmFileHeader.HEADER_NONCE_SIZE + AesGcmFileHeader.HEADER_CONTENTKEY_SIZE, AesGcmFileHeader.HEADER_TAG_SIZE);
 
                 var cleartextPayload = cipherProvider.AesGcmCrypt.AesGcmDecryptDeprecated(ciphertextPayload, encKey, nonce, tag);
 

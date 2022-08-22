@@ -27,7 +27,7 @@ namespace SecureFolderFS.Shared.Extensions
         /// <param name="offset">The offset at where to start the slice.</param>
         /// <param name="length">The length of the slice.</param>
         /// <returns></returns>
-        public static T[] Slice<T>(this T[] source, int offset, int length)
+        public static T[] SliceArray<T>(this T[] source, int offset, int length)
             where T : new()
         {
             var output = new T[length];

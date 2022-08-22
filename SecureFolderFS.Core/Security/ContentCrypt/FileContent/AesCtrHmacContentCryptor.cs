@@ -52,7 +52,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
 
         protected override ICleartextChunk DecryptChunk(CiphertextAesCtrHmacChunk ciphertextChunk, long chunkNumber, AesCtrHmacFileHeader fileHeader)
         {
-            var cleartextChunkBuffer = keyCryptor.AesCtrCrypt.AesCtrDecrypt(ciphertextChunk.GetPayloadAsSpan(), fileHeader.ContentKey, ciphertextChunk.GetNonceAsSpan());
+            var cleartextChunkBuffer = keyCryptor.AesCtrCrypt.Decrypt(ciphertextChunk.GetPayloadAsSpan(), fileHeader.ContentKey, ciphertextChunk.GetNonceAsSpan());
 
             return chunkFactory.FromCleartextChunkBuffer(ExtendCleartextChunkBuffer(cleartextChunkBuffer), cleartextChunkBuffer.Length);
         }

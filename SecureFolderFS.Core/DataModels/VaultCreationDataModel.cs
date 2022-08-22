@@ -32,7 +32,6 @@ namespace SecureFolderFS.Core.DataModels
 
         public void Cleanup()
         {
-            KeyCryptor?.Dispose();
             MacKey?.Dispose();
         }
     }

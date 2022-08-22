@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using static SecureFolderFS.Core.Constants.Security.Headers.AesGcm;
+using static SecureFolderFS.Core.Constants.Security.Headers.AesCtrHmac;
 
 namespace SecureFolderFS.Core.Extensions.SecurityExtensions.Header
 {
-    internal static class AesGcmHeaderExtensions
+    internal static class AesCtrHmacHeaderExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ReadOnlySpan<byte> GetHeaderNonce(this ReadOnlySpan<byte> header)
@@ -19,15 +19,9 @@ namespace SecureFolderFS.Core.Extensions.SecurityExtensions.Header
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ReadOnlySpan<byte> GetHeaderTag(this ReadOnlySpan<byte> header)
+        public static ReadOnlySpan<byte> GetHeaderMac(this ReadOnlySpan<byte> ciphertextHeader)
         {
-            return header.Slice(0, HEADER_TAG_SIZE);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Span<byte> GetHeaderTag(this Span<byte> header)
-        {
-            return header.Slice(0, HEADER_TAG_SIZE);
+            return ciphertextHeader.Slice(ciphertextHeader.Length - HEADER_MAC_SIZE);
         }
     }
 }

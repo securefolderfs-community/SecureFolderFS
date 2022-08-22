@@ -50,9 +50,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             var encKey = masterKey.GetEncryptionKey();
             var macKey = masterKey.GetMacKey();
 
-            var nonce = ciphertextFileHeader.Slice(0, AesCtrHmacFileHeader.HEADER_NONCE_SIZE);
-            var ciphertextPayload = ciphertextFileHeader.Slice(AesCtrHmacFileHeader.HEADER_NONCE_SIZE, AesCtrHmacFileHeader.HEADER_CONTENTKEY_SIZE);
-            var mac = ciphertextFileHeader.Slice(AesCtrHmacFileHeader.HEADER_NONCE_SIZE + AesCtrHmacFileHeader.HEADER_CONTENTKEY_SIZE, AesCtrHmacFileHeader.HEADER_MAC_SIZE);
+            var nonce = ciphertextFileHeader.SliceArray(0, AesCtrHmacFileHeader.HEADER_NONCE_SIZE);
+            var ciphertextPayload = ciphertextFileHeader.SliceArray(AesCtrHmacFileHeader.HEADER_NONCE_SIZE, AesCtrHmacFileHeader.HEADER_CONTENTKEY_SIZE);
+            var mac = ciphertextFileHeader.SliceArray(AesCtrHmacFileHeader.HEADER_NONCE_SIZE + AesCtrHmacFileHeader.HEADER_CONTENTKEY_SIZE, AesCtrHmacFileHeader.HEADER_MAC_SIZE);
 
             var realMac = CalculateFileHeaderMac(macKey, nonce, ciphertextPayload);
             if (!realMac.SequenceEqual(mac))

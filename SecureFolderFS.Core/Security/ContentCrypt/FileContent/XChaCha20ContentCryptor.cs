@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             var fullCiphertextChunkSpan = fullCiphertextChunk.AsSpan();
 
             // Chunk nonce
-            secureRandom.GetBytes(fullCiphertextChunk.Slice(0, CiphertextXChaCha20Chunk.CHUNK_NONCE_SIZE));
+            secureRandom.GetBytes(fullCiphertextChunk.SliceArray(0, CiphertextXChaCha20Chunk.CHUNK_NONCE_SIZE));
 
             // Big Endian chunk number and file header nonce
             var beChunkNumberWithFileHeaderNonce = new byte[sizeof(long) + fileHeader.Nonce.Length];

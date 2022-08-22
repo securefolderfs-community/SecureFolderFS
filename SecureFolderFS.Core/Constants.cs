@@ -103,6 +103,14 @@
                     public const int CHUNK_TAG_SIZE = 16;
                     public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_CLEARTEXT_SIZE + CHUNK_TAG_SIZE;
                 }
+
+                internal static class AesCtrHmac
+                {
+                    public const int CHUNK_CLEARTEXT_SIZE = 32 * 1024; // 32768
+                    public const int CHUNK_NONCE_SIZE = 16;
+                    public const int CHUNK_MAC_SIZE = 32;
+                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_CLEARTEXT_SIZE + CHUNK_MAC_SIZE;
+                }
             }
 
             internal static class Headers
@@ -121,6 +129,14 @@
                     public const int HEADER_CONTENTKEY_SIZE = 32;
                     public const int HEADER_TAG_SIZE = 16;
                     public const int HEADER_SIZE = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE + HEADER_TAG_SIZE;
+                }
+
+                internal static class AesCtrHmac
+                {
+                    public const int HEADER_NONCE_SIZE = 16;
+                    public const int HEADER_CONTENTKEY_SIZE = 32;
+                    public const int HEADER_MAC_SIZE = 32;
+                    public const int HEADER_SIZE = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE + HEADER_MAC_SIZE;
                 }
             }
 

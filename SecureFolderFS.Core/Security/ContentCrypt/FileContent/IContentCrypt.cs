@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         int ChunkCiphertextSize { get; }
 
         /// <summary>
-        /// Encrypts the <see cref="cleartextChunk"/> and writes <see cref="ciphertextChunk"/> with encrypted data.
+        /// Encrypts the <paramref name="cleartextChunk"/> and writes <paramref name="ciphertextChunk"/> with encrypted data.
         /// </summary>
         /// <param name="cleartextChunk">The data to be encrypted.</param>
         /// <param name="chunkNumber">The chunk number part of encrypted data.</param>
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk);
 
         /// <summary>
-        /// Decrypts the <see cref="ciphertextChunk"/> and writes <see cref="cleartextChunk"/> with decrypted data.
+        /// Decrypts the <paramref name="ciphertextChunk"/> and writes <paramref name="cleartextChunk"/> with decrypted data.
         /// </summary>
         /// <param name="ciphertextChunk">The data to be decrypted.</param>
         /// <param name="chunkNumber">The chunk number part of encrypted data.</param>

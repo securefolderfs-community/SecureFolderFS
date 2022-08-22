@@ -4,12 +4,8 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm
 {
     public interface IAesCtrCrypt
     {
-        byte[] AesCtrEncrypt(byte[] bytes, byte[] key, byte[] iv);
+        void Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, Span<byte> result);
 
-        byte[] AesCtrEncrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
-
-        byte[] AesCtrDecrypt(byte[] bytes, byte[] key, byte[] iv);
-
-        byte[] AesCtrDecrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv);
+        bool Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, Span<byte> result);
     }
 }

@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             var encKey = masterKey.GetEncryptionKey();
 
             // Payload
-            var ciphertextPayload = cipherProvider.XChaCha20Poly1305Crypt.XChaCha20Poly1305Encrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce, out byte[] tag);
+            var ciphertextPayload = cipherProvider.XChaCha20Poly1305Crypt.Encrypt(fileHeader.ContentKey, encKey, fileHeader.Nonce, out byte[] tag);
 
             return XChaCha20FileHeader.ConstructCiphertextFileHeader(fileHeader.Nonce, ciphertextPayload, tag);
         }
@@ -44,9 +44,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
             var encKey = masterKey.GetEncryptionKey();
 
-            var nonce = ciphertextFileHeader.Slice(0, XChaCha20FileHeader.HEADER_NONCE_SIZE);
-            var ciphertextPayload = ciphertextFileHeader.Slice(XChaCha20FileHeader.HEADER_NONCE_SIZE, XChaCha20FileHeader.HEADER_CONTENTKEY_SIZE);
-            var tag = ciphertextFileHeader.Slice(XChaCha20FileHeader.HEADER_NONCE_SIZE + XChaCha20FileHeader.HEADER_CONTENTKEY_SIZE, XChaCha20FileHeader.HEADER_TAG_SIZE);
+            var nonce = ciphertextFileHeader.SliceArray(0, XChaCha20FileHeader.HEADER_NONCE_SIZE);
+            var ciphertextPayload = ciphertextFileHeader.SliceArray(XChaCha20FileHeader.HEADER_NONCE_SIZE, XChaCha20FileHeader.HEADER_CONTENTKEY_SIZE);
+            var tag = ciphertextFileHeader.SliceArray(XChaCha20FileHeader.HEADER_NONCE_SIZE + XChaCha20FileHeader.HEADER_CONTENTKEY_SIZE, XChaCha20FileHeader.HEADER_TAG_SIZE);
 
             var cleartextPayload = cipherProvider.XChaCha20Poly1305Crypt.Decrypt(ciphertextPayload, encKey, nonce, tag);
             if (cleartextPayload is null)

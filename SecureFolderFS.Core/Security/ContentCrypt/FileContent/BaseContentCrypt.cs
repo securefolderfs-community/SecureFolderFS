@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using SecureFolderFS.Core.Security.Cipher;
 
@@ -29,6 +30,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         public abstract bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> cleartextChunk);
 
         /// <inheritdoc/>
+        [SkipLocalsInit]
         public virtual long CalculateCiphertextSize(long cleartextSize)
         {
             var overheadPerChunk = ChunkCiphertextSize - ChunkCleartextSize;
@@ -40,6 +42,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         }
 
         /// <inheritdoc/>
+        [SkipLocalsInit]
         public virtual long CalculateCleartextSize(long ciphertextSize)
         {
             var chunkOverhead = ChunkCiphertextSize - ChunkCleartextSize;
@@ -58,7 +61,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         }
 
         /// <inheritdoc/>
-        public void Dispose()
+        public virtual void Dispose()
         {
             secureRandom.Dispose();
         }

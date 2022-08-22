@@ -1,9 +1,8 @@
-﻿using System;
-using SecureFolderFS.Core.Security.EncryptionAlgorithm;
+﻿using SecureFolderFS.Core.Security.EncryptionAlgorithm;
 
 namespace SecureFolderFS.Core.Security.Cipher
 {
-    internal interface ICipherProvider : IDisposable
+    internal interface ICipherProvider
     {
         IArgon2idCrypt Argon2idCrypt { get; }
 
@@ -15,8 +14,8 @@ namespace SecureFolderFS.Core.Security.Cipher
 
         IAesSivCrypt AesSivCrypt { get; }
 
-        IHmacSha256Crypt HmacSha256Crypt { get; }
-
         IRfc3394KeyWrap Rfc3394KeyWrap { get; }
+
+        IHmacSha256Crypt GetHmacInstance();
     }
 }
