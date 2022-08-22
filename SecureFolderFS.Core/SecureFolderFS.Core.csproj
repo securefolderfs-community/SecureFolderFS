@@ -30,4 +30,8 @@
     <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Chunks\Implementation\" />
+  </ItemGroup>
+
 </Project>

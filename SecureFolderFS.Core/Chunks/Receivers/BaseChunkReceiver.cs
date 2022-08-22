@@ -6,15 +6,15 @@ namespace SecureFolderFS.Core.Chunks.Receivers
 {
     internal abstract class BaseChunkReceiver : IChunkReceiver
     {
-        protected readonly IChunkReader chunkReader;
+        protected readonly IChunkReaderDeprecated chunkReader;
 
-        protected readonly IChunkWriter chunkWriter;
+        protected readonly IChunkWriterDeprecated chunkWriter;
 
         protected readonly IFileSystemStatsTracker fileSystemStatsTracker;
 
         private bool _disposed;
 
-        protected BaseChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
+        protected BaseChunkReceiver(IChunkReaderDeprecated chunkReader, IChunkWriterDeprecated chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
         {
             this.chunkReader = chunkReader;
             this.chunkWriter = chunkWriter;

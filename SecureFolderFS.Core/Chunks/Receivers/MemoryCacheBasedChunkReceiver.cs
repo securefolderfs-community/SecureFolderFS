@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.Chunks.Receivers
     {
         private readonly MemoryCache _memoryCache;
 
-        public MemoryCacheBasedChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
+        public MemoryCacheBasedChunkReceiver(IChunkReaderDeprecated chunkReader, IChunkWriterDeprecated chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(chunkReader, chunkWriter, fileSystemStatsTracker)
         {
             _memoryCache = new MemoryCache("SecureFolderFS_chunkcache", new NameValueCollection(Constants.IO.MAX_CACHED_CHUNKS));

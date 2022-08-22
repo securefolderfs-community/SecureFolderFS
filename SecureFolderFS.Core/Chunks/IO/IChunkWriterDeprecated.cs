@@ -2,7 +2,7 @@
 
 namespace SecureFolderFS.Core.Chunks.IO
 {
-    internal interface IChunkWriter : IDisposable
+    internal interface IChunkWriterDeprecated : IDisposable
     {
         void WriteChunk(long chunkNumber, ICleartextChunk cleartextChunk);
     }

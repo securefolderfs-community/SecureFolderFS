@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.Chunks.Receivers
     {
         private readonly ConcurrentDictionary<long, ICleartextChunk> _chunks;
 
-        public RandomAccessMemoryBasedChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
+        public RandomAccessMemoryBasedChunkReceiver(IChunkReaderDeprecated chunkReader, IChunkWriterDeprecated chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(chunkReader, chunkWriter, fileSystemStatsTracker)
         {
             _chunks = new(3, Constants.IO.MAX_CACHED_CHUNKS);

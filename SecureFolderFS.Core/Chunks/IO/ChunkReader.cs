@@ -6,7 +6,7 @@ using SecureFolderFS.Core.Streams.Management;
 
 namespace SecureFolderFS.Core.Chunks.IO
 {
-    internal sealed class ChunkReader : IChunkReader
+    internal sealed class ChunkReader : IChunkReaderDeprecated
     {
         private readonly ISecurity _security;
 

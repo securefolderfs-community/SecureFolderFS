@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.Chunks.IO
             _fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
-        public IChunkReader GetChunkReader(ISecurity security, CiphertextStreamsManager ciphertextStreamsManager, IFileHeader fileHeader)
+        public IChunkReaderDeprecated GetChunkReader(ISecurity security, CiphertextStreamsManager ciphertextStreamsManager, IFileHeader fileHeader)
         {
             if (_vaultVersion.SupportsVersion(VaultVersion.V1))
             {
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.Chunks.IO
             throw new UnsupportedVaultException(_vaultVersion, GetType().Name);
         }
 
-        public IChunkWriter GetChunkWriter(ISecurity security, CiphertextStreamsManager ciphertextStreamsManager, IFileHeader fileHeader)
+        public IChunkWriterDeprecated GetChunkWriter(ISecurity security, CiphertextStreamsManager ciphertextStreamsManager, IFileHeader fileHeader)
         {
             if (_vaultVersion.SupportsVersion(VaultVersion.V1))
             {
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.Chunks.IO
             throw new UnsupportedVaultException(_vaultVersion, GetType().Name);
         }
 
-        public IChunkReceiver GetChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter)
+        public IChunkReceiver GetChunkReceiver(IChunkReaderDeprecated chunkReader, IChunkWriterDeprecated chunkWriter)
         {
             return _chunkCachingStrategy switch
             {

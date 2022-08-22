@@ -2,7 +2,7 @@
 
 namespace SecureFolderFS.Core.Chunks.IO
 {
-    internal interface IChunkReader : IDisposable
+    internal interface IChunkReaderDeprecated : IDisposable
     {
         ICleartextChunk ReadChunk(long chunkNumber);
     }

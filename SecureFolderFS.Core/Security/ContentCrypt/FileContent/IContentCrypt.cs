@@ -18,6 +18,11 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         int ChunkCiphertextSize { get; }
 
         /// <summary>
+        /// Gets the size of overhead per ciphertext chunk.
+        /// </summary>
+        int ChunkCiphertextOverheadSize { get; }
+
+        /// <summary>
         /// Encrypts the <paramref name="cleartextChunk"/> and writes <paramref name="ciphertextChunk"/> with encrypted data.
         /// </summary>
         /// <param name="cleartextChunk">The data to be encrypted.</param>

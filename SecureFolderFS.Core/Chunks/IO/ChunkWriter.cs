@@ -6,7 +6,7 @@ using System;
 
 namespace SecureFolderFS.Core.Chunks.IO
 {
-    internal sealed class ChunkWriter : IChunkWriter
+    internal sealed class ChunkWriter : IChunkWriterDeprecated
     {
         private readonly ISecurity _security;
 

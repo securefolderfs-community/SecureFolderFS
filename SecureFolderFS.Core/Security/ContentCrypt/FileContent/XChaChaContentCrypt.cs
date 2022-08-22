@@ -18,6 +18,8 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;
 
+        public 
+
         public XChaChaContentCrypt(ICipherProvider cipherProvider)
             : base(cipherProvider)
         {

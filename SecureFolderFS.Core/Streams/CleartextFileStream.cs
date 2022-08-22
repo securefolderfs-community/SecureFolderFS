@@ -17,17 +17,13 @@ namespace SecureFolderFS.Core.Streams
     internal sealed class CleartextFileStream : Stream, ICleartextFileStream, IBaseFileStreamInternal, ICleartextFileStreamInternal
     {
         private readonly ISecurity _security;
-
-        private readonly IFileSystemOperations _fileSystemOperations;
-
-        private readonly IChunkFactory _chunkFactory;
-
+        private readonly IChunkAccess _chunkAccess;
+        private readonly IFileOperations _fileOperations;
         private readonly ICiphertextFileStream _ciphertextFileStream;
 
+        // TODO: Remove?
         private readonly IFileHeader _fileHeader;
-
         private readonly ICiphertextPath _ciphertextPath;
-
         private bool _isHeaderWritten;
 
         public IChunkReceiver ChunkReceiver { get; set; }
@@ -77,6 +73,32 @@ namespace SecureFolderFS.Core.Streams
             _Length = _security.ContentCrypt.CalculateCleartextSize(_ciphertextFileStream.Length - _security.HeaderCrypt.HeaderCiphertextSize);
         }
 
+        public int Read2(Span<byte> buffer)
+        {
+            var lengthToEof = _Length - _Position;
+            if (lengthToEof < 1L)
+                return Constants.IO.FILE_EOF;
+
+            var read = 0;
+            var positionInBuffer = 0;
+            var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
+            var adjustedBuffer = buffer.Slice(0, Math.Min(buffer.Length, (int)lengthToEof));
+
+            while (positionInBuffer < adjustedBuffer.Length)
+            {
+                var readPosition = _Position + read;
+                var chunkNumber = readPosition / cleartextChunkSize;
+                var offsetInChunk = (int)(readPosition % cleartextChunkSize);
+                var length = Math.Min(adjustedBuffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
+
+                positionInBuffer += _chunkAccess.CopyFromChunk(chunkNumber, adjustedBuffer.Slice(positionInBuffer), offsetInChunk);
+                read += length;
+            }
+
+            _Position += read;
+            return read;
+        }
+
         public override int Read(Span<byte> buffer)
         {
             var lengthToEof = _Length - _Position;
@@ -85,20 +107,19 @@ namespace SecureFolderFS.Core.Streams
                 return Constants.IO.FILE_EOF;
             }
 
-            var cleartextChunkSize = _security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
+            var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
             var read = 0;
             var positionInBuffer = 0;
-
             var adjustedBuffer = buffer.Slice(0, (int)Math.Min(buffer.Length, lengthToEof));
 
             while (positionInBuffer < adjustedBuffer.Length)
             {
-                long readPosition = Position + read;
-                long chunkNumber = readPosition / cleartextChunkSize;
-                int offsetInChunk = (int)(readPosition % cleartextChunkSize);
-                int length = Math.Min(adjustedBuffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
+                var readPosition = Position + read;
+                var chunkNumber = readPosition / cleartextChunkSize;
+                var offsetInChunk = (int)(readPosition % cleartextChunkSize);
+                var length = Math.Min(adjustedBuffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
 
-                ICleartextChunk cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
+                var cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
                 cleartextChunk.CopyTo(adjustedBuffer, offsetInChunk, ref positionInBuffer);
                 read += length;
             }
@@ -156,7 +177,7 @@ namespace SecureFolderFS.Core.Streams
                 _ciphertextFileStream.SetLength(ciphertextFileSize);
                 _Length = value;
                 _Position = Math.Min(value, Position);
-                _fileSystemOperations.DangerousFileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
+                _fileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
             }
             else
             {
@@ -245,7 +266,7 @@ namespace SecureFolderFS.Core.Streams
             }
 
             _Length = Math.Max(position + written, Length);
-            _fileSystemOperations.DangerousFileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
+            _fileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
         }
 
         public void Lock(long position, long length)

@@ -5,7 +5,7 @@ namespace SecureFolderFS.Core.Chunks.Receivers
 {
     internal sealed class InstantAccessBasedChunkReceiver : BaseChunkReceiver
     {
-        public InstantAccessBasedChunkReceiver(IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
+        public InstantAccessBasedChunkReceiver(IChunkReaderDeprecated chunkReader, IChunkWriterDeprecated chunkWriter, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(chunkReader, chunkWriter, fileSystemStatsTracker)
         {
         }
