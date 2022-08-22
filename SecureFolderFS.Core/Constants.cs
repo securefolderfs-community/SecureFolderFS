@@ -160,6 +160,11 @@
                     public const int MEMORY_SIZE = 102400; // 102400 Kb
                 }
 
+                internal static class HmacSha256
+                {
+                    public const int MAC_SIZE = 32;
+                }
+
                 public static class AesGcm
                 {
                     public const int AES_GCM_TAG_SIZE = 16;

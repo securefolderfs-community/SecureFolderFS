@@ -17,8 +17,6 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
 
         internal IArgon2idCrypt Argon2idCrypt { get; private set; }
 
-        internal IHmacSha256Crypt HmacSha256Crypt { get; private set; }
-
         internal IRfc3394KeyWrap Rfc3394KeyWrap { get; private set; }
 
         private EncryptionAlgorithmBuilder()
@@ -70,14 +68,6 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
             return this;
         }
 
-        public IEncryptionAlgorithmBuilder WithHmacSha256Crypt(IHmacSha256Crypt hmacSha256Crypt)
-        {
-            AssertNotBuilt();
-
-            HmacSha256Crypt = hmacSha256Crypt;
-            return this;
-        }
-
         public IEncryptionAlgorithmBuilder WithRfc3394KeyWrap(IRfc3394KeyWrap rfc3394KeyWrap)
         {
             AssertNotBuilt();
@@ -97,7 +87,6 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder
             AesCtrCrypt ??= new AesCtrCrypt();
             AesSivCrypt ??= new AesSivCrypt();
             Argon2idCrypt ??= new Argon2idCrypt();
-            HmacSha256Crypt ??= CryptImplementation.HmacSha256Crypt.GetBaseInstance();
             Rfc3394KeyWrap ??= new Rfc3394KeyWrap();
 
             return this;

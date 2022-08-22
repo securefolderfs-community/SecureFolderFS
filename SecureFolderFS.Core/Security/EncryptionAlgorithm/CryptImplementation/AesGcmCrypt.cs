@@ -34,8 +34,18 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
 
         public bool Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, ReadOnlySpan<byte> tag, Span<byte> result, ReadOnlySpan<byte> associatedData)
         {
-            using var aesGcm = new AesGcm(key);
-            aesGcm.Decrypt(nonce: iv, ciphertext: bytes, tag: tag, plaintext: result, associatedData: associatedData);
+            try
+            {
+
+                using var aesGcm = new AesGcm(key);
+                aesGcm.Decrypt(nonce: iv, ciphertext: bytes, tag: tag, plaintext: result, associatedData: associatedData);
+
+                return true;
+            }
+            catch (CryptographicException)
+            {
+                return false;
+            }
         }
     }
 }

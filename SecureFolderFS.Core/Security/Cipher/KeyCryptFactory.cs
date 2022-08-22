@@ -33,7 +33,6 @@ namespace SecureFolderFS.Core.Security.Cipher
                     AesGcmCrypt = encryptionAlgorithmBuilderImpl.AesGcmCrypt,
                     AesCtrCrypt = encryptionAlgorithmBuilderImpl.AesCtrCrypt,
                     AesSivCrypt = encryptionAlgorithmBuilderImpl.AesSivCrypt,
-                    HmacSha256Crypt = encryptionAlgorithmBuilderImpl.HmacSha256Crypt,
                     Rfc3394KeyWrap = encryptionAlgorithmBuilderImpl.Rfc3394KeyWrap
                 };
             }

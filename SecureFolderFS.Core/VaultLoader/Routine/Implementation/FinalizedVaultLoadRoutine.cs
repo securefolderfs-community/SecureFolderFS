@@ -1,14 +1,14 @@
-﻿using SecureFolderFS.Core.Instance;
-using SecureFolderFS.Core.Instance.Implementation;
-using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
-using SecureFolderFS.Core.Streams.Receiver;
-using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers;
-using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
+﻿using SecureFolderFS.Core.Chunks.IO;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Paths.Receivers;
 using SecureFolderFS.Core.FileNames.Factory;
+using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
+using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
+using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Core.Instance;
+using SecureFolderFS.Core.Instance.Implementation;
+using SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers;
+using SecureFolderFS.Core.Paths.Receivers;
+using SecureFolderFS.Core.Streams.Receiver;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 {
@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                 _vaultInstance.VaultVersion,
                 _optionalVaultLoadRoutine.FileSystemAdapterType,
                 _optionalVaultLoadRoutine.MountVolumeDataModel,
-                _vaultInstance.Security.ContentCryptor,
+                _vaultInstance.Security,
                 _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver,
                 _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations,
                 _vaultInstance.SecureFolderFSInstanceImpl.PathReceiver,

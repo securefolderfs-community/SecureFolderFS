@@ -1,9 +1,9 @@
-﻿using System;
-using SecureFolderFS.Core.Chunks.Factory;
+﻿using SecureFolderFS.Core.Chunks.Factory;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Instance.Implementation;
 using SecureFolderFS.Core.Security.Loader;
+using System;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutineSteps
 {
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
                     _ => throw new ArgumentOutOfRangeException(nameof(vaultInstance.BaseVaultConfiguration.ContentCipherScheme))
                 };
 
-                var securityLoaderFactory = new SecurityLoaderFactory(vaultInstance.VaultVersion, vaultLoadDataModel.ChunkFactory);
+                var securityLoaderFactory = new SecurityLoaderFactory(vaultInstance.VaultVersion);
                 var securityLoader = securityLoaderFactory.GetSecurityLoader();
 
                 vaultInstance.Security = securityLoader.LoadSecurity(vaultInstance.BaseVaultConfiguration, vaultLoadDataModel.KeyCryptor, vaultLoadDataModel.MasterKey.CreateCopy());

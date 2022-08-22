@@ -74,7 +74,7 @@ namespace SecureFolderFS.Core.Streams
             _isHeaderWritten = isHeaderWritten;
             _ciphertextPath = ciphertextPath;
 
-            _Length = _security.ContentCryptor.FileContentCryptor.CalculateCleartextSize(_ciphertextFileStream.Length - _security.ContentCryptor.FileHeaderCryptor.HeaderSize);
+            _Length = _security.ContentCrypt.CalculateCleartextSize(_ciphertextFileStream.Length - _security.HeaderCrypt.HeaderCiphertextSize);
         }
 
         public override int Read(Span<byte> buffer)

@@ -1,8 +1,8 @@
-﻿using System;
-using SecureFolderFS.Core.FileHeaders;
+﻿using SecureFolderFS.Core.FileHeaders;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
-using SecureFolderFS.Core.Sdk.Tracking;
+using System;
 
 namespace SecureFolderFS.Core.Chunks.IO
 {
