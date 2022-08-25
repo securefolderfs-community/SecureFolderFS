@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         private readonly FileSystemFeatures _dokanFileSystemFeatures;
 
-        public GetVolumeInformationCallback(MountVolumeDataModel mountVolumeDataModel, HandlesCollection handles)
+        public GetVolumeInformationCallback(MountVolumeDataModel mountVolumeDataModel, HandlesManager handles)
             : base(handles)
         {
             _mountVolumeDataModel = mountVolumeDataModel;

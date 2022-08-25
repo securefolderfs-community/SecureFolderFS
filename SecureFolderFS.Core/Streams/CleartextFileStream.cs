@@ -1,32 +1,26 @@
-﻿using System;
-using System.IO;
-using Microsoft.Win32.SafeHandles;
+﻿using Microsoft.Win32.SafeHandles;
+using SecureFolderFS.Core.BufferHolders;
 using SecureFolderFS.Core.Chunks;
-using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Core.FileHeaders;
-using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Security;
-using SecureFolderFS.Core.Streams.InternalStreams;
 using SecureFolderFS.Core.Extensions;
 using SecureFolderFS.Core.Sdk.Streams;
+using SecureFolderFS.Core.Security;
+using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace SecureFolderFS.Core.Streams
 {
-    internal sealed class CleartextFileStream : Stream, ICleartextFileStream, IBaseFileStreamInternal, ICleartextFileStreamInternal
+    internal sealed class CleartextFileStream : Stream, ICleartextFileStream
     {
         private readonly ISecurity _security;
         private readonly IChunkAccess _chunkAccess;
-        private readonly IFileOperations _fileOperations;
         private readonly ICiphertextFileStream _ciphertextFileStream;
+        private readonly CleartextHeaderBuffer _fileHeader;
 
         // TODO: Remove?
-        private readonly IFileHeader _fileHeader;
-        private readonly ICiphertextPath _ciphertextPath;
         private bool _isHeaderWritten;
 
-        public IChunkReceiver ChunkReceiver { get; set; }
+        public ICiphertextFileStream UnderlyingStream { get; }
 
         public Action<ICleartextFileStream> StreamClosedCallback { get; set; }
 
@@ -53,27 +47,24 @@ namespace SecureFolderFS.Core.Streams
 
         public CleartextFileStream(
             ISecurity security,
-            IFileSystemOperations fileSystemOperations,
-            IChunkFactory chunkFactory,
+            IChunkAccess chunkAccess,
             ICiphertextFileStream ciphertextFileStream,
-            IFileHeader fileHeader,
-            bool isHeaderWritten,
-            
-            ICiphertextPath ciphertextPath, FileMode mode, FileAccess access, FileShare share)
+            CleartextHeaderBuffer fileHeader,
+            bool isHeaderWritten)
             //: base(ciphertextPath, mode, access, share)
         {
             _security = security;
-            _fileSystemOperations = fileSystemOperations;
-            _chunkFactory = chunkFactory;
+            _chunkAccess = chunkAccess;
             _ciphertextFileStream = ciphertextFileStream;
             _fileHeader = fileHeader;
             _isHeaderWritten = isHeaderWritten;
-            _ciphertextPath = ciphertextPath;
-
             _Length = _security.ContentCrypt.CalculateCleartextSize(_ciphertextFileStream.Length - _security.HeaderCrypt.HeaderCiphertextSize);
+            _Length = _Length == -1 ? 0 : _Length;
+
+            UnderlyingStream = ciphertextFileStream;
         }
 
-        public int Read2(Span<byte> buffer)
+        public override int Read(Span<byte> buffer)
         {
             var lengthToEof = _Length - _Position;
             if (lengthToEof < 1L)
@@ -99,35 +90,6 @@ namespace SecureFolderFS.Core.Streams
             return read;
         }
 
-        public override int Read(Span<byte> buffer)
-        {
-            var lengthToEof = _Length - _Position;
-            if (lengthToEof < 1L)
-            {
-                return Constants.IO.FILE_EOF;
-            }
-
-            var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
-            var read = 0;
-            var positionInBuffer = 0;
-            var adjustedBuffer = buffer.Slice(0, (int)Math.Min(buffer.Length, lengthToEof));
-
-            while (positionInBuffer < adjustedBuffer.Length)
-            {
-                var readPosition = Position + read;
-                var chunkNumber = readPosition / cleartextChunkSize;
-                var offsetInChunk = (int)(readPosition % cleartextChunkSize);
-                var length = Math.Min(adjustedBuffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
-
-                var cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
-                cleartextChunk.CopyTo(adjustedBuffer, offsetInChunk, ref positionInBuffer);
-                read += length;
-            }
-
-            _Position += read;
-            return read;
-        }
-
         public override int Read(byte[] buffer, int offset, int count)
         {
             ArgumentNullException.ThrowIfNull(buffer);
@@ -137,11 +99,14 @@ namespace SecureFolderFS.Core.Streams
 
         public override void Write(ReadOnlySpan<byte> buffer)
         {
-            long oldFileSize = Length;
-            if (Position > oldFileSize)
+            if (buffer.IsEmpty)
+                return;
+
+            if (Position > Length)
             {
-                long gapLength = Position - oldFileSize;
-                WriteToFillSpace(oldFileSize, gapLength);
+                Debugger.Break(); // Write gap
+                //var gapLength = Position - oldFileSize;
+                //WriteInternal(ArrayExtensions.GenerateWeakNoise(oldFileSize), gapLength);
             }
             else
             {
@@ -162,22 +127,23 @@ namespace SecureFolderFS.Core.Streams
         {
             if (value < _Length)
             {
-                int cleartextChunkSize = _security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
+                int cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
                 long numberOfLastChunk = (value + cleartextChunkSize - 1) / cleartextChunkSize - 1;
                 int sizeOfIncompleteChunk = (int)(value % cleartextChunkSize);
 
                 if (sizeOfIncompleteChunk > 0)
                 {
-                    ICleartextChunk cleartextChunk = ChunkReceiver.GetChunk(numberOfLastChunk);
-                    cleartextChunk.SetActualLength(sizeOfIncompleteChunk);
+                    Debugger.Break();
+                    //ICleartextChunk cleartextChunk = ChunkReceiver.GetChunk(numberOfLastChunk);
+                    //cleartextChunk.SetActualLength(sizeOfIncompleteChunk);
                 }
 
-                long ciphertextFileSize = _security.ContentCryptor.FileHeaderCryptor.HeaderSize + _security.ContentCryptor.FileContentCryptor.CalculateCiphertextSize(value);
-                ChunkReceiver.Flush();
+                long ciphertextFileSize = _security.HeaderCrypt.HeaderCiphertextSize + _security.ContentCrypt.CalculateCiphertextSize(value);
+                _chunkAccess.Flush();
                 _ciphertextFileStream.SetLength(ciphertextFileSize);
                 _Length = value;
                 _Position = Math.Min(value, Position);
-                _fileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
+                //_fileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
             }
             else
             {
@@ -230,7 +196,7 @@ namespace SecureFolderFS.Core.Streams
             if (CanWrite)
             {
                 TryWriteHeader();
-                ChunkReceiver.Flush();
+                _chunkAccess.Flush();
             }
         }
 
@@ -238,35 +204,31 @@ namespace SecureFolderFS.Core.Streams
         {
             TryWriteHeader();
 
-            int cleartextChunkSize = _security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
-            int written = 0;
-            int positionInBuffer = 0;
+            var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
+            var written = 0;
+            var positionInBuffer = 0;
 
             while (positionInBuffer < buffer.Length)
             {
-                long currentPosition = position + written;
-                long chunkNumber = currentPosition / cleartextChunkSize;
-                int offsetInChunk = (int)(currentPosition % cleartextChunkSize);
-                int length = Math.Min(buffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
+                var currentPosition = position + written;
+                var chunkNumber = currentPosition / cleartextChunkSize;
+                var offsetInChunk = (int)(currentPosition % cleartextChunkSize);
+                var length = Math.Min(buffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
 
-                ICleartextChunk cleartextChunk;
                 if (offsetInChunk == 0 && length == cleartextChunkSize)
                 {
-                    cleartextChunk = _chunkFactory.FromCleartextChunkBuffer(new byte[cleartextChunkSize], 0);
-                    cleartextChunk.CopyFrom(buffer, 0, ref positionInBuffer);
-                    ChunkReceiver.SetChunk(chunkNumber, cleartextChunk);
+                    positionInBuffer += _chunkAccess.CopyToChunk(chunkNumber, buffer.Slice(positionInBuffer), 0);
                 }
                 else
                 {
-                    cleartextChunk = ChunkReceiver.GetChunk(chunkNumber);
-                    cleartextChunk.CopyFrom(buffer, offsetInChunk, ref positionInBuffer);
+                    positionInBuffer += _chunkAccess.CopyToChunk(chunkNumber, buffer.Slice(positionInBuffer), offsetInChunk);
                 }
 
                 written += length;
             }
 
             _Length = Math.Max(position + written, Length);
-            _fileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
+            //_fileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
         }
 
         public void Lock(long position, long length)
@@ -279,44 +241,27 @@ namespace SecureFolderFS.Core.Streams
             _ciphertextFileStream.Unlock(position, length);
         }
 
-        SafeFileHandle IBaseFileStreamInternal.DangerousGetInternalSafeFileHandle()
-        {
-            return _ciphertextFileStream.AsBaseFileStreamInternal().DangerousGetInternalSafeFileHandle();
-        }
-
-        ICiphertextFileStream ICleartextFileStreamInternal.DangerousGetInternalCiphertextFileStream()
-        {
-            return _ciphertextFileStream;
-        }
-
-        private void WriteToFillSpace(long position, long count)
-        {
-            WriteInternal(ArrayExtensions.GenerateWeakNoise(count), position);
-        }
-
-        private bool TryWriteHeader()
+        private void TryWriteHeader()
         {
             if (!_isHeaderWritten && CanWrite)
             {
                 _isHeaderWritten = true;
 
-                var headerBuffer = _security.ContentCryptor.FileHeaderCryptor.EncryptHeader(_fileHeader);
+                var headerBuffer = new byte[_security.HeaderCrypt.HeaderCiphertextSize];
+
+                _security.HeaderCrypt.EncryptHeader(_fileHeader, headerBuffer);
                 var savedPosition = _ciphertextFileStream.Position;
                 _ciphertextFileStream.Position = 0L;
                 _ciphertextFileStream.Write(headerBuffer.AsSpan());
                 _ciphertextFileStream.Position = savedPosition + headerBuffer.Length;
-
-                return true;
             }
-
-            return false;
         }
 
         private long BeginOfChunk(long cleartextPosition)
         {
-            long maxCiphertextPayloadSize = long.MaxValue - _security.ContentCryptor.FileHeaderCryptor.HeaderSize;
-            long maxChunks = maxCiphertextPayloadSize / _security.ContentCryptor.FileContentCryptor.ChunkFullCiphertextSize;
-            long chunk = cleartextPosition / _security.ContentCryptor.FileContentCryptor.ChunkCleartextSize;
+            long maxCiphertextPayloadSize = long.MaxValue - _security.HeaderCrypt.HeaderCiphertextSize;
+            long maxChunks = maxCiphertextPayloadSize / _security.ContentCrypt.ChunkCiphertextSize;
+            long chunk = cleartextPosition / _security.ContentCrypt.ChunkCleartextSize;
 
             if (chunk > maxChunks)
             {
@@ -324,7 +269,7 @@ namespace SecureFolderFS.Core.Streams
             }
             else
             {
-                return chunk * _security.ContentCryptor.FileContentCryptor.ChunkFullCiphertextSize + _security.ContentCryptor.FileHeaderCryptor.HeaderSize;
+                return chunk * _security.ContentCrypt.ChunkCiphertextSize + _security.HeaderCrypt.HeaderCiphertextSize;
             }
         }
     }

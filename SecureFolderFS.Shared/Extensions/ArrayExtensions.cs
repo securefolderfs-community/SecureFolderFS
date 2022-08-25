@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Shared.Extensions
 {
@@ -51,6 +52,17 @@ namespace SecureFolderFS.Shared.Extensions
             }
 
             return bytes;
+        }
+
+        /// <summary>
+        /// Reverses the <paramref name="possibleLittleEndian"/> if the system uses Little Endian.
+        /// </summary>
+        /// <param name="possibleLittleEndian">The byte sequence that represents an integer.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void AsBigEndian(this Span<byte> possibleLittleEndian)
+        {
+            if (BitConverter.IsLittleEndian)
+                possibleLittleEndian.Reverse();
         }
 
         /// <summary>

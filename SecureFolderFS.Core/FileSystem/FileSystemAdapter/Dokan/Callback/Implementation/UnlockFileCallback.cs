@@ -6,7 +6,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class UnlockFileCallback : BaseDokanOperationsCallback, IUnlockFileCallback
     {
-        public UnlockFileCallback(HandlesCollection handles)
+        public UnlockFileCallback(HandlesManager handles)
             : base(handles)
         {
         }
@@ -15,18 +15,9 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
             try
             {
-                if (IsContextInvalid(info))
+                if (handles.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
-                    return DokanResult.InvalidHandle;
-                }
-                else if (info.IsDirectory)
-                {
-                    return DokanResult.AccessDenied;
-                }
-
-                if (handles.GetHandle(GetContextValue(info)) is FileHandle fileHandle)
-                {
-                    fileHandle.CleartextFileStream.Unlock(offset, length);
+                    fileHandle.HandleStream.Unlock(offset, length);
                     return DokanResult.Success;
                 }
                 else

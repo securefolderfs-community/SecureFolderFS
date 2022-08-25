@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IFileSystemOperations _fileSystemOperations;
 
-        public SetFileTimeCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public SetFileTimeCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
             _fileSystemOperations = fileSystemOperations;
@@ -29,12 +29,13 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     var lat = lastAccessTime?.ToFileTime() ?? 0L;
                     var lwt = lastWriteTime?.ToFileTime() ?? 0L;
 
-                    if (handles.GetHandle(GetContextValue(info)) is FileHandle fileHandle)
+                    if (handles.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
                     {
-                        if (fileHandle.SetFileTime(ref ct, ref lat, ref lwt))
-                        {
+                        // TODO: Re-add set file time
+                        //if (fileHandle.SetFileTime(ref ct, ref lat, ref lwt))
+                        //{
                             return DokanResult.Success;
-                        }
+                        //}
                     }
                     else
                     {

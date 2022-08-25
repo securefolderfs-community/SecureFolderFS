@@ -1,48 +1,20 @@
-﻿using System;
-using System.IO;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Sdk.Streams;
-using SecureFolderFS.Core.UnsafeNative;
-using SecureFolderFS.Core.Extensions;
-using SecureFolderFS.Core.Streams.Receiver;
+﻿using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {
     internal sealed class FileHandle : HandleObject
     {
-        private bool _disposed;
+        public ICleartextFileStream HandleStream { get; }
 
-        public ICleartextFileStream CleartextFileStream { get; }
-
-        private FileHandle(ICleartextFileStream cleartextFileStream)
+        public FileHandle(ICleartextFileStream cleartextFileStream)
         {
-            CleartextFileStream = cleartextFileStream;
+            HandleStream = cleartextFileStream;
         }
 
-        public bool SetFileTime(ref long ct, ref long lat, ref long lwt)
-        {
-            AssertNotDisposed();
-
-            var hFile = CleartextFileStream.AsBaseFileStreamInternal().DangerousGetInternalSafeFileHandle();
-            return UnsafeNativeApis.SetFileTime(hFile, ref ct, ref lat, ref lwt);
-        }
-
-        public static FileHandle Open(ICiphertextPath ciphertextPath, IFileStreamReceiver fileStreamReceiver, FileMode mode, FileAccess access, FileShare share, FileOptions options)
-        {
-            var cleartextFileStream = fileStreamReceiver.OpenFileStreamToCleartextFile(ciphertextPath, mode, access, share, options);
-            return new FileHandle(cleartextFileStream);
-        }
-
-        private void AssertNotDisposed()
-        {
-            if (_disposed)
-                throw new ObjectDisposedException(GetType().FullName);
-        }
-
+        /// <inheritdoc/>
         public override void Dispose()
         {
-            _disposed = true;
-            CleartextFileStream?.Dispose();
+            HandleStream.Dispose();
         }
     }
 }

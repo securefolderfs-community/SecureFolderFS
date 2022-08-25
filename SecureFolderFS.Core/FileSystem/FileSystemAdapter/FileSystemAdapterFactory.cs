@@ -57,7 +57,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
 
         public DokanFileSystemAdapter GetDokanFileSystemAdapter()
         {
-            var handles = new HandlesCollection(_fileStreamReceiver);
+            var handles = new HandlesManager(_fileStreamReceiver);
             var dokanOperationsCallbacksFactory = new DokanOperationsCallbacksFactory(
                 _vaultVersion,
                 _security,

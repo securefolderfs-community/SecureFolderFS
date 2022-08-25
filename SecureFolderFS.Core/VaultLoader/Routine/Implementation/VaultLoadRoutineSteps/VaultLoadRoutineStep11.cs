@@ -1,9 +1,6 @@
-﻿using SecureFolderFS.Core.Chunks.Factory;
-using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Enums;
+﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Instance.Implementation;
 using SecureFolderFS.Core.Security.Loader;
-using System;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutineSteps
 {
@@ -18,14 +15,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
         {
             try
             {
-                vaultLoadDataModel.ChunkFactory = vaultInstance.BaseVaultConfiguration.ContentCipherScheme switch
-                {
-                    ContentCipherScheme.AES_CTR_HMAC => new AesCtrHmacChunkFactory(),
-                    ContentCipherScheme.AES_GCM => new AesGcmChunkFactory(),
-                    ContentCipherScheme.XChaCha20_Poly1305 => new XChaCha20ChunkFactory(),
-                    _ => throw new ArgumentOutOfRangeException(nameof(vaultInstance.BaseVaultConfiguration.ContentCipherScheme))
-                };
-
                 var securityLoaderFactory = new SecurityLoaderFactory(vaultInstance.VaultVersion);
                 var securityLoader = securityLoaderFactory.GetSecurityLoader();
 

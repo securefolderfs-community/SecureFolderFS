@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
-using SecureFolderFS.Core.Chunks.IO;
-using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Sdk.Streams;
-using SecureFolderFS.Core.Streams.Management;
-using SecureFolderFS.Core.Extensions;
 using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Core.Streams.Management;
+using SecureFolderFS.Shared.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 {
     internal sealed class OpenCryptFile : IDisposable
     {
-        private readonly Dictionary<ICleartextFileStream, long> _openedCleartextStreams;
+        private readonly Dictionary<ICleartextFileStream, long> _openedStreams;
 
         private readonly ICiphertextPath _ciphertextPath;
 
-        private readonly IChunkReceiver _chunkReceiver;
+        private readonly IChunkAccess _chunkAccess;
 
         private readonly CiphertextStreamsManager _ciphertextStreamsManager;
 
@@ -26,29 +24,32 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 
         private bool _disposed;
 
-        public OpenCryptFile(ICiphertextPath ciphertextPath, IChunkReceiver chunkReceiver, CiphertextStreamsManager ciphertextStreamsManager, Action<ICiphertextPath> openCryptFileClosedCallback)
+        public IChunkAccess ChunkAccess { get; }
+
+        public OpenCryptFile(ICiphertextPath ciphertextPath, IChunkAccess chunkAccess, CiphertextStreamsManager ciphertextStreamsManager, Action<ICiphertextPath> openCryptFileClosedCallback)
         {
             _ciphertextPath = ciphertextPath;
-            _chunkReceiver = chunkReceiver;
+            _chunkAccess = chunkAccess;
+            ChunkAccess = chunkAccess;
             _ciphertextStreamsManager = ciphertextStreamsManager;
             _openCryptFileClosedCallback = openCryptFileClosedCallback;
 
-            _openedCleartextStreams = new Dictionary<ICleartextFileStream, long>();
+            _openedStreams = new Dictionary<ICleartextFileStream, long>();
         }
 
         public void Open(ICleartextFileStream cleartextFileStream, ICiphertextFileStream ciphertextFileStream)
         {
             AssertNotDisposed();
 
-            FillCleartextFileStream(cleartextFileStream.AsCleartextFileStreamInternal());
+            (cleartextFileStream as CleartextFileStream)!.StreamClosedCallback = Close;
 
-            if (_openedCleartextStreams.ContainsKey(cleartextFileStream))
+            if (_openedStreams.ContainsKey(cleartextFileStream))
             {
-                _openedCleartextStreams[cleartextFileStream]++;
+                _openedStreams[cleartextFileStream]++;
             }
             else
             {
-                _openedCleartextStreams.Add(cleartextFileStream, 1L);
+                _openedStreams.Add(cleartextFileStream, 1L);
             }
 
             _ciphertextStreamsManager.AddStream(ciphertextFileStream);
@@ -59,17 +60,17 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
         {
             try
             {
-                if (_openedCleartextStreams.ContainsKey(cleartextFileStream) && ((--_openedCleartextStreams[cleartextFileStream]) <= 0))
+                if (_openedStreams.ContainsKey(cleartextFileStream) && ((--_openedStreams[cleartextFileStream]) <= 0))
                 {
-                    _openedCleartextStreams.Remove(cleartextFileStream);
+                    _openedStreams.Remove(cleartextFileStream);
 
-                    using var ciphertextFileStream = cleartextFileStream.AsCleartextFileStreamInternal().DangerousGetInternalCiphertextFileStream();
+                    using var ciphertextFileStream = cleartextFileStream.UnderlyingStream;
                     _ciphertextStreamsManager.RemoveStream(ciphertextFileStream);
                 }
             }
             finally
             {
-                if (_openedCleartextStreams.IsEmpty())
+                if (_openedStreams.IsEmpty())
                 {
                     _openCryptFileClosedCallback?.Invoke(_ciphertextPath);
                 }
@@ -79,12 +80,6 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
         public void FlushChunkReceiver()
         {
             //_chunkReceiver?.Flush();
-        }
-
-        private void FillCleartextFileStream(ICleartextFileStreamInternal cleartextFileStreamInternal)
-        {
-            cleartextFileStreamInternal.StreamClosedCallback = Close;
-            cleartextFileStreamInternal.ChunkReceiver = _chunkReceiver;
         }
 
         private void AssertNotDisposed()
@@ -99,8 +94,8 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
         {
             _disposed = true;
 
-            _openedCleartextStreams.Keys.DisposeCollection();
-            _openedCleartextStreams.Clear();
+            _openedStreams.Keys.DisposeCollection();
+            _openedStreams.Clear();
         }
     }
 }

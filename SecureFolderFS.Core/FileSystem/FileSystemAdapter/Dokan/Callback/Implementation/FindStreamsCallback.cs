@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class FindStreamsCallback : BaseDokanOperationsCallbackWithPath, IFindStreamsCallback // TODO: For now, BaseDokanOperationsCallbackWithPath is not used
     {
-        public FindStreamsCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public FindStreamsCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
         }

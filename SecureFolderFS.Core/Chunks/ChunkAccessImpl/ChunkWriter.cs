@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Helpers;
+﻿using SecureFolderFS.Core.BufferHolders;
 using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
@@ -11,11 +11,11 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
     internal sealed class ChunkWriter : IChunkWriter
     {
         private readonly ISecurity _security;
-        private readonly ReferenceBuffer _fileHeader;
+        private readonly CleartextHeaderBuffer _fileHeader;
         private readonly CiphertextStreamsManager _ciphertextStreamsManager;
         private readonly IFileSystemStatsTracker? _fileSystemStatsTracker;
 
-        public ChunkWriter(ISecurity security, ReferenceBuffer fileHeader, CiphertextStreamsManager ciphertextStreamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
+        public ChunkWriter(ISecurity security, CleartextHeaderBuffer fileHeader, CiphertextStreamsManager ciphertextStreamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
         {
             _security = security;
             _fileHeader = fileHeader;
@@ -34,20 +34,21 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 
             // Rent array for ciphertext chunk
             var ciphertextChunk = ArrayPool<byte>.Shared.Rent(ciphertextSize);
+            var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
             // Encrypt
             _security.ContentCrypt.EncryptChunk(
                 cleartextChunk,
                 chunkNumber,
                 _fileHeader,
-                ciphertextChunk);
+                realCiphertextChunk);
 
             _fileSystemStatsTracker?.AddBytesEncrypted(cleartextChunk.Length);
 
             // Get and write to ciphertext stream
             var ciphertextStream = _ciphertextStreamsManager.GetReadWriteStreamInstance();
             ciphertextStream.Position = streamPosition;
-            ciphertextStream.Write(ciphertextChunk);
+            ciphertextStream.Write(realCiphertextChunk);
 
             _fileSystemStatsTracker?.AddBytesWritten(cleartextChunk.Length);
 

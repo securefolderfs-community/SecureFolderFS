@@ -10,16 +10,16 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
     {
         private bool _disposed;
 
-        protected readonly HandlesCollection handles;
+        protected readonly HandlesManager handles;
 
-        protected BaseDokanOperationsCallback(HandlesCollection handles)
+        protected BaseDokanOperationsCallback(HandlesManager handles)
         {
             this.handles = handles;
         }
 
         protected void CloseHandle(IDokanFileInfo info)
         {
-            handles.Close(GetContextValue(info));
+            handles.CloseHandle(GetContextValue(info));
         }
 
         protected static bool IsContextInvalid(IDokanFileInfo info)

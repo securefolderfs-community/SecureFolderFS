@@ -2,12 +2,12 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.Chunks;
-using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Sdk.Streams;
+using SecureFolderFS.Core.BufferHolders;
 
 namespace SecureFolderFS.Core.Streams.Receiver
 {
@@ -17,17 +17,14 @@ namespace SecureFolderFS.Core.Streams.Receiver
 
         private readonly OpenCryptFileReceiver _openCryptFileReceiver;
 
-        private readonly IChunkFactory _chunkFactory;
-
         private readonly IFileSystemOperations _fileSystemOperations;
 
         private bool _disposed;
 
-        public FileStreamReceiver(ISecurity security, OpenCryptFileReceiver openCryptFileReceiver, IChunkFactory chunkFactory, IFileSystemOperations fileSystemOperations)
+        public FileStreamReceiver(ISecurity security, OpenCryptFileReceiver openCryptFileReceiver, IFileSystemOperations fileSystemOperations)
         {
             _security = security;
             _openCryptFileReceiver = openCryptFileReceiver;
-            _chunkFactory = chunkFactory;
             _fileSystemOperations = fileSystemOperations;
         }
 
@@ -54,16 +51,10 @@ namespace SecureFolderFS.Core.Streams.Receiver
 
                 cleartextFileStream = new CleartextFileStream(
                     _security,
-                    _fileSystemOperations,
-                    _chunkFactory,
+                    openCryptFile.ChunkAccess,
                     ciphertextFileStream,
                     fileHeader,
-                    isHeaderWritten,
-                    ciphertextPath,
-                    mode,
-                    access,
-                    share
-                    );
+                    isHeaderWritten);
 
                 openCryptFile.Open(cleartextFileStream, ciphertextFileStream);
 
@@ -86,16 +77,24 @@ namespace SecureFolderFS.Core.Streams.Receiver
             return new CiphertextFileStream(ciphertextPath, mode, access, share);
         }
 
-        private (IFileHeader fileHeader, bool isHeaderWritten) GetFileHeader(ICiphertextFileStream ciphertextFileStream)
+        private (CleartextHeaderBuffer fileHeader, bool isHeaderWritten) GetFileHeader(ICiphertextFileStream ciphertextFileStream)
         {
             if (ciphertextFileStream.Length == 0L)
             {
-                return (_security.ContentCryptor.FileHeaderCryptor.CreateFileHeader(), false);
+                var cleartextHeader = new byte[_security.HeaderCrypt.HeaderCleartextSize];
+                _security.HeaderCrypt.CreateHeader(cleartextHeader);
+                return (new(cleartextHeader), false);
             }
             else
             {
-                return (_security.ContentCryptor.FileHeaderCryptor.DecryptHeader(
-                    _security.ContentCryptor.FileHeaderCryptor.CiphertextHeaderFromCiphertextFileStream(ciphertextFileStream)), true);
+                var buffer = new byte[_security.HeaderCrypt.HeaderCiphertextSize];
+                var cleartextHeader = new byte[_security.HeaderCrypt.HeaderCleartextSize];
+
+                ciphertextFileStream.Read(buffer.AsSpan());
+                ciphertextFileStream.Position = 0L;
+
+                _security.HeaderCrypt.DecryptHeader(buffer, cleartextHeader);
+                return (new(cleartextHeader), true);
             }
         }
 

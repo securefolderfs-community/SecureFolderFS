@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly ISecurity _security;
 
-        public GetFileInformationCallback(ISecurity security, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public GetFileInformationCallback(ISecurity security, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
             _security = security;

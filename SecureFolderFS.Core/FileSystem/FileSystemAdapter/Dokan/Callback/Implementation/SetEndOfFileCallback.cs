@@ -6,30 +6,19 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class SetEndOfFileCallback : BaseDokanOperationsCallback, ISetEndOfFileCallback
     {
-        public SetEndOfFileCallback(HandlesCollection handles)
+        public SetEndOfFileCallback(HandlesManager handles)
             : base(handles)
         {
         }
 
         public NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
         {
-            if (IsContextInvalid(info))
-            {
-                return DokanResult.InvalidHandle;
-            }
-            else if (info.IsDirectory)
-            {
-                return DokanResult.AccessDenied;
-            }
-
             try
             {
-                if (handles.GetHandle(GetContextValue(info)) is FileHandle fileHandle)
+                if (handles.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
-                    if (length < fileHandle.CleartextFileStream.Length)
-                    {
-                        fileHandle.CleartextFileStream.SetLength(length);
-                    }
+                    if (length < fileHandle.HandleStream.Length)
+                        fileHandle.HandleStream.SetLength(length);
 
                     return DokanResult.Success;
                 }

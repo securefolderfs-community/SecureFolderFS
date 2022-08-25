@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Chunks.IO;
+﻿using SecureFolderFS.Core.Chunks.ChunkAccessImpl;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.FileNames.Factory;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                 OptionalVaultLoadRoutine.CreateWithDefaultOptions(this, _vaultInstance);
             }
 
-            var chunkReceiverFactory = new ChunkReceiverFactory(_vaultInstance.VaultVersion, _vaultLoadDataModel.ChunkFactory, _optionalVaultLoadRoutine.ChunkCachingStrategy, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker);
+            var chunkReceiverFactory = new ChunkAccessFactory(_vaultInstance.Security, _vaultInstance.VaultVersion, _optionalVaultLoadRoutine.ChunkCachingStrategy, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker);
             var openCryptFileReceiver = new OpenCryptFileReceiver(_vaultInstance.Security, chunkReceiverFactory);
             
             var directoryIdReceiverFactory = new DirectoryIdReceiverFactory(_vaultInstance.VaultVersion, _optionalVaultLoadRoutine.DirectoryIdCachingStrategy, _vaultInstance.FileOperations, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker);
@@ -58,7 +58,6 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
                 _vaultInstance.VaultVersion,
                 _vaultInstance.Security,
                 openCryptFileReceiver,
-                _vaultLoadDataModel.ChunkFactory,
                 _vaultInstance.SecureFolderFSInstanceImpl.FileSystemOperations);
             _vaultInstance.SecureFolderFSInstanceImpl.FileStreamReceiver = fileStreamReceiverFactory.GetFileStreamReceiver();
 

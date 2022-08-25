@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class ReadFileCallback : BaseDokanOperationsCallbackWithPath, IReadFileCallback
     {
-        public ReadFileCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public ReadFileCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
         }
@@ -25,37 +25,37 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             var openedNewHandle = false;
 
             // Memory-mapped
-            if (IsContextInvalid(info) || handles.GetHandle(GetContextValue(info)) is not FileHandle fileHandle)
+            if (IsContextInvalid(info) || handles.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
                 contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
-                fileHandle = (FileHandle)handles.GetHandle(contextHandle);
+                fileHandle = handles.GetHandle<FileHandle>(contextHandle)!;
                 openedNewHandle = true;
             }
 
             try
             {
                 // Check EOF
-                if (offset >= fileHandle.CleartextFileStream.Length)
+                if (offset >= fileHandle.HandleStream.Length)
                 {
                     bytesRead = 0;
                     return Constants.IO.FILE_EOF;
                 }
                 else
                 {
-                    fileHandle.CleartextFileStream.Position = offset;
+                    fileHandle.HandleStream.Position = offset;
                 }
 
                 // Read file
                 if (openedNewHandle)
                 {
-                    bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, (int)bufferLength);
+                    bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.HandleStream, buffer, (int)bufferLength);
                 }
                 else
                 {
-                    lock (fileHandle!.CleartextFileStream)
+                    lock (fileHandle!.HandleStream)
                     {
-                        bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.CleartextFileStream, buffer, (int)bufferLength);
+                        bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.HandleStream, buffer, (int)bufferLength);
                     }
                 }
                 
@@ -76,8 +76,9 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 bytesRead = 0;
                 return NtStatus.HandleNoLongerValid;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _ = ex;
                 bytesRead = 0;
 
                 Debugger.Break();
@@ -87,7 +88,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             {
                 if (openedNewHandle)
                 {
-                    handles.Close(contextHandle);
+                    handles.CloseHandle(contextHandle);
                 }
             }
         }

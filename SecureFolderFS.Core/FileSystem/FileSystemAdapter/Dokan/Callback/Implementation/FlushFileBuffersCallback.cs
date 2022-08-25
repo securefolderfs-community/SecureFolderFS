@@ -6,35 +6,25 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class FlushFileBuffersCallback : BaseDokanOperationsCallback, IFlushFileBuffersCallback
     {
-        public FlushFileBuffersCallback(HandlesCollection handles)
+        public FlushFileBuffersCallback(HandlesManager handles)
             : base(handles)
         {
         }
 
         public NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
         {
-            if (IsContextInvalid(info))
-            {
+            if (handles.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
                 return DokanResult.InvalidHandle;
-            }
-            else if (info.IsDirectory)
+
+            try
             {
-                return DokanResult.AccessDenied;
+                fileHandle.HandleStream.Flush();
+                return DokanResult.Success;
             }
-            else if (handles.GetHandle(GetContextValue(info)) is FileHandle fileHandle)
+            catch (IOException)
             {
-                try
-                {
-                    fileHandle.CleartextFileStream.Flush();
-                    return DokanResult.Success;
-                }
-                catch (IOException)
-                {
-                    return DokanResult.DiskFull;
-                }
+                return DokanResult.DiskFull;
             }
-            
-            return DokanResult.InvalidHandle;
         }
     }
 }

@@ -2,5 +2,6 @@
 {
     public interface ICleartextFileStream : IBaseFileStream
     {
+        ICiphertextFileStream UnderlyingStream { get; }
     }
 }

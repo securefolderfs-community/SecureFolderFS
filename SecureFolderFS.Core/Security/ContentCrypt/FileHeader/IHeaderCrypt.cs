@@ -10,6 +10,11 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         int HeaderCiphertextSize { get; }
 
         /// <summary>
+        /// Gets the size of cleartext header.
+        /// </summary>
+        int HeaderCleartextSize { get; }
+
+        /// <summary>
         /// Creates a new cleartext header.
         /// </summary>
         /// <param name="cleartextHeader">The cleartext header to fill.</param>

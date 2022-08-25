@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class GetFileSecurityCallback : BaseDokanOperationsCallbackWithPath, IGetFileSecurityCallback
     {
-        public GetFileSecurityCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public GetFileSecurityCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
         }

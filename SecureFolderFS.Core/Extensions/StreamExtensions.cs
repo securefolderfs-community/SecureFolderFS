@@ -1,29 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using SecureFolderFS.Core.Sdk.Streams;
-using SecureFolderFS.Core.Streams.InternalStreams;
-using SecureFolderFS.Core.Streams;
 
 namespace SecureFolderFS.Core.Extensions
 {
     internal static class StreamExtensions
     {
-        public static IBaseFileStreamInternal AsBaseFileStreamInternal(this IBaseFileStream baseFileStream)
-        {
-            return baseFileStream as IBaseFileStreamInternal;
-        }
-
-        public static ICiphertextFileStreamInternal AsCiphertextFileStreamInternal(this ICiphertextFileStream ciphertextFileStream)
-        {
-            return ciphertextFileStream as ICiphertextFileStreamInternal;
-        }
-
-        public static ICleartextFileStreamInternal AsCleartextFileStreamInternal(this ICleartextFileStream cleartextFileStream)
-        {
-            return cleartextFileStream as ICleartextFileStreamInternal;
-        }
-
         public static long RemainingLength(this Stream stream)
         {
             return stream.Length - stream.Position;

@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
 
         protected readonly IPathReceiver pathReceiver;
 
-        protected BaseDokanOperationsCallbackWithPath(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        protected BaseDokanOperationsCallbackWithPath(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(handles)
         {
             this.vaultPath = vaultPath;

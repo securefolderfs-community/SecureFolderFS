@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IFileSystemOperations _fileSystemOperations;
 
-        public CleanupCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public CleanupCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
             _fileSystemOperations = fileSystemOperations;
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public void Cleanup(string fileName, IDokanFileInfo info)
         {
-            handles.Close(GetContextValue(info));
+            handles.CloseHandle(GetContextValue(info));
             InvalidateContext(info);
 
             // Make sure we delete redirected items from DeleteDirectory() and DeleteFile() here.

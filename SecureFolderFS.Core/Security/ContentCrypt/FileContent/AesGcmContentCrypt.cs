@@ -31,19 +31,19 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             secureRandom.GetBytes(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
 
             // Big Endian chunk number and file header nonce
-            // TODO: OPTIMIZE
-            var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
-            var beChunkNumberWithFileHeaderNonce = new byte[sizeof(long) + HEADER_NONCE_SIZE];
-            Buffer.BlockCopy(beChunkNumber, 0, beChunkNumberWithFileHeaderNonce, 0, beChunkNumber.Length);
-            Buffer.BlockCopy(header.GetHeaderNonce().ToArray(), 0, beChunkNumberWithFileHeaderNonce, beChunkNumber.Length, HEADER_NONCE_SIZE);
+            Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];
+            Unsafe.As<byte, long>(ref associatedData[0]) = chunkNumber;
+            associatedData.Slice(0, sizeof(long)).AsBigEndian();
+            header.GetHeaderNonce().CopyTo(associatedData.Slice(sizeof(long)));
 
+            // Encrypt
             cipherProvider.AesGcmCrypt.Encrypt(
                 cleartextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
                 ciphertextChunk.Slice(CHUNK_TAG_SIZE + cleartextChunk.Length),
                 ciphertextChunk.Slice(CHUNK_NONCE_SIZE, cleartextChunk.Length),
-                beChunkNumberWithFileHeaderNonce);
+                associatedData);
         }
 
         /// <inheritdoc/>
@@ -51,11 +51,10 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         public override bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> cleartextChunk)
         {
             // Big Endian chunk number and file header nonce
-            // TODO: OPTIMIZE
-            var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
-            var beChunkNumberWithFileHeaderNonce = new byte[sizeof(long) + HEADER_NONCE_SIZE];
-            Buffer.BlockCopy(beChunkNumber, 0, beChunkNumberWithFileHeaderNonce, 0, beChunkNumber.Length);
-            Buffer.BlockCopy(header.GetHeaderNonce().ToArray(), 0, beChunkNumberWithFileHeaderNonce, beChunkNumber.Length, HEADER_NONCE_SIZE);
+            Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];
+            Unsafe.As<byte, long>(ref associatedData[0]) = chunkNumber;
+            associatedData.Slice(0, sizeof(long)).AsBigEndian();
+            header.GetHeaderNonce().CopyTo(associatedData.Slice(sizeof(long)));
 
             // Decrypt
             return cipherProvider.AesGcmCrypt.Decrypt(
@@ -64,7 +63,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
                 ciphertextChunk.GetChunkNonce(),
                 ciphertextChunk.GetChunkTag(),
                 cleartextChunk.Slice(0, ciphertextChunk.Length - (CHUNK_NONCE_SIZE + CHUNK_TAG_SIZE)),
-                beChunkNumberWithFileHeaderNonce);
+                associatedData);
         }
     }
 }

@@ -15,6 +15,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         /// <inheritdoc/>
         public abstract int HeaderCiphertextSize { get; }
 
+        /// <inheritdoc/>
+        public abstract int HeaderCleartextSize { get; }
+
         protected BaseHeaderCrypt(MasterKey masterKey, ICipherProvider cipherProvider)
         {
             this.masterKey = masterKey;

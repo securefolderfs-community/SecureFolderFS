@@ -13,6 +13,9 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         /// <inheritdoc/>
         public override int HeaderCiphertextSize { get; } = HEADER_SIZE;
 
+        /// <inheritdoc/>
+        public override int HeaderCleartextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
+
         public XChaChaHeaderCrypt(MasterKey masterKey, ICipherProvider cipherProvider)
             : base(masterKey, cipherProvider)
         {

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using SecureFolderFS.Core.Chunks.IO;
+using SecureFolderFS.Core.BufferHolders;
+using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Core.FileHeaders;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
+using SecureFolderFS.Core.Chunks.ChunkAccessImpl;
 
 namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 {
@@ -15,22 +16,18 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 
         private readonly ISecurity _security;
 
-        private readonly ChunkReceiverFactory _chunkReceiverFactory;
+        private readonly ChunkAccessFactory _chunkReceiverFactory;
 
-        private bool _disposed;
-
-        public OpenCryptFileReceiver(ISecurity security, ChunkReceiverFactory chunkReceiverFactory)
+        public OpenCryptFileReceiver(ISecurity security, ChunkAccessFactory chunkAccessFactory)
         {
             _security = security;
-            _chunkReceiverFactory = chunkReceiverFactory;
+            _chunkReceiverFactory = chunkAccessFactory;
 
             _openCryptFiles = new Dictionary<ICiphertextPath, OpenCryptFile>();
         }
 
-        public OpenCryptFile GetOrCreate(ICiphertextPath ciphertextPath, IFileHeader fileHeader)
+        public OpenCryptFile GetOrCreate(ICiphertextPath ciphertextPath, CleartextHeaderBuffer fileHeader)
         {
-            AssertNotDisposed();
-
             // TODO: It looks like a lot of openCryptFiles are created and closed - multiple streams and caching works fine but it benefits nothing because it can't be used that often.
             // Why? Because as mentioned before, openCryptFiles are quickly opened and closed thus preventing the cache to be used for longer and it constantly needs regenerating
             if (_openCryptFiles.TryGetValue(ciphertextPath, out var openCryptFile))
@@ -49,33 +46,23 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 
         private void CloseCryptFile(ICiphertextPath ciphertextPath)
         {
-            if (_openCryptFiles.TryGetValue(ciphertextPath, out OpenCryptFile openCryptFile))
+            if (_openCryptFiles.TryGetValue(ciphertextPath, out var openCryptFile))
             {
-                openCryptFile.Dispose();
+                openCryptFile?.Dispose();
                 _openCryptFiles.Remove(ciphertextPath);
             }
         }
 
-        private IChunkReceiver GetChunkReceiverForCleartextFileStream(CiphertextStreamsManager ciphertextStreamsManager, IFileHeader fileHeader)
+        private IChunkAccess GetChunkReceiverForCleartextFileStream(CiphertextStreamsManager ciphertextStreamsManager, CleartextHeaderBuffer fileHeader)
         {
-            var reader = _chunkReceiverFactory.GetChunkReader(_security, ciphertextStreamsManager, fileHeader);
-            var writer = _chunkReceiverFactory.GetChunkWriter(_security, ciphertextStreamsManager, fileHeader);
+            var reader = _chunkReceiverFactory.GetChunkReader(ciphertextStreamsManager, fileHeader);
+            var writer = _chunkReceiverFactory.GetChunkWriter(ciphertextStreamsManager, fileHeader);
 
-            return _chunkReceiverFactory.GetChunkReceiver(reader, writer);
-        }
-
-        private void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
+            return _chunkReceiverFactory.GetChunkAccess(reader, writer);
         }
 
         public void Dispose()
         {
-            _disposed = true;
-
             _openCryptFiles.Values.DisposeCollection();
             _openCryptFiles.Clear();
         }

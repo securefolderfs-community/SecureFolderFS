@@ -5,7 +5,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class MountedCallback : BaseDokanOperationsCallback, IMountedCallback
     {
-        public MountedCallback(HandlesCollection handles)
+        public MountedCallback(HandlesManager handles)
             : base(handles)
         {
         }

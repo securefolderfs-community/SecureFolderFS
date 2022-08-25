@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         private readonly IFileSystemOperations _fileSystemOperations;
         private readonly MountVolumeDataModel _mountVolumeDataModel;
         private readonly VaultPath _vaultPath;
-        private readonly HandlesCollection _handles;
+        private readonly HandlesManager _handles;
 
         public DokanOperationsCallbacksFactory(
             VaultVersion vaultVersion,
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
             IFileSystemOperations fileSystemOperations,
             VaultPath vaultPath,
             MountVolumeDataModel mountVolumeDataModel,
-            HandlesCollection handles)
+            HandlesManager handles)
         {
             _vaultVersion = vaultVersion;
             _security = security;

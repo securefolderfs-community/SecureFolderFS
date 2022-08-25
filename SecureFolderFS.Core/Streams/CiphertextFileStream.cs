@@ -1,12 +1,10 @@
-﻿using System.IO;
-using Microsoft.Win32.SafeHandles;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Streams.InternalStreams;
+﻿using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Sdk.Streams;
+using System.IO;
 
 namespace SecureFolderFS.Core.Streams
 {
-    internal sealed class CiphertextFileStream : FileStream, ICiphertextFileStream, ICiphertextFileStreamInternal, IBaseFileStreamInternal
+    internal sealed class CiphertextFileStream : FileStream, ICiphertextFileStream
     {
         public bool IsDisposed { get; private set; }
 
@@ -20,11 +18,6 @@ namespace SecureFolderFS.Core.Streams
             IsDisposed = disposing;
 
             base.Dispose(disposing);
-        }
-
-        SafeFileHandle IBaseFileStreamInternal.DangerousGetInternalSafeFileHandle()
-        {
-            return SafeFileHandle;
         }
     }
 }

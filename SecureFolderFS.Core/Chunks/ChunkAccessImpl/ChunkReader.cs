@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Helpers;
+﻿using SecureFolderFS.Core.BufferHolders;
 using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
@@ -12,11 +12,11 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
     internal sealed class ChunkReader : IChunkReader
     {
         private readonly ISecurity _security;
-        private readonly ReferenceBuffer _fileHeader;
+        private readonly CleartextHeaderBuffer _fileHeader;
         private readonly CiphertextStreamsManager _ciphertextStreamsManager;
         private readonly IFileSystemStatsTracker? _fileSystemStatsTracker;
 
-        public ChunkReader(ISecurity security, ReferenceBuffer fileHeader, CiphertextStreamsManager ciphertextStreamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
+        public ChunkReader(ISecurity security, CleartextHeaderBuffer fileHeader, CiphertextStreamsManager ciphertextStreamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
         {
             _security = security;
             _fileHeader = fileHeader;
@@ -33,11 +33,12 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 
             // Rent array for ciphertext chunk
             var ciphertextChunk = ArrayPool<byte>.Shared.Rent(ciphertextSize);
+            var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
             // Get and read from stream
             var ciphertextFileStream = _ciphertextStreamsManager.GetReadOnlyStreamInstance();
             ciphertextFileStream.Position = ciphertextPosition;
-            var read = ciphertextFileStream.Read(ciphertextChunk);
+            var read = ciphertextFileStream.Read(realCiphertextChunk);
 
             _fileSystemStatsTracker?.AddBytesRead(read);
 
@@ -45,12 +46,12 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
             if (read == Constants.IO.FILE_EOF)
             {
                 ArrayPool<byte>.Shared.Return(ciphertextChunk);
-                return 0; // TODO: OPTIMIZE - should cleartext chunk be cleared?
+                return 0;
             }
 
             // Decrypt
             var result = _security.ContentCrypt.DecryptChunk(
-                ciphertextChunk.AsSpan(0, read),
+                realCiphertextChunk.Slice(0, read),
                 chunkNumber,
                 _fileHeader,
                 cleartextChunk);
