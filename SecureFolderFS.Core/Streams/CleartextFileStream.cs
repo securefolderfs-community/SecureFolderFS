@@ -60,10 +60,12 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public override int Read(Span<byte> buffer)
         {
-            if (_ciphertextStream.Length == 0L)
+            var ciphertextStreamLength = _ciphertextStream.Length;
+
+            if (ciphertextStreamLength == 0L)
                 return Constants.IO.FILE_EOF;
 
-            if (_ciphertextStream.Length < _security.HeaderCrypt.HeaderCiphertextSize)
+            if (ciphertextStreamLength < _security.HeaderCrypt.HeaderCiphertextSize)
                 return Constants.IO.FILE_EOF; // TODO: Health - report invalid header size
 
             var lengthToEof = _Length - _Position;

@@ -2,6 +2,8 @@
 {
     internal sealed class CleartextChunkBuffer : BaseBufferHolder
     {
+        public long ActualLength { get; set; }
+
         public CleartextChunkBuffer(byte[] buffer)
             : base(buffer)
         {

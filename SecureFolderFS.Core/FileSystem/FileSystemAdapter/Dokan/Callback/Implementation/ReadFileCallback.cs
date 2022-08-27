@@ -1,13 +1,12 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.Exceptions;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.Helpers;
+using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Exceptions;
-using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -18,7 +17,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
             var ciphertextPath = GetCiphertextPath(fileName);
