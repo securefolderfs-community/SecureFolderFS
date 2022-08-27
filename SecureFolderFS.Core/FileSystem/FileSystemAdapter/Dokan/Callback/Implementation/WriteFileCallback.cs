@@ -19,8 +19,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
-            ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-
+            var ciphertextPath = GetCiphertextPath(fileName);
             var appendToFile = offset == -1;
             var contextHandle = Constants.FileSystem.INVALID_HANDLE;
             var openedNewHandle = false;
@@ -85,9 +84,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             finally
             {
                 if (openedNewHandle)
-                {
                     handles.CloseHandle(contextHandle);
-                }
             }
         }
 

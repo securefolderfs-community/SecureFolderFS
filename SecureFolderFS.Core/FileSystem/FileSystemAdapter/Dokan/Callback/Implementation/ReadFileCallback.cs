@@ -19,8 +19,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
-            ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-
+            var ciphertextPath = GetCiphertextPath(fileName);
             var contextHandle = Constants.FileSystem.INVALID_HANDLE;
             var openedNewHandle = false;
 

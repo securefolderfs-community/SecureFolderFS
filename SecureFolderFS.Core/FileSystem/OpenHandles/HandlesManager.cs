@@ -1,9 +1,9 @@
-﻿using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Streams.Receiver;
+﻿using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
@@ -21,14 +21,22 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             _handleGenerator = new HandleGenerator();
         }
 
-        public long OpenHandleToFile(ICiphertextPath ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+        public long OpenHandleToFile(string ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
         {
-            var cleartextStream = _fileStreamReceiver.OpenFileStreamToCleartextFile(ciphertextPath, mode, access, share, options);
+            // Open stream
+            var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
+            var cleartextStream = _fileStreamReceiver.OpenCleartextStream(ciphertextPath, ciphertextStream);
+
+            // Flush ChunkAccess if the opened to Truncate
+            if (mode == FileMode.Truncate)
+                cleartextStream.Flush();
+
+            // Create handle
             var fileHandle = new FileHandle(cleartextStream);
-
             var handle = _handleGenerator.ThreadSafeIncrementAndGet();
-            _openHandles.Add(handle, fileHandle);
 
+            // Add handle and return
+            _openHandles.TryAdd(handle, fileHandle);
             return handle;
         }
 
@@ -62,6 +70,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         {
             private long _handleCounter;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public long ThreadSafeIncrementAndGet()
             {
                 Interlocked.Increment(ref _handleCounter);

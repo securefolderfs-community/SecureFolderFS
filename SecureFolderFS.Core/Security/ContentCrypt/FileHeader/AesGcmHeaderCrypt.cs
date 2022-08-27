@@ -46,7 +46,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
                 encKey,
                 cleartextHeader.GetHeaderNonce(),
                 ciphertextHeader.GetHeaderTag(),
-                ciphertextHeader.Slice(HEADER_NONCE_SIZE, cleartextHeader.Length - (HEADER_NONCE_SIZE + HEADER_TAG_SIZE)),
+                ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
                 default);
         }
 
@@ -61,11 +61,11 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
 
             // Decrypt
             return cipherProvider.AesGcmCrypt.Decrypt(
-                ciphertextHeader.Slice(HEADER_NONCE_SIZE),
+                ciphertextHeader.GetHeaderContentKey(),
                 encKey,
                 ciphertextHeader.GetHeaderNonce(),
                 ciphertextHeader.GetHeaderTag(),
-                cleartextHeader.Slice(HEADER_NONCE_SIZE, ciphertextHeader.Length - HEADER_NONCE_SIZE),
+                cleartextHeader.Slice(HEADER_NONCE_SIZE),
                 default);
         }
     }

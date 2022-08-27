@@ -12,21 +12,25 @@ namespace SecureFolderFS.Core.Paths.Receivers
         {
         }
 
-        protected override ICiphertextPath CiphertextPathFromRawCleartextPath(string cleartextPath)
+        /// <inheritdoc/>
+        public override string ToCiphertext(string cleartextPath)
         {
-            return new CiphertextPath(cleartextPath);
+            return cleartextPath;
         }
 
-        protected override ICleartextPath CleartextPathFromRawCiphertextPath(string ciphertextPath)
+        /// <inheritdoc/>
+        public override string ToCleartext(string ciphertextPath)
         {
-            return new CleartextPath(ciphertextPath);
+            return ciphertextPath;
         }
 
+        /// <inheritdoc/>
         public override string GetCleartextFileName(string ciphertextFilePath)
         {
             return Path.GetFileName(ciphertextFilePath);
         }
 
+        /// <inheritdoc/>
         public override string GetCiphertextFileName(string cleartextFilePath)
         {
             return Path.GetFileName(cleartextFilePath);

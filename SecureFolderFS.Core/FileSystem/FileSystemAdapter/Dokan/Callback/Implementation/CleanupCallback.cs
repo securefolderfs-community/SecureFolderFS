@@ -1,4 +1,5 @@
-﻿using DokanNet;
+﻿using System.IO;
+using DokanNet;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
@@ -24,16 +25,16 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             // Make sure we delete redirected items from DeleteDirectory() and DeleteFile() here.
             if (info.DeleteOnClose)
             {
-                ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
+                var ciphertextPath = GetCiphertextPath(fileName);
 
                 if (info.IsDirectory)
                 {
                     _fileSystemOperations.PrepareDirectoryForDeletion(ciphertextPath);
-                    _fileSystemOperations.DangerousDirectoryOperations.DeleteDirectory(ciphertextPath.Path, true);
+                    Directory.Delete(ciphertextPath, true);
                 }
                 else
                 {
-                    _fileSystemOperations.DangerousFileOperations.DeleteFile(ciphertextPath.Path);
+                    File.Delete(ciphertextPath);
                 }
             }
         }

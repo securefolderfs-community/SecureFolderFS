@@ -1,76 +1,45 @@
-﻿using SecureFolderFS.Core.Sdk.Streams;
-using System;
+﻿using System;
+using System.IO;
 
 namespace SecureFolderFS.Core.Streams.Management
 {
     internal sealed class CiphertextStreamsManager : IDisposable
     {
-        private readonly StreamsManager<ICiphertextFileStream> _readOnlyStreams;
-
-        private readonly StreamsManager<ICiphertextFileStream> _readWriteStreams;
-
-        private bool _disposed;
+        private readonly StreamsManager<Stream> _readOnlyStreams;
+        private readonly StreamsManager<Stream> _readWriteStreams;
 
         public CiphertextStreamsManager()
         {
-            _readOnlyStreams = new StreamsManager<ICiphertextFileStream>();
-            _readWriteStreams = new StreamsManager<ICiphertextFileStream>();
+            _readOnlyStreams = new();
+            _readWriteStreams = new();
         }
 
-        public void AddStream(ICiphertextFileStream ciphertextFileStream)
+        public void AddStream(Stream ciphertextStream)
         {
-            AssertNotDisposed();
+            _readOnlyStreams.AddStream(ciphertextStream);
 
-            _readOnlyStreams.AddStream(ciphertextFileStream);
-            if (ciphertextFileStream.CanWrite)
-            {
-                _readWriteStreams.AddStream(ciphertextFileStream);
-            }
+            if (ciphertextStream.CanWrite)
+                _readWriteStreams.AddStream(ciphertextStream);
         }
 
-        public void RemoveStream(ICiphertextFileStream ciphertextFileStream)
+        public void RemoveStream(Stream ciphertextStream)
         {
-            AssertNotDisposed();
-
-            _readOnlyStreams.RemoveStream(ciphertextFileStream);
-            _readWriteStreams.RemoveStream(ciphertextFileStream);
+            _readOnlyStreams.RemoveStream(ciphertextStream);
+            _readWriteStreams.RemoveStream(ciphertextStream);
         }
 
-        public ICiphertextFileStream GetReadOnlyStreamInstance(ICiphertextFileStream ciphertextFileStream = null)
+        public Stream? GetReadOnlyStream()
         {
-            AssertNotDisposed();
-
-            if (ciphertextFileStream is null || ciphertextFileStream.IsDisposed)
-            {
-                return _readOnlyStreams.GetAvailableStream();
-            }
-
-            return ciphertextFileStream;
+            return _readOnlyStreams.GetAvailableStream();
         }
 
-        public ICiphertextFileStream GetReadWriteStreamInstance(ICiphertextFileStream ciphertextFileStream = null)
+        public Stream? GetReadWriteStream()
         {
-            AssertNotDisposed();
-
-            if (ciphertextFileStream is null || ciphertextFileStream.IsDisposed)
-            {
-                return _readWriteStreams.GetAvailableStream();
-            }
-
-            return ciphertextFileStream;
-        }
-
-        private void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
+            return _readWriteStreams.GetAvailableStream();
         }
 
         public void Dispose()
         {
-            _disposed = true;
             _readOnlyStreams.Dispose();
             _readWriteStreams.Dispose();
         }

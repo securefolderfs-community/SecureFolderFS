@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation.VaultLoadRoutin
         public IVaultLoadRoutineStep4 FindConfigurationFile(bool useExternalDiscoverer = false, IVaultConfigurationDiscoverer vaultConfigurationDiscoverer = null)
         {
             vaultLoadDataModel.VaultConfigurationStream = VaultHelpers.FindVaultFile(
-                () => new FromVaultPathVaultConfigurationDiscoverer(vaultInstance.FileOperations),
+                () => new FromVaultPathVaultConfigurationDiscoverer(),
                 vaultFileDiscoverer => vaultFileDiscoverer.DiscoverVaultConfig(vaultInstance.VaultPath.VaultRootPath, Constants.VAULT_CONFIGURATION_FILENAME),
                 useExternalDiscoverer,
                 vaultConfigurationDiscoverer);

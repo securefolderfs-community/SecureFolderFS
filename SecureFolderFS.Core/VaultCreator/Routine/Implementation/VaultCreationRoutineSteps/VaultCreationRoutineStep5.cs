@@ -12,8 +12,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
 
         public IVaultCreationRoutineStep6 CreateContentFolder()
         {
-            vaultCreationDataModel.DirectoryOperations.CreateDirectory(vaultCreationDataModel.VaultPath.VaultContentPath);
-
+            _ = Directory.CreateDirectory(vaultCreationDataModel.VaultPath.VaultContentPath);
             return new VaultCreationRoutineStep6(vaultCreationDataModel);
         }
     }

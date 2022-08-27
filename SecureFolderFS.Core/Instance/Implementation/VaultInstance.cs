@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Paths;
+﻿using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
@@ -24,10 +23,6 @@ namespace SecureFolderFS.Core.Instance.Implementation
         internal SecureFolderFSInstance SecureFolderFSInstanceImpl { get; set; }
 
         internal ISecurity Security { get; set; }
-
-        internal IFileOperations FileOperations { get; set; }
-
-        internal IDirectoryOperations DirectoryOperations { get; set; }
 
         public VaultInstance()
         {

@@ -6,5 +6,10 @@
             : base(buffer)
         {
         }
+
+        public CleartextChunkBuffer(int bufferLength)
+            : base(bufferLength)
+        {
+        }
     }
 }

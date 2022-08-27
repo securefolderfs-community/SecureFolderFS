@@ -47,6 +47,19 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
         }
 
         /// <inheritdoc/>
+        public override void SetChunkLength(long chunkNumber, int length)
+        {
+            var cleartextChunk = new byte[contentCrypt.ChunkCleartextSize];
+            var read = chunkReader.ReadChunk(chunkNumber, cleartextChunk);
+            if (read == -1)
+                throw new UnauthenticChunkException();
+
+            var newLengthCleartextChunk = cleartextChunk.AsSpan(0, Math.Min(read, length));
+
+            chunkWriter.WriteChunk(chunkNumber, newLengthCleartextChunk);
+        }
+
+        /// <inheritdoc/>
         public override void Flush()
         {
         }

@@ -8,12 +8,12 @@ namespace SecureFolderFS.Shared.Extensions
     {
         public static bool IsEmpty<T>(this IEnumerable<T>? enumerable) => enumerable is null || !enumerable.Any();
 
-        public static void DisposeCollection<T>(this IEnumerable<T> enumerable)
+        public static void DisposeCollection<T>(this IEnumerable<T?> enumerable)
             where T : IDisposable
         {
             foreach (var item in enumerable)
             {
-                item.Dispose();
+                item?.Dispose();
             }
         }
 

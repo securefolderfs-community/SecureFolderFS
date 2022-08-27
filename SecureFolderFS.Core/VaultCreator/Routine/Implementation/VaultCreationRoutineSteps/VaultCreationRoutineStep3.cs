@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
 
         public IVaultCreationRoutineStep4 CreateConfigurationFile(IVaultConfigurationDiscoverer vaultConfigurationDiscoverer = null)
         {
-            vaultConfigurationDiscoverer ??= new FromVaultPathVaultConfigurationGenerator(vaultCreationDataModel.FileOperations);
+            vaultConfigurationDiscoverer ??= new FromVaultPathVaultConfigurationGenerator();
 
             vaultCreationDataModel.VaultConfigurationStream = vaultConfigurationDiscoverer.DiscoverVaultConfig(vaultCreationDataModel.VaultPath.VaultRootPath, Constants.VAULT_CONFIGURATION_FILENAME);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using DokanNet;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.Helpers;
@@ -17,16 +18,19 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
             this.handles = handles;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void CloseHandle(IDokanFileInfo info)
         {
             handles.CloseHandle(GetContextValue(info));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static bool IsContextInvalid(IDokanFileInfo info)
         {
             return GetContextValue(info) == Constants.FileSystem.INVALID_HANDLE;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static void InvalidateContext(IDokanFileInfo info)
         {
             info.Context = Constants.FileSystem.INVALID_HANDLE;
@@ -44,11 +48,6 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
             }
         }
 
-        protected static NtStatus ToNtStatusFromWin32Error(long error)
-        {
-            return (NtStatus)UnsafeNativeApis.DokanNtStatusFromWin32((uint)error);
-        }
-
         protected static NtStatus GetNtStatusFromException(Exception exception)
         {
             if (!exception.Win32ErrorFromException(out var win32error))
@@ -57,15 +56,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
             }
             else
             {
-                return ToNtStatusFromWin32Error(win32error);
-            }
-        }
-
-        protected void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
+                return (NtStatus)UnsafeNativeApis.DokanNtStatusFromWin32((uint)win32error);
             }
         }
 

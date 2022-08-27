@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine
 
     public interface IVaultCreationRoutineStep2 : IDisposable
     {
-        IVaultCreationRoutineStep3 AddFileOperations(IFileOperations fileOperations = null, IDirectoryOperations directoryOperations = null);
+        IVaultCreationRoutineStep3 AddFileOperations();
     }
 
     public interface IVaultCreationRoutineStep3 : IDisposable

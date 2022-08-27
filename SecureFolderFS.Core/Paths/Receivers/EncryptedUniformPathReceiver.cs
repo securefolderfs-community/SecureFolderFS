@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Runtime.CompilerServices;
-using SecureFolderFS.Core.FileNames;
+﻿using SecureFolderFS.Core.FileNames;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Sdk.Paths;
+using System;
+using System.IO;
 
 namespace SecureFolderFS.Core.Paths.Receivers
 {
@@ -20,16 +19,19 @@ namespace SecureFolderFS.Core.Paths.Receivers
             _fileNameReceiver = fileNameReceiver;
         }
 
-        protected override ICiphertextPath CiphertextPathFromRawCleartextPath(string cleartextPath)
+        /// <inheritdoc/>
+        public override string ToCiphertext(string cleartextPath)
         {
-            return new CiphertextPath(GetCorrectPath(cleartextPath, GetCiphertextFileName));
+            return GetCorrectPath(cleartextPath, GetCiphertextFileName);
         }
 
-        protected override ICleartextPath CleartextPathFromRawCiphertextPath(string ciphertextPath)
+        /// <inheritdoc/>
+        public override string ToCleartext(string ciphertextPath)
         {
-            return new CleartextPath(GetCorrectPath(ciphertextPath, GetCleartextFileName));
+            return GetCorrectPath(ciphertextPath, GetCleartextFileName);
         }
 
+        /// <inheritdoc/>
         public override string GetCleartextFileName(string cleartextFilePath)
         {
             var fileName = Path.GetFileName(cleartextFilePath);
@@ -39,6 +41,7 @@ namespace SecureFolderFS.Core.Paths.Receivers
             return _fileNameReceiver.GetCleartextFileName(directoryId, fileName);
         }
 
+        /// <inheritdoc/>
         public override string GetCiphertextFileName(string ciphertextFilePath)
         {
             var fileName = Path.GetFileName(ciphertextFilePath);
@@ -55,10 +58,10 @@ namespace SecureFolderFS.Core.Paths.Receivers
 
             foreach (var fileName in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                correctPath += fileNameFunc(Path.Combine(correctPath, fileName)) + '\\';
+                correctPath += fileNameFunc(Path.Combine(correctPath, fileName)) + Path.PathSeparator;
             }
 
-            return !path.EndsWith('\\') ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;
+            return !path.EndsWith(Path.PathSeparator) ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;
         }
     }
 }

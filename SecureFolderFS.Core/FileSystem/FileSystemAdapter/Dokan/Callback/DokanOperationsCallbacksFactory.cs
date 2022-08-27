@@ -116,19 +116,19 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         public ISetFileAttributesCallback GetSetFileAttributesCallback()
         {
             return ForVersion<ISetFileAttributesCallback>(
-                forVersion1: () => new SetFileAttributesCallback(_fileSystemOperations, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new SetFileAttributesCallback(_vaultPath, _pathReceiver, _handles));
         }
 
         public ISetFileTimeCallback GetSetFileTimeCallback()
         {
             return ForVersion<ISetFileTimeCallback>(
-                forVersion1: () => new SetFileTimeCallback(_fileSystemOperations, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new SetFileTimeCallback(_vaultPath, _pathReceiver, _handles));
         }
 
         public IDeleteFileCallback GetDeleteFileCallback()
         {
             return ForVersion<IDeleteFileCallback>(
-                forVersion1: () => new DeleteFileCallback(_fileSystemOperations, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new DeleteFileCallback( _vaultPath, _pathReceiver, _handles));
         }
 
         public IDeleteDirectoryCallback GetDeleteDirectoryCallback()
@@ -140,7 +140,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         public IMoveFileCallback GetMoveFileCallback()
         {
             return ForVersion<IMoveFileCallback>(
-                forVersion1: () => new MoveFileCallback(_fileSystemOperations, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new MoveFileCallback(_vaultPath, _pathReceiver, _handles));
         }
 
         public ISetEndOfFileCallback GetSetEndOfFileCallback()

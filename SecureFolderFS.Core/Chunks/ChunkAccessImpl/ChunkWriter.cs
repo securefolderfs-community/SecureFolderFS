@@ -4,6 +4,7 @@ using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Management;
 using System;
 using System.Buffers;
+using SecureFolderFS.Core.Exceptions;
 
 namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 {
@@ -46,7 +47,8 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
             _fileSystemStatsTracker?.AddBytesEncrypted(cleartextChunk.Length);
 
             // Get and write to ciphertext stream
-            var ciphertextStream = _ciphertextStreamsManager.GetReadWriteStreamInstance();
+            var ciphertextStream = _ciphertextStreamsManager.GetReadWriteStream();
+            _ = ciphertextStream ?? throw new UnavailableStreamException();
             ciphertextStream.Position = streamPosition;
             ciphertextStream.Write(realCiphertextChunk);
 

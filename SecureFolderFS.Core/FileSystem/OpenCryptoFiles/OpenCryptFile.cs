@@ -1,99 +1,77 @@
 ﻿using SecureFolderFS.Core.Chunks;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Sdk.Streams;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.Streams.Management;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 {
     internal sealed class OpenCryptFile : IDisposable
     {
-        private readonly Dictionary<ICleartextFileStream, long> _openedStreams;
-
-        private readonly ICiphertextPath _ciphertextPath;
-
-        private readonly IChunkAccess _chunkAccess;
-
+        private readonly string _ciphertextPath;
+        private readonly Action<string> _onCryptFileClosed;
         private readonly CiphertextStreamsManager _ciphertextStreamsManager;
-
-        private readonly Action<ICiphertextPath> _openCryptFileClosedCallback;
-
-        private bool _disposed;
+        private readonly Dictionary<CleartextFileStream, long> _openedStreams;
 
         public IChunkAccess ChunkAccess { get; }
 
-        public OpenCryptFile(ICiphertextPath ciphertextPath, IChunkAccess chunkAccess, CiphertextStreamsManager ciphertextStreamsManager, Action<ICiphertextPath> openCryptFileClosedCallback)
+        public OpenCryptFile(string ciphertextPath, Action<string> onCryptFileClosed, CiphertextStreamsManager ciphertextStreamsManager, IChunkAccess chunkAccess)
         {
             _ciphertextPath = ciphertextPath;
-            _chunkAccess = chunkAccess;
-            ChunkAccess = chunkAccess;
+            _onCryptFileClosed = onCryptFileClosed;
             _ciphertextStreamsManager = ciphertextStreamsManager;
-            _openCryptFileClosedCallback = openCryptFileClosedCallback;
+            ChunkAccess = chunkAccess;
 
-            _openedStreams = new Dictionary<ICleartextFileStream, long>();
+            _openedStreams = new();
         }
 
-        public void Open(ICleartextFileStream cleartextFileStream, ICiphertextFileStream ciphertextFileStream)
+        public void RegisterStream(CleartextFileStream cleartextFileStream, Stream ciphertextStream)
         {
-            AssertNotDisposed();
-
-            (cleartextFileStream as CleartextFileStream)!.StreamClosedCallback = Close;
+            cleartextFileStream.StreamClosedCallback = Close;
 
             if (_openedStreams.ContainsKey(cleartextFileStream))
-            {
                 _openedStreams[cleartextFileStream]++;
-            }
             else
-            {
                 _openedStreams.Add(cleartextFileStream, 1L);
-            }
 
-            _ciphertextStreamsManager.AddStream(ciphertextFileStream);
+            _ciphertextStreamsManager.AddStream(ciphertextStream);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void Close(ICleartextFileStream cleartextFileStream)
+        public void Close(CleartextFileStream cleartextFileStream)
         {
             try
             {
-                if (_openedStreams.ContainsKey(cleartextFileStream) && ((--_openedStreams[cleartextFileStream]) <= 0))
+                if (_openedStreams.ContainsKey(cleartextFileStream) && --_openedStreams[cleartextFileStream] <= 0)
                 {
                     _openedStreams.Remove(cleartextFileStream);
 
-                    using var ciphertextFileStream = cleartextFileStream.UnderlyingStream;
-                    _ciphertextStreamsManager.RemoveStream(ciphertextFileStream);
+                    using var ciphertextStream = cleartextFileStream.CiphertextStream;
+                    _ciphertextStreamsManager.RemoveStream(ciphertextStream);
                 }
             }
             finally
             {
                 if (_openedStreams.IsEmpty())
                 {
-                    _openCryptFileClosedCallback?.Invoke(_ciphertextPath);
+                    _onCryptFileClosed?.Invoke(_ciphertextPath);
                 }
             }
         }
 
         public void FlushChunkReceiver()
         {
-            //_chunkReceiver?.Flush();
+            Debugger.Break();
+            ChunkAccess.Flush();
         }
 
-        private void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
-        }
-
+        /// <inheritdoc/>
         public void Dispose()
         {
-            _disposed = true;
-
             _openedStreams.Keys.DisposeCollection();
             _openedStreams.Clear();
         }

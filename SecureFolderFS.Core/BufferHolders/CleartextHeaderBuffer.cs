@@ -6,5 +6,10 @@
             : base(buffer)
         {
         }
+
+        public CleartextHeaderBuffer(int bufferLength)
+            : base(bufferLength)
+        {
+        }
     }
 }

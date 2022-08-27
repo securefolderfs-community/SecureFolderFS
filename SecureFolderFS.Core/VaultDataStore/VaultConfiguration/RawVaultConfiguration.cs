@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
+using SecureFolderFS.Core.Helpers;
 using System.IO;
-using SecureFolderFS.Core.Extensions;
 
 namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
 {
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
         public static RawVaultConfiguration Load(Stream configFileStream)
         {
             // Get data from the config file
-            var rawData = configFileStream.ReadToEnd();
+            var rawData = StreamHelpers.ReadToEnd(configFileStream);
 
             // Get vault version
             var vaultVersion = JsonConvert.DeserializeObject<VaultVersion>(rawData); // TODO: Use json validator

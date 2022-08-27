@@ -1,6 +1,7 @@
 ﻿using DokanNet;
 using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.Streams;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             {
                 if (handles.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
-                    fileHandle.HandleStream.Unlock(offset, length);
+                    (fileHandle.HandleStream as ICleartextFileStreamEx)?.Unlock(offset, length);
                     return DokanResult.Success;
                 }
                 else

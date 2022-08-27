@@ -6,9 +6,16 @@ namespace SecureFolderFS.Core.BufferHolders
     {
         protected readonly byte[] buffer;
 
-        public BaseBufferHolder(byte[] buffer)
+        public int Length => buffer.Length;
+
+        protected BaseBufferHolder(byte[] buffer)
         {
             this.buffer = buffer;
+        }
+
+        protected BaseBufferHolder(int bufferLength)
+            : this(new byte[bufferLength])
+        {
         }
 
         public void Clear()

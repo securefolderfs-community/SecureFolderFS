@@ -21,13 +21,13 @@ namespace SecureFolderFS.Core.Extensions.SecurityExtensions.Header
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ReadOnlySpan<byte> GetHeaderTag(this ReadOnlySpan<byte> header)
         {
-            return header.Slice(0, HEADER_TAG_SIZE);
+            return header.Slice(header.Length - HEADER_TAG_SIZE);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Span<byte> GetHeaderTag(this Span<byte> header)
         {
-            return header.Slice(0, HEADER_TAG_SIZE);
+            return header.Slice(header.Length - HEADER_TAG_SIZE);
         }
     }
 }

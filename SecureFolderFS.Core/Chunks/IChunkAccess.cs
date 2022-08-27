@@ -26,6 +26,13 @@ namespace SecureFolderFS.Core.Chunks
         int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk);
 
         /// <summary>
+        /// Sets the length for specified chunk to <paramref name="length"/>.
+        /// </summary>
+        /// <param name="chunkNumber">The number of chunk to set length to.</param>
+        /// <param name="length">The length to trim.</param>
+        void SetChunkLength(long chunkNumber, int length);
+
+        /// <summary>
         /// Flushes outstanding chunks to disk.
         /// </summary>
         void Flush();

@@ -22,11 +22,11 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
             try
             {
-                ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
+                var ciphertextPath = GetCiphertextPath(fileName);
 
-                FileSystemInfo finfo = new FileInfo(ciphertextPath.Path);
+                FileSystemInfo finfo = new FileInfo(ciphertextPath);
                 if (!finfo.Exists)
-                    finfo = new DirectoryInfo(ciphertextPath.Path);
+                    finfo = new DirectoryInfo(ciphertextPath);
                 
                 fileInfo = new FileInformation()
                 {

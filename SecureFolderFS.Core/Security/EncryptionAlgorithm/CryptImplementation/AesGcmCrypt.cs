@@ -36,7 +36,6 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
         {
             try
             {
-
                 using var aesGcm = new AesGcm(key);
                 aesGcm.Decrypt(nonce: iv, ciphertext: bytes, tag: tag, plaintext: result, associatedData: associatedData);
 

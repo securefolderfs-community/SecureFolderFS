@@ -22,15 +22,15 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             {
                 try
                 {
-                    ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
+                    var ciphertextPath = GetCiphertextPath(fileName);
 
                     if (info.IsDirectory)
                     {
-                        new DirectoryInfo(ciphertextPath.Path).SetAccessControl((DirectorySecurity)security);
+                        new DirectoryInfo(ciphertextPath).SetAccessControl((DirectorySecurity)security);
                     }
                     else
                     {
-                        new FileInfo(ciphertextPath.Path).SetAccessControl((FileSecurity)security);
+                        new FileInfo(ciphertextPath).SetAccessControl((FileSecurity)security);
                     }
 
                     return DokanResult.Success;

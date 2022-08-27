@@ -69,23 +69,156 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
         public NtStatus CreateFile(string fileName, DokanNet.FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
             AssertNotDisposed();
-
             return CreateFileCallback.CreateFile(fileName, access, share, mode, options, attributes, info);
         }
 
         public void Cleanup(string fileName, IDokanFileInfo info)
         {
             AssertNotDisposed();
-
             CleanupCallback.Cleanup(fileName, info);
         }
 
         public void CloseFile(string fileName, IDokanFileInfo info)
         {
             AssertNotDisposed();
-
             CloseFileCallback.CloseFile(fileName, info);
         }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return ReadFileCallback.ReadFile(fileName, buffer, bufferLength, out bytesRead, offset, info);
+        }
+
+        
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return WriteFileCallback.WriteFile(fileName, buffer, bufferLength, out bytesWritten, offset, info);
+        }
+
+        public NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return FlushFileBuffersCallback.FlushFileBuffers(fileName, info);
+        }
+
+        public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return GetFileInformationCallback.GetFileInformation(fileName, out fileInfo, info);
+        }
+
+        public NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return FindFilesCallback.FindFiles(fileName, out files, info);
+        }
+
+        public NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return FindFilesWithPatternCallback.FindFilesWithPattern(fileName, searchPattern, out files, info);
+        }
+
+        public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return SetFileAttributesCallback.SetFileAttributes(fileName, attributes, info);
+        }
+
+        public NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return SetFileTimeCallback.SetFileTime(fileName, creationTime, lastAccessTime, lastWriteTime, info);
+        }
+
+        public NtStatus DeleteFile(string fileName, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return DeleteFileCallback.DeleteFile(fileName, info);
+        }
+
+        public NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return DeleteDirectoryCallback.DeleteDirectory(fileName, info);
+        }
+
+        public NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return MoveFileCallback.MoveFile(oldName, newName, replace, info);
+        }
+
+        public NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return SetEndOfFileCallback.SetEndOfFile(fileName, length, info);
+        }
+
+        public NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return SetAllocationSizeCallback.SetAllocationSize(fileName, length, info);
+        }
+
+        public NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return LockFileCallback.LockFile(fileName, offset, length, info);
+        }
+
+        public NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return UnlockFileCallback.UnlockFile(fileName, offset, length, info);
+        }
+
+        public NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return GetDiskFreeSpaceCallback.GetDiskFreeSpace(out freeBytesAvailable, out totalNumberOfBytes, out totalNumberOfFreeBytes, info);
+        }
+
+        public NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName, out uint maximumComponentLength, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return GetVolumeInformationCallback.GetVolumeInformation(out volumeLabel, out features, out fileSystemName, out maximumComponentLength, info);
+        }
+
+        public NtStatus GetFileSecurity(string fileName, out FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return GetFileSecurityCallback.GetFileSecurity(fileName, out security, sections, info);
+        }
+
+        public NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return SetFileSecurityCallback.SetFileSecurity(fileName, security, sections, info);
+        }
+
+        public NtStatus Mounted(string mountPoint, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return MountedCallback.Mounted(mountPoint, info);
+        }
+
+        public NtStatus FindStreams(string fileName, out IList<FileInformation> streams, IDokanFileInfo info)
+        {
+            AssertNotDisposed();
+            return FindStreamsCallback.FindStreams(fileName, out streams, info);
+        }
+
+        public NtStatus Unmounted(IDokanFileInfo info)
+        {
+            return UnmountedCallback.Unmounted(info);
+        }
+
+        #region Unused
 
         public NtStatus ReadFile(string fileName, byte[] buffer, out int bytesRead, long offset, IDokanFileInfo info)
         {
@@ -93,167 +226,13 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan
             return DokanResult.NotImplemented;
         }
 
-        // TODO: OPTIMIZE - add synchronized methodimpl
-        public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return ReadFileCallback.ReadFile(fileName, buffer, bufferLength, out bytesRead, offset, info);
-        }
-
-        // TODO: OPTIMIZE - add synchronized methodimpl
         public NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             bytesWritten = 0;
             return DokanResult.NotImplemented;
         }
 
-        public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return WriteFileCallback.WriteFile(fileName, buffer, bufferLength, out bytesWritten, offset, info);
-        }
-
-        public NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return FlushFileBuffersCallback.FlushFileBuffers(fileName, info);
-        }
-
-        public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return GetFileInformationCallback.GetFileInformation(fileName, out fileInfo, info);
-        }
-
-        public NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return FindFilesCallback.FindFiles(fileName, out files, info);
-        }
-
-        public NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return FindFilesWithPatternCallback.FindFilesWithPattern(fileName, searchPattern, out files, info);
-        }
-
-        public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return SetFileAttributesCallback.SetFileAttributes(fileName, attributes, info);
-        }
-
-        public NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return SetFileTimeCallback.SetFileTime(fileName, creationTime, lastAccessTime, lastWriteTime, info);
-        }
-
-        public NtStatus DeleteFile(string fileName, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return DeleteFileCallback.DeleteFile(fileName, info);
-        }
-
-        public NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return DeleteDirectoryCallback.DeleteDirectory(fileName, info);
-        }
-
-        public NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return MoveFileCallback.MoveFile(oldName, newName, replace, info);
-        }
-
-        public NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return SetEndOfFileCallback.SetEndOfFile(fileName, length, info);
-        }
-
-        public NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return SetAllocationSizeCallback.SetAllocationSize(fileName, length, info);
-        }
-
-        public NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return LockFileCallback.LockFile(fileName, offset, length, info);
-        }
-
-        public NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return UnlockFileCallback.UnlockFile(fileName, offset, length, info);
-        }
-
-        public NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return GetDiskFreeSpaceCallback.GetDiskFreeSpace(out freeBytesAvailable, out totalNumberOfBytes, out totalNumberOfFreeBytes, info);
-        }
-
-        public NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName, out uint maximumComponentLength, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return GetVolumeInformationCallback.GetVolumeInformation(out volumeLabel, out features, out fileSystemName, out maximumComponentLength, info);
-        }
-
-        public NtStatus GetFileSecurity(string fileName, out FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return GetFileSecurityCallback.GetFileSecurity(fileName, out security, sections, info);
-        }
-
-        public NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return SetFileSecurityCallback.SetFileSecurity(fileName, security, sections, info);
-        }
-
-        public NtStatus Mounted(string mountPoint, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return MountedCallback.Mounted(mountPoint, info);
-        }
-
-        public NtStatus Unmounted(IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return UnmountedCallback.Unmounted(info);
-        }
-
-        public NtStatus FindStreams(string fileName, out IList<FileInformation> streams, IDokanFileInfo info)
-        {
-            AssertNotDisposed();
-
-            return FindStreamsCallback.FindStreams(fileName, out streams, info);
-        }
+        #endregion
 
         public void StartFileSystem(string mountLocation)
         {

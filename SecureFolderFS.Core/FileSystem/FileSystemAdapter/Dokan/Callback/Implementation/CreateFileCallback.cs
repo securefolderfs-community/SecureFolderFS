@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Paths;
@@ -7,7 +8,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using SecureFolderFS.Core.Exceptions;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
@@ -25,10 +25,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         public NtStatus CreateFile(string fileName, FileAccess access, FileShare share, FileMode mode,
             FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
-            ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-
+            var ciphertextPath = GetCiphertextPath(fileName);
             var result = DokanResult.Success;
-            var filePath = ciphertextPath.Path;
 
             if (info.IsDirectory)
             {
@@ -37,11 +35,11 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     switch (mode)
                     {
                         case FileMode.Open:
-                            if (!Directory.Exists(filePath))
+                            if (!Directory.Exists(ciphertextPath))
                             {
                                 try
                                 {
-                                    if (!File.GetAttributes(filePath).HasFlag(FileAttributes.Directory))
+                                    if (!File.GetAttributes(ciphertextPath).HasFlag(FileAttributes.Directory))
                                         return DokanResult.NotADirectory;
                                 }
                                 catch (Exception)
@@ -52,16 +50,16 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                                 return DokanResult.PathNotFound;
                             }
 
-                            _ = new DirectoryInfo(filePath).EnumerateFileSystemInfos().Any(); // .Any() iterator moves by one - corresponds to FindNextFile
+                            _ = new DirectoryInfo(ciphertextPath).EnumerateFileSystemInfos().Any(); // .Any() iterator moves by one - corresponds to FindNextFile
                             break;
 
                         case FileMode.CreateNew:
-                            if (Directory.Exists(filePath))
+                            if (Directory.Exists(ciphertextPath))
                                 return DokanResult.FileExists;
 
                             try
                             {
-                                _ = File.GetAttributes(filePath).HasFlag(FileAttributes.Directory);
+                                _ = File.GetAttributes(ciphertextPath).HasFlag(FileAttributes.Directory);
                                 return DokanResult.AlreadyExists;
                             }
                             catch (IOException)
@@ -69,16 +67,15 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                             }
 
                             // Create directory
-                            if (_fileSystemOperations.DangerousDirectoryOperations.CreateDirectory(filePath) is not null)
-                            {
-                                // The directory has been created successfully
+                            _ = Directory.CreateDirectory(ciphertextPath);
 
-                                if (!_fileSystemOperations.InitializeWithDirectory(ciphertextPath, true))
-                                {
-                                    // The directory could not be initialized
-                                    return DokanResult.PathNotFound;
-                                }
+                            // The directory has been created successfully
+                            if (!_fileSystemOperations.InitializeDirectory(ciphertextPath, true))
+                            {
+                                // The directory could not be initialized
+                                return DokanResult.PathNotFound;
                             }
+
                             break;
                     }
                 }
@@ -97,8 +94,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
                 try
                 {
-                    pathExists = (Directory.Exists(filePath) || File.Exists(filePath));
-                    pathIsDirectory = pathExists && File.GetAttributes(filePath).HasFlag(FileAttributes.Directory);
+                    pathExists = (Directory.Exists(ciphertextPath) || File.Exists(ciphertextPath));
+                    pathIsDirectory = pathExists && File.GetAttributes(ciphertextPath).HasFlag(FileAttributes.Directory);
                 }
                 catch (IOException)
                 {
@@ -114,8 +111,10 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                             if (readWriteAttributes || pathIsDirectory)
                             {
                                 if (pathIsDirectory && (access & FileAccess.Delete) == FileAccess.Delete && (access & FileAccess.Synchronize) != FileAccess.Synchronize)
+                                {
                                     // It is a DeleteFile request on a directory
                                     return DokanResult.AccessDenied;
+                                }
 
                                 info.IsDirectory = pathIsDirectory;
                                 InvalidateContext(info); // Must invalidate before returning DokanResult.Success
@@ -157,7 +156,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
                         // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
                         attributes2 &= ~FileAttributes.Normal;
-                        File.SetAttributes(filePath, attributes2);
+                        File.SetAttributes(ciphertextPath, attributes2);
                     }
                 }
                 catch (IntegrityException)
@@ -178,12 +177,12 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 {
                     return DokanResult.PathNotFound;
                 }
-                catch (Exception ex)
+                catch (IOException ioex)
                 {
-                    var hr = (uint)Marshal.GetHRForException(ex);
+                    var hr = (uint)Marshal.GetHRForException(ioex);
                     switch (hr)
                     {
-                        case 0x80070020: //Sharing violation
+                        case 0x80070020: // Sharing violation
                             return DokanResult.SharingViolation;
                         default:
                             throw;

@@ -1,12 +1,12 @@
-﻿using SecureFolderFS.Core.Sdk.Streams;
+﻿using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {
     internal sealed class FileHandle : HandleObject
     {
-        public ICleartextFileStream HandleStream { get; }
+        public Stream HandleStream { get; }
 
-        public FileHandle(ICleartextFileStream cleartextFileStream)
+        public FileHandle(Stream cleartextFileStream)
         {
             HandleStream = cleartextFileStream;
         }

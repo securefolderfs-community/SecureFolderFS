@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             // Encrypt
             cipherProvider.AesCtrCrypt.Encrypt(
                 cleartextChunk,
-                header.GetHeaderContentKey(), 
+                header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
                 ciphertextChunk.Slice(CHUNK_NONCE_SIZE, cleartextChunk.Length));
 
@@ -46,12 +46,13 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
                 ciphertextChunk.Slice(CHUNK_NONCE_SIZE, cleartextChunk.Length),
                 chunkNumber,
-                ciphertextChunk.Slice(CHUNK_NONCE_SIZE + cleartextChunk.Length));
+                ciphertextChunk.Slice(CHUNK_NONCE_SIZE + cleartextChunk.Length, CHUNK_MAC_SIZE));
         }
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public override bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> cleartextChunk)
+        public override bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber,
+            ReadOnlySpan<byte> header, Span<byte> cleartextChunk)
         {
             // Allocate byte* for MAC
             Span<byte> mac = stackalloc byte[CHUNK_MAC_SIZE];
@@ -60,7 +61,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             CalculateChunkMac(
                 header.GetHeaderNonce(),
                 ciphertextChunk.GetChunkNonce(),
-                ciphertextChunk.Slice(CHUNK_NONCE_SIZE, cleartextChunk.Length),
+                ciphertextChunk.GetChunkPayload(),
                 chunkNumber,
                 mac);
 

@@ -1,5 +1,4 @@
-﻿using System;
-using SecureFolderFS.Core.Sdk.Paths;
+﻿using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.Paths.Receivers
 {
@@ -12,68 +11,16 @@ namespace SecureFolderFS.Core.Paths.Receivers
             this.vaultPath = vaultPath;
         }
 
-        public TRequestedPath FromCiphertextPath<TRequestedPath>(string ciphertextPath) where TRequestedPath : IPath
-        {
-            var requestedPathType = typeof(TRequestedPath);
+        /// <inheritdoc/>
+        public abstract string ToCiphertext(string cleartextPath);
 
-            if (typeof(ICleartextPath).IsAssignableFrom(requestedPathType))
-            {
-                return (TRequestedPath)CleartextPathFromRawCiphertextPath(ciphertextPath);
-            }
-            else if (typeof(ICiphertextPath).IsAssignableFrom(requestedPathType))
-            {
-                return (TRequestedPath)CiphertextPathFromRawCiphertextPath(ciphertextPath);
-            }
-            else
-            {
-                throw new ArgumentException($"Could not assign {requestedPathType.Name} from ciphertext path.");
-            }
-        }
+        /// <inheritdoc/>
+        public abstract string ToCleartext(string ciphertextPath);
 
-        public TRequestedPath FromCleartextPath<TRequestedPath>(string cleartextPath) where TRequestedPath : IPath
-        {
-            var requestedPathType = typeof(TRequestedPath);
-
-            if (typeof(ICleartextPath).IsAssignableFrom(requestedPathType))
-            {
-                return (TRequestedPath)CleartextPathFromRawCleartextPath(cleartextPath);
-            }
-            else if (typeof(ICiphertextPath).IsAssignableFrom(requestedPathType))
-            {
-                return (TRequestedPath)CiphertextPathFromRawCleartextPath(cleartextPath);
-            }
-            else
-            {
-                throw new ArgumentException($"Could not assign {requestedPathType.Name} from cleartext path.");
-            }
-        }
-
-        public virtual ICleartextPath FromCiphertextPath(ICiphertextPath ciphertextPath)
-        {
-            return CleartextPathFromRawCiphertextPath(ciphertextPath.Path);
-        }
-
-        public virtual ICiphertextPath FromCleartextPath(ICleartextPath cleartextPath)
-        {
-            return CiphertextPathFromRawCleartextPath(cleartextPath.Path);
-        }
-
-        protected virtual ICleartextPath CleartextPathFromRawCleartextPath(string cleartextPath)
-        {
-            return new CleartextPath(cleartextPath);
-        }
-
-        protected virtual ICiphertextPath CiphertextPathFromRawCiphertextPath(string ciphertextPath)
-        {
-            return new CiphertextPath(ciphertextPath);
-        }
-
+        /// <inheritdoc/>
         public abstract string GetCleartextFileName(string cleartextFilePath);
 
+        /// <inheritdoc/>
         public abstract string GetCiphertextFileName(string ciphertextFilePath);
-
-        protected abstract ICleartextPath CleartextPathFromRawCiphertextPath(string ciphertextPath);
-
-        protected abstract ICiphertextPath CiphertextPathFromRawCleartextPath(string cleartextPath);
     }
 }

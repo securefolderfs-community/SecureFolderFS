@@ -5,6 +5,7 @@ using SecureFolderFS.Core.Streams.Management;
 using System;
 using System.Buffers;
 using System.Diagnostics;
+using SecureFolderFS.Core.Exceptions;
 
 namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 {
@@ -36,7 +37,8 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
             var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
             // Get and read from stream
-            var ciphertextFileStream = _ciphertextStreamsManager.GetReadOnlyStreamInstance();
+            var ciphertextFileStream = _ciphertextStreamsManager.GetReadOnlyStream();
+            _ = ciphertextFileStream ?? throw new UnavailableStreamException();
             ciphertextFileStream.Position = ciphertextPosition;
             var read = ciphertextFileStream.Read(realCiphertextChunk);
 

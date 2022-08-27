@@ -21,23 +21,6 @@ namespace SecureFolderFS.Shared.Extensions
         }
 
         /// <summary>
-        /// Slices the <paramref name="source"/> array into regions.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source">The source array.</param>
-        /// <param name="offset">The offset at where to start the slice.</param>
-        /// <param name="length">The length of the slice.</param>
-        /// <returns></returns>
-        public static T[] SliceArray<T>(this T[] source, int offset, int length)
-            where T : new()
-        {
-            var output = new T[length];
-            Array.Copy(source, offset, output, 0, length);
-
-            return output;
-        }
-
-        /// <summary>
         /// Reverses the array if the architecture uses little endian.
         /// </summary>
         /// <remarks>This function does not check if <paramref name="bytes"/> is already little-endian
@@ -47,9 +30,7 @@ namespace SecureFolderFS.Shared.Extensions
         public static byte[] AsBigEndian(this byte[] bytes)
         {
             if (BitConverter.IsLittleEndian)
-            {
                 Array.Reverse(bytes);
-            }
 
             return bytes;
         }
@@ -84,35 +65,6 @@ namespace SecureFolderFS.Shared.Extensions
                 Array.Copy(array, 0, source, lastOffset, Math.Min(array.Length, source.Length - lastOffset));
                 lastOffset += array.Length;
             }
-        }
-
-        /// <summary>
-        /// Clones an array.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source">The source array.</param>
-        /// <returns></returns>
-        public static T[] CloneArray<T>(this T[] source)
-        {
-            var clonedArray = new T[source.Length];
-            Array.Copy(source, 0, clonedArray, 0, source.Length);
-
-            return clonedArray;
-        }
-
-        /// <summary>
-        /// Creates a new array with <paramref name="size"/> and copies as much contents as possible.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source">The source array.</param>
-        /// <param name="size">Size of new array.</param>
-        /// <returns></returns>
-        public static T[] ArrayWithSize<T>(this T[] source, int size)
-        {
-            var newArray = new T[size];
-            Array.Copy(source, 0, newArray, 0, Math.Min(source.Length, size));
-
-            return newArray;
         }
     }
 }

@@ -26,9 +26,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
             try
             {
-                ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-
-                files = new DirectoryInfo(ciphertextPath.Path)
+                files = new DirectoryInfo(GetCiphertextPath(fileName))
                     .EnumerateFileSystemInfos()
                     .Select<FileSystemInfo, FileInformation?>(finfo =>
                     {

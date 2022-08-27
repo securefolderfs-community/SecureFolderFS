@@ -1,22 +1,18 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class SetFileTimeCallback : BaseDokanOperationsCallbackWithPath, ISetFileTimeCallback
     {
-        private readonly IFileSystemOperations _fileSystemOperations;
-
-        public SetFileTimeCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
+        public SetFileTimeCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            _fileSystemOperations = fileSystemOperations;
         }
 
         public NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info)
@@ -49,16 +45,16 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     }
                 }
 
-                ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
+                var ciphertextPath = GetCiphertextPath(fileName);
 
                 if (creationTime is not null)
-                    _fileSystemOperations.DangerousFileOperations.SetCreationTime(ciphertextPath.Path, creationTime.Value);
+                    File.SetCreationTime(ciphertextPath, creationTime.Value);
 
                 if (lastAccessTime is not null)
-                    _fileSystemOperations.DangerousFileOperations.SetLastAccessTime(ciphertextPath.Path, lastAccessTime.Value);
+                    File.SetLastAccessTime(ciphertextPath, lastAccessTime.Value);
 
                 if (lastWriteTime is not null)
-                    _fileSystemOperations.DangerousFileOperations.SetLastWriteTime(ciphertextPath.Path, lastWriteTime.Value);
+                    File.SetLastWriteTime(ciphertextPath, lastWriteTime.Value);
 
                 return DokanResult.Success;
             }
