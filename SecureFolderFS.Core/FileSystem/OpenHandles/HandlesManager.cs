@@ -21,6 +21,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             _handleGenerator = new HandleGenerator();
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public long OpenHandleToFile(string ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
         {
             // Open stream
