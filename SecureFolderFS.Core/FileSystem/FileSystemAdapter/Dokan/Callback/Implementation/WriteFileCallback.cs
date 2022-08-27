@@ -7,6 +7,7 @@ using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.Paths;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -17,6 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             var ciphertextPath = GetCiphertextPath(fileName);
@@ -43,20 +45,9 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 var alignedPosition = appendToFile ? fileHandle.HandleStream.Length : offset;
 
                 // Write
-                if (openedNewHandle)
-                {
-                    fileHandle.HandleStream.Position = alignedPosition;
-                    bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.HandleStream, buffer, alignedBytesToCopy);
-                }
-                else
-                {
-                    lock (fileHandle.HandleStream) // Protect from overlapped write
-                    {
-                        fileHandle.HandleStream.Position = alignedPosition;
-                        bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.HandleStream, buffer, alignedBytesToCopy);
-                    }
-                }
-
+                fileHandle.HandleStream.Position = alignedPosition;
+                bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.HandleStream, buffer, alignedBytesToCopy);
+                
                 return DokanResult.Success;
             }
             catch (PathTooLongException)

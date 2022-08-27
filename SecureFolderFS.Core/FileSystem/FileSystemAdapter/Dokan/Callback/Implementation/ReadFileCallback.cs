@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Sdk.Paths;
@@ -17,6 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
             var ciphertextPath = GetCiphertextPath(fileName);
@@ -46,17 +48,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 }
 
                 // Read file
-                if (openedNewHandle)
-                {
-                    bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.HandleStream, buffer, (int)bufferLength);
-                }
-                else
-                {
-                    lock (fileHandle!.HandleStream)
-                    {
-                        bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.HandleStream, buffer, (int)bufferLength);
-                    }
-                }
+                bytesRead = StreamHelpers.ReadToIntPtrBuffer(fileHandle.HandleStream, buffer, (int)bufferLength);
                 
                 return DokanResult.Success;
             }

@@ -85,7 +85,11 @@ namespace SecureFolderFS.Core.Streams
                 var offsetInChunk = (int)(readPosition % cleartextChunkSize);
                 var length = Math.Min(adjustedBuffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
 
-                positionInBuffer += _chunkAccess.CopyFromChunk(chunkNumber, adjustedBuffer.Slice(positionInBuffer), offsetInChunk);
+                var copied = _chunkAccess.CopyFromChunk(chunkNumber, adjustedBuffer.Slice(positionInBuffer), offsetInChunk);
+                if (copied < 0)
+                    throw new UnauthenticChunkException();
+
+                positionInBuffer += copied;
                 read += length;
             }
 
@@ -218,15 +222,20 @@ namespace SecureFolderFS.Core.Streams
                 var offsetInChunk = (int)(currentPosition % cleartextChunkSize);
                 var length = Math.Min(buffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
 
+                int copy;
                 if (offsetInChunk == 0 && length == cleartextChunkSize)
                 {
-                    positionInBuffer += _chunkAccess.CopyToChunk(chunkNumber, buffer.Slice(positionInBuffer), 0);
+                    copy = _chunkAccess.CopyToChunk(chunkNumber, buffer.Slice(positionInBuffer), 0);
                 }
                 else
                 {
-                    positionInBuffer += _chunkAccess.CopyToChunk(chunkNumber, buffer.Slice(positionInBuffer), offsetInChunk);
+                    copy = _chunkAccess.CopyToChunk(chunkNumber, buffer.Slice(positionInBuffer), offsetInChunk);
                 }
 
+                if (copy < 0)
+                    throw new UnauthenticChunkException();
+
+                positionInBuffer += copy;
                 written += length;
             }
 

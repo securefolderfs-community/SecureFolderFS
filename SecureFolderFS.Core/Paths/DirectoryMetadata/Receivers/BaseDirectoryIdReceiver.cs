@@ -6,9 +6,9 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
     internal abstract class BaseDirectoryIdReceiver : IDirectoryIdReceiver
     {
         protected readonly IDirectoryIdReader directoryIdReader;
-        protected readonly IFileSystemStatsTracker fileSystemStatsTracker;
+        protected readonly IFileSystemStatsTracker? fileSystemStatsTracker;
 
-        protected BaseDirectoryIdReceiver(IDirectoryIdReader directoryIdReader, IFileSystemStatsTracker fileSystemStatsTracker)
+        protected BaseDirectoryIdReceiver(IDirectoryIdReader directoryIdReader, IFileSystemStatsTracker? fileSystemStatsTracker)
         {
             this.directoryIdReader = directoryIdReader;
             this.fileSystemStatsTracker = fileSystemStatsTracker;

@@ -1,17 +1,16 @@
-﻿using System;
-using SecureFolderFS.Core.Helpers;
+﻿using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
-using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Sdk.Tracking;
+using SecureFolderFS.Core.Security;
 
 namespace SecureFolderFS.Core.FileNames.Receivers
 {
     internal abstract class BaseFileNameReceiver : IFileNameReceiver
     {
         protected readonly ISecurity security;
-        protected readonly IFileSystemStatsTracker fileSystemStatsTracker;
+        protected readonly IFileSystemStatsTracker? fileSystemStatsTracker;
 
-        protected BaseFileNameReceiver(ISecurity security, IFileSystemStatsTracker fileSystemStatsTracker)
+        protected BaseFileNameReceiver(ISecurity security, IFileSystemStatsTracker? fileSystemStatsTracker)
         {
             this.security = security;
             this.fileSystemStatsTracker = fileSystemStatsTracker;
@@ -47,40 +46,6 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
         public abstract void SetCiphertextFileName(DirectoryId directoryId, string cleartextFileName, string ciphertextFileName);
 
-        protected internal sealed class FileNameWithDirectoryId : IEquatable<FileNameWithDirectoryId>
-        {
-            private readonly DirectoryId _directoryId;
-            private readonly string _fileName;
-
-            public FileNameWithDirectoryId(DirectoryId directoryId, string fileName)
-            {
-                _directoryId = directoryId;
-                _fileName = fileName;
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(_directoryId, _fileName);
-            }
-
-            public bool Equals(FileNameWithDirectoryId other)
-            {
-                if (other is null)
-                    return false;
-
-                return other._directoryId.Equals(_directoryId);
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is FileNameWithDirectoryId ciphertextFileNameWithDirectoryId)
-                {
-                    return _directoryId.Equals(ciphertextFileNameWithDirectoryId._directoryId)
-                           && _fileName.Equals(ciphertextFileNameWithDirectoryId._fileName);
-                }
-
-                return base.Equals(obj);
-            }
-        }
+        protected record class FileNameWithDirectoryId(DirectoryId DirectoryId, string FileName);
     }
 }

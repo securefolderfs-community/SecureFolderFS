@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using DokanNet;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
@@ -26,15 +27,20 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             if (info.DeleteOnClose)
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
-
-                if (info.IsDirectory)
+                try
                 {
-                    _fileSystemOperations.PrepareDirectoryForDeletion(ciphertextPath);
-                    Directory.Delete(ciphertextPath, true);
+                    if (info.IsDirectory)
+                    {
+                        _fileSystemOperations.PrepareDirectoryForDeletion(ciphertextPath);
+                        Directory.Delete(ciphertextPath, true);
+                    }
+                    else
+                    {
+                        File.Delete(ciphertextPath);
+                    }
                 }
-                else
+                catch (UnauthorizedAccessException)
                 {
-                    File.Delete(ciphertextPath);
                 }
             }
         }

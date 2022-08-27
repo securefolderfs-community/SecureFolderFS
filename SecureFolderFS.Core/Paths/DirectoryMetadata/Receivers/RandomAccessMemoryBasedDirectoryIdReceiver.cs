@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers
     {
         private readonly Dictionary<string, DirectoryId> _directoryIds;
 
-        public RandomAccessMemoryBasedDirectoryIdReceiver(IDirectoryIdReader directoryIdReader, IFileSystemStatsTracker fileSystemStatsTracker)
+        public RandomAccessMemoryBasedDirectoryIdReceiver(IDirectoryIdReader directoryIdReader, IFileSystemStatsTracker? fileSystemStatsTracker)
             : base(directoryIdReader, fileSystemStatsTracker)
         {
             _directoryIds = new(Constants.IO.MAX_CACHED_DIRECTORY_IDS);

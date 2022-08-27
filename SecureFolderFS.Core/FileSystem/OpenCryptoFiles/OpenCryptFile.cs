@@ -43,8 +43,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
             _ciphertextStreamsManager.AddStream(ciphertextStream);
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public void Close(CleartextFileStream cleartextFileStream)
+        private void Close(CleartextFileStream cleartextFileStream)
         {
             try
             {

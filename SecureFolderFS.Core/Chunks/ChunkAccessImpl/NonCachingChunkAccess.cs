@@ -1,6 +1,7 @@
-﻿using SecureFolderFS.Core.Security.ContentCrypt.FileContent;
+﻿using SecureFolderFS.Core.Exceptions;
+using SecureFolderFS.Core.Security.ContentCrypt.FileContent;
 using System;
-using SecureFolderFS.Core.Exceptions;
+using System.Buffers;
 
 namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 {
@@ -15,13 +16,26 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
         /// <inheritdoc/>
         public override int CopyFromChunk(long chunkNumber, Span<byte> destination, int offsetInChunk)
         {
-            var cleartextChunk = new byte[contentCrypt.ChunkCleartextSize];
-            var read = chunkReader.ReadChunk(chunkNumber, cleartextChunk);
-            if (read == -1)
-                throw new UnauthenticChunkException();
+            // Rent buffer
+            var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
+            var realCleartextChunk = cleartextChunk.AsSpan(0, contentCrypt.ChunkCleartextSize);
 
+            // Read chunk
+            var read = chunkReader.ReadChunk(chunkNumber, realCleartextChunk);
+
+            // Check for errors
+            if (read < 0)
+            {
+                ArrayPool<byte>.Shared.Return(cleartextChunk);
+                return read;
+            }
+
+            // Copy from chunk
             var count = Math.Min(read - offsetInChunk, destination.Length);
-            cleartextChunk.AsSpan(offsetInChunk, count).CopyTo(destination);
+            realCleartextChunk.Slice(offsetInChunk, count).CopyTo(destination);
+
+            // Return buffer
+            ArrayPool<byte>.Shared.Return(cleartextChunk);
 
             return count;
         }
@@ -29,19 +43,30 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
         /// <inheritdoc/>
         public override int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk)
         {
-            var cleartextChunk = new byte[contentCrypt.ChunkCleartextSize];
-            var read = chunkReader.ReadChunk(chunkNumber, cleartextChunk);
-            if (read == -1)
-                throw new UnauthenticChunkException();
+            // Rent buffer
+            var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
+            var realCleartextChunk = cleartextChunk.AsSpan(0, contentCrypt.ChunkCleartextSize);
 
+            // Read chunk
+            var read = chunkReader.ReadChunk(chunkNumber, realCleartextChunk);
+
+            // Check for errors
+            if (read < 0)
+            {
+                ArrayPool<byte>.Shared.Return(cleartextChunk);
+                return read;
+            }
+
+            // Copy to chunk
             var count = Math.Min(contentCrypt.ChunkCleartextSize - offsetInChunk, source.Length);
-            var destination = cleartextChunk.AsSpan(offsetInChunk, count);
+            var destination = realCleartextChunk.Slice(offsetInChunk, count);
             source.Slice(0, count).CopyTo(destination);
 
-            // ActualLength = Math.Max(ActualLength, count + offsetInChunk) doesn't matter here I think
-            
-            // Write the chunk
+            // Write to chunk
             chunkWriter.WriteChunk(chunkNumber, destination);
+
+            // Return buffer
+            ArrayPool<byte>.Shared.Return(cleartextChunk);
 
             return count;
         }

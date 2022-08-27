@@ -32,7 +32,6 @@ namespace SecureFolderFS.Core.Streams.Receiver
             }
             catch (Exception)
             {
-                openCryptFile?.Dispose();
                 ciphertextStream.Dispose();
                 cleartextStream?.Dispose();
                 throw;
