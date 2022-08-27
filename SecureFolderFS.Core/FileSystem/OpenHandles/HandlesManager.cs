@@ -24,7 +24,8 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         public long OpenHandleToFile(string ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
         {
             // Open stream
-            var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
+            var share2 = FileShare.ReadWrite | FileShare.Delete; // TODO: Use share2 because share is broken
+            var ciphertextStream = new FileStream(ciphertextPath, mode, access, share2, 4096, options);
             var cleartextStream = _fileStreamReceiver.OpenCleartextStream(ciphertextPath, ciphertextStream);
 
             // Flush ChunkAccess if the opened to Truncate

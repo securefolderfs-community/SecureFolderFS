@@ -9,10 +9,10 @@
 
     <StackPanel
         Height="32"
-        Padding="14,6"
+        Padding="16,6"
         IsHitTestVisible="True"
         Orientation="Horizontal"
-        Spacing="12">
+        Spacing="16">
 
         <!--  App icon  -->
         <Image
@@ -32,13 +32,13 @@
                 FontSize="12"
                 Text="SecureFolderFS" />
             <TextBlock
-                Margin="0,0,0,1"
+                Margin="0,0,0,2"
                 VerticalAlignment="Bottom"
-                CharacterSpacing="64"
-                FontSize="10"
+                CharacterSpacing="32"
+                FontSize="9"
                 FontWeight="Thin"
                 Opacity="0.8"
-                Text="ALPHA" />
+                Text="BETA" />
         </StackPanel>
     </StackPanel>
 </UserControl>

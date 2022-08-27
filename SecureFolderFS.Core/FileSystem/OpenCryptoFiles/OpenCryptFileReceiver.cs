@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using SecureFolderFS.Core.BufferHolders;
+﻿using SecureFolderFS.Core.BufferHolders;
 using SecureFolderFS.Core.Chunks;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Security;
-using SecureFolderFS.Core.Streams.Management;
 using SecureFolderFS.Core.Chunks.ChunkAccessImpl;
-using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Streams.Management;
+using SecureFolderFS.Shared.Extensions;
+using System;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 {
     internal sealed class OpenCryptFileReceiver : IDisposable
     {
-        private readonly ISecurity _security;
         private readonly ChunkAccessFactory _chunkAccessFactory;
         private readonly Dictionary<string, OpenCryptFile> _openCryptFiles;
 
-        public OpenCryptFileReceiver(ISecurity security, ChunkAccessFactory chunkAccessFactory)
+        public OpenCryptFileReceiver(ChunkAccessFactory chunkAccessFactory)
         {
-            _security = security;
             _chunkAccessFactory = chunkAccessFactory;
             _openCryptFiles = new();
         }
@@ -36,7 +30,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
             var ciphertextStreamsManager = new CiphertextStreamsManager();
             var chunkAccess = GetChunkAccess(ciphertextStreamsManager, fileHeader);
 
-            var openCryptFile = new OpenCryptFile(ciphertextPath, CloseCryptFile, ciphertextStreamsManager, chunkAccess);
+            var openCryptFile = new OpenCryptFile(ciphertextPath, CloseCryptFile, ciphertextStreamsManager, fileHeader, chunkAccess);
             _openCryptFiles.TryAdd(ciphertextPath, openCryptFile);
 
             return openCryptFile;
@@ -59,6 +53,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
             return _chunkAccessFactory.GetChunkAccess(reader, writer);
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             _openCryptFiles.Values.DisposeCollection();

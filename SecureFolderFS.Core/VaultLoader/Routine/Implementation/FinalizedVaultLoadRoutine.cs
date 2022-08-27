@@ -9,15 +9,14 @@ using SecureFolderFS.Core.Instance.Implementation;
 using SecureFolderFS.Core.Paths.DirectoryMetadata.Receivers;
 using SecureFolderFS.Core.Paths.Receivers;
 using SecureFolderFS.Core.Streams.Receiver;
+using System;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 {
     internal sealed class FinalizedVaultLoadRoutine : IFinalizedVaultLoadRoutine
     {
         private readonly VaultInstance _vaultInstance;
-
         private readonly VaultLoadDataModel _vaultLoadDataModel;
-
         private OptionalVaultLoadRoutine? _optionalVaultLoadRoutine;
 
         public FinalizedVaultLoadRoutine(VaultInstance vaultInstance, VaultLoadDataModel vaultLoadDataModel)
@@ -37,10 +36,11 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
             if (_optionalVaultLoadRoutine is null)
             {
                 OptionalVaultLoadRoutine.CreateWithDefaultOptions(this, _vaultInstance);
+                ArgumentNullException.ThrowIfNull(_optionalVaultLoadRoutine);
             }
 
-            var chunkReceiverFactory = new ChunkAccessFactory(_vaultInstance.Security, _vaultInstance.VaultVersion, _optionalVaultLoadRoutine.ChunkCachingStrategy, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker);
-            var openCryptFileReceiver = new OpenCryptFileReceiver(_vaultInstance.Security, chunkReceiverFactory);
+            var chunkAccessFactory = new ChunkAccessFactory(_vaultInstance.Security, _vaultInstance.VaultVersion, _optionalVaultLoadRoutine.ChunkCachingStrategy, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker);
+            var openCryptFileReceiver = new OpenCryptFileReceiver(chunkAccessFactory);
             
             var directoryIdReceiverFactory = new DirectoryIdReceiverFactory(_vaultInstance.VaultVersion, _optionalVaultLoadRoutine.DirectoryIdCachingStrategy, _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker);
             var directoryIdReceiver = directoryIdReceiverFactory.GetDirectoryIdReceiver(directoryIdReceiverFactory.GetDirectoryIdReader());

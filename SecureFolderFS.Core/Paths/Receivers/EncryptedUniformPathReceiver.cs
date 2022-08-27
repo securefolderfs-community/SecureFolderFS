@@ -58,10 +58,10 @@ namespace SecureFolderFS.Core.Paths.Receivers
 
             foreach (var fileName in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                correctPath += fileNameFunc(Path.Combine(correctPath, fileName)) + Path.PathSeparator;
+                correctPath += fileNameFunc(Path.Combine(correctPath, fileName)) + Path.DirectorySeparatorChar;
             }
 
-            return !path.EndsWith(Path.PathSeparator) ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;
+            return !path.EndsWith(Path.DirectorySeparatorChar) ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;
         }
     }
 }

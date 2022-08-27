@@ -28,7 +28,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             if (IsContextInvalid(info) || handles.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
-                contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
+                var fileMode = appendToFile ? FileMode.Append : FileMode.Open;
+                contextHandle = handles.OpenHandleToFile(ciphertextPath, fileMode, System.IO.FileAccess.ReadWrite, FileShare.None, FileOptions.None);
                 fileHandle = handles.GetHandle<FileHandle>(contextHandle)!;
                 openedNewHandle = true;
             }

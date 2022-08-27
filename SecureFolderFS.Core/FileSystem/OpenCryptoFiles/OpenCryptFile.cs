@@ -1,10 +1,10 @@
-﻿using SecureFolderFS.Core.Chunks;
+﻿using SecureFolderFS.Core.BufferHolders;
+using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.Streams.Management;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -17,15 +17,17 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
         private readonly CiphertextStreamsManager _ciphertextStreamsManager;
         private readonly Dictionary<CleartextFileStream, long> _openedStreams;
 
+        public CleartextHeaderBuffer FileHeader { get; }
+
         public IChunkAccess ChunkAccess { get; }
 
-        public OpenCryptFile(string ciphertextPath, Action<string> onCryptFileClosed, CiphertextStreamsManager ciphertextStreamsManager, IChunkAccess chunkAccess)
+        public OpenCryptFile(string ciphertextPath, Action<string> onCryptFileClosed, CiphertextStreamsManager ciphertextStreamsManager, CleartextHeaderBuffer fileHeader, IChunkAccess chunkAccess)
         {
             _ciphertextPath = ciphertextPath;
             _onCryptFileClosed = onCryptFileClosed;
             _ciphertextStreamsManager = ciphertextStreamsManager;
+            FileHeader = fileHeader;
             ChunkAccess = chunkAccess;
-
             _openedStreams = new();
         }
 
@@ -61,12 +63,6 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
                     _onCryptFileClosed?.Invoke(_ciphertextPath);
                 }
             }
-        }
-
-        public void FlushChunkReceiver()
-        {
-            Debugger.Break();
-            ChunkAccess.Flush();
         }
 
         /// <inheritdoc/>

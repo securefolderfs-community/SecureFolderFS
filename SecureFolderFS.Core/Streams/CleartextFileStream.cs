@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.Exceptions;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Streams
 {
@@ -100,12 +101,13 @@ namespace SecureFolderFS.Core.Streams
 
             if (Position > Length)
             {
-                Debugger.Break(); // Write gap
-                //var gapLength = Position - oldFileSize;
-                //WriteInternal(ArrayExtensions.GenerateWeakNoise(oldFileSize), gapLength);
+                // Write gap
+                var gapLength = Position - Length;
+                WriteInternal(ArrayExtensions.GenerateWeakNoise(gapLength), Length);
             }
             else
             {
+                // Write contents
                 WriteInternal(buffer, Position);
             }
 

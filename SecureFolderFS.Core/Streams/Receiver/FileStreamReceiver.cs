@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.BufferHolders;
-using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
+﻿using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
 using SecureFolderFS.Core.Security;
 using System;
 using System.IO;
@@ -24,9 +23,8 @@ namespace SecureFolderFS.Core.Streams.Receiver
             CleartextFileStream? cleartextStream = null;
             try
             {
-                var fileHeader = new CleartextHeaderBuffer(_security.HeaderCrypt.HeaderCleartextSize);
-                openCryptFile = _openCryptFileReceiver.TryGet(ciphertextPath) ?? _openCryptFileReceiver.Create(ciphertextPath, fileHeader);
-                cleartextStream = new CleartextFileStream(_security, openCryptFile.ChunkAccess, ciphertextStream, fileHeader);
+                openCryptFile = _openCryptFileReceiver.TryGet(ciphertextPath) ?? _openCryptFileReceiver.Create(ciphertextPath, new(_security.HeaderCrypt.HeaderCleartextSize));
+                cleartextStream = new CleartextFileStream(_security, openCryptFile.ChunkAccess, ciphertextStream, openCryptFile.FileHeader);
 
                 openCryptFile.RegisterStream(cleartextStream, ciphertextStream);
 
