@@ -13,20 +13,13 @@ namespace SecureFolderFS.Core.FileSystem.Operations
             _directoryIdReceiver = directoryIdReceiver;
         }
 
-        public bool InitializeDirectory(string ciphertextPath, bool skipExists)
+        public void InitializeDirectory(string ciphertextPath)
         {
-            if (skipExists || Directory.Exists(ciphertextPath))
-            {
-                var directoryId = _directoryIdReceiver.CreateNewDirectoryId();
-                var directoryIdPath = PathHelpers.AppendDirectoryIdPath(ciphertextPath);
+            var directoryId = _directoryIdReceiver.CreateNewDirectoryId();
+            var directoryIdPath = PathHelpers.AppendDirectoryIdPath(ciphertextPath);
 
-                using var fileStream = File.Create(directoryIdPath);
-                fileStream.Write(directoryId.Id, 0, directoryId.Id.Length);
-
-                return true;
-            }
-
-            return false;
+            using var fileStream = File.Create(directoryIdPath);
+            fileStream.Write(directoryId.Id, 0, directoryId.Id.Length);
         }
 
         public bool CanDeleteDirectory(string ciphertextPath)

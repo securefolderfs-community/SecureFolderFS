@@ -2,14 +2,15 @@
 using SecureFolderFS.Core.Security.ContentCrypt.FileContent;
 using System;
 using System.Buffers;
+using SecureFolderFS.Core.Sdk.Tracking;
 
 namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 {
     /// <inheritdoc cref="IChunkAccess"/>
     internal sealed class NonCachingChunkAccess : BaseChunkAccess
     {
-        public NonCachingChunkAccess(IContentCrypt contentCrypt, IChunkReader chunkReader, IChunkWriter chunkWriter)
-            : base(contentCrypt, chunkReader, chunkWriter)
+        public NonCachingChunkAccess(IContentCrypt contentCrypt, IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker? statsTracker)
+            : base(contentCrypt, chunkReader, chunkWriter, statsTracker)
         {
         }
 
@@ -32,6 +33,9 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 
             // Copy from chunk
             var count = Math.Min(read - offsetInChunk, destination.Length);
+            if (count <= 0)
+                return 0;
+
             realCleartextChunk.Slice(offsetInChunk, count).CopyTo(destination);
 
             // Return buffer
@@ -59,6 +63,9 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 
             // Copy to chunk
             var count = Math.Min(contentCrypt.ChunkCleartextSize - offsetInChunk, source.Length);
+            if (count <= 0)
+                return 0;
+
             var destination = realCleartextChunk.Slice(offsetInChunk, count);
             source.Slice(0, count).CopyTo(destination);
 

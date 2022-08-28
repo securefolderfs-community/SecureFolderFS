@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace SecureFolderFS.Core.Helpers
 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Security.ContentCrypt.FileContent;
 
 namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
@@ -9,12 +10,14 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
         protected readonly IContentCrypt contentCrypt;
         protected readonly IChunkReader chunkReader;
         protected readonly IChunkWriter chunkWriter;
+        protected readonly IFileSystemStatsTracker? statsTracker;
 
-        protected BaseChunkAccess(IContentCrypt contentCrypt, IChunkReader chunkReader, IChunkWriter chunkWriter)
+        protected BaseChunkAccess(IContentCrypt contentCrypt, IChunkReader chunkReader, IChunkWriter chunkWriter, IFileSystemStatsTracker? statsTracker)
         {
             this.contentCrypt = contentCrypt;
             this.chunkReader = chunkReader;
             this.chunkWriter = chunkWriter;
+            this.statsTracker = statsTracker;
         }
 
         /// <inheritdoc/>

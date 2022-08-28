@@ -19,11 +19,10 @@ namespace SecureFolderFS.Core.Streams.Receiver
         /// <inheritdoc/>
         public Stream OpenCleartextStream(string ciphertextPath, Stream ciphertextStream)
         {
-            OpenCryptFile? openCryptFile = null;
             CleartextFileStream? cleartextStream = null;
             try
             {
-                openCryptFile = _openCryptFileReceiver.TryGet(ciphertextPath) ?? _openCryptFileReceiver.Create(ciphertextPath, new(_security.HeaderCrypt.HeaderCleartextSize));
+                var openCryptFile = _openCryptFileReceiver.TryGet(ciphertextPath) ?? _openCryptFileReceiver.Create(ciphertextPath, new(_security.HeaderCrypt.HeaderCleartextSize));
                 cleartextStream = new CleartextFileStream(_security, openCryptFile.ChunkAccess, ciphertextStream, openCryptFile.FileHeader);
 
                 openCryptFile.RegisterStream(cleartextStream, ciphertextStream);

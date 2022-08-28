@@ -69,12 +69,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                             // Create directory
                             _ = Directory.CreateDirectory(ciphertextPath);
 
-                            // The directory has been created successfully
-                            if (!_fileSystemOperations.InitializeDirectory(ciphertextPath, true))
-                            {
-                                // The directory could not be initialized
-                                return DokanResult.PathNotFound;
-                            }
+                            // Initialize directory with dir id
+                            _fileSystemOperations.InitializeDirectory(ciphertextPath);
 
                             break;
                     }
@@ -147,8 +143,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     if (pathExists && (mode == FileMode.OpenOrCreate || mode == FileMode.Create))
                         result = DokanResult.AlreadyExists;
 
-                    var fileCreated = mode == FileMode.CreateNew || mode == FileMode.Create ||
-                                      (!pathExists && mode == FileMode.OpenOrCreate);
+                    var fileCreated = mode == FileMode.CreateNew || mode == FileMode.Create || (!pathExists && mode == FileMode.OpenOrCreate);
                     if (fileCreated)
                     {
                         var attributes2 = attributes;
@@ -169,6 +164,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 catch (UnauthorizedAccessException) // Don't have access rights
                 {
                     // Must invalidate here, because cleanup is not called
+                    // TODO: Also close ciphertextStream
                     CloseHandle(info);
                     InvalidateContext(info);
                     return DokanResult.AccessDenied;

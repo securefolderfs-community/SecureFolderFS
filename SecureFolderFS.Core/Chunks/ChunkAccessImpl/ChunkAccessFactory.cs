@@ -48,9 +48,8 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
         {
             return _chunkCachingStrategy switch
             {
-                ChunkCachingStrategy.NoCache => new NonCachingChunkAccess(_security.ContentCrypt, chunkReader, chunkWriter),
-                ChunkCachingStrategy.RandomAccessMemoryCache => null!,
-                ChunkCachingStrategy.MemoryCache => null!,
+                ChunkCachingStrategy.NoCache => new NonCachingChunkAccess(_security.ContentCrypt, chunkReader, chunkWriter, _fileSystemStatsTracker),
+                ChunkCachingStrategy.RandomAccessMemoryCache => new DictionaryChunkAccess(_security.ContentCrypt, chunkReader, chunkWriter, _fileSystemStatsTracker)!,
                 _ => throw new ArgumentOutOfRangeException(nameof(_chunkCachingStrategy)),
             };
         }

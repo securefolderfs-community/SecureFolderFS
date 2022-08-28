@@ -2,7 +2,7 @@
 {
     internal interface IFileSystemOperations
     {
-        bool InitializeDirectory(string ciphertextPath, bool skipExists);
+        void InitializeDirectory(string ciphertextPath);
 
         bool CanDeleteDirectory(string ciphertextPath);
 

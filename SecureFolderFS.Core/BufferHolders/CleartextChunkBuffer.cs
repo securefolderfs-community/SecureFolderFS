@@ -2,16 +2,14 @@
 {
     internal sealed class CleartextChunkBuffer : BaseBufferHolder
     {
-        public long ActualLength { get; set; }
+        public bool IsDirty { get; set; }
 
-        public CleartextChunkBuffer(byte[] buffer)
+        public int ActualLength { get; set; }
+
+        public CleartextChunkBuffer(byte[] buffer, int actualLength)
             : base(buffer)
         {
-        }
-
-        public CleartextChunkBuffer(int bufferLength)
-            : base(bufferLength)
-        {
+            ActualLength = actualLength;
         }
     }
 }

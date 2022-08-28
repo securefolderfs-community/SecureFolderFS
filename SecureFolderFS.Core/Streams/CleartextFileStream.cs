@@ -293,11 +293,8 @@ namespace SecureFolderFS.Core.Streams
 
                 return true;
             }
-
-            if (!skipRead)
-                return TryReadHeader();
-
-            return _fileHeader.IsHeaderReady;
+            
+            return TryReadHeader();
         }
 
         private long BeginOfChunk(long cleartextPosition)
