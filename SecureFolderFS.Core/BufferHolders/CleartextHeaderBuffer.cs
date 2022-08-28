@@ -2,6 +2,8 @@
 {
     internal sealed class CleartextHeaderBuffer : BaseBufferHolder
     {
+        public bool IsHeaderReady { get; set; }
+
         public CleartextHeaderBuffer(byte[] buffer)
             : base(buffer)
         {

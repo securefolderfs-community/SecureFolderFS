@@ -1,12 +1,12 @@
 ﻿using SecureFolderFS.Core.BufferHolders;
 using SecureFolderFS.Core.Chunks;
+using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.Security;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
-using SecureFolderFS.Core.Exceptions;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Streams
 {
@@ -16,7 +16,6 @@ namespace SecureFolderFS.Core.Streams
         private readonly IChunkAccess _chunkAccess;
         private readonly Stream _ciphertextStream;
         private readonly CleartextHeaderBuffer _fileHeader;
-        private bool _isHeaderReady;
 
         private long _Length;
         private long _Position;
@@ -72,6 +71,7 @@ namespace SecureFolderFS.Core.Streams
             if (lengthToEof < 1L)
                 return Constants.IO.FILE_EOF;
 
+            // Read header if not ready
             if (!TryReadHeader())
                 throw new UnauthenticFileHeaderException();
 
@@ -179,7 +179,7 @@ namespace SecureFolderFS.Core.Streams
         {
             if (CanWrite)
             {
-                TryWriteHeader();
+                TryWriteHeader(true);
                 _chunkAccess.Flush();
             }
         }
@@ -210,7 +210,7 @@ namespace SecureFolderFS.Core.Streams
 
         private void WriteInternal(ReadOnlySpan<byte> buffer, long position)
         {
-            if (!TryWriteHeader())
+            if (!TryWriteHeader(false))
                 throw new UnauthenticFileHeaderException();
 
             var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
@@ -248,7 +248,7 @@ namespace SecureFolderFS.Core.Streams
         [SkipLocalsInit]
         private bool TryReadHeader()
         {
-            if (!_isHeaderReady && CanRead && _ciphertextStream.Length >= _security.HeaderCrypt.HeaderCiphertextSize)
+            if (!_fileHeader.IsHeaderReady && CanRead && _ciphertextStream.Length >= _security.HeaderCrypt.HeaderCiphertextSize)
             {
                 // Allocate ciphertext header
                 Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
@@ -264,19 +264,19 @@ namespace SecureFolderFS.Core.Streams
                     return false;
 
                 // Decrypt header
-                _isHeaderReady = _security.HeaderCrypt.DecryptHeader(ciphertextHeader, _fileHeader);
+                _fileHeader.IsHeaderReady = _security.HeaderCrypt.DecryptHeader(ciphertextHeader, _fileHeader);
             }
 
-            return _isHeaderReady;
+            return _fileHeader.IsHeaderReady;
         }
 
         [SkipLocalsInit]
-        private bool TryWriteHeader()
+        private bool TryWriteHeader(bool skipRead)
         {
-            if (CanWrite && _ciphertextStream.Length == 0L)
+            if (!_fileHeader.IsHeaderReady && CanWrite && _ciphertextStream.Length == 0L)
             {
                 // Make sure we save the header state
-                _isHeaderReady = true;
+                _fileHeader.IsHeaderReady = true;
 
                 // Allocate ciphertext header
                 Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
@@ -294,7 +294,10 @@ namespace SecureFolderFS.Core.Streams
                 return true;
             }
 
-            return TryReadHeader();
+            if (!skipRead)
+                return TryReadHeader();
+
+            return _fileHeader.IsHeaderReady;
         }
 
         private long BeginOfChunk(long cleartextPosition)

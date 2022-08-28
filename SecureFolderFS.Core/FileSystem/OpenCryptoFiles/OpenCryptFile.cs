@@ -6,7 +6,6 @@ using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 {
@@ -33,7 +32,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 
         public void RegisterStream(CleartextFileStream cleartextFileStream, Stream ciphertextStream)
         {
-            cleartextFileStream.StreamClosedCallback = Close;
+            cleartextFileStream.StreamClosedCallback = CloseCallback;
 
             if (_openedStreams.ContainsKey(cleartextFileStream))
                 _openedStreams[cleartextFileStream]++;
@@ -43,24 +42,20 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
             _ciphertextStreamsManager.AddStream(ciphertextStream);
         }
 
-        private void Close(CleartextFileStream cleartextFileStream)
+        private void CloseCallback(CleartextFileStream cleartextFileStream)
         {
             try
             {
                 if (_openedStreams.ContainsKey(cleartextFileStream) && --_openedStreams[cleartextFileStream] <= 0)
-                {
                     _openedStreams.Remove(cleartextFileStream);
 
-                    using var ciphertextStream = cleartextFileStream.CiphertextStream;
-                    _ciphertextStreamsManager.RemoveStream(ciphertextStream);
-                }
+                using var ciphertextStream = cleartextFileStream.CiphertextStream;
+                _ciphertextStreamsManager.RemoveStream(ciphertextStream);
             }
             finally
             {
                 if (_openedStreams.IsEmpty())
-                {
                     _onCryptFileClosed?.Invoke(_ciphertextPath);
-                }
             }
         }
 
