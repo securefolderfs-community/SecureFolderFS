@@ -4,14 +4,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     public sealed class GraphPointViewModel
     {
-        public long Value { get; }
+        public long Value { get; set; }
 
-        public DateTime Date { get; }
-
-        public GraphPointViewModel(long value, DateTime date)
-        {
-            Value = value;
-            Date = date;
-        }
+        public DateTime Date { get; set; }
     }
 }
