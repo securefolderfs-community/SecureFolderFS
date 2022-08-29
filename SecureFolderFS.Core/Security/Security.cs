@@ -1,24 +1,33 @@
-﻿using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.Security.KeyCrypt;
+﻿using SecureFolderFS.Core.Security.Cipher;
+using SecureFolderFS.Core.Security.ContentCrypt.FileContent;
+using SecureFolderFS.Core.Security.ContentCrypt.FileHeader;
+using SecureFolderFS.Core.Security.ContentCrypt.FileName;
 
 namespace SecureFolderFS.Core.Security
 {
     internal sealed class Security : ISecurity
     {
-        public IContentCryptor ContentCryptor { get; }
+        public ICipherProvider CipherProvider { get; }
 
-        public IKeyCryptor KeyCryptor { get; }
+        public IContentCrypt ContentCrypt { get; }
 
-        public Security(IContentCryptor contentCryptor, IKeyCryptor keyCryptor)
+        public IHeaderCrypt HeaderCrypt { get; }
+
+        public IFileNameCryptor? FileNameCryptor { get; }
+
+        public Security(ICipherProvider cipherProvider, IContentCrypt contentCrypt, IHeaderCrypt headerCrypt, IFileNameCryptor? fileNameCryptor)
         {
-            ContentCryptor = contentCryptor;
-            KeyCryptor = keyCryptor;
+            CipherProvider = cipherProvider;
+            ContentCrypt = contentCrypt;
+            HeaderCrypt = headerCrypt;
+            FileNameCryptor = fileNameCryptor;
         }
 
         public void Dispose()
         {
-            ContentCryptor?.Dispose();
-            KeyCryptor?.Dispose();
+            ContentCrypt.Dispose();
+            HeaderCrypt.Dispose();
+            FileNameCryptor?.Dispose();
         }
     }
 }

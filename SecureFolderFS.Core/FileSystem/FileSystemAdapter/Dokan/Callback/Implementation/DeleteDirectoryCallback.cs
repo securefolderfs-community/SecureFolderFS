@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IFileSystemOperations _fileSystemOperations;
 
-        public DeleteDirectoryCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public DeleteDirectoryCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
             _fileSystemOperations = fileSystemOperations;
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
         {
-            ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
+            var ciphertextPath = GetCiphertextPath(fileName);
             return _fileSystemOperations.CanDeleteDirectory(ciphertextPath) ? DokanResult.Success : DokanResult.DirectoryNotEmpty;
         }
     }

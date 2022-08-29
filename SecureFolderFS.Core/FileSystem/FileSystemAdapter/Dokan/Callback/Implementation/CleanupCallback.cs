@@ -1,4 +1,6 @@
-﻿using DokanNet;
+﻿using System;
+using System.IO;
+using DokanNet;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
@@ -10,7 +12,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IFileSystemOperations _fileSystemOperations;
 
-        public CleanupCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public CleanupCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
             _fileSystemOperations = fileSystemOperations;
@@ -18,22 +20,27 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         public void Cleanup(string fileName, IDokanFileInfo info)
         {
-            handles.Close(GetContextValue(info));
+            handles.CloseHandle(GetContextValue(info));
             InvalidateContext(info);
 
             // Make sure we delete redirected items from DeleteDirectory() and DeleteFile() here.
             if (info.DeleteOnClose)
             {
-                ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-
-                if (info.IsDirectory)
+                var ciphertextPath = GetCiphertextPath(fileName);
+                try
                 {
-                    _fileSystemOperations.PrepareDirectoryForDeletion(ciphertextPath);
-                    _fileSystemOperations.DangerousDirectoryOperations.DeleteDirectory(ciphertextPath.Path, true);
+                    if (info.IsDirectory)
+                    {
+                        _fileSystemOperations.PrepareDirectoryForDeletion(ciphertextPath);
+                        Directory.Delete(ciphertextPath, true);
+                    }
+                    else
+                    {
+                        File.Delete(ciphertextPath);
+                    }
                 }
-                else
+                catch (UnauthorizedAccessException)
                 {
-                    _fileSystemOperations.DangerousFileOperations.DeleteFile(ciphertextPath.Path);
                 }
             }
         }

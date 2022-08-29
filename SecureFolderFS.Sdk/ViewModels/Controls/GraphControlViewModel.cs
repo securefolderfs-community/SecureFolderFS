@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -16,7 +16,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             Data = new();
         }
 
-        public void AddPoint(GraphPointViewModel graphPoint)
+        public GraphPointViewModel RentGraphPoint()
+        {
+            GraphPointViewModel graphPoint;
+            if (Data.Count < Constants.Graphs.MAX_GRAPH_POINTS)
+            {
+                graphPoint = new();
+            }
+            else
+            {
+                graphPoint = Data[0];
+                Data.RemoveAt(0);
+            }
+
+            return graphPoint;
+        }
+
+        public void ReturnGraphPoint(GraphPointViewModel graphPoint)
         {
             if (Data.Count >= Constants.Graphs.MAX_GRAPH_POINTS)
                 Data.RemoveAt(0);

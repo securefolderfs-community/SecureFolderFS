@@ -4,7 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
 {
@@ -45,6 +45,6 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
 
         internal abstract void WriteConfiguration(Stream destinationStream);
 
-        internal abstract bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey);
+        internal abstract bool Verify(ICipherProvider keyCryptor, MasterKey masterKey);
     }
 }

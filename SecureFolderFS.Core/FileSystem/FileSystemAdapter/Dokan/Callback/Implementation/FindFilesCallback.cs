@@ -8,7 +8,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IFindFilesWithPatternCallback _findFilesWithPatternCallback;
 
-        public FindFilesCallback(IFindFilesWithPatternCallback findFilesWithPatternCallback, HandlesCollection handles)
+        public FindFilesCallback(IFindFilesWithPatternCallback findFilesWithPatternCallback, HandlesManager handles)
             : base(handles)
         {
             _findFilesWithPatternCallback = findFilesWithPatternCallback;

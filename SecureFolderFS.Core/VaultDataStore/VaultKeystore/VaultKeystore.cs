@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
+using SecureFolderFS.Core.Helpers;
 using System;
 using System.IO;
-using SecureFolderFS.Core.Extensions;
 
 namespace SecureFolderFS.Core.VaultDataStore.VaultKeystore
 {
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultKeystore
         public static VaultKeystore Load(Stream keystoreFileStream)
         {
             // Get data from keystore file
-            string rawData = keystoreFileStream.ReadToEnd();
+            string rawData = StreamHelpers.ReadToEnd(keystoreFileStream);
 
             // Get keystore instance
             VaultKeystore vaultKeystore = JsonConvert.DeserializeObject<VaultKeystore>(rawData);

@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Core.VaultDataStore;
 
 namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationRoutineSteps

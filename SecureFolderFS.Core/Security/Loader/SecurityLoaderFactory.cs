@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Chunks;
-using SecureFolderFS.Core.Exceptions;
+﻿using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.VaultDataStore;
 
 namespace SecureFolderFS.Core.Security.Loader
@@ -8,19 +7,16 @@ namespace SecureFolderFS.Core.Security.Loader
     {
         private readonly VaultVersion _vaultVersion;
 
-        private readonly IChunkFactory _chunkFactory;
-
-        public SecurityLoaderFactory(VaultVersion vaultVersion, IChunkFactory chunkFactory)
+        public SecurityLoaderFactory(VaultVersion vaultVersion)
         {
             _vaultVersion = vaultVersion;
-            _chunkFactory = chunkFactory;
         }
 
         public ISecurityLoader GetSecurityLoader()
         {
             if (_vaultVersion.SupportsVersion(VaultVersion.V1))
             {
-                return new SecurityLoader(_chunkFactory);
+                return new SecurityLoader();
             }
 
             throw new UnsupportedVaultException(_vaultVersion, GetType().Name);

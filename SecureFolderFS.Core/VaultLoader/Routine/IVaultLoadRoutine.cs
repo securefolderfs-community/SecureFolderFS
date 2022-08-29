@@ -1,5 +1,4 @@
 ﻿using SecureFolderFS.Core.Discoverers;
-using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Security.EncryptionAlgorithm.Builder;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
@@ -24,7 +23,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine
 
     public interface IVaultLoadRoutineStep2
     {
-        IVaultLoadRoutineStep3 AddFileOperations(IFileOperations fileOperations = null, IDirectoryOperations directoryOperations = null);
+        IVaultLoadRoutineStep3 AddFileOperations();
     }
 
     public interface IVaultLoadRoutineStep3

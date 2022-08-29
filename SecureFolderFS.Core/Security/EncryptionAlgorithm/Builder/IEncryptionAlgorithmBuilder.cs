@@ -16,8 +16,6 @@
 
         IEncryptionAlgorithmBuilder WithArgon2idCrypt(IArgon2idCrypt argon2idCrypt);
 
-        IEncryptionAlgorithmBuilder WithHmacSha256Crypt(IHmacSha256Crypt hmacSha256Crypt);
-
         IEncryptionAlgorithmBuilder WithRfc3394KeyWrap(IRfc3394KeyWrap rfc3394KeyWrap);
 
         IEncryptionAlgorithmBuilder DoFinal();

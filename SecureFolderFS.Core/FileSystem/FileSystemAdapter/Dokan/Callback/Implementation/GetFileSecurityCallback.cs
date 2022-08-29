@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class GetFileSecurityCallback : BaseDokanOperationsCallbackWithPath, IGetFileSecurityCallback
     {
-        public GetFileSecurityCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public GetFileSecurityCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
         }
@@ -20,18 +20,17 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
             if (!CompatibilityHelpers.IsPlatformWindows)
             {
-
                 security = null;
                 return DokanResult.NotImplemented;
             }
 
             try
             {
-                ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
+                var ciphertextPath = GetCiphertextPath(fileName);
 
                 security = info.IsDirectory
-                    ? new DirectoryInfo(ciphertextPath.Path).GetAccessControl()
-                    : new FileInfo(ciphertextPath.Path).GetAccessControl();
+                    ? new DirectoryInfo(ciphertextPath).GetAccessControl()
+                    : new FileInfo(ciphertextPath).GetAccessControl();
 
                 return DokanResult.Success;
             }

@@ -1,54 +1,40 @@
 ﻿using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
-using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Core.Security.ContentCrypt.FileContent;
 using SecureFolderFS.Core.Security.ContentCrypt.FileHeader;
 using SecureFolderFS.Core.Security.ContentCrypt.FileName;
-using SecureFolderFS.Core.Chunks;
+using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 
 namespace SecureFolderFS.Core.Security.Loader
 {
     internal sealed class SecurityLoader : ISecurityLoader
     {
-        private readonly IChunkFactory _chunkFactory;
-
-        public SecurityLoader(IChunkFactory chunkFactory)
+        public ISecurity LoadSecurity(BaseVaultConfiguration vaultConfiguration, ICipherProvider cipherProvider, MasterKey masterKeyCopy)
         {
-            _chunkFactory = chunkFactory;
-        }
+            IContentCrypt contentCrypt;
+            IHeaderCrypt headerCrypt;
+            IFileNameCryptor? fileNameCryptor;
 
-        public ISecurity LoadSecurity(BaseVaultConfiguration vaultConfiguration, IKeyCryptor keyCryptor, MasterKey masterKeyCopy)
-        {
-            IFileContentCryptor fileContentCryptor;
-            IFileHeaderCryptor fileHeaderCryptor;
-            IFileNameCryptor fileNameCryptor;
-
-            // IFileContentCryptor, IFileHeaderCryptor
+            // IContentCrypt, IHeaderCrypt
             switch (vaultConfiguration.ContentCipherScheme)
             {
                 case ContentCipherScheme.AES_CTR_HMAC:
-                    {
-                        fileContentCryptor = new AesCtrHmacContentCryptor(masterKeyCopy, keyCryptor, _chunkFactory);
-                        fileHeaderCryptor = new AesCtrHmacHeaderCryptor(masterKeyCopy, keyCryptor);
-                        break;
-                    }
+                    contentCrypt = new AesCtrHmacContentCrypt(masterKeyCopy.GetMacKey(), cipherProvider);
+                    headerCrypt = new AesCtrHmacHeaderCrypt(masterKeyCopy, cipherProvider);
+                    break;
+                    
 
                 case ContentCipherScheme.AES_GCM:
-                    {
-                        fileContentCryptor = new AesGcmContentCryptor(keyCryptor, _chunkFactory);
-                        fileHeaderCryptor = new AesGcmHeaderCryptor(masterKeyCopy, keyCryptor);
-                        break;
-                    }
+                    contentCrypt = new AesGcmContentCrypt(cipherProvider);
+                    headerCrypt = new AesGcmHeaderCrypt(masterKeyCopy, cipherProvider);
+                    break;
 
                 case ContentCipherScheme.XChaCha20_Poly1305:
-                    {
-                        fileContentCryptor = new XChaCha20ContentCryptor(keyCryptor, _chunkFactory);
-                        fileHeaderCryptor = new XChaCha20HeaderCryptor(masterKeyCopy, keyCryptor);
-                        break;
-                    }
+                    contentCrypt = new XChaChaContentCrypt(cipherProvider);
+                    headerCrypt = new XChaChaHeaderCrypt(masterKeyCopy, cipherProvider);
+                    break;
 
                 case ContentCipherScheme.Undefined:
                 default:
@@ -59,7 +45,7 @@ namespace SecureFolderFS.Core.Security.Loader
             switch (vaultConfiguration.FileNameCipherScheme)
             {
                 case FileNameCipherScheme.AES_SIV:
-                    fileNameCryptor = new AesSivNameCryptor(keyCryptor, masterKeyCopy);
+                    fileNameCryptor = new AesSivNameCryptor(cipherProvider, masterKeyCopy);
                     break;
 
                 case FileNameCipherScheme.None:
@@ -71,10 +57,7 @@ namespace SecureFolderFS.Core.Security.Loader
                     throw new UndefinedCipherSchemeException(nameof(FileNameCipherScheme));
             }
 
-            IContentCryptor contentCryptor = new ContentCryptor(fileContentCryptor, fileHeaderCryptor, fileNameCryptor);
-
-            Security security = new Security(contentCryptor, keyCryptor);
-            return security;
+            return new Security(cipherProvider, contentCrypt, headerCrypt, fileNameCryptor);
         }
     }
 }

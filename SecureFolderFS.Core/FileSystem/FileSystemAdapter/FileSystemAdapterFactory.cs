@@ -1,15 +1,15 @@
-﻿using System;
-using SecureFolderFS.Core.DataModels;
+﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Receiver;
+using SecureFolderFS.Core.VaultDataStore;
+using System;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
 {
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
         private readonly VaultVersion _vaultVersion;
         private readonly FileSystemAdapterType _fileSystemAdapterType;
         private readonly MountVolumeDataModel _mountVolumeDataModel;
-        private readonly IContentCryptor _contentCryptor;
+        private readonly ISecurity _security;
         private readonly IFileStreamReceiver _fileStreamReceiver;
         private readonly IFileSystemOperations _fileSystemOperations;
         private readonly IPathReceiver _pathReceier;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
         public FileSystemAdapterFactory(VaultVersion vaultVersion,
             FileSystemAdapterType fileSystemAdapterType,
             MountVolumeDataModel mountVolumeDataModel,
-            IContentCryptor contentCryptor,
+            ISecurity security,
             IFileStreamReceiver fileStreamReceiver,
             IFileSystemOperations fileSystemOperations,
             IPathReceiver pathReceier,
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
             _vaultVersion = vaultVersion;
             _fileSystemAdapterType = fileSystemAdapterType;
             _mountVolumeDataModel = mountVolumeDataModel;
-            _contentCryptor = contentCryptor;
+            _security = security;
             _fileStreamReceiver = fileStreamReceiver;
             _fileSystemOperations = fileSystemOperations;
             _pathReceier = pathReceier;
@@ -57,10 +57,10 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
 
         public DokanFileSystemAdapter GetDokanFileSystemAdapter()
         {
-            var handles = new HandlesCollection(_fileStreamReceiver);
+            var handles = new HandlesManager(_fileStreamReceiver);
             var dokanOperationsCallbacksFactory = new DokanOperationsCallbacksFactory(
                 _vaultVersion,
-                _contentCryptor,
+                _security,
                 _pathReceier,
                 _fileSystemOperations,
                 _vaultPath,

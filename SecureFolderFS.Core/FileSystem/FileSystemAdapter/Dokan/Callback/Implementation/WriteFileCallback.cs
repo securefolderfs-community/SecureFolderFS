@@ -1,62 +1,51 @@
 ﻿using DokanNet;
-using System;
-using System.IO;
-using System.Diagnostics;
+using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
+using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class WriteFileCallback : BaseDokanOperationsCallbackWithPath, IWriteFileCallback
     {
-        public WriteFileCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public WriteFileCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
         }
 
         public NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
-            ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-
+            var ciphertextPath = GetCiphertextPath(fileName);
             var appendToFile = offset == -1;
             var contextHandle = Constants.FileSystem.INVALID_HANDLE;
             var openedNewHandle = false;
 
             // Memory-mapped
-            if (IsContextInvalid(info) || handles.GetHandle(GetContextValue(info)) is not FileHandle fileHandle)
+            if (IsContextInvalid(info) || handles.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
-                contextHandle = handles.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
-                fileHandle = (FileHandle)handles.GetHandle(contextHandle);
+                var fileMode = appendToFile ? FileMode.Append : FileMode.Open;
+                contextHandle = handles.OpenHandleToFile(ciphertextPath, fileMode, System.IO.FileAccess.ReadWrite, FileShare.None, FileOptions.None);
+                fileHandle = handles.GetHandle<FileHandle>(contextHandle)!;
                 openedNewHandle = true;
             }
 
             try
             {
                 // Align for Paging I/O
-                var alignedBytesToCopy = AlignSizeForPagingIo((int)bufferLength, offset, fileHandle.CleartextFileStream.Length, info);
+                var alignedBytesToCopy = AlignSizeForPagingIo((int)bufferLength, offset, fileHandle.HandleStream.Length, info);
 
                 // Align position for offset
-                var alignedPosition = appendToFile ? fileHandle.CleartextFileStream.Length : offset;
+                var alignedPosition = appendToFile ? fileHandle.HandleStream.Length : offset;
 
                 // Write
-                if (openedNewHandle)
-                {
-                    fileHandle.CleartextFileStream.Position = alignedPosition;
-                    bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, alignedBytesToCopy);
-                }
-                else
-                {
-                    lock (fileHandle.CleartextFileStream) // Protect from overlapped write
-                    {
-                        fileHandle.CleartextFileStream.Position = alignedPosition;
-                        bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.CleartextFileStream, buffer, alignedBytesToCopy);
-                    }
-                }
-
+                fileHandle.HandleStream.Position = alignedPosition;
+                bytesWritten = StreamHelpers.WriteFromIntPtrBuffer(fileHandle.HandleStream, buffer, alignedBytesToCopy);
+                
                 return DokanResult.Success;
             }
             catch (PathTooLongException)
@@ -72,10 +61,11 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             catch (UnavailableStreamException)
             {
                 bytesWritten = 0;
-                return DokanResult.InvalidHandle;
+                return NtStatus.HandleNoLongerValid;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _ = ex;
                 bytesWritten = 0;
 
                 Debugger.Break();
@@ -84,9 +74,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             finally
             {
                 if (openedNewHandle)
-                {
-                    handles.Close(contextHandle);
-                }
+                    handles.CloseHandle(contextHandle);
             }
         }
 

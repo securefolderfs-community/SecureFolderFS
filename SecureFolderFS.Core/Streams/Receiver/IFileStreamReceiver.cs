@@ -1,14 +1,16 @@
 ﻿using System;
 using System.IO;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Receiver
 {
     internal interface IFileStreamReceiver : IDisposable
     {
-        ICleartextFileStream OpenFileStreamToCleartextFile(ICiphertextPath ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options);
-
-        ICiphertextFileStream OpenFileStreamToCiphertextFile(ICiphertextPath ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options);
+        /// <summary>
+        /// Opens a new cleartext stream wrapping <paramref name="ciphertextStream"/>.
+        /// </summary>
+        /// <param name="ciphertextPath">The ciphertext path of the file.</param>
+        /// <param name="ciphertextStream">The ciphertext stream to wrap by the cleartext stream.</param>
+        /// <returns>A new instance of cleartext stream.</returns>
+        Stream OpenCleartextStream(string ciphertextPath, Stream ciphertextStream);
     }
 }

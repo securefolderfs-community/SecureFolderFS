@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths;
 
@@ -11,25 +10,20 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class MoveFileCallback : BaseDokanOperationsCallbackWithPath, IMoveFileCallback
     {
-        private readonly IFileSystemOperations _fileSystemOperations;
-
-        public MoveFileCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public MoveFileCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            _fileSystemOperations = fileSystemOperations;
         }
 
         public NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
         {
-            ConstructFilePath(oldName, out ICiphertextPath oldCiphertextPath);
-            ConstructFilePath(newName, out ICiphertextPath newCiphertextPath);
+            var oldCiphertextPath = GetCiphertextPath(oldName);
+            var newCiphertextPath = GetCiphertextPath(newName);
 
             CloseHandle(info);
             InvalidateContext(info);
 
-            var newPathExists = info.IsDirectory
-                ? _fileSystemOperations.DangerousDirectoryOperations.Exists(newCiphertextPath.Path)
-                : _fileSystemOperations.DangerousFileOperations.Exists(newCiphertextPath.Path);
+            var newPathExists = info.IsDirectory ? Directory.Exists(newCiphertextPath) : File.Exists(newCiphertextPath);
 
             try
             {
@@ -37,11 +31,11 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 {
                     if (info.IsDirectory)
                     {
-                        _fileSystemOperations.MoveDirectory(oldCiphertextPath, newCiphertextPath);
+                        Directory.Move(oldCiphertextPath, newCiphertextPath);
                     }
                     else
                     {
-                        _fileSystemOperations.MoveFile(oldCiphertextPath, newCiphertextPath);
+                        File.Move(oldCiphertextPath, newCiphertextPath);
                     }
 
                     return DokanResult.Success;
@@ -55,8 +49,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     }
 
                     // File
-                    _fileSystemOperations.DangerousFileOperations.DeleteFile(newCiphertextPath.Path);
-                    _fileSystemOperations.MoveFile(oldCiphertextPath, newCiphertextPath);
+                    File.Delete(newCiphertextPath);
+                    File.Move(oldCiphertextPath, newCiphertextPath);
                     
                     return DokanResult.Success;
                 }

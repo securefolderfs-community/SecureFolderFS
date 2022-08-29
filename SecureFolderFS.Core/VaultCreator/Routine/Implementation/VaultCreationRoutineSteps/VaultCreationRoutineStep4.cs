@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.VaultCreator.Routine.Implementation.VaultCreationR
 
         public IVaultCreationRoutineStep5 CreateKeystoreFile(IVaultKeystoreDiscoverer vaultKeystoreDiscoverer = null)
         {
-            vaultKeystoreDiscoverer ??= new FromVaultPathVaultKeystoreGenerator(vaultCreationDataModel.FileOperations);
+            vaultKeystoreDiscoverer ??= new FromVaultPathVaultKeystoreGenerator();
             vaultCreationDataModel.VaultKeystoreStream = vaultKeystoreDiscoverer.DiscoverVaultKeystore(vaultCreationDataModel.VaultPath.VaultRootPath, Constants.VAULT_KEYSTORE_FILENAME);
 
             return new VaultCreationRoutineStep5(vaultCreationDataModel);

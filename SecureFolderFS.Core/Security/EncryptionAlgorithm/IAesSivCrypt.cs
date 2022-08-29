@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace SecureFolderFS.Core.Security.EncryptionAlgorithm
+﻿namespace SecureFolderFS.Core.Security.EncryptionAlgorithm
 {
-    public interface IAesSivCrypt : IDisposable
+    public interface IAesSivCrypt
     {
         byte[] AesSivEncrypt(byte[] cleartextBytes, byte[] encryptionKey, byte[] macKey, byte[] associatedData);
 

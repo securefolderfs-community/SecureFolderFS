@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Paths.DirectoryMetadata;
+﻿using System.Collections.Concurrent;
+using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Security;
 using System.Collections.Generic;
@@ -8,14 +9,14 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 {
     internal sealed class RandomAccessMemoryBasedFileNameReceiver : BaseFileNameReceiver
     {
-        private readonly Dictionary<FileNameWithDirectoryId, string> _ciphertextFileNames;
-        private readonly Dictionary<FileNameWithDirectoryId, string> _cleartextFileNames;
+        private readonly ConcurrentDictionary<FileNameWithDirectoryId, string> _ciphertextFileNames;
+        private readonly ConcurrentDictionary<FileNameWithDirectoryId, string> _cleartextFileNames;
 
         public RandomAccessMemoryBasedFileNameReceiver(ISecurity security, IFileSystemStatsTracker fileSystemStatsTracker)
             : base(security, fileSystemStatsTracker)
         {
-            _ciphertextFileNames = new(Constants.IO.MAX_CACHED_CIPHERTEXT_FILENAMES);
-            _cleartextFileNames = new(Constants.IO.MAX_CACHED_CLEARTEXT_FILENAMES);
+            _ciphertextFileNames = new(3, Constants.IO.MAX_CACHED_CIPHERTEXT_FILENAMES);
+            _cleartextFileNames = new(3, Constants.IO.MAX_CACHED_CLEARTEXT_FILENAMES);
         }
 
         public override string GetCleartextFileName(DirectoryId directoryId, string ciphertextFileName)
@@ -57,9 +58,8 @@ namespace SecureFolderFS.Core.FileNames.Receivers
             if (_cleartextFileNames.Count >= Constants.IO.MAX_CACHED_CLEARTEXT_FILENAMES)
             {
                 var fileNameWithDirectoryIdToRemove = _cleartextFileNames.Keys.First();
-                _cleartextFileNames.Remove(fileNameWithDirectoryIdToRemove);
+                _cleartextFileNames.TryRemove(fileNameWithDirectoryIdToRemove, out _);
             }
-
 
             _cleartextFileNames[new(directoryId, ciphertextFileName)] = cleartextFileName;
         }
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Core.FileNames.Receivers
             if (_ciphertextFileNames.Count >= Constants.IO.MAX_CACHED_CIPHERTEXT_FILENAMES)
             {
                 var fileNameWithDirectoryIdToRemove = _ciphertextFileNames.Keys.First();
-                _ciphertextFileNames.Remove(fileNameWithDirectoryIdToRemove);
+                _ciphertextFileNames.TryRemove(fileNameWithDirectoryIdToRemove, out _);
             }
 
             _ciphertextFileNames[new(directoryId, cleartextFileName)] = ciphertextFileName;

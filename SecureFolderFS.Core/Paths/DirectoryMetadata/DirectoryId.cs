@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 
 namespace SecureFolderFS.Core.Paths.DirectoryMetadata
 {
@@ -11,6 +10,15 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata
         private DirectoryId(byte[] id)
         {
             Id = id;
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(DirectoryId? other)
+        {
+            if (other is null)
+                return false;
+
+            return other.Id.AsSpan().SequenceEqual(Id);
         }
 
         public static DirectoryId CreateNew()
@@ -29,14 +37,6 @@ namespace SecureFolderFS.Core.Paths.DirectoryMetadata
             stream.Read(buffer, 0, buffer.Length);
 
             return new DirectoryId(buffer);
-        }
-
-        public bool Equals(DirectoryId other)
-        {
-            if (other is null)
-                return false;
-
-            return other.Id.SequenceEqual(Id);
         }
     }
 }

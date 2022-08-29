@@ -2,42 +2,33 @@
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Sdk.Paths;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
 {
     internal abstract class BaseDokanOperationsCallbackWithPath : BaseDokanOperationsCallback
     {
         protected readonly VaultPath vaultPath;
-
         protected readonly IPathReceiver pathReceiver;
 
-        protected BaseDokanOperationsCallbackWithPath(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        protected BaseDokanOperationsCallbackWithPath(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(handles)
         {
             this.vaultPath = vaultPath;
             this.pathReceiver = pathReceiver;
         }
 
-        protected void ConstructFilePath(string fileName, out ICleartextPath cleartextPath)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected string GetCiphertextPath(string cleartextName)
         {
-            var filePath = PathHelpers.ConstructFilePathFromVaultRootPath(vaultPath, fileName);
-
-            cleartextPath = pathReceiver.FromCleartextPath<ICleartextPath>(filePath);
+            var path = PathHelpers.ConstructFilePathFromVaultRootPath(vaultPath, cleartextName);
+            return pathReceiver.ToCiphertext(path);
         }
 
-        protected void ConstructFilePath(string fileName, out ICiphertextPath ciphertextPath)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected string GetCleartextPath(string cleartextName)
         {
-            var filePath = PathHelpers.ConstructFilePathFromVaultRootPath(vaultPath, fileName);
-
-            ciphertextPath = pathReceiver.FromCleartextPath<ICiphertextPath>(filePath);
-        }
-
-        protected void ConstructFilePath(string fileName, out ICleartextPath cleartextPath, out ICiphertextPath ciphertextPath)
-        {
-            var filePath = PathHelpers.ConstructFilePathFromVaultRootPath(vaultPath, fileName);
-
-            cleartextPath = pathReceiver.FromCleartextPath<ICleartextPath>(filePath);
-            ciphertextPath = pathReceiver.FromCleartextPath<ICiphertextPath>(filePath);
+            return PathHelpers.ConstructFilePathFromVaultRootPath(vaultPath, cleartextName);
         }
     }
 }

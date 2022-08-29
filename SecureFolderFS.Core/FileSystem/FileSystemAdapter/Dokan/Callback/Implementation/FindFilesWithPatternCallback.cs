@@ -1,38 +1,36 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.Helpers;
+using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class FindFilesWithPatternCallback : BaseDokanOperationsCallbackWithPath, IFindFilesWithPatternCallback
     {
-        private readonly IContentCryptor _contentCryptor;
+        private readonly ISecurity _security;
 
-        public FindFilesWithPatternCallback(IContentCryptor contentCryptor, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public FindFilesWithPatternCallback(ISecurity security, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            _contentCryptor = contentCryptor;
+            _security = security;
         }
 
         public NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files, IDokanFileInfo info)
         {
             try
             {
-                ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-
-                files = new DirectoryInfo(ciphertextPath.Path)
+                files = new DirectoryInfo(GetCiphertextPath(fileName))
                     .EnumerateFileSystemInfos()
                     .Select<FileSystemInfo, FileInformation?>(finfo =>
                     {
-                        if (PathHelpers.IsCoreFile(finfo.Name) || !DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, true))
+                        if (PathHelpers.IsCoreFile(finfo.Name) || !DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, false))
                             return null;
 
                         try
@@ -47,7 +45,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                                 LastAccessTime = finfo.LastAccessTime,
                                 LastWriteTime = finfo.LastWriteTime,
                                 Length = finfo is FileInfo fileInfo
-                                    ? _contentCryptor.FileContentCryptor.CalculateCleartextSize(fileInfo.Length - _contentCryptor.FileHeaderCryptor.HeaderSize)
+                                    ? _security.ContentCrypt.CalculateCleartextSize(fileInfo.Length - _security.HeaderCrypt.HeaderCiphertextSize)
                                     : 0L
                             };
                         }

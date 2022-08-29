@@ -5,7 +5,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class CloseFileCallback : BaseDokanOperationsCallback, ICloseFileCallback
     {
-        public CloseFileCallback(HandlesCollection handles)
+        public CloseFileCallback(HandlesManager handles)
             : base(handles)
         {
         }

@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
 using SecureFolderFS.Core.Paths;
 
@@ -12,11 +11,7 @@ namespace SecureFolderFS.Core.DataModels
     {
         public VaultPath VaultPath { get; set; }
 
-        public IKeyCryptor KeyCryptor { get; set; }
-
-        public IFileOperations FileOperations { get; set; }
-
-        public IDirectoryOperations DirectoryOperations { get; set; }
+        public ICipherProvider KeyCryptor { get; set; }
 
         public Stream VaultKeystoreStream { get; set; }
 
@@ -32,7 +27,6 @@ namespace SecureFolderFS.Core.DataModels
 
         public void Cleanup()
         {
-            KeyCryptor?.Dispose();
             MacKey?.Dispose();
         }
     }

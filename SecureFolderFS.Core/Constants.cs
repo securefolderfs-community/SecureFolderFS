@@ -86,7 +86,59 @@
 
         internal static class Security
         {
-            public const bool ALWAYS_CHECK_CHUNK_INTEGRITY = true;
+            internal static class Chunks
+            {
+                internal static class XChaCha20Poly1305
+                {
+                    public const int CHUNK_CLEARTEXT_SIZE = 32 * 1024; // 32768
+                    public const int CHUNK_NONCE_SIZE = 24;
+                    public const int CHUNK_TAG_SIZE = 16;
+                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_CLEARTEXT_SIZE + CHUNK_TAG_SIZE;
+                }
+
+                internal static class AesGcm
+                {
+                    public const int CHUNK_CLEARTEXT_SIZE = 32 * 1024; // 32768
+                    public const int CHUNK_NONCE_SIZE = 12;
+                    public const int CHUNK_TAG_SIZE = 16;
+                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_CLEARTEXT_SIZE + CHUNK_TAG_SIZE;
+                }
+
+                internal static class AesCtrHmac
+                {
+                    public const int CHUNK_CLEARTEXT_SIZE = 32 * 1024; // 32768
+                    public const int CHUNK_NONCE_SIZE = 16;
+                    public const int CHUNK_MAC_SIZE = 32;
+                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_CLEARTEXT_SIZE + CHUNK_MAC_SIZE;
+                }
+            }
+
+            internal static class Headers
+            {
+                internal static class XChaCha20Poly1305
+                {
+                    public const int HEADER_NONCE_SIZE = 24;
+                    public const int HEADER_CONTENTKEY_SIZE = 32;
+                    public const int HEADER_TAG_SIZE = 16;
+                    public const int HEADER_SIZE = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE + HEADER_TAG_SIZE;
+                }
+
+                internal static class AesGcm
+                {
+                    public const int HEADER_NONCE_SIZE = 12;
+                    public const int HEADER_CONTENTKEY_SIZE = 32;
+                    public const int HEADER_TAG_SIZE = 16;
+                    public const int HEADER_SIZE = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE + HEADER_TAG_SIZE;
+                }
+
+                internal static class AesCtrHmac
+                {
+                    public const int HEADER_NONCE_SIZE = 16;
+                    public const int HEADER_CONTENTKEY_SIZE = 32;
+                    public const int HEADER_MAC_SIZE = 32;
+                    public const int HEADER_SIZE = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE + HEADER_MAC_SIZE;
+                }
+            }
 
             public static class KeyChains
             {
@@ -108,14 +160,14 @@
                     public const int MEMORY_SIZE = 102400; // 102400 Kb
                 }
 
+                internal static class HmacSha256
+                {
+                    public const int MAC_SIZE = 32;
+                }
+
                 public static class AesGcm
                 {
                     public const int AES_GCM_TAG_SIZE = 16;
-                }
-
-                public static class XChaCha20
-                {
-                    public const int XCHACHA20_POLY1305_TAG_SIZE = 16;
                 }
             }
         }

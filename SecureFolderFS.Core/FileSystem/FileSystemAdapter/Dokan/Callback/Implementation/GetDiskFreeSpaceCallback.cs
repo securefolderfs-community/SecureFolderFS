@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 
         private int _driveInfoTries;
 
-        public GetDiskFreeSpaceCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public GetDiskFreeSpaceCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
         }

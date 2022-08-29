@@ -1,11 +1,11 @@
-﻿using System;
+﻿using ByteSizeLib;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ByteSizeLib;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
@@ -68,9 +68,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             var write = Convert.ToInt64(ByteSize.FromBytes(_currentWriteAmount).MegaBytes);
 
             var now = DateTime.Now;
-            ReadGraphViewModel.AddPoint(new(read, now));
-            WriteGraphViewModel.AddPoint(new(write, now));
 
+            // Update graph for read
+            var readPoint = ReadGraphViewModel.RentGraphPoint();
+            readPoint.Date = now;
+            readPoint.Value = read;
+            ReadGraphViewModel.ReturnGraphPoint(readPoint);
+
+            // Update graph for write
+            var writePoint = WriteGraphViewModel.RentGraphPoint();
+            writePoint.Date = now;
+            writePoint.Value = write;
+            WriteGraphViewModel.ReturnGraphPoint(writePoint);
+            
+            // Reset amounts
             _currentReadAmount = 0;
             _currentWriteAmount = 0;
 

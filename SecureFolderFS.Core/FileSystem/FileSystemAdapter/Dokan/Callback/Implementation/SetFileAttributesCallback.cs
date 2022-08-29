@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.FileSystem.Operations;
 using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Paths;
 
@@ -10,12 +9,9 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class SetFileAttributesCallback : BaseDokanOperationsCallbackWithPath, ISetFileAttributesCallback
     {
-        private readonly IFileSystemOperations _fileSystemOperations;
-
-        public SetFileAttributesCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public SetFileAttributesCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            _fileSystemOperations = fileSystemOperations;
         }
 
         public NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
@@ -26,8 +22,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                 // because a value of 0x00000000 in the FileAttributes field means that the file attributes for this file MUST NOT be changed when setting basic information for the file
                 if (attributes != 0)
                 {
-                    ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
-                    _fileSystemOperations.DangerousFileOperations.SetAttributes(ciphertextPath.Path, attributes);
+                    var ciphertextPath = GetCiphertextPath(fileName);
+                    File.SetAttributes(ciphertextPath, attributes);
                 }
 
                 return DokanResult.Success;

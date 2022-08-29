@@ -1,32 +1,32 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.Security;
 using System;
 using System.IO;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class GetFileInformationCallback : BaseDokanOperationsCallbackWithPath, IGetFileInformationCallback
     {
-        private readonly IContentCryptor _contentCryptor;
+        private readonly ISecurity _security;
 
-        public GetFileInformationCallback(IContentCryptor contentCryptor, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesCollection handles)
+        public GetFileInformationCallback(ISecurity security, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
             : base(vaultPath, pathReceiver, handles)
         {
-            _contentCryptor = contentCryptor;
+            _security = security;
         }
 
         public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
         {
             try
             {
-                ConstructFilePath(fileName, out ICiphertextPath ciphertextPath);
+                var ciphertextPath = GetCiphertextPath(fileName);
 
-                FileSystemInfo finfo = new FileInfo(ciphertextPath.Path);
+                FileSystemInfo finfo = new FileInfo(ciphertextPath);
                 if (!finfo.Exists)
-                    finfo = new DirectoryInfo(ciphertextPath.Path);
+                    finfo = new DirectoryInfo(ciphertextPath);
                 
                 fileInfo = new FileInformation()
                 {
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     LastAccessTime = finfo.LastAccessTime,
                     LastWriteTime = finfo.LastWriteTime,
                     Length = finfo is FileInfo fileInfo2
-                        ? _contentCryptor.FileContentCryptor.CalculateCleartextSize(fileInfo2.Length - _contentCryptor.FileHeaderCryptor.HeaderSize)
+                        ? _security.ContentCrypt.CalculateCleartextSize(fileInfo2.Length - _security.HeaderCrypt.HeaderCiphertextSize)
                         : 0L
                 };
 

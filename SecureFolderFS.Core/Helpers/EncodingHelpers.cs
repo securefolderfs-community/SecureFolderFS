@@ -11,8 +11,7 @@
 
         public static string WithoutBase64UrlEncoding(string base64Urlstring)
         {
-            string base64string = base64Urlstring.Replace('_', '/').Replace('-', '+');
-
+            var base64string = base64Urlstring.Replace('_', '/').Replace('-', '+');
             return (base64string.Length % 4) switch
             {
                 2 => base64string += "==",

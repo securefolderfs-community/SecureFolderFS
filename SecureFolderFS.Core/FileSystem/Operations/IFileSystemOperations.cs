@@ -1,21 +1,11 @@
-﻿using SecureFolderFS.Core.Sdk.Paths;
-
-namespace SecureFolderFS.Core.FileSystem.Operations
+﻿namespace SecureFolderFS.Core.FileSystem.Operations
 {
     internal interface IFileSystemOperations
     {
-        IFileOperations DangerousFileOperations { get; }
+        void InitializeDirectory(string ciphertextPath);
 
-        IDirectoryOperations DangerousDirectoryOperations { get; }
+        bool CanDeleteDirectory(string ciphertextPath);
 
-        bool InitializeWithDirectory(ICiphertextPath ciphertextPath, bool skipExists);
-
-        bool CanDeleteDirectory(ICiphertextPath ciphertextPath);
-
-        bool PrepareDirectoryForDeletion(ICiphertextPath ciphertextPath);
-
-        void MoveFile(ICiphertextPath sourceCiphertextPath, ICiphertextPath destinationCiphertextPath);
-
-        void MoveDirectory(ICiphertextPath sourceCiphertextPath, ICiphertextPath destinationCiphertextPath);
+        void PrepareDirectoryForDeletion(string ciphertextPath);
     }
 }

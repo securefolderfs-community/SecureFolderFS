@@ -1,12 +1,13 @@
 ﻿using DokanNet;
 using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.Streams;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class LockFileCallback : BaseDokanOperationsCallback, ILockFileCallback
     {
-        public LockFileCallback(HandlesCollection handles)
+        public LockFileCallback(HandlesManager handles)
             : base(handles)
         {
         }
@@ -15,18 +16,9 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
         {
             try
             {
-                if (IsContextInvalid(info))
+                if (handles.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
-                    return DokanResult.InvalidHandle;
-                }
-                else if (info.IsDirectory)
-                {
-                    return DokanResult.AccessDenied;
-                }
-
-                if (handles.GetHandle(GetContextValue(info)) is FileHandle fileHandle)
-                {
-                    fileHandle.CleartextFileStream.Lock(offset, length);
+                    (fileHandle.HandleStream as ICleartextFileStreamEx)?.Lock(offset, length);
                     return DokanResult.Success;
                 }
                 else

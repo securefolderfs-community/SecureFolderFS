@@ -1,12 +1,12 @@
 ﻿using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 
 namespace SecureFolderFS.Core.Security.ContentCrypt.FileName
 {
     internal sealed class AesSivNameCryptor : BaseNameCryptor
     {
-        public AesSivNameCryptor(IKeyCryptor keyCryptor, MasterKey masterKey)
+        public AesSivNameCryptor(ICipherProvider keyCryptor, MasterKey masterKey)
             : base(keyCryptor, masterKey)
         {
         }

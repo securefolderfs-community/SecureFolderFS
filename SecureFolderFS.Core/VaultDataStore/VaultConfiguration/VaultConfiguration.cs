@@ -3,7 +3,7 @@ using System.Linq;
 using System.IO;
 using Newtonsoft.Json;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Core.Security.KeyCrypt;
+using SecureFolderFS.Core.Security.Cipher;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Helpers;
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
             return JsonConvert.DeserializeObject<VaultConfiguration>(rawVaultConfiguration.rawData);
         }
 
-        internal override bool Verify(IKeyCryptor keyCryptor, MasterKey masterKey)
+        internal override bool Verify(ICipherProvider keyCryptor, MasterKey masterKey)
         {
             if (HmacSha256Mac.IsEmpty() || masterKey.AnyEmpty() || keyCryptor is null)
             {
@@ -32,14 +32,17 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
             }
 
             var macKey = masterKey.GetMacKey();
-            using var hmacSha256Crypt = keyCryptor.HmacSha256Crypt.GetInstance();
+            using var hmacSha256Crypt = keyCryptor.GetHmacInstance();
 
-            hmacSha256Crypt.InitializeHMAC(macKey);
+            hmacSha256Crypt.InitializeHmac(macKey);
             hmacSha256Crypt.Update(BitConverter.GetBytes(Version));
             hmacSha256Crypt.Update(BitConverter.GetBytes((uint)FileNameCipherScheme));
             hmacSha256Crypt.DoFinal(BitConverter.GetBytes((uint)ContentCipherScheme));
 
-            return HmacSha256Mac.SequenceEqual(hmacSha256Crypt.GetHash());
+            var hmacsha256Mac = new byte[Constants.Security.EncryptionAlgorithm.HmacSha256.MAC_SIZE];
+            hmacSha256Crypt.GetHash(hmacsha256Mac);
+
+            return HmacSha256Mac.SequenceEqual(hmacsha256Mac);
         }
 
         internal override void WriteConfiguration(Stream destinationStream)

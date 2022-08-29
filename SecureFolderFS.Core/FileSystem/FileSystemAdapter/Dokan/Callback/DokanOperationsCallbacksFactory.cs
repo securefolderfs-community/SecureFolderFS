@@ -1,42 +1,36 @@
-﻿using System;
-using SecureFolderFS.Core.DataModels;
+﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Security.ContentCrypt;
-using SecureFolderFS.Core.VaultDataStore;
 using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.Security;
+using SecureFolderFS.Core.VaultDataStore;
+using System;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
 {
     internal sealed class DokanOperationsCallbacksFactory
     {
         private readonly VaultVersion _vaultVersion;
-
-        private readonly IContentCryptor _contentCryptor;
-
+        private readonly ISecurity _security;
         private readonly IPathReceiver _pathReceiver;
-
         private readonly IFileSystemOperations _fileSystemOperations;
-
         private readonly MountVolumeDataModel _mountVolumeDataModel;
-
         private readonly VaultPath _vaultPath;
-
-        private readonly HandlesCollection _handles;
+        private readonly HandlesManager _handles;
 
         public DokanOperationsCallbacksFactory(
             VaultVersion vaultVersion,
-            IContentCryptor contentCryptor,
+            ISecurity security,
             IPathReceiver pathReceiver,
             IFileSystemOperations fileSystemOperations,
             VaultPath vaultPath,
             MountVolumeDataModel mountVolumeDataModel,
-            HandlesCollection handles)
+            HandlesManager handles)
         {
             _vaultVersion = vaultVersion;
-            _contentCryptor = contentCryptor;
+            _security = security;
             _pathReceiver = pathReceiver;
             _fileSystemOperations = fileSystemOperations;
             _vaultPath = vaultPath;
@@ -104,7 +98,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         public IGetFileInformationCallback GetGetFileInformationCallback()
         {
             return ForVersion<IGetFileInformationCallback>(
-                forVersion1: () => new GetFileInformationCallback(_contentCryptor, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new GetFileInformationCallback(_security, _vaultPath, _pathReceiver, _handles));
         }
 
         public IFindFilesCallback GetFindFilesCallback(IFindFilesWithPatternCallback findFilesWithPatternCallback)
@@ -116,25 +110,25 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         public IFindFilesWithPatternCallback GetFindFilesWithPatternCallback()
         {
             return ForVersion<IFindFilesWithPatternCallback>(
-                forVersion1: () => new FindFilesWithPatternCallback(_contentCryptor, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new FindFilesWithPatternCallback(_security, _vaultPath, _pathReceiver, _handles));
         }
 
         public ISetFileAttributesCallback GetSetFileAttributesCallback()
         {
             return ForVersion<ISetFileAttributesCallback>(
-                forVersion1: () => new SetFileAttributesCallback(_fileSystemOperations, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new SetFileAttributesCallback(_vaultPath, _pathReceiver, _handles));
         }
 
         public ISetFileTimeCallback GetSetFileTimeCallback()
         {
             return ForVersion<ISetFileTimeCallback>(
-                forVersion1: () => new SetFileTimeCallback(_fileSystemOperations, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new SetFileTimeCallback(_vaultPath, _pathReceiver, _handles));
         }
 
         public IDeleteFileCallback GetDeleteFileCallback()
         {
             return ForVersion<IDeleteFileCallback>(
-                forVersion1: () => new DeleteFileCallback(_fileSystemOperations, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new DeleteFileCallback( _vaultPath, _pathReceiver, _handles));
         }
 
         public IDeleteDirectoryCallback GetDeleteDirectoryCallback()
@@ -146,7 +140,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback
         public IMoveFileCallback GetMoveFileCallback()
         {
             return ForVersion<IMoveFileCallback>(
-                forVersion1: () => new MoveFileCallback(_fileSystemOperations, _vaultPath, _pathReceiver, _handles));
+                forVersion1: () => new MoveFileCallback(_vaultPath, _pathReceiver, _handles));
         }
 
         public ISetEndOfFileCallback GetSetEndOfFileCallback()

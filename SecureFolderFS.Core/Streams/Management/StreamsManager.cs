@@ -1,57 +1,37 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Core.Sdk.Streams;
 
 namespace SecureFolderFS.Core.Streams.Management
 {
     internal sealed class StreamsManager<TStream> : IDisposable
-        where TStream : IBaseFileStream
+        where TStream : class, IDisposable
     {
         private readonly List<TStream> _streams;
 
-        private bool _disposed;
-
         public StreamsManager()
         {
-            _streams = new List<TStream>();
+            _streams = new();
         }
 
         public void AddStream(TStream stream)
         {
-            AssertNotDisposed();
-
             _streams.Add(stream);
         }
 
         public void RemoveStream(TStream stream)
         {
-            AssertNotDisposed();
-
             _streams.Remove(stream);
         }
 
-        public TStream GetAvailableStream()
+        public TStream? GetAvailableStream()
         {
-            AssertNotDisposed();
-
-            return _streams.FirstOrDefault() ?? throw new UnavailableStreamException();
-        }
-
-        private void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
+            return _streams.FirstOrDefault();
         }
 
         public void Dispose()
         {
-            _disposed = true;
-
             _streams.DisposeCollection();
             _streams.Clear();
         }
