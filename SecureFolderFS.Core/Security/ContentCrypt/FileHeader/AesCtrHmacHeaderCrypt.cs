@@ -22,18 +22,16 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
         public override void CreateHeader(Span<byte> cleartextHeader)
         {
             // Nonce
             secureRandom.GetNonZeroBytes(cleartextHeader.Slice(0, HEADER_NONCE_SIZE));
 
             // Content key
-            secureRandom.GetBytes(cleartextHeader.Slice(HEADER_NONCE_SIZE));
+            secureRandom.GetBytes(cleartextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
         public override void EncryptHeader(ReadOnlySpan<byte> cleartextHeader, Span<byte> ciphertextHeader)
         {
             var encKey = masterKey.GetEncryptionKey();
@@ -46,12 +44,12 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
                 cleartextHeader.GetHeaderContentKey(),
                 encKey,
                 cleartextHeader.GetHeaderNonce(),
-                ciphertextHeader.Slice(HEADER_NONCE_SIZE));
+                ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
 
             // Calculate MAC
             CalculateHeaderMac(
                 cleartextHeader.GetHeaderNonce(),
-                cleartextHeader.GetHeaderContentKey(),
+                ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
                 ciphertextHeader.Slice(cleartextHeader.Length)); // cleartextHeader.Length already includes HEADER_NONCE_SIZE
         }
 
@@ -87,7 +85,6 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             return true;
         }
 
-        [SkipLocalsInit]
         private void CalculateHeaderMac(ReadOnlySpan<byte> headerNonce, ReadOnlySpan<byte> ciphertextPayload, Span<byte> headerMac)
         {
             var macKey = masterKey.GetMacKey();
@@ -96,7 +93,6 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
             hmacSha256.InitializeHmac(macKey);
             hmacSha256.Update(headerNonce);
             hmacSha256.DoFinal(ciphertextPayload);
-
             hmacSha256.GetHash(headerMac);
         }
     }

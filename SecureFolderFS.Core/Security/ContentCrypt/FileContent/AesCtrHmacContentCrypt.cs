@@ -27,7 +27,6 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
         public override void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
         {
             // Chunk nonce
@@ -79,7 +78,6 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
             return true;
         }
 
-        [SkipLocalsInit]
         private void CalculateChunkMac(ReadOnlySpan<byte> headerNonce, ReadOnlySpan<byte> chunkNonce, ReadOnlySpan<byte> ciphertextPayload, long chunkNumber, Span<byte> chunkMac)
         {
             var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();

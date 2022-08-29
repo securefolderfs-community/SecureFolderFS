@@ -1,7 +1,6 @@
 ﻿using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Security.Cipher;
 using System;
-using System.Runtime.CompilerServices;
 using static SecureFolderFS.Core.Constants.Security.Headers.AesGcm;
 using static SecureFolderFS.Core.Extensions.SecurityExtensions.Header.AesGcmHeaderExtensions;
 
@@ -21,18 +20,16 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
         public override void CreateHeader(Span<byte> cleartextHeader)
         {
             // Nonce
             secureRandom.GetNonZeroBytes(cleartextHeader.Slice(0, HEADER_NONCE_SIZE));
 
             // Content key
-            secureRandom.GetBytes(cleartextHeader.Slice(HEADER_NONCE_SIZE));
+            secureRandom.GetBytes(cleartextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
         public override void EncryptHeader(ReadOnlySpan<byte> cleartextHeader, Span<byte> ciphertextHeader)
         {
             var encKey = masterKey.GetEncryptionKey();
@@ -51,7 +48,6 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileHeader
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
         public override bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> cleartextHeader)
         {
             var encKey = masterKey.GetEncryptionKey();

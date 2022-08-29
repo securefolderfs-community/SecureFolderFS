@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
                     .EnumerateFileSystemInfos()
                     .Select<FileSystemInfo, FileInformation?>(finfo =>
                     {
-                        if (PathHelpers.IsCoreFile(finfo.Name) || !DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, true))
+                        if (PathHelpers.IsCoreFile(finfo.Name) || !DokanHelper.DokanIsNameInExpression(searchPattern, finfo.Name, false))
                             return null;
 
                         try

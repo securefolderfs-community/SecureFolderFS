@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
             var chunkAccess = GetChunkAccess(ciphertextStreamsManager, fileHeader);
 
             var openCryptFile = new OpenCryptFile(ciphertextPath, CloseCryptFile, ciphertextStreamsManager, fileHeader, chunkAccess);
-            _openCryptFiles.TryAdd(ciphertextPath, openCryptFile);
+            _openCryptFiles.Add(ciphertextPath, openCryptFile);
 
             return openCryptFile;
         }

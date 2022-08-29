@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.Security.ContentCrypt.FileContent
                 cleartextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
-                ciphertextChunk.Slice(CHUNK_TAG_SIZE + cleartextChunk.Length),
+                ciphertextChunk.Slice(CHUNK_NONCE_SIZE + cleartextChunk.Length),
                 ciphertextChunk.Slice(CHUNK_NONCE_SIZE, cleartextChunk.Length),
                 associatedData);
         }

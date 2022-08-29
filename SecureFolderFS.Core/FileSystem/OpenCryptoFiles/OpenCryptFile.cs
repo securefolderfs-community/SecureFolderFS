@@ -55,7 +55,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
             finally
             {
                 if (_openedStreams.IsEmpty())
-                    _onCryptFileClosed?.Invoke(_ciphertextPath);
+                    _onCryptFileClosed.Invoke(_ciphertextPath);
             }
         }
 
@@ -64,6 +64,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
         {
             _openedStreams.Keys.DisposeCollection();
             _openedStreams.Clear();
+            _ciphertextStreamsManager.Dispose();
         }
     }
 }

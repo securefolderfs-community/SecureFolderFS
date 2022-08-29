@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using SecureFolderFS.Core.DataModels;
+﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
-using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Instance.Implementation;
 using SecureFolderFS.Core.Sdk.Tracking;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
 {
@@ -105,7 +104,7 @@ namespace SecureFolderFS.Core.VaultLoader.Routine.Implementation
             var fileSystemAdapterType = FileSystemAvailabilityHelpers.GetAvailableAdapter(FileSystemAdapterType.DokanAdapter);
             FileSystemAdapterType = InitializeIfNotInstantiated(FileSystemAdapterType, () => FileSystemAdapterType.DokanAdapter);
             MountVolumeDataModel = InitializeIfNotInstantiated(MountVolumeDataModel, () => GetDefaultMountVolumeDataModel(_vaultInstance.VolumeName));
-            ChunkCachingStrategy = InitializeIfNotInstantiated(ChunkCachingStrategy, () => ChunkCachingStrategy.NoCache);
+            ChunkCachingStrategy = InitializeIfNotInstantiated(ChunkCachingStrategy, () => ChunkCachingStrategy.RandomAccessMemoryCache);
             DirectoryIdCachingStrategy = InitializeIfNotInstantiated(DirectoryIdCachingStrategy, () => DirectoryIdCachingStrategy.RandomAccessMemoryCache);
             FileNameCachingStrategy = InitializeIfNotInstantiated(FileNameCachingStrategy, () => FileNameCachingStrategy.RandomAccessMemoryCache);
             _vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker = InitializeIfNotInstantiated(_vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker, () => null, nameof(_vaultInstance.SecureFolderFSInstanceImpl.FileSystemStatsTracker));

@@ -61,7 +61,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
             catch (UnavailableStreamException)
             {
                 bytesWritten = 0;
-                return DokanResult.InvalidHandle;
+                return NtStatus.HandleNoLongerValid;
             }
             catch (Exception ex)
             {
