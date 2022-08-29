@@ -27,6 +27,9 @@ namespace SecureFolderFS.WinUI.WindowViews
 
         private void EnsureEarlyWindow()
         {
+            // Set persistence id
+            PersistenceId = "SecureFolderFS_mainwindow";
+
             // Set title
             AppWindow.Title = "SecureFolderFS";
 

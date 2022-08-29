@@ -14,19 +14,19 @@
         <vc:VaultHealthStateToStringConverter x:Key="VaultHealthStateToStringConverter" />
 
         <DataTemplate x:Key="WithDetailedHealthTemplate" x:DataType="local:VaultHealthControl">
-            <StackPanel>
+            <StackPanel Margin="0,-4,0,0">
                 <!--  Vault status  -->
                 <TextBlock
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    FontWeight="SemiBold"
+                    FontWeight="Medium"
                     Text="{Binding Path=VaultHealthState, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource VaultHealthStateToStringConverter}}"
                     TextTrimming="CharacterEllipsis" />
                 <!--  Last checked  -->
                 <TextBlock
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Opacity="0.8"
+                    Opacity="0.6"
                     Text="{Binding Path=VaultHealthLastCheckedDate, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}"
                     TextTrimming="CharacterEllipsis" />
             </StackPanel>
@@ -44,10 +44,10 @@
         </Grid.ColumnDefinitions>
 
         <!--  Icon  -->
-        <Grid Grid.Column="0" Margin="-8,-6,0,0">
+        <Grid Grid.Column="0" Margin="-8,0,0,0">
             <Image
                 Width="64"
-                Height="60"
+                Height="64"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Source="../Assets/AppAssets/GreenShield.svg"
@@ -58,33 +58,31 @@
         <ContentPresenter
             x:Name="DetailedHealthContentPresenter"
             Grid.Column="1"
+            VerticalContentAlignment="Center"
             Canvas.ZIndex="1" />
 
         <!--  Start scanning  -->
         <StackPanel
             Grid.Column="2"
+            Margin="0,-6,0,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
-            Canvas.ZIndex="10"
-            Orientation="Horizontal">
+            Orientation="Horizontal"
+            Spacing="4">
             <Button
-                Height="36"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 Command="{x:Bind StartScanningCommand, Mode=OneWay}"
-                Content="Start scanning"
-                CornerRadius="4 0 0 4" />
+                Content="Start scanning" />
             <Button
-                Height="36"
-                Padding="12,9,12,10"
+                Width="36"
+                Height="35"
+                Padding="0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                VerticalContentAlignment="Center"
                 Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
-                CornerRadius="0 4 4 0"
                 ToolTipService.ToolTip="Go to Vault Health">
-                <FontIcon FontSize="14" Glyph="&#xE95E;" />
+                <FontIcon FontSize="15" Glyph="&#xE76C;" />
             </Button>
         </StackPanel>
 

@@ -12,10 +12,14 @@
 
     <UserControl.Resources>
         <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+
+        <Style x:Key="ChartLine" TargetType="Line">
+            <Setter Property="Stroke" Value="Transparent" />
+        </Style>
     </UserControl.Resources>
 
     <Button
-        Height="264"
+        Height="232"
         Padding="12"
         HorizontalAlignment="Stretch"
         HorizontalContentAlignment="Center"
@@ -62,14 +66,22 @@
                 x:DeferLoadStrategy="Lazy"
                 Loaded="CartesianChart_Loaded">
                 <sf:SfCartesianChart.XAxes>
-                    <sf:DateTimeAxis ShowGridLines="False" Visibility="Collapsed" />
+                    <sf:DateTimeAxis
+                        AxisLineStyle="{StaticResource ChartLine}"
+                        ShowGridLines="False"
+                        Visibility="Collapsed" />
                 </sf:SfCartesianChart.XAxes>
                 <sf:SfCartesianChart.YAxes>
                     <sf:NumericalAxis
+                        AxisLineStyle="{StaticResource ChartLine}"
                         Minimum="0"
                         MinorTickLineSize="8"
                         ShowGridLines="False"
-                        TickLineSize="0" />
+                        TickLineSize="0">
+                        <sf:NumericalAxis.LabelStyle>
+                            <sf:LabelStyle Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                        </sf:NumericalAxis.LabelStyle>
+                    </sf:NumericalAxis>
                 </sf:SfCartesianChart.YAxes>
 
                 <sf:SfCartesianChart.Series>
@@ -82,8 +94,8 @@
                         YBindingPath="Value">
                         <sf:AreaSeries.Fill>
                             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                <GradientStop Offset="0" Color="{x:Bind ChartPrimaryColor}" />
-                                <GradientStop Offset="1" Color="{x:Bind ChartSecondaryColor}" />
+                                <GradientStop Offset="0.2" Color="{x:Bind ChartPrimaryColor}" />
+                                <GradientStop Offset="1.3" Color="{x:Bind ChartSecondaryColor}" />
                             </LinearGradientBrush>
                         </sf:AreaSeries.Fill>
                     </sf:AreaSeries>

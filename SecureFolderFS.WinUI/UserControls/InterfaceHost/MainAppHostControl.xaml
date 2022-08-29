@@ -19,10 +19,12 @@
 
     <NavigationView
         x:Name="Sidebar"
+        ExpandedModeThresholdWidth="864"
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="True"
         IsSettingsVisible="False"
         MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
+        OpenPaneLength="284"
         PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
@@ -59,7 +61,7 @@
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon
-                            Margin="0,0,0,-2"
+                            Margin="2,0,2,-4"
                             FontSize="16"
                             Glyph="&#xECC8;" />
                         <TextBlock Text="New vault" />
@@ -120,11 +122,10 @@
                                 FontWeight="SemiBold"
                                 Text="{x:Bind VaultModel.VaultName, Mode=OneWay}"
                                 TextTrimming="CharacterEllipsis" />
-
                             <!--  Last opened  -->
                             <TextBlock
                                 FontSize="14"
-                                Opacity="0.8"
+                                Opacity="0.6"
                                 Text="Undefined" />
                         </StackPanel>
                     </NavigationViewItem.Content>

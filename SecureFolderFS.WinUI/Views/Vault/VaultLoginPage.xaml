@@ -32,7 +32,7 @@
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginCredentialsViewModel">
             <StackPanel Spacing="24">
                 <!--  Password Control  -->
-                <StackPanel Width="400" Spacing="8">
+                <StackPanel Width="364" Spacing="8">
                     <TextBlock Opacity="0.8" Text="Enter password" />
                     <PasswordBox
                         x:Name="VaultPasswordBox"
@@ -46,7 +46,7 @@
                 <!--  Login  -->
                 <Button
                     x:Name="ContinueButton"
-                    Padding="24,6"
+                    Padding="32,6"
                     HorizontalAlignment="Center"
                     Click="ContinueButton_Click"
                     Content="Unlock"
@@ -81,7 +81,7 @@
                     <TextBlock
                         HorizontalAlignment="Center"
                         FontSize="14"
-                        Opacity="0.8"
+                        Opacity="0.6"
                         Text="Vault is locked" />
                 </StackPanel>
 
