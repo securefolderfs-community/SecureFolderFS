@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.Services
         /// Finalizes and deploys the routine that will finish the vault creation task.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the action.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that represents the action.</returns>
         Task<IResult> DeployAsync(CancellationToken cancellationToken = default);
     }
 }

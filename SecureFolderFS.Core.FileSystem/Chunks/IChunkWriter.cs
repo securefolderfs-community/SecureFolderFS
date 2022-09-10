@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace SecureFolderFS.Core.Chunks
+namespace SecureFolderFS.Core.FileSystem.Chunks
 {
     /// <summary>
     /// Provides write access to chunks.
     /// </summary>
-    internal interface IChunkWriter : IDisposable
+    public interface IChunkWriter : IDisposable
     {
         /// <summary>
         /// Writes <paramref name="cleartextChunk"/> into chunk at specified <paramref name="chunkNumber"/>.

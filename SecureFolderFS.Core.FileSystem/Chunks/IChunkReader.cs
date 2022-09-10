@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace SecureFolderFS.Core.Chunks
+namespace SecureFolderFS.Core.FileSystem.Chunks
 {
     /// <summary>
     /// Provides read access to chunks.
     /// </summary>
-    internal interface IChunkReader : IDisposable
+    public interface IChunkReader : IDisposable
     {
         /// <summary>
         /// Reads chunk at specified <paramref name="chunkNumber"/> into <paramref name="cleartextChunk"/>.

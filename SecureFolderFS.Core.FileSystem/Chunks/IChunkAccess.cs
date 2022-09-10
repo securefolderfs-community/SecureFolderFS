@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace SecureFolderFS.Core.Chunks
+namespace SecureFolderFS.Core.FileSystem.Chunks
 {
     /// <summary>
     /// Provides access to cleartext chunks data in individual files.
     /// </summary>
-    internal interface IChunkAccess : IDisposable
+    public interface IChunkAccess : IDisposable
     {
         /// <summary>
         /// Copies bytes from chunk into <paramref name="destination"/>.
