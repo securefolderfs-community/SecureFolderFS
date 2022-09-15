@@ -1,12 +1,13 @@
-﻿using SecureFolderFS.Core.Sdk.Paths;
+﻿using SecureFolderFS.Core.FileSystem.Paths;
 
-namespace SecureFolderFS.Core.Paths.Receivers
+namespace SecureFolderFS.Core.Paths
 {
-    internal abstract class BasePathReceiver : IPathReceiver
+    /// <inheritdoc cref="IPathConverter"/>
+    internal abstract class BasePathConverter : IPathConverter
     {
         protected readonly VaultPath vaultPath;
 
-        protected BasePathReceiver(VaultPath vaultPath)
+        protected BasePathConverter(VaultPath vaultPath)
         {
             this.vaultPath = vaultPath;
         }
@@ -19,8 +20,5 @@ namespace SecureFolderFS.Core.Paths.Receivers
 
         /// <inheritdoc/>
         public abstract string GetCleartextFileName(string cleartextFilePath);
-
-        /// <inheritdoc/>
-        public abstract string GetCiphertextFileName(string ciphertextFilePath);
     }
 }

@@ -6,6 +6,7 @@ using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SecureFolderFS.Core.FileSystem.Chunks;
 
 namespace SecureFolderFS.Core.FileSystem.OpenCryptoFiles
 {

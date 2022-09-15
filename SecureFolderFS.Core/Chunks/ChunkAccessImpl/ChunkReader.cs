@@ -1,11 +1,12 @@
-﻿using SecureFolderFS.Core.BufferHolders;
+﻿using SecureFolderFS.Core.Exceptions;
+using SecureFolderFS.Core.FileSystem.Chunks;
+using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Security;
-using SecureFolderFS.Core.Streams.Management;
+using SecureFolderFS.Shared.Helpers;
 using System;
 using System.Buffers;
 using System.Diagnostics;
-using SecureFolderFS.Core.Exceptions;
 
 namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
 {
@@ -13,15 +14,15 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
     internal sealed class ChunkReader : IChunkReader
     {
         private readonly ISecurity _security;
-        private readonly CleartextHeaderBuffer _fileHeader;
-        private readonly CiphertextStreamsManager _ciphertextStreamsManager;
+        private readonly BufferHolder _fileHeader;
+        private readonly IStreamsManager _streamsManager;
         private readonly IFileSystemStatsTracker? _fileSystemStatsTracker;
 
-        public ChunkReader(ISecurity security, CleartextHeaderBuffer fileHeader, CiphertextStreamsManager ciphertextStreamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
+        public ChunkReader(ISecurity security, BufferHolder fileHeader, IStreamsManager streamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
         {
             _security = security;
             _fileHeader = fileHeader;
-            _ciphertextStreamsManager = ciphertextStreamsManager;
+            _streamsManager = streamsManager;
             _fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
@@ -37,7 +38,7 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
             var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
             // Get and read from stream
-            var ciphertextFileStream = _ciphertextStreamsManager.GetReadOnlyStream();
+            var ciphertextFileStream = _streamsManager.GetReadOnlyStream();
             _ = ciphertextFileStream ?? throw new UnavailableStreamException();
             ciphertextFileStream.Position = ciphertextPosition;
             var read = ciphertextFileStream.Read(realCiphertextChunk);
@@ -75,7 +76,7 @@ namespace SecureFolderFS.Core.Chunks.ChunkAccessImpl
         /// <inheritdoc/>
         public void Dispose()
         {
-            _ciphertextStreamsManager.Dispose();
+            _streamsManager.Dispose();
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using SecureFolderFS.Core.Sdk.Paths;
+﻿using SecureFolderFS.Core.FileSystem.Paths;
+using System;
 
 namespace SecureFolderFS.Core.Instance
 {
@@ -7,7 +7,7 @@ namespace SecureFolderFS.Core.Instance
     {
         string MountLocation { get; }
 
-        IPathReceiver PathReceiver { get; }
+        IPathConverter PathConverter { get; }
 
         void StartFileSystem();
     }

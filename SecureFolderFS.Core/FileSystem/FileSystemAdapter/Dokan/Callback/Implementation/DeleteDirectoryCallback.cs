@@ -1,8 +1,8 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Paths;
-using SecureFolderFS.Core.Sdk.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
@@ -10,8 +10,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IFileSystemOperations _fileSystemOperations;
 
-        public DeleteDirectoryCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public DeleteDirectoryCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
             _fileSystemOperations = fileSystemOperations;
         }

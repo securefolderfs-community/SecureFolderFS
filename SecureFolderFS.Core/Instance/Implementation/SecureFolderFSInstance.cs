@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using SecureFolderFS.Core.Exceptions;
+﻿using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
 using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.Sdk.Tracking;
+using SecureFolderFS.Core.Streams.Receiver;
 
 namespace SecureFolderFS.Core.Instance.Implementation
 {
@@ -13,7 +12,7 @@ namespace SecureFolderFS.Core.Instance.Implementation
     {
         public string MountLocation { get; internal set; }
 
-        public IPathReceiver PathReceiver { get; internal set; }
+        public IPathConverter PathConverter { get; internal set; }
 
         internal IFileSystemStatsTracker FileSystemStatsTracker { get; set; }
 

@@ -1,25 +1,21 @@
 ﻿using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileNames;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.VaultDataStore;
-using SecureFolderFS.Core.Sdk.Paths;
 
-namespace SecureFolderFS.Core.Paths.Receivers
+namespace SecureFolderFS.Core.Paths
 {
-    internal sealed class PathReceiverFactory
+    internal sealed class PathConverterFactory
     {
         private readonly VaultVersion _vaultVersion;
-
         private readonly VaultPath _vaultPath;
-
         private readonly IDirectoryIdReceiver _directoryIdReceiver;
-
         private readonly IFileNameReceiver _fileNameReceiver;
-
         private readonly FileNameCipherScheme _fileNameCipherScheme;
 
-        public PathReceiverFactory(VaultVersion vaultVersion,
+        public PathConverterFactory(VaultVersion vaultVersion,
             VaultPath vaultPath,
             IDirectoryIdReceiver directoryIdReceiver,
             IFileNameReceiver fileNameReceiver,
@@ -32,16 +28,16 @@ namespace SecureFolderFS.Core.Paths.Receivers
             _fileNameCipherScheme = fileNameCipherScheme;
         }
 
-        public IPathReceiver GetPathReceiver()
+        public IPathConverter GetPathReceiver()
         {
             // Version control can be added
             switch (_fileNameCipherScheme)
             {
                 case FileNameCipherScheme.None:
-                    return new UnencryptedUniformPathReceiver(_vaultPath);
+                    return new CleartextPathConverter(_vaultPath);
 
                 case FileNameCipherScheme.AES_SIV:
-                    return new EncryptedUniformPathReceiver(_vaultPath, _directoryIdReceiver, _fileNameReceiver);
+                    return new CiphertextPathConverter(_vaultPath, _directoryIdReceiver, _fileNameReceiver);
 
                 default:
                 case FileNameCipherScheme.Undefined:

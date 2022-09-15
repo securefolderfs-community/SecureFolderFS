@@ -1,18 +1,18 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Shared.Helpers;
 using System;
 using System.IO;
 using System.Security.AccessControl;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Paths;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class GetFileSecurityCallback : BaseDokanOperationsCallbackWithPath, IGetFileSecurityCallback
     {
-        public GetFileSecurityCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public GetFileSecurityCallback(VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
         }
 

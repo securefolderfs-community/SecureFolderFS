@@ -4,8 +4,8 @@ using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan;
 using SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Paths;
-using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Streams.Receiver;
 using SecureFolderFS.Core.VaultDataStore;
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
         private readonly ISecurity _security;
         private readonly IFileStreamReceiver _fileStreamReceiver;
         private readonly IFileSystemOperations _fileSystemOperations;
-        private readonly IPathReceiver _pathReceier;
+        private readonly IPathConverter _pathConverter;
         private readonly VaultPath _vaultPath;
 
         public FileSystemAdapterFactory(VaultVersion vaultVersion,
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
             ISecurity security,
             IFileStreamReceiver fileStreamReceiver,
             IFileSystemOperations fileSystemOperations,
-            IPathReceiver pathReceier,
+            IPathConverter pathConverter,
             VaultPath vaultPath)
         {
             _vaultVersion = vaultVersion;
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
             _security = security;
             _fileStreamReceiver = fileStreamReceiver;
             _fileSystemOperations = fileSystemOperations;
-            _pathReceier = pathReceier;
+            _pathConverter = _pathConverter;
             _vaultPath = vaultPath;
         }
 
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter
             var dokanOperationsCallbacksFactory = new DokanOperationsCallbacksFactory(
                 _vaultVersion,
                 _security,
-                _pathReceier,
+                _pathConverter,
                 _fileSystemOperations,
                 _vaultPath,
                 _mountVolumeDataModel,

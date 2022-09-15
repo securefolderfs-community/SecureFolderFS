@@ -1,6 +1,8 @@
-﻿namespace SecureFolderFS.Core.BufferHolders
+﻿using SecureFolderFS.Shared.Helpers;
+
+namespace SecureFolderFS.Core.BufferHolders
 {
-    internal sealed class CleartextChunkBuffer : BaseBufferHolder
+    internal sealed class CleartextChunkBuffer : BufferHolder
     {
         public bool IsDirty { get; set; }
 

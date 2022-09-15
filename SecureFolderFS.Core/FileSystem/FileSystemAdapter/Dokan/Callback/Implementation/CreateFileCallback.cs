@@ -2,8 +2,8 @@
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Paths;
-using SecureFolderFS.Core.Sdk.Paths;
 using System;
 using System.IO;
 using System.Linq;
@@ -16,8 +16,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly IFileSystemOperations _fileSystemOperations;
 
-        public CreateFileCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public CreateFileCallback(IFileSystemOperations fileSystemOperations, VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
             _fileSystemOperations = fileSystemOperations;
         }

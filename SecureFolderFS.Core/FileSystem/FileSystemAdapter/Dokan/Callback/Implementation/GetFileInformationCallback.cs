@@ -1,7 +1,7 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Paths;
-using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.Security;
 using System;
 using System.IO;
@@ -12,8 +12,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
     {
         private readonly ISecurity _security;
 
-        public GetFileInformationCallback(ISecurity security, VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public GetFileInformationCallback(ISecurity security, VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
             _security = security;
         }

@@ -1,9 +1,9 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths;
-using SecureFolderFS.Core.Sdk.Paths;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -12,8 +12,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class ReadFileCallback : BaseDokanOperationsCallbackWithPath, IReadFileCallback
     {
-        public ReadFileCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public ReadFileCallback(VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
         }
 

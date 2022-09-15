@@ -1,6 +1,8 @@
-﻿namespace SecureFolderFS.Core.BufferHolders
+﻿using SecureFolderFS.Shared.Helpers;
+
+namespace SecureFolderFS.Core.BufferHolders
 {
-    internal sealed class CleartextHeaderBuffer : BaseBufferHolder
+    internal sealed class CleartextHeaderBuffer : BufferHolder
     {
         public bool IsHeaderReady { get; set; }
 

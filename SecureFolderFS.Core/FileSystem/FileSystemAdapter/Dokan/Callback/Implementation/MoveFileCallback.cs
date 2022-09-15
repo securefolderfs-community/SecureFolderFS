@@ -1,17 +1,17 @@
 ﻿using DokanNet;
-using System;
-using System.IO;
-using SecureFolderFS.Core.Sdk.Paths;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Core.Paths;
+using System;
+using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class MoveFileCallback : BaseDokanOperationsCallbackWithPath, IMoveFileCallback
     {
-        public MoveFileCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public MoveFileCallback(VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
         }
 

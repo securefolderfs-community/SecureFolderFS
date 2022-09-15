@@ -1,15 +1,15 @@
 ﻿using DokanNet;
-using System.IO;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Sdk.Paths;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Paths;
+using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class DeleteFileCallback : BaseDokanOperationsCallbackWithPath, IDeleteFileCallback
     {
-        public DeleteFileCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public DeleteFileCallback(VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
         }
 

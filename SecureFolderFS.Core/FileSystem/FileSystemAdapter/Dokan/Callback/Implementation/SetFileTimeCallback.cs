@@ -1,7 +1,7 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Paths;
-using SecureFolderFS.Core.Sdk.Paths;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -10,8 +10,8 @@ namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implem
 {
     internal sealed class SetFileTimeCallback : BaseDokanOperationsCallbackWithPath, ISetFileTimeCallback
     {
-        public SetFileTimeCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public SetFileTimeCallback(VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
         }
 

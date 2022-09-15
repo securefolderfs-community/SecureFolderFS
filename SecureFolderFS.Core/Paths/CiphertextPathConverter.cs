@@ -5,14 +5,15 @@ using SecureFolderFS.Core.Sdk.Paths;
 using System;
 using System.IO;
 
-namespace SecureFolderFS.Core.Paths.Receivers
+namespace SecureFolderFS.Core.Paths
 {
-    internal sealed class EncryptedUniformPathReceiver : BasePathReceiver, IPathReceiver
+    /// <inheritdoc cref="IPathReceiver"/>
+    internal sealed class CiphertextPathConverter : BasePathConverter
     {
         private readonly IDirectoryIdReceiver _directoryIdReceiver;
         private readonly IFileNameReceiver _fileNameReceiver;
 
-        public EncryptedUniformPathReceiver(VaultPath vaultPath, IDirectoryIdReceiver directoryIdReceiver, IFileNameReceiver fileNameReceiver)
+        public CiphertextPathConverter(VaultPath vaultPath, IDirectoryIdReceiver directoryIdReceiver, IFileNameReceiver fileNameReceiver)
             : base(vaultPath)
         {
             _directoryIdReceiver = directoryIdReceiver;
@@ -41,8 +42,7 @@ namespace SecureFolderFS.Core.Paths.Receivers
             return _fileNameReceiver.GetCleartextFileName(directoryId, fileName);
         }
 
-        /// <inheritdoc/>
-        public override string GetCiphertextFileName(string ciphertextFilePath)
+        private string GetCiphertextFileName(string ciphertextFilePath)
         {
             var fileName = Path.GetFileName(ciphertextFilePath);
             var directoryIdPath = PathHelpers.EnsurePathIsDirectoryIdOrGetFromParent(ciphertextFilePath, vaultPath);

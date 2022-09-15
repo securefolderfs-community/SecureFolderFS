@@ -1,16 +1,16 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.Paths;
 using System;
 using System.Collections.Generic;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.Sdk.Paths;
-using SecureFolderFS.Core.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.FileSystemAdapter.Dokan.Callback.Implementation
 {
     internal sealed class FindStreamsCallback : BaseDokanOperationsCallbackWithPath, IFindStreamsCallback // TODO: For now, BaseDokanOperationsCallbackWithPath is not used
     {
-        public FindStreamsCallback(VaultPath vaultPath, IPathReceiver pathReceiver, HandlesManager handles)
-            : base(vaultPath, pathReceiver, handles)
+        public FindStreamsCallback(VaultPath vaultPath, IPathConverter pathConverter, HandlesManager handles)
+            : base(vaultPath, pathConverter, handles)
         {
         }
 

@@ -1,13 +1,12 @@
 ﻿using System.IO;
-using SecureFolderFS.Core.Sdk.Paths;
 
-namespace SecureFolderFS.Core.Paths.Receivers
+namespace SecureFolderFS.Core.Paths
 {
-    internal sealed class UnencryptedUniformPathReceiver : BasePathReceiver, IPathReceiver
+    internal sealed class CleartextPathConverter : BasePathConverter
     {
-        // Paths are not encrypted so we use the same raw path for every type (ciphertext == cleartext)
+        // Paths are not encrypted so we use the same path for every return value (ciphertext == cleartext)
 
-        public UnencryptedUniformPathReceiver(VaultPath vaultPath)
+        public CleartextPathConverter(VaultPath vaultPath)
             : base(vaultPath)
         {
         }
@@ -28,12 +27,6 @@ namespace SecureFolderFS.Core.Paths.Receivers
         public override string GetCleartextFileName(string ciphertextFilePath)
         {
             return Path.GetFileName(ciphertextFilePath);
-        }
-
-        /// <inheritdoc/>
-        public override string GetCiphertextFileName(string cleartextFilePath)
-        {
-            return Path.GetFileName(cleartextFilePath);
         }
     }
 }
