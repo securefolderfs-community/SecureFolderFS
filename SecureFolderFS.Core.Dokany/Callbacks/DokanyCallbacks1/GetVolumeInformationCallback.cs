@@ -1,0 +1,30 @@
+﻿using DokanNet;
+using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.Helpers;
+
+namespace SecureFolderFS.Core.Dokany.Callbacks.DokanyCallbacks
+{
+    internal sealed class GetVolumeInformationCallback : BaseDokanOperationsCallback, IGetVolumeInformationCallback
+    {
+        private readonly MountVolumeDataModel _mountVolumeDataModel;
+        private readonly FileSystemFeatures _dokanFileSystemFeatures;
+
+        public GetVolumeInformationCallback(MountVolumeDataModel mountVolumeDataModel, HandlesManager handles)
+            : base(handles)
+        {
+            _mountVolumeDataModel = mountVolumeDataModel;
+            _dokanFileSystemFeatures = mountVolumeDataModel.FileSystemFlags.ToDokanFileSystemFlags();
+        }
+
+        public NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName, out uint maximumComponentLength, IDokanFileInfo info)
+        {
+            volumeLabel = _mountVolumeDataModel.VolumeName;
+            fileSystemName = _mountVolumeDataModel.FileSystemName;
+            maximumComponentLength = _mountVolumeDataModel.MaximumComponentLength;
+            features = _dokanFileSystemFeatures;
+
+            return DokanResult.Success;
+        }
+    }
+}

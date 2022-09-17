@@ -46,6 +46,6 @@ namespace SecureFolderFS.Core.FileNames.Receivers
 
         public abstract void SetCiphertextFileName(DirectoryId directoryId, string cleartextFileName, string ciphertextFileName);
 
-        protected record class FileNameWithDirectoryId(DirectoryId DirectoryId, string FileName);
+        protected record FileNameWithDirectoryId(DirectoryId DirectoryId, string FileName);
     }
 }

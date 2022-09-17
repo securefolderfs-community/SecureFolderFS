@@ -1,4 +1,6 @@
-﻿using Miscreant;
+﻿using System;
+using System.Security.Cryptography;
+using Miscreant;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
@@ -7,26 +9,40 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
     {
         // TODO: Check correctness of passed parameters
 
-        public byte[] AesSivEncrypt(byte[] cleartextBytes, byte[] encryptionKey, byte[] macKey, byte[] associatedData)
+        public void Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey,
+            ReadOnlySpan<byte> associatedData, Span<byte> result)
         {
             var longKey = new byte[encryptionKey.Length + macKey.Length];
-            longKey.EmplaceArrays(encryptionKey, macKey);
+            longKey.EmplaceArrays(encryptionKey.ToArray(), macKey.ToArray());
 
             // The longKey will be split into two keys - one for S2V and the other one for CTR
 
             using var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
-            return aesCmacSiv.Seal(cleartextBytes, data: associatedData);
+            var result2 = aesCmacSiv.Seal(bytes.ToArray(), data: associatedData.ToArray());
+            
+            result2.CopyTo(result);
         }
 
-        public byte[] AesSivDecrypt(byte[] ciphertextBytes, byte[] encryptionKey, byte[] macKey, byte[] associatedData)
+        public bool Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey,
+            ReadOnlySpan<byte> associatedData, Span<byte> result)
         {
             var longKey = new byte[encryptionKey.Length + macKey.Length];
-            longKey.EmplaceArrays(encryptionKey, macKey);
+            longKey.EmplaceArrays(encryptionKey.ToArray(), macKey.ToArray());
 
-            // The longKey will be split into two keys - one for S2V and the other one for CTR
+            try
+            {
+                // The longKey will be split into two keys - one for S2V and the other one for CTR
 
-            using var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
-            return aesCmacSiv.Open(ciphertextBytes, data: associatedData);
+                using var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
+                var result2 = aesCmacSiv.Open(bytes.ToArray(), data: associatedData.ToArray());
+
+                result2.CopyTo(result);
+                return true;
+            }
+            catch (CryptographicException)
+            {
+                return false;
+            }
         }
     }
 }

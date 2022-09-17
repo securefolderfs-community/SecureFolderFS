@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecureFolderFS.Shared.Helpers;
+using System;
 
 namespace SecureFolderFS.Core.FileSystem.CryptFiles
 {
@@ -17,8 +18,9 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         /// <summary>
         /// Creates new instance of <see cref="IOpenCryptFile"/>.
         /// </summary>
-        /// <param name="ciphertextPath">The ciphertext path of the file.</param>
+        /// <param name="ciphertextPath">The ciphertext path pointing to the file.</param>
+        /// <param name="headerBuffer">The cleartext header of the file.</param>
         /// <returns>An instance of <see cref="IOpenCryptFile"/>.</returns>
-        IOpenCryptFile CreateNew(string ciphertextPath);
+        IOpenCryptFile CreateNew(string ciphertextPath, BufferHolder headerBuffer);
     }
 }

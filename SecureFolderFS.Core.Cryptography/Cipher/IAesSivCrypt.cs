@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SecureFolderFS.Core.Security.EncryptionAlgorithm
+namespace SecureFolderFS.Core.Cryptography.Cipher
 {
     public interface IAesSivCrypt
     {
