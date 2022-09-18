@@ -9,8 +9,8 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
     {
         // TODO: Check correctness of passed parameters
 
-        public void Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey,
-            ReadOnlySpan<byte> associatedData, Span<byte> result)
+        public byte[] Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey,
+            ReadOnlySpan<byte> associatedData)
         {
             var longKey = new byte[encryptionKey.Length + macKey.Length];
             longKey.EmplaceArrays(encryptionKey.ToArray(), macKey.ToArray());
@@ -18,13 +18,11 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
             // The longKey will be split into two keys - one for S2V and the other one for CTR
 
             using var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
-            var result2 = aesCmacSiv.Seal(bytes.ToArray(), data: associatedData.ToArray());
-            
-            result2.CopyTo(result);
+            return aesCmacSiv.Seal(bytes.ToArray(), data: associatedData.ToArray());
         }
 
-        public bool Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey,
-            ReadOnlySpan<byte> associatedData, Span<byte> result)
+        public byte[]? Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey,
+            ReadOnlySpan<byte> associatedData)
         {
             var longKey = new byte[encryptionKey.Length + macKey.Length];
             longKey.EmplaceArrays(encryptionKey.ToArray(), macKey.ToArray());
@@ -34,14 +32,11 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
                 // The longKey will be split into two keys - one for S2V and the other one for CTR
 
                 using var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
-                var result2 = aesCmacSiv.Open(bytes.ToArray(), data: associatedData.ToArray());
-
-                result2.CopyTo(result);
-                return true;
+                return aesCmacSiv.Open(bytes.ToArray(), data: associatedData.ToArray());
             }
             catch (CryptographicException)
             {
-                return false;
+                return null;
             }
         }
     }

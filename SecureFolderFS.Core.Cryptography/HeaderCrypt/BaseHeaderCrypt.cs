@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using System.Security.Cryptography;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {

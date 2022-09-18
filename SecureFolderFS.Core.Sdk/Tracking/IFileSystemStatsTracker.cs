@@ -8,6 +8,7 @@ namespace SecureFolderFS.Core.Sdk.Tracking
     /// <br/>
     /// This API is exposed.
     /// </summary>
+    [Obsolete]
     public interface IFileSystemStatsTracker : IDisposable
     {
         #region IO

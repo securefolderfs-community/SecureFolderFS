@@ -1,10 +1,13 @@
 ﻿using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.Cryptography.HeaderCrypt;
+using SecureFolderFS.Core.Cryptography.NameCrypt;
+using System;
 
 namespace SecureFolderFS.Core.Cryptography
 {
-    public interface ISecurity
+    // TODO: Needs docs
+    public interface ISecurity : IDisposable
     {
         ICipherProvider CipherProvider { get; }
 
@@ -12,6 +15,6 @@ namespace SecureFolderFS.Core.Cryptography
 
         IHeaderCrypt HeaderCrypt { get; }
 
-        IFileNameCryptor FileNameCryptor { get; }
+        INameCrypt? NameCrypt { get; }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace SecureFolderFS.Core.BufferHolders
 {
+    /// <inheritdoc cref="BufferHolder"/>
     internal sealed class CleartextChunkBuffer : BufferHolder
     {
         public bool IsDirty { get; set; }

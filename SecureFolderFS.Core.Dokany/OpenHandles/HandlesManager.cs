@@ -1,26 +1,24 @@
-﻿using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Dokany.OpenHandles
 {
     internal sealed class HandlesManager : IDisposable
     {
-        private readonly IFileStreamReceiver _fileStreamReceiver;
-        private readonly Dictionary<long, ObjectHandle> _openHandles;
+        private readonly IStreamsAccess _streamsAccess;
         private readonly HandleGenerator _handleGenerator;
+        private readonly Dictionary<long, ObjectHandle> _openHandles;
 
-        public HandlesManager(IFileStreamReceiver fileStreamReceiver)
+        public HandlesManager(IStreamsAccess streamsAccess)
         {
-            _fileStreamReceiver = fileStreamReceiver;
+            _streamsAccess = streamsAccess;
+            _handleGenerator = new();
             _openHandles = new();
-            _handleGenerator = new HandleGenerator();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -29,7 +27,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             // Open stream
             var share2 = FileShare.ReadWrite | FileShare.Delete; // TODO: Use share2 because share is broken
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share2, 4096, options);
-            var cleartextStream = _fileStreamReceiver.OpenCleartextStream(ciphertextPath, ciphertextStream);
+            var cleartextStream = _streamsAccess.OpenCleartextStream(ciphertextPath, ciphertextStream);
 
             // Flush ChunkAccess if the opened to Truncate
             if (mode == FileMode.Truncate)
@@ -70,7 +68,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             _openHandles.Clear();
         }
 
-        private class HandleGenerator
+        private sealed class HandleGenerator
         {
             private long _handleCounter;
 

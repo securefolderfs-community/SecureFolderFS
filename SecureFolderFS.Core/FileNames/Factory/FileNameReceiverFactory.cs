@@ -1,9 +1,9 @@
-﻿using System;
-using SecureFolderFS.Core.VaultDataStore;
+﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileNames.Receivers;
-using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Sdk.Tracking;
+using SecureFolderFS.Core.VaultDataStore;
+using System;
 
 namespace SecureFolderFS.Core.FileNames.Factory
 {

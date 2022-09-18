@@ -5,7 +5,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
     /// <summary>
     /// Represents an encryption method to encrypt and decrypt headers.
     /// </summary>
-    internal interface IHeaderCrypt
+    public interface IHeaderCrypt : IDisposable
     {
         /// <summary>
         /// Gets the size of ciphertext header.

@@ -37,12 +37,14 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         {
             var ciphertextNameBuffer = Convert.FromBase64String(EncodingHelpers.WithoutBase64UrlEncoding(ciphertextName));
             var cleartextNameBuffer = DecryptFileName(ciphertextNameBuffer, directoryId);
+            if (cleartextNameBuffer is null)
+                return null;
 
             return Encoding.UTF8.GetString(cleartextNameBuffer);
         }
 
-        protected abstract void EncryptFileName(ReadOnlySpan<byte> cleartextFileNameBuffer, ReadOnlySpan<byte> directoryId, Span<byte> result);
+        protected abstract byte[] EncryptFileName(ReadOnlySpan<byte> cleartextFileNameBuffer, ReadOnlySpan<byte> directoryId);
 
-        protected abstract bool DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId, Span<byte> result);
+        protected abstract byte[]? DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId);
     }
 }

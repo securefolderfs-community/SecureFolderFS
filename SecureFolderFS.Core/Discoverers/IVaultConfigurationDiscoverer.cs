@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace SecureFolderFS.Core.Discoverers
 {
@@ -8,6 +9,7 @@ namespace SecureFolderFS.Core.Discoverers
     /// <br/>
     /// This API is exposed.
     /// </summary>
+    [Obsolete]
     public interface IVaultConfigurationDiscoverer
     {
         /// <summary>

@@ -13,15 +13,15 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         }
 
         /// <inheritdoc/>
-        protected override void EncryptFileName(ReadOnlySpan<byte> cleartextFileNameBuffer, ReadOnlySpan<byte> directoryId, Span<byte> result)
+        protected override byte[] EncryptFileName(ReadOnlySpan<byte> cleartextFileNameBuffer, ReadOnlySpan<byte> directoryId)
         {
-            cipherProvider.AesSivCrypt.Encrypt(cleartextFileNameBuffer, encryptionKey, macKey, directoryId, result);
+            return cipherProvider.AesSivCrypt.Encrypt(cleartextFileNameBuffer, encryptionKey, macKey, directoryId);
         }
 
         /// <inheritdoc/>
-        protected override bool DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId, Span<byte> result)
+        protected override byte[]? DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId)
         {
-            return cipherProvider.AesSivCrypt.Decrypt(ciphertextFileNameBuffer, encryptionKey, macKey, directoryId, result);
+            return cipherProvider.AesSivCrypt.Decrypt(ciphertextFileNameBuffer, encryptionKey, macKey, directoryId);
         }
     }
 }

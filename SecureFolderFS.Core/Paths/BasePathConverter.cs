@@ -5,20 +5,20 @@ namespace SecureFolderFS.Core.Paths
     /// <inheritdoc cref="IPathConverter"/>
     internal abstract class BasePathConverter : IPathConverter
     {
-        protected readonly VaultPath vaultPath;
+        protected readonly string vaultRootPath;
 
-        protected BasePathConverter(VaultPath vaultPath)
+        protected BasePathConverter(string vaultRootPath)
         {
-            this.vaultPath = vaultPath;
+            this.vaultRootPath = vaultRootPath;
         }
 
         /// <inheritdoc/>
-        public abstract string ToCiphertext(string cleartextPath);
+        public abstract string? ToCiphertext(string cleartextPath);
 
         /// <inheritdoc/>
-        public abstract string ToCleartext(string ciphertextPath);
+        public abstract string? ToCleartext(string ciphertextPath);
 
         /// <inheritdoc/>
-        public abstract string GetCleartextFileName(string cleartextFilePath);
+        public abstract string? GetCleartextFileName(string cleartextFilePath);
     }
 }

@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LangVersion>preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,10 +15,6 @@
     <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Callbacks\DokanyCallbacks1\" />
   </ItemGroup>
 
 </Project>

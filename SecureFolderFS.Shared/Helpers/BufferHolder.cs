@@ -2,11 +2,15 @@
 
 namespace SecureFolderFS.Shared.Helpers
 {
+    /// <summary>
+    /// Holds a reference to a byte array buffer.
+    /// </summary>
     public abstract class BufferHolder
     {
+        /// <summary>
+        /// Gets the held byte array buffer.
+        /// </summary>
         public byte[] Buffer { get; }
-
-        public virtual int Length => Buffer.Length;
 
         protected BufferHolder(byte[] buffer)
         {
@@ -16,11 +20,6 @@ namespace SecureFolderFS.Shared.Helpers
         protected BufferHolder(int bufferLength)
             : this(new byte[bufferLength])
         {
-        }
-
-        public virtual void Clear()
-        {
-            Array.Clear(Buffer);
         }
 
         public static implicit operator Span<byte>(BufferHolder bufferHolder) => bufferHolder.Buffer;

@@ -42,7 +42,6 @@
 
             public const string UNC_NAME = "securefolderfs";
 
-            public const int MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP = 10;
 
             internal static class Dokan
             {
@@ -73,7 +72,6 @@
         {
             public const int DIRECTORY_ID_MAX_SIZE = 16;
 
-            public const int FILE_EOF = 0;
 
             public const int MAX_CACHED_CHUNKS = 6;
 

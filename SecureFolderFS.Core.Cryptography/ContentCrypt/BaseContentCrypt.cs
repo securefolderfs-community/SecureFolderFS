@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
+using System;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.Cipher;
 
 namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 {
-/// <inheritdoc cref="IContentCrypt"/>
+    /// <inheritdoc cref="IContentCrypt"/>
     internal abstract class BaseContentCrypt : IContentCrypt
     {
         protected readonly ICipherProvider cipherProvider;

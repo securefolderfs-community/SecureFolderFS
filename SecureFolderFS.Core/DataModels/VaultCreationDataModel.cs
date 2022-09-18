@@ -1,12 +1,14 @@
-﻿using System.IO;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.Cipher;
-using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
 using SecureFolderFS.Core.Paths;
+using SecureFolderFS.Core.SecureStore;
+using SecureFolderFS.Core.VaultDataStore.VaultKeystore;
+using System;
+using System.IO;
 
 namespace SecureFolderFS.Core.DataModels
 {
+    [Obsolete]
     internal sealed class VaultCreationDataModel
     {
         public VaultPath VaultPath { get; set; }

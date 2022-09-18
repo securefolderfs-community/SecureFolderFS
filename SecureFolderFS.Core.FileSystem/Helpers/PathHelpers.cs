@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers
 {
     public static class PathHelpers
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsCoreFile(string fileName)
+        {
+            return fileName.Contains(Constants.DIRECTORY_ID_FILENAME);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string EnsureTrailingPathSeparator(string path)
         {
@@ -29,7 +30,5 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
 
             return Path.Combine(vaultRootPath, EnsureNoLeadingPathSeparator(fileName));
         }
-
-
     }
 }

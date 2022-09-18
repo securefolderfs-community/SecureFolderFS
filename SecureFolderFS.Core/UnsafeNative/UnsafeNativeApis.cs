@@ -38,10 +38,6 @@ namespace SecureFolderFS.Core.UnsafeNative
         public static extern void RtlZeroMemory([Out] IntPtr ptr, [In] UIntPtr cnt);
 
         [DllImport("dokan2.dll", ExactSpelling = true)]
-        [return: MarshalAs(UnmanagedType.I8)]
-        public static extern long DokanNtStatusFromWin32([In][MarshalAs(UnmanagedType.U4)] uint Error);
-
-        [DllImport("dokan2.dll", ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.U8)]
         public static extern ulong DokanVersion();
 
