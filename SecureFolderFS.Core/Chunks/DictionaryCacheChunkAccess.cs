@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.BufferHolders;
+﻿using SecureFolderFS.Core.Buffers;
 using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.Sdk.Tracking;
@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.Chunks
     /// <inheritdoc cref="IChunkAccess"/>
     internal sealed class DictionaryCacheChunkAccess : BaseChunkAccess
     {
-        private readonly ConcurrentDictionary<long, CleartextChunkBuffer> _chunkCache;
+        private readonly ConcurrentDictionary<long, ChunkBuffer> _chunkCache;
 
         public DictionaryCacheChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatsTracker? statsTracker)
             : base(chunkReader, chunkWriter, contentCrypt, statsTracker)
@@ -89,7 +89,7 @@ namespace SecureFolderFS.Core.Chunks
             _chunkCache.Clear();
         }
 
-        private CleartextChunkBuffer? GetChunk(long chunkNumber)
+        private ChunkBuffer? GetChunk(long chunkNumber)
         {
             if (!_chunkCache.TryGetValue(chunkNumber, out var cleartextChunk))
             {
@@ -106,7 +106,7 @@ namespace SecureFolderFS.Core.Chunks
                     return null;
 
                 // Create cleartext and set it to cache
-                cleartextChunk = new CleartextChunkBuffer(buffer, read);
+                cleartextChunk = new ChunkBuffer(buffer, read);
                 SetChunk(chunkNumber, cleartextChunk);
             }
             else
@@ -121,7 +121,7 @@ namespace SecureFolderFS.Core.Chunks
             return cleartextChunk;
         }
 
-        private void SetChunk(long chunkNumber, CleartextChunkBuffer cleartextChunk)
+        private void SetChunk(long chunkNumber, ChunkBuffer cleartextChunk)
         {
             if (_chunkCache.Count >= Constants.IO.MAX_CACHED_CHUNKS)
             {

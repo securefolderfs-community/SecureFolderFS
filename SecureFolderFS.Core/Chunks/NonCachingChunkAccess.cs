@@ -1,9 +1,9 @@
 ﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
-using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.Sdk.Tracking;
 using System;
 using System.Buffers;
+using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Chunks
 {
@@ -85,7 +85,7 @@ namespace SecureFolderFS.Core.Chunks
             var cleartextChunk = new byte[contentCrypt.ChunkCleartextSize];
             var read = chunkReader.ReadChunk(chunkNumber, cleartextChunk);
             if (read == -1)
-                throw new UnauthenticChunkException();
+                throw new CryptographicException();
 
             var newLengthCleartextChunk = cleartextChunk.AsSpan(0, Math.Min(read, length));
 

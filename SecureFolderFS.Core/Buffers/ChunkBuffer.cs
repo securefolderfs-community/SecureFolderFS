@@ -1,15 +1,15 @@
 ﻿using SecureFolderFS.Shared.Helpers;
 
-namespace SecureFolderFS.Core.BufferHolders
+namespace SecureFolderFS.Core.Buffers
 {
     /// <inheritdoc cref="BufferHolder"/>
-    internal sealed class CleartextChunkBuffer : BufferHolder
+    internal sealed class ChunkBuffer : BufferHolder
     {
         public bool IsDirty { get; set; }
 
         public int ActualLength { get; set; }
 
-        public CleartextChunkBuffer(byte[] buffer, int actualLength)
+        public ChunkBuffer(byte[] buffer, int actualLength)
             : base(buffer)
         {
             ActualLength = actualLength;

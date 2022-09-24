@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Paths.DirectoryMetadata;
+﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Security;
 using SecureFolderFS.Core.Sdk.Tracking;
 

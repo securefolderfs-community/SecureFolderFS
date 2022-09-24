@@ -1,7 +1,7 @@
-﻿using SecureFolderFS.Core.Helpers;
+﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Sdk.Tracking;
-using SecureFolderFS.Core.Security;
 
 namespace SecureFolderFS.Core.FileNames.Receivers
 {
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.FileNames.Receivers
         {
             fileSystemStatsTracker?.AddFileNameAccess();
 
-            var cleartextFileName = security.FileNameCryptor.DecryptFileName(
+            var cleartextFileName = security.NameCrypt!.DecryptName(
                 PathHelpers.RemoveExtension(ciphertextFileName, Constants.ENCRYPTED_FILE_EXTENSION), directoryId);
 
             SetCleartextFileName(directoryId, ciphertextFileName, cleartextFileName);
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.FileNames.Receivers
         {
             fileSystemStatsTracker?.AddFileNameAccess();
 
-            var ciphertextFileName = PathHelpers.AppendExtension(security.FileNameCryptor.EncryptFileName(cleartextFileName, directoryId),
+            var ciphertextFileName = PathHelpers.AppendExtension(security.NameCrypt.EncryptName(cleartextFileName, directoryId),
                     Constants.ENCRYPTED_FILE_EXTENSION);
 
             SetCiphertextFileName(directoryId, cleartextFileName, ciphertextFileName);

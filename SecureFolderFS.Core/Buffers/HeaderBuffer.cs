@@ -1,18 +1,18 @@
 ﻿using SecureFolderFS.Shared.Helpers;
 
-namespace SecureFolderFS.Core.BufferHolders
+namespace SecureFolderFS.Core.Buffers
 {
     /// <inheritdoc cref="BufferHolder"/>
-    internal sealed class CleartextHeaderBuffer : BufferHolder
+    internal sealed class HeaderBuffer : BufferHolder
     {
         public bool IsHeaderReady { get; set; }
 
-        public CleartextHeaderBuffer(byte[] buffer)
+        public HeaderBuffer(byte[] buffer)
             : base(buffer)
         {
         }
 
-        public CleartextHeaderBuffer(int bufferLength)
+        public HeaderBuffer(int bufferLength)
             : base(bufferLength)
         {
         }

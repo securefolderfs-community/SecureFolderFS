@@ -70,7 +70,7 @@ namespace SecureFolderFS.Core.Chunks
                 return -1;
             }
 
-            return read - _security.ContentCrypt.ChunkCiphertextOverheadSize;
+            return read - (_security.ContentCrypt.ChunkCiphertextSize - _security.ContentCrypt.ChunkCleartextSize);
         }
 
         /// <inheritdoc/>

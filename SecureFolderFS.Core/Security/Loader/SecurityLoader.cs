@@ -1,21 +1,22 @@
-﻿using SecureFolderFS.Core.Enums;
+﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.ContentCrypt;
+using SecureFolderFS.Core.Cryptography.HeaderCrypt;
+using SecureFolderFS.Core.Cryptography.NameCrypt;
+using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Core.Security.Cipher;
-using SecureFolderFS.Core.Security.ContentCrypt.FileContent;
-using SecureFolderFS.Core.Security.ContentCrypt.FileHeader;
-using SecureFolderFS.Core.Security.ContentCrypt.FileName;
 using SecureFolderFS.Core.VaultDataStore.VaultConfiguration;
 
 namespace SecureFolderFS.Core.Security.Loader
 {
-    internal sealed class SecurityLoader : ISecurityLoader
+    internal sealed class SecurityLoader
     {
         public ISecurity LoadSecurity(BaseVaultConfiguration vaultConfiguration, ICipherProvider cipherProvider, MasterKey masterKeyCopy)
         {
             IContentCrypt contentCrypt;
             IHeaderCrypt headerCrypt;
-            IFileNameCryptor? fileNameCryptor;
+            INameCrypt? nameCrypt;
 
             // IContentCrypt, IHeaderCrypt
             switch (vaultConfiguration.ContentCipherScheme)
@@ -45,11 +46,11 @@ namespace SecureFolderFS.Core.Security.Loader
             switch (vaultConfiguration.FileNameCipherScheme)
             {
                 case FileNameCipherScheme.AES_SIV:
-                    fileNameCryptor = new AesSivNameCryptor(cipherProvider, masterKeyCopy);
+                    nameCrypt = new AesSivNameCryptor(cipherProvider, masterKeyCopy);
                     break;
 
                 case FileNameCipherScheme.None:
-                    fileNameCryptor = null;
+                    nameCrypt = null;
                     break;
 
                 case FileNameCipherScheme.Undefined:
@@ -57,7 +58,7 @@ namespace SecureFolderFS.Core.Security.Loader
                     throw new UndefinedCipherSchemeException(nameof(FileNameCipherScheme));
             }
 
-            return new Security(cipherProvider, contentCrypt, headerCrypt, fileNameCryptor);
+            return new Security(cipherProvider, contentCrypt, headerCrypt, nameCrypt);
         }
     }
 }

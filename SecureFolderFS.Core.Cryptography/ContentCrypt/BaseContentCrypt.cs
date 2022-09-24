@@ -16,9 +16,6 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public abstract int ChunkCiphertextSize { get; }
 
-        /// <inheritdoc/>
-        public virtual int ChunkCiphertextOverheadSize => ChunkCiphertextSize - ChunkCleartextSize;
-
         protected BaseContentCrypt(ICipherProvider cipherProvider)
         {
             this.cipherProvider = cipherProvider;

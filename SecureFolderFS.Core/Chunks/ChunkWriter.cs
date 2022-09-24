@@ -1,9 +1,9 @@
-﻿using SecureFolderFS.Core.BufferHolders;
+﻿using SecureFolderFS.Core.Buffers;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem.Chunks;
+using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.Sdk.Tracking;
-using SecureFolderFS.Core.Streams.Management;
 using System;
 using System.Buffers;
 
@@ -13,15 +13,15 @@ namespace SecureFolderFS.Core.Chunks
     internal sealed class ChunkWriter : IChunkWriter
     {
         private readonly ISecurity _security;
-        private readonly CleartextHeaderBuffer _fileHeader;
-        private readonly CiphertextStreamsManager _ciphertextStreamsManager;
+        private readonly HeaderBuffer _fileHeader;
+        private readonly IStreamsManager _streamsManager;
         private readonly IFileSystemStatsTracker? _fileSystemStatsTracker;
 
-        public ChunkWriter(ISecurity security, CleartextHeaderBuffer fileHeader, CiphertextStreamsManager ciphertextStreamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
+        public ChunkWriter(ISecurity security, HeaderBuffer fileHeader, IStreamsManager streamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
         {
             _security = security;
             _fileHeader = fileHeader;
-            _ciphertextStreamsManager = ciphertextStreamsManager;
+            _streamsManager = streamsManager;
             _fileSystemStatsTracker = fileSystemStatsTracker;
         }
 
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Core.Chunks
         public void WriteChunk(long chunkNumber, ReadOnlySpan<byte> cleartextChunk)
         {
             // Calculate size of ciphertext
-            var ciphertextSize = Math.Min(cleartextChunk.Length + _security.ContentCrypt.ChunkCiphertextOverheadSize, _security.ContentCrypt.ChunkCiphertextSize);
+            var ciphertextSize = Math.Min(cleartextChunk.Length + (_security.ContentCrypt.ChunkCiphertextSize - _security.ContentCrypt.ChunkCleartextSize), _security.ContentCrypt.ChunkCiphertextSize);
 
             // Calculate position in ciphertext stream
             var streamPosition = _security.HeaderCrypt.HeaderCiphertextSize + chunkNumber * _security.ContentCrypt.ChunkCiphertextSize;
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.Chunks
             _fileSystemStatsTracker?.AddBytesEncrypted(cleartextChunk.Length);
 
             // Get and write to ciphertext stream
-            var ciphertextStream = _ciphertextStreamsManager.GetReadWriteStream();
+            var ciphertextStream = _streamsManager.GetReadWriteStream();
             _ = ciphertextStream ?? throw new UnavailableStreamException();
             ciphertextStream.Position = streamPosition;
             ciphertextStream.Write(realCiphertextChunk);
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Core.Chunks
         /// <inheritdoc/>
         public void Dispose()
         {
-            _ciphertextStreamsManager.Dispose();
+            _streamsManager.Dispose();
         }
     }
 }

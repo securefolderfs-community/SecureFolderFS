@@ -6,18 +6,18 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 {
     internal sealed class DokanyWrapper
     {
+        private readonly Dokan _dokan;
         private readonly BaseDokanCallbacks _dokanCallbacks;
-        private Dokan? _dokan;
         private DokanInstance? _dokanInstance;
 
         public DokanyWrapper(BaseDokanCallbacks dokanCallbacks)
         {
+            _dokan = new(new NullLogger());
             _dokanCallbacks = dokanCallbacks;
         }
 
         public void StartFileSystem(string mountPoint)
         {
-            _dokan = new(new NullLogger());
             var dokanBuilder = new DokanInstanceBuilder(_dokan)
                 .ConfigureOptions(opt =>
                 {
@@ -32,9 +32,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public bool CloseFileSystem(FileSystemCloseMethod closeMethod)
         {
             _ = closeMethod; // TODO: Implement close method
-
             _dokanInstance?.Dispose();
-            _dokan?.Dispose();
 
             return true;
         }

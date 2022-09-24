@@ -1,8 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Paths.DirectoryMetadata;
 using SecureFolderFS.Core.Sdk.Tracking;
-using SecureFolderFS.Core.Security;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace SecureFolderFS.Core.FileNames.Receivers

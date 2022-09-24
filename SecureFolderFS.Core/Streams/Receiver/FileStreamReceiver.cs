@@ -1,5 +1,7 @@
-﻿using SecureFolderFS.Core.FileSystem.OpenCryptoFiles;
-using SecureFolderFS.Core.Security;
+﻿using SecureFolderFS.Core.Buffers;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.CryptFiles;
+using SecureFolderFS.Core.FileSystem.Streams;
 using System;
 using System.IO;
 
@@ -8,31 +10,33 @@ namespace SecureFolderFS.Core.Streams.Receiver
     internal sealed class FileStreamReceiver : IFileStreamReceiver
     {
         private readonly ISecurity _security;
-        private readonly OpenCryptFileReceiver _openCryptFileReceiver;
+        private readonly ICryptFileManager _cryptFileManager;
 
-        public FileStreamReceiver(ISecurity security, OpenCryptFileReceiver openCryptFileReceiver)
+        public FileStreamReceiver(ISecurity security, ICryptFileManager cryptFileManager)
         {
             _security = security;
-            _openCryptFileReceiver = openCryptFileReceiver;
+            _cryptFileManager = cryptFileManager;
         }
 
         /// <inheritdoc/>
-        public Stream OpenCleartextStream(string ciphertextPath, Stream ciphertextStream)
+        public CleartextStream? OpenCleartextStream(string ciphertextPath, Stream ciphertextStream)
         {
-            CleartextFileStream? cleartextStream = null;
             try
             {
-                var openCryptFile = _openCryptFileReceiver.TryGet(ciphertextPath) ?? _openCryptFileReceiver.Create(ciphertextPath, new(_security.HeaderCrypt.HeaderCleartextSize));
-                cleartextStream = new CleartextFileStream(_security, openCryptFile.ChunkAccess, ciphertextStream, openCryptFile.FileHeader);
+                // Get or create encrypted file from the file system
+                var openCryptFile = _cryptFileManager.TryGet(ciphertextPath)
+                                    ?? _cryptFileManager.CreateNew(ciphertextPath, new HeaderBuffer(_security.HeaderCrypt.HeaderCleartextSize));
 
-                openCryptFile.RegisterStream(cleartextStream, ciphertextStream);
+                // Check if something went wrong
+                if (openCryptFile is null)
+                    return null;
 
-                return cleartextStream;
+                // Open a new stream for that file registering existing ciphertext stream
+                return openCryptFile.OpenStream(ciphertextStream);
             }
             catch (Exception)
             {
                 ciphertextStream.Dispose();
-                cleartextStream?.Dispose();
                 throw;
             }
         }
@@ -40,7 +44,7 @@ namespace SecureFolderFS.Core.Streams.Receiver
         /// <inheritdoc/>
         public void Dispose()
         {
-            _openCryptFileReceiver.Dispose();
+            _cryptFileManager.Dispose();
         }
     }
 }

@@ -1,26 +1,43 @@
-﻿using SecureFolderFS.Core.FileSystem.CryptFiles;
-using SecureFolderFS.Shared.Helpers;
-using System;
+﻿using SecureFolderFS.Core.Buffers;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Chunks;
+using SecureFolderFS.Core.FileSystem.CryptFiles;
+using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.Streams;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.CryptFiles
 {
-    /// <inheritdoc cref="IOpenCryptFileManager"/>
-    internal sealed class OpenCryptFileManager : BaseOpenCryptFileManager
+    /// <inheritdoc cref="ICryptFileManager"/>
+    internal sealed class OpenCryptFileManager : BaseCryptFileManager
     {
-        /// <inheritdoc/>
-        protected override IOpenCryptFile GetOpenCryptFile(BufferHolder headerBuffer)
-        {
-            var streamsManager = new StreamsManager();
-            var chunkAccess = GetChunkAccess(streamsManager, headerBuffer);
+        private readonly ISecurity _security;
 
-            var openCryptFile = new OpenCryptFile()
+        public OpenCryptFileManager(ISecurity security)
+        {
+            _security = security;
         }
 
-        private IChunkAccess GetChunkAccess(StreamsManager streamsManager, BufferHolder headerBuffer)
+        /// <inheritdoc/>
+        protected override ICryptFile? GetCryptFile(string ciphertextPath, BufferHolder headerBuffer)
+        {
+            if (headerBuffer is not HeaderBuffer headerBuffer2)
+                return null;
+
+            var streamsManager = new StreamsManager();
+            var chunkAccess = GetChunkAccess(streamsManager, headerBuffer2);
+
+            return new OpenCryptFile(ciphertextPath, _security, headerBuffer2, chunkAccess, streamsManager, NotifyClosed);
+        }
+
+        private IChunkAccess GetChunkAccess(IStreamsManager streamsManager, HeaderBuffer headerBuffer)
         {
 
+        }
+
+        private void NotifyClosed(string ciphertextPath)
+        {
+            openCryptFiles.Remove(ciphertextPath);
         }
     }
 }
