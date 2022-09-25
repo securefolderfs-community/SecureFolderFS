@@ -1,10 +1,16 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers
 {
     public static class PathHelpers
     {
+        public static string RemoveExtension(string fileName, string extension)
+        {
+            return fileName.EndsWith(extension, StringComparison.OrdinalIgnoreCase) ? fileName.Remove(fileName.Length - extension.Length) : fileName;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsCoreFile(string fileName)
         {
@@ -15,6 +21,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
         public static string EnsureTrailingPathSeparator(string path)
         {
             return path.EndsWith(Path.DirectorySeparatorChar) ? path : path + Path.DirectorySeparatorChar;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string EnsureNoTrailingPathSeparator(string path)
+        {
+            return path.EndsWith(Path.DirectorySeparatorChar) ? path.Remove(path.Length - 1) : path;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

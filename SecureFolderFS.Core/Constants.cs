@@ -70,9 +70,6 @@
 
         internal static class IO
         {
-            public const int DIRECTORY_ID_MAX_SIZE = 16;
-
-
             public const int MAX_CACHED_CHUNKS = 6;
 
             public const int MAX_CACHED_DIRECTORY_IDS = 1000;

@@ -6,12 +6,12 @@
     public enum FileNameCachingStrategy
     {
         /// <summary>
-        /// No caching strategy is used.
+        /// No caching is used.
         /// </summary>
         NoCache = 0,
 
         /// <summary>
-        /// Simple cache based on dictionary of paths.
+        /// Simple in-memory cache of file names.
         /// </summary>
         RandomAccessMemoryCache = 1
     }

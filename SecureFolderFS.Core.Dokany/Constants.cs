@@ -2,7 +2,7 @@
 {
     public static class Constants
     {
-        internal const string DOKAN_DLL = "dokan2.dll";
+        public const string DOKAN_DLL = "dokan2.dll";
 
         internal static class FileSystem
         {

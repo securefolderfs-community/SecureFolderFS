@@ -1,9 +1,10 @@
 ﻿using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.Helpers;
 using System;
 using System.IO;
+using System.Text;
 
 namespace SecureFolderFS.Core.Paths
 {
@@ -13,8 +14,8 @@ namespace SecureFolderFS.Core.Paths
         private readonly IFileNameAccess _fileNameAccess;
         private readonly IDirectoryIdAccess _directoryIdAccess;
 
-        public CiphertextPathConverter(VaultPath vaultPath, IFileNameAccess fileNameAccess, IDirectoryIdAccess directoryIdAccess)
-            : base(vaultPath)
+        public CiphertextPathConverter(string vaultRootPath, IFileNameAccess fileNameAccess, IDirectoryIdAccess directoryIdAccess)
+            : base(vaultRootPath)
         {
             _fileNameAccess = fileNameAccess;
             _directoryIdAccess = directoryIdAccess;
@@ -44,7 +45,7 @@ namespace SecureFolderFS.Core.Paths
             if (directoryId is null)
                 return null;
 
-            return _fileNameAccess.GetCleartextName(fileName, directoryId);
+            return _fileNameAccess.GetCleartextName(fileName, directoryId).ToString();
         }
 
         private string? GetCiphertextFileName(string ciphertextFilePath)
@@ -58,15 +59,16 @@ namespace SecureFolderFS.Core.Paths
             if (directoryId is null)
                 return null;
 
-            return _fileNameAccess.GetCiphertextName(fileName, directoryId);
+            return _fileNameAccess.GetCiphertextName(fileName, directoryId).ToString();
         }
 
         private string? GetCorrectPath(string path, Func<string, string?> fileNameFunc)
         {
             var onlyPathAfterContent = path.Substring(vaultRootPath.Length, path.Length - vaultRootPath.Length);
             var correctPath = PathHelpers.EnsureTrailingPathSeparator(vaultRootPath);
+            var pathBuilder = new StringBuilder(255);
 
-            foreach (var fileName in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var item in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
                 var name = fileNameFunc(Path.Combine(correctPath, fileName));
                 if (name is null)

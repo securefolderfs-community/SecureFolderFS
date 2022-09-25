@@ -16,5 +16,8 @@ namespace SecureFolderFS.Core.FileSystem.Directories
         {
             return new DirectoryId(Guid.NewGuid().ToByteArray());
         }
+
+        public static implicit operator ReadOnlySpan<byte>(DirectoryId directoryId) => directoryId.Id;
+        public static implicit operator ReadOnlyMemory<byte>(DirectoryId directoryId) => directoryId.Id;
     }
 }

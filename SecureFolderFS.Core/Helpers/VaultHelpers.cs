@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.Helpers
 {
@@ -9,11 +8,6 @@ namespace SecureFolderFS.Core.Helpers
     {
         public static char GetUnusedMountLetter()
         {
-            if (!CompatibilityHelpers.IsPlatformWindows)
-            {
-                return char.MinValue;
-            }
-
             var occupiedLetters = Directory.GetLogicalDrives().Select(item => item[0]);
             var availableLetters = Constants.ALPHABET.ToCharArray().Skip(3).Except(occupiedLetters); // Skip C and A, B - these are reserved for floppy disks and should not be used
 
@@ -25,7 +19,7 @@ namespace SecureFolderFS.Core.Helpers
             Func<TVaultFileDiscoverer> builtinFileDiscovererInitializationCallback,
             Func<TVaultFileDiscoverer, Stream> openStreamToVaultFile,
             bool useExternalDiscoverer = false,
-            TVaultFileDiscoverer vaultFileDiscoverer = null) where TVaultFileDiscoverer : class
+            TVaultFileDiscoverer? vaultFileDiscoverer = null) where TVaultFileDiscoverer : class
         {
             bool usedDefaultDiscoverer = true;
             TVaultFileDiscoverer appropriateDiscoverer;

@@ -23,19 +23,25 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public virtual string EncryptName(string cleartextName, ReadOnlySpan<byte> directoryId)
+        public virtual string EncryptName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
         {
-            var cleartextNameBuffer = Encoding.UTF8.GetBytes(cleartextName);
-            var ciphertextNameBuffer = EncryptFileName(cleartextNameBuffer, directoryId);
+            // Allocate byte* for encoding
+            Span<byte> bytes = stackalloc byte[Encoding.UTF8.GetByteCount(cleartextName)];
 
-            return EncodingHelpers.WithBase64UrlEncoding(Convert.ToBase64String(ciphertextNameBuffer));
+            // Get bytes from cleartext name
+            var count = Encoding.UTF8.GetBytes(cleartextName, bytes);
+
+            // Encrypt
+            var encryptedName = EncryptFileName(bytes.Slice(0, count), directoryId);
+
+            // Encode with url64
+            return EncodingHelpers.EncodeBaseUrl64(Convert.ToBase64String(encryptedName));
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
-        public virtual string? DecryptName(string ciphertextName, ReadOnlySpan<byte> directoryId)
+        public virtual string? DecryptName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            var ciphertextNameBuffer = Convert.FromBase64String(EncodingHelpers.WithoutBase64UrlEncoding(ciphertextName));
+            var ciphertextNameBuffer = Convert.FromBase64String(EncodingHelpers.DecodeBaseUrl64(ciphertextName.ToString()));
             var cleartextNameBuffer = DecryptFileName(ciphertextNameBuffer, directoryId);
             if (cleartextNameBuffer is null)
                 return null;

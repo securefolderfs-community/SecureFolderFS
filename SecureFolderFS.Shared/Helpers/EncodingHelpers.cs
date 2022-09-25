@@ -2,21 +2,20 @@
 {
     public static class EncodingHelpers
     {
-        private static readonly char[] base64Padding = { '=' };
-
-        public static string WithBase64UrlEncoding(string base64string)
+        public static string EncodeBaseUrl64(string str)
         {
-            return base64string.TrimEnd(base64Padding).Replace('+', '-').Replace('/', '_');
+            var trimmedStr = str.TrimEnd('=');
+            return trimmedStr.Replace('/', '_').Replace('+', '-');
         }
 
-        public static string WithoutBase64UrlEncoding(string base64Urlstring)
+        public static string DecodeBaseUrl64(string encoded)
         {
-            var base64string = base64Urlstring.Replace('_', '/').Replace('-', '+');
-            return (base64string.Length % 4) switch
+            var decoded = encoded.Replace('_', '/').Replace('-', '+');
+            return (decoded.Length % 4) switch
             {
-                2 => base64string += "==",
-                3 => base64string += "=",
-                _ => base64string
+                2 => decoded + "==",
+                3 => decoded + "=",
+                _ => decoded
             };
         }
     }

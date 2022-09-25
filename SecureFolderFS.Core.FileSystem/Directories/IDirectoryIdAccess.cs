@@ -6,7 +6,7 @@ namespace SecureFolderFS.Core.FileSystem.Directories
     /// <summary>
     /// Accesses directory IDs found on the encrypting file system.
     /// </summary>
-    public interface IDirectoryIdAccess // TODO: In impl, always append id filename
+    public interface IDirectoryIdAccess
     {
         /// <summary>
         /// Gets the directory ID of provided <paramref name="ciphertextPath"/> directory path.
