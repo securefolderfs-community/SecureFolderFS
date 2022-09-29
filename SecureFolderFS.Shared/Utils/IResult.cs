@@ -33,6 +33,9 @@ namespace SecureFolderFS.Shared.Utils
     /// <inheritdoc cref="IResult"/>
     public interface IResultWithMessage : IResult
     {
+        /// <summary>
+        /// Gets formatted display message describing result of the action.
+        /// </summary>
         string? Message { get; }
     }
 

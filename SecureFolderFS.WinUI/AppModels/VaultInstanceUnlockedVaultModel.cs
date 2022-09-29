@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using SecureFolderFS.Core.Instance;
+﻿using SecureFolderFS.Core.Instance;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.AppModels
 {

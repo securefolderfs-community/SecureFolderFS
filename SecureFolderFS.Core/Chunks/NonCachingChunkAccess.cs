@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Chunks;
-using SecureFolderFS.Core.Sdk.Tracking;
 using System;
 using System.Buffers;
 using System.Security.Cryptography;

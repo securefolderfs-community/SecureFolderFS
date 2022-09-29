@@ -6,8 +6,8 @@ namespace SecureFolderFS.Core.Paths
     {
         // Paths are not encrypted so we use the same path for every return value (ciphertext == cleartext)
 
-        public CleartextPathConverter(VaultPath vaultPath)
-            : base(vaultPath)
+        public CleartextPathConverter(string vaultRootPath)
+            : base(vaultRootPath)
         {
         }
 

@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
-using SecureFolderFS.Core.Sdk.Tracking;
 using System;
 using System.IO;
 

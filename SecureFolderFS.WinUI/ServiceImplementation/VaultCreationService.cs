@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Enums;
+﻿using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.VaultCreator.Routine;
 using SecureFolderFS.Sdk.Models;
@@ -13,7 +9,10 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
-using SecureFolderFS.WinUI.AppModels;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {

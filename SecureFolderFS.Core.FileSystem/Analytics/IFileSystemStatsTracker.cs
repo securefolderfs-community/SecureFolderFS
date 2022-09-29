@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SecureFolderFS.Core.Sdk.Tracking
+namespace SecureFolderFS.Core.FileSystem.Analytics
 {
     /// <summary>
     /// Provides module for reporting live vault statistics.

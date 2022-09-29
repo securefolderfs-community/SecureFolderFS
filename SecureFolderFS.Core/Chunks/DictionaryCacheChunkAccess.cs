@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.Buffers;
 using SecureFolderFS.Core.Cryptography.ContentCrypt;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Chunks;
-using SecureFolderFS.Core.Sdk.Tracking;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -46,7 +46,7 @@ namespace SecureFolderFS.Core.Chunks
                 return -1;
 
             // Update state of chunk
-            cleartextChunk.IsDirty = true;
+            cleartextChunk.WasModified = true;
 
             // Copy to chunk
             var count = Math.Min(contentCrypt.ChunkCleartextSize - offsetInChunk, source.Length);
@@ -73,7 +73,7 @@ namespace SecureFolderFS.Core.Chunks
             if (cleartextChunk.ActualLength > length)
             {
                 cleartextChunk.ActualLength = length;
-                cleartextChunk.IsDirty = true;
+                cleartextChunk.WasModified = true;
             }
         }
 
@@ -82,7 +82,7 @@ namespace SecureFolderFS.Core.Chunks
         {
             foreach (var item in _chunkCache)
             {
-                if (item.Value.IsDirty)
+                if (item.Value.WasModified)
                     chunkWriter.WriteChunk(item.Key, item.Value.Buffer.AsSpan(0, item.Value.ActualLength));
             }
 
@@ -129,7 +129,7 @@ namespace SecureFolderFS.Core.Chunks
                 var chunkNumberToRemove = _chunkCache.Keys.First();
 
                 // Write chunk
-                if (_chunkCache.TryRemove(chunkNumberToRemove, out var removedChunk) && removedChunk.IsDirty)
+                if (_chunkCache.TryRemove(chunkNumberToRemove, out var removedChunk) && removedChunk.WasModified)
                 {
                     var realRemovedChunk = removedChunk.Buffer.AsSpan(0, removedChunk.ActualLength);
                     chunkWriter.WriteChunk(chunkNumberToRemove, realRemovedChunk);

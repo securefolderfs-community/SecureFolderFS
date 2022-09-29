@@ -1,10 +1,8 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.Helpers;
-using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Directories;
-using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using System;
@@ -15,30 +13,24 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
-using SecureFolderFS.Core.FileSystem.Enums;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
 {
-    internal class DokanyCallbacks : BaseDokanCallbacks, IDokanOperationsUnsafe
+    internal class OnDeviceDokany : BaseDokanyCallbacks, IDokanOperationsUnsafe
     {
-        private DriveInfo? _vaultDriveInfo;
-        private int _vaultDriveInfoTries;
-
         // TODO: Add required modifier
-        public DokanyVolumeModel VolumeModel { get; init; }
-
         public ISecurity Security { get; init; }
 
         public IDirectoryIdAccess DirectoryIdAccess { get; init; }
 
-        public DokanyCallbacks(string vaultRootPath, IPathConverter pathConverter, HandlesManager handlesManager)
+        public OnDeviceDokany(string vaultRootPath, IPathConverter pathConverter, HandlesManager handlesManager)
             : base(vaultRootPath, pathConverter, handlesManager)
         {
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus CreateFile(string fileName, DokanNet.FileAccess access, FileShare share, FileMode mode,
+        public override NtStatus CreateFile(string fileName, DokanNet.FileAccess access, FileShare share, FileMode mode,
             FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
             var ciphertextPath = GetCiphertextPath(fileName);
@@ -208,7 +200,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual void Cleanup(string fileName, IDokanFileInfo info)
+        public override void Cleanup(string fileName, IDokanFileInfo info)
         {
             handlesManager.CloseHandle(GetContextValue(info));
             InvalidateContext(info);
@@ -236,47 +228,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual void CloseFile(string fileName, IDokanFileInfo info)
-        {
-            _ = fileName;
-
-            CloseHandle(info);
-            InvalidateContext(info);
-        }
-
-        /// <inheritdoc/>
-        public NtStatus ReadFile(string fileName, byte[] buffer, out int bytesRead, long offset, IDokanFileInfo info)
-        {
-            bytesRead = 0;
-            return DokanResult.NotImplemented;
-        }
-
-        /// <inheritdoc/>
-        public NtStatus WriteFile(string fileName, byte[] buffer, out int bytesWritten, long offset, IDokanFileInfo info)
-        {
-            bytesWritten = 0;
-            return DokanResult.NotImplemented;
-        }
-
-        /// <inheritdoc/>
-        public virtual NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
-        {
-            if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
-                return DokanResult.InvalidHandle;
-
-            try
-            {
-                fileHandle.FileStream.Flush();
-                return DokanResult.Success;
-            }
-            catch (IOException)
-            {
-                return DokanResult.DiskFull;
-            }
-        }
-
-        /// <inheritdoc/>
-        public virtual NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
+        public override NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info)
         {
             try
             {
@@ -328,13 +280,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
-        {
-            return FindFilesWithPattern(fileName, "*", out files, info);
-        }
-
-        /// <inheritdoc/>
-        public virtual NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files, IDokanFileInfo info)
+        public override NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files, IDokanFileInfo info)
         {
             try
             {
@@ -375,7 +321,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
+        public override NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info)
         {
             try
             {
@@ -408,7 +354,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime,
+        public override NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime,
             IDokanFileInfo info)
         {
             try
@@ -419,7 +365,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     var lat = lastAccessTime?.ToFileTime() ?? 0L;
                     var lwt = lastWriteTime?.ToFileTime() ?? 0L;
 
-                    if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
+                    if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
                     {
                         if (fileHandle.SetFileTime(ref ct, ref lat, ref lwt))
                             return DokanResult.Success;
@@ -462,7 +408,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus DeleteFile(string fileName, IDokanFileInfo info)
+        public override NtStatus DeleteFile(string fileName, IDokanFileInfo info)
         {
             var ciphertextPath = GetCiphertextPath(fileName);
 
@@ -480,7 +426,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
+        public override NtStatus DeleteDirectory(string fileName, IDokanFileInfo info)
         {
             var canDelete = true;
             var ciphertextPath = GetCiphertextPath(fileName);
@@ -500,7 +446,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
+        public override NtStatus MoveFile(string oldName, string newName, bool replace, IDokanFileInfo info)
         {
             var oldCiphertextPath = GetCiphertextPath(oldName);
             var newCiphertextPath = GetCiphertextPath(newName);
@@ -579,17 +525,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
+        public override NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
         {
             try
             {
-                if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
-                {
-                    fileHandle.FileStream.SetLength(length);
-                    return DokanResult.Success;
-                }
-
-                return DokanResult.InvalidHandle;
+                return base.SetEndOfFile(fileName, length, info);
             }
             catch (IOException ioEx)
             {
@@ -601,17 +541,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus SetAllocationSize(string fileName, long length, IDokanFileInfo info)
-        {
-            return SetEndOfFile(fileName, length, info);
-        }
-
-        /// <inheritdoc/>
-        public virtual NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
+        public override NtStatus LockFile(string fileName, long offset, long length, IDokanFileInfo info)
         {
             try
             {
-                if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
+                if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
                     fileHandle.Lock(offset, length);
                     return DokanResult.Success;
@@ -626,11 +560,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
+        public override NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info)
         {
             try
             {
-                if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
+                if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
                     fileHandle.Unlock(offset, length);
                     return DokanResult.Success;
@@ -645,36 +579,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes,
-            IDokanFileInfo info)
-        {
-            if (_vaultDriveInfo is null && _vaultDriveInfoTries < Constants.FileSystem.MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP)
-            {
-                _vaultDriveInfoTries++;
-                _vaultDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => di.IsReady && string.Equals(di.RootDirectory.Name, Path.GetPathRoot(vaultRootPath), StringComparison.OrdinalIgnoreCase));
-            }
-
-            freeBytesAvailable = _vaultDriveInfo?.TotalFreeSpace ?? 0L;
-            totalNumberOfBytes = _vaultDriveInfo?.TotalSize ?? 0L;
-            totalNumberOfFreeBytes = _vaultDriveInfo?.AvailableFreeSpace ?? 0L;
-
-            return DokanResult.Success;
-        }
-
-        /// <inheritdoc/>
-        public virtual NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName,
-            out uint maximumComponentLength, IDokanFileInfo info)
-        {
-            volumeLabel = VolumeModel.VolumeName;
-            fileSystemName = VolumeModel.FileSystemName;
-            maximumComponentLength = VolumeModel.MaximumComponentLength;
-            features = VolumeModel.FileSystemFeatures;
-
-            return DokanResult.Success;
-        }
-
-        /// <inheritdoc/>
-        public virtual NtStatus GetFileSecurity(string fileName, out FileSystemSecurity? security, AccessControlSections sections,
+        public override NtStatus GetFileSecurity(string fileName, out FileSystemSecurity? security, AccessControlSections sections,
             IDokanFileInfo info)
         {
             try
@@ -709,7 +614,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections,
+        public override NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections,
             IDokanFileInfo info)
         {
             try
@@ -745,72 +650,12 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus Mounted(string mountPoint, IDokanFileInfo info)
-        {
-            return DokanResult.Success;
-        }
-
-        /// <inheritdoc/>
-        public virtual NtStatus Unmounted(IDokanFileInfo info)
-        {
-            return DokanResult.Success;
-        }
-
-        /// <inheritdoc/>
-        public virtual NtStatus FindStreams(string fileName, out IList<FileInformation> streams, IDokanFileInfo info)
-        {
-            streams = Array.Empty<FileInformation>();
-            return DokanResult.NotImplemented;
-        }
-
-        /// <inheritdoc/>
-        public virtual unsafe NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset,
+        public override NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset,
             IDokanFileInfo info)
         {
-            var ciphertextPath = GetCiphertextPath(fileName);
-            var contextHandle = Constants.FileSystem.INVALID_HANDLE;
-            var openedNewHandle = false;
-
-            // Memory-mapped
-            if (IsContextInvalid(info) || handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
-            {
-                // Invalid handle...
-                contextHandle = handlesManager.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
-                fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle)!;
-                openedNewHandle = true;
-            }
-
             try
             {
-                // Check EOF
-                if (offset >= fileHandle.FileStream.Length)
-                {
-                    bytesRead = 0;
-                    return FileSystem.Constants.FILE_EOF;
-                }
-                else
-                    fileHandle.FileStream.Position = offset;
-
-                // Read file
-                var bufferSpan = new Span<byte>(buffer.ToPointer(), (int)bufferLength);
-                bytesRead = fileHandle.FileStream.Read(bufferSpan);
-
-                return DokanResult.Success;
-            }
-            catch (PathTooLongException)
-            {
-                bytesRead = 0;
-                return DokanResult.InvalidName;
-            }
-            catch (CryptographicException)
-            {
-                bytesRead = 0;
-                return NtStatus.CrcError;
-            }
-            catch (UnavailableStreamException)
-            {
-                bytesRead = 0;
-                return NtStatus.HandleNoLongerValid;
+                return base.ReadFile(fileName, buffer, bufferLength, out bytesRead, offset, info);
             }
             catch (IOException ioEx)
             {
@@ -830,63 +675,15 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                 return DokanResult.InternalError;
             }
-            finally
-            {
-                if (openedNewHandle)
-                    handlesManager.CloseHandle(contextHandle);
-            }
         }
 
         /// <inheritdoc/>
-        public virtual unsafe NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset,
+        public override NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset,
             IDokanFileInfo info)
         {
-            var ciphertextPath = GetCiphertextPath(fileName);
-            var appendToFile = offset == -1;
-            var contextHandle = Constants.FileSystem.INVALID_HANDLE;
-            var openedNewHandle = false;
-
-            // Memory-mapped
-            if (IsContextInvalid(info) || handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
-            {
-                // Invalid handle...
-                contextHandle = handlesManager.OpenHandleToFile(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.None, FileOptions.None);
-                fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle)!;
-                openedNewHandle = true;
-            }
-
             try
             {
-                // Align for Paging I/O
-                var alignedBytesToCopy = AlignSizeForPagingIo((int)bufferLength, offset, fileHandle.FileStream.Length, info);
-
-                // Align position for offset
-                var alignedPosition = appendToFile ? fileHandle.FileStream.Length : offset;
-
-                // Align position
-                fileHandle.FileStream.Position = alignedPosition;
-
-                // Write file
-                var bufferSpan = new ReadOnlySpan<byte>(buffer.ToPointer(), alignedBytesToCopy);
-                fileHandle.FileStream.Write(bufferSpan);
-                bytesWritten = alignedBytesToCopy;
-                
-                return DokanResult.Success;
-            }
-            catch (PathTooLongException)
-            {
-                bytesWritten = 0;
-                return DokanResult.InvalidName;
-            }
-            catch (CryptographicException)
-            {
-                bytesWritten = 0;
-                return NtStatus.CrcError;
-            }
-            catch (UnavailableStreamException)
-            {
-                bytesWritten = 0;
-                return NtStatus.HandleNoLongerValid;
+                return base.WriteFile(fileName, buffer, bufferLength, out bytesWritten, offset, info);
             }
             catch (IOException ioEx)
             {
@@ -906,28 +703,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 Debugger.Break();
                 return DokanResult.InternalError;
             }
-            finally
-            {
-                if (openedNewHandle)
-                    handlesManager.CloseHandle(contextHandle);
-            }
-        }
-
-        private static int AlignSizeForPagingIo(int bufferLength, long offset, long streamLength, IDokanFileInfo info)
-        {
-            if (info.PagingIo)
-            {
-                var longDistanceToEnd = streamLength - offset;
-                if (longDistanceToEnd > int.MaxValue)
-                    return bufferLength;
-
-                if (longDistanceToEnd < bufferLength)
-                    return (int)longDistanceToEnd;
-
-                return bufferLength;
-            }
-
-            return bufferLength;
         }
     }
 }

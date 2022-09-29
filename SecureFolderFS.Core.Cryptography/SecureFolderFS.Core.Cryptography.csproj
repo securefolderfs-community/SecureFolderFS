@@ -11,4 +11,8 @@
     <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CryptAlg\" />
+  </ItemGroup>
+
 </Project>

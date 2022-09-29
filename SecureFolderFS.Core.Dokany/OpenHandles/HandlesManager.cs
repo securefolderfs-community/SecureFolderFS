@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
                 cleartextStream.Flush();
 
             // Create handle
-            var fileHandle = new FileHandle(cleartextStream);
+            var fileHandle = new Win32FileHandle(cleartextStream); // TODO: For now it's Win32FileHandle
             var handle = _handleGenerator.ThreadSafeIncrementAndGet();
 
             // Add handle and return

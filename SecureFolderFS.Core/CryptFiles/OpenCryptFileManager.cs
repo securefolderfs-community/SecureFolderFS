@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Buffers;
+﻿using System;
+using SecureFolderFS.Core.Buffers;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.CryptFiles;
@@ -32,7 +33,7 @@ namespace SecureFolderFS.Core.CryptFiles
 
         private IChunkAccess GetChunkAccess(IStreamsManager streamsManager, HeaderBuffer headerBuffer)
         {
-
+            throw new NotImplementedException(); // TODO: Implement this method
         }
 
         private void NotifyClosed(string ciphertextPath)

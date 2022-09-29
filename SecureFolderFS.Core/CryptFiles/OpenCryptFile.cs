@@ -54,7 +54,7 @@ namespace SecureFolderFS.Core.CryptFiles
             _streamsManager.AddStream(ciphertextStream);
 
             // Open the cleartext stream
-            return new CleartextFileStream(_security, _chunkAccess, _headerBuffer, ciphertextStream, NotifyClosed);
+            return new CleartextFileStream(ciphertextStream, _security, _chunkAccess, _headerBuffer, NotifyClosed);
         }
 
         private void NotifyClosed(Stream ciphertextStream)

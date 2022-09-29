@@ -7,10 +7,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
     internal sealed class DokanyWrapper
     {
         private readonly Dokan _dokan;
-        private readonly BaseDokanCallbacks _dokanCallbacks;
+        private readonly BaseDokanyCallbacks _dokanCallbacks;
         private DokanInstance? _dokanInstance;
 
-        public DokanyWrapper(BaseDokanCallbacks dokanCallbacks)
+        public DokanyWrapper(BaseDokanyCallbacks dokanCallbacks)
         {
             _dokan = new(new NullLogger());
             _dokanCallbacks = dokanCallbacks;

@@ -10,6 +10,16 @@ namespace SecureFolderFS.Core.FileSystem.Streams
     /// </summary>
     public abstract class CleartextStream : Stream
     {
+        /// <summary>
+        /// Gets the underlying ciphertext stream.
+        /// </summary>
+        public Stream BaseStream { get; }
+
+        protected CleartextStream(Stream baseStream)
+        {
+            BaseStream = baseStream;
+        }
+
         /// <inheritdoc/>
         public sealed override int Read(byte[] buffer, int offset, int count)
         {
@@ -45,11 +55,5 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         {
             throw new NotSupportedException();
         }
-
-        /// <inheritdoc cref="FileStream.Lock"/>
-        public abstract void Lock(long position, long length);
-
-        /// <inheritdoc cref="FileStream.Unlock"/>
-        public abstract void Unlock(long position, long length);
     }
 }

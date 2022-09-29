@@ -1,14 +1,14 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage.Enums;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -173,7 +173,7 @@ namespace SecureFolderFS.Sdk.AppModels
                         // Write contents
                         await typeStream.WriteAsync(typeBuffer, cancellationToken);
 
-                        // Setting saved, set IsDirty to false
+                        // Setting saved, setting is no longer dirty
                         item.Value.IsDirty = false;
                     }
                     catch (Exception)

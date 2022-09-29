@@ -1,9 +1,7 @@
 ﻿using SecureFolderFS.Core.Exceptions;
-using SecureFolderFS.Core.FileSystem.FileSystemAdapter;
-using SecureFolderFS.Core.FileSystem.Operations;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Sdk.Tracking;
 using SecureFolderFS.Core.Streams.Receiver;
 
 namespace SecureFolderFS.Core.Instance.Implementation

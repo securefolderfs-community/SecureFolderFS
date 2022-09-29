@@ -5,7 +5,7 @@ namespace SecureFolderFS.Core.Exceptions
     public sealed class IncorrectPasswordException : Exception
     {
         public IncorrectPasswordException()
-            : base("The password is incorrect")
+            : base("The provided password is incorrect")
         {
         }
     }
