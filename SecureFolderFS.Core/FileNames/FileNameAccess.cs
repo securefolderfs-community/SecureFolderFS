@@ -10,10 +10,10 @@ namespace SecureFolderFS.Core.FileNames
     /// <inheritdoc cref="IFileNameAccess"/>
     internal class FileNameAccess : IFileNameAccess
     {
-        protected readonly ISecurity security;
+        protected readonly Security security;
         protected readonly IFileSystemStatsTracker? statsTracker;
 
-        public FileNameAccess(ISecurity security, IFileSystemStatsTracker? statsTracker)
+        public FileNameAccess(Security security, IFileSystemStatsTracker? statsTracker)
         {
             this.security = security;
             this.statsTracker = statsTracker;

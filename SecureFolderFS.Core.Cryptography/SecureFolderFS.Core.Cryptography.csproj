@@ -8,11 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+    <PackageReference Include="Miscreant" Version="0.3.3" />
+    <PackageReference Include="NSec.Cryptography" Version="22.4.0" />
+    <PackageReference Include="RFC3394" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CryptAlg\" />
+    <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
   </ItemGroup>
 
 </Project>

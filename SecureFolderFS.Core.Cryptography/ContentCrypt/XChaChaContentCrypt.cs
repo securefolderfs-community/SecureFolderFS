@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 using static SecureFolderFS.Core.Cryptography.Constants.Security.Chunks.XChaCha20Poly1305;
@@ -10,7 +9,7 @@ using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.X
 namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 {
     /// <inheritdoc cref="IContentCrypt"/>
-    internal sealed class XChaChaContentCrypt : BaseContentCrypt
+    public sealed class XChaChaContentCrypt : BaseContentCrypt
     {
         /// <inheritdoc/>
         public override int ChunkCleartextSize { get; } = CHUNK_CLEARTEXT_SIZE;
@@ -18,7 +17,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;
 
-        public XChaChaContentCrypt(ICipherProvider cipherProvider)
+        public XChaChaContentCrypt(CipherProvider cipherProvider)
             : base(cipherProvider)
         {
         }

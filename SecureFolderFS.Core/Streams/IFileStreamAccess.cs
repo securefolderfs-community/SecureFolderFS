@@ -2,9 +2,9 @@
 using System;
 using System.IO;
 
-namespace SecureFolderFS.Core.Streams.Receiver
+namespace SecureFolderFS.Core.Streams
 {
-    internal interface IFileStreamReceiver : IDisposable
+    internal interface IFileStreamAccess : IDisposable
     {
         /// <summary>
         /// Opens a new cleartext stream wrapping <paramref name="ciphertextStream"/>.

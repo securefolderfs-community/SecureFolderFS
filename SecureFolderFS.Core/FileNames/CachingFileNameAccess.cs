@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.FileNames
         private readonly ConcurrentDictionary<NameWithDirectoryId, ReadOnlyMemory<char>> _cleartextNames;
         private readonly ConcurrentDictionary<NameWithDirectoryId, ReadOnlyMemory<char>> _ciphertextNames;
 
-        public CachingFileNameAccess(ISecurity security, IFileSystemStatsTracker? statsTracker)
+        public CachingFileNameAccess(Security security, IFileSystemStatsTracker? statsTracker)
             : base(security, statsTracker)
         {
             _cleartextNames = new(3, Constants.IO.MAX_CACHED_CLEARTEXT_FILENAMES);

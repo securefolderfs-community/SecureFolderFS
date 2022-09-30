@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.Runtime.CompilerServices;
@@ -12,9 +11,9 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     {
         protected readonly SecretKey macKey;
         protected readonly SecretKey encryptionKey;
-        protected readonly ICipherProvider cipherProvider;
+        protected readonly CipherProvider cipherProvider;
 
-        protected BaseNameCrypt(SecretKey macKey, SecretKey encryptionKey, ICipherProvider cipherProvider)
+        protected BaseNameCrypt(SecretKey macKey, SecretKey encryptionKey, CipherProvider cipherProvider)
         {
             this.macKey = macKey;
             this.encryptionKey = encryptionKey;

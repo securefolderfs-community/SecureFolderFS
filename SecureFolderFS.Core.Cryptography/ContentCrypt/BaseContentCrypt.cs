@@ -1,13 +1,12 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using System;
+﻿using System;
 using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 {
     /// <inheritdoc cref="IContentCrypt"/>
-    internal abstract class BaseContentCrypt : IContentCrypt
+    public abstract class BaseContentCrypt : IContentCrypt
     {
-        protected readonly ICipherProvider cipherProvider;
+        protected readonly CipherProvider cipherProvider;
         protected readonly RandomNumberGenerator secureRandom;
 
         /// <inheritdoc/>
@@ -16,7 +15,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public abstract int ChunkCiphertextSize { get; }
 
-        protected BaseContentCrypt(ICipherProvider cipherProvider)
+        protected BaseContentCrypt(CipherProvider cipherProvider)
         {
             this.cipherProvider = cipherProvider;
             this.secureRandom = RandomNumberGenerator.Create();

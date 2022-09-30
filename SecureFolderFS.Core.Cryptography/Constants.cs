@@ -64,6 +64,16 @@
                 public const int MAC_KEY_LENGTH = 32;
                 public const int SALT_LENGTH = 16;
             }
+
+            internal static class CryptImpl
+            {
+                internal static class Argon2
+                {
+                    public const int DEGREE_OF_PARALLELISM = 8;
+                    public const int ITERATIONS = 8;
+                    public const int MEMORY_SIZE = 102400;
+                }
+            }
         }
     }
 }

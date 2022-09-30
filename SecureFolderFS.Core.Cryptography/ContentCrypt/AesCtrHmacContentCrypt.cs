@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
@@ -10,7 +9,7 @@ using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.A
 namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 {
     /// <inheritdoc cref="IContentCrypt"/>
-    internal sealed class AesCtrHmacContentCrypt : BaseContentCrypt
+    public sealed class AesCtrHmacContentCrypt : BaseContentCrypt
     {
         private readonly SecretKey _macKey;
 
@@ -20,7 +19,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;
 
-        public AesCtrHmacContentCrypt(SecretKey macKey, ICipherProvider cipherProvider)
+        public AesCtrHmacContentCrypt(SecretKey macKey, CipherProvider cipherProvider)
             : base(cipherProvider)
         {
             _macKey = macKey;

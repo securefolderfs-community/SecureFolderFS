@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.Helpers;
-using SecureFolderFS.Core.Streams.Receiver;
+using SecureFolderFS.Core.Streams;
 
 namespace SecureFolderFS.Core.Instance.Implementation
 {
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.Instance.Implementation
 
         internal IFileSystemStatsTracker FileSystemStatsTracker { get; set; }
 
-        internal IFileStreamReceiver FileStreamReceiver { get; set; }
+        internal IFileStreamAccess FileStreamReceiver { get; set; }
 
         internal IFileSystemAdapter FileSystemAdapter { get; set; }
 

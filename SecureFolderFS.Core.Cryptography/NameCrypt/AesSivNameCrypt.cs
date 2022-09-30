@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 
 namespace SecureFolderFS.Core.Cryptography.NameCrypt
@@ -7,7 +6,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     /// <inheritdoc cref="INameCrypt"/>
     internal sealed class AesSivNameCrypt : BaseNameCrypt
     {
-        public AesSivNameCrypt(SecretKey macKey, SecretKey encryptionKey, ICipherProvider cipherProvider)
+        public AesSivNameCrypt(SecretKey macKey, SecretKey encryptionKey, CipherProvider cipherProvider)
             : base(macKey, encryptionKey, cipherProvider)
         {
         }

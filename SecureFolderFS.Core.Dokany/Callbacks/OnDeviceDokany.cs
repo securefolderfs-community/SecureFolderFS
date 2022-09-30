@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
     internal class OnDeviceDokany : BaseDokanyCallbacks, IDokanOperationsUnsafe
     {
         // TODO: Add required modifier
-        public ISecurity Security { get; init; }
+        public Security Security { get; init; }
 
         public IDirectoryIdAccess DirectoryIdAccess { get; init; }
 

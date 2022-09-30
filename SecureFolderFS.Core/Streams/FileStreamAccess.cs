@@ -5,14 +5,14 @@ using SecureFolderFS.Core.FileSystem.Streams;
 using System;
 using System.IO;
 
-namespace SecureFolderFS.Core.Streams.Receiver
+namespace SecureFolderFS.Core.Streams
 {
-    internal sealed class FileStreamReceiver : IFileStreamReceiver
+    internal sealed class FileStreamAccess : IFileStreamAccess
     {
-        private readonly ISecurity _security;
+        private readonly Security _security;
         private readonly ICryptFileManager _cryptFileManager;
 
-        public FileStreamReceiver(ISecurity security, ICryptFileManager cryptFileManager)
+        public FileStreamAccess(Security security, ICryptFileManager cryptFileManager)
         {
             _security = security;
             _cryptFileManager = cryptFileManager;

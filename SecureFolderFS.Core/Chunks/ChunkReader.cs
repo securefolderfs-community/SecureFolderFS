@@ -13,12 +13,12 @@ namespace SecureFolderFS.Core.Chunks
     /// <inheritdoc cref="IChunkReader"/>
     internal sealed class ChunkReader : IChunkReader
     {
-        private readonly ISecurity _security;
+        private readonly Security _security;
         private readonly BufferHolder _fileHeader;
         private readonly IStreamsManager _streamsManager;
         private readonly IFileSystemStatsTracker? _fileSystemStatsTracker;
 
-        public ChunkReader(ISecurity security, BufferHolder fileHeader, IStreamsManager streamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
+        public ChunkReader(Security security, BufferHolder fileHeader, IStreamsManager streamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
         {
             _security = security;
             _fileHeader = fileHeader;

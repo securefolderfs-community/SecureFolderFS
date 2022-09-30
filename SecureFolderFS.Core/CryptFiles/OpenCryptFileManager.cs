@@ -12,9 +12,9 @@ namespace SecureFolderFS.Core.CryptFiles
     /// <inheritdoc cref="ICryptFileManager"/>
     internal sealed class OpenCryptFileManager : BaseCryptFileManager
     {
-        private readonly ISecurity _security;
+        private readonly Security _security;
 
-        public OpenCryptFileManager(ISecurity security)
+        public OpenCryptFileManager(Security security)
         {
             _security = security;
         }

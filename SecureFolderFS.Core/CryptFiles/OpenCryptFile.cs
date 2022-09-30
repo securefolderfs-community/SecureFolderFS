@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.CryptFiles
     /// <inheritdoc cref="ICryptFile"/>
     internal sealed class OpenCryptFile : ICryptFile
     {
-        private readonly ISecurity _security;
+        private readonly Security _security;
         private readonly HeaderBuffer _headerBuffer;
         private readonly IChunkAccess _chunkAccess;
         private readonly IStreamsManager _streamsManager;
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.CryptFiles
 
         public OpenCryptFile(
             string ciphertextPath,
-            ISecurity security,
+            Security security,
             HeaderBuffer headerBuffer,
             IChunkAccess chunkAccess,
             IStreamsManager streamsManager,

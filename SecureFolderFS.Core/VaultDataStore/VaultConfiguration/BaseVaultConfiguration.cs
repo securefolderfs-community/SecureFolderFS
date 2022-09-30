@@ -12,7 +12,6 @@ namespace SecureFolderFS.Core.VaultDataStore.VaultConfiguration
     public abstract class BaseVaultConfiguration : VaultVersion
     {
         private const uint UNDEFINED_CONTENT_ENCRYPTION_SCHEME = (uint)ContentCipherScheme.Undefined; // Type safety for Undefined
-
         private const uint UNDEFINED_FILENAME_ENCRYPTION_SCHEME = (uint)FileNameCipherScheme.Undefined; // Type safety for Undefined
 
         /// <summary>

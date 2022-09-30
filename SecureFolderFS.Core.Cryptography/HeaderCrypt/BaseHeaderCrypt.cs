@@ -1,16 +1,15 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {
     /// <inheritdoc cref="IHeaderCrypt"/>
-    internal abstract class BaseHeaderCrypt : IHeaderCrypt
+    public abstract class BaseHeaderCrypt : IHeaderCrypt
     {
         protected readonly SecretKey macKey;
         protected readonly SecretKey encryptionKey;
-        protected readonly ICipherProvider cipherProvider;
+        protected readonly CipherProvider cipherProvider;
         protected readonly RandomNumberGenerator secureRandom;
 
         /// <inheritdoc/>
@@ -19,7 +18,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public abstract int HeaderCleartextSize { get; }
 
-        protected BaseHeaderCrypt(SecretKey macKey, SecretKey encryptionKey, ICipherProvider cipherProvider)
+        protected BaseHeaderCrypt(SecretKey macKey, SecretKey encryptionKey, CipherProvider cipherProvider)
         {
             this.macKey = macKey;
             this.encryptionKey = encryptionKey;

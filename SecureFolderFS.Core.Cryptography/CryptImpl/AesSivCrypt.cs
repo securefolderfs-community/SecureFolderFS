@@ -1,16 +1,16 @@
-﻿using System;
-using System.Security.Cryptography;
-using Miscreant;
+﻿using Miscreant;
+using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Shared.Extensions;
+using System;
+using System.Security.Cryptography;
 
-namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
+namespace SecureFolderFS.Core.Cryptography.CryptImpl
 {
-    internal sealed class AesSivCrypt : IAesSivCrypt
+    /// <inheritdoc cref="IAesSivCrypt"/>
+    public sealed class AesSivCrypt : IAesSivCrypt
     {
-        // TODO: Check correctness of passed parameters
-
-        public byte[] Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey,
-            ReadOnlySpan<byte> associatedData)
+        /// <inheritdoc/>
+        public byte[] Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey, ReadOnlySpan<byte> associatedData)
         {
             var longKey = new byte[encryptionKey.Length + macKey.Length];
             longKey.EmplaceArrays(encryptionKey.ToArray(), macKey.ToArray());
@@ -21,8 +21,8 @@ namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
             return aesCmacSiv.Seal(bytes.ToArray(), data: associatedData.ToArray());
         }
 
-        public byte[]? Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey,
-            ReadOnlySpan<byte> associatedData)
+        /// <inheritdoc/>
+        public byte[]? Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> encryptionKey, ReadOnlySpan<byte> macKey, ReadOnlySpan<byte> associatedData)
         {
             var longKey = new byte[encryptionKey.Length + macKey.Length];
             longKey.EmplaceArrays(encryptionKey.ToArray(), macKey.ToArray());

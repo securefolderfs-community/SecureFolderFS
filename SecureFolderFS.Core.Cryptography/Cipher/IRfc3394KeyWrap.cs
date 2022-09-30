@@ -4,8 +4,8 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
 {
     public interface IRfc3394KeyWrap
     {
-        byte[] Rfc3394WrapKey(byte[] bytes, byte[] kek);
+        byte[] WrapKey(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> kek);
 
-        byte[] Rfc3394UnwrapKey(byte[] bytes, byte[] kek);
+        byte[] UnwrapKey(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> kek);
     }
 }

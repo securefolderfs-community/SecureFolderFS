@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Streams
 {
     internal sealed class CleartextFileStream : CleartextStream
     {
-        private readonly ISecurity _security;
+        private readonly Security _security;
         private readonly IChunkAccess _chunkAccess;
         private readonly HeaderBuffer _headerBuffer;
         private readonly Action<Stream> _notifyStreamClosed;
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.Streams
 
         public CleartextFileStream(
             Stream ciphertextStream,
-            ISecurity security,
+            Security security,
             IChunkAccess chunkAccess,
             HeaderBuffer headerBuffer,
             Action<Stream> notifyStreamClosed)

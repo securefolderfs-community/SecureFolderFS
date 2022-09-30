@@ -1,10 +1,11 @@
-﻿using System;
-using NSec.Cryptography;
+﻿using NSec.Cryptography;
+using SecureFolderFS.Core.Cryptography.Cipher;
+using System;
 
-namespace SecureFolderFS.Core.Security.EncryptionAlgorithm.CryptImplementation
+namespace SecureFolderFS.Core.Cryptography.CryptImpl
 {
     /// <inheritdoc cref="IXChaCha20Poly1305Crypt"/>
-    internal sealed class XChaCha20Poly1305Crypt : IXChaCha20Poly1305Crypt
+    public sealed class XChaCha20Poly1305Crypt : IXChaCha20Poly1305Crypt
     {
         /// <inheritdoc/>
         public void Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> nonce, Span<byte> resultAndTag, ReadOnlySpan<byte> associatedData)

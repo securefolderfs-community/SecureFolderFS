@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using static SecureFolderFS.Core.Cryptography.Constants.Security.Headers.AesGcm;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.AesGcmHeaderExtensions;
@@ -7,7 +6,7 @@ using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.A
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {
     /// <inheritdoc cref="IHeaderCrypt"/>
-    internal sealed class AesGcmHeaderCrypt : BaseHeaderCrypt
+    public sealed class AesGcmHeaderCrypt : BaseHeaderCrypt
     {
         /// <inheritdoc/>
         public override int HeaderCiphertextSize { get; } = HEADER_SIZE;
@@ -15,7 +14,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public override int HeaderCleartextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
 
-        public AesGcmHeaderCrypt(SecretKey macKey, SecretKey encryptionKey, ICipherProvider cipherProvider)
+        public AesGcmHeaderCrypt(SecretKey macKey, SecretKey encryptionKey, CipherProvider cipherProvider)
             : base(macKey, encryptionKey, cipherProvider)
         {
         }

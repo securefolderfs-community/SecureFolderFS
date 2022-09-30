@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 using static SecureFolderFS.Core.Cryptography.Constants.Security.Chunks.AesGcm;
@@ -18,7 +17,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;
 
-        public AesGcmContentCrypt(ICipherProvider cipherProvider)
+        public AesGcmContentCrypt(CipherProvider cipherProvider)
             : base(cipherProvider)
         {
         }

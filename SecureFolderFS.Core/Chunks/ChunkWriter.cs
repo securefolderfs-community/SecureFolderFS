@@ -12,12 +12,12 @@ namespace SecureFolderFS.Core.Chunks
     /// <inheritdoc cref="IChunkWriter"/>
     internal sealed class ChunkWriter : IChunkWriter
     {
-        private readonly ISecurity _security;
+        private readonly Security _security;
         private readonly HeaderBuffer _fileHeader;
         private readonly IStreamsManager _streamsManager;
         private readonly IFileSystemStatsTracker? _fileSystemStatsTracker;
 
-        public ChunkWriter(ISecurity security, HeaderBuffer fileHeader, IStreamsManager streamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
+        public ChunkWriter(Security security, HeaderBuffer fileHeader, IStreamsManager streamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
         {
             _security = security;
             _fileHeader = fileHeader;

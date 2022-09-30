@@ -1,32 +1,36 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.ContentCrypt;
+﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.Cryptography.HeaderCrypt;
 using SecureFolderFS.Core.Cryptography.NameCrypt;
+using System;
 
-namespace SecureFolderFS.Core.Security
+namespace SecureFolderFS.Core.Cryptography
 {
-    /// <inheritdoc cref="ISecurity"/>
-    internal sealed class Security : ISecurity
+    /// <summary>
+    /// Represents a security object used for encrypting and decrypting data in SecureFolderFS.
+    /// </summary>
+    public sealed class Security : IDisposable
     {
-        /// <inheritdoc/>
-        public ICipherProvider CipherProvider { get; }
+        // TODO: Needs docs
 
-        /// <inheritdoc/>
+        public CipherProvider CipherProvider { get; }
+
         public IContentCrypt ContentCrypt { get; }
 
-        /// <inheritdoc/>
         public IHeaderCrypt HeaderCrypt { get; }
 
-        /// <inheritdoc/>
         public INameCrypt? NameCrypt { get; }
 
-        public Security(ICipherProvider cipherProvider, IContentCrypt contentCrypt, IHeaderCrypt headerCrypt, INameCrypt? nameCrypt)
+        private Security(CipherProvider cipherProvider, IContentCrypt contentCrypt, IHeaderCrypt headerCrypt, INameCrypt? nameCrypt)
         {
             CipherProvider = cipherProvider;
             ContentCrypt = contentCrypt;
             HeaderCrypt = headerCrypt;
             NameCrypt = nameCrypt;
+        }
+
+        public static Security CreateNew()
+        {
+
         }
 
         /// <inheritdoc/>

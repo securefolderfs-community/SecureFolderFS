@@ -1,9 +1,9 @@
-﻿namespace SecureFolderFS.Core.Cryptography.Cipher
+﻿using System;
+
+namespace SecureFolderFS.Core.Cryptography.Cipher
 {
     public interface IArgon2idCrypt
     {
-        byte[] Argon2idHash(byte[] password, byte[] salt);
-
-        bool VerifyArgon2idHash(byte[] origin, byte[] password, byte[] salt);
+        void DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result);
     }
 }

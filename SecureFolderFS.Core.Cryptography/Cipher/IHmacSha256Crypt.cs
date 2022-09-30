@@ -2,7 +2,12 @@
 
 namespace SecureFolderFS.Core.Cryptography.Cipher
 {
-    public interface IHmacSha256Crypt : IDisposable
+    public interface IHmacSha256Crypt
+    {
+        IHmacSha256Instance GetInstance();
+    }
+
+    public interface IHmacSha256Instance : IDisposable
     {
         void InitializeHmac(ReadOnlySpan<byte> key);
 
