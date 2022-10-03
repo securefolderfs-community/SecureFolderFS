@@ -50,21 +50,6 @@
                 public const int DOKAN_MAX_VERSION = 210;
 
                 public const uint MAX_COMPONENT_LENGTH = 256;
-
-                public const DokanNet.FileAccess DATA_ACCESS =
-                                                          DokanNet.FileAccess.ReadData
-                                                        | DokanNet.FileAccess.WriteData
-                                                        | DokanNet.FileAccess.AppendData
-                                                        | DokanNet.FileAccess.Execute
-                                                        | DokanNet.FileAccess.GenericExecute
-                                                        | DokanNet.FileAccess.GenericWrite
-                                                        | DokanNet.FileAccess.GenericRead;
-
-                public const DokanNet.FileAccess DATA_WRITE_ACCESS =
-                                                             DokanNet.FileAccess.WriteData
-                                                           | DokanNet.FileAccess.AppendData
-                                                           | DokanNet.FileAccess.Delete
-                                                           | DokanNet.FileAccess.GenericWrite;
             }
         }
 
@@ -82,10 +67,15 @@
         public static class KeyChains
         {
             public const int ENCRYPTIONKEY_LENGTH = 32;
-
             public const int MACKEY_LENGTH = 32;
-
             public const int SALT_LENGTH = 16;
+            public const int KEK_LENGTH = 32;
+        }
+
+        public static class VaultVersion
+        {
+            public const int V1 = 1;
+            public const int LATEST_VERSION = V1;
         }
     }
 }

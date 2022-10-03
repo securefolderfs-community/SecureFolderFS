@@ -12,8 +12,8 @@ namespace SecureFolderFS.Core.Cryptography.CryptImpl
             var argon2id = new Argon2id(new Argon2Parameters()
             {
                 DegreeOfParallelism = 1, // TODO: Impl supports only 1 for now // Constants.Security.CryptImpl.Argon2.DEGREE_OF_PARALLELISM,
-                MemorySize = Constants.Security.CryptImpl.Argon2.MEMORY_SIZE,
-                NumberOfPasses = Constants.Security.CryptImpl.Argon2.ITERATIONS
+                MemorySize = Constants.Crypt.CryptImpl.Argon2.MEMORY_SIZE,
+                NumberOfPasses = Constants.Crypt.CryptImpl.Argon2.ITERATIONS
             });
 
             argon2id.DeriveBytes(password, salt, result);

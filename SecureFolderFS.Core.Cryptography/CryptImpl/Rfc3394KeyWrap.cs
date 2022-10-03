@@ -13,9 +13,10 @@ namespace SecureFolderFS.Core.Cryptography.CryptImpl
         }
 
         /// <inheritdoc/>
-        public byte[] UnwrapKey(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> kek)
+        public void UnwrapKey(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> kek, Span<byte> result)
         {
-            return RFC3394.KeyWrapAlgorithm.UnwrapKey(kek: kek.ToArray(), ciphertext: bytes.ToArray());
+            var result2 = RFC3394.KeyWrapAlgorithm.UnwrapKey(kek: kek.ToArray(), ciphertext: bytes.ToArray());
+            result2.CopyTo(result);
         }
     }
 }

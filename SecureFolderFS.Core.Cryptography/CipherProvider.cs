@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.Cryptography
 
         public static CipherProvider CreateNew()
         {
-            return new CipherProvider()
+            return new()
             {
                 Argon2idCrypt = new Argon2idCrypt(),
                 XChaCha20Poly1305Crypt = new XChaCha20Poly1305Crypt(),

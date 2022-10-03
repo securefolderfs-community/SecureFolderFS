@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using System.Runtime.CompilerServices;
-using static SecureFolderFS.Core.Cryptography.Constants.Security.Headers.AesCtrHmac;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Headers.AesCtrHmac;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.AesCtrHmacHeaderExtensions;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
@@ -15,8 +15,8 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public override int HeaderCleartextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
 
-        public AesCtrHmacHeaderCrypt(SecretKey macKey, SecretKey encryptionKey, CipherProvider cipherProvider)
-            : base(macKey, encryptionKey, cipherProvider)
+        public AesCtrHmacHeaderCrypt(SecretKey encKey, SecretKey macKey, CipherProvider cipherProvider)
+            : base(encKey, macKey, cipherProvider)
         {
         }
 

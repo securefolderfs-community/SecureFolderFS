@@ -9,14 +9,14 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     /// <inheritdoc cref="INameCrypt"/>
     internal abstract class BaseNameCrypt : INameCrypt
     {
+        protected readonly SecretKey encKey;
         protected readonly SecretKey macKey;
-        protected readonly SecretKey encryptionKey;
         protected readonly CipherProvider cipherProvider;
 
-        protected BaseNameCrypt(SecretKey macKey, SecretKey encryptionKey, CipherProvider cipherProvider)
+        protected BaseNameCrypt(SecretKey encKey, SecretKey macKey, CipherProvider cipherProvider)
         {
+            this.encKey = encKey;
             this.macKey = macKey;
-            this.encryptionKey = encryptionKey;
             this.cipherProvider = cipherProvider;
         }
 

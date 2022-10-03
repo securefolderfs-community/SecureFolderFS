@@ -1,11 +1,9 @@
-﻿using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.Routines;
-using SecureFolderFS.Core.VaultCreator.Routine;
+﻿using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.Routines.CreationRoutines;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
@@ -13,40 +11,39 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.Enums;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultCreationService"/>
     internal sealed class VaultCreationService : IVaultCreationService
     {
-        private IVaultCreationRoutineStep3? _step3;
-        private IVaultCreationRoutineStep4? _step4;
-        private IVaultCreationRoutineStep6? _step6;
-        private IVaultCreationRoutineStep9? _step9;
-        private IVaultCreationRoutineStep10? _step10;
-        private IVaultCreationRoutineStep11? _step11;
+        private Stream? _configStream;
+        private Stream? _keystoreStream;
+        private IAsyncSerializer<byte[]> _keystoreSerializer;
         private IModifiableFolder? _folder;
+        private ICreationRoutine? _creationRoutine;
 
         /// <inheritdoc/>
-        public Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
+        public async Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
         {
-            if (folder is not ILocatableFolder vaultFolder)
-                return Task.FromResult(false);
-
             _folder = folder;
-            _step3 = VaultRoutines.NewVaultCreationRoutine()
-                .EstablishRoutine()
-                .SetVaultFolder(vaultFolder)
-                .AddFileOperations();
+            _creationRoutine = VaultRoutines.NewCreationRoutine();
 
-            return Task.FromResult(true);
+            try
+            {
+                await _creationRoutine.CreateContentFolderAsync(folder, cancellationToken);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc/>
         public async Task<IResult> PrepareConfigurationAsync(CancellationToken cancellationToken = default)
         {
-            _ = _step3 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
-
             if (_folder is null)
                 return new CommonResult(false);
 
@@ -54,22 +51,18 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             if (configFile is null)
                 return new CommonResult(false);
 
-            var configStream = await configFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
-            if (configStream is null)
+            _configStream = await configFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
+            if (_configStream is null)
                 return new CommonResult(false);
 
-            _step4 = _step3.CreateConfigurationFile(new StreamConfigDiscoverer(configStream));
             return new CommonResult();
         }
 
         /// <inheritdoc/>
-        public Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer,
-            CancellationToken cancellationToken = default)
+        public Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, CancellationToken cancellationToken = default)
         {
-            _ = _step4 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
-
-            _step6 = _step4.CreateKeystoreFile(new StreamKeystoreDiscoverer(keystoreStream))
-                .CreateContentFolder();
+            _keystoreStream = keystoreStream;
+            _keystoreSerializer = serializer;
 
             return Task.FromResult<IResult>(new CommonResult());
         }
@@ -77,6 +70,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public Task<bool> SetPasswordAsync(IPassword password, CancellationToken cancellationToken = default)
         {
+            _creationRoutine.SetVaultDataAsync(password);
+            _creationRoutine.WriteConfigurationAsync()
             _ = _step6 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
 
             _step9 = _step6
@@ -88,6 +83,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public async Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipherScheme, ICipherInfoModel nameCipherScheme, CancellationToken cancellationToken = default)
+        {
+
+        }
+
         public Task<bool> SetContentCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default)
         {
             _ = _step9 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
@@ -136,6 +136,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public void Dispose()
         {
+            _configStream?.Dispose();
+            _creationRoutine?.Dispose();
         }
     }
 }

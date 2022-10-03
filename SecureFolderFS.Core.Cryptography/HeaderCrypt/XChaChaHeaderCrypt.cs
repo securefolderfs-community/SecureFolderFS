@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
-using static SecureFolderFS.Core.Cryptography.Constants.Security.Headers.XChaCha20Poly1305;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Headers.XChaCha20Poly1305;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.XChaChaHeaderExtensions;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public override int HeaderCleartextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
 
-        public XChaChaHeaderCrypt(SecretKey macKey, SecretKey encryptionKey, CipherProvider cipherProvider)
-            : base(macKey, encryptionKey, cipherProvider)
+        public XChaChaHeaderCrypt(SecretKey encKey, SecretKey macKey, CipherProvider cipherProvider)
+            : base(encKey, macKey, cipherProvider)
         {
         }
 
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             // Encrypt
             cipherProvider.XChaCha20Poly1305Crypt.Encrypt(
                 cleartextHeader.GetHeaderContentKey(),
-                encryptionKey,
+                encKey,
                 cleartextHeader.GetHeaderNonce(),
                 ciphertextHeader.Slice(HEADER_NONCE_SIZE),
                 default);
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             // Decrypt
             return cipherProvider.XChaCha20Poly1305Crypt.Decrypt(
                 ciphertextHeader.Slice(HEADER_NONCE_SIZE),
-                encryptionKey,
+                encKey,
                 ciphertextHeader.GetHeaderNonce(),
                 cleartextHeader.Slice(HEADER_NONCE_SIZE),
                 default);

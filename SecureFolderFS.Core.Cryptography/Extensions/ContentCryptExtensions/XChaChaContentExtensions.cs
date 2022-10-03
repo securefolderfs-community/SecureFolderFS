@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using static SecureFolderFS.Core.Cryptography.Constants.Security.Chunks.XChaCha20Poly1305;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.XChaCha20Poly1305;
 
 namespace SecureFolderFS.Core.Cryptography.Extensions.ContentCryptExtensions
 {

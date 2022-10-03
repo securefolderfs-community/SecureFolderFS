@@ -1,7 +1,8 @@
-﻿using SecureFolderFS.Core.VaultCreator.Routine;
-using SecureFolderFS.Core.VaultCreator.Routine.Implementation;
-using SecureFolderFS.Core.VaultLoader.Routine;
-using SecureFolderFS.Core.VaultLoader.Routine.Implementation;
+﻿using SecureFolderFS.Core.Routines.CreationRoutines;
+using SecureFolderFS.Core.Routines.UnlockRoutines;
+using SecureFolderFS.Core.Validators;
+using SecureFolderFS.Shared.Utils;
+using System.IO;
 
 namespace SecureFolderFS.Core.Routines
 {
@@ -13,14 +14,19 @@ namespace SecureFolderFS.Core.Routines
     /// </summary>
     public static class VaultRoutines
     {
-        public static IVaultLoadRoutine NewVaultLoadRoutine()
+        public static IUnlockRoutine NewUnlockRoutine()
         {
-            return new VaultLoadRoutine();
+            return new UnlockRoutine();
         }
 
-        public static IVaultCreationRoutine NewVaultCreationRoutine()
+        public static ICreationRoutine NewCreationRoutine()
         {
-            return new VaultCreationRoutine();
+            return new CreationRoutine();
+        }
+
+        public static IAsyncValidator<Stream> NewVersionValidator(IAsyncSerializer<byte[]> serializer)
+        {
+            return new VersionValidator(serializer);
         }
     }
 }

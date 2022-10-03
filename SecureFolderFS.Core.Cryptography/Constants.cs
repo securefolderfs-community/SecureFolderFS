@@ -2,7 +2,7 @@
 {
     public static class Constants
     {
-        internal static class Security
+        internal static class Crypt
         {
             internal static class Chunks
             {

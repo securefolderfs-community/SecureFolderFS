@@ -4,7 +4,6 @@ using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using System;
 using System.IO;
-using System.Text;
 
 namespace SecureFolderFS.Core.Paths
 {
@@ -62,15 +61,16 @@ namespace SecureFolderFS.Core.Paths
             return _fileNameAccess.GetCiphertextName(fileName, directoryId).ToString();
         }
 
+        // TODO: Refactor
         private string? GetCorrectPath(string path, Func<string, string?> fileNameFunc)
         {
             var onlyPathAfterContent = path.Substring(vaultRootPath.Length, path.Length - vaultRootPath.Length);
             var correctPath = PathHelpers.EnsureTrailingPathSeparator(vaultRootPath);
-            var pathBuilder = new StringBuilder(255);
+            //var pathBuilder = new StringBuilder(255);
 
             foreach (var item in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                var name = fileNameFunc(Path.Combine(correctPath, fileName));
+                var name = fileNameFunc(Path.Combine(correctPath, item));
                 if (name is null)
                     return null;
 

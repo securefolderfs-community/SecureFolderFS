@@ -1,10 +1,10 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -22,6 +22,14 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Sets the password used for decryption of this vault.
+        /// </summary>
+        /// <param name="password">The password key.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true, otherwise false.</returns>
+        Task<bool> SetPasswordAsync(IPassword password, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Prepares a new configuration file for vault.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
@@ -32,34 +40,18 @@ namespace SecureFolderFS.Sdk.Services
         /// Prepares a new keystore using <paramref name="keystoreStream"/>.
         /// </summary>
         /// <param name="keystoreStream">The stream where keystore will be stored.</param>
-        /// <param name="serializer">The serializer used to serialize the keystore.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> depending if the keystore was created successfully.</returns>
-        Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
-        
-        /// <summary>
-        /// Sets the password used for decryption of this vault.
-        /// </summary>
-        /// <param name="password">The password key.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true, otherwise false.</returns>
-        Task<bool> SetPasswordAsync(IPassword password, CancellationToken cancellationToken = default);
+        Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Sets the content cipher scheme that will be used for vault encryption.
+        /// Sets the content and filename cipher scheme that will be used for vault encryption.
         /// </summary>
-        /// <param name="cipherScheme">The content cipher scheme to set.</param>
+        /// <param name="nameCipherScheme">The filename cipher scheme to set.</param>
+        /// <param name="contentCipherScheme">The content cipher scheme to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the cipher scheme is supported and was properly set, returns true, otherwise false.</returns>
-        Task<bool> SetContentCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Sets the filename cipher scheme that will be used for vault encryption.
-        /// </summary>
-        /// <param name="cipherScheme">The filename cipher scheme to set.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the cipher scheme is supported and was properly set, returns true, otherwise false.</returns>
-        Task<bool> SetFileNameCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default);
+        Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipherScheme, ICipherInfoModel nameCipherScheme, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Finalizes and deploys the routine that will finish the vault creation task.

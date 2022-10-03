@@ -47,6 +47,22 @@ namespace SecureFolderFS.Shared.Extensions
         }
 
         /// <summary>
+        /// Slices <paramref name="array"/> and copies contents onto new array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array">The array to slice.</param>
+        /// <param name="start">The start index to begin the slice at.</param>
+        /// <param name="length">The count of items to slice.</param>
+        /// <returns>A copy of <paramref name="array"/> with sliced data.</returns>
+        public static T[] SliceArray<T>(this T[] array, int start, int length)
+        {
+            var arrayCopy = new T[array.Length - (start + length)];
+            Array.Copy(array, start, arrayCopy, 0, length);
+
+            return arrayCopy;
+        }
+
+        /// <summary>
         /// Copies <paramref name="arrays"/> to <paramref name="source"/> in order.
         /// </summary>
         /// <typeparam name="T"></typeparam>

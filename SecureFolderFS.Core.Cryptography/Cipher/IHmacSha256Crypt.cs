@@ -4,6 +4,8 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
 {
     public interface IHmacSha256Crypt
     {
+        int MacSize { get; }
+
         IHmacSha256Instance GetInstance();
     }
 

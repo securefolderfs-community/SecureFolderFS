@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SecureFolderFS.Core.FileSystem.Models
+﻿namespace SecureFolderFS.Core.FileSystem.Models
 {
     public sealed class MountOptions
     {

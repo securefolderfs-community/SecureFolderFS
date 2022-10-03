@@ -64,7 +64,7 @@ namespace SecureFolderFS.Core.Streams
                 return FileSystem.Constants.FILE_EOF;
 
             if (ciphertextStreamLength < _security.HeaderCrypt.HeaderCiphertextSize)
-                return FileSystem.Constants.FILE_EOF; // TODO: Health - report invalid header size
+                return FileSystem.Constants.FILE_EOF; // TODO: HealthAPI - report invalid header size
 
             var lengthToEof = _Length - _Position;
             if (lengthToEof < 1L)
