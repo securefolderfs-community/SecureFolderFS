@@ -1,18 +1,18 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultExistingCreationModel"/>
     public sealed class VaultExistingCreationModel : IVaultExistingCreationModel
     {
-        private readonly IAsyncValidator<IFolder> _vaultValidator; // TODO: Maybe inject through constructor?
+        private readonly IAsyncValidator<IFolder> _vaultValidator;
         private IFolder? _vaultFolder;
 
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();

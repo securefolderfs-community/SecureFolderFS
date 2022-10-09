@@ -1,5 +1,5 @@
-﻿using System;
-using SecureFolderFS.Shared.Utils;
+﻿using SecureFolderFS.Shared.Utils;
+using System;
 
 namespace SecureFolderFS.Shared.Helpers
 {
@@ -7,20 +7,20 @@ namespace SecureFolderFS.Shared.Helpers
     public class CommonResult : IResult
     {
         /// <inheritdoc/>
-        public bool IsSuccess { get; }
+        public bool Successful { get; }
 
         /// <inheritdoc/>
         public Exception? Exception { get; }
 
         public CommonResult(bool isSuccess = true)
         {
-            IsSuccess = isSuccess;
+            Successful = isSuccess;
         }
 
         public CommonResult(Exception? exception)
         {
             Exception = exception;
-            IsSuccess = false;
+            Successful = false;
         }
     }
 

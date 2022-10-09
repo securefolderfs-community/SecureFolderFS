@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
@@ -13,6 +15,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel, IRecipient<ChangeLoginOptionMessage>
     {
+        private ISerializationService SerializationService { get; } = Ioc.Default.GetRequiredService<ISerializationService>();
+
         [ObservableProperty]
         private string? _VaultName;
 
@@ -47,7 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             }
             else
             {
-                var keystoreModel = new FileKeystoreModel(keystoreFile, JsonToStreamSerializer.Instance);
+                var keystoreModel = new FileKeystoreModel(keystoreFile, SerializationService.StreamSerializer);
                 var vaultUnlockingModel = new VaultUnlockingModel();
 
                 LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, keystoreModel, VaultModel, Messenger);

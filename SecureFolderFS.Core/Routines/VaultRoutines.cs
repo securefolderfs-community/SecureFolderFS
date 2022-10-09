@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.Routines
             return new CreationRoutine();
         }
 
-        public static IAsyncValidator<Stream> NewVersionValidator(IAsyncSerializer<byte[]> serializer)
+        public static IAsyncValidator<Stream> NewVersionValidator(IAsyncSerializer<Stream> serializer)
         {
             return new VersionValidator(serializer);
         }

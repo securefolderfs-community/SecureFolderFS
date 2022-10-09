@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SecureFolderFS.Sdk.Services
 {

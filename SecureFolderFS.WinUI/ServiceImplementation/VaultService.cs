@@ -1,22 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultService"/>
     internal sealed class VaultService : IVaultService
     {
+        private ISerializationService SerializationService { get; } = Ioc.Default.GetRequiredService<ISerializationService>();
+
         /// <inheritdoc/>
         public IAsyncValidator<IFolder> GetVaultValidator()
         {
-            return new VaultValidator();
+            return new VaultValidator(SerializationService.StreamSerializer);
         }
 
         /// <inheritdoc/>

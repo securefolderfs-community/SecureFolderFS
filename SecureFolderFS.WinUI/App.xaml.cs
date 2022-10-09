@@ -98,6 +98,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
+                .AddSingleton<ISerializationService, SerializationService>()
                 .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>();
 
             return serviceCollection.BuildServiceProvider();

@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             // Encrypt
             cipherProvider.AesGcmCrypt.Encrypt(
                 cleartextHeader.GetHeaderContentKey(),
-                encryptionKey,
+                encKey,
                 cleartextHeader.GetHeaderNonce(),
                 ciphertextHeader.GetHeaderTag(),
                 ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             // Decrypt
             return cipherProvider.AesGcmCrypt.Decrypt(
                 ciphertextHeader.GetHeaderContentKey(),
-                encryptionKey,
+                encKey,
                 ciphertextHeader.GetHeaderNonce(),
                 ciphertextHeader.GetHeaderTag(),
                 cleartextHeader.Slice(HEADER_NONCE_SIZE),

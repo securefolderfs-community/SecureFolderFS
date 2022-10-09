@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public void SetVaultPassword(IPassword password, CancellationToken cancellationToken = default)
+        public void SetVaultPassword(IPassword password)
         {
             using (password)
             {

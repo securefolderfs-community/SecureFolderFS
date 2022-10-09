@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 
 namespace SecureFolderFS.Sdk.Storage
 {

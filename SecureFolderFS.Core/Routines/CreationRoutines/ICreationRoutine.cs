@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
     {
         Task CreateContentFolderAsync(IModifiableFolder vaultFolder, CancellationToken cancellationToken = default);
 
-        void SetVaultPassword(IPassword password, CancellationToken cancellationToken = default);
+        void SetVaultPassword(IPassword password);
 
         Task WriteKeystoreAsync(Stream keystoreStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default);
 

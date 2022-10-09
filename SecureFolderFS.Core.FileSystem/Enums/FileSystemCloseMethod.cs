@@ -11,11 +11,11 @@
         /// <summary>
         /// Tries to close the file system waiting for all processes to finish execution.
         /// </summary>
-        GracefullyClose = 2,
+        CloseGracefully = 2,
 
         /// <summary>
-        /// Forcefully closes the file system regardless of the state.
+        /// Forcefully closes the file system regardless of its the state.
         /// </summary>
-        ForcefullyClose = 4
+        CloseForcefully = 4
     }
 }

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using SecureFolderFS.Sdk.AppModels;
+﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.WinUI.AppModels;
+using SecureFolderFS.WinUI.Serialization;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
 {
@@ -10,7 +10,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
     internal sealed class SavedVaultsService : SingleFileSettingsModel, ISavedVaultsService
     {
         public SavedVaultsService(IModifiableFolder? settingsFolder)
-            : base(new SavedVaultsJsonToStreamSerializer())
+            : base(new SavedVaultsStreamSerializer())
         {
             SettingsFolder = settingsFolder;
         }

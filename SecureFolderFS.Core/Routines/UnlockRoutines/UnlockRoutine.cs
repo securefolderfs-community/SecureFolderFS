@@ -6,12 +6,13 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Validators;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         private readonly CipherProvider _cipherProvider;
         private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
-        private IModifiableFolder? _contentFolder;
+        private IFolder? _contentFolder;
         private SecretKey? _encKey;
         private SecretKey? _macKey;
 
@@ -34,43 +35,33 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         }
 
         /// <inheritdoc/>
-        public async Task ReadConfigurationAsync(Stream configStream, IAsyncSerializer<byte[]> serializer,
-            CancellationToken cancellationToken = default)
-        {
-            configStream.Position = 0L;
-
-            var configBuffer = new byte[configStream.Length];
-            var read = await configStream.ReadAsync(configBuffer, cancellationToken);
-            if (read < configBuffer.Length)
-                throw new ArgumentException("Reading vault configuration yielded less data than expected.");
-
-            // Check if the alleged version is supported
-            IAsyncValidator<Stream> versionValidator = new VersionValidator(serializer);
-            var validationResult = await versionValidator.ValidateAsync(configStream, cancellationToken);
-            if (!validationResult.IsSuccess)
-                throw validationResult.Exception ?? new UnsupportedVaultException();
-
-            _configDataModel = await serializer.DeserializeAsync<byte[], VaultConfigurationDataModel?>(configBuffer, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public async Task ReadKeystoreAsync(Stream keystoreStream, IAsyncSerializer<byte[]> serializer,
-            CancellationToken cancellationToken = default)
-        {
-            keystoreStream.Position = 0L;
-
-            var keystoreBuffer = new byte[keystoreStream.Length];
-            var read = await keystoreStream.ReadAsync(keystoreBuffer, cancellationToken);
-            if (read < keystoreBuffer.Length)
-                throw new ArgumentException("Reading vault keystore yielded less data than expected.");
-
-            _keystoreDataModel = await serializer.DeserializeAsync<byte[], VaultKeystoreDataModel?>(keystoreBuffer, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public void SetContentFolder(IModifiableFolder contentFolder)
+        public void SetContentFolder(IFolder contentFolder)
         {
             _contentFolder = contentFolder;
+        }
+
+        /// <inheritdoc/>
+        public async Task ReadConfigurationAsync(Stream configStream, IAsyncSerializer<Stream> serializer,
+            CancellationToken cancellationToken = default)
+        {
+            // Check if the presumed version is supported
+            IAsyncValidator<Stream> versionValidator = new VersionValidator(serializer);
+            var validationResult = await versionValidator.ValidateAsync(configStream, cancellationToken);
+            if (!validationResult.Successful)
+                throw validationResult.Exception ?? new UnsupportedVaultException();
+
+            _configDataModel = await serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(configStream, cancellationToken);
+            if (_configDataModel is null)
+                throw new SerializationException($"Data could not be deserialized into {nameof(VaultConfigurationDataModel)}.");
+        }
+
+        /// <inheritdoc/>
+        public async Task ReadKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer,
+            CancellationToken cancellationToken = default)
+        {
+            _keystoreDataModel = await serializer.DeserializeAsync<Stream, VaultKeystoreDataModel?>(keystoreStream, cancellationToken);
+            if (_keystoreDataModel is null)
+                throw new SerializationException($"Data could not be deserialized into {nameof(VaultKeystoreDataModel)}.");
         }
 
         /// <inheritdoc/>
@@ -110,7 +101,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             // Check if the payload has not been tampered with
             IAsyncValidator<VaultConfigurationDataModel> validator = new ConfigurationValidator(_cipherProvider, _macKey);
             var validationResult = await validator.ValidateAsync(_configDataModel, cancellationToken);
-            if (!validationResult.IsSuccess)
+            if (!validationResult.Successful)
                 throw validationResult.Exception ?? throw new CryptographicException();
 
 

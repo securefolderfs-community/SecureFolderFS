@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
+using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.Helpers;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Helpers;
@@ -22,7 +23,7 @@ namespace SecureFolderFS.WinUI.AppModels
         public Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
         {
             var result = FileSystemAvailabilityHelpers.IsDokanyAvailable();
-            if (result != FileSystemAvailabilityErrorType.FileSystemAvailable)
+            if (result != FileSystemAvailabilityType.FileSystemAvailable)
             {
                 // TODO: Use translation strings
                 var message = result switch

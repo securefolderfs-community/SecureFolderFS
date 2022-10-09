@@ -18,16 +18,16 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="folder">The folder of the vault to be set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and the vault folder is valid, returns true otherwise false.</returns>
-        Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that determines whether the vault folder was set successfully or not.</returns>
+        Task<IResult> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sets the <see cref="Stream"/> containing vault configuration.
         /// </summary>
         /// <param name="stream">The stream with vault configuration data.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the data from file was retrieved successfully, returns true, otherwise false.</returns>
-        Task<bool> SetConfigurationStreamAsync(Stream stream, CancellationToken cancellationToken = default); // TODO: Maybe make it stream?
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that determines whether the data from file was retrieved successfully or not.</returns>
+        Task<IResult> SetConfigurationStreamAsync(Stream stream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sets the <see cref="Stream"/> to keystore containing serialized vault keys.
@@ -35,8 +35,16 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="stream">The stream that contains the keystore.</param>
         /// <param name="serializer">The serializer used to deserialize the keystore.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If serialization is successful, returns true otherwise false.</returns>
-        Task<bool> SetKeystoreStreamAsync(Stream stream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that determines whether the serialization was successful or not.</returns>
+        Task<IResult> SetKeystoreStreamAsync(Stream stream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sets the file system provider for this vault.
+        /// </summary>
+        /// <param name="fileSystemInfoModel">The file system provider to use for the vault instance.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that represents the action.</returns>
+        Task<IResult> SetFileSystemAsync(IFileSystemInfoModel fileSystemInfoModel, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Unlocks and initializes the vault using the provided <paramref name="password"/>.

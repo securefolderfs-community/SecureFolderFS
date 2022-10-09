@@ -1,0 +1,33 @@
+﻿using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Enums;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Storage;
+using System.Threading.Tasks;
+
+namespace SecureFolderFS.WinUI.AppModels
+{
+    /// <inheritdoc cref="IUnlockedVaultModel"/>
+    internal sealed class FileSystemUnlockedVaultModel : IUnlockedVaultModel
+    {
+        private readonly IVirtualFileSystem _virtualFileSystem;
+
+        /// <inheritdoc/>
+        public IFolder UnlockedFolder { get; }
+
+        /// <inheritdoc/>
+        public IVaultStatisticsModel VaultStatisticsModel { get; }
+
+        public FileSystemUnlockedVaultModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel)
+        {
+            _virtualFileSystem = virtualFileSystem;
+            UnlockedFolder = virtualFileSystem.RootFolder;
+            VaultStatisticsModel = vaultStatisticsModel;
+        }
+
+        /// <inheritdoc/>
+        public async Task LockAsync()
+        {
+            await _virtualFileSystem.CloseAsync(FileSystemCloseMethod.CloseForcefully);
+        }
+    }
+}

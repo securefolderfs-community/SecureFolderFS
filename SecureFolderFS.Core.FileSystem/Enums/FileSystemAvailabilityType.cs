@@ -11,27 +11,27 @@
         None = 0,
 
         /// <summary>
-        /// The file system and driver have been detected and ready to use.
+        /// The file system provider has been detected and is ready to use.
         /// </summary>
         Available = 1,
 
         /// <summary>
-        /// The file system driver has not been detected.
+        /// The file system core engine is unavailable or not found.
         /// </summary>
-        DriverNotAvailable = 2,
+        CoreNotAvailable = 2,
 
         /// <summary>
-        /// The file system library has not been detected.
+        /// The file system module is unavailable or not found.
         /// </summary>
         ModuleNotAvailable = 4,
 
         /// <summary>
-        /// The file system version is too low.
+        /// The file system version is too low to work with SecureFolderFS.
         /// </summary>
         VersionTooLow = 8,
 
         /// <summary>
-        /// The file system version is too high.
+        /// The file system version is too high to work with SecureFolderFS.
         /// </summary>
         VersionTooHigh = 16
     }

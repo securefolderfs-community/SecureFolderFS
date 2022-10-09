@@ -1,4 +1,6 @@
-﻿using SecureFolderFS.Core.Routines;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Core.Cryptography.Enums;
+using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.Routines.CreationRoutines;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -11,7 +13,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.Enums;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -19,10 +20,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class VaultCreationService : IVaultCreationService
     {
         private Stream? _configStream;
-        private Stream? _keystoreStream;
-        private IAsyncSerializer<byte[]> _keystoreSerializer;
         private IModifiableFolder? _folder;
         private ICreationRoutine? _creationRoutine;
+        private ContentCipherScheme _contentCipherScheme;
+        private FileNameCipherScheme _fileNameCipherScheme;
+
+        private ISerializationService SerializationService { get; } = Ioc.Default.GetRequiredService<ISerializationService>();
 
         /// <inheritdoc/>
         public async Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
@@ -39,6 +42,16 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             {
                 return false;
             }
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> SetPasswordAsync(IPassword password, CancellationToken cancellationToken = default)
+        {
+            if (_creationRoutine is null)
+                return Task.FromResult(false);
+
+            _creationRoutine.SetVaultPassword(password);
+            return Task.FromResult(true);
         }
 
         /// <inheritdoc/>
@@ -59,78 +72,65 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, CancellationToken cancellationToken = default)
+        public async Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default)
         {
-            _keystoreStream = keystoreStream;
-            _keystoreSerializer = serializer;
+            if (_creationRoutine is null)
+                return new CommonResult(false);
 
-            return Task.FromResult<IResult>(new CommonResult());
+            try
+            {
+                await _creationRoutine.WriteKeystoreAsync(keystoreStream, serializer, cancellationToken);
+                return new CommonResult();
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult(ex);
+            }
         }
 
         /// <inheritdoc/>
-        public Task<bool> SetPasswordAsync(IPassword password, CancellationToken cancellationToken = default)
+        public Task<IResult> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel nameCipher, CancellationToken cancellationToken = default)
         {
-            _creationRoutine.SetVaultDataAsync(password);
-            _creationRoutine.WriteConfigurationAsync()
-            _ = _step6 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
+            if (_creationRoutine is null || _configStream is null)
+                return Task.FromResult<IResult>(new CommonResult(false));
 
-            _step9 = _step6
-                .AddEncryptionAlgorithmBuilder()
-                .InitializeKeystoreData(password)
-                .ContinueKeystoreFileInitialization();
-
-            return Task.FromResult(true);
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipherScheme, ICipherInfoModel nameCipherScheme, CancellationToken cancellationToken = default)
-        {
-
-        }
-
-        public Task<bool> SetContentCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default)
-        {
-            _ = _step9 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
-
-            var contentCipherScheme = cipherScheme.Id switch
+            _contentCipherScheme = contentCipher.Id switch
             {
                 Core.Constants.CipherId.AES_CTR_HMAC => ContentCipherScheme.AES_CTR_HMAC,
                 Core.Constants.CipherId.AES_GCM => ContentCipherScheme.AES_GCM,
                 Core.Constants.CipherId.XCHACHA20_POLY1305 => ContentCipherScheme.XChaCha20_Poly1305,
-                _ => throw new ArgumentOutOfRangeException(nameof(cipherScheme.Id))
+                _ => throw new ArgumentOutOfRangeException(nameof(contentCipher.Id))
             };
-
-            _step10 = _step9.SetContentCipherScheme(contentCipherScheme);
-            return Task.FromResult(true);
-        }
-
-        /// <inheritdoc/>
-        public Task<bool> SetFileNameCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default)
-        {
-            _ = _step10 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
-
-            var fileNameCipherScheme = cipherScheme.Id switch
+            _fileNameCipherScheme = nameCipher.Id switch
             {
                 Core.Constants.CipherId.NONE => FileNameCipherScheme.None,
                 Core.Constants.CipherId.AES_SIV => FileNameCipherScheme.AES_SIV,
-                _ => throw new ArgumentOutOfRangeException(nameof(cipherScheme.Id))
+                _ => throw new ArgumentOutOfRangeException(nameof(nameCipher.Id))
             };
 
-            _step11 = _step10.SetFileNameCipherScheme(fileNameCipherScheme);
-            return Task.FromResult(true);
+            return Task.FromResult<IResult>(new CommonResult());
         }
 
         /// <inheritdoc/>
-        public Task<IResult> DeployAsync(CancellationToken cancellationToken = default)
+        public async Task<IResult> DeployAsync(CancellationToken cancellationToken = default)
         {
-            _ = _step11 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
+            if (_creationRoutine is null || _configStream is null)
+                return new CommonResult(false);
 
-            _step11
-                .ContinueConfigurationFileInitialization()
-                .Finalize()
-                .Deploy();
+            try
+            {
+                await _creationRoutine.WriteConfigurationAsync(
+                    new(_contentCipherScheme, _fileNameCipherScheme),
+                    _configStream,
+                    SerializationService.BufferSerializer,
+                    cancellationToken);
 
-            return Task.FromResult<IResult>(new CommonResult());
+                return new CommonResult();
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult(ex);
+            }
         }
 
         /// <inheritdoc/>

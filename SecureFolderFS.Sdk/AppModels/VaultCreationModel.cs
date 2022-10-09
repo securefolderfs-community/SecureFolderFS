@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 return new CommonResult(false);
 
             var configurationResult = await VaultCreationService.PrepareConfigurationAsync(cancellationToken);
-            if (!configurationResult.IsSuccess)
+            if (!configurationResult.Successful)
                 return configurationResult;
 
             var readmeFile = await folder.TryCreateFileAsync(Constants.VaultReadme.VAULT_README_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public async Task<IResult> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default)
         {
             var keystoreStreamResult = await keystoreModel.GetKeystoreStreamAsync(FileAccess.ReadWrite, cancellationToken);
-            if (!keystoreStreamResult.IsSuccess || keystoreStreamResult.Value is null)
+            if (!keystoreStreamResult.Successful)
                 return keystoreStreamResult;
 
             return await VaultCreationService.PrepareKeystoreAsync(keystoreStreamResult.Value, keystoreModel.KeystoreSerializer, cancellationToken);
@@ -74,7 +74,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 return new CommonResult<IVaultModel?>(null);
 
             var deployResult = await VaultCreationService.DeployAsync(cancellationToken);
-            if (!deployResult.IsSuccess)
+            if (!deployResult.Successful)
                 return new CommonResult<IVaultModel?>(deployResult.Exception);
 
             // Create vault model

@@ -7,6 +7,8 @@ namespace SecureFolderFS.Core.Cryptography.CryptImpl
     /// <inheritdoc cref="IHmacSha256Crypt"/>
     public sealed class HmacSha256Crypt : IHmacSha256Crypt
     {
+        public int MacSize { get; } = 256 / 8;
+
         /// <inheritdoc/>
         public IHmacSha256Instance GetInstance()
         {

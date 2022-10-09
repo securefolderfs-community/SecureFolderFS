@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
@@ -13,6 +9,9 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
@@ -53,15 +52,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             using (password)
             {
                 var setFolderResult = await _vaultUnlockingModel.SetFolderAsync(_vaultModel.Folder, cancellationToken);
-                if (!setFolderResult.IsSuccess)
+                if (!setFolderResult.Successful)
                     return; // TODO: Report the issue
 
                 var setKeystoreResult = await _vaultUnlockingModel.SetKeystoreAsync(_keystoreModel, cancellationToken);
-                if (!setKeystoreResult.IsSuccess)
+                if (!setKeystoreResult.Successful)
                     return; // TODO: Report the issue
 
                 var unlockResult = await _vaultUnlockingModel.UnlockAsync(password, cancellationToken);
-                if (!unlockResult.IsSuccess)
+                if (!unlockResult.Successful)
                     return; // TODO: Report the issue
 
                 unlockedVaultModel = unlockResult.Value;
@@ -87,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
         {
             // Check if the vault is supported
             var vaultValidationResult = await _vaultValidator.ValidateAsync(_vaultModel.Folder, cancellationToken);
-            if (!vaultValidationResult.IsSuccess)
+            if (!vaultValidationResult.Successful)
                 return; // TODO: Report the issue
         }
 

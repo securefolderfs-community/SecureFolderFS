@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         {
             var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
 
-            using var hmacSha256 = cipherProvider.GetHmacInstance();
+            using var hmacSha256 = cipherProvider.HmacSha256Crypt.GetInstance();
             hmacSha256.InitializeHmac(_macKey);
             hmacSha256.Update(headerNonce);
             hmacSha256.Update(beChunkNumber);

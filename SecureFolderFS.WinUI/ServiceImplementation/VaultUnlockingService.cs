@@ -1,98 +1,122 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Routines;
-using SecureFolderFS.Core.VaultLoader.Routine;
+using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using SecureFolderFS.Core.Enums;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class VaultUnlockingService : IVaultUnlockingService
     {
-        private IVaultLoadRoutineStep3? _step3;
-        private IVaultLoadRoutineStep5? _step5;
-        private IVaultLoadRoutineStep8? _step8;
-        private IFolder? _folder;
+        private IFolder? _vaultFolder;
+        private IUnlockRoutine? _unlockRoutine;
+        private FileSystemAdapterType _fileSystemAdapterType;
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
+        private ISerializationService SerializationService { get; } = Ioc.Default.GetRequiredService<ISerializationService>();
+
         /// <inheritdoc/>
-        public Task<bool> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public async Task<IResult> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            _folder = folder;
+            _unlockRoutine = VaultRoutines.NewUnlockRoutine();
 
-            _step3 = VaultRoutines.NewVaultLoadRoutine()
-                .EstablishRoutine()
-                .SetFolder(folder)
-                .AddFileOperations();
+            var contentFolder = await folder.GetFolderWithResultAsync(Core.Constants.CONTENT_FOLDERNAME, cancellationToken);
+            if (!contentFolder.Successful)
+                return contentFolder;
 
-            return Task.FromResult(true);
+            _vaultFolder = folder;
+            _unlockRoutine.SetContentFolder(contentFolder.Value!);
+
+            return new CommonResult();
         }
 
         /// <inheritdoc/>
-        public Task<bool> SetConfigurationStreamAsync(Stream stream, CancellationToken cancellationToken = default)
+        public async Task<IResult> SetConfigurationStreamAsync(Stream stream, CancellationToken cancellationToken = default)
         {
-            _ = _step3 ?? throw new InvalidOperationException("The vault folder has not been set yet.");
+            if (_unlockRoutine is null)
+                return new CommonResult(false);
 
-            if (_folder is null)
-                return Task.FromResult(false);
-
-            _step5 = _step3
-                .FindConfigurationFile(true, new StreamConfigDiscoverer(stream))
-                .ContinueConfigurationFileInitialization();
-
-            return Task.FromResult(true);
+            try
+            {
+                await _unlockRoutine.ReadConfigurationAsync(stream, SerializationService.StreamSerializer, cancellationToken);
+                return new CommonResult();
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult(ex);
+            }
         }
 
         /// <inheritdoc/>
-        public Task<bool> SetKeystoreStreamAsync(Stream stream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
+        public async Task<IResult> SetKeystoreStreamAsync(Stream stream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
         {
-            _ = _step5 ?? throw new InvalidOperationException("The vault folder has not been set yet.");
+            if (_unlockRoutine is null)
+                return new CommonResult(false);
 
-            _step8 = _step5
-                .FindKeystoreFile(true, new StreamKeystoreDiscoverer(stream))
-                .ContinueKeystoreFileInitialization()
-                .AddEncryptionAlgorithmBuilder();
+            try
+            {
+                await _unlockRoutine.ReadKeystoreAsync(stream, serializer, cancellationToken);
+                return new CommonResult();
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult(ex);
+            }
+        }
 
-            return Task.FromResult(true);
+        /// <inheritdoc/>
+        public async Task<IResult> SetFileSystemAsync(IFileSystemInfoModel fileSystemInfoModel, CancellationToken cancellationToken = default)
+        {
+            var isSupportedResult = await fileSystemInfoModel.IsSupportedAsync(cancellationToken);
+            if (!isSupportedResult.Successful)
+                return isSupportedResult;
+
+            // Determine file system adapter type
+            _fileSystemAdapterType = fileSystemInfoModel.Id switch
+            {
+                Core.Constants.FileSystemId.DOKAN_ID => FileSystemAdapterType.DokanAdapter,
+                Core.Constants.FileSystemId.WEBDAV_ID => FileSystemAdapterType.WebDavAdapter,
+                _ => throw new ArgumentOutOfRangeException(nameof(IFileSystemInfoModel.Id))
+            };
+
+            return new CommonResult();
         }
 
         /// <inheritdoc/>
         public async Task<IResult<IUnlockedVaultModel?>> UnlockAndStartAsync(IPassword password, CancellationToken cancellationToken = default)
         {
-            _ = _step8 ?? throw new InvalidOperationException("The keystore has not been set yet.");
+            if (_unlockRoutine is null)
+                return new CommonResult<IUnlockedVaultModel?>(null, false);
 
             try
             {
+                // Derive cryptographic keys from password
+                _unlockRoutine.DeriveKeystore(password);
+
+                // Retrieve file system mounter
                 var vaultStatisticsBridge = new FileSystemStatsTrackerToVaultStatisticsModelBridge();
+                var mountableFileSystem = await _unlockRoutine.PrepareAndUnlockAsync(new()
+                {
+                    FileSystemAdapterType = _fileSystemAdapterType,
+                    FileSystemStatsTracker = vaultStatisticsBridge
+                }, cancellationToken);
 
-                var vaultInstance = _step8.DeriveMasterKeyFromPassword(password)
-                    .ContinueInitializationWithMasterKey()
-                    .VerifyVaultConfiguration()
-                    .ContinueInitialization()
-                    .Finalize()
-                    .ContinueWithOptionalRoutine()
-                    .EstablishOptionalRoutine()
-                    .AddFileSystemStatsTracker(vaultStatisticsBridge)
-                    .Finalize()
-                    .Deploy();
-
-                if (vaultInstance is null)
-                    return new CommonResult<IUnlockedVaultModel?>(null);
-
-                vaultInstance.SecureFolderFSInstance.StartFileSystem();
-                await Task.Delay(100, cancellationToken); // Wait for the file system to start
-
-                var rootFolder = await FileSystemService.GetFolderFromPathAsync(vaultInstance.SecureFolderFSInstance.MountLocation, cancellationToken);
-                // TODO: Ensure rootFolder is not null
-                return new CommonResult<IUnlockedVaultModel?>(new VaultInstanceUnlockedVaultModel(vaultInstance, rootFolder, vaultStatisticsBridge));
+                // Mount the file system
+                FileSystemService.DirectoryExistsAsync();
+                var virtualFileSystem = await mountableFileSystem.MountAsync(new(null), cancellationToken);
+                
+                return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge));
             }
             catch (Exception ex)
             {

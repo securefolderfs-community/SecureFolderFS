@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             // Encrypt
             cipherProvider.AesCtrCrypt.Encrypt(
                 cleartextHeader.GetHeaderContentKey(),
-                encryptionKey,
+                encKey,
                 cleartextHeader.GetHeaderNonce(),
                 ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
 
@@ -73,7 +73,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             // Decrypt
             cipherProvider.AesCtrCrypt.Decrypt(
                 ciphertextHeader.GetHeaderContentKey(),
-                encryptionKey,
+                encKey,
                 ciphertextHeader.GetHeaderNonce(),
                 cleartextHeader.Slice(HEADER_NONCE_SIZE));
 
@@ -82,7 +82,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 
         private void CalculateHeaderMac(ReadOnlySpan<byte> headerNonce, ReadOnlySpan<byte> ciphertextPayload, Span<byte> headerMac)
         {
-            using var hmacSha256 = cipherProvider.GetHmacInstance();
+            using var hmacSha256 = cipherProvider.HmacSha256Crypt.GetInstance();
 
             hmacSha256.InitializeHmac(macKey);
             hmacSha256.Update(headerNonce);

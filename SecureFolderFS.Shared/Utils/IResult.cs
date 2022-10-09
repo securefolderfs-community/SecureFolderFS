@@ -10,10 +10,10 @@ namespace SecureFolderFS.Shared.Utils
         /// <summary>
         /// Gets the value that determines whether the action completed successfully.
         /// </summary>
-        bool IsSuccess { get; }
+        bool Successful { get; }
 
         /// <summary>
-        /// Gets the exception associated with the action, if any.
+        /// Gets the exception associated with the action if any.
         /// </summary>
         Exception? Exception { get; }
     }

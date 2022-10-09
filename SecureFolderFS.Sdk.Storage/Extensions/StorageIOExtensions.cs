@@ -12,7 +12,6 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         {
             await using var sourceStream = await source.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
             await using var destinationStream = await destination.OpenStreamAsync(FileAccess.Read, FileShare.None, cancellationToken);
-
             await sourceStream.CopyToAsync(destinationStream, cancellationToken);
         }
 

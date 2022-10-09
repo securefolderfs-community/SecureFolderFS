@@ -2,7 +2,6 @@
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
-using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -12,9 +11,9 @@ namespace SecureFolderFS.Core.Validators
 {
     internal sealed class VersionValidator : IAsyncValidator<Stream>
     {
-        private readonly IAsyncSerializer<byte[]> _serializer;
+        private readonly IAsyncSerializer<Stream> _serializer;
 
-        public VersionValidator(IAsyncSerializer<byte[]> serializer)
+        public VersionValidator(IAsyncSerializer<Stream> serializer)
         {
             _serializer = serializer;
         }
@@ -22,16 +21,9 @@ namespace SecureFolderFS.Core.Validators
         /// <inheritdoc/>
         public async Task<IResult> ValidateAsync(Stream value, CancellationToken cancellationToken = default)
         {
-            value.Position = 0L;
-
-            var configBuffer = new byte[value.Length];
-            var read = await value.ReadAsync(configBuffer, cancellationToken);
-            if (read < configBuffer.Length)
-                return new CommonResult(new ArgumentException("Reading vault configuration yielded less data than expected."));
-
-            var configDataModel = await _serializer.DeserializeAsync<byte[], VaultConfigurationDataModel?>(configBuffer, cancellationToken);
+            var configDataModel = await _serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(value, cancellationToken);
             if (configDataModel is null)
-                return new CommonResult(new SerializationException("Couldn't deserialize config buffer to configuration data model"));
+                return new CommonResult(new SerializationException("Couldn't deserialize configuration buffer to configuration data model"));
 
             return new CommonResult(configDataModel.Version == Constants.VaultVersion.LATEST_VERSION);
         }

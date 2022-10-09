@@ -1,14 +1,16 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.Utils;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 {
@@ -16,6 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
     {
         private readonly IVaultCreationModel _vaultCreationModel;
         private VaultWizardPasswordViewModel? _nextViewModel;
+        private ISerializationService SerializationService { get; } = Ioc.Default.GetRequiredService<ISerializationService>();
 
         public VaultWizardCreationPathViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
@@ -40,8 +43,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
                 return; // TODO: Report issue
 
             // TODO: Important! Dispose the IKeystoreModel!!!
-            var setKeystoreResult = await _vaultCreationModel.SetKeystoreAsync(new FileKeystoreModel(keystoreFile, JsonToStreamSerializer.Instance), cancellationToken);
-            if (!setKeystoreResult.IsSuccess)
+            var setKeystoreResult = await _vaultCreationModel.SetKeystoreAsync(new FileKeystoreModel(keystoreFile, SerializationService.StreamSerializer), cancellationToken);
+            if (!setKeystoreResult.Successful)
                 return; // TODO: Report issue
 
             _nextViewModel = new(_vaultCreationModel, Messenger, DialogViewModel);
@@ -52,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
         public override async Task<bool> SetLocationAsync(IModifiableFolder storage, CancellationToken cancellationToken = default)
         {
             var setFolderResult = await _vaultCreationModel.SetFolderAsync(storage, cancellationToken);
-            if (!setFolderResult.IsSuccess)
+            if (!setFolderResult.Successful)
                 return false;
 
             SelectedLocation = storage;

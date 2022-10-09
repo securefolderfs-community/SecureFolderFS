@@ -1,6 +1,6 @@
-﻿using System;
-using SecureFolderFS.Core.Sdk.Tracking;
+﻿using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Sdk.Models;
+using System;
 
 namespace SecureFolderFS.WinUI.AppModels
 {

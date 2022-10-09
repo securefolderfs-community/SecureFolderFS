@@ -63,11 +63,11 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 return;
 
             var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
-            if (fileSystemAdapterResult.IsSuccess && FileSystemInfoBar is not null)
+            if (fileSystemAdapterResult.Successful && FileSystemInfoBar is not null)
             {
                 FileSystemInfoBar.IsOpen = false;
             }
-            else if (!fileSystemAdapterResult.IsSuccess)
+            else if (!fileSystemAdapterResult.Successful)
             {
                 FileSystemInfoBar = fileSystemAdapter.Id switch
                 {
@@ -89,7 +89,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
             foreach (var item in ViewModel.BannerViewModel.FileSystemAdapters)
             {
                 var isSupportedResult = await item.FileSystemInfoModel.IsSupportedAsync(cancellationToken);
-                if (isSupportedResult.IsSuccess)
+                if (isSupportedResult.Successful)
                     return item;
             }
 

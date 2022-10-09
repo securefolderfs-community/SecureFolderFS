@@ -58,13 +58,6 @@
                 }
             }
 
-            internal static class KeyChains
-            {
-                public const int ENCRYPTION_KEY_LENGTH = 32;
-                public const int MAC_KEY_LENGTH = 32;
-                public const int SALT_LENGTH = 16;
-            }
-
             internal static class CryptImpl
             {
                 internal static class Argon2

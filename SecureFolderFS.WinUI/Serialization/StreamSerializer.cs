@@ -1,25 +1,25 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.AppModels
+namespace SecureFolderFS.WinUI.Serialization
 {
     /// <summary>
     /// Implementation for <see cref="IAsyncSerializer{TSerialized}"/> that uses <see cref="Stream"/> to serialize/deserialize JSON.
     /// </summary>
-    public class JsonToStreamSerializer : IAsyncSerializer<Stream>
+    internal class StreamSerializer : IAsyncSerializer<Stream>
     {
         /// <summary>
-        /// A single instance of <see cref="JsonToStreamSerializer"/>.
+        /// A single instance of <see cref="StreamSerializer"/>.
         /// </summary>
-        public static JsonToStreamSerializer Instance { get; } = new();
+        public static StreamSerializer Instance { get; } = new();
 
-        protected JsonToStreamSerializer()
+        protected StreamSerializer()
         {
         }
 
@@ -35,6 +35,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public virtual async Task<object?> DeserializeAsync(Stream serialized, Type dataType, CancellationToken cancellationToken = default)
         {
+            serialized.Position = 0L;
             var buffer = await serialized.ReadAllBytesAsync();
             var rawSerialized = Encoding.UTF8.GetString(buffer);
 

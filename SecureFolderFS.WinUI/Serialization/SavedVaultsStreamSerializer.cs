@@ -1,16 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using SecureFolderFS.Sdk.AppModels;
 
-namespace SecureFolderFS.WinUI.AppModels
+namespace SecureFolderFS.WinUI.Serialization
 {
-    /// <inheritdoc cref="JsonToStreamSerializer"/>
-    internal sealed class SavedVaultsJsonToStreamSerializer : JsonToStreamSerializer
+    /// <inheritdoc cref="StreamSerializer"/>
+    internal sealed class SavedVaultsStreamSerializer : StreamSerializer
     {
         /// <inheritdoc/>
         public override async Task<object?> DeserializeAsync(Stream serialized, Type dataType, CancellationToken cancellationToken = default)

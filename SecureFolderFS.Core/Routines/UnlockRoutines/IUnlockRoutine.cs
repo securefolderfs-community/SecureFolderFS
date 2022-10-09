@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.Models;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.IO;
@@ -12,11 +12,11 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
     // TODO: Needs docs
     public interface IUnlockRoutine : IDisposable
     {
-        Task ReadConfigurationAsync(Stream configStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default);
+        void SetContentFolder(IFolder contentFolder);
 
-        Task ReadKeystoreAsync(Stream keystoreStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default);
+        Task ReadConfigurationAsync(Stream configStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
 
-        void SetContentFolder(IModifiableFolder contentFolder); // TODO: Not so good, refactor later
+        Task ReadKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
 
         void DeriveKeystore(IPassword password);
 

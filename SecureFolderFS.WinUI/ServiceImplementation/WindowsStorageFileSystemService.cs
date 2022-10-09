@@ -1,10 +1,10 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.WinUI.Storage.WindowsStorage;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.WinUI.Storage.WindowsStorage;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
