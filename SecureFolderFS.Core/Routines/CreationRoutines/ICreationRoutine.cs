@@ -15,8 +15,8 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
 
         void SetVaultPassword(IPassword password);
 
-        Task WriteKeystoreAsync(Stream keystoreStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default);
+        Task WriteKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
 
-        Task WriteConfigurationAsync(VaultOptions vaultOptions, Stream configStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default);
+        Task WriteConfigurationAsync(VaultOptions vaultOptions, Stream configStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
     }
 }

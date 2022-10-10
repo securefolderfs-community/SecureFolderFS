@@ -36,16 +36,6 @@
             public const string FILESYSTEM_NAME = "NTFS";
 
             public const string UNC_NAME = "securefolderfs";
-
-
-            internal static class Dokan
-            {
-                public const int DOKAN_VERSION = 205;
-
-                public const int DOKAN_MAX_VERSION = 210;
-
-                public const uint MAX_COMPONENT_LENGTH = 256;
-            }
         }
 
         internal static class IO

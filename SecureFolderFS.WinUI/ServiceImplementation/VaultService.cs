@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
@@ -14,12 +14,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     /// <inheritdoc cref="IVaultService"/>
     internal sealed class VaultService : IVaultService
     {
-        private ISerializationService SerializationService { get; } = Ioc.Default.GetRequiredService<ISerializationService>();
-
         /// <inheritdoc/>
         public IAsyncValidator<IFolder> GetVaultValidator()
         {
-            return new VaultValidator(SerializationService.StreamSerializer);
+            return new VaultValidator(StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>

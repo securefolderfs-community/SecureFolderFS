@@ -49,7 +49,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Unlocks and initializes the vault using the provided <paramref name="password"/>.
         /// </summary>
-        /// <exception cref="IOException"></exception> // TODO: Add exceptions
         /// <param name="password">The password to unlock the vault with.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of <see cref="IUnlockedVaultModel"/> that represents the action.</returns>

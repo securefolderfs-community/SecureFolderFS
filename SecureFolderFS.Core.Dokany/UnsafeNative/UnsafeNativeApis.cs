@@ -16,5 +16,13 @@ namespace SecureFolderFS.Core.Dokany.UnsafeNative
         [DllImport(Constants.DOKAN_DLL, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.I8)]
         public static extern long DokanNtStatusFromWin32([In][MarshalAs(UnmanagedType.U4)] uint Error);
+
+        [DllImport(Constants.DOKAN_DLL, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U8)]
+        public static extern ulong DokanVersion();
+
+        [DllImport(Constants.DOKAN_DLL, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.U8)]
+        public static extern ulong DokanDriverVersion();
     }
 }

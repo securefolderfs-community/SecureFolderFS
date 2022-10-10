@@ -1,22 +1,22 @@
-﻿using Microsoft.UI.Xaml;
-using System;
-using System.Diagnostics;
-using System.IO;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.WinUI.ServiceImplementation;
-using SecureFolderFS.WinUI.WindowViews;
-using SecureFolderFS.WinUI.Helpers;
-using System.Threading.Tasks;
-using Windows.Storage;
+using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.WinUI.AppModels;
+using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.WinUI.ServiceImplementation;
 using SecureFolderFS.WinUI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.WinUI.Storage.NativeStorage;
+using SecureFolderFS.WinUI.WindowViews;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -98,7 +98,6 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
-                .AddSingleton<ISerializationService, SerializationService>()
                 .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>();
 
             return serviceCollection.BuildServiceProvider();

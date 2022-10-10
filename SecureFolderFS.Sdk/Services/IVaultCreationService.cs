@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="serializer">The serializer used to serialize the keystore.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> depending on whether the keystore was created successfully.</returns>
-        Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default);
+        Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sets the content and filename cipher scheme that will be used for vault encryption.

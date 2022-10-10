@@ -7,12 +7,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.WinUI.Serialization
+namespace SecureFolderFS.Sdk.AppModels
 {
     /// <summary>
     /// Implementation for <see cref="IAsyncSerializer{TSerialized}"/> that uses <see cref="Stream"/> to serialize/deserialize JSON.
     /// </summary>
-    internal class StreamSerializer : IAsyncSerializer<Stream>
+    public class StreamSerializer : IAsyncSerializer<Stream>
     {
         /// <summary>
         /// A single instance of <see cref="StreamSerializer"/>.

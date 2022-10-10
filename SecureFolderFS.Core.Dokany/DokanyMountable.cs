@@ -23,7 +23,6 @@ namespace SecureFolderFS.Core.Dokany
         /// <inheritdoc/>
         public Task<IVirtualFileSystem> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
-            _dokanyCallbacks.
             throw new NotImplementedException();
         }
     }

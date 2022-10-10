@@ -72,14 +72,14 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         }
 
         /// <inheritdoc/>
-        public async Task WriteKeystoreAsync(Stream keystoreStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default)
+        public async Task WriteKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
         {
-            var serializedKeystore = await serializer.SerializeAsync(_keystoreDataModel, cancellationToken);
-            await keystoreStream.WriteAsync(serializedKeystore, cancellationToken);
+            await using var serializedKeystoreStream = await serializer.SerializeAsync(_keystoreDataModel, cancellationToken);
+            await serializedKeystoreStream.CopyToAsync(keystoreStream, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task WriteConfigurationAsync(VaultOptions vaultOptions, Stream configStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default)
+        public async Task WriteConfigurationAsync(VaultOptions vaultOptions, Stream configStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(_macKey);
 
@@ -102,10 +102,10 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
                 };
                 
                 // Serialize data
-                var serializedConfig = await serializer.SerializeAsync(configurationDataModel, cancellationToken);
+                await using var serializedConfigStream = await serializer.SerializeAsync(configurationDataModel, cancellationToken);
 
                 // Write configuration
-                await configStream.WriteAsync(serializedConfig, cancellationToken);
+                await serializedConfigStream.CopyToAsync(configStream, cancellationToken);
             }
         }
 

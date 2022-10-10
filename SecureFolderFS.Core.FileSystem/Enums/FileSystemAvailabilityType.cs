@@ -1,8 +1,11 @@
-﻿namespace SecureFolderFS.Core.FileSystem.Enums
+﻿using System;
+
+namespace SecureFolderFS.Core.FileSystem.Enums
 {
     /// <summary>
     /// Defines types of possible file system availability errors.
     /// </summary>
+    [Flags]
     public enum FileSystemAvailabilityType : uint
     {
         /// <summary>

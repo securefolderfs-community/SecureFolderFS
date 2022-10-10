@@ -1,39 +1,36 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.AppModels;
+﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.AppModels
 {
     /// <summary>
     /// Manages a settings node of shared settings.
     /// </summary>
-    internal abstract class SharedSettingsModel : SingleFileSettingsModel
+    internal abstract class SharedSettingsModel : SettingsModel
     {
-        protected readonly ISettingsModel originSettingsModel;
+        protected ISettingsModel OriginSettingsModel { get; }
 
         protected SharedSettingsModel(IDatabaseModel<string> originSettingsDatabase, ISettingsModel originSettingsModel)
         {
-            this.SettingsDatabase = originSettingsDatabase;
-            this.originSettingsModel = originSettingsModel;
+            SettingsDatabase = originSettingsDatabase;
+            OriginSettingsModel = originSettingsModel;
         }
 
         /// <inheritdoc/>
-        public override bool IsAvailable => originSettingsModel.IsAvailable;
-
-        /// <inheritdoc/>
-        protected sealed override string? SettingsStorageName { get; } = null;
+        public override bool IsAvailable => OriginSettingsModel.IsAvailable;
 
         /// <inheritdoc/>
         public sealed override Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
         {
-            return originSettingsModel.LoadSettingsAsync(cancellationToken);
+            return OriginSettingsModel.LoadSettingsAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
         public sealed override Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
         {
-            return originSettingsModel.SaveSettingsAsync(cancellationToken);
+            return OriginSettingsModel.SaveSettingsAsync(cancellationToken);
         }
     }
 }

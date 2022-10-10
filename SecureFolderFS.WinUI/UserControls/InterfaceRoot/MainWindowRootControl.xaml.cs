@@ -56,7 +56,8 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             // Continue root initialization
             if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped
             {
-                ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
+                //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
+                // TODO: Implement OOBE
             }
             else
             {

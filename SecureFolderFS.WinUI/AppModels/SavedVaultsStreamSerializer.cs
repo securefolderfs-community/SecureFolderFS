@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using SecureFolderFS.Sdk.AppModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.WinUI.Serialization
+namespace SecureFolderFS.WinUI.AppModels
 {
     /// <inheritdoc cref="StreamSerializer"/>
     internal sealed class SavedVaultsStreamSerializer : StreamSerializer

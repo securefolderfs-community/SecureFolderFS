@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using SecureFolderFS.Core.FileSystem.Enums;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem
 {
-    /// <summary>
-    /// Represents a file x
-    /// </summary>
+    // TODO: Needs docs
     public interface IFileSystemDescriptor
     {
-
+        Task<FileSystemAvailabilityType> DetermineAvailabilityAsync();
     }
 }

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Models;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -11,19 +10,9 @@ namespace SecureFolderFS.Sdk.AppModels
     public abstract class SettingsModel : ISettingsModel
     {
         /// <summary>
-        /// Gets the <see cref="IModifiableFolder"/> where settings files are stored.
-        /// </summary>
-        protected IModifiableFolder? SettingsFolder { get; set; }
-
-        /// <summary>
         /// Gets the <see cref="IDatabaseModel{T}"/> where settings are stored.
         /// </summary>
         protected IDatabaseModel<string>? SettingsDatabase { get; set; }
-
-        /// <summary>
-        /// Gets the name of the settings store.
-        /// </summary>
-        protected abstract string? SettingsStorageName { get; }
 
         /// <inheritdoc/>
         public virtual bool IsAvailable { get; protected set; }

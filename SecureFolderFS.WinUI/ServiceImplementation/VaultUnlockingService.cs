@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
@@ -12,7 +14,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Enums;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -23,8 +24,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         private FileSystemAdapterType _fileSystemAdapterType;
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
-
-        private ISerializationService SerializationService { get; } = Ioc.Default.GetRequiredService<ISerializationService>();
 
         /// <inheritdoc/>
         public async Task<IResult> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
@@ -49,7 +48,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             try
             {
-                await _unlockRoutine.ReadConfigurationAsync(stream, SerializationService.StreamSerializer, cancellationToken);
+                await _unlockRoutine.ReadConfigurationAsync(stream, StreamSerializer.Instance, cancellationToken);
                 return new CommonResult();
             }
             catch (Exception ex)
@@ -113,8 +112,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 }, cancellationToken);
 
                 // Mount the file system
-                FileSystemService.DirectoryExistsAsync();
-                var virtualFileSystem = await mountableFileSystem.MountAsync(new(null), cancellationToken);
+                // TODO: Specify mount point
+                var virtualFileSystem = await mountableFileSystem.MountAsync(new(), cancellationToken);
                 
                 return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge));
             }

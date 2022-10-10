@@ -3,6 +3,8 @@
     public static class Constants
     {
         public const string DOKAN_DLL = "dokan2.dll";
+        public const int DOKAN_VERSION = 205;
+        public const int DOKAN_MAX_VERSION = 210;
 
         internal static class FileSystem
         {

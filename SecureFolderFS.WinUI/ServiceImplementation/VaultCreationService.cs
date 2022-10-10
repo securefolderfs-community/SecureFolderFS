@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Core.Cryptography.Enums;
+﻿using SecureFolderFS.Core.Cryptography.Enums;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.Routines.CreationRoutines;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.Enums;
@@ -25,8 +25,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         private ContentCipherScheme _contentCipherScheme;
         private FileNameCipherScheme _fileNameCipherScheme;
 
-        private ISerializationService SerializationService { get; } = Ioc.Default.GetRequiredService<ISerializationService>();
-
         /// <inheritdoc/>
         public async Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
         {
@@ -47,6 +45,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public Task<bool> SetPasswordAsync(IPassword password, CancellationToken cancellationToken = default)
         {
+            _ = cancellationToken;
+
             if (_creationRoutine is null)
                 return Task.FromResult(false);
 
@@ -72,7 +72,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<byte[]> serializer, CancellationToken cancellationToken = default)
+        public async Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
         {
             if (_creationRoutine is null)
                 return new CommonResult(false);
@@ -122,7 +122,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 await _creationRoutine.WriteConfigurationAsync(
                     new(_contentCipherScheme, _fileNameCipherScheme),
                     _configStream,
-                    SerializationService.BufferSerializer,
+                    StreamSerializer.Instance,
                     cancellationToken);
 
                 return new CommonResult();
