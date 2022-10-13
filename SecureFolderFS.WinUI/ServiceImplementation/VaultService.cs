@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Sdk.AppModels;
+﻿using SecureFolderFS.Core.Dokany;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
@@ -23,7 +24,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public async IAsyncEnumerable<IFileSystemInfoModel> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            yield return new DokanyFileSystemDescriptor();
+            yield return new DokanyFileSystemDescriptor(new DokanyAvailabilityChecker());
             await Task.CompletedTask;
         }
 

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Dokany
 {
-    /// <inheritdoc cref="IFileSystemDescriptor"/>
-    public sealed class DokanyDescriptor : IFileSystemDescriptor
+    /// <inheritdoc cref="IFileSystemAvailabilityChecker"/>
+    public sealed class DokanyAvailabilityChecker : IFileSystemAvailabilityChecker
     {
         /// <inheritdoc/>
         public Task<FileSystemAvailabilityType> DetermineAvailabilityAsync()

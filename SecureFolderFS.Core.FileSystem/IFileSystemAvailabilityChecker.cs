@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.FileSystem
 {
     // TODO: Needs docs
-    public interface IFileSystemDescriptor
+    public interface IFileSystemAvailabilityChecker
     {
         Task<FileSystemAvailabilityType> DetermineAvailabilityAsync();
     }

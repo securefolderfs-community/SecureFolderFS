@@ -3,12 +3,11 @@ using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Sdk.Storage;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
@@ -18,34 +17,27 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 {
     internal abstract class BaseDokanyCallbacks : IDokanOperationsUnsafe
     {
-        protected DriveInfo? vaultDriveInfo;
-        protected int vaultDriveInfoTries;
-
-        protected readonly string vaultRootPath;
+        protected readonly IFolder contentFolder;
         protected readonly IPathConverter pathConverter;
         protected readonly HandlesManager handlesManager;
 
         // TODO: Add required modifier
         public DokanyVolumeModel VolumeModel { get; init; }
 
-        protected BaseDokanyCallbacks(string vaultRootPath, IPathConverter pathConverter, HandlesManager handlesManager)
+        protected BaseDokanyCallbacks(IFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager)
         {
-            this.vaultRootPath = vaultRootPath;
+            this.contentFolder = contentFolder;
             this.pathConverter = pathConverter;
             this.handlesManager = handlesManager;
-        }
-
-        // TODO: Add checks for nullable in places where this function is called
-        protected string? GetCiphertextPath(string cleartextName)
-        {
-            var path = PathHelpers.PathFromVaultRoot(cleartextName, vaultRootPath);
-            return pathConverter.ToCiphertext(path);
         }
 
         protected void CloseHandle(IDokanFileInfo info)
         {
             handlesManager.CloseHandle(GetContextValue(info));
         }
+
+        // TODO: Add checks for nullable in places where this function is called
+        protected abstract string? GetCiphertextPath(string cleartextName);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static bool IsContextInvalid(IDokanFileInfo info)
@@ -134,23 +126,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes,
-            IDokanFileInfo info)
-        {
-            if (vaultDriveInfo is null && vaultDriveInfoTries < Constants.FileSystem.MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP)
-            {
-                vaultDriveInfoTries++;
-                vaultDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => 
-                    di.IsReady &&
-                    di.RootDirectory.Name.Equals(Path.GetPathRoot(vaultRootPath), StringComparison.OrdinalIgnoreCase));
-            }
-
-            freeBytesAvailable = vaultDriveInfo?.TotalFreeSpace ?? 0L;
-            totalNumberOfBytes = vaultDriveInfo?.TotalSize ?? 0L;
-            totalNumberOfFreeBytes = vaultDriveInfo?.AvailableFreeSpace ?? 0L;
-
-            return DokanResult.Success;
-        }
+        public abstract NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info);
 
         /// <inheritdoc/>
         public virtual NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName,

@@ -5,6 +5,7 @@ using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,16 +18,21 @@ using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
 {
-    internal class OnDeviceDokany : BaseDokanyCallbacks, IDokanOperationsUnsafe
+    internal sealed class OnDeviceDokany : BaseDokanyCallbacks, IDokanOperationsUnsafe
     {
+        private readonly ILocatableFolder _locatableContentFolder;
+        private DriveInfo? _vaultDriveInfo;
+        private int _vaultDriveInfoTries;
+        
         // TODO: Add required modifier
         public Security Security { get; init; }
 
         public IDirectoryIdAccess DirectoryIdAccess { get; init; }
 
-        public OnDeviceDokany(string vaultRootPath, IPathConverter pathConverter, HandlesManager handlesManager)
-            : base(vaultRootPath, pathConverter, handlesManager)
+        public OnDeviceDokany(ILocatableFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager)
+            : base(contentFolder, pathConverter, handlesManager)
         {
+            _locatableContentFolder = contentFolder;
         }
 
         /// <inheritdoc/>
@@ -277,6 +283,25 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 fileInfo = default;
                 return DokanResult.Unsuccessful;
             }
+        }
+
+        /// <inheritdoc/>
+        public override NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes,
+            IDokanFileInfo info)
+        {
+            if (_vaultDriveInfo is null && _vaultDriveInfoTries < Constants.FileSystem.MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP)
+            {
+                _vaultDriveInfoTries++;
+                _vaultDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => 
+                    di.IsReady &&
+                    di.RootDirectory.Name.Equals(Path.GetPathRoot(_locatableContentFolder.Path), StringComparison.OrdinalIgnoreCase));
+            }
+
+            freeBytesAvailable = _vaultDriveInfo?.TotalFreeSpace ?? 0L;
+            totalNumberOfBytes = _vaultDriveInfo?.TotalSize ?? 0L;
+            totalNumberOfFreeBytes = _vaultDriveInfo?.AvailableFreeSpace ?? 0L;
+
+            return DokanResult.Success;
         }
 
         /// <inheritdoc/>
@@ -703,6 +728,13 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 Debugger.Break();
                 return DokanResult.InternalError;
             }
+        }
+
+        /// <inheritdoc/>
+        protected override string? GetCiphertextPath(string cleartextName)
+        {
+            var path = PathHelpers.PathFromVaultRoot(cleartextName, _locatableContentFolder.Path);
+            return pathConverter.ToCiphertext(path);
         }
     }
 }
