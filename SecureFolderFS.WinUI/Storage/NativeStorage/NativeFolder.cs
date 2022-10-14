@@ -36,7 +36,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         {
             var path = System.IO.Path.Combine(Path, folderName);
 
-            if (!File.Exists(path))
+            if (!Directory.Exists(path))
                 throw new FileNotFoundException();
 
             return Task.FromResult<IFolder>(new NativeFolder(path));

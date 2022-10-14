@@ -1,4 +1,4 @@
-﻿using NSec.Cryptography;
+﻿using Konscious.Security.Cryptography;
 using SecureFolderFS.Core.Cryptography.Cipher;
 using System;
 
@@ -9,14 +9,13 @@ namespace SecureFolderFS.Core.Cryptography.CryptImpl
     {
         public void DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result)
         {
-            var argon2id = new Argon2id(new Argon2Parameters()
-            {
-                DegreeOfParallelism = 1, // TODO: Impl supports only 1 for now // Constants.Security.CryptImpl.Argon2.DEGREE_OF_PARALLELISM,
-                MemorySize = Constants.Crypt.CryptImpl.Argon2.MEMORY_SIZE,
-                NumberOfPasses = Constants.Crypt.CryptImpl.Argon2.ITERATIONS
-            });
+            using var argon2id = new Argon2id(password.ToArray());
+            argon2id.Salt = salt.ToArray();
+            argon2id.DegreeOfParallelism = Constants.Crypt.CryptImpl.Argon2.DEGREE_OF_PARALLELISM;
+            argon2id.Iterations = Constants.Crypt.CryptImpl.Argon2.ITERATIONS;
+            argon2id.MemorySize = Constants.Crypt.CryptImpl.Argon2.MEMORY_SIZE;
 
-            argon2id.DeriveBytes(password, salt, result);
+            argon2id.GetBytes(Constants.ARGON2_KEK_LENGTH).CopyTo(result);
         }
     }
 }

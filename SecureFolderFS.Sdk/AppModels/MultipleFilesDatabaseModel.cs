@@ -149,11 +149,12 @@ namespace SecureFolderFS.Sdk.AppModels
                         if (dataStream is null)
                             continue;
 
-                        // Reset the stream
-                        dataStream.Seek(0, SeekOrigin.Begin);
+                        // Overwrite existing content
+                        dataStream.Position = 0L;
                         dataStream.SetLength(0L);
 
                         // Copy contents
+                        serializedDataStream.Position = 0L;
                         await serializedDataStream.CopyToAsync(dataStream, cancellationToken);
 
                         // Type file part

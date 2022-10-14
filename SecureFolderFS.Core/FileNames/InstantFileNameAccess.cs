@@ -8,12 +8,12 @@ using System.IO;
 namespace SecureFolderFS.Core.FileNames
 {
     /// <inheritdoc cref="IFileNameAccess"/>
-    internal class FileNameAccess : IFileNameAccess
+    internal class InstantFileNameAccess : IFileNameAccess
     {
         protected readonly Security security;
         protected readonly IFileSystemStatsTracker? statsTracker;
 
-        public FileNameAccess(Security security, IFileSystemStatsTracker? statsTracker)
+        public InstantFileNameAccess(Security security, IFileSystemStatsTracker? statsTracker)
         {
             this.security = security;
             this.statsTracker = statsTracker;

@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
+﻿using SecureFolderFS.Shared.Utils;
 using System;
 using System.IO;
-using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,6 +12,8 @@ namespace SecureFolderFS.Sdk.AppModels
     /// </summary>
     public class StreamSerializer : IAsyncSerializer<Stream>
     {
+        private JsonSerializerOptions DefaultSerializerOptions { get; }
+
         /// <summary>
         /// A single instance of <see cref="StreamSerializer"/>.
         /// </summary>
@@ -21,25 +21,29 @@ namespace SecureFolderFS.Sdk.AppModels
 
         protected StreamSerializer()
         {
+            DefaultSerializerOptions = new()
+            {
+                WriteIndented = true
+            };
         }
 
         /// <inheritdoc/>
-        public virtual Task<Stream> SerializeAsync(object? data, Type dataType, CancellationToken cancellationToken = default)
+        public virtual async Task<Stream> SerializeAsync(object? data, Type dataType, CancellationToken cancellationToken = default)
         {
-            var serialized = JsonConvert.SerializeObject(data, dataType, Formatting.Indented, null);
-            var buffer = Encoding.UTF8.GetBytes(serialized);
+            var outputStream = new MemoryStream();
+            await JsonSerializer.SerializeAsync(outputStream, data, dataType, DefaultSerializerOptions, cancellationToken);
 
-            return Task.FromResult<Stream>(new MemoryStream(buffer));
+            return outputStream;
         }
 
         /// <inheritdoc/>
         public virtual async Task<object?> DeserializeAsync(Stream serialized, Type dataType, CancellationToken cancellationToken = default)
         {
-            serialized.Position = 0L;
-            var buffer = await serialized.ReadAllBytesAsync();
-            var rawSerialized = Encoding.UTF8.GetString(buffer);
+            if (serialized.CanSeek)
+                serialized.Position = 0L;
 
-            return JsonConvert.DeserializeObject(rawSerialized, dataType);
+            var deserialized = await JsonSerializer.DeserializeAsync(serialized, dataType, DefaultSerializerOptions, cancellationToken);
+            return deserialized;
         }
     }
 }

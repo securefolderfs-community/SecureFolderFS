@@ -2,8 +2,6 @@
 {
     public static class Constants
     {
-        public const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
         public const string CONTENT_FOLDERNAME = "content";
 
         public const string VAULT_CONFIGURATION_FILENAME = "sfconfig.cfg";
@@ -54,7 +52,6 @@
             public const int ENCRYPTIONKEY_LENGTH = 32;
             public const int MACKEY_LENGTH = 32;
             public const int SALT_LENGTH = 16;
-            public const int KEK_LENGTH = 32;
         }
 
         public static class VaultVersion

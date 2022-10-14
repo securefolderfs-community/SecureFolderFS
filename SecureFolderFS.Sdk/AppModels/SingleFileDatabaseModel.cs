@@ -1,12 +1,12 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -79,17 +79,19 @@ namespace SecureFolderFS.Sdk.AppModels
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
-                await using var stream = await _databaseFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
-                if (stream is null)
+                await using var dataStream = await _databaseFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
+                if (dataStream is null)
                     return false;
 
                 await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, object?>>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
-                stream.SetLength(0L);
+                dataStream.Position = 0L;
+                dataStream.SetLength(0L);
 
-                // Write settings
-                await settingsStream.CopyToAsync(stream, cancellationToken);
+                // Copy contents
+                settingsStream.Position = 0L;
+                await settingsStream.CopyToAsync(dataStream, cancellationToken);
 
                 return true;
             }

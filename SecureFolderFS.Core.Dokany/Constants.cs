@@ -9,6 +9,7 @@
         internal static class FileSystem
         {
             public const long INVALID_HANDLE = 0L;
+            public const uint MAX_COMPONENT_LENGTH = 256;
             public const int MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP = 5;
 
             public const DokanNet.FileAccess DATA_ACCESS =

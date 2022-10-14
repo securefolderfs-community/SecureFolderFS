@@ -51,7 +51,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
                 secureRandom.GetNonZeroBytes(salt);
 
                 // Derive KEK
-                Span<byte> kek = stackalloc byte[Constants.KeyChains.KEK_LENGTH];
+                Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
                 _cipherProvider.Argon2idCrypt.DeriveKey(password.GetPassword(), salt, kek);
 
                 // Wrap keys

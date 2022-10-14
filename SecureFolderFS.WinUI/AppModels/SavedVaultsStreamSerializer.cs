@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
-using SecureFolderFS.Sdk.AppModels;
+﻿using SecureFolderFS.Sdk.AppModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,8 +22,10 @@ namespace SecureFolderFS.WinUI.AppModels
                 var cleanedDictionary = new Dictionary<string, object>();
                 foreach (var item in dictionary)
                 {
-                    if (item.Value is JArray jArray)
-                        cleanedDictionary.Add(item.Key, jArray.Select(x => x.ToObject<string>()).ToList());
+                    if (item.Value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Array)
+                    {
+                        cleanedDictionary.Add(item.Key, jsonElement.EnumerateArray().Select(x => x.GetString()).ToList());
+                    }
                     else
                         cleanedDictionary.Add(item.Key, item.Value);
                 }

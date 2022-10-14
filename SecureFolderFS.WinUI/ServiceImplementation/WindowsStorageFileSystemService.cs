@@ -2,6 +2,8 @@
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.WinUI.Storage.WindowsStorage;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -67,6 +69,15 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public Task<IDisposable?> ObtainLockAsync(IStorable storage, CancellationToken cancellationToken = default)
         {
             return Task.FromResult<IDisposable?>(null); // TODO: Implement
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<string> GetFreeMountPoints()
+        {
+            var occupiedLetters = System.IO.Directory.GetLogicalDrives().Select(item => item[0]);
+            var availableLetters = Constants.ALPHABET.ToCharArray().Skip(3).Except(occupiedLetters); // Skip floppy disk drives and system drive
+
+            return availableLetters.Select(item => $"{item}:\\");
         }
     }
 }

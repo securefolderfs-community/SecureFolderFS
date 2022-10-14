@@ -11,7 +11,7 @@ namespace SecureFolderFS.Shared.Extensions
             TData? data,
             CancellationToken cancellationToken = default)
         {
-            return await serializer.SerializeAsync(data, typeof(TSerialized), cancellationToken);
+            return await serializer.SerializeAsync(data, typeof(TData), cancellationToken);
         }
 
         public static async Task<TData?> DeserializeAsync<TSerialized, TData>(

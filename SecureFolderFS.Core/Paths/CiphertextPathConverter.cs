@@ -8,32 +8,33 @@ using System.IO;
 namespace SecureFolderFS.Core.Paths
 {
     /// <inheritdoc cref="IPathConverter"/>
-    internal sealed class CiphertextPathConverter : BasePathConverter
+    internal sealed class CiphertextPathConverter : IPathConverter
     {
+        private readonly string _vaultRootPath;
         private readonly IFileNameAccess _fileNameAccess;
         private readonly IDirectoryIdAccess _directoryIdAccess;
 
         public CiphertextPathConverter(string vaultRootPath, IFileNameAccess fileNameAccess, IDirectoryIdAccess directoryIdAccess)
-            : base(vaultRootPath)
         {
+            _vaultRootPath = vaultRootPath;
             _fileNameAccess = fileNameAccess;
             _directoryIdAccess = directoryIdAccess;
         }
 
         /// <inheritdoc/>
-        public override string? ToCiphertext(string cleartextPath)
+        public string? ToCiphertext(string cleartextPath)
         {
             return GetCorrectPath(cleartextPath, GetCiphertextFileName);
         }
 
         /// <inheritdoc/>
-        public override string? ToCleartext(string ciphertextPath)
+        public string? ToCleartext(string ciphertextPath)
         {
             return GetCorrectPath(ciphertextPath, GetCleartextFileName);
         }
 
         /// <inheritdoc/>
-        public override string? GetCleartextFileName(string cleartextFilePath)
+        public string? GetCleartextFileName(string cleartextFilePath)
         {
             var fileName = Path.GetFileName(cleartextFilePath);
             var parentDirectory = Path.GetDirectoryName(cleartextFilePath);
@@ -64,9 +65,8 @@ namespace SecureFolderFS.Core.Paths
         // TODO: Refactor
         private string? GetCorrectPath(string path, Func<string, string?> fileNameFunc)
         {
-            var onlyPathAfterContent = path.Substring(vaultRootPath.Length, path.Length - vaultRootPath.Length);
-            var correctPath = PathHelpers.EnsureTrailingPathSeparator(vaultRootPath);
-            //var pathBuilder = new StringBuilder(255);
+            var onlyPathAfterContent = path.Substring(_vaultRootPath.Length, path.Length - _vaultRootPath.Length);
+            var correctPath = PathHelpers.EnsureTrailingPathSeparator(_vaultRootPath);
 
             foreach (var item in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {

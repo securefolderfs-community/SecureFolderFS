@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -56,5 +57,11 @@ namespace SecureFolderFS.Sdk.Storage
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a lock handle to <paramref name="storage"/> represented with <see cref="IDisposable"/>, otherwise null.</returns>
         Task<IDisposable?> ObtainLockAsync(IStorable storage, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets all free locations of free mount points.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{T}"/> of mount point paths.</returns>
+        IEnumerable<string> GetFreeMountPoints();
     }
 }

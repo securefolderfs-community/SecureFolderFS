@@ -2,6 +2,8 @@
 {
     public static class Constants
     {
+        public const int ARGON2_KEK_LENGTH = 32;
+
         internal static class Crypt
         {
             internal static class Chunks

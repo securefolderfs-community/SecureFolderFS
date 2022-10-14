@@ -20,15 +20,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         protected readonly IFolder contentFolder;
         protected readonly IPathConverter pathConverter;
         protected readonly HandlesManager handlesManager;
+        protected readonly DokanyVolumeModel volumeModel;
 
-        // TODO: Add required modifier
-        public DokanyVolumeModel VolumeModel { get; init; }
-
-        protected BaseDokanyCallbacks(IFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager)
+        protected BaseDokanyCallbacks(IFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager, DokanyVolumeModel volumeModel)
         {
             this.contentFolder = contentFolder;
             this.pathConverter = pathConverter;
             this.handlesManager = handlesManager;
+            this.volumeModel = volumeModel;
         }
 
         protected void CloseHandle(IDokanFileInfo info)
@@ -132,10 +131,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public virtual NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName,
             out uint maximumComponentLength, IDokanFileInfo info)
         {
-            volumeLabel = VolumeModel.VolumeName;
-            fileSystemName = VolumeModel.FileSystemName;
-            maximumComponentLength = VolumeModel.MaximumComponentLength;
-            features = VolumeModel.FileSystemFeatures;
+            volumeLabel = volumeModel.VolumeName;
+            fileSystemName = volumeModel.FileSystemName;
+            maximumComponentLength = volumeModel.MaximumComponentLength;
+            features = volumeModel.FileSystemFeatures;
 
             return DokanResult.Success;
         }

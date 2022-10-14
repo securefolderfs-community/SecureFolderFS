@@ -33,6 +33,6 @@ namespace SecureFolderFS.Core.DataModels
         /// Gets the HMAC-SHA256 hash of the payload.
         /// </summary>
         [JsonPropertyName("hmacsha256mac")]
-        public byte[] PayloadMac { get; init; }
+        public byte[]? PayloadMac { get; init; }
     }
 }

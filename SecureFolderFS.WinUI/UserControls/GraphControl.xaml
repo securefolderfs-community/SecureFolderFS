@@ -68,7 +68,8 @@
                 <sf:SfCartesianChart.XAxes>
                     <sf:DateTimeAxis
                         AxisLineStyle="{StaticResource ChartLine}"
-                        ShowGridLines="False"
+                        ShowMajorGridLines="False"
+                        ShowMinorGridLines="False"
                         Visibility="Collapsed" />
                 </sf:SfCartesianChart.XAxes>
                 <sf:SfCartesianChart.YAxes>
@@ -76,7 +77,8 @@
                         AxisLineStyle="{StaticResource ChartLine}"
                         Minimum="0"
                         MinorTickLineSize="8"
-                        ShowGridLines="False"
+                        ShowMajorGridLines="False"
+                        ShowMinorGridLines="False"
                         TickLineSize="0">
                         <sf:NumericalAxis.LabelStyle>
                             <sf:LabelStyle Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />

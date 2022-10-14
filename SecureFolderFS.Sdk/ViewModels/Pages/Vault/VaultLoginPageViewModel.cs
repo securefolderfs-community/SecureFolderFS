@@ -8,6 +8,9 @@ using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
@@ -47,8 +50,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             }
             else
             {
+                var vaultService = Ioc.Default.GetRequiredService<IVaultService>();
+                var fileSystems = await vaultService.GetFileSystemsAsync(cancellationToken).ToListAsync(cancellationToken);
+
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
-                var vaultUnlockingModel = new VaultUnlockingModel();
+                var vaultUnlockingModel = new VaultUnlockingModel(fileSystems[0]);
 
                 LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, keystoreModel, VaultModel, Messenger);
             }

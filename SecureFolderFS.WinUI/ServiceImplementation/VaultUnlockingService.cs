@@ -6,12 +6,12 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,18 +26,22 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
         /// <inheritdoc/>
-        public async Task<IResult> SetVaultFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public async Task<IResult> SetVaultFolderAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
         {
-            _unlockRoutine = VaultRoutines.NewUnlockRoutine();
+            _unlockRoutine?.Dispose();
+            _unlockRoutine ??= VaultRoutines.NewUnlockRoutine();
 
-            var contentFolder = await folder.GetFolderWithResultAsync(Core.Constants.CONTENT_FOLDERNAME, cancellationToken);
-            if (!contentFolder.Successful)
-                return contentFolder;
+            try
+            {
+                await _unlockRoutine.SetVaultFolder(vaultFolder, cancellationToken);
+                _vaultFolder = vaultFolder;
 
-            _vaultFolder = folder;
-            _unlockRoutine.SetContentFolder(contentFolder.Value!);
-
-            return new CommonResult();
+                return new CommonResult();
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult(ex);
+            }
         }
 
         /// <inheritdoc/>
@@ -111,9 +115,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                     FileSystemStatsTracker = vaultStatisticsBridge
                 }, cancellationToken);
 
+                // Get free mount point
+                var firstFreeMountPoint = FileSystemService.GetFreeMountPoints().FirstOrDefault();
+                if (firstFreeMountPoint is null)
+                    return new CommonResult<IUnlockedVaultModel?>(new DirectoryNotFoundException("No available free mount points for vault file system"));
+                
                 // Mount the file system
-                // TODO: Specify mount point
-                var virtualFileSystem = await mountableFileSystem.MountAsync(new(), cancellationToken);
+                var virtualFileSystem = await mountableFileSystem.MountAsync(new(firstFreeMountPoint), cancellationToken);
                 
                 return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge));
             }

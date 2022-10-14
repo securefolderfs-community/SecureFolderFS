@@ -18,6 +18,8 @@ namespace SecureFolderFS.Core.SecureStore
         public override SecretKey CreateCopy()
         {
             var keyCopy = new byte[Key.Length];
+            Array.Copy(Key, 0, keyCopy, 0, Key.Length);
+
             return new SecureKey(keyCopy);
         }
 

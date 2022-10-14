@@ -16,6 +16,8 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.ComponentBuilders;
+using SecureFolderFS.Core.Dokany;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {
@@ -26,6 +28,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private IFolder? _contentFolder;
+        private IFolder? _vaultFolder;
         private SecretKey? _encKey;
         private SecretKey? _macKey;
 
@@ -35,9 +38,10 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         }
 
         /// <inheritdoc/>
-        public void SetContentFolder(IFolder contentFolder)
+        public async Task SetVaultFolder(IFolder vaultFolder, CancellationToken cancellationToken = default)
         {
-            _contentFolder = contentFolder;
+            _vaultFolder = vaultFolder;
+            _contentFolder = await vaultFolder.GetFolderAsync(Constants.CONTENT_FOLDERNAME, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -76,7 +80,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
                 using var macKey = new SecureKey(new byte[Constants.KeyChains.MACKEY_LENGTH]);
 
                 // Derive KEK
-                Span<byte> kek = stackalloc byte[Constants.KeyChains.KEK_LENGTH];
+                Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
                 _cipherProvider.Argon2idCrypt.DeriveKey(password.GetPassword(), _keystoreDataModel.Salt, kek);
 
                 // Unwrap keys
@@ -93,18 +97,33 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         public async Task<IMountableFileSystem> PrepareAndUnlockAsync(FileSystemOptions fileSystemOptions, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
+            ArgumentNullException.ThrowIfNull(_contentFolder);
+            ArgumentNullException.ThrowIfNull(_vaultFolder);
             ArgumentNullException.ThrowIfNull(_macKey);
+            ArgumentNullException.ThrowIfNull(_encKey);
 
-            // Create MAC key copy for the validator
+            // Create MAC key copy for the validator that can be disposed here
             using var macKeyCopy = _macKey.CreateCopy();
 
             // Check if the payload has not been tampered with
-            IAsyncValidator<VaultConfigurationDataModel> validator = new ConfigurationValidator(_cipherProvider, _macKey);
+            IAsyncValidator<VaultConfigurationDataModel> validator = new ConfigurationValidator(_cipherProvider, macKeyCopy);
             var validationResult = await validator.ValidateAsync(_configDataModel, cancellationToken);
             if (!validationResult.Successful)
                 throw validationResult.Exception ?? throw new CryptographicException();
 
+            // Build the file system mountable
+            var componentBuilder = new FileSystemComponentBuilder()
+            {
+                ConfigDataModel = _configDataModel,
+                ContentFolder = _contentFolder,
+                FileSystemOptions = fileSystemOptions
+            };
 
+            // TODO: Determine file system adapter using fileSystemOptions.FileSystemAdapterType
+            var (security, directoryIdAccess, pathConverter, streamsAccess) = componentBuilder.BuildComponents(_encKey, _macKey);
+            var mountable = DokanyMountable.CreateDokanyMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess);
+
+            return mountable;
         }
 
         /// <inheritdoc/>

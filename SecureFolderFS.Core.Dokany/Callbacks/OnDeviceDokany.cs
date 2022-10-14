@@ -1,6 +1,7 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.Helpers;
+using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
@@ -29,8 +30,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
         public IDirectoryIdAccess DirectoryIdAccess { get; init; }
 
-        public OnDeviceDokany(ILocatableFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager)
-            : base(contentFolder, pathConverter, handlesManager)
+        public OnDeviceDokany(ILocatableFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager, DokanyVolumeModel volumeModel)
+            : base(contentFolder, pathConverter, handlesManager, volumeModel)
         {
             _locatableContentFolder = contentFolder;
         }
