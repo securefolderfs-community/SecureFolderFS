@@ -29,6 +29,9 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share2, 4096, options);
             var cleartextStream = _streamsAccess.OpenCleartextStream(ciphertextPath, ciphertextStream);
 
+            if (cleartextStream is null)
+                return Constants.FileSystem.INVALID_HANDLE;
+
             // Flush ChunkAccess if the opened to Truncate
             if (mode == FileMode.Truncate)
                 cleartextStream.Flush();

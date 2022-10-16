@@ -36,30 +36,28 @@ namespace SecureFolderFS.Core.Paths
         /// <inheritdoc/>
         public string? GetCleartextFileName(string cleartextFilePath)
         {
-            var fileName = Path.GetFileName(cleartextFilePath);
-            var parentDirectory = Path.GetDirectoryName(cleartextFilePath);
-            if (parentDirectory is null)
+            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, _vaultRootPath);
+            if (directoryIdPath is null)
                 return null;
 
-            var directoryId = _directoryIdAccess.GetDirectoryId(parentDirectory);
+            var directoryId = _directoryIdAccess.GetDirectoryId(directoryIdPath);
             if (directoryId is null)
                 return null;
 
-            return _fileNameAccess.GetCleartextName(fileName, directoryId).ToString();
+            return _fileNameAccess.GetCleartextName(Path.GetFileName(cleartextFilePath), directoryId).ToString();
         }
 
         private string? GetCiphertextFileName(string ciphertextFilePath)
         {
-            var fileName = Path.GetFileName(ciphertextFilePath);
-            var parentDirectory = Path.GetDirectoryName(ciphertextFilePath);
-            if (parentDirectory is null)
+            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, _vaultRootPath);
+            if (directoryIdPath is null)
                 return null;
 
-            var directoryId = _directoryIdAccess.GetDirectoryId(parentDirectory);
+            var directoryId = _directoryIdAccess.GetDirectoryId(directoryIdPath);
             if (directoryId is null)
                 return null;
 
-            return _fileNameAccess.GetCiphertextName(fileName, directoryId).ToString();
+            return _fileNameAccess.GetCiphertextName(Path.GetFileName(ciphertextFilePath), directoryId).ToString();
         }
 
         // TODO: Refactor

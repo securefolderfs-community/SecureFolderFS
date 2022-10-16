@@ -11,6 +11,23 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
             return fileName.EndsWith(extension, StringComparison.OrdinalIgnoreCase) ? fileName.Remove(fileName.Length - extension.Length) : fileName;
         }
 
+        public static string? GetDirectoryIdPathOfParent(string path, string rootPath)
+        {
+            var parentPath = Path.GetDirectoryName(path);
+            if (parentPath is null)
+                return null;
+
+            if (parentPath.Equals(rootPath))
+            {
+                // Parent path is the same as rootPath where the directory ID should be empty
+                return string.Empty;
+            }
+            else
+            {
+                return Path.Combine(parentPath, Constants.DIRECTORY_ID_FILENAME);
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsCoreFile(string fileName)
         {

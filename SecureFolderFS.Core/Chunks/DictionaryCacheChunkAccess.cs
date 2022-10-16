@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Chunks
         public DictionaryCacheChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatsTracker? statsTracker)
             : base(chunkReader, chunkWriter, contentCrypt, statsTracker)
         {
-            _chunkCache = new(3, Constants.IO.MAX_CACHED_CHUNKS);
+            _chunkCache = new(3, Constants.Caching.MAX_CACHED_CHUNKS);
         }
 
         /// <inheritdoc/>
@@ -123,7 +123,7 @@ namespace SecureFolderFS.Core.Chunks
 
         private void SetChunk(long chunkNumber, ChunkBuffer cleartextChunk)
         {
-            if (_chunkCache.Count >= Constants.IO.MAX_CACHED_CHUNKS)
+            if (_chunkCache.Count >= Constants.Caching.MAX_CACHED_CHUNKS)
             {
                 // Get chunk number to remove
                 var chunkNumberToRemove = _chunkCache.Keys.First();

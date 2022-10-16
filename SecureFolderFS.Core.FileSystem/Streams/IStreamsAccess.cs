@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
-    public interface IStreamsAccess
+    public interface IStreamsAccess : IDisposable
     {
         /// <summary>
         /// Opens a new cleartext stream wrapping <paramref name="ciphertextStream"/>.

@@ -17,8 +17,8 @@ namespace SecureFolderFS.Core.FileNames
         public CachingFileNameAccess(Security security, IFileSystemStatsTracker? statsTracker)
             : base(security, statsTracker)
         {
-            _cleartextNames = new(3, Constants.IO.MAX_CACHED_CLEARTEXT_FILENAMES);
-            _ciphertextNames = new(3, Constants.IO.MAX_CACHED_CIPHERTEXT_FILENAMES);
+            _cleartextNames = new(3, Constants.Caching.MAX_CACHED_CLEARTEXT_FILENAMES);
+            _ciphertextNames = new(3, Constants.Caching.MAX_CACHED_CIPHERTEXT_FILENAMES);
         }
 
         /// <inheritdoc/>
@@ -75,7 +75,7 @@ namespace SecureFolderFS.Core.FileNames
 
         private void SetCleartextName(ReadOnlyMemory<char> cleartextName, ReadOnlyMemory<char> ciphertextName, DirectoryId directoryId)
         {
-            if (_cleartextNames.Count >= Constants.IO.MAX_CACHED_CLEARTEXT_FILENAMES)
+            if (_cleartextNames.Count >= Constants.Caching.MAX_CACHED_CLEARTEXT_FILENAMES)
                 _cleartextNames.TryRemove(_cleartextNames.Keys.First(), out _);
 
             _cleartextNames[new(directoryId, ciphertextName)] = cleartextName;
@@ -83,7 +83,7 @@ namespace SecureFolderFS.Core.FileNames
 
         private void SetCiphertextName(ReadOnlyMemory<char> ciphertextName, ReadOnlyMemory<char> cleartextName, DirectoryId directoryId)
         {
-            if (_ciphertextNames.Count >= Constants.IO.MAX_CACHED_CIPHERTEXT_FILENAMES)
+            if (_ciphertextNames.Count >= Constants.Caching.MAX_CACHED_CIPHERTEXT_FILENAMES)
                 _ciphertextNames.TryRemove(_ciphertextNames.Keys.First(), out _);
 
             _ciphertextNames[new(directoryId, cleartextName)] = ciphertextName;

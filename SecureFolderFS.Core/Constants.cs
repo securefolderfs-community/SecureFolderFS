@@ -25,25 +25,11 @@
             public const string AES_SIV = "AES-SIV";
         }
 
-        internal static class FileSystem
-        {
-            public const long INVALID_HANDLE = 0L;
-
-            public const uint FILESYSTEM_SERIAL_NUMBER = 1137196800u;
-
-            public const string FILESYSTEM_NAME = "NTFS";
-
-            public const string UNC_NAME = "securefolderfs";
-        }
-
-        internal static class IO
+        internal static class Caching
         {
             public const int MAX_CACHED_CHUNKS = 6;
-
             public const int MAX_CACHED_DIRECTORY_IDS = 1000;
-
             public const int MAX_CACHED_CIPHERTEXT_FILENAMES = 2000;
-
             public const int MAX_CACHED_CLEARTEXT_FILENAMES = 2000;
         }
 

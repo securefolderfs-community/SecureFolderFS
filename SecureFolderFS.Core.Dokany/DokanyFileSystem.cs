@@ -24,12 +24,10 @@ namespace SecureFolderFS.Core.Dokany
         }
 
         /// <inheritdoc/>
-        public Task<bool> CloseAsync(FileSystemCloseMethod closeMethod)
+        public async Task<bool> CloseAsync(FileSystemCloseMethod closeMethod)
         {
             IsOperational = false;
-            var result = _dokanyWrapper.CloseFileSystem(closeMethod);
-
-            return Task.FromResult(result);
+            return await Task.Run(() => _dokanyWrapper.CloseFileSystem(closeMethod));
         }
     }
 }

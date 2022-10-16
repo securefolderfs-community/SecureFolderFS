@@ -9,6 +9,11 @@ namespace SecureFolderFS.Core.FileSystem.Directories
     public sealed record DirectoryId(byte[] Id)
     {
         /// <summary>
+        /// Gets a <see cref="DirectoryId"/> which is empty.
+        /// </summary>
+        public static DirectoryId Empty { get; } = new(Array.Empty<byte>());
+
+        /// <summary>
         /// Creates a new directory ID with unique GUID.
         /// </summary>
         /// <returns>A new directory ID.</returns>
