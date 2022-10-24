@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ITHit.WebDAV.Server" Version="12.1.11824" />
+    <PackageReference Include="NWebDav.Server" Version="0.1.36" />
   </ItemGroup>
 
 </Project>

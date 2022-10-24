@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Directories
                 return DirectoryId.Empty;
 
             // Open stream to directory id
-            using var fileStream = OpenDirectoryIdStream(ciphertextPath, FileAccess.Read);
+            using var fileStream = OpenDirectoryIdStream(ciphertextPath, FileMode.Open, FileAccess.Read);
             if (fileStream is null)
                 return null; // TODO: Report that the folder metadata file does not exist to the HealthAPI
 
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.Directories
         public virtual bool SetDirectoryId(string ciphertextPath, DirectoryId directoryId)
         {
             // Open stream to directory id
-            using var fileStream = OpenDirectoryIdStream(ciphertextPath, FileAccess.ReadWrite);
+            using var fileStream = OpenDirectoryIdStream(ciphertextPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             if (fileStream is null)
                 return false; // TODO: Report that the folder metadata file does not exist to the HealthAPI
 
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Core.Directories
 
             // Open stream to directory id
             await using var fileStream =
-                await OpenDirectoryIdStreamAsync(ciphertextPath, FileAccess.Read, cancellationToken);
+                await OpenDirectoryIdStreamAsync(ciphertextPath, FileMode.Open, FileAccess.Read, cancellationToken);
             if (fileStream is null)
                 return null; // TODO: Report that the folder metadata file does not exist to the HealthAPI
 
@@ -75,7 +75,7 @@ namespace SecureFolderFS.Core.Directories
         public virtual async Task<bool> SetDirectoryIdAsync(string ciphertextPath, DirectoryId directoryId, CancellationToken cancellationToken = default)
         {
             // Open stream to directory id
-            await using var fileStream = await OpenDirectoryIdStreamAsync(ciphertextPath, FileAccess.ReadWrite, cancellationToken);
+            await using var fileStream = await OpenDirectoryIdStreamAsync(ciphertextPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, cancellationToken);
             if (fileStream is null)
                 return false; // TODO: Report that the folder metadata file does not exist to the HealthAPI
 
@@ -90,8 +90,8 @@ namespace SecureFolderFS.Core.Directories
         {
         }
 
-        protected abstract Stream? OpenDirectoryIdStream(string ciphertextPath, FileAccess access);
+        protected abstract Stream? OpenDirectoryIdStream(string ciphertextPath, FileMode mode, FileAccess access);
 
-        protected abstract Task<Stream?> OpenDirectoryIdStreamAsync(string ciphertextPath, FileAccess access, CancellationToken cancellationToken);
+        protected abstract Task<Stream?> OpenDirectoryIdStreamAsync(string ciphertextPath, FileMode mode, FileAccess access, CancellationToken cancellationToken);
     }
 }

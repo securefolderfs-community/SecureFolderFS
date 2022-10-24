@@ -6,11 +6,11 @@ namespace SecureFolderFS.Core.Directories
 {
     internal sealed class DeprecatedDirectoryIdAccessImpl : InstantDirectoryIdAccess
     {
-        protected override Stream? OpenDirectoryIdStream(string ciphertextPath, FileAccess access)
+        protected override Stream? OpenDirectoryIdStream(string ciphertextPath, FileMode mode, FileAccess access)
         {
             try
             {
-                return File.Open(ciphertextPath, FileMode.Open, access);
+                return File.Open(ciphertextPath, mode, access);
             }
             catch (FileNotFoundException)
             {
@@ -18,11 +18,11 @@ namespace SecureFolderFS.Core.Directories
             }
         }
 
-        protected override Task<Stream?> OpenDirectoryIdStreamAsync(string ciphertextPath, FileAccess access, CancellationToken cancellationToken)
+        protected override Task<Stream?> OpenDirectoryIdStreamAsync(string ciphertextPath, FileMode mode, FileAccess access, CancellationToken cancellationToken)
         {
             try
             {
-                return Task.FromResult<Stream?>(File.Open(ciphertextPath, FileMode.Open, access));
+                return Task.FromResult<Stream?>(File.Open(ciphertextPath, mode, access));
             }
             catch (FileNotFoundException)
             {

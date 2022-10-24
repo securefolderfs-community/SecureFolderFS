@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
@@ -85,7 +86,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                             _ = Directory.CreateDirectory(ciphertextPath);
 
                             // Initialize directory with directory ID
-                            _ = DirectoryIdAccess.SetDirectoryId(ciphertextPath, DirectoryId.CreateNew()); // TODO: Maybe nodiscard?
+                            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+                            _ = DirectoryIdAccess.SetDirectoryId(directoryIdPath, DirectoryId.CreateNew()); // TODO: Maybe nodiscard?
 
                             break;
                     }
@@ -407,6 +409,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 }
 
                 var ciphertextPath = GetCiphertextPath(fileName);
+                if (ciphertextPath is null)
+                    return NtStatus.ObjectPathInvalid;
 
                 if (creationTime is not null)
                     File.SetCreationTime(ciphertextPath, creationTime.Value);
@@ -456,6 +460,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             var canDelete = true;
             var ciphertextPath = GetCiphertextPath(fileName);
+            if (ciphertextPath is null)
+                return NtStatus.ObjectPathInvalid;
+
             using var directoryEnumerator = Directory.EnumerateFileSystemEntries(ciphertextPath).GetEnumerator();
 
             while (directoryEnumerator.MoveNext())
@@ -476,6 +483,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             var oldCiphertextPath = GetCiphertextPath(oldName);
             var newCiphertextPath = GetCiphertextPath(newName);
+
+            if (oldCiphertextPath is null || newCiphertextPath is null)
+                return NtStatus.ObjectPathInvalid;
 
             CloseHandle(info);
             InvalidateContext(info);
@@ -676,6 +686,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset,
             IDokanFileInfo info)
         {
@@ -704,6 +715,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset,
             IDokanFileInfo info)
         {

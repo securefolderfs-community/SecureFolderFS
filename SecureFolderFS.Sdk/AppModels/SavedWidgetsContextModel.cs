@@ -54,8 +54,6 @@ namespace SecureFolderFS.Sdk.AppModels
             {
                 yield return new LocalWidgetModel(item.Key, SettingsService, item.Value);
             }
-
-            await Task.CompletedTask;
         }
     }
 }

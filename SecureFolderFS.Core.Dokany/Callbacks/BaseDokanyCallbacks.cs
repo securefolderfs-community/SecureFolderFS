@@ -160,6 +160,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual unsafe NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset,
             IDokanFileInfo info)
         {
@@ -224,6 +225,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public virtual unsafe NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset,
             IDokanFileInfo info)
         {

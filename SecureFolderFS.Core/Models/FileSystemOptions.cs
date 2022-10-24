@@ -7,7 +7,7 @@ namespace SecureFolderFS.Core.Models
     {
         public FileSystemAdapterType FileSystemAdapterType { get; init; } // TODO: required modifier
 
-        public ChunkCachingStrategy ChunkCachingStrategy { get; init; } = ChunkCachingStrategy.RandomAccessMemoryCache;
+        public ChunkCachingStrategy ChunkCachingStrategy { get; init; } = ChunkCachingStrategy.NoCache;
 
         public FileNameCachingStrategy FileNameCachingStrategy { get; init; } = FileNameCachingStrategy.RandomAccessMemoryCache;
 
