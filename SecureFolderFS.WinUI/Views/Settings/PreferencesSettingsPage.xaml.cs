@@ -77,6 +77,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 if (FileSystemInfoBar is null)
                     return;
 
+                await Task.Delay(800, cancellationToken);
                 FileSystemInfoBar.IsOpen = true;
                 FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Error;
                 FileSystemInfoBar.CanBeClosed = false;

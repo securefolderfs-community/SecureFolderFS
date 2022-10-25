@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.WinUI.Views.Settings.PreferencesSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:anim="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.Settings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -20,9 +21,10 @@
         <DataTemplate x:Key="DokanyUnavailableInfoBarTemplate" x:DataType="uc2:DokanyInfoBar">
             <InfoBar
                 IsClosable="{x:Bind CanBeClosed, Mode=OneWay}"
-                IsOpen="{x:Bind IsOpen, Mode=OneWay}"
+                IsOpen="True"
                 Message="{x:Bind Message, Mode=OneWay}"
-                Severity="{x:Bind InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}">
+                Severity="{x:Bind InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
+                Visibility="{x:Bind IsOpen, Mode=OneWay}">
                 <InfoBar.Content>
                     <Grid Padding="16,8,16,8">
                         <HyperlinkButton
@@ -32,6 +34,27 @@
                             Content="Open website" />
                     </Grid>
                 </InfoBar.Content>
+
+                <anim:Implicit.ShowAnimations>
+                    <anim:TranslationAnimation
+                        From="0,-15,0"
+                        To="0"
+                        Duration="0:0:0.4" />
+                    <anim:OpacityAnimation
+                        From="0"
+                        To="1.0"
+                        Duration="0:0:0.6" />
+                </anim:Implicit.ShowAnimations>
+                <anim:Implicit.HideAnimations>
+                    <anim:OpacityAnimation
+                        From="1.0"
+                        To="0.0"
+                        Duration="0:0:0.2" />
+                    <anim:TranslationAnimation
+                        From="0"
+                        To="0,-15,0"
+                        Duration="0:0:0.2" />
+                </anim:Implicit.HideAnimations>
             </InfoBar>
         </DataTemplate>
     </Page.Resources>
@@ -43,6 +66,12 @@
             <!--  Other settings  -->
             <RowDefinition />
         </Grid.RowDefinitions>
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <ReorderThemeTransition />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
 
         <!--  Banner  -->
         <uc:BannerControl Grid.Row="0">
