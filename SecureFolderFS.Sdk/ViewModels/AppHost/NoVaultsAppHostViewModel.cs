@@ -1,12 +1,13 @@
-﻿using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.AppHost
 {
@@ -15,6 +16,8 @@ namespace SecureFolderFS.Sdk.ViewModels.AppHost
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
         private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
+
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         public NoVaultsAppHostViewModel(IVaultCollectionModel vaultCollectionModel)
         {
@@ -35,6 +38,13 @@ namespace SecureFolderFS.Sdk.ViewModels.AppHost
         private async Task AddNewVaultAsync()
         {
             await DialogService.ShowDialogAsync(new VaultWizardDialogViewModel());
+        }
+
+        [RelayCommand]
+        private async Task OpenSettingsAsync()
+        {
+            await DialogService.ShowDialogAsync(new SettingsDialogViewModel());
+            await SettingsService.SaveSettingsAsync();
         }
     }
 }

@@ -1,13 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
+using SecureFolderFS.Shared.Extensions;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -26,19 +28,19 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         public MainWindowRootControl()
         {
             InitializeComponent();
+
             ViewModel = new();
         }
 
         /// <inheritdoc/>
         public void Receive(RootNavigationRequestedMessage message)
         {
-            ViewModel.AppContentViewModel = message.ViewModel as ObservableObject;
+            NavigateHostControl(message.ViewModel);
         }
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
         {
             _ = EnsureRootAsync();
-
             WeakReferenceMessenger.Default.Register(this);
         }
 
@@ -64,14 +66,27 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
                 if (result[1]) // Has vaults
                 {
                     // Show main app screen
-                    ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
+                    NavigateHostControl(new MainAppHostViewModel(vaultCollectionModel));
                 }
                 else // Doesn't have vaults
                 {
                     // Show no vaults screen
-                    ViewModel.AppContentViewModel = new NoVaultsAppHostViewModel(vaultCollectionModel);
+                    NavigateHostControl(new NoVaultsAppHostViewModel(vaultCollectionModel));
                 }
             }
+        }
+
+        private async void NavigateHostControl(INotifyPropertyChanged viewModel)
+        {
+            // Use transitions only when the initial page view model is not MainAppHostViewModel 
+            if ((ViewModel.AppContentViewModel is null && viewModel is not MainAppHostViewModel)
+                || (ViewModel.AppContentViewModel is not MainAppHostViewModel && ViewModel.AppContentViewModel is not null && viewModel is MainAppHostViewModel))
+                AppContent?.ContentTransitions?.ClearAndAdd(new ContentThemeTransition());
+
+            ViewModel.AppContentViewModel = viewModel;
+
+            await Task.Delay(250);
+            AppContent?.ContentTransitions?.Clear();
         }
     }
 }

@@ -1,16 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
+using SecureFolderFS.Shared.Extensions;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
@@ -21,6 +21,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
         [ObservableProperty]
         private BaseLoginStrategyViewModel? _LoginStrategyViewModel;
+
+        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         public VaultLoginPageViewModel(IVaultModel vaultModel)
             : base(vaultModel, new WeakReferenceMessenger())
@@ -40,6 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             LoginStrategyViewModel = message.ViewModel;
         }
 
+        // TODO: Move to separate method and add file system watcher for any vault changes.
         private async Task DetermineLoginStrategyAsync(CancellationToken cancellationToken)
         {
             var is2faEnabled = false; // TODO: Just for testing, implement the real code later
@@ -47,8 +50,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             {
                 // TODO: Recognize the option in that view model
                 LoginStrategyViewModel = new LoginKeystoreSelectionViewModel();
+                return;
             }
-            else
+
+            var vaultValidator = VaultService.GetVaultValidator();
+            var validationResult = await vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
+
+            if (validationResult.Successful)
             {
                 var vaultService = Ioc.Default.GetRequiredService<IVaultService>();
                 var fileSystems = await vaultService.GetFileSystemsAsync(cancellationToken).ToListAsync(cancellationToken);
@@ -57,6 +65,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 var vaultUnlockingModel = new VaultUnlockingModel(fileSystems[0]);
 
                 LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, keystoreModel, VaultModel, Messenger);
+            }
+            else
+            {
+                // TODO: Improve error message
+                LoginStrategyViewModel = new LoginInvalidVaultViewModel("Vault is inaccessible.");
             }
         }
     }

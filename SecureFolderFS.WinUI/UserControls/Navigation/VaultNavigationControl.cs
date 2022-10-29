@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.UI.Xaml.Media.Animation;
+﻿using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.WinUI.Views.Vault;
+using System;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
@@ -36,6 +36,9 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
                 VaultDashboardPageViewModel => typeof(VaultDashboardPage),
                 _ => throw new ArgumentNullException(nameof(viewModel))
             };
+
+            if (viewModel is VaultLoginPageViewModel && existing is VaultDashboardPageViewModel)
+                transitionInfo ??= new ContinuumNavigationTransitionInfo();
 
             ContentFrame.Navigate(pageType, viewModel, transitionInfo);
         }

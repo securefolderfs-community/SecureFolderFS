@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
@@ -104,5 +105,12 @@ namespace SecureFolderFS.WinUI.Views.Settings
         }
         public static readonly DependencyProperty FileSystemInfoBarProperty =
             DependencyProperty.Register(nameof(FileSystemInfoBar), typeof(InfoBarViewModel), typeof(PreferencesSettingsPage), new PropertyMetadata(null));
+
+        private async void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
+            await Task.Delay(400);
+            RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
+        }
     }
 }

@@ -1,5 +1,7 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
@@ -41,8 +43,15 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private void AppLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ComboBox comboBox && comboBox.SelectedItem is ILanguageModel language)
+            if (sender is ComboBox { SelectedItem: ILanguageModel language })
                 ViewModel.LanguageSettingViewModel.UpdateCurrentLanguage(language);
+        }
+
+        private async void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
+            await Task.Delay(400);
+            RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
         }
     }
 }

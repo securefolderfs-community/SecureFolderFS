@@ -54,6 +54,14 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginInvalidVaultViewModel">
+            <Grid>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="{x:Bind ErrorMessage, Mode=OneWay}" />
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <ScrollViewer>
@@ -95,7 +103,10 @@
                     HorizontalContentAlignment="Center"
                     Content="{x:Bind ViewModel.LoginStrategyViewModel, Mode=OneWay}">
                     <ContentControl.ContentTemplateSelector>
-                        <ts:LoginMethodTemplateSelector AuthenticateTemplate="{StaticResource AuthenticateTemplate}" LoginTemplate="{StaticResource LoginTemplate}" />
+                        <ts:LoginMethodTemplateSelector
+                            AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
+                            InvalidTemplate="{StaticResource VaultInvalidTemplate}"
+                            LoginTemplate="{StaticResource LoginTemplate}" />
                     </ContentControl.ContentTemplateSelector>
                 </ContentControl>
             </Grid>

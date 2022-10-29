@@ -18,19 +18,17 @@
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
     </Page.Resources>
 
-    <Grid Padding="16,16,16,8" RowSpacing="12">
+    <Grid
+        x:Name="RootGrid"
+        Padding="16,16,16,8"
+        Loaded="RootGrid_Loaded"
+        RowSpacing="12">
         <Grid.RowDefinitions>
             <!--  Banner  -->
             <RowDefinition Height="Auto" />
             <!--  Other settings  -->
             <RowDefinition />
         </Grid.RowDefinitions>
-
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <ReorderThemeTransition />
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
 
         <!--  Banner  -->
         <StackPanel Grid.Row="0">
