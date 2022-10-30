@@ -1,13 +1,13 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Enums;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using CreationCollisionOption = SecureFolderFS.Sdk.Storage.Enums.CreationCollisionOption;
 using NameCollisionOption = SecureFolderFS.Sdk.Storage.Enums.NameCollisionOption;
 
@@ -16,6 +16,8 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
     /// <inheritdoc cref="IFolder"/>
     internal sealed class WindowsStorageFolder : WindowsStorable<StorageFolder>, ILocatableFolder, IModifiableFolder
     {
+        // TODO: Implement IMutableFolder
+
         public WindowsStorageFolder(StorageFolder storage)
             : base(storage)
         {

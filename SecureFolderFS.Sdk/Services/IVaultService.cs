@@ -12,6 +12,13 @@ namespace SecureFolderFS.Sdk.Services
     public interface IVaultService // TODO: Rename this service since it doesn't have any vault related members
     {
         /// <summary>
+        /// Determines whether provided <paramref name="fileName"/> is part of vault core configuration files.
+        /// </summary>
+        /// <param name="fileName">The file name to check.</param>
+        /// <returns>True if the file name is a reserved file name, otherwise false.</returns>
+        bool IsKeyFileName(string? fileName);
+
+        /// <summary>
         /// Gets the <see cref="IAsyncValidator{T}"/> to validate vaults.
         /// </summary>
         IAsyncValidator<IFolder> GetVaultValidator();

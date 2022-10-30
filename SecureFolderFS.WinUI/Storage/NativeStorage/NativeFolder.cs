@@ -1,19 +1,20 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage.MutableStorage;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Enums;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {
     /// <inheritdoc cref="IFolder"/>
-    internal sealed class NativeFolder : NativeStorable, ILocatableFolder, IModifiableFolder
+    internal sealed class NativeFolder : NativeStorable, ILocatableFolder, IModifiableFolder, IMutableFolder
     {
         public NativeFolder(string path)
             : base(path)
@@ -48,16 +49,12 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
             if (kind == StorableKind.Files)
             {
                 foreach (var item in Directory.EnumerateFiles(Path))
-                {
                     yield return new NativeFile(item);
-                }
             }
             else if (kind == StorableKind.Folders)
             {
                 foreach (var item in Directory.EnumerateDirectories(Path))
-                {
                     yield return new NativeFolder(item);
-                }
             }
             else
             {
@@ -87,9 +84,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
                 Directory.Delete(locatableFolder.Path, true);
             }
             else
-            {
                 throw new ArgumentException($"Could not delete {item}.");
-            }
 
             return Task.CompletedTask;
         }
@@ -108,16 +103,15 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
 
                     return new NativeFile(newPath);
                 }
-                else
-                {
-                    var copiedFile = await CreateFileAsync(itemToCopy.Name, collisionOption, cancellationToken);
-                    await sourceFile.CopyContentsToAsync(copiedFile, cancellationToken);
 
-                    return copiedFile;
-                }
+                var copiedFile = await CreateFileAsync(itemToCopy.Name, collisionOption, cancellationToken);
+                await sourceFile.CopyContentsToAsync(copiedFile, cancellationToken);
+
+                return copiedFile;
             }
             else if (itemToCopy is IFolder sourceFolder)
             {
+                // TODO: Implement folder copy
                 throw new NotSupportedException();
             }
 
@@ -199,6 +193,11 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
 
             _ = Directory.CreateDirectory(path);
             return Task.FromResult<IFolder>(new NativeFolder(path));
+        }
+
+        public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<IFolderWatcher>(new NativeFolderWatcher(this));
         }
     }
 }

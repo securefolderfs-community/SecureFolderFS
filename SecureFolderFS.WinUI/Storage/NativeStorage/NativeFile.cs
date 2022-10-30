@@ -1,9 +1,9 @@
-﻿using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
+﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {

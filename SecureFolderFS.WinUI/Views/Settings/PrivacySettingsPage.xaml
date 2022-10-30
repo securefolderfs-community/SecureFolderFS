@@ -26,7 +26,18 @@
 
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
-            <ucab:ActionBlockControl Title="Automatically lock vaults" Description="Lock all vaults when system is locked">
+            <ucab:ActionBlockControl Title="Disable recently accessed list" Description="Temporarily disable recent files list when unlocking vaults">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE81C;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <ToggleSwitch
+                        MinWidth="0"
+                        IsEnabled="False"
+                        IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl Title="Automatically lock vaults" Description="Lock all vaults when device is locked">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE72E;" />
                 </ucab:ActionBlockControl.Icon>

@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Dokany;
+﻿using System;
+using SecureFolderFS.Core.Dokany;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -15,6 +16,14 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     /// <inheritdoc cref="IVaultService"/>
     internal sealed class VaultService : IVaultService
     {
+        /// <inheritdoc/>
+        public bool IsKeyFileName(string? fileName)
+        {
+            return fileName != null &&
+                   (fileName.Equals(Core.Constants.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
+                    fileName.Equals(Core.Constants.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal));
+        }
+
         /// <inheritdoc/>
         public IAsyncValidator<IFolder> GetVaultValidator()
         {

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -17,27 +16,12 @@ namespace SecureFolderFS.Sdk.AppModels
         public IFolder Folder { get; }
 
         /// <inheritdoc/>
-        public IDisposable? FolderLock { get; private set; }
-
-        /// <inheritdoc/>
         public string VaultName { get; }
 
         public LocalVaultModel(IFolder folder)
         {
             Folder = folder;
             VaultName = folder.Name;
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> LockFolderAsync(CancellationToken cancellationToken = default)
-        {
-            var folderLock = await FileSystemService.ObtainLockAsync(Folder, cancellationToken);
-            if (folderLock is null)
-                return false;
-
-            FolderLock?.Dispose();
-            FolderLock = folderLock;
-            return true;
         }
 
         /// <inheritdoc/>

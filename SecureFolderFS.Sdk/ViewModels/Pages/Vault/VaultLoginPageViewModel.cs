@@ -58,19 +58,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
             if (validationResult.Successful)
             {
-                var vaultService = Ioc.Default.GetRequiredService<IVaultService>();
-                var fileSystems = await vaultService.GetFileSystemsAsync(cancellationToken).ToListAsync(cancellationToken);
-
+                var fileSystems = await VaultService.GetFileSystemsAsync(cancellationToken).ToListAsync(cancellationToken);
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
                 var vaultUnlockingModel = new VaultUnlockingModel(fileSystems[0]);
 
-                LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, keystoreModel, VaultModel, Messenger);
+                LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, new VaultLoginModel(VaultModel), keystoreModel, Messenger);
             }
             else
-            {
-                // TODO: Improve error message
-                LoginStrategyViewModel = new LoginInvalidVaultViewModel("Vault is inaccessible.");
-            }
+                LoginStrategyViewModel = new LoginInvalidVaultViewModel(validationResult.GetMessage("Vault is inaccessible."));
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            base.Dispose();
         }
     }
 }
