@@ -16,6 +16,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel, IRecipient<ChangeLoginOptionMessage>
     {
+        private readonly IVaultLoginModel _vaultLoginModel;
+
         [ObservableProperty]
         private string? _VaultName;
 
@@ -27,12 +29,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         public VaultLoginPageViewModel(IVaultModel vaultModel)
             : base(vaultModel, new WeakReferenceMessenger())
         {
+            _vaultLoginModel = new VaultLoginModel(vaultModel);
             VaultName = vaultModel.VaultName;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            await _vaultLoginModel.WatchForChangesAsync(cancellationToken);
             await DetermineLoginStrategyAsync(cancellationToken);
         }
 
@@ -62,7 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
                 var vaultUnlockingModel = new VaultUnlockingModel(fileSystems[0]);
 
-                LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, new VaultLoginModel(VaultModel), keystoreModel, Messenger);
+                LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, _vaultLoginModel, keystoreModel, Messenger);
             }
             else
                 LoginStrategyViewModel = new LoginInvalidVaultViewModel(validationResult.GetMessage("Vault is inaccessible."));
@@ -71,7 +75,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         /// <inheritdoc/>
         public override void Dispose()
         {
-            base.Dispose();
+            LoginStrategyViewModel?.Dispose();
         }
     }
 }

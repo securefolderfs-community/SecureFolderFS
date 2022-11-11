@@ -64,17 +64,20 @@ namespace SecureFolderFS.Sdk.AppModels
 
         private async void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Replace)
+            if (e.NewItems is null)
+                return;
+
+            if (e.Action == NotifyCollectionChangedAction.Replace && e.OldItems is not null)
             {
-                var oldItem = Path.GetFileName(e.OldItems?.Cast<string>().FirstOrDefault());
-                var newItem = Path.GetFileName(e.NewItems?.Cast<string>().FirstOrDefault());
+                var oldItem = Path.GetFileName(e.OldItems.Cast<string>().FirstOrDefault());
+                var newItem = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
                 if (!VaultService.IsKeyFileName(oldItem) && !VaultService.IsKeyFileName(newItem))
                     return;
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                var item = Path.GetFileName(e.NewItems?.Cast<string>().FirstOrDefault());
+                var item = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
                 if (!VaultService.IsKeyFileName(item))
                     return;
