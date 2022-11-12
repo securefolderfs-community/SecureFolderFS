@@ -134,6 +134,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public void Dispose()
         {
+            _unlockRoutine?.Dispose();
         }
     }
 }

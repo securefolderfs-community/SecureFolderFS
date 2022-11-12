@@ -10,11 +10,28 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
     internal sealed class NativeFolderWatcher : IFolderWatcher
     {
         private FileSystemWatcher? _fileSystemWatcher;
+        private NotifyCollectionChangedEventHandler? _collectionChanged;
 
         public IMutableFolder Folder { get; }
 
         /// <inheritdoc/>
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged
+        {
+            add
+            {
+                if (_fileSystemWatcher is not null)
+                    _fileSystemWatcher.EnableRaisingEvents = true;
+
+                _collectionChanged += value;
+            }
+            remove
+            {
+                if (_fileSystemWatcher is not null)
+                    _fileSystemWatcher.EnableRaisingEvents = false;
+
+                _collectionChanged -= value;
+            }
+        }
 
         public NativeFolderWatcher(IMutableFolder folder)
         {
@@ -35,17 +52,17 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
 
         private void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Replace, e.OldFullPath, e.FullPath));
+            _collectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Replace, e.FullPath, e.OldFullPath));
         }
 
         private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Remove, e.FullPath));
+            _collectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Remove, e.FullPath));
         }
 
         private void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, e.FullPath));
+            _collectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, e.FullPath));
         }
 
         /// <inheritdoc/>
@@ -60,6 +77,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         {
             if (_fileSystemWatcher is not null)
             {
+                _fileSystemWatcher.EnableRaisingEvents = false;
                 _fileSystemWatcher.Created -= FileSystemWatcher_Created;
                 _fileSystemWatcher.Deleted -= FileSystemWatcher_Deleted;
                 _fileSystemWatcher.Renamed -= FileSystemWatcher_Renamed;

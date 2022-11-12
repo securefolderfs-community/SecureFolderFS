@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utils;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel, IRecipient<ChangeLoginOptionMessage>
     {
         private readonly IVaultLoginModel _vaultLoginModel;
+        private readonly IAsyncValidator<IFolder> _vaultValidator;
 
         [ObservableProperty]
         private string? _VaultName;
@@ -26,11 +28,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
+        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
+
         public VaultLoginPageViewModel(IVaultModel vaultModel)
             : base(vaultModel, new WeakReferenceMessenger())
         {
-            _vaultLoginModel = new VaultLoginModel(vaultModel);
             VaultName = vaultModel.VaultName;
+            _vaultValidator = VaultService.GetVaultValidator();
+            _vaultLoginModel = new VaultLoginModel(vaultModel);
+            _vaultLoginModel.VaultChangedEvent += VaultLoginModel_VaultChangedEvent;
+        }
+
+        private async void VaultLoginModel_VaultChangedEvent(object? sender, IResult e)
+        {
+            if (!e.Successful)
+            {
+                await ThreadingService.ExecuteOnUiThreadAsync();
+                await DetermineLoginStrategyAsync();
+            }
         }
 
         /// <inheritdoc/>
@@ -47,7 +62,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         }
 
         // TODO: Move to separate method and add file system watcher for any vault changes.
-        private async Task DetermineLoginStrategyAsync(CancellationToken cancellationToken)
+        private async Task DetermineLoginStrategyAsync(CancellationToken cancellationToken = default)
         {
             var is2faEnabled = false; // TODO: Just for testing, implement the real code later
             if (is2faEnabled || await VaultModel.Folder.TryGetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
@@ -57,9 +72,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 return;
             }
 
-            var vaultValidator = VaultService.GetVaultValidator();
-            var validationResult = await vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
-
+            var validationResult = await _vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
             {
                 var fileSystems = await VaultService.GetFileSystemsAsync(cancellationToken).ToListAsync(cancellationToken);
@@ -75,6 +88,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         /// <inheritdoc/>
         public override void Dispose()
         {
+            _vaultLoginModel.VaultChangedEvent -= VaultLoginModel_VaultChangedEvent;
             LoginStrategyViewModel?.Dispose();
         }
     }

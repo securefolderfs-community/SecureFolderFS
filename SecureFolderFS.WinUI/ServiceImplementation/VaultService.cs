@@ -17,11 +17,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class VaultService : IVaultService
     {
         /// <inheritdoc/>
-        public bool IsKeyFileName(string? fileName)
+        public bool IsFileNameReserved(string? fileName)
         {
-            return fileName != null &&
+            return fileName is not null &&
                    (fileName.Equals(Core.Constants.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
-                    fileName.Equals(Core.Constants.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal));
+                    fileName.Equals(Core.Constants.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal) ||
+                    fileName.Equals(Core.Constants.CONTENT_FOLDERNAME, StringComparison.Ordinal));
         }
 
         /// <inheritdoc/>

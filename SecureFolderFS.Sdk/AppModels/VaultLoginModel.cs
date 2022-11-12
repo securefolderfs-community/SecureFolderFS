@@ -3,6 +3,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.MutableStorage;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.Specialized;
@@ -15,7 +16,6 @@ namespace SecureFolderFS.Sdk.AppModels
 {
     internal sealed class VaultLoginModel : IVaultLoginModel
     {
-        private readonly IAsyncValidator<IFolder> _vaultValidator;
         private IFolderWatcher? _folderWatcher;
 
         private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
@@ -31,7 +31,6 @@ namespace SecureFolderFS.Sdk.AppModels
         public VaultLoginModel(IVaultModel vaultModel)
         {
             VaultModel = vaultModel;
-            _vaultValidator = VaultService.GetVaultValidator();
         }
 
         /// <inheritdoc/>
@@ -62,29 +61,33 @@ namespace SecureFolderFS.Sdk.AppModels
             return FileSystemService.ObtainLockAsync(VaultModel.Folder, cancellationToken);
         }
 
-        private async void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        private void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems is null)
                 return;
 
+            IResult? result = null;
             if (e.Action == NotifyCollectionChangedAction.Replace && e.OldItems is not null)
             {
                 var oldItem = Path.GetFileName(e.OldItems.Cast<string>().FirstOrDefault());
                 var newItem = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
-                if (!VaultService.IsKeyFileName(oldItem) && !VaultService.IsKeyFileName(newItem))
-                    return;
+                // Determine whether any of the changed files were integral parts of the vault
+                if (VaultService.IsFileNameReserved(oldItem) || VaultService.IsFileNameReserved(newItem))
+                    result = new CommonResult(false);
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 var item = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
-                if (!VaultService.IsKeyFileName(item))
-                    return;
+                // Determine if the deleted file was an integral part of the vault
+                if (VaultService.IsFileNameReserved(item))
+                    result = new CommonResult(false);
             }
 
-            var validationResult = await _vaultValidator.ValidateAsync(VaultModel.Folder);
-            VaultChangedEvent?.Invoke(this, validationResult);
+            // If unassigned, an unrelated file/folder has changed - the result should be true
+            result ??= new CommonResult();
+            VaultChangedEvent?.Invoke(this, result);
         }
 
         /// <inheritdoc/>

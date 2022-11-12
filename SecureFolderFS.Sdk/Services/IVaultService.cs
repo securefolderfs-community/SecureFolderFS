@@ -15,8 +15,8 @@ namespace SecureFolderFS.Sdk.Services
         /// Determines whether provided <paramref name="fileName"/> is part of vault core configuration files.
         /// </summary>
         /// <param name="fileName">The file name to check.</param>
-        /// <returns>True if the file name is a reserved file name, otherwise false.</returns>
-        bool IsKeyFileName(string? fileName);
+        /// <returns>Returns true if the file name is a part of vault configuration data, otherwise false.</returns>
+        bool IsFileNameReserved(string? fileName);
 
         /// <summary>
         /// Gets the <see cref="IAsyncValidator{T}"/> to validate vaults.

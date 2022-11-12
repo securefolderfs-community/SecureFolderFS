@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.ComponentBuilders
 
         public (Security, IDirectoryIdAccess, IPathConverter, IStreamsAccess) BuildComponents(SecretKey encKey, SecretKey macKey)
         {
-            var security = Security.CreateNew(encKey, macKey, ConfigDataModel.ContentCipherScheme, ConfigDataModel.FileNameCipherScheme);
+            var security = Security.CreateNew(encKey.CreateCopy(), macKey.CreateCopy(), ConfigDataModel.ContentCipherScheme, ConfigDataModel.FileNameCipherScheme);
 
             IDirectoryIdAccess directoryIdAccess = FileSystemOptions.DirectoryIdCachingStrategy switch
             {

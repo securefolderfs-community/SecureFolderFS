@@ -16,10 +16,12 @@ namespace SecureFolderFS.Sdk.Models
         IVaultModel VaultModel { get; }
 
         /// <summary>
-        /// An event that's fired when vault folder state has changed.
+        /// An event that's fired when integral parts of vault folder were changed.
+        /// The state of vault contents is determined by <see cref="IResult.Successful"/>.
+        /// If the value is true, the state of vault contents has not been changed, otherwise the validity of the vault should be reevaluated.
         /// </summary>
         /// <remarks>
-        /// The event needs to be successfully activated through <see cref="WatchForChangesAsync"/> before it can be used.
+        /// This event handler needs to be successfully activated through <see cref="WatchForChangesAsync"/> before it can be used.
         /// </remarks>
         event EventHandler<IResult>? VaultChangedEvent;
 
