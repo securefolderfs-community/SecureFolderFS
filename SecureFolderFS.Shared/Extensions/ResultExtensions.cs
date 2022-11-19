@@ -7,11 +7,10 @@ namespace SecureFolderFS.Shared.Extensions
         public static string GetMessage(this IResult result, string? fallback = null)
         {
             fallback ??= "Unknown error";
-
             if (result is IResultWithMessage resultWithMessage)
                 return resultWithMessage.Message ?? fallback;
 
-            return result.Exception?.GetType().Name ?? fallback;
+            return result.Exception?.Message ?? fallback;
         }
     }
 }

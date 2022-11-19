@@ -24,13 +24,20 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         }
 
         /// <inheritdoc/>
+        public string? LastVaultFolderId
+        {
+            get => GetSetting<string>();
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var settingsFile = await SettingsFolder.TryCreateFileAsync(Constants.LocalSettings.APPLICATION_SETTINGS_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
             if (settingsFile is null)
                 return;
 
-            SettingsDatabase = new SingleFileDatabaseModel(settingsFile, StreamSerializer.Instance);
+            SettingsDatabase = new SingleFileDatabaseModel(settingsFile, DoubleSerializedStreamSerializer.Instance);
             IsAvailable = true;
         }
     }

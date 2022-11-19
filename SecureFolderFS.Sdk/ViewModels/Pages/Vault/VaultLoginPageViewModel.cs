@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
-    public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel, IRecipient<ChangeLoginOptionMessage>
+    public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel, IRecipient<VaultUnlockedMessage>, IRecipient<ChangeLoginOptionMessage>
     {
-        private readonly IVaultLoginModel _vaultLoginModel;
+        private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IAsyncValidator<IFolder> _vaultValidator;
 
         [ObservableProperty]
@@ -35,11 +35,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         {
             VaultName = vaultModel.VaultName;
             _vaultValidator = VaultService.GetVaultValidator();
-            _vaultLoginModel = new VaultLoginModel(vaultModel);
-            _vaultLoginModel.VaultChangedEvent += VaultLoginModel_VaultChangedEvent;
+            _vaultWatcherModel = new VaultWatcherModel(vaultModel);
+            _vaultWatcherModel.VaultChangedEvent += VaultWatcherModel_VaultChangedEvent;
+
+            WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
         }
 
-        private async void VaultLoginModel_VaultChangedEvent(object? sender, IResult e)
+        private async void VaultWatcherModel_VaultChangedEvent(object? sender, IResult e)
         {
             if (!e.Successful)
             {
@@ -51,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await _vaultLoginModel.WatchForChangesAsync(cancellationToken);
+            await _vaultWatcherModel.WatchForChangesAsync(cancellationToken);
             await DetermineLoginStrategyAsync(cancellationToken);
         }
 
@@ -61,9 +63,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             LoginStrategyViewModel = message.ViewModel;
         }
 
+        /// <inheritdoc/>
+        public void Receive(VaultUnlockedMessage message)
+        {
+            // Free resources that are no longer being used for login
+            if (_vaultWatcherModel.VaultModel.Equals(message.VaultModel))
+                Dispose();
+        }
+
         // TODO: Move to separate method and add file system watcher for any vault changes.
         private async Task DetermineLoginStrategyAsync(CancellationToken cancellationToken = default)
         {
+            var validationResult = await _vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
+            // TODO: Use validationResult for 2fa detection as well
+
             var is2faEnabled = false; // TODO: Just for testing, implement the real code later
             if (is2faEnabled || await VaultModel.Folder.TryGetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
             {
@@ -72,14 +85,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 return;
             }
 
-            var validationResult = await _vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
             {
                 var fileSystems = await VaultService.GetFileSystemsAsync(cancellationToken).ToListAsync(cancellationToken);
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
                 var vaultUnlockingModel = new VaultUnlockingModel(fileSystems[0]);
 
-                LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, _vaultLoginModel, keystoreModel, Messenger);
+                LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
             }
             else
                 LoginStrategyViewModel = new LoginInvalidVaultViewModel(validationResult.GetMessage("Vault is inaccessible."));
@@ -88,7 +100,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _vaultLoginModel.VaultChangedEvent -= VaultLoginModel_VaultChangedEvent;
+            _vaultWatcherModel.VaultChangedEvent -= VaultWatcherModel_VaultChangedEvent;
+            _vaultWatcherModel.Dispose();
             LoginStrategyViewModel?.Dispose();
         }
     }

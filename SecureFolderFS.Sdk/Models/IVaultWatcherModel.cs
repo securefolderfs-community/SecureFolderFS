@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
-    /// Model 
+    /// A model used for monitoring vault contents. 
     /// </summary>
-    public interface IVaultLoginModel : IDisposable
+    public interface IVaultWatcherModel : IDisposable
     {
         /// <summary>
         /// Gets associated <see cref="IVaultModel"/> with this model.

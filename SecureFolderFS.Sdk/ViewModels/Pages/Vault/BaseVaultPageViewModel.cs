@@ -24,6 +24,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public virtual void Dispose() { }
+        public abstract void Dispose();
     }
 }

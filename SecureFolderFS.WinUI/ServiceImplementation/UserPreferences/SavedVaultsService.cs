@@ -3,7 +3,6 @@ using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.WinUI.AppModels;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +31,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
             if (settingsFile is null)
                 return;
 
-            SettingsDatabase = new SingleFileDatabaseModel(settingsFile, new SavedVaultsStreamSerializer());
+            SettingsDatabase = new SingleFileDatabaseModel(settingsFile, DoubleSerializedStreamSerializer.Instance);
             IsAvailable = true;
         }
     }

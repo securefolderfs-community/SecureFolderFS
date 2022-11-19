@@ -1,6 +1,6 @@
 ﻿namespace SecureFolderFS.Sdk.Enums
 {
-    public enum AppUpdateResult
+    public enum AppUpdateResultType
     {
         Completed = 0,
         InProgress = 1,

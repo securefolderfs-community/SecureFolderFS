@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <param name="defaultValue">Retrieves the default value. If <paramref name="defaultValue"/> is null, returns the default value of <typeparamref name="T"/>.</param>
         /// <param name="settingName">The name of the setting.</param>
         /// <returns>A requested setting. The value is determined by the availability of the setting in the storage or by the <paramref name="defaultValue"/>.</returns>
-        protected virtual T? GetSetting<T>(Func<T?>? defaultValue, [CallerMemberName] string settingName = "")
+        protected virtual T? GetSetting<T>(Func<T?>? defaultValue = null, [CallerMemberName] string settingName = "")
         {
             if (!IsAvailable || SettingsDatabase is null || string.IsNullOrEmpty(settingName))
                 return defaultValue is not null ? defaultValue() : default;

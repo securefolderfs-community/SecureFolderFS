@@ -35,7 +35,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         /// <inheritdoc/>
         public void Receive(RootNavigationRequestedMessage message)
         {
-            NavigateHostControl(message.ViewModel);
+            _ = NavigateHostControlAsync(message.ViewModel);
         }
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
@@ -47,13 +47,14 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         private async Task EnsureRootAsync()
         {
             var vaultCollectionModel = new LocalVaultCollectionModel();
+            var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
             var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
 
             // Small delay for Mica material to load
             await Task.Delay(1);
 
             // Initialize
-            var result = await Task.WhenAll(applicationSettingsService.LoadSettingsAsync(), vaultCollectionModel.HasVaultsAsync());
+            var result = await Task.WhenAll(applicationSettingsService.LoadSettingsAsync(), settingsService.LoadSettingsAsync(), vaultCollectionModel.HasVaultsAsync());
 
             // Continue root initialization
             if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped
@@ -63,20 +64,20 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             }
             else
             {
-                if (result[1]) // Has vaults
+                if (result[2]) // Has vaults
                 {
                     // Show main app screen
-                    NavigateHostControl(new MainAppHostViewModel(vaultCollectionModel));
+                    _ = NavigateHostControlAsync(new MainAppHostViewModel(vaultCollectionModel));
                 }
                 else // Doesn't have vaults
                 {
                     // Show no vaults screen
-                    NavigateHostControl(new NoVaultsAppHostViewModel(vaultCollectionModel));
+                    _ = NavigateHostControlAsync(new NoVaultsAppHostViewModel(vaultCollectionModel));
                 }
             }
         }
 
-        private async void NavigateHostControl(INotifyPropertyChanged viewModel)
+        private async Task NavigateHostControlAsync(INotifyPropertyChanged viewModel)
         {
             // Use transitions only when the initial page view model is not MainAppHostViewModel 
             if ((ViewModel.AppContentViewModel is null && viewModel is not MainAppHostViewModel)

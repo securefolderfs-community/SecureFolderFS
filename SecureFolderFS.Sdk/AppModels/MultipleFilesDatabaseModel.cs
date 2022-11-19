@@ -32,11 +32,11 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue)
+        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null)
             where TValue : default
         {
             if (settingsCache.TryGetValue(key, out var value))
-                return (TValue?)value.Data;
+                return value.Data.TryCast(defaultValue);
 
             var fallback = defaultValue is not null ? defaultValue() : default;
             settingsCache[key] = new(typeof(TValue), fallback); // The data needs to be saved

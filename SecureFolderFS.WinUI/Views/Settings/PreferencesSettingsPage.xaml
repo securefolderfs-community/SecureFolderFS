@@ -124,10 +124,7 @@
                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.StartOnSystemStartup, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl
-                Title="Continue where you left off"
-                Description="Start on previously opened vault"
-                IsEnabled="False">
+            <ucab:ActionBlockControl Title="Continue where you left off" Description="Start on previously selected vault">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE7E8;" />
                 </ucab:ActionBlockControl.Icon>

@@ -42,7 +42,6 @@
                         Loaded="VaultPasswordBox_Loaded"
                         PlaceholderText="Password" />
                 </StackPanel>
-
                 <!--  Login  -->
                 <Button
                     x:Name="ContinueButton"
@@ -55,12 +54,19 @@
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginInvalidVaultViewModel">
-            <Grid>
+            <StackPanel Spacing="4">
                 <TextBlock
                     HorizontalAlignment="Center"
+                    FontSize="17"
+                    Text="Vault could not be loaded" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="12"
+                    HorizontalTextAlignment="Center"
+                    IsTextSelectionEnabled="True"
                     Opacity="0.8"
                     Text="{x:Bind ErrorMessage, Mode=OneWay}" />
-            </Grid>
+            </StackPanel>
         </DataTemplate>
     </Page.Resources>
 
@@ -108,6 +114,11 @@
                             InvalidTemplate="{StaticResource VaultInvalidTemplate}"
                             LoginTemplate="{StaticResource LoginTemplate}" />
                     </ContentControl.ContentTemplateSelector>
+                    <ContentControl.ContentTransitions>
+                        <TransitionCollection>
+                            <ContentThemeTransition />
+                        </TransitionCollection>
+                    </ContentControl.ContentTransitions>
                 </ContentControl>
             </Grid>
         </Grid>

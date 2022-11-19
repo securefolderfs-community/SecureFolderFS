@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using SecureFolderFS.Shared.Extensions;
 using System.Linq;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -51,7 +52,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
             WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(Navigation);
 
             await ViewModel.InitAsync();
-            Sidebar.SelectedItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault();
+            Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
         }
 
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

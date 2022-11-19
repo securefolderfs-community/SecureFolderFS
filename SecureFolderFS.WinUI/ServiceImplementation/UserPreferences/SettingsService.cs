@@ -29,7 +29,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
             if (settingsFile is null)
                 return;
 
-            SettingsDatabase = new SingleFileDatabaseModel(settingsFile, StreamSerializer.Instance);
+            SettingsDatabase = new SingleFileDatabaseModel(settingsFile, DoubleSerializedStreamSerializer.Instance);
             IsAvailable = true;
         }
     }

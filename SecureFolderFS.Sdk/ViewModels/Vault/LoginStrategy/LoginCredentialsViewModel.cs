@@ -15,14 +15,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
     public sealed partial class LoginCredentialsViewModel : BaseLoginStrategyViewModel
     {
         private readonly IVaultUnlockingModel _vaultUnlockingModel;
-        private readonly IVaultLoginModel _vaultLoginModel;
+        private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IKeystoreModel _keystoreModel;
         private readonly IMessenger _messenger;
 
-        public LoginCredentialsViewModel(IVaultUnlockingModel vaultUnlockingModel, IVaultLoginModel vaultLoginModel, IKeystoreModel keystoreModel, IMessenger messenger)
+        public LoginCredentialsViewModel(IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel, IMessenger messenger)
         {
             _vaultUnlockingModel = vaultUnlockingModel;
-            _vaultLoginModel = vaultLoginModel;
+            _vaultWatcherModel = vaultWatcherModel;
             _keystoreModel = keystoreModel;
             _messenger = messenger;
         }
@@ -34,16 +34,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
                 return;
 
             // Check if the folder is accessible
-            if (!await _vaultLoginModel.VaultModel.IsAccessibleAsync(cancellationToken))
+            if (!await _vaultWatcherModel.VaultModel.IsAccessibleAsync(cancellationToken))
                 return; // TODO: Report the issue
 
             IUnlockedVaultModel? unlockedVaultModel;
 
-            using (_vaultLoginModel.LockFolderAsync(cancellationToken))
+            using (_vaultWatcherModel.LockFolderAsync(cancellationToken))
             using (_vaultUnlockingModel)
             using (password)
             {
-                var setFolderResult = await _vaultUnlockingModel.SetFolderAsync(_vaultLoginModel.VaultModel.Folder, cancellationToken);
+                var setFolderResult = await _vaultUnlockingModel.SetFolderAsync(_vaultWatcherModel.VaultModel.Folder, cancellationToken);
                 if (!setFolderResult.Successful)
                     return; // TODO: Report the issue
 
@@ -64,12 +64,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             if (unlockedVaultModel is null)
                 throw new InvalidOperationException($"Invalid state. {nameof(unlockedVaultModel)} shouldn't be null.");
 
-            var widgetsContextModel = new SavedWidgetsContextModel(_vaultLoginModel.VaultModel); // TODO: Reuse the instance
-            var vaultViewModel = new VaultViewModel(unlockedVaultModel, widgetsContextModel, _vaultLoginModel.VaultModel);
+            var widgetsContextModel = new SavedWidgetsContextModel(_vaultWatcherModel.VaultModel); // TODO: Reuse the instance
+            var vaultViewModel = new VaultViewModel(unlockedVaultModel, widgetsContextModel, _vaultWatcherModel.VaultModel);
             var dashboardPage = new VaultDashboardPageViewModel(vaultViewModel, _messenger);
             _ = dashboardPage.InitAsync(cancellationToken);
 
-            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultLoginModel.VaultModel));
+            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultWatcherModel.VaultModel));
             WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardPage));
         }
 

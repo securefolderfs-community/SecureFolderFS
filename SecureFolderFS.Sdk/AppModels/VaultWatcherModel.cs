@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    internal sealed class VaultLoginModel : IVaultLoginModel
+    internal sealed class VaultWatcherModel : IVaultWatcherModel
     {
         private IFolderWatcher? _folderWatcher;
 
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public event EventHandler<IResult>? VaultChangedEvent;
 
-        public VaultLoginModel(IVaultModel vaultModel)
+        public VaultWatcherModel(IVaultModel vaultModel)
         {
             VaultModel = vaultModel;
         }

@@ -1,17 +1,23 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Shared.Utils;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
     public sealed partial class SidebarViewModel : ObservableObject, IAsyncInitialize, IRecipient<AddVaultMessage>, IRecipient<RemoveVaultMessage>
     {
+        private IApplicationSettingsService ApplicationSettingsService { get; } = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
+
+        private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
+
         private IVaultCollectionModel VaultCollectionModel { get; }
 
         public ObservableCollection<SidebarItemViewModel> SidebarItems { get; }
@@ -20,8 +26,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         public SidebarFooterViewModel FooterViewModel { get; }
 
-        [ObservableProperty]
         private SidebarItemViewModel? _SelectedItem;
+        public SidebarItemViewModel? SelectedItem
+        {
+            get => _SelectedItem;
+            set
+            {
+                if (SetProperty(ref _SelectedItem, value) && PreferencesSettingsService.ContinueOnLastVault)
+                    ApplicationSettingsService.LastVaultFolderId = _SelectedItem?.VaultModel.Folder.Id;
+            }
+        }
 
         public SidebarViewModel(IVaultCollectionModel vaultCollectionModel)
         {
@@ -41,6 +55,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             {
                 SidebarItems.Add(new(item));
             }
+
+            if (PreferencesSettingsService.ContinueOnLastVault)
+                SelectedItem = SidebarItems.FirstOrDefault(x => x.VaultModel.Folder.Id.Equals(ApplicationSettingsService.LastVaultFolderId));
+
+            SelectedItem ??= SidebarItems.FirstOrDefault();
         }
 
         /// <inheritdoc/>

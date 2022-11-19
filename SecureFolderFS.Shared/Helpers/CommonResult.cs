@@ -22,6 +22,12 @@ namespace SecureFolderFS.Shared.Helpers
             Exception = exception;
             Successful = false;
         }
+
+        public CommonResult(IResult result, Exception? exception = null)
+        {
+            Exception = result.Exception ?? exception;
+            Successful = Exception is null;
+        }
     }
 
     /// <inheritdoc cref="IResult{T}"/>
@@ -39,6 +45,12 @@ namespace SecureFolderFS.Shared.Helpers
         public CommonResult(Exception? exception)
             : base(exception)
         {
+        }
+
+        public CommonResult(IResult<T> result, T? value = default, Exception? exception = null)
+            : base(result, exception)
+        {
+            Value = result.Value ?? value;
         }
     }
 }

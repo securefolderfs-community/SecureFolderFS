@@ -1,10 +1,10 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public abstract TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue);
+        public abstract TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null);
 
         /// <inheritdoc/>
         public abstract bool SetValue<TValue>(string key, TValue? value);
