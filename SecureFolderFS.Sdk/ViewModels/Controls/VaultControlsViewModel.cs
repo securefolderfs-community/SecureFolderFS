@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             await FileExplorerService.OpenInFileExplorerAsync(rootFolder);
         }
 
-        [RelayCommand(AllowConcurrentExecutions = true)]
+        [RelayCommand]
         private async Task LockVaultAsync()
         {
             await _vaultViewModel.UnlockedVaultModel.LockAsync();

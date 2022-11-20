@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 
         public ObservableCollection<FileSystemAdapterItemViewModel> FileSystemAdapters { get; }
 
-        public string PreferredFileSystemId
+        public string? PreferredFileSystemId
         {
             get => PreferencesSettingsService.PreferredFileSystemId;
             set => PreferencesSettingsService.PreferredFileSystemId = value;

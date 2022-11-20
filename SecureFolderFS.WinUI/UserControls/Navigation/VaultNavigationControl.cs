@@ -23,6 +23,13 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
             if (viewModel is not BaseVaultPageViewModel pageViewModel)
                 throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");
 
+            // Dashboard closing animation
+            if (pageViewModel is VaultLoginPageViewModel && (NavigationCache.TryGetValue(pageViewModel.VaultModel, out var existing)) && existing is VaultDashboardPageViewModel)
+                transitionInfo ??= new ContinuumNavigationTransitionInfo();
+
+            // Standard animation
+            transitionInfo ??= new EntranceNavigationTransitionInfo();
+
             // Set or update the view model for individual page
             NavigationCache[pageViewModel.VaultModel] = pageViewModel;
 
@@ -32,11 +39,6 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
                 VaultDashboardPageViewModel => typeof(VaultDashboardPage),
                 _ => throw new ArgumentNullException(nameof(viewModel))
             };
-
-            if (viewModel is VaultLoginPageViewModel
-                && NavigationCache.TryGetValue(pageViewModel.VaultModel, out var existing)
-                && existing is VaultDashboardPageViewModel)
-                transitionInfo ??= new ContinuumNavigationTransitionInfo();
 
             ContentFrame.Navigate(pageType, viewModel, transitionInfo);
         }

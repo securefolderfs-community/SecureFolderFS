@@ -226,8 +226,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public virtual unsafe NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset,
-            IDokanFileInfo info)
+        public virtual unsafe NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             var ciphertextPath = GetCiphertextPath(fileName);
             var appendToFile = offset == -1;
@@ -246,7 +245,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (IsContextInvalid(info) || handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
-                contextHandle = handlesManager.OpenHandleToFile(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.None, FileOptions.None);
+                contextHandle = handlesManager.OpenHandleToFile(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
                 fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle)!;
                 openedNewHandle = true;
             }
@@ -317,8 +316,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public abstract NtStatus SetFileAttributes(string fileName, FileAttributes attributes, IDokanFileInfo info);
 
         /// <inheritdoc/>
-        public abstract NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime,
-            IDokanFileInfo info);
+        public abstract NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info);
 
         /// <inheritdoc/>
         public abstract NtStatus DeleteFile(string fileName, IDokanFileInfo info);
@@ -336,14 +334,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public abstract NtStatus UnlockFile(string fileName, long offset, long length, IDokanFileInfo info);
 
         /// <inheritdoc/>
-        public abstract NtStatus GetFileSecurity(string fileName, out FileSystemSecurity? security,
-            AccessControlSections sections,
-            IDokanFileInfo info);
+        public abstract NtStatus GetFileSecurity(string fileName, out FileSystemSecurity? security, AccessControlSections sections, IDokanFileInfo info);
 
         /// <inheritdoc/>
-        public abstract NtStatus SetFileSecurity(string fileName, FileSystemSecurity security,
-            AccessControlSections sections,
-            IDokanFileInfo info);
+        public abstract NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info);
 
         protected static int AlignSizeForPagingIo(int bufferLength, long offset, long streamLength, IDokanFileInfo info)
         {

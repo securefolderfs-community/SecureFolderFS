@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <summary>
         /// A single instance of <see cref="DoubleSerializedStreamSerializer"/>.
         /// </summary>
-        public static DoubleSerializedStreamSerializer Instance { get; } = new();
+        public new static DoubleSerializedStreamSerializer Instance { get; } = new();
 
         /// <inheritdoc/>
         public override Task<Stream> SerializeAsync(object? data, Type dataType, CancellationToken cancellationToken = default)

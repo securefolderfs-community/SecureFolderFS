@@ -1,13 +1,13 @@
 ﻿using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace SecureFolderFS.Core.FileSystem.CryptFiles
 {
     /// <inheritdoc cref="ICryptFileManager"/>
     public abstract class BaseCryptFileManager : ICryptFileManager
     {
-        protected readonly Dictionary<string, ICryptFile> openCryptFiles;
+        protected readonly ConcurrentDictionary<string, ICryptFile> openCryptFiles;
 
         protected BaseCryptFileManager()
         {

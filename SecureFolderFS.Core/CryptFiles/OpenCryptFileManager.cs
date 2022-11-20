@@ -53,7 +53,7 @@ namespace SecureFolderFS.Core.CryptFiles
 
         private void NotifyClosed(string ciphertextPath)
         {
-            openCryptFiles.Remove(ciphertextPath);
+            openCryptFiles.TryRemove(ciphertextPath, out _);
         }
     }
 }

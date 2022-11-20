@@ -86,12 +86,12 @@ namespace SecureFolderFS.Core.Cryptography.CryptImpl
                 _counter = counter;
             }
 
-            public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] ignoredParameter)
+            public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[]? ignoredParameter)
             {
                 return new CounterModeCryptoTransform(_aes, rgbKey, _nonce, _counter);
             }
 
-            public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] ignoredParameter)
+            public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[]? ignoredParameter)
             {
                 return new CounterModeCryptoTransform(_aes, rgbKey, _nonce, _counter);
             }

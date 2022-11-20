@@ -26,10 +26,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         private DriveInfo? _vaultDriveInfo;
         private int _vaultDriveInfoTries;
         
-        // TODO: Add required modifier
-        public Security Security { get; init; }
+        public required Security Security { get; init; }
 
-        public IDirectoryIdAccess DirectoryIdAccess { get; init; }
+        public required IDirectoryIdAccess DirectoryIdAccess { get; init; }
 
         public OnDeviceDokany(ILocatableFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager, DokanyVolumeModel volumeModel)
             : base(contentFolder, pathConverter, handlesManager, volumeModel)
@@ -166,7 +165,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         var attributes2 = attributes;
                         attributes2 |= FileAttributes.Archive; // Files are always created with FileAttributes.Archive
 
-                        // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set.
+                        // FILE_ATTRIBUTE_NORMAL is override if any other attribute is set
                         attributes2 &= ~FileAttributes.Normal;
                         File.SetAttributes(ciphertextPath, attributes2);
                     }
@@ -174,7 +173,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 catch (CryptographicException)
                 {
                     // Must invalidate here, because cleanup is not called
-                    // TODO: Also close ciphertextStream
                     CloseHandle(info);
                     InvalidateContext(info);
                     return NtStatus.CrcError;
@@ -182,7 +180,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 catch (UnauthorizedAccessException) // Don't have access rights
                 {
                     // Must invalidate here, because cleanup is not called
-                    // TODO: Also close ciphertextStream
                     CloseHandle(info);
                     InvalidateContext(info);
                     return DokanResult.AccessDenied;
@@ -211,13 +208,16 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override void Cleanup(string fileName, IDokanFileInfo info)
         {
-            handlesManager.CloseHandle(GetContextValue(info));
+            CloseHandle(info);
             InvalidateContext(info);
 
             // Make sure we delete redirected items from DeleteDirectory() and DeleteFile() here.
             if (info.DeleteOnClose)
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
+                if (ciphertextPath is null)
+                    return;
+
                 try
                 {
                     if (info.IsDirectory)
@@ -289,8 +289,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public override NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes,
-            IDokanFileInfo info)
+        public override NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info)
         {
             if (_vaultDriveInfo is null && _vaultDriveInfoTries < Constants.FileSystem.MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP)
             {
@@ -312,8 +311,15 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             try
             {
+                var ciphertextPath = GetCiphertextPath(fileName);
+                if (ciphertextPath is null)
+                {
+                    files = Array.Empty<FileInformation>();
+                    return DokanResult.PathNotFound;
+                }
+
+                var directory = new DirectoryInfo(ciphertextPath);
                 List<FileInformation>? fileList = null;
-                var directory = new DirectoryInfo(GetCiphertextPath(fileName));
 
                 foreach (var item in directory.EnumerateFileSystemInfos(searchPattern))
                 {
@@ -358,6 +364,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (attributes != 0)
                 {
                     var ciphertextPath = GetCiphertextPath(fileName);
+                    if (ciphertextPath is null)
+                        return DokanResult.PathNotFound;
+
                     File.SetAttributes(ciphertextPath, attributes);
                 }
 
@@ -382,8 +391,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public override NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime,
-            IDokanFileInfo info)
+        public override NtStatus SetFileTime(string fileName, DateTime? creationTime, DateTime? lastAccessTime, DateTime? lastWriteTime, IDokanFileInfo info)
         {
             try
             {
@@ -496,6 +504,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             {
                 if (!newPathExists)
                 {
+                    InvalidateContext(info);
                     if (info.IsDirectory)
                     {
                         Directory.Move(oldCiphertextPath, newCiphertextPath);
@@ -509,6 +518,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 }
                 else if (replace)
                 {
+                    InvalidateContext(info);
                     if (info.IsDirectory)
                     {
                         // Cannot replace directory destination - See MOVEFILE_REPLACE_EXISTING
@@ -522,9 +532,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     return DokanResult.Success;
                 }
                 else
-                {
                     return DokanResult.FileExists;
-                }
             }
             catch (PathTooLongException)
             {
@@ -615,15 +623,22 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public override NtStatus GetFileSecurity(string fileName, out FileSystemSecurity? security, AccessControlSections sections,
-            IDokanFileInfo info)
+        public override NtStatus GetFileSecurity(string fileName, out FileSystemSecurity? security, AccessControlSections sections, IDokanFileInfo info)
         {
             try
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
+                if (ciphertextPath is null)
+                {
+                    security = null;
+                    return DokanResult.PathNotFound;
+                }
+
+#pragma warning disable CA1416 // Validate platform compatibility
                 security = info.IsDirectory
                     ? new DirectoryInfo(ciphertextPath).GetAccessControl()
                     : new FileInfo(ciphertextPath).GetAccessControl();
+#pragma warning restore CA1416 // Validate platform compatibility
 
                 return DokanResult.Success;
             }
@@ -650,12 +665,15 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public override NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections,
-            IDokanFileInfo info)
+        public override NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info)
         {
             try
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
+                if (ciphertextPath is null)
+                    return DokanResult.PathNotFound;
+
+#pragma warning disable CA1416 // Validate platform compatibility
                 if (info.IsDirectory)
                 {
                     new DirectoryInfo(ciphertextPath).SetAccessControl((DirectorySecurity)security);
@@ -664,6 +682,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 {
                     new FileInfo(ciphertextPath).SetAccessControl((FileSecurity)security);
                 }
+#pragma warning restore CA1416 // Validate platform compatibility
 
                 return DokanResult.Success;
             }
@@ -687,8 +706,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset,
-            IDokanFileInfo info)
+        public override NtStatus ReadFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesRead, long offset, IDokanFileInfo info)
         {
             try
             {
@@ -716,8 +734,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
         /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset,
-            IDokanFileInfo info)
+        public override NtStatus WriteFile(string fileName, IntPtr buffer, uint bufferLength, out int bytesWritten, long offset, IDokanFileInfo info)
         {
             try
             {

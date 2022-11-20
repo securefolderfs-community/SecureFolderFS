@@ -95,7 +95,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (dataStream is null)
                     return false;
 
-                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, ISerializedData?>>(settingsCache, cancellationToken);
+                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, ISerializedData>>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
                 dataStream.Position = 0L;

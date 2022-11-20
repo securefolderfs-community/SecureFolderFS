@@ -9,21 +9,20 @@ namespace SecureFolderFS.Core.Cryptography
     public sealed class CipherProvider
     {
         // TODO: Needs docs
-        // TODO: Add required modifier
 
-        public IArgon2idCrypt Argon2idCrypt { get; private init; }
+        public required IArgon2idCrypt Argon2idCrypt { get; init; }
 
-        public IXChaCha20Poly1305Crypt XChaCha20Poly1305Crypt { get; private init; }
+        public required IXChaCha20Poly1305Crypt XChaCha20Poly1305Crypt { get; init; }
 
-        public IAesGcmCrypt AesGcmCrypt { get; private init; }
+        public required IAesGcmCrypt AesGcmCrypt { get; init; }
 
-        public IAesCtrCrypt AesCtrCrypt { get; private init; }
+        public required IAesCtrCrypt AesCtrCrypt { get; init; }
 
-        public IAesSivCrypt AesSivCrypt { get; private init; }
+        public required IAesSivCrypt AesSivCrypt { get; init; }
 
-        public IRfc3394KeyWrap Rfc3394KeyWrap { get; private init; }
+        public required IRfc3394KeyWrap Rfc3394KeyWrap { get; init; }
 
-        public IHmacSha256Crypt HmacSha256Crypt { get; private init; }
+        public required IHmacSha256Crypt HmacSha256Crypt { get; init; }
 
         public static CipherProvider CreateNew()
         {

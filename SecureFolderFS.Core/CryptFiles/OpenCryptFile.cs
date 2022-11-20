@@ -8,6 +8,7 @@ using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.CryptFiles
 {
@@ -52,7 +53,7 @@ namespace SecureFolderFS.Core.CryptFiles
 
             // Make sure to also add it to streams manager
             _streamsManager.AddStream(ciphertextStream);
-
+            
             // Open the cleartext stream
             return new CleartextFileStream(ciphertextStream, _security, _chunkAccess, _headerBuffer, NotifyClosed);
         }

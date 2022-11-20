@@ -13,15 +13,14 @@ namespace SecureFolderFS.Core.Cryptography
     public sealed class Security : IDisposable
     {
         // TODO: Needs docs
-        // TODO: Add required modifier
 
-        public CipherProvider CipherProvider { get; init; }
+        public required CipherProvider CipherProvider { get; init; }
 
-        public IHeaderCrypt HeaderCrypt { get; init; }
+        public required IHeaderCrypt HeaderCrypt { get; init; }
 
-        public IContentCrypt ContentCrypt { get; init; }
+        public required IContentCrypt ContentCrypt { get; init; }
 
-        public INameCrypt? NameCrypt { get; init; }
+        public required INameCrypt? NameCrypt { get; init; }
 
         public static Security CreateNew(SecretKey encKey, SecretKey macKey, ContentCipherScheme contentCipher, FileNameCipherScheme fileNameCipher)
         {

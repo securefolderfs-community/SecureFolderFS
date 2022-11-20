@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public async Task<IResult> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default)
         {
             var keystoreStreamResult = await keystoreModel.GetKeystoreStreamAsync(FileAccess.ReadWrite, cancellationToken);
-            if (!keystoreStreamResult.Successful)
+            if (keystoreStreamResult.Value is null || !keystoreStreamResult.Successful)
                 return keystoreStreamResult;
 
             return await VaultCreationService.PrepareKeystoreAsync(keystoreStreamResult.Value, keystoreModel.KeystoreSerializer, cancellationToken);

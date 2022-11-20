@@ -21,12 +21,12 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             _openHandles = new();
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public long OpenHandleToFile(string ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
         {
             // Open stream
-            var share2 = FileShare.ReadWrite | FileShare.Delete; // TODO: Use share2 because share is broken
-            var ciphertextStream = new FileStream(ciphertextPath, mode, access, share2, 4096, options);
+            _ = share;
+            share = FileShare.ReadWrite | FileShare.Delete; // TODO: Temporary fix for file share issue
+            var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
             var cleartextStream = _streamsAccess.OpenCleartextStream(ciphertextPath, ciphertextStream);
 
             if (cleartextStream is null)
