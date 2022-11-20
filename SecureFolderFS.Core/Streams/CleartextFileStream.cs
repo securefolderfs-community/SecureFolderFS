@@ -77,7 +77,7 @@ namespace SecureFolderFS.Core.Streams
             var read = 0;
             var positionInBuffer = 0;
             var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
-            var adjustedBuffer = buffer.Slice(0, Math.Min(buffer.Length, (int)lengthToEof));
+            var adjustedBuffer = buffer.Slice(0, (int)Math.Min(buffer.Length, lengthToEof));
 
             while (positionInBuffer < adjustedBuffer.Length)
             {
