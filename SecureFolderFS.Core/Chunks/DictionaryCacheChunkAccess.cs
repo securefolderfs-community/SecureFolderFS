@@ -3,7 +3,7 @@ using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SecureFolderFS.Core.Chunks
@@ -11,12 +11,12 @@ namespace SecureFolderFS.Core.Chunks
     /// <inheritdoc cref="IChunkAccess"/>
     internal sealed class DictionaryCacheChunkAccess : BaseChunkAccess
     {
-        private readonly ConcurrentDictionary<long, ChunkBuffer> _chunkCache;
+        private readonly Dictionary<long, ChunkBuffer> _chunkCache;
 
         public DictionaryCacheChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatsTracker? statsTracker)
             : base(chunkReader, chunkWriter, contentCrypt, statsTracker)
         {
-            _chunkCache = new(3, Constants.Caching.MAX_CACHED_CHUNKS);
+            _chunkCache = new(Constants.Caching.MAX_CACHED_CHUNKS);
         }
 
         /// <inheritdoc/>
@@ -80,70 +80,78 @@ namespace SecureFolderFS.Core.Chunks
         /// <inheritdoc/>
         public override void Flush()
         {
-            foreach (var item in _chunkCache)
+            lock (_chunkCache)
             {
-                if (item.Value.WasModified)
-                    chunkWriter.WriteChunk(item.Key, item.Value.Buffer.AsSpan(0, item.Value.ActualLength));
-            }
+                foreach (var item in _chunkCache)
+                {
+                    if (item.Value.WasModified)
+                        chunkWriter.WriteChunk(item.Key, item.Value.Buffer.AsSpan(0, item.Value.ActualLength));
+                }
 
-            _chunkCache.Clear();
+                _chunkCache.Clear();
+            }
         }
 
         private ChunkBuffer? GetChunk(long chunkNumber)
         {
-            if (!_chunkCache.TryGetValue(chunkNumber, out var cleartextChunk))
+            lock (_chunkCache)
             {
-                // Cache miss
+                if (!_chunkCache.TryGetValue(chunkNumber, out var cleartextChunk))
+                {
+                    // Cache miss, update stats
+                    statsTracker?.AddChunkAccess();
+                    statsTracker?.AddChunkCacheMiss();
 
-                // Update stats
-                statsTracker?.AddChunkAccess();
-                statsTracker?.AddChunkCacheMiss();
+                    // Read chunk
+                    var buffer = new byte[contentCrypt.ChunkCleartextSize];
+                    var read = chunkReader.ReadChunk(chunkNumber, buffer);
+                    if (read < 0)
+                        return null;
 
-                // Read chunk
-                var buffer = new byte[contentCrypt.ChunkCleartextSize];
-                var read = chunkReader.ReadChunk(chunkNumber, buffer);
-                if (read < 0)
-                    return null;
+                    // Create cleartext and set it to cache
+                    cleartextChunk = new ChunkBuffer(buffer, read);
+                    SetChunk(chunkNumber, cleartextChunk);
+                }
+                else
+                {
+                    // Cache hit, update stats
+                    statsTracker?.AddChunkAccess();
+                    statsTracker?.AddChunkCacheHit();
+                }
 
-                // Create cleartext and set it to cache
-                cleartextChunk = new ChunkBuffer(buffer, read);
-                SetChunk(chunkNumber, cleartextChunk);
+                return cleartextChunk;
             }
-            else
-            {
-                // Cache hit
-
-                // Update stats
-                statsTracker?.AddChunkAccess();
-                statsTracker?.AddChunkCacheHit();
-            }
-
-            return cleartextChunk;
         }
 
         private void SetChunk(long chunkNumber, ChunkBuffer cleartextChunk)
         {
-            if (_chunkCache.Count >= Constants.Caching.MAX_CACHED_CHUNKS)
+            lock (_chunkCache)
             {
-                // Get chunk number to remove
-                var chunkNumberToRemove = _chunkCache.Keys.First();
-
-                // Write chunk
-                if (_chunkCache.TryRemove(chunkNumberToRemove, out var removedChunk) && removedChunk.WasModified)
+                if (_chunkCache.Count >= Constants.Caching.MAX_CACHED_CHUNKS)
                 {
-                    var realRemovedChunk = removedChunk.Buffer.AsSpan(0, removedChunk.ActualLength);
-                    chunkWriter.WriteChunk(chunkNumberToRemove, realRemovedChunk);
-                }
-            }
+                    // Get chunk number to remove
+                    var chunkNumberToRemove = _chunkCache.Keys.First();
 
-            _chunkCache[chunkNumber] = cleartextChunk;
+                    // Write chunk
+                    if (_chunkCache.Remove(chunkNumberToRemove, out var removedChunk) && removedChunk.WasModified)
+                    {
+                        var realRemovedChunk = removedChunk.Buffer.AsSpan(0, removedChunk.ActualLength);
+                        chunkWriter.WriteChunk(chunkNumberToRemove, realRemovedChunk);
+                    }
+                }
+
+                _chunkCache[chunkNumber] = cleartextChunk;
+            }
         }
 
         /// <inheritdoc/>
         public override void Dispose()
         {
-            base.Dispose();
-            _chunkCache.Clear();
+            lock (_chunkCache)
+            {
+                base.Dispose();
+                _chunkCache.Clear();
+            }
         }
     }
 }

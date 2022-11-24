@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Core.Cryptography.Helpers;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.AesGcm;
@@ -31,9 +32,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
             // Big Endian chunk number and file header nonce
             Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];
-            Unsafe.As<byte, long>(ref associatedData[0]) = chunkNumber;
-            associatedData.Slice(0, sizeof(long)).AsBigEndian();
-            header.GetHeaderNonce().CopyTo(associatedData.Slice(sizeof(long)));
+            CryptHelpers.FillAssociatedData(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Encrypt
             cipherProvider.AesGcmCrypt.Encrypt(
@@ -51,9 +50,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         {
             // Big Endian chunk number and file header nonce
             Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];
-            Unsafe.As<byte, long>(ref associatedData[0]) = chunkNumber;
-            associatedData.Slice(0, sizeof(long)).AsBigEndian();
-            header.GetHeaderNonce().CopyTo(associatedData.Slice(sizeof(long)));
+            CryptHelpers.FillAssociatedData(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Decrypt
             return cipherProvider.AesGcmCrypt.Decrypt(

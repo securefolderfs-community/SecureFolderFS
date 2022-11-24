@@ -12,6 +12,10 @@ namespace SecureFolderFS.Core.Directories
             {
                 return File.Open(ciphertextPath, mode, access, FileShare.ReadWrite | FileShare.Delete);
             }
+            catch (DirectoryNotFoundException)
+            {
+                return null;
+            }
             catch (FileNotFoundException)
             {
                 return null;
@@ -23,6 +27,10 @@ namespace SecureFolderFS.Core.Directories
             try
             {
                 return Task.FromResult<Stream?>(File.Open(ciphertextPath, mode, access, FileShare.ReadWrite | FileShare.Delete));
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return Task.FromResult<Stream?>(null);
             }
             catch (FileNotFoundException)
             {

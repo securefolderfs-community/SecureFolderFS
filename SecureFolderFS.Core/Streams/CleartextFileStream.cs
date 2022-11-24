@@ -216,8 +216,12 @@ namespace SecureFolderFS.Core.Streams
                 written += length;
             }
 
+            // Update length after writing
             _Length = Math.Max(position + written, Length);
-            //_fileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
+
+            // Update last write time
+            if (BaseStream is FileStream fileStream)
+                File.SetLastWriteTime(fileStream.SafeFileHandle, DateTime.Now);
         }
 
         [SkipLocalsInit]
@@ -268,8 +272,8 @@ namespace SecureFolderFS.Core.Streams
 
                 return true;
             }
-            
-            return TryReadHeader();
+
+            return skipRead || TryReadHeader();
         }
 
         private long BeginOfChunk(long cleartextPosition)

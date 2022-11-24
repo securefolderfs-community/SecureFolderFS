@@ -21,39 +21,58 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public void AddStream(Stream stream)
         {
-            _readOnlyStreams.Add(stream);
+            lock (_readOnlyStreams)
+            lock (_readWriteStreams)
+            {
+                _readOnlyStreams.Add(stream);
 
-            if (stream.CanWrite)
-                _readWriteStreams.Add(stream);
+                if (stream.CanWrite)
+                    _readWriteStreams.Add(stream);
+            }
         }
 
         /// <inheritdoc/>
         public void RemoveStream(Stream stream)
         {
-            _ = _readOnlyStreams.Remove(stream);
-            _ = _readWriteStreams.Remove(stream);
+            lock (_readOnlyStreams)
+            lock (_readWriteStreams)
+            {
+
+                _ = _readOnlyStreams.Remove(stream);
+                _ = _readWriteStreams.Remove(stream);
+            }
         }
 
         /// <inheritdoc/>
         public Stream? GetReadOnlyStream()
         {
-            return _readOnlyStreams.FirstOrDefault();
+            lock (_readOnlyStreams)
+            {
+                return _readOnlyStreams.FirstOrDefault();
+            }
         }
 
         /// <inheritdoc/>
         public Stream? GetReadWriteStream()
         {
-            return _readWriteStreams.FirstOrDefault();
+            lock (_readWriteStreams)
+            {
+                return _readWriteStreams.FirstOrDefault();
+            }
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _readOnlyStreams.DisposeCollection();
-            _readWriteStreams.DisposeCollection();
+            lock (_readOnlyStreams)
+            lock (_readWriteStreams)
+            {
+                _readOnlyStreams.DisposeCollection();
+                _readWriteStreams.DisposeCollection();
 
-            _readOnlyStreams.Clear();
-            _readWriteStreams.Clear();
+                _readOnlyStreams.Clear();
+                _readWriteStreams.Clear();
+            }
         }
     }
 }

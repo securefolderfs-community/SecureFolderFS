@@ -1,13 +1,13 @@
 ﻿using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.FileSystem.CryptFiles
 {
     /// <inheritdoc cref="ICryptFileManager"/>
     public abstract class BaseCryptFileManager : ICryptFileManager
     {
-        protected readonly ConcurrentDictionary<string, ICryptFile> openCryptFiles;
+        protected readonly Dictionary<string, ICryptFile> openCryptFiles;
 
         protected BaseCryptFileManager()
         {
@@ -17,8 +17,11 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         /// <inheritdoc/>
         public virtual ICryptFile? TryGet(string ciphertextPath)
         {
-            openCryptFiles.TryGetValue(ciphertextPath, out var openCryptFile);
-            return openCryptFile;
+            lock (openCryptFiles)
+            {
+                openCryptFiles.TryGetValue(ciphertextPath, out var openCryptFile);
+                return openCryptFile;
+            }
         }
 
         /// <inheritdoc/>
@@ -28,8 +31,11 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
             if (cryptFile is null)
                 return null;
 
-            openCryptFiles[ciphertextPath] = cryptFile;
-            return cryptFile;
+            lock (openCryptFiles)
+            {
+                openCryptFiles[ciphertextPath] = cryptFile;
+                return cryptFile;
+            }
         }
 
         protected abstract ICryptFile? GetCryptFile(string ciphertextPath, BufferHolder headerBuffer);
@@ -37,8 +43,11 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            openCryptFiles.Values.DisposeCollection();
-            openCryptFiles.Clear();
+            lock (openCryptFiles)
+            {
+                openCryptFiles.Values.DisposeCollection();
+                openCryptFiles.Clear();
+            }
         }
     }
 }
