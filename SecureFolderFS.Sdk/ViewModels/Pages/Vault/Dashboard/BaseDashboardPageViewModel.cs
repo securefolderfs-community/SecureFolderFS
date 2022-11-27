@@ -1,22 +1,22 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
     public abstract class BaseDashboardPageViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
-        protected VaultViewModel VaultViewModel { get; }
+        protected UnlockedVaultViewModel UnlockedVaultViewModel { get; }
 
         protected IMessenger Messenger { get; }
 
-        protected BaseDashboardPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
+        protected BaseDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IMessenger messenger)
         {
-            VaultViewModel = vaultViewModel;
+            UnlockedVaultViewModel = unlockedVaultViewModel;
             Messenger = messenger;
         }
 

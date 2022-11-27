@@ -1,9 +1,9 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
@@ -13,11 +13,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 
         public VaultControlsViewModel VaultControlsViewModel { get; }
 
-        public VaultOverviewPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
-            : base(vaultViewModel, messenger)
+        public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IMessenger messenger)
+            : base(unlockedVaultViewModel, messenger)
         {
-            WidgetsViewModel = new(vaultViewModel.UnlockedVaultModel, vaultViewModel.WidgetsContextModel);
-            VaultControlsViewModel = new(messenger, vaultViewModel);
+            WidgetsViewModel = new(unlockedVaultViewModel.UnlockedVaultModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);
+            VaultControlsViewModel = new(messenger, unlockedVaultViewModel);
         }
 
         /// <inheritdoc/>

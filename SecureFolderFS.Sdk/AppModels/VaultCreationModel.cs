@@ -77,12 +77,6 @@ namespace SecureFolderFS.Sdk.AppModels
             // Create vault model
             IVaultModel vaultModel = new LocalVaultModel(_vaultFolder);
 
-            // Set up widgets
-            IWidgetsContextModel widgetsContextModel = new SavedWidgetsContextModel(vaultModel); // TODO: Reuse it!
-
-            await widgetsContextModel.AddWidgetAsync(Constants.Widgets.HEALTH_WIDGET_ID, cancellationToken);
-            await widgetsContextModel.AddWidgetAsync(Constants.Widgets.GRAPHS_WIDGET_ID, cancellationToken);
-
             return new CommonResult<IVaultModel?>(vaultModel);
         }
 

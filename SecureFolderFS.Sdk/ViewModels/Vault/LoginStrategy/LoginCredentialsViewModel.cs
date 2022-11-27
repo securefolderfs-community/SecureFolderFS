@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
@@ -14,13 +13,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
     public sealed partial class LoginCredentialsViewModel : BaseLoginStrategyViewModel
     {
+        private readonly VaultViewModel _vaultViewModel;
         private readonly IVaultUnlockingModel _vaultUnlockingModel;
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IKeystoreModel _keystoreModel;
         private readonly IMessenger _messenger;
 
-        public LoginCredentialsViewModel(IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel, IMessenger messenger)
+        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel, IMessenger messenger)
         {
+            _vaultViewModel = vaultViewModel;
             _vaultUnlockingModel = vaultUnlockingModel;
             _vaultWatcherModel = vaultWatcherModel;
             _keystoreModel = keystoreModel;
@@ -38,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             using (_vaultUnlockingModel)
             using (password)
             {
-                var setFolderResult = await _vaultUnlockingModel.SetFolderAsync(_vaultWatcherModel.VaultModel.Folder, cancellationToken);
+                var setFolderResult = await _vaultUnlockingModel.SetFolderAsync(_vaultViewModel.VaultModel.Folder, cancellationToken);
                 if (!setFolderResult.Successful)
                     return; // TODO: Report the issue
 
@@ -59,9 +60,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             if (unlockedVaultModel is null)
                 throw new InvalidOperationException($"Invalid state. {nameof(unlockedVaultModel)} shouldn't be null.");
 
-            var widgetsContextModel = new SavedWidgetsContextModel(_vaultWatcherModel.VaultModel); // TODO: Reuse the instance
-            var vaultViewModel = new VaultViewModel(unlockedVaultModel, widgetsContextModel, _vaultWatcherModel.VaultModel);
-            var dashboardPage = new VaultDashboardPageViewModel(vaultViewModel, _messenger);
+            // Update last access date
+            await _vaultViewModel.VaultContextModel.SetLastAccessedDate(DateTime.Now, cancellationToken);
+
+            var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, _messenger);
             _ = dashboardPage.InitAsync(cancellationToken);
 
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultWatcherModel.VaultModel));

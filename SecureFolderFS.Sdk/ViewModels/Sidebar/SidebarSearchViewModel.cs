@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             await foreach (var item in SearchModel.SearchAsync(query, cancellationToken))
             {
                 if (item is SidebarItemViewModel sidebarItem)
-                    SearchItems.Add(sidebarItem.VaultModel.VaultName);
+                    SearchItems.Add(sidebarItem.VaultViewModel.VaultModel.VaultName);
             }
         }
     }

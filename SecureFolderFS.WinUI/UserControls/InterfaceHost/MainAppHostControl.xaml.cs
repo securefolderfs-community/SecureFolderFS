@@ -4,13 +4,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Extensions;
 using System.Linq;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,15 +29,19 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
             if (ViewModel.SidebarViewModel.SidebarItems.IsEmpty())
                 Navigation.ClearContent();
 
-            Navigation.NavigationCache.Remove(message.VaultModel);
+            var viewModelToRemove = Navigation.NavigationCache.Keys.FirstOrDefault(x => x.VaultModel.Equals(message.VaultModel));
+            if (viewModelToRemove is null)
+                return;
+
+            Navigation.NavigationCache.Remove(viewModelToRemove);
         }
 
-        private void NavigateToItem(IVaultModel vaultModel)
+        private void NavigateToItem(VaultViewModel vaultViewModel)
         {
             // Get the item from cache or create new instance
-            if (!Navigation.NavigationCache.TryGetValue(vaultModel, out var destination))
+            if (!Navigation.NavigationCache.TryGetValue(vaultViewModel, out var destination))
             {
-                destination = new VaultLoginPageViewModel(vaultModel);
+                destination = new VaultLoginPageViewModel(vaultViewModel);
                 _ = destination.InitAsync();
             }
 
@@ -58,17 +61,17 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
         private void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is SidebarItemViewModel itemViewModel)
-                NavigateToItem(itemViewModel.VaultModel);
+                NavigateToItem(itemViewModel.VaultViewModel);
         }
 
         private void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultModel.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(args.ChosenSuggestion));
             if (chosenItem is null)
                 return;
 
             Sidebar.SelectedItem  = chosenItem;
-            NavigateToItem(chosenItem.VaultModel);
+            NavigateToItem(chosenItem.VaultViewModel);
         }
 
         private async void SidebarSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)

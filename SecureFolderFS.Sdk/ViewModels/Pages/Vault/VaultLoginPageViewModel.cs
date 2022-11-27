@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
@@ -30,12 +31,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
-        public VaultLoginPageViewModel(IVaultModel vaultModel)
-            : base(vaultModel, new WeakReferenceMessenger())
+        public VaultLoginPageViewModel(VaultViewModel vaultViewModel)
+            : base(vaultViewModel, new WeakReferenceMessenger())
         {
-            VaultName = vaultModel.VaultName;
+            VaultName = vaultViewModel.VaultModel.VaultName;
             _vaultValidator = VaultService.GetVaultValidator();
-            _vaultWatcherModel = new VaultWatcherModel(vaultModel);
+            _vaultWatcherModel = new VaultWatcherModel(vaultViewModel.VaultModel);
             _vaultWatcherModel.VaultChangedEvent += VaultWatcherModel_VaultChangedEvent;
 
             WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
@@ -67,18 +68,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         public void Receive(VaultUnlockedMessage message)
         {
             // Free resources that are no longer being used for login
-            if (_vaultWatcherModel.VaultModel.Equals(message.VaultModel))
+            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
                 Dispose();
         }
 
         // TODO: Move to separate method and add file system watcher for any vault changes.
         private async Task DetermineLoginStrategyAsync(CancellationToken cancellationToken = default)
         {
-            var validationResult = await _vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
+            var validationResult = await _vaultValidator.ValidateAsync(VaultViewModel.VaultModel.Folder, cancellationToken);
             // TODO: Use validationResult for 2fa detection as well
 
             var is2faEnabled = false; // TODO: Just for testing, implement the real code later
-            if (is2faEnabled || await VaultModel.Folder.TryGetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
+            if (is2faEnabled || await VaultViewModel.VaultModel.Folder.TryGetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
             {
                 // TODO: Recognize the option in that view model
                 LoginStrategyViewModel = new LoginKeystoreSelectionViewModel();
@@ -91,7 +92,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
                 var vaultUnlockingModel = new VaultUnlockingModel(fileSystems[0]);
 
-                LoginStrategyViewModel = new LoginCredentialsViewModel(vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
+                LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
             }
             else
                 LoginStrategyViewModel = new LoginInvalidVaultViewModel(validationResult.GetMessage("Vault is inaccessible."));

@@ -1,8 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -15,22 +12,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public string VaultName { get; }
 
-        /// <inheritdoc/>
-        public DateTime LastAccessedDate { get; private set; }
-
         public LocalVaultModel(IFolder folder)
         {
             Folder = folder;
             VaultName = folder.Name;
-        }
-
-        /// <inheritdoc/>
-        public Task AccessVaultAsync(CancellationToken cancellationToken = default)
-        {
-            LastAccessedDate = DateTime.Now;
-
-            // TODO: Persist LastAccessDate
-            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>

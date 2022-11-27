@@ -30,21 +30,15 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<IResult<IVaultModel?>> DeployAsync(CancellationToken cancellationToken = default)
+        public Task<IResult<IVaultModel?>> DeployAsync(CancellationToken cancellationToken = default)
         {
             if (_vaultFolder is null)
-                return new CommonResult<IVaultModel?>(null);
+                return Task.FromResult<IResult<IVaultModel?>>(new CommonResult<IVaultModel?>(null));
 
             // Create vault model
             IVaultModel vaultModel = new LocalVaultModel(_vaultFolder);
 
-            // Set up widgets
-            IWidgetsContextModel widgetsContextModel = new SavedWidgetsContextModel(vaultModel); // TODO: Reuse it!
-
-            await widgetsContextModel.AddWidgetAsync(Constants.Widgets.HEALTH_WIDGET_ID, cancellationToken);
-            await widgetsContextModel.AddWidgetAsync(Constants.Widgets.GRAPHS_WIDGET_ID, cancellationToken);
-
-            return new CommonResult<IVaultModel?>(vaultModel);
+            return Task.FromResult<IResult<IVaultModel?>>(new CommonResult<IVaultModel?>(vaultModel));
         }
     }
 }

@@ -1,33 +1,43 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
+using System;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault
 {
     /// <summary>
-    /// Represents the view model of an unlocked vault.
+    /// Represents the view model of a vault.
     /// </summary>
-    public sealed class VaultViewModel : ObservableObject
+    public sealed class VaultViewModel : ObservableObject, IEquatable<VaultViewModel>
     {
         /// <summary>
-        /// Gets the unlocked vault model that manages the life time of the vault.
+        /// Gets the vault model associated with the vault.
         /// </summary>
-        public IUnlockedVaultModel UnlockedVaultModel { get; }
+        public IVaultModel VaultModel { get; }
+
+        /// <summary>
+        /// Gets the context model that represents this vault.
+        /// </summary>
+        public IVaultContextModel VaultContextModel { get; }
 
         /// <summary>
         /// Gets the context model that represents all widgets in this vault.
         /// </summary>
         public IWidgetsContextModel WidgetsContextModel { get; }
 
-        /// <summary>
-        /// Gets the vault model associated with the vault.
-        /// </summary>
-        public IVaultModel VaultModel { get; }
-
-        public VaultViewModel(IUnlockedVaultModel unlockedVaultModel, IWidgetsContextModel widgetsContextModel, IVaultModel vaultModel)
+        public VaultViewModel(IVaultModel vaultModel, IVaultContextModel vaultContextModel, IWidgetsContextModel widgetsContextModel)
         {
-            UnlockedVaultModel = unlockedVaultModel;
-            WidgetsContextModel = widgetsContextModel;
             VaultModel = vaultModel;
+            VaultContextModel = vaultContextModel;
+            WidgetsContextModel = widgetsContextModel;
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(VaultViewModel? other)
+        {
+            if (other is null)
+                return false;
+
+            return VaultModel.Equals(other.VaultModel);
         }
     }
 }

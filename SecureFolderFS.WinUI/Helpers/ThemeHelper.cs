@@ -89,9 +89,6 @@ namespace SecureFolderFS.WinUI.Helpers
         {
             await _dispatcherQueue.EnqueueAsync(() =>
             {
-                if (_CurrentTheme == ElementTheme.Default)
-                    _CurrentTheme = Application.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
-
                 UpdateTheme();
                 foreach (var item in _themeChangedCallbacks.Values)
                 {
