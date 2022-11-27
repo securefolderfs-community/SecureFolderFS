@@ -6,6 +6,8 @@ namespace SecureFolderFS.Shared.Helpers
     /// <inheritdoc cref="IResult"/>
     public class CommonResult : IResult
     {
+        public static CommonResult Success { get; } = new();
+
         /// <inheritdoc/>
         public bool Successful { get; }
 

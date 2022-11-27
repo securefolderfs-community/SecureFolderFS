@@ -4,6 +4,7 @@ using Microsoft.UI.Windowing;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -52,8 +53,7 @@ namespace SecureFolderFS.WinUI.WindowViews
             }
 
             // Register ThemeHelper
-            var themeHelper = ThemeHelper.RegisterWindowInstance(AppWindow);
-            themeHelper.UpdateTheme();
+            ThemeHelper.Instance.RegisterWindowInstance(AppWindow, HostControl);
 
             // Set min size
             base.MinHeight = 572;
@@ -69,6 +69,12 @@ namespace SecureFolderFS.WinUI.WindowViews
             var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
 
             await Task.WhenAll(settingsService.SaveSettingsAsync(), applicationSettingsService.SaveSettingsAsync());
+        }
+
+        private void HostControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Update current theme to refresh window buttons' colors
+            ThemeHelper.Instance.UpdateTheme();
         }
     }
 }

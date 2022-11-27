@@ -46,7 +46,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     return setStreamResult;
             }
 
-            return new CommonResult();
+            return CommonResult.Success;
         }
 
         /// <inheritdoc/>

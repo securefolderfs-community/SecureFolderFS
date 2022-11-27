@@ -64,11 +64,20 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             if (configFile is null)
                 return new CommonResult(false);
 
-            _configStream = await configFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
-            if (_configStream is null)
-                return new CommonResult(false);
+            // Make sure to dispose previous configuration file stream
+            if (_configStream is not null)
+            {
+                await _configStream.DisposeAsync();
+                _configStream = null;
+            }
 
-            return new CommonResult();
+            // Open the configuration file stream
+            var configStreamResult = await configFile.OpenStreamWithResultAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
+            if (!configStreamResult.Successful)
+                return configStreamResult;
+
+            _configStream = configStreamResult.Value;
+            return CommonResult.Success;
         }
 
         /// <inheritdoc/>
@@ -80,7 +89,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             try
             {
                 await _creationRoutine.WriteKeystoreAsync(keystoreStream, serializer, cancellationToken);
-                return new CommonResult();
+                return CommonResult.Success;
             }
             catch (Exception ex)
             {
@@ -108,7 +117,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 _ => throw new ArgumentOutOfRangeException(nameof(nameCipher.Id))
             };
 
-            return Task.FromResult<IResult>(new CommonResult());
+            return Task.FromResult<IResult>(CommonResult.Success);
         }
 
         /// <inheritdoc/>
@@ -125,7 +134,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                     StreamSerializer.Instance,
                     cancellationToken);
 
-                return new CommonResult();
+                return CommonResult.Success;
             }
             catch (Exception ex)
             {

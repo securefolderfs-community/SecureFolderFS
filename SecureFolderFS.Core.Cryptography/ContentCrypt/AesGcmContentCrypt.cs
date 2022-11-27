@@ -1,5 +1,4 @@
 ﻿using SecureFolderFS.Core.Cryptography.Helpers;
-using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.AesGcm;

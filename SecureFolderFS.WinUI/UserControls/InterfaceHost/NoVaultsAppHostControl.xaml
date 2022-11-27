@@ -29,7 +29,7 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="You haven't added any vaults yet. Let's start making your files more secure." />
+                    Text="You haven't added any vaults yet. Create a new one or add existing to begin." />
             </StackPanel>
 
             <!--  Add vault  -->

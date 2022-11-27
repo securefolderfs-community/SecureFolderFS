@@ -24,7 +24,7 @@ namespace SecureFolderFS.WinUI.AppModels
         /// <inheritdoc/>
         public Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
         {
-            return Task.FromResult<IResult>(new CommonResult());
+            return Task.FromResult<IResult>(CommonResult.Success);
         }
 
         /// <inheritdoc/>

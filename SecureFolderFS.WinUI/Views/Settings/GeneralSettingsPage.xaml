@@ -124,15 +124,12 @@
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl
-                Title="Theme"
-                Description="Choose application theme"
-                IsEnabled="False">
+            <ucab:ActionBlockControl Title="Theme" Description="Choose application theme">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE790;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ComboBox SelectedIndex="0">
+                    <ComboBox SelectedIndex="{x:Bind SelectedThemeIndex, Mode=TwoWay}">
                         <ComboBox.Items>
                             <ComboBoxItem Content="System default" />
                             <ComboBoxItem Content="Light" />

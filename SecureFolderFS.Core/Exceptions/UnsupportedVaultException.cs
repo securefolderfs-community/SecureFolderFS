@@ -5,7 +5,7 @@ namespace SecureFolderFS.Core.Exceptions
     public sealed class UnsupportedVaultException : Exception
     {
         public UnsupportedVaultException()
-            : base($"The vault version is not supported by SecureFolderFS.")
+            : base("The vault version is not supported by SecureFolderFS.")
         {
         }
 

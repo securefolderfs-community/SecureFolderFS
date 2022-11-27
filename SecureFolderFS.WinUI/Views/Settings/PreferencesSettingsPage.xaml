@@ -134,7 +134,7 @@
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
                 Title="Open vault folder"
-                Description="Automatically open vault folder when it is unlocked"
+                Description="Automatically open folder when vault is unlocked"
                 IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xED25;" />

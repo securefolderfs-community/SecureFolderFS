@@ -1,5 +1,4 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.AesCtrHmac;
@@ -77,9 +76,16 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             return true;
         }
 
+        [SkipLocalsInit]
         private void CalculateChunkMac(ReadOnlySpan<byte> headerNonce, ReadOnlySpan<byte> chunkNonce, ReadOnlySpan<byte> ciphertextPayload, long chunkNumber, Span<byte> chunkMac)
         {
-            var beChunkNumber = BitConverter.GetBytes(chunkNumber).AsBigEndian();
+            // Convert long to byte array
+            Span<byte> beChunkNumber = stackalloc byte[sizeof(long)];
+            Unsafe.As<byte, long>(ref beChunkNumber[0]) = chunkNumber;
+
+            // Reverse byte order as needed
+            if (BitConverter.IsLittleEndian)
+                beChunkNumber.Reverse();
 
             using var hmacSha256 = cipherProvider.HmacSha256Crypt.GetInstance();
             hmacSha256.InitializeHmac(_macKey);

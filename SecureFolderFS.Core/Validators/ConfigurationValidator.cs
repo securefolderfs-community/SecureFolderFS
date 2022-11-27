@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.Validators
             if (!payloadMac.SequenceEqual(value.PayloadMac))
                 return Task.FromResult<IResult>(new CommonResult(new CryptographicException("Vault hash doesn't match the computed hash.")));
 
-            return Task.FromResult<IResult>(new CommonResult());
+            return Task.FromResult<IResult>(CommonResult.Success);
         }
     }
 }

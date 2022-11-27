@@ -18,10 +18,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         public string Name { get; protected set; }
 
         /// <inheritdoc/>
-        public virtual string Id
-        {
-            get => _computedId ??= ChecksumHelpers.CalculateChecksumForPath(Path);
-        }
+        public virtual string Id => _computedId ??= ChecksumHelpers.CalculateChecksumForPath(Path);
 
         protected NativeStorable(string path)
         {

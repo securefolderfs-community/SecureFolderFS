@@ -1,15 +1,15 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.WinUI.Storage.WindowsStorage;
+using SecureFolderFS.WinUI.WindowViews;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.WinUI.Storage.WindowsStorage;
-using SecureFolderFS.WinUI.WindowViews;
 using WinUIEx;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
@@ -36,17 +36,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.GetWindowHandle());
 
             if (filter is not null)
-            {
                 filePicker.FileTypeFilter.EnumeratedAdd(filter);
-            }
             else
-            {
                 filePicker.FileTypeFilter.Add("*");
-            }
 
             var fileTask = filePicker.PickSingleFileAsync().AsTask(cancellationToken);
             var file = await fileTask;
-
             if (file is null)
                 return null;
 

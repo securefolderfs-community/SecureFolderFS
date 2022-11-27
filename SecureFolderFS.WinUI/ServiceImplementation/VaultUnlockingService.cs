@@ -19,7 +19,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     internal sealed class VaultUnlockingService : IVaultUnlockingService
     {
-        private IFolder? _vaultFolder;
         private IUnlockRoutine? _unlockRoutine;
         private FileSystemAdapterType _fileSystemAdapterType;
 
@@ -34,9 +33,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             try
             {
                 await _unlockRoutine.SetVaultFolder(vaultFolder, cancellationToken);
-                _vaultFolder = vaultFolder;
-
-                return new CommonResult();
+                return CommonResult.Success;
             }
             catch (Exception ex)
             {
@@ -53,7 +50,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             try
             {
                 await _unlockRoutine.ReadConfigurationAsync(stream, StreamSerializer.Instance, cancellationToken);
-                return new CommonResult();
+                return CommonResult.Success;
             }
             catch (Exception ex)
             {
@@ -70,7 +67,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             try
             {
                 await _unlockRoutine.ReadKeystoreAsync(stream, serializer, cancellationToken);
-                return new CommonResult();
+                return CommonResult.Success;
             }
             catch (Exception ex)
             {
@@ -93,7 +90,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 _ => throw new ArgumentOutOfRangeException(nameof(IFileSystemInfoModel.Id))
             };
 
-            return new CommonResult();
+            return CommonResult.Success;
         }
 
         /// <inheritdoc/>

@@ -1,7 +1,6 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,13 +9,14 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <inheritdoc cref="IVaultModel"/>
     public sealed class LocalVaultModel : IVaultModel
     {
-        private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
-
         /// <inheritdoc/>
         public IFolder Folder { get; }
 
         /// <inheritdoc/>
         public string VaultName { get; }
+
+        /// <inheritdoc/>
+        public DateTime LastAccessedDate { get; private set; }
 
         public LocalVaultModel(IFolder folder)
         {
@@ -25,13 +25,12 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default)
+        public Task AccessVaultAsync(CancellationToken cancellationToken = default)
         {
-            if (Folder is not ILocatableFolder vaultFolder)
-                return Task.FromResult(false);
+            LastAccessedDate = DateTime.Now;
 
-            // TODO: There can be additional measures added to determine if the Folder is still accessible.
-            return FileSystemService.DirectoryExistsAsync(vaultFolder.Path, cancellationToken);
+            // TODO: Persist LastAccessDate
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>

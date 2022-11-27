@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    public partial class App : Application
+    public sealed partial class App : Application
     {
         private Window? _window;
 
@@ -118,7 +118,7 @@ namespace SecureFolderFS.WinUI
             LogException(e.ExceptionObject as Exception);
         }
 
-        private void LogException(Exception? ex)
+        private static void LogException(Exception? ex)
         {
             var formattedException = ExceptionHelpers.FormatException(ex);
 
@@ -135,7 +135,7 @@ namespace SecureFolderFS.WinUI
             Func<IDatabaseModel<string>, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
         {
             var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
-            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl!);
+            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl);
         }
     }
 }

@@ -33,12 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             if (password is null)
                 return;
 
-            // Check if the folder is accessible
-            if (!await _vaultWatcherModel.VaultModel.IsAccessibleAsync(cancellationToken))
-                return; // TODO: Report the issue
-
             IUnlockedVaultModel? unlockedVaultModel;
-
             using (_vaultWatcherModel.LockFolderAsync(cancellationToken))
             using (_vaultUnlockingModel)
             using (password)

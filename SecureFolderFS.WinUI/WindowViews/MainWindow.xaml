@@ -13,5 +13,5 @@
     </winuiex:WindowEx.Backdrop>
 
     <!--  UI Root  -->
-    <uc:MainWindowRootControl x:Name="HostControl" />
+    <uc:MainWindowRootControl x:Name="HostControl" Loaded="HostControl_Loaded" />
 </winuiex:WindowEx>

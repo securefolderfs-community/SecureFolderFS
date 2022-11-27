@@ -8,7 +8,6 @@ using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.CryptFiles
 {

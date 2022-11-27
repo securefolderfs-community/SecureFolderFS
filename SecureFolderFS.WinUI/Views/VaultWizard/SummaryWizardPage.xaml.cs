@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.WinUI.Helpers;
-using SecureFolderFS.WinUI.WindowViews;
 using System;
 using System.Threading.Tasks;
 
@@ -28,7 +27,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         {
             InitializeComponent();
 
-            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].RegisterForThemeChangedCallback(nameof(SummaryWizardPage), _ =>
+            ThemeHelper.Instance.SubscribeThemeChangedCallback(nameof(SummaryWizardPage), _ =>
             {
                 CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);
             });
@@ -46,15 +45,17 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         {
             CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);
             VisualPlayer.Visibility = Visibility.Collapsed;
+
             await Task.Delay(600);
             _ = VisualPlayer.PlayAsync(CheckVisualSource.Markers["NormalOffToNormalOn_Start"], CheckVisualSource.Markers["NormalOffToNormalOn_End"], false);
             await Task.Delay(20);
+
             VisualPlayer.Visibility = Visibility.Visible;
         }
 
         public void Dispose()
         {
-            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].UnregisterForThemeChangedCallback(nameof(SummaryWizardPage));
+            ThemeHelper.Instance.UnsubscribeThemeChangedCallback(nameof(SummaryWizardPage));
         }
     }
 }

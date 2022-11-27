@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     opt.MountPoint = mountPoint;
                 });
 
-            _dokanInstance = dokanBuilder.Build(_dokanCallbacks as IDokanOperationsUnsafe);
+            _dokanInstance = dokanBuilder.Build(_dokanCallbacks);
         }
 
         public bool CloseFileSystem(FileSystemCloseMethod closeMethod)

@@ -2,7 +2,6 @@
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.Streams;
-using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -99,8 +98,10 @@ namespace SecureFolderFS.Core.Streams
         }
 
         /// <inheritdoc/>
+        [SkipLocalsInit]
         public override void Write(ReadOnlySpan<byte> buffer)
         {
+            // Don't initiate write if the buffer is empty
             if (buffer.IsEmpty)
                 return;
 
@@ -108,7 +109,13 @@ namespace SecureFolderFS.Core.Streams
             {
                 // Write gap
                 var gapLength = Position - Length;
-                WriteInternal(ArrayExtensions.GenerateWeakNoise(gapLength), Length);
+
+                // Generate weak noise
+                var weakNoise = new byte[gapLength];
+                Random.Shared.NextBytes(weakNoise);
+
+                // Write contents of weak noise array
+                WriteInternal(weakNoise, Length);
             }
             else
             {
@@ -139,7 +146,10 @@ namespace SecureFolderFS.Core.Streams
                 BaseStream.SetLength(ciphertextFileSize);
                 _Length = value;
                 _Position = Math.Min(value, Position);
-                //_fileOperations.SetLastWriteTime(_ciphertextPath.Path, DateTime.Now);
+                
+                // Update last write time
+                if (BaseStream is FileStream fileStream)
+                    File.SetLastWriteTime(fileStream.SafeFileHandle, DateTime.Now);
             }
         }
 

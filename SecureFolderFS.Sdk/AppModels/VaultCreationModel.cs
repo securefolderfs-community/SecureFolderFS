@@ -35,8 +35,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 await readmeFile.WriteAllTextAsync(Constants.VaultReadme.VAULT_README_MESSAGE, cancellationToken);
 
             _vaultFolder = folder;
-
-            return new CommonResult();
+            return CommonResult.Success;
         }
 
         /// <inheritdoc/>

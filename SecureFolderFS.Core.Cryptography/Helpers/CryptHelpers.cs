@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Shared.Extensions;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.Cryptography.Helpers
@@ -11,8 +10,9 @@ namespace SecureFolderFS.Core.Cryptography.Helpers
             // Set first 8B of chunk number to associatedData
             Unsafe.As<byte, long>(ref associatedData[0]) = chunkNumber;
 
-            // Reverse the byte order as needed
-            associatedData.Slice(0, sizeof(long)).AsBigEndian();
+            // Reverse byte order as needed
+            if (BitConverter.IsLittleEndian)
+                associatedData.Slice(0, sizeof(long)).Reverse();
 
             // Copy header nonce after chunk number
             headerNonce.CopyTo(associatedData.Slice(sizeof(long)));

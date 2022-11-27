@@ -31,7 +31,10 @@ namespace SecureFolderFS.Sdk.AppModels
         public virtual async Task<Stream> SerializeAsync(object? data, Type dataType, CancellationToken cancellationToken = default)
         {
             var outputStream = new MemoryStream();
+
+            // Serialize data to stream
             await JsonSerializer.SerializeAsync(outputStream, data, dataType, DefaultSerializerOptions, cancellationToken);
+            outputStream.Position = 0;
 
             return outputStream;
         }

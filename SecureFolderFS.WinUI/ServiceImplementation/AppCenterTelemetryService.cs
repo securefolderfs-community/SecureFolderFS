@@ -1,9 +1,9 @@
 ﻿using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using SecureFolderFS.Sdk.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AppCenter.Crashes;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {

@@ -1,7 +1,6 @@
-﻿using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Core.Cryptography.Helpers;
 using System;
 using System.Runtime.CompilerServices;
-using SecureFolderFS.Core.Cryptography.Helpers;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.XChaCha20Poly1305;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Headers.XChaCha20Poly1305;
 using static SecureFolderFS.Core.Cryptography.Extensions.ContentCryptExtensions.XChaChaContentExtensions;

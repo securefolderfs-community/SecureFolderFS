@@ -15,10 +15,15 @@
             public const string USER_SETTINGS_FILENAME = "user_settings.json";
         }
 
+        public static class AppLocalSettings
+        {
+            public const string THEME_PREFERENCE_SETTING = "ImmersiveTheme";
+        }
+
         public static class Application
         {
             public const string EXCEPTION_BLOCK_DATE_FORMAT = "dd.MM.yyyy HH_mm_ss";
-            public const string EXCEPTIONLOG_FILENAME = "securefolderfs_exceptionlog.log";
+            public const string EXCEPTION_LOG_FILENAME = "securefolderfs_exceptionlog.log";
         }
     }
 }

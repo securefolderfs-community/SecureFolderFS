@@ -1,10 +1,10 @@
 ﻿using Microsoft.Windows.ApplicationModel.Resources;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.Globalization;
-using SecureFolderFS.Sdk.AppModels;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -12,7 +12,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class LocalizationService : ILocalizationService
     {
         private static readonly ResourceLoader ResourceLoader = new();
-        private List<ILanguageModel>? _languageCache;
+        private IReadOnlyList<ILanguageModel>? _languageCache;
 
         public LocalizationService()
         {
@@ -25,7 +25,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public string? LocalizeString(string resourceKey)
         {
-            return ResourceLoader.GetString(resourceKey);
+            return resourceKey;
+
+            // TODO: Localize strings
+            // return ResourceLoader.GetString(resourceKey);
         }
 
         /// <inheritdoc/>
@@ -38,8 +41,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public IEnumerable<ILanguageModel> GetLanguages()
         {
             _languageCache ??= ApplicationLanguages.ManifestLanguages
-                .Select(item => new AppLanguageModel(item))
-                .Cast<ILanguageModel>()
+                .Select<string, ILanguageModel>(item => new AppLanguageModel(item))
                 .ToList();
 
             return _languageCache;

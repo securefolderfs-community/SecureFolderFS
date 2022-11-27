@@ -44,7 +44,7 @@ namespace SecureFolderFS.WinUI.AppModels
                 return new CommonResult(new NotSupportedException(message));
             }
 
-            return new CommonResult();
+            return CommonResult.Success;
         }
 
         /// <inheritdoc/>

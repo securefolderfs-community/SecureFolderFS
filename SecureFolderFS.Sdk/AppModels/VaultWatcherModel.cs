@@ -86,7 +86,7 @@ namespace SecureFolderFS.Sdk.AppModels
             }
 
             // If unassigned, an unrelated file/folder has changed - the result should be true
-            result ??= new CommonResult();
+            result ??= CommonResult.Success;
             VaultChangedEvent?.Invoke(this, result);
         }
 

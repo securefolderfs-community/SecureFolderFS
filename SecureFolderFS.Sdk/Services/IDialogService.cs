@@ -1,7 +1,7 @@
-﻿using System.ComponentModel;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Enums;
+﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
 {

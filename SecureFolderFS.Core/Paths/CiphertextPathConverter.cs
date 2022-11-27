@@ -24,13 +24,13 @@ namespace SecureFolderFS.Core.Paths
         /// <inheritdoc/>
         public string? ToCiphertext(string cleartextPath)
         {
-            return GetCorrectPath(cleartextPath, GetCiphertextFileName);
+            return ConstructPath(cleartextPath, true);
         }
 
         /// <inheritdoc/>
         public string? ToCleartext(string ciphertextPath)
         {
-            return GetCorrectPath(ciphertextPath, GetCleartextFileName);
+            return ConstructPath(ciphertextPath, false);
         }
 
         /// <inheritdoc/>
@@ -61,21 +61,21 @@ namespace SecureFolderFS.Core.Paths
         }
 
         // TODO: Refactor
-        private string? GetCorrectPath(string path, Func<string, string?> fileNameFunc)
+        private string? ConstructPath(string rawPath, bool convertToCiphertext)
         {
-            var onlyPathAfterContent = path.Substring(_vaultRootPath.Length, path.Length - _vaultRootPath.Length);
+            var onlyPathAfterContent = rawPath.Substring(_vaultRootPath.Length, rawPath.Length - _vaultRootPath.Length);
             var correctPath = PathHelpers.EnsureTrailingPathSeparator(_vaultRootPath);
 
             foreach (var item in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                var name = fileNameFunc(Path.Combine(correctPath, item));
+                var name = convertToCiphertext ? GetCiphertextFileName(Path.Combine(correctPath, item)) : GetCleartextFileName(Path.Combine(correctPath, item));
                 if (name is null)
                     return null;
 
                 correctPath += $"{name}{Path.DirectorySeparatorChar}";
             }
 
-            return !path.EndsWith(Path.DirectorySeparatorChar) ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;
+            return !rawPath.EndsWith(Path.DirectorySeparatorChar) ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;
         }
     }
 }

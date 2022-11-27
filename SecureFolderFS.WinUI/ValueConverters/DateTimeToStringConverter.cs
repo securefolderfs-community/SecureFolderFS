@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.UI.Xaml.Data;
+﻿using Microsoft.UI.Xaml.Data;
+using System;
 
 namespace SecureFolderFS.WinUI.ValueConverters
 {
@@ -8,9 +8,7 @@ namespace SecureFolderFS.WinUI.ValueConverters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is not DateTime dateTime)
-            {
                 return string.Empty;
-            }
 
             string dateString;
             if (dateTime.Date == DateTime.Today)

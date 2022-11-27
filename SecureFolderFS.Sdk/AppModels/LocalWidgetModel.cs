@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public Task<object?> GetDataAsync(string key, CancellationToken cancellationToken = default)
         {
             if (_widgetDataModel.WidgetData.TryGetValue(key, out var value))
-                return Task.FromResult<object?>(value);
+                return Task.FromResult(value);
 
             return Task.FromResult<object?>(null);
         }

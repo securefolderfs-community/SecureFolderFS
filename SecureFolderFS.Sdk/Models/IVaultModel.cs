@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Sdk.Models
 {
@@ -21,10 +21,15 @@ namespace SecureFolderFS.Sdk.Models
         string VaultName { get; }
 
         /// <summary>
-        /// Determines if <see cref="Folder"/> is valid and can be accessed.
+        /// Gets the date of last vault access time.
+        /// </summary>
+        DateTime LastAccessedDate { get; }
+
+        /// <summary>
+        /// Tries to access the vault, updating <see cref="LastAccessedDate"/>.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and the folder is accessible, returns true, otherwise false.</returns>
-        Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task AccessVaultAsync(CancellationToken cancellationToken = default);
     }
 }

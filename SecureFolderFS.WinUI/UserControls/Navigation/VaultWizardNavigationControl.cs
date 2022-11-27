@@ -1,11 +1,11 @@
-﻿using System;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.WinUI.Views.VaultWizard;
+using System;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
@@ -13,10 +13,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
     internal sealed class VaultWizardNavigationControl : NavigationControl
     {
         /// <inheritdoc cref="Frame.CanGoBack"/>
-        public bool CanGoBack
-        {
-            get => ContentFrame.CanGoBack;
-        }
+        public bool CanGoBack => ContentFrame.CanGoBack;
 
         /// <inheritdoc/>
         public override void Receive(BackNavigationRequestedMessage message)

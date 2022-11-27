@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
         <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
     </UserControl.Resources>
 
     <NavigationView
@@ -126,7 +127,7 @@
                             <TextBlock
                                 FontSize="14"
                                 Opacity="0.6"
-                                Text="Undefined" />
+                                Text="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                         </StackPanel>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
