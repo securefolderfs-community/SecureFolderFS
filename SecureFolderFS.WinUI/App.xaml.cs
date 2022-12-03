@@ -123,7 +123,7 @@ namespace SecureFolderFS.WinUI
             var formattedException = ExceptionHelpers.FormatException(ex);
 
             Debug.WriteLine(formattedException);
-            Debugger.Break(); // Please check "Output Window" for exception details (View -> Output Window) (Ctr + Alt + O)
+            Debugger.Break(); // Please check "Output Window" for exception details (On Visual Studio, View -> Output Window or Ctr+Alt+O)
 
 #if !DEBUG
             ExceptionHelpers.LogExceptionToFile(formattedException);

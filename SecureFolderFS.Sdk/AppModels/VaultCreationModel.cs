@@ -30,9 +30,9 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!configurationResult.Successful)
                 return configurationResult;
 
-            var readmeFile = await folder.TryCreateFileAsync(Constants.VaultReadme.VAULT_README_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            var readmeFile = await folder.TryCreateFileAsync(Constants.VaultInformation.VAULT_README_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
             if (readmeFile is not null)
-                await readmeFile.WriteAllTextAsync(Constants.VaultReadme.VAULT_README_MESSAGE, cancellationToken);
+                await readmeFile.WriteAllTextAsync(Constants.VaultInformation.VAULT_README_MESSAGE, cancellationToken);
 
             _vaultFolder = folder;
             return CommonResult.Success;

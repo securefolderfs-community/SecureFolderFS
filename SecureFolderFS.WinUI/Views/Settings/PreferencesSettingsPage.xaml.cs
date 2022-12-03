@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
@@ -10,7 +7,11 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.WinUI.UserControls.InfoBars;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -82,7 +83,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 FileSystemInfoBar.IsOpen = true;
                 FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Error;
                 FileSystemInfoBar.CanBeClosed = false;
-                FileSystemInfoBar.Message = fileSystemAdapterResult.Exception?.Message ?? "EMPTY MSG";
+                FileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
             }
         }
 

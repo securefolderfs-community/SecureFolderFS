@@ -21,12 +21,12 @@
 
     <NavigationView
         x:Name="Sidebar"
-        ExpandedModeThresholdWidth="864"
+        ExpandedModeThresholdWidth="816"
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="True"
         IsSettingsVisible="False"
         MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
-        OpenPaneLength="284"
+        OpenPaneLength="260"
         PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
@@ -129,7 +129,7 @@
                             <TextBlock
                                 x:Name="LastOpenedText"
                                 x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
-                                FontSize="14"
+                                FontSize="12"
                                 Opacity="0.6"
                                 Text="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                         </StackPanel>
