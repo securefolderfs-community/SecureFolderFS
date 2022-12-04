@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.UserControls.InfoBars
 {

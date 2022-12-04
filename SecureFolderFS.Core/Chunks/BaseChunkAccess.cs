@@ -11,14 +11,14 @@ namespace SecureFolderFS.Core.Chunks
         protected readonly IChunkReader chunkReader;
         protected readonly IChunkWriter chunkWriter;
         protected readonly IContentCrypt contentCrypt;
-        protected readonly IFileSystemStatsTracker? statsTracker;
+        protected readonly IFileSystemStatistics? fileSystemStatistics;
 
-        protected BaseChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatsTracker? statsTracker)
+        protected BaseChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics? fileSystemStatistics)
         {
             this.chunkReader = chunkReader;
             this.chunkWriter = chunkWriter;
             this.contentCrypt = contentCrypt;
-            this.statsTracker = statsTracker;
+            this.fileSystemStatistics = fileSystemStatistics;
         }
 
         /// <inheritdoc/>

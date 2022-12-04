@@ -15,14 +15,14 @@ namespace SecureFolderFS.Core.Chunks
         private readonly Security _security;
         private readonly HeaderBuffer _fileHeader;
         private readonly IStreamsManager _streamsManager;
-        private readonly IFileSystemStatsTracker? _fileSystemStatsTracker;
+        private readonly IFileSystemStatistics? _fileSystemStatistics;
 
-        public ChunkWriter(Security security, HeaderBuffer fileHeader, IStreamsManager streamsManager, IFileSystemStatsTracker? fileSystemStatsTracker)
+        public ChunkWriter(Security security, HeaderBuffer fileHeader, IStreamsManager streamsManager, IFileSystemStatistics? fileSystemStatistics)
         {
             _security = security;
             _fileHeader = fileHeader;
             _streamsManager = streamsManager;
-            _fileSystemStatsTracker = fileSystemStatsTracker;
+            _fileSystemStatistics = fileSystemStatistics;
         }
 
         /// <inheritdoc/>
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.Chunks
                 _fileHeader,
                 realCiphertextChunk);
 
-            _fileSystemStatsTracker?.AddBytesEncrypted(cleartextChunk.Length);
+            _fileSystemStatistics?.NotifyBytesEncrypted(cleartextChunk.Length);
 
             // Get and write to ciphertext stream
             var ciphertextStream = _streamsManager.GetReadWriteStream();
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Core.Chunks
             ciphertextStream.Position = streamPosition;
             ciphertextStream.Write(realCiphertextChunk);
 
-            _fileSystemStatsTracker?.AddBytesWritten(cleartextChunk.Length);
+            _fileSystemStatistics?.NotifyBytesWritten(cleartextChunk.Length);
 
             // Return array
             ArrayPool<byte>.Shared.Return(ciphertextChunk);

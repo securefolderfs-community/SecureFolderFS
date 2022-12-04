@@ -14,7 +14,7 @@
         CloseGracefully = 2,
 
         /// <summary>
-        /// Forcefully closes the file system regardless of its the state.
+        /// Forcefully closes the file system regardless of its state.
         /// </summary>
         CloseForcefully = 4
     }

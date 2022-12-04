@@ -11,18 +11,18 @@ namespace SecureFolderFS.Core.FileNames
     internal class InstantFileNameAccess : IFileNameAccess
     {
         protected readonly Security security;
-        protected readonly IFileSystemStatsTracker? statsTracker;
+        protected readonly IFileSystemStatistics? fileSystemStatistics;
 
-        public InstantFileNameAccess(Security security, IFileSystemStatsTracker? statsTracker)
+        public InstantFileNameAccess(Security security, IFileSystemStatistics? fileSystemStatistics)
         {
             this.security = security;
-            this.statsTracker = statsTracker;
+            this.fileSystemStatistics = fileSystemStatistics;
         }
 
         /// <inheritdoc/>
         public virtual ReadOnlySpan<char> GetCleartextName(ReadOnlySpan<char> ciphertextName, DirectoryId directoryId)
         {
-            statsTracker?.AddFileNameAccess();
+            fileSystemStatistics?.NotifyFileNameAccess();
 
             var nameWithoutExt = Path.GetFileNameWithoutExtension(ciphertextName);
             if (nameWithoutExt.IsEmpty)
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.FileNames
         /// <inheritdoc/>
         public virtual ReadOnlySpan<char> GetCiphertextName(ReadOnlySpan<char> cleartextName, DirectoryId directoryId)
         {
-            statsTracker?.AddFileNameAccess();
+            fileSystemStatistics?.NotifyFileNameAccess();
 
             var ciphertextName = security.NameCrypt!.EncryptName(cleartextName, directoryId);
             return Path.ChangeExtension(ciphertextName, Constants.ENCRYPTED_FILE_EXTENSION);

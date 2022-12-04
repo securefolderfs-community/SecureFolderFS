@@ -45,8 +45,8 @@ namespace SecureFolderFS.Core.ComponentBuilders
             {
                 IFileNameAccess fileNameAccess = FileSystemOptions.FileNameCachingStrategy switch
                 {
-                    FileNameCachingStrategy.RandomAccessMemoryCache => new CachingFileNameAccess(security, FileSystemOptions.FileSystemStatsTracker),
-                    FileNameCachingStrategy.NoCache => new InstantFileNameAccess(security, FileSystemOptions.FileSystemStatsTracker),
+                    FileNameCachingStrategy.RandomAccessMemoryCache => new CachingFileNameAccess(security, FileSystemOptions.FileSystemStatistics),
+                    FileNameCachingStrategy.NoCache => new InstantFileNameAccess(security, FileSystemOptions.FileSystemStatistics),
                     _ => throw new ArgumentOutOfRangeException(nameof(FileSystemOptions.FileNameCachingStrategy))
                 };
 
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Core.ComponentBuilders
             else
                 throw new ArgumentOutOfRangeException(nameof(VaultConfigurationDataModel.FileNameCipherScheme));
 
-            var cryptFileManager = new OpenCryptFileManager(security, FileSystemOptions.ChunkCachingStrategy, FileSystemOptions.FileSystemStatsTracker);
+            var cryptFileManager = new OpenCryptFileManager(security, FileSystemOptions.ChunkCachingStrategy, FileSystemOptions.FileSystemStatistics);
             var streamsAccess = new FileStreamAccess(security, cryptFileManager);
 
             return (security, directoryIdAccess, pathConverter, streamsAccess);

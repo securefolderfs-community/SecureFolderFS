@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.FileNames
         private readonly ConcurrentDictionary<NameWithDirectoryId, ReadOnlyMemory<char>> _cleartextNames;
         private readonly ConcurrentDictionary<NameWithDirectoryId, ReadOnlyMemory<char>> _ciphertextNames;
 
-        public CachingFileNameAccess(Security security, IFileSystemStatsTracker? statsTracker)
-            : base(security, statsTracker)
+        public CachingFileNameAccess(Security security, IFileSystemStatistics? fileSystemStatistics)
+            : base(security, fileSystemStatistics)
         {
             _cleartextNames = new(3, Constants.Caching.MAX_CACHED_CLEARTEXT_FILENAMES);
             _ciphertextNames = new(3, Constants.Caching.MAX_CACHED_CIPHERTEXT_FILENAMES);
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Core.FileNames
             if (!_cleartextNames.TryGetValue(new(directoryId, ciphertextName.ToArray()), out var cleartextName))
             {
                 // Not found in cache
-                statsTracker?.AddFileNameCacheMiss();
+                fileSystemStatistics?.NotifyFileNameCacheMiss();
 
                 // Get new cleartext name
                 var newCleartextName = base.GetCleartextName(ciphertextName, directoryId);
@@ -40,8 +40,8 @@ namespace SecureFolderFS.Core.FileNames
                 return newCleartextName;
             }
 
-            statsTracker?.AddFileNameAccess();
-            statsTracker?.AddFileNameCacheHit();
+            fileSystemStatistics?.NotifyFileNameAccess();
+            fileSystemStatistics?.NotifyFileNameCacheHit();
 
             // Return existing cleartext name
             return cleartextName.ToArray();
@@ -53,7 +53,7 @@ namespace SecureFolderFS.Core.FileNames
             if (!_ciphertextNames.TryGetValue(new(directoryId, cleartextName.ToArray()), out var ciphertextName))
             {
                 // Not found in cache
-                statsTracker?.AddFileNameCacheMiss();
+                fileSystemStatistics?.NotifyFileNameCacheMiss();
 
                 // Get new ciphertext name
                 var newCiphertextName = base.GetCiphertextName(cleartextName, directoryId);
@@ -66,8 +66,8 @@ namespace SecureFolderFS.Core.FileNames
                 return newCiphertextName;
             }
 
-            statsTracker?.AddFileNameAccess();
-            statsTracker?.AddFileNameCacheHit();
+            fileSystemStatistics?.NotifyFileNameAccess();
+            fileSystemStatistics?.NotifyFileNameCacheHit();
 
             // Return existing ciphertext name
             return ciphertextName.ToArray();

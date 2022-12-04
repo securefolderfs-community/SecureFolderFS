@@ -1,11 +1,12 @@
-﻿using SecureFolderFS.Core.FileSystem;
+﻿using SecureFolderFS.Core.Dokany.Callbacks;
+using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Storage;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Dokany.Callbacks;
-using SecureFolderFS.Core.FileSystem.Enums;
 
 namespace SecureFolderFS.Core.Dokany
 {
+    /// <inheritdoc cref="IVirtualFileSystem"/>
     internal sealed class DokanyFileSystem : IVirtualFileSystem
     {
         private readonly DokanyWrapper _dokanyWrapper;
@@ -26,8 +27,10 @@ namespace SecureFolderFS.Core.Dokany
         /// <inheritdoc/>
         public async Task<bool> CloseAsync(FileSystemCloseMethod closeMethod)
         {
-            IsOperational = false;
-            return await Task.Run(() => _dokanyWrapper.CloseFileSystem(closeMethod));
+            if (IsOperational)
+                IsOperational = !await Task.Run(() => _dokanyWrapper.CloseFileSystem(closeMethod));
+
+            return !IsOperational;
         }
     }
 }

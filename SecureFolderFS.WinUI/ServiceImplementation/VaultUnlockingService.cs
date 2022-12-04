@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
@@ -105,11 +106,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 _unlockRoutine.DeriveKeystore(password);
 
                 // Retrieve file system mounter
-                var vaultStatisticsBridge = new FileSystemStatsTrackerToVaultStatisticsModelBridge();
+                var vaultStatisticsBridge = new FileSystemStatisticsToVaultStatisticsModelBridge();
                 var mountableFileSystem = await _unlockRoutine.PrepareAndUnlockAsync(new()
                 {
-                    FileSystemAdapterType = _fileSystemAdapterType,
-                    FileSystemStatsTracker = vaultStatisticsBridge
+                    AdapterType = _fileSystemAdapterType,
+                    FileSystemStatistics = vaultStatisticsBridge
                 }, cancellationToken);
 
                 // Get free mount point
@@ -117,8 +118,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 if (firstFreeMountPoint is null)
                     return new CommonResult<IUnlockedVaultModel?>(new DirectoryNotFoundException("No available free mount points for vault file system"));
                 
+                // TODO: Determine mount options based on _fileSystemAdapterType
                 // Mount the file system
-                var virtualFileSystem = await mountableFileSystem.MountAsync(new(firstFreeMountPoint), cancellationToken);
+                var virtualFileSystem = await mountableFileSystem.MountAsync(new DokanyMountOptions() { MountPath = firstFreeMountPoint }, cancellationToken);
                 
                 return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge));
             }

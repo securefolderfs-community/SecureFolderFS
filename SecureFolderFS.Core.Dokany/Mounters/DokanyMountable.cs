@@ -1,8 +1,10 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Models;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
@@ -11,10 +13,8 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Directories;
 
-namespace SecureFolderFS.Core.Dokany
+namespace SecureFolderFS.Core.Dokany.Mounters
 {
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class DokanyMountable : IMountableFileSystem
@@ -29,14 +29,16 @@ namespace SecureFolderFS.Core.Dokany
         /// <inheritdoc/>
         public Task<IVirtualFileSystem> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
-            _dokanyWrapper.StartFileSystem(mountOptions.MountPoint);
+            if (mountOptions is not DokanyMountOptions dokanyMountOptions)
+                throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(DokanyMountOptions)}.");
 
-            // TODO: For now SimpleDokanyFolder until cloud storage is implemented
-            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SimpleDokanyFolder(mountOptions.MountPoint));
+            _dokanyWrapper.StartFileSystem(dokanyMountOptions.MountPath);
+            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SimpleDokanyFolder(dokanyMountOptions.MountPath)); // TODO: For now SimpleDokanyFolder until cloud storage is implemented
+
             return Task.FromResult<IVirtualFileSystem>(dokanyFileSystem);
         }
 
-        public static DokanyMountable CreateDokanyMountable(string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)
         {
             // TODO: Select correct dokany callbacks (on-device, cloud). Perhaps add a flag to this class to indicate what type of FS to mount
             if (contentFolder is not ILocatableFolder locatableContentFolder)
@@ -44,7 +46,7 @@ namespace SecureFolderFS.Core.Dokany
 
             var volumeModel = new DokanyVolumeModel()
             {
-                FileSystemName = "NTFS",
+                FileSystemName = Constants.FileSystem.FILESYSTEM_NAME,
                 MaximumComponentLength = Constants.FileSystem.MAX_COMPONENT_LENGTH,
                 VolumeName = volumeName,
                 FileSystemFeatures = FileSystemFeatures.CasePreservedNames
@@ -59,7 +61,7 @@ namespace SecureFolderFS.Core.Dokany
                 Security = security
             };
 
-            return new(dokanyCallbacks);
+            return new DokanyMountable(dokanyCallbacks);
         }
     }
 }

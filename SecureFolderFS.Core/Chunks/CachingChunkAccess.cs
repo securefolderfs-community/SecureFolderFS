@@ -9,12 +9,12 @@ using System.Linq;
 namespace SecureFolderFS.Core.Chunks
 {
     /// <inheritdoc cref="IChunkAccess"/>
-    internal sealed class DictionaryCacheChunkAccess : BaseChunkAccess
+    internal sealed class CachingChunkAccess : BaseChunkAccess
     {
         private readonly Dictionary<long, ChunkBuffer> _chunkCache;
 
-        public DictionaryCacheChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatsTracker? statsTracker)
-            : base(chunkReader, chunkWriter, contentCrypt, statsTracker)
+        public CachingChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics? fileSystemStatistics)
+            : base(chunkReader, chunkWriter, contentCrypt, fileSystemStatistics)
         {
             _chunkCache = new(Constants.Caching.MAX_CACHED_CHUNKS);
         }
@@ -99,8 +99,8 @@ namespace SecureFolderFS.Core.Chunks
                 if (!_chunkCache.TryGetValue(chunkNumber, out var cleartextChunk))
                 {
                     // Cache miss, update stats
-                    statsTracker?.AddChunkAccess();
-                    statsTracker?.AddChunkCacheMiss();
+                    fileSystemStatistics?.NotifyChunkAccess();
+                    fileSystemStatistics?.NotifyChunkCacheMiss();
 
                     // Read chunk
                     var buffer = new byte[contentCrypt.ChunkCleartextSize];
@@ -115,8 +115,8 @@ namespace SecureFolderFS.Core.Chunks
                 else
                 {
                     // Cache hit, update stats
-                    statsTracker?.AddChunkAccess();
-                    statsTracker?.AddChunkCacheHit();
+                    fileSystemStatistics?.NotifyChunkAccess();
+                    fileSystemStatistics?.NotifyChunkCacheHit();
                 }
 
                 return cleartextChunk;

@@ -8,10 +8,10 @@ using System.Security.Cryptography;
 namespace SecureFolderFS.Core.Chunks
 {
     /// <inheritdoc cref="IChunkAccess"/>
-    internal sealed class NonCachingChunkAccess : BaseChunkAccess
+    internal sealed class InstantChunkAccess : BaseChunkAccess
     {
-        public NonCachingChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatsTracker? statsTracker)
-            : base(chunkReader, chunkWriter, contentCrypt, statsTracker)
+        public InstantChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics? fileSystemStatistics)
+            : base(chunkReader, chunkWriter, contentCrypt, fileSystemStatistics)
         {
         }
 

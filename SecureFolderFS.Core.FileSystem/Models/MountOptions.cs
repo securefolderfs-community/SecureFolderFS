@@ -1,12 +1,9 @@
 ﻿namespace SecureFolderFS.Core.FileSystem.Models
 {
-    public sealed class MountOptions
+    /// <summary>
+    /// The base class which is implemented to provide mount specific properties.
+    /// </summary>
+    public abstract class MountOptions
     {
-        public string MountPoint { get; }
-
-        public MountOptions(string mountPoint)
-        {
-            MountPoint = mountPoint;
-        }
     }
 }

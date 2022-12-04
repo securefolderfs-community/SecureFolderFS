@@ -8,9 +8,10 @@
 
         internal static class FileSystem
         {
+            public const string FILESYSTEM_NAME = "NTFS";
             public const long INVALID_HANDLE = 0L;
             public const uint MAX_COMPONENT_LENGTH = 256;
-            public const int MAX_DRIVE_INFO_CALLS_UNTIL_GIVEUP = 5;
+            public const int MAX_DRIVE_INFO_CALLS_UNTIL_GIVE_UP = 5;
 
             public const DokanNet.FileAccess DATA_ACCESS =
                                                           DokanNet.FileAccess.ReadData
@@ -20,6 +21,7 @@
                                                         | DokanNet.FileAccess.GenericExecute
                                                         | DokanNet.FileAccess.GenericWrite
                                                         | DokanNet.FileAccess.GenericRead;
+
             public const DokanNet.FileAccess DATA_WRITE_ACCESS =
                                                           DokanNet.FileAccess.WriteData
                                                         | DokanNet.FileAccess.AppendData

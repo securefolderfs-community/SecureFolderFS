@@ -17,13 +17,13 @@ namespace SecureFolderFS.Core.CryptFiles
     {
         private readonly Security _security;
         private readonly ChunkCachingStrategy _chunkCachingStrategy;
-        private readonly IFileSystemStatsTracker? _statsTracker;
+        private readonly IFileSystemStatistics? _fileSystemStatistics;
 
-        public OpenCryptFileManager(Security security, ChunkCachingStrategy chunkCachingStrategy, IFileSystemStatsTracker? statsTracker)
+        public OpenCryptFileManager(Security security, ChunkCachingStrategy chunkCachingStrategy, IFileSystemStatistics? fileSystemStatistics)
         {
             _security = security;
             _chunkCachingStrategy = chunkCachingStrategy;
-            _statsTracker = statsTracker;
+            _fileSystemStatistics = fileSystemStatistics;
         }
 
         /// <inheritdoc/>
@@ -40,13 +40,13 @@ namespace SecureFolderFS.Core.CryptFiles
 
         private IChunkAccess GetChunkAccess(IStreamsManager streamsManager, HeaderBuffer headerBuffer)
         {
-            var chunkReader = new ChunkReader(_security, headerBuffer, streamsManager, _statsTracker);
-            var chunkWriter = new ChunkWriter(_security, headerBuffer, streamsManager, _statsTracker);
+            var chunkReader = new ChunkReader(_security, headerBuffer, streamsManager, _fileSystemStatistics);
+            var chunkWriter = new ChunkWriter(_security, headerBuffer, streamsManager, _fileSystemStatistics);
 
             return _chunkCachingStrategy switch
             {
-                ChunkCachingStrategy.RandomAccessMemoryCache => new DictionaryCacheChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _statsTracker),
-                ChunkCachingStrategy.NoCache => new NonCachingChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _statsTracker),
+                ChunkCachingStrategy.RandomAccessMemoryCache => new CachingChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _fileSystemStatistics),
+                ChunkCachingStrategy.NoCache => new InstantChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _fileSystemStatistics),
                 _ => throw new ArgumentOutOfRangeException(nameof(_chunkCachingStrategy))
             };
         }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SecureFolderFS.Core.Dokany.UnsafeNative;
+using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using SecureFolderFS.Core.Dokany.UnsafeNative;
 
 namespace SecureFolderFS.Core.Dokany.Helpers
 {

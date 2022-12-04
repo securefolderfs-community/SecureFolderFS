@@ -1,11 +1,15 @@
-﻿using SecureFolderFS.Core.Cryptography;
+﻿using SecureFolderFS.Core.ComponentBuilders;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.Dokany.Mounters;
+using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Validators;
+using SecureFolderFS.Core.WebDav.Mounters;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
@@ -16,8 +20,6 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.ComponentBuilders;
-using SecureFolderFS.Core.Dokany;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {
@@ -119,9 +121,13 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
                 FileSystemOptions = fileSystemOptions
             };
 
-            // TODO: Determine file system adapter using fileSystemOptions.FileSystemAdapterType
             var (security, directoryIdAccess, pathConverter, streamsAccess) = componentBuilder.BuildComponents(_encKey, _macKey);
-            var mountable = DokanyMountable.CreateDokanyMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess);
+            var mountable = fileSystemOptions.AdapterType switch
+            {
+                FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
+                FileSystemAdapterType.WebDavAdapter => WebDavWindowsMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
+                _ => throw new ArgumentOutOfRangeException(nameof(fileSystemOptions.AdapterType))
+            };
 
             return mountable;
         }

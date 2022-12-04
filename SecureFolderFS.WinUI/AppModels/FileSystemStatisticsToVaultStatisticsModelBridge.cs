@@ -4,7 +4,7 @@ using System;
 
 namespace SecureFolderFS.WinUI.AppModels
 {
-    internal sealed class FileSystemStatsTrackerToVaultStatisticsModelBridge : IVaultStatisticsModel, IFileSystemStatsTracker
+    internal sealed class FileSystemStatisticsToVaultStatisticsModelBridge : IVaultStatisticsModel, IFileSystemStatistics
     {
         private bool _disposed;
         private Action<long>? _readCallback;
@@ -29,13 +29,13 @@ namespace SecureFolderFS.WinUI.AppModels
         }
 
         /// <inheritdoc/>
-        public void AddBytesRead(long amount)
+        public void NotifyBytesRead(long amount)
         {
             _readCallback?.Invoke(amount);
         }
 
         /// <inheritdoc/>
-        public void AddBytesWritten(long amount)
+        public void NotifyBytesWritten(long amount)
         {
             _writeCallback?.Invoke(amount);
         }
@@ -43,57 +43,57 @@ namespace SecureFolderFS.WinUI.AppModels
         #region Unused Methods
 
         /// <inheritdoc/>
-        public void AddBytesEncrypted(long amount)
+        public void NotifyBytesEncrypted(long amount)
         {
         }
 
         /// <inheritdoc/>
-        public void AddBytesDecrypted(long amount)
+        public void NotifyBytesDecrypted(long amount)
         {
         }
 
         /// <inheritdoc/>
-        public void AddChunkCacheMiss()
+        public void NotifyChunkCacheMiss()
         {
         }
 
         /// <inheritdoc/>
-        public void AddChunkCacheHit()
+        public void NotifyChunkCacheHit()
         {
         }
 
         /// <inheritdoc/>
-        public void AddChunkAccess()
+        public void NotifyChunkAccess()
         {
         }
 
         /// <inheritdoc/>
-        public void AddDirectoryIdCacheMiss()
+        public void NotifyDirectoryIdCacheMiss()
         {
         }
 
         /// <inheritdoc/>
-        public void AddDirectoryIdCacheHit()
+        public void NotifyDirectoryIdCacheHit()
         {
         }
 
         /// <inheritdoc/>
-        public void AddDirectoryIdAccess()
+        public void NotifyDirectoryIdAccess()
         {
         }
 
         /// <inheritdoc/>
-        public void AddFileNameCacheMiss()
+        public void NotifyFileNameCacheMiss()
         {
         }
 
         /// <inheritdoc/>
-        public void AddFileNameCacheHit()
+        public void NotifyFileNameCacheHit()
         {
         }
 
         /// <inheritdoc/>
-        public void AddFileNameAccess()
+        public void NotifyFileNameAccess()
         {
         }
 
