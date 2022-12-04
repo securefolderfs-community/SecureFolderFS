@@ -18,12 +18,6 @@
   <!-- Added manually, prevent from removing framework package references -->
   <Target Name="_RemoveFrameworkReferences" />
   <ItemGroup>
-    <Compile Remove="ResourceDictionaries\**" />
-    <EmbeddedResource Remove="ResourceDictionaries\**" />
-    <None Remove="ResourceDictionaries\**" />
-    <Page Remove="ResourceDictionaries\**" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Remove="Assets\AppAssets\AppTitle.svg" />
     <Content Remove="Assets\AppAssets\GreenShield.svg" />
   </ItemGroup>
@@ -206,9 +200,6 @@
     <Page Update="Views\Vault\VaultOverviewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Remove="ResourceDictionaries\**" />
   </ItemGroup>
 
   <!-- TODO: Remove when WindowsAppSDK 1.2 is released https://docs.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps -->

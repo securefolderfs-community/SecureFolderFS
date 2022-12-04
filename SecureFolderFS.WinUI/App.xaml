@@ -8,13 +8,15 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+
+                <!--  Other dictionaries  -->
+
+                <!--  Other app resources  -->
+                <ResourceDictionary>
+                    <SolidColorBrush x:Key="WindowCaptionBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled" Color="Transparent" />
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-
-            <!--  Other app resources  -->
-
-            <SolidColorBrush x:Key="WindowCaptionBackground" Color="Transparent" />
-            <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled" Color="Transparent" />
-
         </ResourceDictionary>
     </Application.Resources>
 </Application>

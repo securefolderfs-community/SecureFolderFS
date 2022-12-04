@@ -121,10 +121,10 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
                 FileSystemOptions = fileSystemOptions
             };
 
-            var (security, directoryIdAccess, pathConverter, streamsAccess) = componentBuilder.BuildComponents(_encKey, _macKey);
+            var (security, directoryIdAccess, pathConverter, streamsAccess) = componentBuilder.BuildComponents(_encKey, _macKey, fileSystemOptions.HealthStatistics);
             var mountable = fileSystemOptions.AdapterType switch
             {
-                FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
+                FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess, fileSystemOptions.HealthStatistics),
                 FileSystemAdapterType.WebDavAdapter => WebDavWindowsMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
                 _ => throw new ArgumentOutOfRangeException(nameof(fileSystemOptions.AdapterType))
             };

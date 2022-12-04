@@ -4,6 +4,7 @@ using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Models;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -38,7 +39,7 @@ namespace SecureFolderFS.Core.Dokany.Mounters
             return Task.FromResult<IVirtualFileSystem>(dokanyFileSystem);
         }
 
-        public static IMountableFileSystem CreateMountable(string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess, IFileSystemHealthStatistics? fileSystemHealthStatistics)
         {
             // TODO: Select correct dokany callbacks (on-device, cloud). Perhaps add a flag to this class to indicate what type of FS to mount
             if (contentFolder is not ILocatableFolder locatableContentFolder)
@@ -55,8 +56,9 @@ namespace SecureFolderFS.Core.Dokany.Mounters
                                      | FileSystemFeatures.SupportsRemoteStorage
                                      | FileSystemFeatures.UnicodeOnDisk
             };
-            var dokanyCallbacks = new OnDeviceDokany(locatableContentFolder, pathConverter, new(streamsAccess), volumeModel)
+            var dokanyCallbacks = new OnDeviceDokany(pathConverter, new(streamsAccess), volumeModel, fileSystemHealthStatistics)
             {
+                LocatableContentFolder = locatableContentFolder,
                 DirectoryIdAccess = directoryIdAccess,
                 Security = security
             };

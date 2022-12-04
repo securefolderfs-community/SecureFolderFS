@@ -1,11 +1,18 @@
-﻿using System.IO;
+﻿using SecureFolderFS.Core.FileSystem.Analytics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Directories
 {
+    // TODO: Replace with Instant and caching strategies
     internal sealed class DeprecatedDirectoryIdAccessImpl : InstantDirectoryIdAccess
     {
+        public DeprecatedDirectoryIdAccessImpl(IFileSystemHealthStatistics? fileSystemHealthStatistics)
+            : base(fileSystemHealthStatistics)
+        {
+        }
+
         protected override Stream? OpenDirectoryIdStream(string ciphertextPath, FileMode mode, FileAccess access)
         {
             try

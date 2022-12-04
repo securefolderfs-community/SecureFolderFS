@@ -3,6 +3,7 @@ using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -22,18 +23,18 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 {
     internal sealed class OnDeviceDokany : BaseDokanyCallbacks, IDokanOperationsUnsafe
     {
-        private readonly ILocatableFolder _locatableContentFolder;
         private DriveInfo? _vaultDriveInfo;
         private int _vaultDriveInfoTries;
         
+        public required ILocatableFolder LocatableContentFolder { get; init; }
+
         public required Security Security { get; init; }
 
         public required IDirectoryIdAccess DirectoryIdAccess { get; init; }
 
-        public OnDeviceDokany(ILocatableFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager, DokanyVolumeModel volumeModel)
-            : base(contentFolder, pathConverter, handlesManager, volumeModel)
+        public OnDeviceDokany(IPathConverter pathConverter, HandlesManager handlesManager, DokanyVolumeModel volumeModel, IFileSystemHealthStatistics? fileSystemHealthStatistics)
+            : base(pathConverter, handlesManager, volumeModel, fileSystemHealthStatistics)
         {
-            _locatableContentFolder = contentFolder;
         }
 
         /// <inheritdoc/>
@@ -300,7 +301,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 _vaultDriveInfoTries++;
                 _vaultDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => 
                     di.IsReady &&
-                    di.RootDirectory.Name.Equals(Path.GetPathRoot(_locatableContentFolder.Path), StringComparison.OrdinalIgnoreCase));
+                    di.RootDirectory.Name.Equals(Path.GetPathRoot(LocatableContentFolder.Path), StringComparison.OrdinalIgnoreCase));
             }
 
             freeBytesAvailable = _vaultDriveInfo?.TotalFreeSpace ?? 0L;
@@ -767,7 +768,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         protected override string? GetCiphertextPath(string cleartextName)
         {
-            var path = PathHelpers.PathFromVaultRoot(cleartextName, _locatableContentFolder.Path);
+            var path = PathHelpers.PathFromVaultRoot(cleartextName, LocatableContentFolder.Path);
             return pathConverter.ToCiphertext(path);
         }
     }

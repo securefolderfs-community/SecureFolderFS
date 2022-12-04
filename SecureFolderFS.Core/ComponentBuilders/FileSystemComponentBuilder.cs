@@ -6,6 +6,7 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileNames;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -21,22 +22,21 @@ namespace SecureFolderFS.Core.ComponentBuilders
 {
     internal sealed class FileSystemComponentBuilder // Terrible.
     { 
-        // TODO: Add required modifier
-        public VaultConfigurationDataModel ConfigDataModel { get; init; }
+        public required VaultConfigurationDataModel ConfigDataModel { get; init; }
 
-        public FileSystemOptions FileSystemOptions { get; init; }
+        public required FileSystemOptions FileSystemOptions { get; init; }
 
-        public IFolder ContentFolder { get; init; }
+        public required IFolder ContentFolder { get; init; }
 
-        public (Security, IDirectoryIdAccess, IPathConverter, IStreamsAccess) BuildComponents(SecretKey encKey, SecretKey macKey)
+        public (Security, IDirectoryIdAccess, IPathConverter, IStreamsAccess) BuildComponents(SecretKey encKey, SecretKey macKey, IFileSystemHealthStatistics? healthStatistics)
         {
             var security = Security.CreateNew(encKey.CreateCopy(), macKey.CreateCopy(), ConfigDataModel.ContentCipherScheme, ConfigDataModel.FileNameCipherScheme);
 
             IDirectoryIdAccess directoryIdAccess = FileSystemOptions.DirectoryIdCachingStrategy switch
             {
                 // TODO: Use correct impl
-                DirectoryIdCachingStrategy.RandomAccessMemoryCache => new DeprecatedDirectoryIdAccessImpl(),
-                DirectoryIdCachingStrategy.NoCache => new DeprecatedDirectoryIdAccessImpl(),
+                DirectoryIdCachingStrategy.RandomAccessMemoryCache => new DeprecatedDirectoryIdAccessImpl(healthStatistics),
+                DirectoryIdCachingStrategy.NoCache => new DeprecatedDirectoryIdAccessImpl(healthStatistics),
                 _ => throw new ArgumentOutOfRangeException(nameof(FileSystemOptions.DirectoryIdCachingStrategy))
             };
 

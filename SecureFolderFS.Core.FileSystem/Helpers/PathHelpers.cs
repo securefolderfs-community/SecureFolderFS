@@ -17,15 +17,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
             if (parentPath is null)
                 return null;
 
+            // Parent path is the same as rootPath where the directory ID should be empty
             if (parentPath.Equals(rootPath))
-            {
-                // Parent path is the same as rootPath where the directory ID should be empty
                 return string.Empty;
-            }
-            else
-            {
-                return Path.Combine(parentPath, Constants.DIRECTORY_ID_FILENAME);
-            }
+
+            return Path.Combine(parentPath, Constants.DIRECTORY_ID_FILENAME);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

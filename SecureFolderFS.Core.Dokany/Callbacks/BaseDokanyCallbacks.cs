@@ -11,23 +11,24 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
 {
     internal abstract class BaseDokanyCallbacks : IDokanOperationsUnsafe
     {
-        protected readonly IFolder contentFolder;
         protected readonly IPathConverter pathConverter;
         protected readonly HandlesManager handlesManager;
         protected readonly DokanyVolumeModel volumeModel;
+        protected readonly IFileSystemHealthStatistics? fileSystemHealthStatistics;
 
-        protected BaseDokanyCallbacks(IFolder contentFolder, IPathConverter pathConverter, HandlesManager handlesManager, DokanyVolumeModel volumeModel)
+        protected BaseDokanyCallbacks(IPathConverter pathConverter, HandlesManager handlesManager, DokanyVolumeModel volumeModel, IFileSystemHealthStatistics? fileSystemHealthStatistics)
         {
-            this.contentFolder = contentFolder;
             this.pathConverter = pathConverter;
             this.handlesManager = handlesManager;
             this.volumeModel = volumeModel;
+            this.fileSystemHealthStatistics = fileSystemHealthStatistics;
         }
 
         protected void CloseHandle(IDokanFileInfo info)
@@ -171,7 +172,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             // Check if the path is correct
             if (ciphertextPath is null)
             {
-                // TODO: Report to HealthAPI
                 bytesRead = 0;
                 return DokanResult.PathNotFound;
             }
@@ -236,7 +236,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             // Check if the path is correct
             if (ciphertextPath is null)
             {
-                // TODO: Report to HealthAPI
                 bytesWritten = 0;
                 return DokanResult.PathNotFound;
             }

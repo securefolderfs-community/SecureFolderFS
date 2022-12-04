@@ -5,8 +5,8 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
-using System.Collections.Generic;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 
 namespace SecureFolderFS.WinUI.Helpers
@@ -17,9 +17,10 @@ namespace SecureFolderFS.WinUI.Helpers
         private FrameworkElement? _rootContent;
         private readonly UISettings _uiSettings;
         private readonly DispatcherQueue _dispatcherQueue;
-        private readonly Dictionary<string, Action<ElementTheme>> _themeChangedCallbacks;
 
         public static ThemeHelper Instance { get; } = new();
+
+        public event EventHandler<ElementTheme>? OnThemeChangedEvent;
 
         private ElementTheme _CurrentTheme;
         public ElementTheme CurrentTheme
@@ -31,7 +32,6 @@ namespace SecureFolderFS.WinUI.Helpers
                 {
                     _CurrentTheme = value;
                     ApplicationData.Current.LocalSettings.Values[Constants.AppLocalSettings.THEME_PREFERENCE_SETTING] = (int)value;
-
                     UpdateTheme();
                 }
             }
@@ -41,7 +41,6 @@ namespace SecureFolderFS.WinUI.Helpers
         {
             _uiSettings = new();
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _themeChangedCallbacks = new();
             _uiSettings.ColorValuesChanged += Settings_ColorValuesChanged;
             _CurrentTheme = ((int?)ApplicationData.Current.LocalSettings.Values[Constants.AppLocalSettings.THEME_PREFERENCE_SETTING] ?? 0) switch
             {
@@ -63,19 +62,33 @@ namespace SecureFolderFS.WinUI.Helpers
 
             if (_appWindow is not null && AppWindowTitleBar.IsCustomizationSupported())
             {
-                _appWindow.TitleBar.ButtonHoverBackgroundColor = ((SolidColorBrush?)Application.Current.Resources["ButtonBackgroundPointerOver"])?.Color;
-                _appWindow.TitleBar.ButtonForegroundColor = ((SolidColorBrush?)Application.Current.Resources["ButtonForeground"])?.Color;
+                switch (CurrentTheme)
+                {
+                    case ElementTheme.Dark:
+                        _appWindow.TitleBar.ButtonForegroundColor = Color.FromArgb(255, 255, 255, 255);
+                        _appWindow.TitleBar.ButtonHoverBackgroundColor = Color.FromArgb(21, 255, 255, 255);
+                        _appWindow.TitleBar.ButtonHoverForegroundColor = Color.FromArgb(255, 255, 255, 255);
+                        _appWindow.TitleBar.ButtonPressedBackgroundColor = Color.FromArgb(8, 255, 255, 255);
+                        _appWindow.TitleBar.ButtonPressedForegroundColor = Color.FromArgb(255, 255, 255, 255);
+                        break;
+
+                    case ElementTheme.Light:
+                        _appWindow.TitleBar.ButtonForegroundColor = Color.FromArgb(228, 0, 0, 0);
+                        _appWindow.TitleBar.ButtonHoverBackgroundColor = Color.FromArgb(128, 249, 249, 249);
+                        _appWindow.TitleBar.ButtonHoverForegroundColor = Color.FromArgb(255, 0, 0, 0);
+                        _appWindow.TitleBar.ButtonPressedBackgroundColor = Color.FromArgb(77, 249, 249, 249);
+                        _appWindow.TitleBar.ButtonPressedForegroundColor = Color.FromArgb(255, 0, 0, 0);
+                        break;
+
+                    default:
+                        _appWindow.TitleBar.ButtonForegroundColor = ((SolidColorBrush?)Application.Current.Resources["ButtonForeground"])?.Color;
+                        _appWindow.TitleBar.ButtonHoverBackgroundColor = ((SolidColorBrush?)Application.Current.Resources["ButtonBackgroundPointerOver"])?.Color;
+                        _appWindow.TitleBar.ButtonHoverForegroundColor = ((SolidColorBrush?)Application.Current.Resources["ButtonForegroundPointerOver"])?.Color;
+                        _appWindow.TitleBar.ButtonPressedBackgroundColor = ((SolidColorBrush?)Application.Current.Resources["ButtonBackgroundPressed"])?.Color;
+                        _appWindow.TitleBar.ButtonPressedForegroundColor = ((SolidColorBrush?)Application.Current.Resources["ButtonForegroundPressed"])?.Color;
+                        break;
+                }
             }
-        }
-
-        public void SubscribeThemeChangedCallback(string className, Action<ElementTheme> callback)
-        {
-            _themeChangedCallbacks.Add(className, callback);
-        }
-
-        public void UnsubscribeThemeChangedCallback(string className)
-        {
-            _themeChangedCallbacks.Remove(className);
         }
 
         public void RegisterWindowInstance(AppWindow appWindow, FrameworkElement rootContent)
@@ -90,10 +103,7 @@ namespace SecureFolderFS.WinUI.Helpers
             await _dispatcherQueue.EnqueueAsync(() =>
             {
                 UpdateTheme();
-                foreach (var item in _themeChangedCallbacks.Values)
-                {
-                    item(CurrentTheme);
-                }
+                OnThemeChangedEvent?.Invoke(this, _CurrentTheme);
             }, DispatcherQueuePriority.Low);
         }
     }

@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.FileSystem.Directories;
+﻿using SecureFolderFS.Core.FileSystem.Analytics;
+using SecureFolderFS.Core.FileSystem.Directories;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,13 @@ namespace SecureFolderFS.Core.Directories
     /// <inheritdoc cref="IDirectoryIdAccess"/>
     public abstract class InstantDirectoryIdAccess : IDirectoryIdAccess
     {
+        protected readonly IFileSystemHealthStatistics? _fileSystemHealthStatistics;
+
+        protected InstantDirectoryIdAccess(IFileSystemHealthStatistics? fileSystemHealthStatistics)
+        {
+            _fileSystemHealthStatistics = fileSystemHealthStatistics;
+        }
+
         /// <inheritdoc/>
         public virtual DirectoryId? GetDirectoryId(string ciphertextPath)
         {
@@ -18,10 +26,17 @@ namespace SecureFolderFS.Core.Directories
             // Open stream to directory id
             using var fileStream = OpenDirectoryIdStream(ciphertextPath, FileMode.Open, FileAccess.Read);
             if (fileStream is null)
-                return null; // TODO: Report that the folder metadata file does not exist to the HealthAPI
+            {
+                _fileSystemHealthStatistics?.ReportDirectoryIdNotFound(ciphertextPath);
+                return null;
+            }
 
-            //if (fileStream.Length < FileSystem.Constants.DIRECTORY_ID_SIZE)
-            //    return null; // TODO: Report that the ID size is smaller than requested to the HealthAPI.
+            // Check if size is correct
+            if (fileStream.Length < FileSystem.Constants.DIRECTORY_ID_SIZE)
+            {
+                _fileSystemHealthStatistics?.ReportDirectoryIdInvalid(ciphertextPath);
+                return null;
+            }
 
             // Read directory id from stream
             var buffer = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
@@ -38,7 +53,10 @@ namespace SecureFolderFS.Core.Directories
             // Open stream to directory id
             using var fileStream = OpenDirectoryIdStream(ciphertextPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             if (fileStream is null)
-                return false; // TODO: Report that the folder metadata file does not exist to the HealthAPI
+            {
+                _fileSystemHealthStatistics?.ReportDirectoryIdNotFound(ciphertextPath);
+                return false;
+            }
 
             // Write directory id to stream
             fileStream.Write(directoryId);
@@ -54,13 +72,19 @@ namespace SecureFolderFS.Core.Directories
                 return DirectoryId.Empty;
 
             // Open stream to directory id
-            await using var fileStream =
-                await OpenDirectoryIdStreamAsync(ciphertextPath, FileMode.Open, FileAccess.Read, cancellationToken);
+            await using var fileStream = await OpenDirectoryIdStreamAsync(ciphertextPath, FileMode.Open, FileAccess.Read, cancellationToken);
             if (fileStream is null)
-                return null; // TODO: Report that the folder metadata file does not exist to the HealthAPI
+            {
+                _fileSystemHealthStatistics?.ReportDirectoryIdNotFound(ciphertextPath);
+                return null;
+            }
 
-            //if (fileStream.Length < FileSystem.Constants.DIRECTORY_ID_SIZE)
-            //    return null; // TODO: Report that the ID size is smaller than requested to the HealthAPI.
+            // Check if size is correct
+            if (fileStream.Length < FileSystem.Constants.DIRECTORY_ID_SIZE)
+            {
+                _fileSystemHealthStatistics?.ReportDirectoryIdInvalid(ciphertextPath);
+                return null;
+            }
 
             // Read directory id from stream
             var buffer = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
@@ -77,7 +101,10 @@ namespace SecureFolderFS.Core.Directories
             // Open stream to directory id
             await using var fileStream = await OpenDirectoryIdStreamAsync(ciphertextPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, cancellationToken);
             if (fileStream is null)
-                return false; // TODO: Report that the folder metadata file does not exist to the HealthAPI
+            {
+                _fileSystemHealthStatistics?.ReportDirectoryIdNotFound(ciphertextPath);
+                return false;
+            }
 
             // Write directory id to stream
             await fileStream.WriteAsync(directoryId, cancellationToken);
