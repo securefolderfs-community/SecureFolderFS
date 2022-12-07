@@ -26,8 +26,8 @@ namespace SecureFolderFS.Core.DataModels
         /// Gets the version of the vault.
         /// </summary>
         [JsonPropertyName("version")]
-        [DefaultValue(0)]
-        public int Version { get; init; }
+        [DefaultValue(Constants.VaultVersion.LATEST_VERSION)]
+        public int Version { get; init; } = Constants.VaultVersion.LATEST_VERSION;
 
         /// <summary>
         /// Gets the HMAC-SHA256 hash of the payload.

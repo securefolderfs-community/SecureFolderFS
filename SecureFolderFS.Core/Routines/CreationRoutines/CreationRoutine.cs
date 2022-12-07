@@ -76,6 +76,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         {
             await using var serializedKeystoreStream = await serializer.SerializeAsync(_keystoreDataModel, cancellationToken);
             await serializedKeystoreStream.CopyToAsync(keystoreStream, cancellationToken);
+            keystoreStream.Position = 0;
         }
 
         /// <inheritdoc/>
