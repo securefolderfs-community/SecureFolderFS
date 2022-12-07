@@ -20,6 +20,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class VaultCreationService : IVaultCreationService
     {
         private Stream? _configStream;
+        private Stream? _keystoreStream;
         private IModifiableFolder? _folder;
         private ICreationRoutine? _creationRoutine;
         private ContentCipherScheme _contentCipherScheme;
@@ -89,6 +90,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             try
             {
                 await _creationRoutine.WriteKeystoreAsync(keystoreStream, serializer, cancellationToken);
+                _keystoreStream = keystoreStream;
+
                 return CommonResult.Success;
             }
             catch (Exception ex)
@@ -123,7 +126,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public async Task<IResult> DeployAsync(CancellationToken cancellationToken = default)
         {
-            if (_creationRoutine is null || _configStream is null)
+            if (_creationRoutine is null || _configStream is null || _keystoreStream is null)
                 return new CommonResult(false);
 
             try
@@ -133,6 +136,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                     _configStream,
                     StreamSerializer.Instance,
                     cancellationToken);
+                await _configStream.FlushAsync(cancellationToken);
+                _configStream.Close();
+
+                await _creationRoutine.WriteKeystoreAsync(_keystoreStream, StreamSerializer.Instance,
+                    cancellationToken);
+                await _keystoreStream.FlushAsync(cancellationToken);
+                _keystoreStream.Close();
 
                 return CommonResult.Success;
             }
@@ -146,6 +156,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public void Dispose()
         {
             _configStream?.Dispose();
+            _keystoreStream?.Dispose();
             _creationRoutine?.Dispose();
         }
     }
