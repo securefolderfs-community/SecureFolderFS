@@ -89,6 +89,6 @@ namespace SecureFolderFS.Core.FileNames
             _ciphertextNames[new(directoryId, cleartextName)] = ciphertextName;
         }
 
-        private record NameWithDirectoryId(DirectoryId DirectoryId, ReadOnlyMemory<char> FileName);
+        private sealed record NameWithDirectoryId(DirectoryId DirectoryId, ReadOnlyMemory<char> FileName);
     }
 }

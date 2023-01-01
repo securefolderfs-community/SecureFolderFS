@@ -8,10 +8,8 @@ namespace SecureFolderFS.WinUI.Helpers
     {
         public static string CalculateChecksumForPath(string path)
         {
-            using var md5 = MD5.Create();
-
             var buffer = Encoding.UTF8.GetBytes(path);
-            var hash = md5.ComputeHash(buffer);
+            var hash = MD5.HashData(buffer);
 
             return BitConverter.ToString(hash).Replace("-", string.Empty);
         }

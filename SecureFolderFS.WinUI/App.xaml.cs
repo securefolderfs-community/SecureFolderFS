@@ -91,7 +91,7 @@ namespace SecureFolderFS.WinUI
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>()
                 .AddSingleton<IVaultService, VaultService>()
-                .AddSingleton<IFileSystemService, NativeFileSystemService>()
+                .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IThreadingService, ThreadingService>()

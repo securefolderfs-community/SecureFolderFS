@@ -1,0 +1,19 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SecureFolderFS.WinUI.ResourceDictionaries">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <Style x:Key="AddNewVaultBanner" TargetType="Image">
+                <Setter Property="Source" Value="ms-appx:///Assets/AppAssets/Vault_light.svg" />
+            </Style>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <Style x:Key="AddNewVaultBanner" TargetType="Image">
+                <Setter Property="Source" Value="ms-appx:///Assets/AppAssets/Vault_dark.svg" />
+            </Style>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

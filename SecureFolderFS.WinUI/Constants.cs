@@ -2,8 +2,7 @@
 {
     internal static class Constants
     {
-        public const string MAIN_WINDOW_ID = "main_window";
-        public const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public const string MAIN_WINDOW_ID = "SecureFolderFS_mainwindow";
 
         public static class LocalSettings
         {

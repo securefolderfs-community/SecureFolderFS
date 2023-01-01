@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Models;
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,27 @@ namespace SecureFolderFS.Sdk.AppModels
 
         /// <inheritdoc/>
         public virtual bool IsAvailable { get; protected set; }
+
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <inheritdoc/>
+        public virtual async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
+        {
+            if (SettingsDatabase is null)
+                return false;
+
+            return await SettingsDatabase.LoadAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
+        {
+            if (SettingsDatabase is null)
+                return false;
+
+            return await SettingsDatabase.SaveAsync(cancellationToken);
+        }
 
         /// <summary>
         /// Gets a value of a setting defined by <paramref name="settingName"/>.
@@ -44,25 +66,23 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!IsAvailable || SettingsDatabase is null || string.IsNullOrEmpty(settingName))
                 return false;
 
-            return SettingsDatabase.SetValue(settingName, value);
+            if (SettingsDatabase.SetValue(settingName, value))
+            {
+                OnPropertyChanged(this, settingName);
+                return true;
+            }
+
+            return false;
         }
 
-        /// <inheritdoc/>
-        public virtual async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Invokes <see cref="PropertyChanged"/> event notifying that a value of a specific property has changed.
+        /// </summary>
+        /// <param name="sender">The object that called this method.</param>
+        /// <param name="propertyName">The name of the property whose value has changed.</param>
+        protected void OnPropertyChanged(object? sender, string propertyName)
         {
-            if (SettingsDatabase is null)
-                return false;
-
-            return await SettingsDatabase.LoadAsync(cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public virtual async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
-        {
-            if (SettingsDatabase is null)
-                return false;
-
-            return await SettingsDatabase.SaveAsync(cancellationToken);
+            PropertyChanged?.Invoke(sender, new(propertyName));
         }
     }
 }

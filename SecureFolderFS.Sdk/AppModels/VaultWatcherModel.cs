@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LockableStorage;
 using SecureFolderFS.Sdk.Storage.MutableStorage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
@@ -17,8 +17,6 @@ namespace SecureFolderFS.Sdk.AppModels
     internal sealed class VaultWatcherModel : IVaultWatcherModel
     {
         private IFolderWatcher? _folderWatcher;
-
-        private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
@@ -56,9 +54,12 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public Task<IDisposable?> LockFolderAsync(CancellationToken cancellationToken = default)
+        public Task<IAsyncDisposable?> LockFolderAsync(CancellationToken cancellationToken = default)
         {
-            return FileSystemService.ObtainLockAsync(VaultModel.Folder, cancellationToken);
+            if (VaultModel.Folder is ILockableFolder lockableFolder)
+                return lockableFolder.ObtainLockAsync(cancellationToken);
+
+            return Task.FromResult<IAsyncDisposable?>(null);
         }
 
         private void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
             var readmeFile = await folder.TryCreateFileAsync(Constants.VaultInformation.VAULT_README_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
             if (readmeFile is not null)
-                await readmeFile.WriteAllTextAsync(Constants.VaultInformation.VAULT_README_MESSAGE, cancellationToken);
+                await readmeFile.WriteAllTextAsync(Constants.VaultInformation.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
 
             _vaultFolder = folder;
             return CommonResult.Success;

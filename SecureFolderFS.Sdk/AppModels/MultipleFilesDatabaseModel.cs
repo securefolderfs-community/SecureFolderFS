@@ -81,7 +81,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     try
                     {
                         // Get type string
-                        var typeString = await StorageIOExtensions.ReadStringAsync(typeFile, Encoding.UTF8, cancellationToken);
+                        var typeString = await typeFile.ReadAllTextAsync(Encoding.UTF8, cancellationToken);
                         if (string.IsNullOrEmpty(typeString))
                             continue;
 
@@ -103,6 +103,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     }
                     catch (Exception)
                     {
+                        // TODO: Re-throw exceptions in some cases?
                         continue;
                     }
                 }
@@ -111,6 +112,7 @@ namespace SecureFolderFS.Sdk.AppModels
             }
             catch (Exception)
             {
+                // If the exception was re-thrown...
                 return false;
             }
             finally
@@ -179,6 +181,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     }
                     catch (Exception)
                     {
+                        // TODO: Re-throw exceptions in some cases?
                         continue;
                     }
                 }
@@ -196,7 +199,7 @@ namespace SecureFolderFS.Sdk.AppModels
             }
         }
 
-        public record SettingValue(Type Type, object? Data, bool IsDirty = true)
+        public sealed record SettingValue(Type Type, object? Data, bool IsDirty = true)
         {
             public object? Data { get; set; } = Data;
 

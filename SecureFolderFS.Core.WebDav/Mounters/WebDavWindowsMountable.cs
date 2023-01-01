@@ -1,18 +1,16 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
-using SecureFolderFS.Core.FileSystem.Models;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.Enums;
-using SecureFolderFS.Core.WebDav.Models;
 using SecureFolderFS.Sdk.Storage;
 using System;
 using System.Net;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
-//using NWebDav.Server;
 
 namespace SecureFolderFS.Core.WebDav.Mounters
 {
@@ -35,10 +33,10 @@ namespace SecureFolderFS.Core.WebDav.Mounters
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            //var webDavDispatcher = new WebDavDispatcher();
+            var webDavWrapper = new WebDavWrapper(httpListener);
+            webDavWrapper.StartFileSystem();
 
-            //return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem());
-            throw new NotImplementedException();
+            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(null, webDavWrapper));
         }
 
         public static IMountableFileSystem CreateMountable(string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)

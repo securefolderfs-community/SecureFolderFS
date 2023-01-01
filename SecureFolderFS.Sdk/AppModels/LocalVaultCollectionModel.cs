@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Extensions;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Sdk.AppModels
     {
         private List<IVaultModel>? _vaults;
 
-        private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
+        private IStorageService StorageService { get; } = Ioc.Default.GetRequiredService<IStorageService>();
 
         /// <inheritdoc/>
         public async Task<bool> HasVaultsAsync(CancellationToken cancellationToken = default)
@@ -83,7 +84,7 @@ namespace SecureFolderFS.Sdk.AppModels
             _vaults ??= new();
             foreach (var item in SettingsService.VaultPaths)
             {
-                var folder = await FileSystemService.GetFolderFromPathAsync(item, cancellationToken);
+                var folder = await StorageService.TryGetFolderFromPathAsync(item, cancellationToken);
                 if (folder is not null)
                 {
                     var vaultModel = new LocalVaultModel(folder);

@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <winuiex:WindowEx.Backdrop>
-        <winuiex:MicaSystemBackdrop DarkTintOpacity="0.8" />
+        <winuiex:MicaSystemBackdrop />
     </winuiex:WindowEx.Backdrop>
 
     <!--  UI Root  -->

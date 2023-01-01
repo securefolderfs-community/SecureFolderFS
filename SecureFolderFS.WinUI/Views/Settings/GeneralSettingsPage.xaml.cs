@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.WinUI.Helpers;
-using SecureFolderFS.WinUI.WindowViews;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -55,7 +54,12 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 ViewModel.LanguageSettingViewModel.UpdateCurrentLanguage(language);
         }
 
-        private async void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        private void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            _ = AddItemsTransitionAsync();
+        }
+
+        private async Task AddItemsTransitionAsync()
         {
             // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
             await Task.Delay(400);

@@ -1,7 +1,7 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
-using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Directories;

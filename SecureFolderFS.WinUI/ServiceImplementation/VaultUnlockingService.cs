@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Core.Dokany.Models;
+﻿using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
@@ -12,7 +11,6 @@ using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,8 +20,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     {
         private IUnlockRoutine? _unlockRoutine;
         private FileSystemAdapterType _fileSystemAdapterType;
-
-        private IFileSystemService FileSystemService { get; } = Ioc.Default.GetRequiredService<IFileSystemService>();
 
         /// <inheritdoc/>
         public async Task<IResult> SetVaultFolderAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
@@ -113,14 +109,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                     FileSystemStatistics = vaultStatisticsBridge
                 }, cancellationToken);
 
-                // Get free mount point
-                var firstFreeMountPoint = FileSystemService.GetFreeMountPoints().FirstOrDefault();
-                if (firstFreeMountPoint is null)
-                    return new CommonResult<IUnlockedVaultModel?>(new DirectoryNotFoundException("No available free mount points for vault file system"));
-                
                 // TODO: Determine mount options based on _fileSystemAdapterType
                 // Mount the file system
-                var virtualFileSystem = await mountableFileSystem.MountAsync(new DokanyMountOptions() { MountPath = firstFreeMountPoint }, cancellationToken);
+                var virtualFileSystem = await mountableFileSystem.MountAsync(new DokanyMountOptions(), cancellationToken);
                 
                 return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge));
             }

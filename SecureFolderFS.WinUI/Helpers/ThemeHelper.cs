@@ -91,7 +91,7 @@ namespace SecureFolderFS.WinUI.Helpers
             }
         }
 
-        public void RegisterWindowInstance(AppWindow appWindow, FrameworkElement rootContent)
+        public void RegisterWindowInstance(AppWindow appWindow, FrameworkElement? rootContent)
         {
             _appWindow = appWindow;
             _rootContent = rootContent;

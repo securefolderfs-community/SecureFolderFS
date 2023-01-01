@@ -1,7 +1,6 @@
 ﻿using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Storage;
-using System;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav
@@ -9,22 +8,29 @@ namespace SecureFolderFS.Core.WebDav
     /// <inheritdoc cref="IVirtualFileSystem"/>
     internal sealed class WebDavFileSystem : IVirtualFileSystem
     {
+        private readonly WebDavWrapper _webDavWrapper;
+
         /// <inheritdoc/>
         public IFolder RootFolder { get; }
 
         /// <inheritdoc/>
-        public bool IsOperational { get; }
+        public bool IsOperational { get; private set; }
 
-        public WebDavFileSystem(IFolder rootFolder)
+        public WebDavFileSystem(IFolder rootFolder, WebDavWrapper webDavWrapper)
         {
+            _webDavWrapper = webDavWrapper;
+
             RootFolder = rootFolder;
             IsOperational = true;
         }
 
         /// <inheritdoc/>
-        public Task<bool> CloseAsync(FileSystemCloseMethod closeMethod)
+        public async Task<bool> CloseAsync(FileSystemCloseMethod closeMethod)
         {
-            throw new NotImplementedException();
+            if (IsOperational)
+                IsOperational = !await Task.Run(() => _webDavWrapper.CloseFileSystem(closeMethod));
+
+            return !IsOperational;
         }
     }
 }

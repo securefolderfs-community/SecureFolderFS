@@ -1,11 +1,12 @@
-﻿using System;
-using SecureFolderFS.Core.Dokany;
+﻿using SecureFolderFS.Core.Dokany;
+using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -35,6 +36,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public async IAsyncEnumerable<IFileSystemInfoModel> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             yield return new DokanyFileSystemDescriptor(new DokanyAvailabilityChecker());
+            yield return new WebDavFileSystemDescriptor(new WebDavAvailabilityChecker());
+
             await Task.CompletedTask;
         }
 

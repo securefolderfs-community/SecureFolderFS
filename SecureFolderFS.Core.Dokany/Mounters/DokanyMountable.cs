@@ -1,17 +1,19 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
-using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Analytics;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
-using SecureFolderFS.Core.FileSystem.Models;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,8 +35,12 @@ namespace SecureFolderFS.Core.Dokany.Mounters
             if (mountOptions is not DokanyMountOptions dokanyMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(DokanyMountOptions)}.");
 
-            _dokanyWrapper.StartFileSystem(dokanyMountOptions.MountPath);
-            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SimpleDokanyFolder(dokanyMountOptions.MountPath)); // TODO: For now SimpleDokanyFolder until cloud storage is implemented
+            var mountPath = dokanyMountOptions.MountPath ?? GetFreeMountPath();
+            if (mountPath is null)
+                throw new DirectoryNotFoundException("No available free mount points for vault file system");
+
+            _dokanyWrapper.StartFileSystem(mountPath);
+            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SimpleDokanyFolder(mountPath)); // TODO: For now SimpleDokanyFolder until cloud storage is implemented
 
             return Task.FromResult<IVirtualFileSystem>(dokanyFileSystem);
         }
@@ -64,6 +70,14 @@ namespace SecureFolderFS.Core.Dokany.Mounters
             };
 
             return new DokanyMountable(dokanyCallbacks);
+        }
+
+        private static string? GetFreeMountPath()
+        {
+            var occupiedLetters = Directory.GetLogicalDrives().Select(item => item[0]);
+            var availableLetters = FileSystem.Constants.ALPHABET.ToCharArray().Skip(3).Except(occupiedLetters); // Skip floppy disk drives and system drive
+
+            return availableLetters.Select(item => $"{item}:\\").FirstOrDefault();
         }
     }
 }

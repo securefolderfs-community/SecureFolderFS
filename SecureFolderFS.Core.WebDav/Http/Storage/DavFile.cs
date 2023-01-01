@@ -1,0 +1,44 @@
+﻿using SecureFolderFS.Core.WebDav.Storage;
+using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
+using SecureFolderFS.Sdk.Storage.ExtendableStorage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace SecureFolderFS.Core.WebDav.Http.Storage
+{
+    /// <inheritdoc cref="IDavFile"/>
+    internal sealed class DavFile : DavStorable<ILocatableFile>, IDavFile
+    {
+        /// <inheritdoc/>
+        public string Path { get; }
+
+        public DavFile(ILocatableFile storableInternal, IDavProperties properties)
+            : base(storableInternal, properties)
+        {
+            Path = storableInternal.Path;
+        }
+
+        /// <inheritdoc/>
+        public Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
+        {
+            return StorableInternal.OpenStreamAsync(access, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
+        {
+            if (StorableInternal is IFileExtended fileExtended)
+                return fileExtended.OpenStreamAsync(access, share, cancellationToken);
+
+            return StorableInternal.OpenStreamAsync(access, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        {
+            return StorableInternal.GetParentAsync(cancellationToken);
+        }
+    }
+}

@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
 using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -32,7 +32,7 @@ namespace SecureFolderFS.WinUI.WindowViews
         private void EnsureEarlyWindow()
         {
             // Set persistence id
-            PersistenceId = "SecureFolderFS_mainwindow";
+            PersistenceId = Constants.MAIN_WINDOW_ID;
 
             // Set title
             AppWindow.Title = "SecureFolderFS";

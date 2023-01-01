@@ -195,6 +195,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
             return Task.FromResult<IFolder>(new NativeFolder(path));
         }
 
+        /// <inheritdoc/>
         public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
         {
             return Task.FromResult<IFolderWatcher>(new NativeFolderWatcher(this));

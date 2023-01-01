@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
+﻿using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.MutableStorage;
 using System.Collections.Specialized;
 using System.IO;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {
+    /// <inheritdoc cref="IFolderWatcher"/>
     internal sealed class NativeFolderWatcher : IFolderWatcher
     {
         private FileSystemWatcher? _fileSystemWatcher;

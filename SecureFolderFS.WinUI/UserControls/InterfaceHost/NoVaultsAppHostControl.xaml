@@ -12,36 +12,50 @@
         <Grid
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            RowSpacing="40">
+            RowSpacing="24">
             <Grid.RowDefinitions>
+                <!--  Banner  -->
+                <RowDefinition Height="Auto" />
                 <!--  Title  -->
                 <RowDefinition />
                 <!--  Continue button  -->
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Spacing="3">
+            <!--  Banner  -->
+            <Image
+                Grid.Row="0"
+                Width="296"
+                Stretch="UniformToFill"
+                Style="{ThemeResource AddNewVaultBanner}" />
+
+            <!--  Title  -->
+            <StackPanel Grid.Row="1" Spacing="3">
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontSize="22"
                     FontWeight="SemiBold"
                     Text="Welcome to SecureFolderFS" />
+
                 <TextBlock
+                    MaxWidth="450"
                     HorizontalAlignment="Center"
-                    Opacity="0.8"
-                    Text="You haven't added any vaults yet. Create a new one or add existing to begin." />
+                    Opacity="0.6"
+                    Text="You haven't added any vaults yet. Create a new one or add existing to begin!"
+                    TextAlignment="Center"
+                    TextWrapping="WrapWholeWords" />
             </StackPanel>
 
-            <!--  Add vault  -->
+            <!--  Continue button  -->
             <Button
-                Grid.Row="1"
-                Padding="24,6"
+                Grid.Row="2"
+                Padding="32,6"
                 HorizontalAlignment="Center"
                 Command="{x:Bind ViewModel.AddNewVaultCommand}"
                 Content="Add vault"
                 Style="{ThemeResource AccentButtonStyle}" />
-
         </Grid>
+
         <!--  Settings  -->
         <Button
             Grid.RowSpan="2"

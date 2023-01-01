@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.FileSystem.Models;
+﻿using SecureFolderFS.Core.FileSystem.AppModels;
 using System.Threading;
 using System.Threading.Tasks;
 

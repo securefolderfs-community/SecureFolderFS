@@ -1,6 +1,5 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Dokany.Helpers;
-using SecureFolderFS.Core.Dokany.Models;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -13,6 +12,7 @@ using System.Security.AccessControl;
 using System.Security.Cryptography;
 using SecureFolderFS.Core.FileSystem.Analytics;
 using FileAccess = DokanNet.FileAccess;
+using SecureFolderFS.Core.Dokany.AppModels;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
 {

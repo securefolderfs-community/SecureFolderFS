@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.Storage.LocatableStorage
 {
     /// <summary>
-    /// Represents a file or folder that resides within a folder structure.
+    /// Represents a storage object that resides within a folder structure.
     /// </summary>
     public interface ILocatableStorable : IStorable
     {

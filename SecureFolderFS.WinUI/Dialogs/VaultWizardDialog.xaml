@@ -81,8 +81,7 @@
             <TextBlock
                 x:Name="TitleText"
                 FontSize="22"
-                FontWeight="SemiBold"
-                Opacity="1">
+                FontWeight="SemiBold">
                 <TextBlock.RenderTransform>
                     <TranslateTransform />
                 </TextBlock.RenderTransform>

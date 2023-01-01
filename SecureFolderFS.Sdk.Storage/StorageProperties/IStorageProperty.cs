@@ -1,27 +1,20 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 
 namespace SecureFolderFS.Sdk.Storage.StorageProperties
 {
     /// <summary>
-    /// Represents storage object property.
+    /// Represents a storage object property.
     /// </summary>
-    public interface IStorageProperty
+    public interface IStorageProperty<T>
     {
-        /// <summary>
-        /// Gets the storage property name.
-        /// </summary>
-        string Name { get; }
-
         /// <summary>
         /// Gets the value associated with the storage property.
         /// </summary>
-        object? Value { get; }
+        T Value { get; }
 
         /// <summary>
-        /// Modifies the value of a storage property and sets it to <paramref name="newValue"/>.
+        /// An event that's fired when value of the property is updated.
         /// </summary>
-        /// <param name="newValue">The new value of the property.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and the property was modified, returns true, otherwise false.</returns>
-        Task<bool> ModifyAsync(object newValue);
+        event EventHandler<T> ValueUpdated;
     }
 }

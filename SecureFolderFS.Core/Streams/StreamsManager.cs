@@ -9,6 +9,7 @@ namespace SecureFolderFS.Core.Streams
     /// <inheritdoc cref="IStreamsManager"/>
     internal sealed class StreamsManager : IStreamsManager
     {
+        private bool _disposed;
         private readonly List<Stream> _readOnlyStreams;
         private readonly List<Stream> _readWriteStreams;
 
@@ -21,6 +22,9 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public void AddStream(Stream stream)
         {
+            if (_disposed)
+                return;
+
             lock (_readOnlyStreams)
             lock (_readWriteStreams)
             {
@@ -34,6 +38,9 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public void RemoveStream(Stream stream)
         {
+            if (_disposed)
+                return;
+
             lock (_readOnlyStreams)
             lock (_readWriteStreams)
             {
@@ -46,6 +53,9 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public Stream? GetReadOnlyStream()
         {
+            if (_disposed)
+                return null;
+
             lock (_readOnlyStreams)
             {
                 return _readOnlyStreams.FirstOrDefault();
@@ -55,6 +65,9 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public Stream? GetReadWriteStream()
         {
+            if (_disposed)
+                return null;
+
             lock (_readWriteStreams)
             {
                 return _readWriteStreams.FirstOrDefault();
@@ -64,6 +77,10 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public void Dispose()
         {
+            if (_disposed)
+                return;
+
+            _disposed = true;
             lock (_readOnlyStreams)
             lock (_readWriteStreams)
             {

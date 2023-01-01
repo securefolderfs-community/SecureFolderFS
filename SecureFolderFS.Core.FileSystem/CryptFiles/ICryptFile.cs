@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SecureFolderFS.Core.FileSystem.Streams;
+using System;
 using System.IO;
-using SecureFolderFS.Core.FileSystem.Streams;
 
 namespace SecureFolderFS.Core.FileSystem.CryptFiles
 {
