@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Core.FUSE", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.CLI", "SecureFolderFS.CLI\SecureFolderFS.CLI.csproj", "{8B8F8595-48AB-475E-9C24-9569DA5488CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tmds.Fuse", "Tmds.Fuse\src\Tmds.Fuse\Tmds.Fuse.csproj", "{8C0C23C5-D3D8-4495-93BB-2A200815DB10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -229,6 +231,22 @@ Global
 		{8B8F8595-48AB-475E-9C24-9569DA5488CD}.Release|x64.Build.0 = Release|Any CPU
 		{8B8F8595-48AB-475E-9C24-9569DA5488CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{8B8F8595-48AB-475E-9C24-9569DA5488CD}.Release|x86.Build.0 = Release|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Debug|arm64.Build.0 = Debug|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Debug|x64.Build.0 = Debug|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Debug|x86.Build.0 = Debug|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Release|arm64.ActiveCfg = Release|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Release|arm64.Build.0 = Release|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Release|x64.ActiveCfg = Release|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Release|x64.Build.0 = Release|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Release|x86.ActiveCfg = Release|Any CPU
+		{8C0C23C5-D3D8-4495-93BB-2A200815DB10}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
