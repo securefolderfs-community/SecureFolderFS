@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.Shared.Helpers;
 using System.Threading;
 using System.Threading.Tasks;
 

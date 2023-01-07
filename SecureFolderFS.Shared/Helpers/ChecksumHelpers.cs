@@ -2,9 +2,9 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SecureFolderFS.WinUI.Helpers
+namespace SecureFolderFS.Shared.Helpers
 {
-    internal static class ChecksumHelpers
+    public static class ChecksumHelpers
     {
         public static string CalculateChecksumForPath(string path)
         {
