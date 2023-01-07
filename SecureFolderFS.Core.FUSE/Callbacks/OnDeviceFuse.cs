@@ -39,7 +39,8 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Create(ReadOnlySpan<byte> path, mode_t mode, ref FuseFileInfo fi)
         {
-            creat(GetCiphertextPathPointer(path), mode);
+            var fd = creat(GetCiphertextPathPointer(path), mode);
+            close(fd);
             Open(path, ref fi);
 
             return 0;
