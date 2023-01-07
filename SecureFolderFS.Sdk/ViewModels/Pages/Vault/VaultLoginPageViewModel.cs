@@ -90,8 +90,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             {
                 var fileSystems = await VaultService.GetFileSystemsAsync(cancellationToken).ToListAsync(cancellationToken);
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
-                var vaultUnlockingModel = new VaultUnlockingModel(fileSystems[0]);
 
+                var dokanyFileSystem = fileSystems[0];
+                var webDavFileSystem  = fileSystems[1];
+                _ = dokanyFileSystem;
+                _ = webDavFileSystem;
+
+                var vaultUnlockingModel = new VaultUnlockingModel(webDavFileSystem);
                 LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
             }
             else

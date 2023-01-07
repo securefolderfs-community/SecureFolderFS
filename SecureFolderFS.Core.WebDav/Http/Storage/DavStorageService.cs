@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Core.WebDav.Http.Storage.StorageProperties;
+using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
@@ -32,8 +33,8 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         {
             try
             {
-                _ = await GetFileFromPathAsync(path, cancellationToken);
-                return true;
+                var realPath = GetPathFromUriPath(path);
+                return await _storageService.FileExistsAsync(realPath, cancellationToken);
             }
             catch (Exception)
             {
@@ -46,8 +47,8 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         {
             try
             {
-                _ = await GetFolderFromPathAsync(path, cancellationToken);
-                return true;
+                var realPath = GetPathFromUriPath(path);
+                return await _storageService.DirectoryExistsAsync(realPath, cancellationToken);
             }
             catch (Exception)
             {
@@ -60,9 +61,11 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         {
             var realPath = GetPathFromUriPath(path);
             var folder = await _storageService.GetFolderFromPathAsync(realPath, cancellationToken);
-            var properties = new DavBasicProperties();
+            var properties = new DavBasicProperties<IDavFolder>();
+            var davFolder = new DavFolder(folder, properties);
+            properties.Storable = davFolder;
 
-            return new DavFolder(folder, properties);
+            return davFolder;
         }
 
         /// <inheritdoc/>
@@ -70,9 +73,11 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         {
             var realPath = GetPathFromUriPath(path);
             var file = await _storageService.GetFileFromPathAsync(realPath, cancellationToken);
-            var properties = new DavBasicProperties();
+            var properties = new DavBasicProperties<IDavFile>();
+            var davFile = new DavFile(file, properties);
+            properties.Storable = davFile;
 
-            return new DavFile(file, properties);
+            return davFile;
         }
 
         private string GetPathFromUriPath(string uriPath)

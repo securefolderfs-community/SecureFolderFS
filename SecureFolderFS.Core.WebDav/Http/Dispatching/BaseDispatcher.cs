@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.Http.Dispatching
 {
-    /// <inheritdoc cref="IRequestDispatcher"/>
-    internal abstract class BaseDispatcher : IRequestDispatcher
+    /// <inheritdoc cref="IDavDispatcher"/>
+    internal abstract class BaseDispatcher : IDavDispatcher
     {
         protected static CommonResult NotImplemented { get; } = new(new NotImplementedException());
 

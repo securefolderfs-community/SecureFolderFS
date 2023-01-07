@@ -1,7 +1,10 @@
-﻿using SecureFolderFS.Core.Dokany.AppModels;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Enums;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
+using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -29,7 +32,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             try
             {
-                await _unlockRoutine.SetVaultFolder(vaultFolder, cancellationToken);
+                var storageService = Ioc.Default.GetRequiredService<IStorageService>();
+                await _unlockRoutine.SetVaultStoreAsync(vaultFolder, storageService, cancellationToken);
                 return CommonResult.Success;
             }
             catch (Exception ex)
@@ -109,10 +113,16 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                     FileSystemStatistics = vaultStatisticsBridge
                 }, cancellationToken);
 
-                // TODO: Determine mount options based on _fileSystemAdapterType
+                // Select appropriate mount options for the file system
+                MountOptions mountOptions = _fileSystemAdapterType switch
+                {
+                    FileSystemAdapterType.DokanAdapter => new DokanyMountOptions(),
+                    FileSystemAdapterType.WebDavAdapter => new WebDavMountOptions() { Domain = "localhost", Port = "4949" }
+                };
+
                 // Mount the file system
-                var virtualFileSystem = await mountableFileSystem.MountAsync(new DokanyMountOptions(), cancellationToken);
-                
+                var virtualFileSystem = await mountableFileSystem.MountAsync(mountOptions, cancellationToken);
+
                 return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge));
             }
             catch (Exception ex)

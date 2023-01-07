@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Storage;
+using System;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem
@@ -7,7 +8,7 @@ namespace SecureFolderFS.Core.FileSystem
     /// <summary>
     /// Represents a virtual encrypting file system.
     /// </summary>
-    public interface IVirtualFileSystem
+    public interface IVirtualFileSystem : IAsyncDisposable
     {
         /// <summary>
         /// Gets the root directory of this virtual file system instance.

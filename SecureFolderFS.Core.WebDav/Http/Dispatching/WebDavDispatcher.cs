@@ -1,11 +1,10 @@
 ﻿using SecureFolderFS.Sdk.Storage;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.Http.Dispatching
 {
-    /// <inheritdoc cref="IRequestDispatcher"/>
+    /// <inheritdoc cref="IDavDispatcher"/>
     internal sealed class WebDavDispatcher : BaseDispatcher
     {
         private readonly IStorageService _davStorageService;
@@ -20,7 +19,6 @@ namespace SecureFolderFS.Core.WebDav.Http.Dispatching
         protected override async Task InvokeRequestAsync(IRequestHandler requestHandler, IHttpContext context, CancellationToken cancellationToken)
         {
             await requestHandler.ProcessRequestAsync(context, _davStorageService, cancellationToken);
-            throw new NotImplementedException();
         }
     }
 }

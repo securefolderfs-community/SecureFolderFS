@@ -32,5 +32,11 @@ namespace SecureFolderFS.Core.Dokany
 
             return !IsOperational;
         }
+
+        /// <inheritdoc/>
+        public async ValueTask DisposeAsync()
+        {
+            _ = await CloseAsync(FileSystemCloseMethod.CloseForcefully);
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.WebDav.Http
 {
     // TODO: Needs docs
-    internal interface IRequestDispatcher : IDisposable
+    internal interface IDavDispatcher : IDisposable
     {
         IRequestHandlerProvider RequestHandlerProvider { get; }
 

@@ -19,19 +19,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default)
         {
-            if (File.Exists(path))
-                return Task.FromResult(true);
-
-            return Task.FromResult(false);
+            return Task.FromResult(File.Exists(path));
         }
 
         /// <inheritdoc/>
         public Task<bool> DirectoryExistsAsync(string path, CancellationToken cancellationToken = default)
         {
-            if (Directory.Exists(path))
-                return Task.FromResult(true);
-
-            return Task.FromResult(false);
+            return Task.FromResult(Directory.Exists(path));
         }
 
         /// <inheritdoc/>

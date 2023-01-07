@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.WebDav.Storage;
-using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Sdk.Storage.StorageProperties;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         /// <inheritdoc/>
         public string Path { get; }
 
-        public DavFile(ILocatableFile storableInternal, IDavProperties properties)
+        public DavFile(ILocatableFile storableInternal, IBasicProperties properties)
             : base(storableInternal, properties)
         {
             Path = storableInternal.Path;

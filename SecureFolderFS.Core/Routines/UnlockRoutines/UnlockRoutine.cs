@@ -29,6 +29,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         private readonly CipherProvider _cipherProvider;
         private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
+        private IStorageService? _storageService;
         private IFolder? _contentFolder;
         private IFolder? _vaultFolder;
         private SecretKey? _encKey;
@@ -40,9 +41,10 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         }
 
         /// <inheritdoc/>
-        public async Task SetVaultFolder(IFolder vaultFolder, CancellationToken cancellationToken = default)
+        public async Task SetVaultStoreAsync(IFolder vaultFolder, IStorageService storageService, CancellationToken cancellationToken = default)
         {
             _vaultFolder = vaultFolder;
+            _storageService = storageService;
             _contentFolder = await vaultFolder.GetFolderAsync(Constants.CONTENT_FOLDERNAME, cancellationToken);
         }
 
@@ -99,6 +101,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         public async Task<IMountableFileSystem> PrepareAndUnlockAsync(FileSystemOptions fileSystemOptions, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
+            ArgumentNullException.ThrowIfNull(_storageService);
             ArgumentNullException.ThrowIfNull(_contentFolder);
             ArgumentNullException.ThrowIfNull(_vaultFolder);
             ArgumentNullException.ThrowIfNull(_macKey);
@@ -125,7 +128,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             var mountable = fileSystemOptions.AdapterType switch
             {
                 FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess, fileSystemOptions.HealthStatistics),
-                FileSystemAdapterType.WebDavAdapter => WebDavWindowsMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
+                FileSystemAdapterType.WebDavAdapter => WebDavWindowsMountable.CreateMountable(_storageService, _vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
                 _ => throw new ArgumentOutOfRangeException(nameof(fileSystemOptions.AdapterType))
             };
 
