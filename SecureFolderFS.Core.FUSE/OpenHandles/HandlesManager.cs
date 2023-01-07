@@ -1,19 +1,15 @@
-﻿using SecureFolderFS.Core.FileSystem.Streams;
-using SecureFolderFS.Shared.Extensions;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Shared.Extensions;
 
-namespace SecureFolderFS.Core.Dokany.OpenHandles
+namespace SecureFolderFS.Core.FUSE.OpenHandles
 {
     internal sealed class HandlesManager : IDisposable
     {
         private readonly IStreamsAccess _streamsAccess;
         private readonly HandleGenerator _handleGenerator;
-        private readonly Dictionary<long, ObjectHandle> _openHandles;
+        private readonly Dictionary<ulong, ObjectHandle> _openHandles;
 
         public HandlesManager(IStreamsAccess streamsAccess)
         {
@@ -22,46 +18,41 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             _openHandles = new();
         }
 
-        public long OpenHandleToFile(string ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+        public ulong? OpenHandleToFile(string ciphertextPath, FileMode mode, FileAccess access, FileShare share,
+            FileOptions options)
         {
-            // Open stream
-            _ = share;
-            share = FileShare.ReadWrite | FileShare.Delete; // TODO: Temporary fix for file share issue
-            var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
+            var ciphertextStream = new FileStream(ciphertextPath, mode, access, share);
             var cleartextStream = _streamsAccess.OpenCleartextStream(ciphertextPath, ciphertextStream);
 
             if (cleartextStream is null)
-                return Constants.FileSystem.INVALID_HANDLE;
+                return null;
 
-            // Flush ChunkAccess if the opened to Truncate
             if (mode == FileMode.Truncate)
                 cleartextStream.Flush();
 
-            // Create handle
-            var fileHandle = new Win32FileHandle(cleartextStream); // TODO: For now it's Win32FileHandle
+            var fileHandle = new FuseFileHandle(cleartextStream);
             var handle = _handleGenerator.ThreadSafeIncrementAndGet();
 
-            // Add handle and return
             _openHandles.TryAdd(handle, fileHandle);
             return handle;
         }
 
-        public THandle? GetHandle<THandle>(long handle)
+        public THandle? GetHandle<THandle>(ulong? handle)
             where THandle : ObjectHandle
         {
-            if (handle == Constants.FileSystem.INVALID_HANDLE)
+            if (handle == null)
                 return null;
 
-            _openHandles.TryGetValue(handle, out var handleObject);
+            _openHandles.TryGetValue(handle.Value, out var handleObject);
             return (THandle?)handleObject;
         }
 
-        public void CloseHandle(long handle)
+        public void CloseHandle(ulong? handle)
         {
-            if (handle == Constants.FileSystem.INVALID_HANDLE)
+            if (handle == null)
                 return;
 
-            _openHandles.Remove(handle, out var handleObject);
+            _openHandles.Remove(handle.Value, out var handleObject);
             handleObject?.Dispose();
         }
 
@@ -74,10 +65,10 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
 
         private sealed class HandleGenerator
         {
-            private long _handleCounter;
+            private ulong _handleCounter;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public long ThreadSafeIncrementAndGet()
+            public ulong ThreadSafeIncrementAndGet()
             {
                 Interlocked.Increment(ref _handleCounter);
                 return _handleCounter;

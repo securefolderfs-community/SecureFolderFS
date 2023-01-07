@@ -20,6 +20,7 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FUSE.Mounters;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {
@@ -129,6 +130,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             {
                 FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess, fileSystemOptions.HealthStatistics),
                 FileSystemAdapterType.WebDavAdapter => WebDavWindowsMountable.CreateMountable(_storageService, _vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
+                FileSystemAdapterType.FuseAdapter => FuseMountable.CreateMountable(_vaultFolder.Name, pathConverter, _contentFolder, security, directoryIdAccess, streamsAccess),
                 _ => throw new ArgumentOutOfRangeException(nameof(fileSystemOptions.AdapterType))
             };
 

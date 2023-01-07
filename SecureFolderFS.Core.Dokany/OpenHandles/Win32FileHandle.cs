@@ -2,6 +2,7 @@
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem.Streams;
 using System.IO;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
 
 namespace SecureFolderFS.Core.Dokany.OpenHandles
 {

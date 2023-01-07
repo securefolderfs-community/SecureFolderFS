@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Core.Dokany.OpenHandles
+﻿using SecureFolderFS.Core.FileSystem.OpenHandles;
+
+namespace SecureFolderFS.Core.Dokany.OpenHandles
 {
     /// <summary>
     /// Represents a directory handle on the virtual file system.

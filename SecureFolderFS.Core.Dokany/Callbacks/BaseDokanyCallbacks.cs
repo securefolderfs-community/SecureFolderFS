@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using SecureFolderFS.Core.FileSystem.Analytics;
 using FileAccess = DokanNet.FileAccess;
 using SecureFolderFS.Core.Dokany.AppModels;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
 {

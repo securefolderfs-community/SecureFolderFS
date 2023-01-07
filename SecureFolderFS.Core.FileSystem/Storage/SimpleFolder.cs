@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Dokany.Storage
+namespace SecureFolderFS.Core.FileSystem.Storage
 {
     // TODO: This class is mostly unimplemented. Implement: IModifiableFolder, IFolder, ILocatableFolder, and IFile, ILocatableFile for on-device and on-cloud operations
-    internal sealed class SimpleDokanyFolder : ILocatableFolder
+    public sealed class SimpleFolder : ILocatableFolder
     {
         public string Id { get; }
 
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.Dokany.Storage
 
         public string Path { get; } // Only needed for locating the vault in the UI
 
-        public SimpleDokanyFolder(string path)
+        public SimpleFolder(string path)
         {
             Id = path;
             Name = System.IO.Path.GetFileName(path);
