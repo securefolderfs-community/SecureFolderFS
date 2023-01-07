@@ -4,7 +4,7 @@ namespace SecureFolderFS.Core.FUSE.UnsafeNative
 {
     internal sealed class UnsafeNativeApis
     {
-        [DllImport("libc.so.6", SetLastError = true)]
-        public static extern unsafe int rename(byte *oldPath, byte *newPath);
+        [DllImport("libc.so.6", SetLastError = true, EntryPoint = "renameat2")]
+        public static extern unsafe int RenameAt2(int oldDirFd, byte *oldPath, int newDirFd, byte *newPath, uint flags);
     }
 }

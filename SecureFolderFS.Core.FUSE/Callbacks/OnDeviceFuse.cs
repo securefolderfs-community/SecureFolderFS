@@ -88,8 +88,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Rename(ReadOnlySpan<byte> path, ReadOnlySpan<byte> newPath, int flags)
         {
-            // TODO use the renameat2 function with flags
-            return UnsafeNativeApis.rename(GetCiphertextPathPointer(path), GetCiphertextPathPointer(newPath));
+            return UnsafeNativeApis.RenameAt2(0, GetCiphertextPathPointer(path), 0, GetCiphertextPathPointer(newPath), (uint)flags);
         }
 
         public override int Read(ReadOnlySpan<byte> path, ulong offset, Span<byte> buffer, ref FuseFileInfo fi)
