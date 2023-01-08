@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.WebDav.Enums;
+﻿using NWebDav.Server.Stores;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
@@ -9,6 +9,9 @@ namespace SecureFolderFS.Core.WebDav.Storage
     /// </summary>
     internal interface IDavFolder : IDavStorable, ILocatableFolder, IModifiableFolder
     {
-        EnumerationDepthMode DepthMode { get; }
+        /// <summary>
+        /// Gets the depth mode for enumerating directory contents.
+        /// </summary>
+        InfiniteDepthMode DepthMode { get; }
     }
 }

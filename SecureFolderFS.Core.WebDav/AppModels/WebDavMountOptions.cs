@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.WebDav.AppModels
         /// <summary>
         /// Gets the protocol used for the connection.
         /// </summary>
-        public WebDavProtocol Protocol { get; init; } = WebDavProtocol.Http;
+        public WebDavProtocolMode Protocol { get; init; } = WebDavProtocolMode.Http;
 
         /// <summary>
         /// Gets the domain address used for the connection.

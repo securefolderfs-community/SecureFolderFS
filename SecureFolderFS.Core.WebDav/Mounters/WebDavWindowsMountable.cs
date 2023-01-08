@@ -1,4 +1,7 @@
-﻿using SecureFolderFS.Core.Cryptography;
+﻿using NWebDav.Server;
+using NWebDav.Server.Dispatching;
+using NWebDav.Server.Stores;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
@@ -6,28 +9,25 @@ using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.Enums;
-using SecureFolderFS.Core.WebDav.Http;
-using SecureFolderFS.Core.WebDav.Http.Dispatching;
+using SecureFolderFS.Core.WebDav.Http.Storage;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.WebDav.Http.Requests;
-using SecureFolderFS.Core.WebDav.Http.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 
 namespace SecureFolderFS.Core.WebDav.Mounters
 {
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class WebDavWindowsMountable : IMountableFileSystem
     {
-        private readonly IDavDispatcher _davDispatcher;
+        private readonly IRequestDispatcher _requestDispatcher;
 
-        private WebDavWindowsMountable(IDavDispatcher davDispatcher)
+        private WebDavWindowsMountable(IRequestDispatcher requestDispatcher)
         {
-            _davDispatcher = davDispatcher;
+            _requestDispatcher = requestDispatcher;
         }
 
         /// <inheritdoc/>
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.WebDav.Mounters
             if (!int.TryParse(webDavMountOptions.Port, out var portNumber) || (portNumber > 9999 || portNumber <= 0))
                 throw new ArgumentException($"Parameter {nameof(WebDavMountOptions.Port)} is invalid.");
 
-            var protocol = webDavMountOptions.Protocol == WebDavProtocol.Http ? "http" : "https";
+            var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
             var prefix = $"{protocol}://{webDavMountOptions.Domain}:{webDavMountOptions.Port}/";
             var httpListener = new HttpListener();
 
@@ -47,7 +47,7 @@ namespace SecureFolderFS.Core.WebDav.Mounters
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
             IPrincipal? serverPrincipal = null;
-            var webDavWrapper = new WebDavWrapper(httpListener, _davDispatcher, serverPrincipal);
+            var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher);
             webDavWrapper.StartFileSystem();
 
             return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(null, webDavWrapper));
@@ -58,9 +58,8 @@ namespace SecureFolderFS.Core.WebDav.Mounters
             if (contentFolder is not ILocatableFolder locatableContentFolder)
                 throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
 
-            var requestHandlerProvider = new RequestHandlerProvider();
             var davStorageService = new DavStorageService(locatableContentFolder, storageService);
-            var dispatcher = new WebDavDispatcher(davStorageService, requestHandlerProvider);
+            var dispatcher = new WebDavDispatcher(new DiskStore(locatableContentFolder.Path), new RequestHandlerFactory(), null);
 
             return new WebDavWindowsMountable(dispatcher);
         }
