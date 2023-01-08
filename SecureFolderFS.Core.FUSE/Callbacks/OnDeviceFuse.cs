@@ -62,6 +62,27 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return 0;
         }
 
+        public override unsafe int FAllocate(ReadOnlySpan<byte> path, int mode, ulong offset, long length, ref FuseFileInfo fi)
+        {
+            var ciphertextPath = GetCiphertextPath(path);
+            if (ciphertextPath == null)
+                return -ENOENT;
+
+            var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
+            if (handle == null || !handle.FileAccess.HasFlag(FileAccess.Write))
+                return -EBADF;
+
+            var ciphertextPathPointer = GetCiphertextPathPointer(path);
+            var fd = open(ciphertextPathPointer, O_WRONLY);
+            if (fd == -1)
+                return errno;
+
+            var result = fallocate(fd, mode, (long)offset, length);
+            close(fd);
+
+            return result;
+        }
+
         public override unsafe int GetAttr(ReadOnlySpan<byte> path, ref stat stat, FuseFileInfoRef fiRef)
         {
             var ciphertextPath = GetCiphertextPath(path);
