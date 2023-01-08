@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         {
             var fd = creat(GetCiphertextPathPointer(path), mode);
             if (fd == -1)
-                return errno;
+                return -EIO;
 
             close(fd);
             Open(path, ref fi);
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             var ciphertextPathPointer = GetCiphertextPathPointer(path);
             var fd = open(ciphertextPathPointer, O_WRONLY);
             if (fd == -1)
-                return errno;
+                return -EIO;
 
             var result = fallocate(fd, mode, (long)offset, length);
             close(fd);
@@ -297,7 +297,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             var fd = open(ciphertextPathPointer, O_WRONLY);
             if (fd == -1)
-                return errno;
+                return -EIO;
 
             fixed (timespec *times = new[] { atime, mtime })
             {
