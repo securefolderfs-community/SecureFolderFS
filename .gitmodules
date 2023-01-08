@@ -1,6 +1,6 @@
-[submodule "Tmds.Fuse"]
-	path = lib/Tmds.Fuse
-	url = https://github.com/seertenedos/Tmds.Fuse
 [submodule "lib/nwebdav"]
 	path = lib/nwebdav
 	url = https://github.com/securefolderfs-community/nwebdav.git
+[submodule "lib/Tmds.Fuse"]
+	path = lib/Tmds.Fuse
+	url = https://github.com/seertenedos/Tmds.Fuse
