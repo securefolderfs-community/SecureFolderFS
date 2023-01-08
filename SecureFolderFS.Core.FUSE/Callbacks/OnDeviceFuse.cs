@@ -26,15 +26,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         {
         }
 
-        public override unsafe int Access(ReadOnlySpan<byte> path, mode_t mode)
-        {
-            if (path.SequenceEqual(RootPath))
-                fixed (byte *pathPtr = Encoding.UTF8.GetBytes(LocatableContentFolder.Path))
-                    return access(pathPtr, (int)mode);
-
-            return access(GetCiphertextPathPointer(path), (int)mode);
-        }
-
         public override unsafe int ChMod(ReadOnlySpan<byte> path, mode_t mode, FuseFileInfoRef fiRef)
         {
             if (handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh) == null)
