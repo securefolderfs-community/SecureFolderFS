@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPathPointer == null)
                 return -ENOENT;
 
-            return chmod(GetCiphertextPathPointer(path), mode);
+            return chmod(ciphertextPathPointer, mode);
         }
 
         public override unsafe int Chown(ReadOnlySpan<byte> path, uint uid, uint gid, FuseFileInfoRef fiRef)
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPathPointer == null)
                 return -ENOENT;
 
-            return chown(GetCiphertextPathPointer(path), uid, gid);
+            return chown(ciphertextPathPointer, uid, gid);
         }
 
         public override unsafe int Create(ReadOnlySpan<byte> path, mode_t mode, ref FuseFileInfo fi)
@@ -69,15 +69,17 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (handle == null || !handle.FileAccess.HasFlag(FileAccess.Write))
                 return -EBADF;
 
-            var ciphertextPathPointer = GetCiphertextPathPointer(path);
-            var fd = open(ciphertextPathPointer, O_WRONLY);
-            if (fd == -1)
-                return -EIO;
+            fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+            {
+                var fd = open(ciphertextPathPointer, O_WRONLY);
+                if (fd == -1)
+                    return -EIO;
 
-            var result = fallocate(fd, mode, (long)offset, length);
-            close(fd);
+                var result = fallocate(fd, mode, (long)offset, length);
+                close(fd);
 
-            return result;
+                return result;
+            }
         }
 
         public override int Flush(ReadOnlySpan<byte> path, ref FuseFileInfo fi)
@@ -98,11 +100,14 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             fixed (stat *statPtr = &stat)
             {
-                var result = LibC.stat(GetCiphertextPathPointer(path), statPtr);
-                if (File.Exists(ciphertextPath))
-                    stat.st_size = Math.Max(0, Security.ContentCrypt.CalculateCleartextSize(stat.st_size - Security.HeaderCrypt.HeaderCiphertextSize));
+                fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+                {
+                    var result = LibC.stat(ciphertextPathPointer, statPtr);
+                    if (File.Exists(ciphertextPath))
+                        stat.st_size = Math.Max(0, Security.ContentCrypt.CalculateCleartextSize(stat.st_size - Security.HeaderCrypt.HeaderCiphertextSize));
 
-                return result;
+                    return result;
+                }
             }
         }
 
@@ -115,9 +120,12 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (File.Exists(ciphertextPath) || Directory.Exists(ciphertextPath))
                 return -EEXIST;
 
-            var result = mkdir(GetCiphertextPathPointer(path), mode);
-            if (result != 0)
-                return result;
+            fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+            {
+                var result = mkdir(ciphertextPathPointer, mode);
+                if (result != 0)
+                    return result;
+            }
 
             // Initialize directory with directory ID
             var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
@@ -276,7 +284,8 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (File.Exists(ciphertextPath))
                 return -EISDIR;
 
-            return truncate(GetCiphertextPathPointer(path), (long)length);
+            fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+                return truncate(GetCiphertextPathPointer(path), (long)length);
         }
 
         /// <remarks>
@@ -291,10 +300,14 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -EISDIR;
 
             var stat = new stat();
-            LibC.stat(GetCiphertextPathPointer(path), &stat);
 
-            if (S_ISLNK(stat.st_mode))
-                return unlink(GetCiphertextPathPointer(path));
+            fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+            {
+                LibC.stat(ciphertextPathPointer, &stat);
+
+                if (S_ISLNK(stat.st_mode))
+                    return unlink(ciphertextPathPointer);
+            }
 
             File.Delete(ciphertextPath);
             return 0;
