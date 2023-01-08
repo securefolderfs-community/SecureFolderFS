@@ -1,19 +1,17 @@
 ﻿using DokanNet;
+using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
+using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Sdk.Storage;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
-using SecureFolderFS.Core.FileSystem.Analytics;
 using FileAccess = DokanNet.FileAccess;
-using SecureFolderFS.Core.Dokany.AppModels;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
 {
@@ -30,32 +28,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             this.handlesManager = handlesManager;
             this.volumeModel = volumeModel;
             this.fileSystemHealthStatistics = fileSystemHealthStatistics;
-        }
-
-        protected void CloseHandle(IDokanFileInfo info)
-        {
-            handlesManager.CloseHandle(GetContextValue(info));
-        }
-
-        // TODO: Add checks for nullable in places where this function is called
-        protected abstract string? GetCiphertextPath(string cleartextName);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static bool IsContextInvalid(IDokanFileInfo info)
-        {
-            return GetContextValue(info) == Constants.FileSystem.INVALID_HANDLE;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static void InvalidateContext(IDokanFileInfo info)
-        {
-            info.Context = Constants.FileSystem.INVALID_HANDLE;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static long GetContextValue(IDokanFileInfo info)
-        {
-            return info.Context is long ctxLong ? ctxLong : Constants.FileSystem.INVALID_HANDLE;
         }
 
         #region Unused
@@ -103,7 +75,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        public virtual NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
+	public virtual NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
         {
             return FindFilesWithPattern(fileName, "*", out files, info);
         }
@@ -125,9 +97,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             return SetEndOfFile(fileName, length, info);
         }
-
-        /// <inheritdoc/>
-        public abstract NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info);
 
         /// <inheritdoc/>
         public virtual NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName,
@@ -307,6 +276,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public abstract void Cleanup(string fileName, IDokanFileInfo info);
 
         /// <inheritdoc/>
+        public abstract NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info);
+
+        /// <inheritdoc/>
         public abstract NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, IDokanFileInfo info);
 
         /// <inheritdoc/>
@@ -338,6 +310,32 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
         /// <inheritdoc/>
         public abstract NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info);
+
+        // TODO: Add checks for nullable in places where this function is called
+        protected abstract string? GetCiphertextPath(string cleartextName);
+
+        protected void CloseHandle(IDokanFileInfo info)
+        {
+            handlesManager.CloseHandle(GetContextValue(info));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static bool IsContextInvalid(IDokanFileInfo info)
+        {
+            return GetContextValue(info) == Constants.FileSystem.INVALID_HANDLE;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static void InvalidateContext(IDokanFileInfo info)
+        {
+            info.Context = Constants.FileSystem.INVALID_HANDLE;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static long GetContextValue(IDokanFileInfo info)
+        {
+            return info.Context is long ctxLong ? ctxLong : Constants.FileSystem.INVALID_HANDLE;
+        }
 
         protected static int AlignSizeForPagingIo(int bufferLength, long offset, long streamLength, IDokanFileInfo info)
         {

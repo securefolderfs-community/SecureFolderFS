@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.WebDav.Enums;
+﻿using NWebDav.Server.Stores;
 using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         public string Path { get; }
 
         /// <inheritdoc/>
-        public EnumerationDepthMode DepthMode { get; } = EnumerationDepthMode.Shallow;
+        public InfiniteDepthMode DepthMode { get; } = InfiniteDepthMode.Assume0;
 
         public DavFolder(ILocatableFolder storableInternal, IBasicProperties properties)
             : base(storableInternal, properties)
