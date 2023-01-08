@@ -1,5 +1,5 @@
 [submodule "Tmds.Fuse"]
-	path = Tmds.Fuse
+	path = lib/Tmds.Fuse
 	url = https://github.com/seertenedos/Tmds.Fuse
 [submodule "lib/nwebdav"]
 	path = lib/nwebdav
