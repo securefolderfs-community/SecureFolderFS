@@ -21,7 +21,13 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
         public ulong? OpenHandleToFile(string ciphertextPath, FileMode mode, FileAccess access, FileShare share,
             FileOptions options)
         {
-            var ciphertextStream = new FileStream(ciphertextPath, mode, access, share);
+            var ciphertextStream = new FileStream(ciphertextPath, new FileStreamOptions
+            {
+                Mode = mode,
+                Access = access,
+                Share = share,
+                Options = options
+            });
             var cleartextStream = _streamsAccess.OpenCleartextStream(ciphertextPath, ciphertextStream);
 
             if (cleartextStream is null)
@@ -30,10 +36,19 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
             if (mode == FileMode.Truncate)
                 cleartextStream.Flush();
 
-            var fileHandle = new FuseFileHandle(cleartextStream);
+            var fileHandle = new FuseFileHandle(cleartextStream, access);
             var handle = _handleGenerator.ThreadSafeIncrementAndGet();
 
             _openHandles.TryAdd(handle, fileHandle);
+            return handle;
+        }
+
+        public ulong OpenHandleToDirectory(string ciphertextPath)
+        {
+            var directoryHandle = new DirectoryHandle();
+            var handle = _handleGenerator.ThreadSafeIncrementAndGet();
+
+            _openHandles.TryAdd(handle, directoryHandle);
             return handle;
         }
 
