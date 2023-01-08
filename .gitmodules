@@ -3,4 +3,4 @@
 	url = https://github.com/securefolderfs-community/nwebdav.git
 [submodule "lib/Tmds.Fuse"]
 	path = lib/Tmds.Fuse
-	url = git@github.com:taj-ny/Tmds.Fuse.git
+	url = https://github.com/securefolderfs-community/Tmds.Fuse
