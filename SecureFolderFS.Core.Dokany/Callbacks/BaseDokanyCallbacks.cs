@@ -76,7 +76,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-	public virtual NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
+	    public virtual NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
         {
             return FindFilesWithPattern(fileName, "*", out files, info);
         }

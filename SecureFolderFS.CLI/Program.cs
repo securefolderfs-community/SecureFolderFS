@@ -15,15 +15,16 @@ namespace SecureFolderFS.CLI
     internal static class Program
     {
         private static readonly string VaultFolder =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "SecureFolderFS_FUSE");
-        private static readonly string VaultMountPath = Path.Combine(VaultFolder, "mount");
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                nameof(SecureFolderFS), "vaults/FuseTest");
 
         private static readonly string KeystorePath = Path.Combine(VaultFolder, "keystore.json");
         private static readonly string ConfigPath = Path.Combine(VaultFolder, "config.json");
 
         private static async Task Main(string[] args)
         {
-            //await CreateVaultAsync();
+            if (!Directory.Exists(VaultFolder))
+                await CreateVaultAsync();
             var fs = await UnlockVaultAsync();
 
             Console.ReadKey();
@@ -39,7 +40,6 @@ namespace SecureFolderFS.CLI
             }
 
             Directory.CreateDirectory(VaultFolder);
-            Directory.CreateDirectory(VaultMountPath);
 
             await using var keystoreStream = new FileStream(KeystorePath, FileMode.Create);
             await using var configStream = new FileStream(ConfigPath, FileMode.Create);
@@ -69,10 +69,7 @@ namespace SecureFolderFS.CLI
                 AdapterType = FileSystemAdapterType.FuseAdapter
             });
 
-            return await mountableFileSystem.MountAsync(new FuseMountOptions
-            {
-                MountPath = VaultMountPath
-            });
+            return await mountableFileSystem.MountAsync(new FuseMountOptions());
         }
 
         private sealed class Password : IPassword

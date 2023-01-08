@@ -8,6 +8,6 @@ namespace SecureFolderFS.Core.FUSE.AppModels
         /// <summary>
         /// Gets the path where the file system should be mounted. If a null value is given, default mount point will be used.
         /// </summary>
-        public string? MountPath { get; init; } = null;
+        public string? MountPoint { get; init; } = null;
     }
 }
