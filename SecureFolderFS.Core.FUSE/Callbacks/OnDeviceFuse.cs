@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Directories;
@@ -20,6 +21,8 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         public required Security Security { get; init; }
 
         public required IDirectoryIdAccess DirectoryIdAccess { get; init; }
+
+        public override bool SupportsMultiThreading => true;
 
         public OnDeviceFuse(IPathConverter pathConverter, HandlesManager handlesManager)
             : base(pathConverter, handlesManager)
@@ -184,6 +187,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Read(ReadOnlySpan<byte> path, ulong offset, Span<byte> buffer, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
@@ -318,6 +322,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             }
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Write(ReadOnlySpan<byte> path, ulong offset, ReadOnlySpan<byte> buffer, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
