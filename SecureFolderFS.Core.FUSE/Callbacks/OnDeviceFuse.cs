@@ -274,7 +274,10 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         public override unsafe int UpdateTimestamps(ReadOnlySpan<byte> path, ref timespec atime, ref timespec mtime, FuseFileInfoRef fiRef)
         {
             var ciphertextPathPointer = GetCiphertextPathPointer(path);
-            if (ciphertextPathPointer == null || handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh) == null)
+            if (ciphertextPathPointer == null)
+                return -EBADF;
+
+            if (!fiRef.IsNull && handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh) == null)
                 return -EBADF;
 
             var fd = open(ciphertextPathPointer, O_WRONLY);
