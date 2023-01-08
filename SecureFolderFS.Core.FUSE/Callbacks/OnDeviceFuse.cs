@@ -77,6 +77,16 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return result;
         }
 
+        public override int Flush(ReadOnlySpan<byte> path, ref FuseFileInfo fi)
+        {
+            var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
+            if (handle == null || !handle.FileAccess.HasFlag(FileAccess.Write))
+                return -EBADF;
+
+            handle.Stream.Flush();
+            return 0;
+        }
+
         public override unsafe int GetAttr(ReadOnlySpan<byte> path, ref stat stat, FuseFileInfoRef fiRef)
         {
             var ciphertextPath = GetCiphertextPath(path);
