@@ -273,19 +273,22 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Truncate(ReadOnlySpan<byte> path, ulong length, FuseFileInfoRef fiRef)
         {
-            var handle = handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh);
-            if (handle == null || handle.FileAccess.HasFlag(FileAccess.Write))
-                return -EBADF;
+            if (!fiRef.IsNull)
+            {
+                var handle = handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh);
+                if (handle != null && !handle.FileAccess.HasFlag(FileAccess.Write))
+                    return -EBADF;
+            }
 
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath == null)
                 return -ENOENT;
 
-            if (File.Exists(ciphertextPath))
+            if (Directory.Exists(ciphertextPath))
                 return -EISDIR;
 
             fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
-                return truncate(GetCiphertextPathPointer(path), (long)length);
+                return truncate(ciphertextPathPointer, (long)length);
         }
 
         /// <remarks>
