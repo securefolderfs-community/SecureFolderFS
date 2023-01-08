@@ -11,6 +11,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -45,14 +46,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             bytesRead = 0;
             return DokanResult.NotImplemented;
         }
-        
+
         #endregion
 
         /// <inheritdoc/>
         public virtual void CloseFile(string fileName, IDokanFileInfo info)
         {
             _ = fileName;
-            
+
             CloseHandle(info);
             InvalidateContext(info);
         }
@@ -234,7 +235,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var bufferSpan = new ReadOnlySpan<byte>(buffer.ToPointer(), alignedBytesToCopy);
                 fileHandle.Stream.Write(bufferSpan);
                 bytesWritten = alignedBytesToCopy;
-                
+
                 return DokanResult.Success;
             }
             catch (PathTooLongException)
