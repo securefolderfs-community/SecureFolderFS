@@ -28,9 +28,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int ChMod(ReadOnlySpan<byte> path, mode_t mode, FuseFileInfoRef fiRef)
         {
-            if (handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh) == null)
-                return -EBADF;
-
             var ciphertextPathPointer = GetCiphertextPathPointer(path);
             if (ciphertextPathPointer == null)
                 return -ENOENT;
@@ -40,9 +37,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Chown(ReadOnlySpan<byte> path, uint uid, uint gid, FuseFileInfoRef fiRef)
         {
-            if (handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh) == null)
-                return -EBADF;
-
             var ciphertextPathPointer = GetCiphertextPathPointer(path);
             if (ciphertextPathPointer == null)
                 return -ENOENT;
