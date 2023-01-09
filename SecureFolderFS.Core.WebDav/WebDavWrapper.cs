@@ -46,8 +46,8 @@ namespace SecureFolderFS.Core.WebDav
         public bool CloseFileSystem(FileSystemCloseMethod closeMethod)
         {
             _ = closeMethod; // TODO: Implement close method
+            _ = _fileSystemTask;
             _fileSystemCts.Cancel();
-            _fileSystemTask?.Dispose();
 
             return true;
         }

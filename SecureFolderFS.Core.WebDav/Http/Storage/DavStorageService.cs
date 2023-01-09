@@ -1,5 +1,5 @@
-﻿using SecureFolderFS.Core.WebDav.Http.Storage.StorageProperties;
-using SecureFolderFS.Core.WebDav.Storage;
+﻿using NWebDav.Server.Storage;
+using SecureFolderFS.Core.WebDav.Http.Storage.StorageProperties;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;

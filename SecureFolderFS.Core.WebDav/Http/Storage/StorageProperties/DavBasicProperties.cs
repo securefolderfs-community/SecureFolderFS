@@ -1,5 +1,5 @@
-﻿using SecureFolderFS.Core.WebDav.Storage;
-using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
+﻿using NWebDav.Server.Storage;
+using NWebDav.Server.Storage.StorageProperties;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage.StorageProperties
     {
         // Justification: Storable is late-initialized
 #pragma warning disable CS8618
-        public TStorable Storable { get; set; }
+        public TStorable? Storable { get; set; }
 #pragma warning restore CS8618
 
         /// <inheritdoc/>

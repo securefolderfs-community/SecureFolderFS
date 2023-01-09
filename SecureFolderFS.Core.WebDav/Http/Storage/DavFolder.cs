@@ -1,5 +1,5 @@
-﻿using NWebDav.Server.Stores;
-using SecureFolderFS.Core.WebDav.Storage;
+﻿using NWebDav.Server.Enums;
+using NWebDav.Server.Storage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -13,15 +13,18 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.WebDav.Http.Storage
 {
     /// <inheritdoc cref="IDavFolder"/>
-    internal sealed class DavFolder : DavStorable<ILocatableFolder>, IDavFolder
+    internal sealed class DavFolder : DavStorable<IDavFolder, ILocatableFolder>, IDavFolder
     {
         /// <inheritdoc/>
         public string Path { get; }
 
         /// <inheritdoc/>
-        public InfiniteDepthMode DepthMode { get; } = InfiniteDepthMode.Assume0;
+        public EnumerationDepthMode DepthMode { get; } = EnumerationDepthMode.Assume0;
 
-        public DavFolder(ILocatableFolder storableInternal, IBasicProperties properties)
+        /// <inheritdoc/>
+        protected override IDavFolder Implementation => this;
+
+        public DavFolder(ILocatableFolder storableInternal, IBasicProperties? properties)
             : base(storableInternal, properties)
         {
             Path = storableInternal.Path;
@@ -79,21 +82,29 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         }
 
         /// <inheritdoc/>
-        public Task<IFile> CreateFileAsync(string desiredName, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IFile> CreateFileAsync(string desiredName, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is IModifiableFolder modifiableFolder)
-                return modifiableFolder.CreateFileAsync(desiredName, collisionOption, cancellationToken);
+            if (StorableInternal is not IModifiableFolder modifiableFolder)
+                throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            throw new NotSupportedException("Modifying folder contents is not supported.");
+            var file = await modifiableFolder.CreateFileAsync(desiredName, collisionOption, cancellationToken);
+            if (file is not ILocatableFile locatableFile)
+                throw new NotSupportedException("The created file is not locatable.");
+
+            return new DavFile(locatableFile, null);
         }
 
         /// <inheritdoc/>
-        public Task<IFolder> CreateFolderAsync(string desiredName, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IFolder> CreateFolderAsync(string desiredName, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is IModifiableFolder modifiableFolder)
-                return modifiableFolder.CreateFolderAsync(desiredName, collisionOption, cancellationToken);
+            if (StorableInternal is not IModifiableFolder modifiableFolder)
+                throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            throw new NotSupportedException("Modifying folder contents is not supported.");
+            var folder = await modifiableFolder.CreateFolderAsync(desiredName, collisionOption, cancellationToken);
+            if (folder is not ILocatableFolder locatableFolder)
+                throw new NotSupportedException("The created file is not locatable.");
+
+            return new DavFolder(locatableFolder, null);
         }
     }
 }
