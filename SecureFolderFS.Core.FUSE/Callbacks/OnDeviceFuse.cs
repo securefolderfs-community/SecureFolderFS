@@ -187,9 +187,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath == null)
                 return -ENOENT;
 
-            if (File.Exists(ciphertextPath) || Directory.Exists(ciphertextPath))
-                return -EEXIST;
-
             fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
             {
                 var result = mkdir(ciphertextPathPointer, mode);
@@ -363,7 +360,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPathPointer == null)
                 return -ENOENT;
 
-            fixed (statvfs * statfsPtr = &statfs)
+            fixed (statvfs *statfsPtr = &statfs)
                 return statvfs(ciphertextPathPointer, statfsPtr) == -1 ? -errno : 0;
         }
 
@@ -380,9 +377,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath == null)
                 return -ENOENT;
 
-            if (Directory.Exists(ciphertextPath))
-                return -EISDIR;
-
             fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
                 return truncate(ciphertextPathPointer, (long)length) == -1 ? -errno : 0;
         }
@@ -398,38 +392,29 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (Directory.Exists(ciphertextPath))
                 return -EISDIR;
 
-            var stat = new stat();
             fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
-            {
-                LibC.stat(ciphertextPathPointer, &stat);
-
-                if (S_ISLNK(stat.st_mode))
-                    return unlink(ciphertextPathPointer) == -1 ? -errno : 0;
-            }
-
-            File.Delete(ciphertextPath);
-            return 0;
+                return unlink(ciphertextPathPointer) == -1 ? -errno : 0;
         }
 
         public override unsafe int UpdateTimestamps(ReadOnlySpan<byte> path, ref timespec atime, ref timespec mtime, FuseFileInfoRef fiRef)
         {
             var ciphertextPathPointer = GetCiphertextPathPointer(path);
             if (ciphertextPathPointer == null)
-                return -EBADF;
+                return -ENOENT;
 
             if (!fiRef.IsNull && handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh) == null)
                 return -EBADF;
 
             var fd = open(ciphertextPathPointer, O_WRONLY);
             if (fd == -1)
-                return -EIO;
+                return -errno;
 
             fixed (timespec *times = new[] { atime, mtime })
             {
                 var result = futimens(fd, times);
                 close(fd);
 
-                return result;
+                return result == -1 ? -errno : 0;
             }
         }
 
