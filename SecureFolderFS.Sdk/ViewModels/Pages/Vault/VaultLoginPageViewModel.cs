@@ -92,7 +92,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
 
                 var dokanyFileSystem = fileSystems[0];
-                var webDavFileSystem  = fileSystems[1];
+                var webDavFileSystem = fileSystems[1];
                 _ = dokanyFileSystem;
                 _ = webDavFileSystem;
 

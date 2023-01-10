@@ -1,26 +1,29 @@
 ﻿using NWebDav.Server.Storage;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.WebDav.Http.Storage
+namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IDavFile"/>
-    internal sealed class DavFile : DavStorable<IDavFile, ILocatableFile>, IDavFile
+    /// <typeparam name="TCapability">An interface that represents capabilities of this file.</typeparam>
+    internal sealed class DavFile<TCapability> : DavStorable<IDavFile, TCapability>, IDavFile
+        where TCapability : IFile
     {
         /// <inheritdoc/>
-        public string Path { get; }
+        public string Path => StorableInternal.TryGetPath() ?? string.Empty;
 
         /// <inheritdoc/>
         protected override IDavFile Implementation => this;
 
-        public DavFile(ILocatableFile storableInternal, IBasicProperties? properties)
+        public DavFile(TCapability storableInternal, IBasicProperties? properties = null)
             : base(storableInternal, properties)
         {
-            Path = storableInternal.Path;
         }
 
         /// <inheritdoc/>
@@ -39,9 +42,16 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         }
 
         /// <inheritdoc/>
-        public Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        public async Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            return StorableInternal.GetParentAsync(cancellationToken);
+            if (StorableInternal is not ILocatableStorable locatableStorable)
+                return null;
+
+            var parentFolder = await locatableStorable.GetParentAsync(cancellationToken);
+            if (parentFolder is null)
+                return null;
+
+            return new DavFolder<ILocatableFolder>(parentFolder);
         }
     }
 }

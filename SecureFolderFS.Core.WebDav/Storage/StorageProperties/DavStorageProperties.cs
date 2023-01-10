@@ -6,16 +6,16 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.WebDav.Http.Storage.StorageProperties
+namespace SecureFolderFS.Core.WebDav.Storage.StorageProperties
 {
     /// <inheritdoc cref="IBasicProperties"/>
-    internal sealed class DavBasicProperties<TStorable> : IDavProperties
+    internal sealed class DavStorageProperties<TStorable> : IDavProperties
         where TStorable : IDavStorable
     {
-        // Justification: Storable is late-initialized
-#pragma warning disable CS8618
+        /// <summary>
+        /// Gets or sets the storable object of which properties to get.
+        /// </summary>
         public TStorable? Storable { get; set; }
-#pragma warning restore CS8618
 
         /// <inheritdoc/>
         public Task<IStorageProperty<DateTime>> GetDateCreatedAsync(CancellationToken cancellationToken = default)

@@ -4,7 +4,6 @@ using SecureFolderFS.Core.Routines.CreationRoutines;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
@@ -61,7 +60,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             if (_folder is null)
                 return new CommonResult(false);
 
-            var configFile = await _folder.TryCreateFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            var configFile = await _folder.TryCreateFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, false, cancellationToken);
             if (configFile is null)
                 return new CommonResult(false);
 

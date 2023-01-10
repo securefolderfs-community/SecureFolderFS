@@ -9,7 +9,7 @@ namespace SecureFolderFS.Sdk.Storage.MutableStorage
     public interface IFolderWatcher : INotifyCollectionChanged, IDisposable, IAsyncDisposable
     {
         /// <summary>
-        /// The folder being watched for changes.
+        /// Gets the folder being watched for changes.
         /// </summary>
         public IMutableFolder Folder { get; }
     }

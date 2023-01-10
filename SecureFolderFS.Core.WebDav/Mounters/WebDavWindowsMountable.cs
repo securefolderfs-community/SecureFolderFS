@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.WebDav.Mounters
                 throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
 
             var davStorageService = new DavStorageService(locatableContentFolder, storageService);
-            var dispatcher = new WebDavDispatcher(new DiskStore(locatableContentFolder.Path), davStorageService, new RequestHandlerFactory(), null);
+            var dispatcher = new WebDavDispatcher(new DiskStore(locatableContentFolder.Path), davStorageService, new RequestHandlerProvider(), null);
 
             return new WebDavWindowsMountable(dispatcher);
         }

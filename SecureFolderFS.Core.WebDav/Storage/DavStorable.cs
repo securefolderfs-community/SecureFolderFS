@@ -1,10 +1,9 @@
 ﻿using NWebDav.Server.Storage;
-using SecureFolderFS.Core.WebDav.Http.Storage.StorageProperties;
-using SecureFolderFS.Core.WebDav.Storage;
+using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
 
-namespace SecureFolderFS.Core.WebDav.Http.Storage
+namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IDavStorable"/>
     internal abstract class DavStorable<TImplementation, TStorableInternal> : IDavStorableInternal<TStorableInternal>, IDavStorable
@@ -23,14 +22,14 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
         public virtual string Name => StorableInternal.Name;
 
         /// <inheritdoc/>
-        public virtual IBasicProperties Properties => InitializeProperties((_propertiesCache ??= new DavBasicProperties<TImplementation>()));
+        public virtual IBasicProperties Properties => InitializeProperties((_propertiesCache ??= new DavStorageProperties<TImplementation>()));
 
         /// <summary>
         /// Gets the implementor which is represented by <typeparamref name="TImplementation"/> type.
         /// </summary>
         protected abstract TImplementation Implementation { get; }
 
-        protected DavStorable(TStorableInternal storableInternal, IBasicProperties? properties)
+        protected DavStorable(TStorableInternal storableInternal, IBasicProperties? properties = null)
         {
             StorableInternal = storableInternal;
             _propertiesCache = properties;
@@ -38,8 +37,8 @@ namespace SecureFolderFS.Core.WebDav.Http.Storage
 
         private IBasicProperties InitializeProperties(IBasicProperties properties)
         {
-            if (properties is DavBasicProperties<TImplementation> { Storable: null } davBasicProperties)
-                davBasicProperties.Storable = Implementation;
+            if (properties is DavStorageProperties<TImplementation> { Storable: null } davStorageProperties)
+                davStorageProperties.Storable = Implementation;
 
             return properties;
         }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Storage.StorageProperties
 {
@@ -11,7 +12,8 @@ namespace SecureFolderFS.Sdk.Storage.StorageProperties
         /// Updates the value of the property notifying all handlers.
         /// </summary>
         /// <param name="newValue">The new value to set.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task ModifyAsync(T newValue);
+        Task ModifyAsync(T newValue, CancellationToken cancellationToken = default);
     }
 }
