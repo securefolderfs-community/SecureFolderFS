@@ -10,8 +10,8 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using Tmds.Fuse;
 using Tmds.Linux;
 using static Tmds.Linux.LibC;
+using Constants = SecureFolderFS.Core.FileSystem.Constants;
 
-// TODO Links
 namespace SecureFolderFS.Core.FUSE.Callbacks
 {
     internal sealed class OnDeviceFuse : BaseFuseCallbacks
@@ -328,18 +328,20 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 (uint)flags) == -1 ? errno : 0;
         }
 
-        public override int RmDir(ReadOnlySpan<byte> path)
+        public override unsafe int RmDir(ReadOnlySpan<byte> path)
         {
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath == null)
                 return -ENOENT;
 
-            // TODO handle non-empty directories
+            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => Path.GetFileName(x) != Constants.DIRECTORY_ID_FILENAME))
+                return -ENOTEMPTY;
 
             DirectoryIdAccess.RemoveDirectoryId(ciphertextPath);
+            File.Delete(Path.Combine(ciphertextPath, Constants.DIRECTORY_ID_FILENAME));
 
-            Directory.Delete(ciphertextPath, true);
-            return 0;
+            fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+                return rmdir(ciphertextPathPointer) == -1 ? -errno : 0;
         }
 
         public override unsafe int SetXAttr(ReadOnlySpan<byte> path, ReadOnlySpan<byte> name, ReadOnlySpan<byte> value, int flags)
