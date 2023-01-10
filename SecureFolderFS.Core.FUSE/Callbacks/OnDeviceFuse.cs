@@ -29,6 +29,8 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         {
         }
 
+        // Access doesn't need to be implemented due to the default_permissions mount option
+
         public override unsafe int ChMod(ReadOnlySpan<byte> path, mode_t mode, FuseFileInfoRef fiRef)
         {
             var ciphertextPathPointer = GetCiphertextPathPointer(path);
@@ -147,6 +149,35 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
                     return result == -1 ? -errno : 0;
                 }
+            }
+        }
+
+        public override unsafe int GetXAttr(ReadOnlySpan<byte> path, ReadOnlySpan<byte> name, Span<byte> value)
+        {
+            var ciphertextPath = GetCiphertextPath(path);
+            if (ciphertextPath == null)
+                return -ENOENT;
+
+            fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *namePointer = name)
+            fixed (void *valuePointer = value)
+            {
+                var result = UnsafeNativeApis.GetXAttr(ciphertextPathPointer, namePointer, valuePointer, value.Length);
+                return result == -1 ? -errno : result;
+            }
+        }
+
+        public override unsafe int ListXAttr(ReadOnlySpan<byte> path, Span<byte> list)
+        {
+            var ciphertextPath = GetCiphertextPath(path);
+            if (ciphertextPath == null)
+                return -ENOENT;
+
+            fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *listPointer = list)
+            {
+                var result = UnsafeNativeApis.ListXAttr(ciphertextPathPointer, listPointer, list.Length);
+                return result == -1 ? -errno : result;
             }
         }
 
@@ -284,6 +315,16 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return 0;
         }
 
+        public override unsafe int RemoveXAttr(ReadOnlySpan<byte> path, ReadOnlySpan<byte> name)
+        {
+            var ciphertextPathPointer = GetCiphertextPathPointer(path);
+            if (ciphertextPathPointer == null)
+                return -ENOENT;
+
+            fixed (byte *namePointer = name)
+                return UnsafeNativeApis.RemoveXAttr(ciphertextPathPointer, namePointer) == -1 ? -errno : 0;
+        }
+
         public override unsafe int Rename(ReadOnlySpan<byte> path, ReadOnlySpan<byte> newPath, int flags)
         {
             return UnsafeNativeApis.RenameAt2(0, GetCiphertextPathPointer(path), 0, GetCiphertextPathPointer(newPath),
@@ -302,6 +343,18 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             Directory.Delete(ciphertextPath, true);
             return 0;
+        }
+
+        public override unsafe int SetXAttr(ReadOnlySpan<byte> path, ReadOnlySpan<byte> name, ReadOnlySpan<byte> value, int flags)
+        {
+            var ciphertextPath = GetCiphertextPath(path);
+            if (ciphertextPath == null)
+                return -ENOENT;
+
+            fixed (byte *ciphertextPathPointer = Encoding.UTF8.GetBytes(ciphertextPath))
+            fixed (byte *namePointer = name)
+            fixed (void *valuePointer = value)
+                return UnsafeNativeApis.SetXAttr(ciphertextPathPointer, namePointer, valuePointer, value.Length, flags) == -1 ? -errno : 0;
         }
 
         public override unsafe int StatFS(ReadOnlySpan<byte> path, ref statvfs statfs)
