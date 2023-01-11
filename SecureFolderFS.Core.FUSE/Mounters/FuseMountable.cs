@@ -35,9 +35,12 @@ namespace SecureFolderFS.Core.FUSE.Mounters
             if (mountOptions is not FuseMountOptions fuseMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(FuseMountOptions)}.");
 
-            Cleanup();
-
             var mountPoint = fuseMountOptions.MountPoint;
+            if (mountPoint == null)
+                Cleanup();
+            else
+                Cleanup(mountPoint);
+
             if (mountPoint != null && IsMountPoint(mountPoint))
                 throw new ArgumentException("A filesystem is already mounted in the specified path.");
 
@@ -48,10 +51,10 @@ namespace SecureFolderFS.Core.FUSE.Mounters
                 var i = 1;
                 while (IsMountPoint(mountPoint))
                     mountPoint = Path.Combine(MountDirectory, $"{_vaultName} ({i++})");
-
-                if (!Directory.Exists(mountPoint))
-                    Directory.CreateDirectory(mountPoint);
             }
+
+            if (!Directory.Exists(mountPoint))
+                Directory.CreateDirectory(mountPoint);
 
             _fuseWrapper.StartFileSystem(mountPoint);
             var fuseFileSystem = new FuseFileSystem(_fuseWrapper, new SimpleFolder(mountPoint));
@@ -96,18 +99,21 @@ namespace SecureFolderFS.Core.FUSE.Mounters
         private static void Cleanup()
         {
             foreach (var directory in Directory.GetDirectories(MountDirectory))
+                Cleanup(directory);
+        }
+
+        private static void Cleanup(string directory)
+        {
+            try
             {
-                try
-                {
-                    Directory.EnumerateFileSystemEntries(directory);
-                }
-                catch (IOException)
-                {
-                    var process = Process.Start("fusermount3", $"-u -z \"{directory}\"");
-                    process.WaitForExit();
-                    if (process.ExitCode == 0)
-                        Directory.Delete(directory);
-                }
+                Directory.EnumerateFileSystemEntries(directory);
+            }
+            catch (IOException)
+            {
+                var process = Process.Start("fusermount3", $"-u -z \"{directory}\"");
+                process.WaitForExit();
+                if (process.ExitCode == 0)
+                    Directory.Delete(directory);
             }
         }
     }

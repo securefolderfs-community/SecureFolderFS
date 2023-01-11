@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Directories;
@@ -51,7 +52,14 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Create(ReadOnlySpan<byte> path, mode_t mode, ref FuseFileInfo fi)
         {
-            var fd = creat(GetCiphertextPathPointer(path), mode);
+            var ciphertextPath = GetCiphertextPath(path);
+            if (ciphertextPath == null)
+                return -ENOENT;
+
+            if ((fi.flags & O_CREAT) != 0 && (fi.flags & O_EXCL) != 0 && File.Exists(ciphertextPath))
+                return -EEXIST;
+
+            var fd = creat(ToUtf8ByteArray(ciphertextPath), mode);
             if (fd == -1)
                 return -errno;
 
@@ -121,7 +129,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             var result = onlyData ? fdatasync(fd) : fsync(fd);
             close(fd);
 
-            return result == 0 ? 0 : -errno;
+            return result == -1 ? -errno : 0;
         }
 
         public override unsafe int GetAttr(ReadOnlySpan<byte> path, ref stat stat, FuseFileInfoRef fiRef)
@@ -135,11 +143,13 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             fixed (stat *statPtr = &stat)
             {
-                var result = LibC.stat(ToUtf8ByteArray(ciphertextPath), statPtr);
+                if (LibC.stat(ToUtf8ByteArray(ciphertextPath), statPtr) == -1)
+                    return -errno;
+
                 if (File.Exists(ciphertextPath))
                     stat.st_size = Math.Max(0, Security.ContentCrypt.CalculateCleartextSize(stat.st_size - Security.HeaderCrypt.HeaderCiphertextSize));
 
-                return result == -1 ? -errno : 0;
+                return 0;
             }
         }
 
@@ -149,8 +159,11 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPathPtr == null)
                 return -ENOENT;
 
+            if (value.Length == 0)
+                return -ERANGE;
+
             fixed (byte *namePtr = name)
-            fixed (void *valuePtr = value)
+            fixed (void *valuePtr = &MemoryMarshal.GetReference(value))
             {
                 var result = UnsafeNativeApis.GetXAttr(ciphertextPathPtr, namePtr, valuePtr, value.Length);
                 return result == -1 ? -errno : result;
@@ -162,6 +175,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             var ciphertextPathPtr = GetCiphertextPathPointer(path);
             if (ciphertextPathPtr == null)
                 return -ENOENT;
+
+            if (list.Length == 0)
+                return UnsafeNativeApis.ListXAttr(ciphertextPathPtr, null, 0) == -1 ? -errno : 0;
 
             fixed (byte *listPtr = list)
             {
@@ -179,7 +195,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (mkdir(ToUtf8ByteArray(ciphertextPath), mode) == -1)
                 return -errno;
 
-                // Initialize directory with directory ID
+            // Initialize directory with directory ID
             var directoryIdPath = Path.Combine(ciphertextPath, Constants.DIRECTORY_ID_FILENAME);
             _ = DirectoryIdAccess.SetDirectoryId(directoryIdPath, DirectoryId.CreateNew());
 
@@ -196,24 +212,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if ((fi.flags & O_APPEND) != 0)
                 mode = FileMode.Append;
             else if ((fi.flags & O_CREAT) != 0)
-            {
-                // TODO this breaks LibreOffice's lock files
-                // if ((fi.flags & O_EXCL) != 0 && File.Exists(ciphertextPath))
-                // return -EEXIST;
-
-                // TODO Don't follow symlinks if O_EXCL is specified
                 mode = FileMode.Create;
-            }
             else if ((fi.flags & O_TRUNC) != 0)
                 mode = FileMode.Truncate;
-
-            // TODO Check if path is a symlink
-            // if ((fi.flags & O_NOFOLLOW) != 0)
-            // return -ELOOP;
-
-            // Files are sometimes opened without an access flag, even though it should always be present.
-            // Also the stream can't be write only for some reason.
-            var access = (fi.flags & O_RDONLY) != 0 ? FileAccess.Read : FileAccess.ReadWrite;
 
             var options = FileOptions.None;
             if ((fi.flags & O_ASYNC) != 0)
@@ -226,6 +227,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if ((fi.flags & O_TMPFILE) != 0)
                 options |= FileOptions.DeleteOnClose;
 
+            var access = mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite;
             var handle = handlesManager.OpenHandleToFile(ciphertextPath, mode, access, FileShare.ReadWrite, options);
             if (handle == null)
                 return -EACCES;
@@ -252,6 +254,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
             if (handle == null)
                 return -EBADF;
+
+            if ((long)offset >= handle.Stream.Length)
+                return 0;
 
             handle.Stream.Position = (long)offset;
             return handle.Stream.Read(buffer);
@@ -397,6 +402,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
             if (handle == null)
                 return -EBADF;
+
+            if (handle.FileMode == FileMode.Append)
+                offset = (ulong)handle.Stream.Length;
 
             handle.Stream.Position = (long)offset;
             handle.Stream.Write(buffer);

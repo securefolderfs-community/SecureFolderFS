@@ -23,7 +23,9 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
         {
             var ciphertextStream = new FileStream(ciphertextPath, new FileStreamOptions
             {
-                Mode = mode,
+                // A file cannot be opened with both FileMode.Append and FileMode.Read, but opening it with
+                // FileMode.Write would cause an error when writing, as the stream needs to be readable.
+                Mode = mode == FileMode.Append ? FileMode.Open : mode,
                 Access = access,
                 Share = share,
                 Options = options
@@ -36,7 +38,7 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
             if (mode == FileMode.Truncate)
                 cleartextStream.Flush();
 
-            var fileHandle = new FuseFileHandle(cleartextStream, access);
+            var fileHandle = new FuseFileHandle(cleartextStream, access, mode);
             var handle = _handleGenerator.ThreadSafeIncrementAndGet();
 
             _openHandles.TryAdd(handle, fileHandle);
