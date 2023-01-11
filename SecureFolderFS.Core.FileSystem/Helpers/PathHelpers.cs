@@ -44,7 +44,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
 
         public static string PathFromVaultRoot(string fileName, string vaultRootPath)
         {
-            if (fileName.Length == 0 || fileName[0] == Path.DirectorySeparatorChar)
+            if (fileName.Length == 0 || (fileName.Length == 1 && fileName[0] == Path.DirectorySeparatorChar))
                 return EnsureTrailingPathSeparator(vaultRootPath);
 
             return Path.Combine(vaultRootPath, EnsureNoLeadingPathSeparator(fileName));
