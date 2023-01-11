@@ -1,16 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers
 {
     public static class PathHelpers
     {
-        public static string RemoveExtension(string fileName, string extension)
-        {
-            return fileName.EndsWith(extension, StringComparison.OrdinalIgnoreCase) ? fileName.Remove(fileName.Length - extension.Length) : fileName;
-        }
-
         public static string? GetDirectoryIdPathOfParent(string path, string rootPath)
         {
             var parentPath = Path.GetDirectoryName(path);
@@ -33,13 +27,13 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string EnsureTrailingPathSeparator(string path)
         {
-            return path.EndsWith(Path.DirectorySeparatorChar) ? path : path + Path.DirectorySeparatorChar;
+            return path[^1] == Path.DirectorySeparatorChar ? path : path + Path.DirectorySeparatorChar;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string EnsureNoTrailingPathSeparator(string path)
         {
-            return path.EndsWith(Path.DirectorySeparatorChar) ? path.Remove(path.Length - 1) : path;
+            return path[^1] == Path.DirectorySeparatorChar ? path.Substring(0, path.Length - 1) : path;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -50,7 +44,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
 
         public static string PathFromVaultRoot(string fileName, string vaultRootPath)
         {
-            if (string.IsNullOrEmpty(fileName)|| (fileName.Length == 1 && fileName[0] == Path.DirectorySeparatorChar))
+            if (fileName.Length == 0 || (fileName.Length == 1 && fileName[0] == Path.DirectorySeparatorChar))
                 return EnsureTrailingPathSeparator(vaultRootPath);
 
             return Path.Combine(vaultRootPath, EnsureNoLeadingPathSeparator(fileName));

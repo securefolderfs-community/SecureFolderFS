@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         /// <inheritdoc/>
         public async Task CreateContentFolderAsync(IModifiableFolder vaultFolder, CancellationToken cancellationToken = default)
         {
-            _ = await vaultFolder.CreateFolderAsync(Constants.CONTENT_FOLDERNAME, CreationCollisionOption.FailIfExists, cancellationToken);
+            _ = await vaultFolder.CreateFolderAsync(Constants.CONTENT_FOLDERNAME, false, cancellationToken);
         }
 
         /// <inheritdoc/>

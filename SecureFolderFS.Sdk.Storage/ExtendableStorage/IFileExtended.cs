@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.Storage.ExtendableStorage
 {
     /// <summary>
-    /// Extends existing <see cref="IFile"/> interface with additional properties.
+    /// Extends existing <see cref="IFile"/> interface with additional functionality.
     /// </summary>
     public interface IFileExtended : IFile
     {

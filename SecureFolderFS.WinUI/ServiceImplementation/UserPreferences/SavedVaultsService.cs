@@ -1,6 +1,5 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services.UserPreferences;
-using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using System.Collections.Generic;
@@ -27,7 +26,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFile = await SettingsFolder.TryCreateFileAsync(Constants.LocalSettings.SAVED_VAULTS_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            var settingsFile = await SettingsFolder.TryCreateFileAsync(Constants.LocalSettings.SAVED_VAULTS_FILENAME, false, cancellationToken);
             if (settingsFile is null)
                 return;
 

@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.Storage.Enums;
-using SecureFolderFS.Sdk.Storage.Extensions;
+﻿using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
@@ -136,8 +135,8 @@ namespace SecureFolderFS.Sdk.AppModels
                         if (FlushOnlyChangedValues && !item.Value.IsDirty)
                             continue;
 
-                        var dataFile = await _databaseFolder.TryCreateFileAsync(item.Key, CreationCollisionOption.OpenIfExists, cancellationToken);
-                        var typeFile = await _databaseFolder.TryCreateFileAsync($"{item.Key}{TYPE_FILE_SUFFIX}", CreationCollisionOption.OpenIfExists, cancellationToken);
+                        var dataFile = await _databaseFolder.TryCreateFileAsync(item.Key, false, cancellationToken);
+                        var typeFile = await _databaseFolder.TryCreateFileAsync($"{item.Key}{TYPE_FILE_SUFFIX}", false, cancellationToken);
                         if (dataFile is null || typeFile is null)
                             continue;
 

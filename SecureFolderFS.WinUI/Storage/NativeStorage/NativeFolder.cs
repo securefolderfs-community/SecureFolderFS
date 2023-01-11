@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {
     /// <inheritdoc cref="IFolder"/>
-    internal sealed class NativeFolder : NativeStorable, ILocatableFolder, IModifiableFolder, IMutableFolder
+    internal sealed class NativeFolder : NativeStorable, ILocatableFolder, IModifiableFolder, IMutableFolder, IFolderExtended
     {
         public NativeFolder(string path)
             : base(path)
@@ -90,10 +91,8 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            var overwrite = collisionOption == CreationCollisionOption.ReplaceExisting;
-
             if (itemToCopy is IFile sourceFile)
             {
                 if (itemToCopy is ILocatableFile sourceLocatableFile)
@@ -104,7 +103,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
                     return new NativeFile(newPath);
                 }
 
-                var copiedFile = await CreateFileAsync(itemToCopy.Name, collisionOption, cancellationToken);
+                var copiedFile = await CreateFileAsync(itemToCopy.Name, overwrite, cancellationToken);
                 await sourceFile.CopyContentsToAsync(copiedFile, cancellationToken);
 
                 return copiedFile;
@@ -112,6 +111,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
             else if (itemToCopy is IFolder sourceFolder)
             {
                 // TODO: Implement folder copy
+                _ = sourceFolder;
                 throw new NotSupportedException();
             }
 
@@ -119,10 +119,8 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            var overwrite = collisionOption == CreationCollisionOption.ReplaceExisting;
-
             if (itemToMove is IFile sourceFile)
             {
                 if (itemToMove is ILocatableFile sourceLocatableFile)
@@ -134,7 +132,7 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
                 }
                 else
                 {
-                    var copiedFile = await CreateFileAsync(itemToMove.Name, collisionOption, cancellationToken);
+                    var copiedFile = await CreateFileAsync(itemToMove.Name, overwrite, cancellationToken);
                     await sourceFile.CopyContentsToAsync(copiedFile, cancellationToken);
                     await source.DeleteAsync(itemToMove, true, cancellationToken);
 
@@ -150,46 +148,21 @@ namespace SecureFolderFS.WinUI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IFile> CreateFileAsync(string desiredName, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             var path = System.IO.Path.Combine(Path, desiredName);
-            if (File.Exists(path))
-            {
-                switch (collisionOption)
-                {
-                    case CreationCollisionOption.GenerateUniqueName:
-                        return await CreateFileAsync($"{System.IO.Path.GetFileNameWithoutExtension(desiredName)} (1){System.IO.Path.GetExtension(desiredName)}", collisionOption, cancellationToken);
+            if (overwrite || !File.Exists(path))
+                await File.Create(path).DisposeAsync();
 
-                    case CreationCollisionOption.OpenIfExists:
-                        return new NativeFile(path);
-
-                    case CreationCollisionOption.FailIfExists:
-                        throw new IOException("File already exists with the same name.");
-                }
-            }
-
-            await File.Create(path).DisposeAsync();
             return new NativeFile(path);
         }
 
         /// <inheritdoc/>
-        public Task<IFolder> CreateFolderAsync(string desiredName, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             var path = System.IO.Path.Combine(Path, desiredName);
-            if (Directory.Exists(path))
-            {
-                switch (collisionOption)
-                {
-                    case CreationCollisionOption.GenerateUniqueName:
-                        return CreateFolderAsync($"{desiredName} (1)", collisionOption, cancellationToken);
-
-                    case CreationCollisionOption.OpenIfExists:
-                        return Task.FromResult<IFolder>(new NativeFolder(path));
-
-                    case CreationCollisionOption.FailIfExists:
-                        throw new IOException("Folder already exists with the same name.");
-                }
-            }
+            if (overwrite)
+                Directory.Delete(path, true);
 
             _ = Directory.CreateDirectory(path);
             return Task.FromResult<IFolder>(new NativeFolder(path));

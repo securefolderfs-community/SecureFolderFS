@@ -11,6 +11,7 @@ using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.WebDav.Mounters;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
@@ -46,7 +47,9 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         {
             _vaultFolder = vaultFolder;
             _storageService = storageService;
-            _contentFolder = await vaultFolder.GetFolderAsync(Constants.CONTENT_FOLDERNAME, cancellationToken);
+            _contentFolder = await vaultFolder.TryGetFolderAsync(Constants.CONTENT_FOLDERNAME, cancellationToken);
+
+            _ = _contentFolder ?? throw new DirectoryNotFoundException("The content folder was not found.");
         }
 
         /// <inheritdoc/>

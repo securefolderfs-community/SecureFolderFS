@@ -25,7 +25,8 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         public virtual string EncryptName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
         {
             // Allocate byte* for encoding
-            Span<byte> bytes = stackalloc byte[Encoding.UTF8.GetByteCount(cleartextName)];
+            var length = Encoding.UTF8.GetByteCount(cleartextName);
+            var bytes = length < 255 ? stackalloc byte[length] : new byte[length];
 
             // Get bytes from cleartext name
             var count = Encoding.UTF8.GetBytes(cleartextName, bytes);

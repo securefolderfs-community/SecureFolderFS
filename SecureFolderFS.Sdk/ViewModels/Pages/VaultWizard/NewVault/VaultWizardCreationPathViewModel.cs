@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
                 return;
             }
 
-            var keystoreFile = await SelectedLocation!.TryCreateFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            var keystoreFile = await SelectedLocation!.TryCreateFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, false, cancellationToken);
             if (keystoreFile is null)
                 return; // TODO: Report issue
 

@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using System;
@@ -8,13 +9,11 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
-using CreationCollisionOption = SecureFolderFS.Sdk.Storage.Enums.CreationCollisionOption;
-using NameCollisionOption = SecureFolderFS.Sdk.Storage.Enums.NameCollisionOption;
 
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
     /// <inheritdoc cref="IFolder"/>
-    internal sealed class WindowsStorageFolder : WindowsStorable<StorageFolder>, ILocatableFolder, IModifiableFolder
+    internal sealed class WindowsStorageFolder : WindowsStorable<StorageFolder>, ILocatableFolder, IModifiableFolder, IFolderExtended
     {
         // TODO: Implement IMutableFolder
 
@@ -44,33 +43,47 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            if (kind == StorableKind.Files)
+            switch (kind)
             {
-                var files = await storage.GetFilesAsync().AsTask(cancellationToken);
-                foreach (var item in files)
+                case StorableKind.Files:
                 {
-                    yield return new WindowsStorageFile(item);
-                }
-            }
-            else if (kind == StorableKind.Folders)
-            {
-                var folders = await storage.GetFoldersAsync().AsTask(cancellationToken);
-                foreach (var item in folders)
-                {
-                    yield return new WindowsStorageFolder(item);
-                }
-            }
-            else
-            {
-                var items = await storage.GetItemsAsync().AsTask(cancellationToken);
-                foreach (var item in items)
-                {
-                    if (item is StorageFile storageFile)
-                        yield return new WindowsStorageFile(storageFile);
+                    var files = await storage.GetFilesAsync().AsTask(cancellationToken);
+                    foreach (var item in files)
+                    {
+                        yield return new WindowsStorageFile(item);
+                    }
 
-                    if (item is StorageFolder storageFolder)
-                        yield return new WindowsStorageFolder(storageFolder);
+                    break;
                 }
+
+                case StorableKind.Folders:
+                {
+                    var folders = await storage.GetFoldersAsync().AsTask(cancellationToken);
+                    foreach (var item in folders)
+                    {
+                        yield return new WindowsStorageFolder(item);
+                    }
+
+                    break;
+                }
+
+                case StorableKind.All:
+                {
+                    var items = await storage.GetItemsAsync().AsTask(cancellationToken);
+                    foreach (var item in items)
+                    {
+                        if (item is StorageFile storageFile)
+                            yield return new WindowsStorageFile(storageFile);
+
+                        if (item is StorageFolder storageFolder)
+                            yield return new WindowsStorageFolder(storageFolder);
+                    }
+
+                    break;
+                }
+
+                default:
+                    yield break;
             }
         }
 
@@ -92,11 +105,11 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (itemToCopy is WindowsStorable<StorageFile> sourceFile)
             {
-                var copiedFileTask = sourceFile.storage.CopyAsync(storage, itemToCopy.Name, GetWindowsNameCollisionOption(collisionOption)).AsTask(cancellationToken);
+                var copiedFileTask = sourceFile.storage.CopyAsync(storage, itemToCopy.Name, GetWindowsNameCollisionOption(overwrite)).AsTask(cancellationToken);
                 var copiedFile = await copiedFileTask;
 
                 return new WindowsStorageFile(copiedFile);
@@ -106,11 +119,11 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (itemToMove is WindowsStorable<StorageFile> sourceFile)
             {
-                await sourceFile.storage.MoveAsync(storage, itemToMove.Name, GetWindowsNameCollisionOption(collisionOption)).AsTask(cancellationToken);
+                await sourceFile.storage.MoveAsync(storage, itemToMove.Name, GetWindowsNameCollisionOption(overwrite)).AsTask(cancellationToken);
                 return new WindowsStorageFile(sourceFile.storage);
             }
 
@@ -118,63 +131,21 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IFile> CreateFileAsync(string desiredName, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            var fileTask = storage.CreateFileAsync(desiredName, GetWindowsCreationCollisionOption(collisionOption)).AsTask(cancellationToken);
+            var fileTask = storage.CreateFileAsync(desiredName, GetWindowsCreationCollisionOption(overwrite)).AsTask(cancellationToken);
             var file = await fileTask;
 
             return new WindowsStorageFile(file);
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder> CreateFolderAsync(string desiredName, CreationCollisionOption collisionOption = default, CancellationToken cancellationToken = default)
+        public async Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            var folderTask = storage.CreateFolderAsync(desiredName, GetWindowsCreationCollisionOption(collisionOption)).AsTask(cancellationToken);
+            var folderTask = storage.CreateFolderAsync(desiredName, GetWindowsCreationCollisionOption(overwrite)).AsTask(cancellationToken);
             var folder = await folderTask;
 
             return new WindowsStorageFolder(folder);
-        }
-
-        private static StorageDeleteOption GetWindowsStorageDeleteOption(bool deletePermanentlyFlag)
-        {
-            return deletePermanentlyFlag ? StorageDeleteOption.PermanentDelete : StorageDeleteOption.Default;
-        }
-
-        private static Windows.Storage.NameCollisionOption GetWindowsNameCollisionOption(
-            CreationCollisionOption options)
-        {
-            return options switch
-            {
-                CreationCollisionOption.GenerateUniqueName => Windows.Storage.NameCollisionOption.GenerateUniqueName,
-                CreationCollisionOption.ReplaceExisting => Windows.Storage.NameCollisionOption.ReplaceExisting,
-                CreationCollisionOption.FailIfExists => Windows.Storage.NameCollisionOption.FailIfExists,
-                _ => throw new ArgumentOutOfRangeException(nameof(options))
-            };
-        }
-
-        private static Windows.Storage.NameCollisionOption GetWindowsNameCollisionOption(
-            NameCollisionOption options)
-        {
-            return options switch
-            {
-                NameCollisionOption.GenerateUniqueName => Windows.Storage.NameCollisionOption.GenerateUniqueName,
-                NameCollisionOption.ReplaceExisting => Windows.Storage.NameCollisionOption.ReplaceExisting,
-                NameCollisionOption.FailIfExists => Windows.Storage.NameCollisionOption.FailIfExists,
-                _ => throw new ArgumentOutOfRangeException(nameof(options))
-            };
-        }
-
-        private static Windows.Storage.CreationCollisionOption GetWindowsCreationCollisionOption(
-            CreationCollisionOption options)
-        {
-            return options switch
-            {
-                CreationCollisionOption.GenerateUniqueName => Windows.Storage.CreationCollisionOption.GenerateUniqueName,
-                CreationCollisionOption.ReplaceExisting => Windows.Storage.CreationCollisionOption.ReplaceExisting,
-                CreationCollisionOption.OpenIfExists => Windows.Storage.CreationCollisionOption.OpenIfExists,
-                CreationCollisionOption.FailIfExists => Windows.Storage.CreationCollisionOption.FailIfExists,
-                _ => throw new ArgumentOutOfRangeException(nameof(options))
-            };
         }
 
         /// <inheritdoc/>
@@ -184,6 +155,21 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
             var parentFolder = await parentFolderTask;
 
             return new WindowsStorageFolder(parentFolder);
+        }
+
+        private static StorageDeleteOption GetWindowsStorageDeleteOption(bool permanently)
+        {
+            return permanently ? StorageDeleteOption.PermanentDelete : StorageDeleteOption.Default;
+        }
+
+        private static NameCollisionOption GetWindowsNameCollisionOption(bool overwrite)
+        {
+            return overwrite ? NameCollisionOption.ReplaceExisting : NameCollisionOption.GenerateUniqueName;
+        }
+
+        private static CreationCollisionOption GetWindowsCreationCollisionOption(bool overwrite)
+        {
+            return overwrite ? CreationCollisionOption.ReplaceExisting : CreationCollisionOption.OpenIfExists;
         }
     }
 }
