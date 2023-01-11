@@ -159,14 +159,19 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPathPtr == null)
                 return -ENOENT;
 
-            if (value.Length == 0)
-                return -ERANGE;
-
             fixed (byte *namePtr = name)
-            fixed (void *valuePtr = &MemoryMarshal.GetReference(value))
             {
-                var result = UnsafeNativeApis.GetXAttr(ciphertextPathPtr, namePtr, valuePtr, value.Length);
-                return result == -1 ? -errno : result;
+                if (value.Length == 0)
+                {
+                    var result = UnsafeNativeApis.GetXAttr(ciphertextPathPtr, namePtr, null, value.Length);
+                    return result == -1 ? -errno : result;
+                }
+
+                fixed (void *valuePtr = value)
+                {
+                    var result = UnsafeNativeApis.GetXAttr(ciphertextPathPtr, namePtr, valuePtr, value.Length);
+                    return result == -1 ? -errno : result;
+                }
             }
         }
 
@@ -177,7 +182,10 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             if (list.Length == 0)
-                return UnsafeNativeApis.ListXAttr(ciphertextPathPtr, null, 0) == -1 ? -errno : 0;
+            {
+                var result = UnsafeNativeApis.ListXAttr(ciphertextPathPtr, null, 0);
+                return result == -1 ? -errno : result;
+            }
 
             fixed (byte *listPtr = list)
             {

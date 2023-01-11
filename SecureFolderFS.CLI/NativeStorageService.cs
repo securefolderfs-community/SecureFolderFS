@@ -1,8 +1,11 @@
-﻿using SecureFolderFS.CLI.NativeStorage;
-using SecureFolderFS.Sdk.Storage;
+﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.WinUI.Storage.NativeStorage;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace SecureFolderFS.CLI
+namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="IStorageService"/>
     internal sealed class NativeStorageService : IStorageService

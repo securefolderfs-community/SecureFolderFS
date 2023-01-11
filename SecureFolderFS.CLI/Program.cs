@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using SecureFolderFS.CLI.NativeStorage;
 using SecureFolderFS.Core.Cryptography.Enums;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem;
@@ -9,6 +8,8 @@ using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.WinUI.ServiceImplementation;
+using SecureFolderFS.WinUI.Storage.NativeStorage;
 
 namespace SecureFolderFS.CLI
 {

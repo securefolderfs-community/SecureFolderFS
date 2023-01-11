@@ -1,7 +1,10 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Shared.Helpers;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace SecureFolderFS.CLI.NativeStorage
+namespace SecureFolderFS.WinUI.Storage.NativeStorage
 {
     /// <inheritdoc cref="IStorable"/>
     internal abstract class NativeStorable : ILocatableStorable
