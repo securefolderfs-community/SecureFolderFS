@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public void StartFileSystem(string mountPoint)
         {
-            _fuseMount = Fuse.Mount(mountPoint, _fuseCallbacks, new MountOptions()
+            _fuseMount = Fuse.Mount(mountPoint, _fuseCallbacks, new MountOptions
             {
                 Options = "default_permissions"
             });

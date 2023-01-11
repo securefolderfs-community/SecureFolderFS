@@ -18,9 +18,7 @@ namespace SecureFolderFS.Core.FUSE.Mounters
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class FuseMountable : IMountableFileSystem
     {
-        private static readonly string MountDirectory =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                nameof(SecureFolderFS), "mount");
+        private static readonly string MountDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), nameof(SecureFolderFS), "mount");
 
         private readonly FuseWrapper _fuseWrapper;
         private readonly string _vaultName;
@@ -41,7 +39,7 @@ namespace SecureFolderFS.Core.FUSE.Mounters
 
             var mountPoint = fuseMountOptions.MountPoint;
             if (mountPoint != null && IsMountPoint(mountPoint))
-                throw new ArgumentException("A filesystem is already mounted in the specified mount point.");
+                throw new ArgumentException("A filesystem is already mounted in the specified path.");
 
             if (mountPoint == null)
             {
@@ -93,7 +91,7 @@ namespace SecureFolderFS.Core.FUSE.Mounters
         }
 
         /// <summary>
-        /// Cleans up leftover directories after an application crash.
+        /// Removes mount points without a connected transport endpoint.
         /// </summary>
         private static void Cleanup()
         {
@@ -105,7 +103,7 @@ namespace SecureFolderFS.Core.FUSE.Mounters
                 }
                 catch (IOException)
                 {
-                    var process = Process.Start("fusermount", $"-u \"{directory}\"");
+                    var process = Process.Start("fusermount3", $"-u -z \"{directory}\"");
                     process.WaitForExit();
                     if (process.ExitCode == 0)
                         Directory.Delete(directory);

@@ -69,7 +69,7 @@ namespace SecureFolderFS.CLI
                 AdapterType = FileSystemAdapterType.FuseAdapter
             });
 
-            return await mountableFileSystem.MountAsync(new FuseMountOptions());
+            return await mountableFileSystem.MountAsync(new FuseMountOptions() {MountPoint = "/home/marcin/.steam/test"});
         }
 
         private sealed class Password : IPassword

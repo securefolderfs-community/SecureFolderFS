@@ -43,15 +43,6 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
             return handle;
         }
 
-        public ulong OpenHandleToDirectory(string ciphertextPath)
-        {
-            var directoryHandle = new DirectoryHandle();
-            var handle = _handleGenerator.ThreadSafeIncrementAndGet();
-
-            _openHandles.TryAdd(handle, directoryHandle);
-            return handle;
-        }
-
         public THandle? GetHandle<THandle>(ulong? handle)
             where THandle : ObjectHandle
         {

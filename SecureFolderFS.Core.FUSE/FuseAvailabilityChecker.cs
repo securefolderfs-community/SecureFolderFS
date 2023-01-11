@@ -10,8 +10,7 @@ namespace SecureFolderFS.Core.FUSE
         /// <inheritdoc/>
         public Task<FileSystemAvailabilityType> DetermineAvailabilityAsync()
         {
-            var handle = NativeLibrary.Load("libfuse3.so.3");
-            if (handle == IntPtr.Zero)
+            if (!NativeLibrary.TryLoad("libfuse3.so.3", out var handle))
                 return Task.FromResult(FileSystemAvailabilityType.ModuleNotAvailable);
 
             NativeLibrary.Free(handle);
