@@ -1,6 +1,4 @@
-﻿using NWebDav.Server.Storage;
-using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
-using SecureFolderFS.Sdk.Storage;
+﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.IO;
@@ -61,9 +59,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         {
             var realPath = GetPathFromUriPath(path);
             var folder = await _storageService.GetFolderFromPathAsync(realPath, cancellationToken);
-            var properties = new DavStorageProperties<IDavFolder>();
-            var davFolder = new DavFolder<ILocatableFolder>(folder, properties);
-            properties.Storable = davFolder;
+            var davFolder = new DavFolder<ILocatableFolder>(folder);
 
             return davFolder;
         }
@@ -73,9 +69,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         {
             var realPath = GetPathFromUriPath(path);
             var file = await _storageService.GetFileFromPathAsync(realPath, cancellationToken);
-            var properties = new DavStorageProperties<IDavFile>();
-            var davFile = new DavFile<ILocatableFile>(file, properties);
-            properties.Storable = davFile;
+            var davFile = new DavFile<ILocatableFile>(file);
 
             return davFile;
         }
