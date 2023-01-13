@@ -17,6 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using SecureFolderFS.Core.Dokany.UnsafeNative;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -326,13 +327,17 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var directory = new DirectoryInfo(ciphertextPath);
                 List<FileInformation>? fileList = null;
 
-                foreach (var item in directory.EnumerateFileSystemInfos(searchPattern))
+                var items = Security.NameCrypt is null ? directory.EnumerateFileSystemInfos(searchPattern) : directory.EnumerateFileSystemInfos();
+                foreach (var item in items)
                 {
                     if (PathHelpers.IsCoreFile(item.Name))
                         continue;
 
                     var cleartextName = pathConverter.GetCleartextFileName(item.FullName);
                     if (string.IsNullOrEmpty(cleartextName))
+                        continue;
+
+                    if (Security.NameCrypt is not null && !UnsafeNativeApis.PathMatchSpec(cleartextName, searchPattern))
                         continue;
 
                     fileList ??= new();
