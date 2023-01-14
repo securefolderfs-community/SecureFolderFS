@@ -279,14 +279,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             content.AddEntry(".");
             content.AddEntry("..");
 
-            foreach (var file in Directory.EnumerateFiles(ciphertextPath))
-            {
-                if (Path.GetFileName(file) != Constants.DIRECTORY_ID_FILENAME)
-                    content.AddEntry(pathConverter.GetCleartextFileName(file));
-            }
-
-            foreach (var directory in Directory.EnumerateDirectories(ciphertextPath))
-                content.AddEntry(pathConverter.GetCleartextFileName(directory));
+            foreach (var entry in Directory.GetFileSystemEntries(ciphertextPath))
+                if (!PathHelpers.IsCoreFile(entry))
+                    content.AddEntry(pathConverter.GetCleartextFileName(entry));
 
             return 0;
         }
