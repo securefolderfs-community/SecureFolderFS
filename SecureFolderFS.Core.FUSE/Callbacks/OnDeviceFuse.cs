@@ -352,20 +352,39 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return statvfs(ciphertextPathPtr, statfsPtr) == -1 ? -errno : 0;
         }
 
-        public override unsafe int Truncate(ReadOnlySpan<byte> path, ulong length, FuseFileInfoRef fiRef)
+        public override int Truncate(ReadOnlySpan<byte> path, ulong length, FuseFileInfoRef fiRef)
         {
-            if (!fiRef.IsNull)
-            {
-                var handle = handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh);
-                if (handle != null && !handle.FileAccess.HasFlag(FileAccess.Write))
-                    return -EBADF;
-            }
-
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath == null)
                 return -ENOENT;
 
-            return truncate(ToUtf8ByteArray(ciphertextPath), (long)length) == -1 ? -errno : 0;
+            if (Directory.Exists(ciphertextPath))
+                return -EISDIR;
+            if (!File.Exists(ciphertextPath))
+                return -ENOENT;
+
+            FuseFileHandle? handle;
+            if (fiRef.IsNull)
+            {
+                var newHandle = handlesManager.OpenHandleToFile(ciphertextPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.None);
+                if (newHandle == null)
+                    return -EIO;
+
+                handle = handlesManager.GetHandle<FuseFileHandle>(newHandle)!;
+            }
+            else
+            {
+                handle = handlesManager.GetHandle<FuseFileHandle>(fiRef.Value.fh);
+                if (handle == null || !handle.FileAccess.HasFlag(FileAccess.Write))
+                    return -EBADF;
+            }
+
+            // TODO Fix SetLength
+            var position = handle.Stream.Position;
+            handle.Stream.SetLength((long)length);
+            handle.Stream.Position = position;
+
+            return 0;
         }
 
         /// <remarks>
