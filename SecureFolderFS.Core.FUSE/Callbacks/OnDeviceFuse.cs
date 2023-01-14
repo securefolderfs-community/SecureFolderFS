@@ -374,7 +374,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                     return -EBADF;
             }
 
-            // TODO Fix SetLength
             var position = handle.Stream.Position;
             handle.Stream.SetLength((long)length);
             handle.Stream.Position = position;

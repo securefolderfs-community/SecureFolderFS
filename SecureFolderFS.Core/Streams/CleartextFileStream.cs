@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.Streams
         private long _Position;
 
         /// <inheritdoc/>
-        public override long Position 
+        public override long Position
         {
             get => _Position;
             set => Seek(value, SeekOrigin.Begin);
@@ -129,6 +129,9 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public override void SetLength(long value)
         {
+            if (!TryWriteHeader(false))
+                throw new CryptographicException();
+
             if (value < _Length)
             {
                 var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
@@ -146,7 +149,7 @@ namespace SecureFolderFS.Core.Streams
                 BaseStream.SetLength(ciphertextFileSize);
                 _Length = value;
                 _Position = Math.Min(value, Position);
-                
+
                 // Update last write time
                 if (BaseStream is FileStream fileStream)
                     File.SetLastWriteTime(fileStream.SafeFileHandle, DateTime.Now);
