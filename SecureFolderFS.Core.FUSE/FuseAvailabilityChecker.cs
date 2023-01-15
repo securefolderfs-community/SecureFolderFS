@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices;
-using SecureFolderFS.Core.FileSystem;
+﻿using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
+using Tmds.Fuse;
 
 namespace SecureFolderFS.Core.FUSE
 {
@@ -10,11 +10,7 @@ namespace SecureFolderFS.Core.FUSE
         /// <inheritdoc/>
         public Task<FileSystemAvailabilityType> DetermineAvailabilityAsync()
         {
-            if (!NativeLibrary.TryLoad("libfuse3.so.3", out var handle))
-                return Task.FromResult(FileSystemAvailabilityType.ModuleNotAvailable);
-
-            NativeLibrary.Free(handle);
-            return Task.FromResult(FileSystemAvailabilityType.Available);
+            return Task.FromResult(Fuse.CheckDependencies() ? FileSystemAvailabilityType.Available : FileSystemAvailabilityType.ModuleNotAvailable);
         }
     }
 }

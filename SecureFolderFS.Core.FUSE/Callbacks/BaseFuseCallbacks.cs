@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return cipherTextPath == null ? null : ToUtf8ByteArray(cipherTextPath);
         }
 
-        protected unsafe byte* ToUtf8ByteArray(string str)
+        protected static unsafe byte* ToUtf8ByteArray(string str)
         {
             fixed (byte *ptr = Encoding.UTF8.GetBytes(str))
                 return ptr;

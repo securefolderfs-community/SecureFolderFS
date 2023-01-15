@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Directories;
@@ -67,6 +66,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return Open(path, ref fi);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int FAllocate(ReadOnlySpan<byte> path, int mode, ulong offset, long length, ref FuseFileInfo fi)
         {
             var ciphertextPath = GetCiphertextPath(path);
@@ -77,18 +77,18 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (handle == null || !handle.FileAccess.HasFlag(FileAccess.Write))
                 return -EBADF;
 
-            if (mode == 0)
-            {
-                var newLength = (long)offset + length;
-                if ((fi.flags & FALLOC_FL_KEEP_SIZE) == 0 && newLength > handle.Stream.Length)
-                    handle.Stream.SetLength((long)offset + length);
-            }
-            else
+            if (mode != 0)
                 return -EOPNOTSUPP;
 
+            var newLength = (long)offset + length;
+            if ((fi.flags & FALLOC_FL_KEEP_SIZE) == 0 && newLength > handle.Stream.Length)
+                handle.Stream.SetLength(newLength);
+
             return 0;
+
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Flush(ReadOnlySpan<byte> path, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
@@ -99,36 +99,51 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override unsafe int FSync(ReadOnlySpan<byte> path, bool onlyData, ref FuseFileInfo fi)
         {
-            if (handlesManager.GetHandle<FuseFileHandle>(fi.fh) == null)
+            var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
+            if (handle == null)
                 return -EBADF;
 
             var ciphertextPathPtr = GetCiphertextPathPointer(path);
             if (ciphertextPathPtr == null)
                 return -ENOENT;
 
+            handle.Stream.Flush();
+
+            if (onlyData)
+                return 0;
+
             var fd = open(ciphertextPathPtr, O_WRONLY);
             if (fd == -1)
                 return -errno;
 
-            var result = onlyData ? fdatasync(fd) : fsync(fd);
+            var result = fsync(fd);
             close(fd);
 
             return result == -1 ? -errno : 0;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override unsafe int FSyncDir(ReadOnlySpan<byte> path, bool onlyData, ref FuseFileInfo fi)
         {
-            var ciphertextPathPtr = GetCiphertextPathPointer(path);
-            if (ciphertextPathPtr == null)
+            var ciphertextPath = GetCiphertextPath(path);
+            if (ciphertextPath == null)
                 return -ENOENT;
 
-            var fd = UnsafeNativeApis.OpenDir(ciphertextPathPtr);
+            foreach (var handle in handlesManager.OpenHandles)
+                if (handle is FuseFileHandle fuseFileHandle && fuseFileHandle.Directory == Path.GetDirectoryName(ciphertextPath))
+                    fuseFileHandle.Stream.Flush();
+
+            if (onlyData)
+                return 0;
+
+            var fd = open(ToUtf8ByteArray(ciphertextPath), O_RDONLY);
             if (fd == -1)
                 return -errno;
 
-            var result = onlyData ? fdatasync(fd) : fsync(fd);
+            var result = fsync(fd);
             close(fd);
 
             return result == -1 ? -errno : 0;
@@ -163,17 +178,14 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             fixed (byte *namePtr = name)
             {
+                int result;
                 if (value.Length == 0)
-                {
-                    var result = UnsafeNativeApis.GetXAttr(ciphertextPathPtr, namePtr, null, value.Length);
-                    return result == -1 ? -errno : result;
-                }
+                    result = UnsafeNativeApis.GetXAttr(ciphertextPathPtr, namePtr, null, value.Length);
+                else
+                    fixed (void *valuePtr = value)
+                        result = UnsafeNativeApis.GetXAttr(ciphertextPathPtr, namePtr, valuePtr, value.Length);
 
-                fixed (void *valuePtr = value)
-                {
-                    var result = UnsafeNativeApis.GetXAttr(ciphertextPathPtr, namePtr, valuePtr, value.Length);
-                    return result == -1 ? -errno : result;
-                }
+                return result == -1 ? -errno : result;
             }
         }
 
@@ -183,17 +195,14 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPathPtr == null)
                 return -ENOENT;
 
+            int result;
             if (list.Length == 0)
-            {
-                var result = UnsafeNativeApis.ListXAttr(ciphertextPathPtr, null, 0);
-                return result == -1 ? -errno : result;
-            }
+                result = UnsafeNativeApis.ListXAttr(ciphertextPathPtr, null, 0);
+            else
+                fixed (byte *listPtr = list)
+                    result = UnsafeNativeApis.ListXAttr(ciphertextPathPtr, listPtr, list.Length);
 
-            fixed (byte *listPtr = list)
-            {
-                var result = UnsafeNativeApis.ListXAttr(ciphertextPathPtr, listPtr, list.Length);
-                return result == -1 ? -errno : result;
-            }
+            return result == -1 ? -errno : result;
         }
 
         public override unsafe int MkDir(ReadOnlySpan<byte> path, mode_t mode)
@@ -249,11 +258,13 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         public override int OpenDir(ReadOnlySpan<byte> path, ref FuseFileInfo fi)
         {
             var ciphertextPath = GetCiphertextPath(path);
-            if (ciphertextPath == null || !Directory.Exists(ciphertextPath))
+            if (ciphertextPath == null)
                 return -ENOENT;
 
             if (File.Exists(ciphertextPath))
                 return -ENOTDIR;
+            if (!Directory.Exists(ciphertextPath))
+                return -ENOENT;
 
             return 0;
         }
@@ -288,6 +299,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override void Release(ReadOnlySpan<byte> path, ref FuseFileInfo fi)
         {
             handlesManager.CloseHandle(fi.fh);
@@ -319,7 +331,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath == null)
                 return -ENOENT;
 
-            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => Path.GetFileName(x) != Constants.DIRECTORY_ID_FILENAME))
+            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreFile(x)))
                 return -ENOTEMPTY;
 
             DirectoryIdAccess.RemoveDirectoryId(ciphertextPath);
@@ -349,6 +361,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return statvfs(ciphertextPathPtr, statfsPtr) == -1 ? -errno : 0;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Truncate(ReadOnlySpan<byte> path, ulong length, FuseFileInfoRef fiRef)
         {
             var ciphertextPath = GetCiphertextPath(path);

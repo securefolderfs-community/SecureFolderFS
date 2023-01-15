@@ -10,9 +10,6 @@ namespace SecureFolderFS.Core.FUSE.UnsafeNative
         [DllImport("libc.so.6", SetLastError = true, EntryPoint = "listxattr")]
         public static extern int ListXAttr(byte *path, byte *list, int size);
 
-        [DllImport("libc.so.6", SetLastError = true, EntryPoint = "opendir")]
-        public static extern int OpenDir(byte *path);
-
         [DllImport("libc.so.6", SetLastError = true, EntryPoint = "removexattr")]
         public static extern int RemoveXAttr(byte *path, byte *name);
 
