@@ -1,12 +1,13 @@
 ﻿using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.CryptImpl;
+using System;
 
 namespace SecureFolderFS.Core.Cryptography
 {
     /// <summary>
     /// Provides cipher algorithm implementations.
     /// </summary>
-    public sealed class CipherProvider
+    public sealed class CipherProvider : IDisposable
     {
         // TODO: Needs docs
 
@@ -36,6 +37,12 @@ namespace SecureFolderFS.Core.Cryptography
                 Rfc3394KeyWrap = new Rfc3394KeyWrap(),
                 HmacSha256Crypt = new HmacSha256Crypt()
             };
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            AesSivCrypt.Dispose();
         }
     }
 }
