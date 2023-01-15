@@ -153,7 +153,7 @@ namespace SecureFolderFS.Core.Streams
                 var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
                 var amountToWrite = value - _Length;
                 var iterationSize = (int)Math.Min(cleartextChunkSize, amountToWrite); // Can cast to int, because cleartextChunkSize is int
-                var numberOfPasses = Math.Max(1, amountToWrite / iterationSize);
+                var numberOfPasses = Math.Max(1, Math.Ceiling(amountToWrite / (float)iterationSize));
 
                 var written = 0L;
                 var emptyBytes = new byte[iterationSize].AsSpan();

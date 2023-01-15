@@ -67,7 +67,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return Open(path, ref fi);
         }
 
-        public override unsafe int FAllocate(ReadOnlySpan<byte> path, int mode, ulong offset, long length, ref FuseFileInfo fi)
+        public override int FAllocate(ReadOnlySpan<byte> path, int mode, ulong offset, long length, ref FuseFileInfo fi)
         {
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath == null)
@@ -78,7 +78,13 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -EBADF;
 
             if (mode == 0)
-                handle.Stream.SetLength((long)offset + length);
+            {
+                var newLength = (long)offset + length;
+                if ((fi.flags & FALLOC_FL_KEEP_SIZE) == 0 && newLength > handle.Stream.Length)
+                    handle.Stream.SetLength((long)offset + length);
+            }
+            else
+                return -EOPNOTSUPP;
 
             return 0;
         }
