@@ -322,7 +322,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Rename(ReadOnlySpan<byte> path, ReadOnlySpan<byte> newPath, int flags)
         {
-            return UnsafeNativeApis.RenameAt2(0, GetCiphertextPathPointer(path), 0, GetCiphertextPathPointer(newPath), (uint)flags) == -1 ? errno : 0;
+            return UnsafeNativeApis.RenameAt2(0, GetCiphertextPathPointer(path), 0, GetCiphertextPathPointer(newPath), (uint)flags) == -1 ? -errno : 0;
         }
 
         public override unsafe int RmDir(ReadOnlySpan<byte> path)
