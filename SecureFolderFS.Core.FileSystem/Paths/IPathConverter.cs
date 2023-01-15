@@ -5,6 +5,8 @@
     /// </summary>
     public interface IPathConverter
     {
+        // TODO: Use ReadOnlySpan<char> for all methods
+
         /// <summary>
         /// Converts <paramref name="cleartextPath"/> into ciphertext.
         /// </summary>
@@ -25,5 +27,12 @@
         /// <param name="ciphertextFilePath">The ciphertext path to get the filename from.</param>
         /// <returns>If successful, value represents a cleartext filename, otherwise null.</returns>
         string? GetCleartextFileName(string ciphertextFilePath);
+
+        /// <summary>
+        /// Gets first ciphertext filename from provided cleartext path.
+        /// </summary>
+        /// <param name="cleartextFilePath">The cleartext path to get the filename from.</param>
+        /// <returns>If successful, value represents a ciphertext filename, otherwise null.</returns>
+        string? GetCiphertextFileName(string cleartextFilePath);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Analytics;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using System;
 using System.IO;
@@ -20,7 +19,7 @@ namespace SecureFolderFS.Core.FileNames
         }
 
         /// <inheritdoc/>
-        public virtual ReadOnlySpan<char> GetCleartextName(ReadOnlySpan<char> ciphertextName, DirectoryId directoryId)
+        public virtual ReadOnlySpan<char> GetCleartextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
             fileSystemStatistics?.NotifyFileNameAccess();
 
@@ -28,7 +27,7 @@ namespace SecureFolderFS.Core.FileNames
             if (nameWithoutExt.IsEmpty)
                 return ReadOnlySpan<char>.Empty;
 
-            var cleartextName = security.NameCrypt!.DecryptName(nameWithoutExt, directoryId.Id);
+            var cleartextName = security.NameCrypt!.DecryptName(nameWithoutExt, directoryId);
             if (cleartextName is null)
                 return ReadOnlySpan<char>.Empty;
 
@@ -36,7 +35,7 @@ namespace SecureFolderFS.Core.FileNames
         }
 
         /// <inheritdoc/>
-        public virtual ReadOnlySpan<char> GetCiphertextName(ReadOnlySpan<char> cleartextName, DirectoryId directoryId)
+        public virtual ReadOnlySpan<char> GetCiphertextName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
         {
             fileSystemStatistics?.NotifyFileNameAccess();
 

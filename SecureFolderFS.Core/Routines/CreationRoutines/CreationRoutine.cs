@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         {
             using (password)
             {
-                using var encKey = new SecureKey(new byte[Constants.KeyChains.ENCRYPTIONKEY_LENGTH]);
+                using var encKey = new SecureKey(new byte[Constants.KeyChains.ENCKEY_LENGTH]);
                 using var macKey = new SecureKey(new byte[Constants.KeyChains.MACKEY_LENGTH]);
                 var salt = new byte[Constants.KeyChains.SALT_LENGTH];
 

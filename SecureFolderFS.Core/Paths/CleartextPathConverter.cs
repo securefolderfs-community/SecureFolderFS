@@ -3,6 +3,7 @@ using System.IO;
 
 namespace SecureFolderFS.Core.Paths
 {
+    /// <inheritdoc cref="IPathConverter"/>
     internal sealed class CleartextPathConverter : IPathConverter
     {
         // Paths are not encrypted so we use the same path for every return value (ciphertext == cleartext)
@@ -23,6 +24,12 @@ namespace SecureFolderFS.Core.Paths
         public string? GetCleartextFileName(string ciphertextFilePath)
         {
             return Path.GetFileName(ciphertextFilePath);
+        }
+
+        /// <inheritdoc/>
+        public string? GetCiphertextFileName(string cleartextFilePath)
+        {
+            return Path.GetFileName(cleartextFilePath);
         }
     }
 }

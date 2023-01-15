@@ -65,7 +65,7 @@ namespace SecureFolderFS.Core.Streams
             if (ciphertextStreamLength < _security.HeaderCrypt.HeaderCiphertextSize)
                 return FileSystem.Constants.FILE_EOF; // TODO: HealthAPI - report invalid header size
 
-            var lengthToEof = _Length - _Position;
+            var lengthToEof = Length - _Position;
             if (lengthToEof < 1L)
                 return FileSystem.Constants.FILE_EOF;
 
@@ -132,10 +132,10 @@ namespace SecureFolderFS.Core.Streams
             if (!TryWriteHeader(false))
                 throw new CryptographicException();
 
-            if (value == _Length)
+            if (value == Length)
                 return;
 
-            if (value < _Length)
+            if (value < Length)
             {
                 var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
                 var missingSize = (int)(value % cleartextChunkSize);
@@ -148,17 +148,17 @@ namespace SecureFolderFS.Core.Streams
 
                 _Position = Math.Min(value, _Position);
             }
-            else if (value > _Length)
+            else if (value > Length)
             {
                 var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
-                var amountToWrite = value - _Length;
+                var amountToWrite = value - Length;
                 var iterationSize = (int)Math.Min(cleartextChunkSize, amountToWrite); // Can cast to int, because cleartextChunkSize is int
                 var numberOfPasses = Math.Max(1, amountToWrite / iterationSize);
 
                 var written = 0L;
                 var emptyBytes = new byte[iterationSize].AsSpan();
                 var savedPosition = _Position;
-                _Position = _Length;
+                _Position = Length;
 
                 for (var i = 0L; i < numberOfPasses; i++)
                 {
@@ -184,16 +184,17 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            var seekPos = origin switch
+            var seekPosition = origin switch
             {
                 SeekOrigin.Begin => offset,
                 SeekOrigin.End => Length + offset,
                 _ => _Position + offset
             };
 
-            var realSeekPos = BeginOfChunk(seekPos);
-            BaseStream.Position = realSeekPos;
-            _Position = seekPos;
+            var ciphertextPosition = AlignToChunkStartPosition(seekPosition);
+            BaseStream.Position = ciphertextPosition;
+            _Position = seekPosition;
+
             return _Position;
         }
 
@@ -252,7 +253,7 @@ namespace SecureFolderFS.Core.Streams
             _Length = Math.Max(position + written, Length);
 
             // Update position after writing
-            _Position += buffer.Length;
+            _Position += written;
 
             // Update last write time
             if (BaseStream is FileStream fileStream)
@@ -311,7 +312,7 @@ namespace SecureFolderFS.Core.Streams
             return skipRead || TryReadHeader();
         }
 
-        private long BeginOfChunk(long cleartextPosition)
+        private long AlignToChunkStartPosition(long cleartextPosition)
         {
             var maxCiphertextPayloadSize = long.MaxValue - _security.HeaderCrypt.HeaderCiphertextSize;
             var maxChunks = maxCiphertextPayloadSize / _security.ContentCrypt.ChunkCiphertextSize;

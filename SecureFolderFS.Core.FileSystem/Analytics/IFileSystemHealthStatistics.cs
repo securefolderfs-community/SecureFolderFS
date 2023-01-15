@@ -5,7 +5,7 @@
         #region Directory ID
 
         /// <summary>
-        /// Reports that the file containing directory ID has been not found.
+        /// Reports that the file containing directory ID was not found.
         /// </summary>
         /// <param name="directoryIdPath">The ciphertext path to directory ID file.</param>
         void ReportDirectoryIdNotFound(string directoryIdPath);

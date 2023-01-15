@@ -83,7 +83,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
 
             using (password)
             {
-                using var encKey = new SecureKey(new byte[Constants.KeyChains.ENCRYPTIONKEY_LENGTH]);
+                using var encKey = new SecureKey(new byte[Constants.KeyChains.ENCKEY_LENGTH]);
                 using var macKey = new SecureKey(new byte[Constants.KeyChains.MACKEY_LENGTH]);
 
                 // Derive KEK
@@ -127,7 +127,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
                 FileSystemOptions = fileSystemOptions
             };
 
-            var (security, directoryIdAccess, pathConverter, streamsAccess) = componentBuilder.BuildComponents(_encKey, _macKey, fileSystemOptions.HealthStatistics);
+            var (security, directoryIdAccess, pathConverter, streamsAccess) = componentBuilder.BuildComponents(_encKey, _macKey);
             var mountable = fileSystemOptions.AdapterType switch
             {
                 FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess, fileSystemOptions.HealthStatistics),

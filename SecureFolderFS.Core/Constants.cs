@@ -3,11 +3,8 @@
     public static class Constants
     {
         public const string CONTENT_FOLDERNAME = "content";
-
         public const string VAULT_CONFIGURATION_FILENAME = "sfconfig.cfg";
-
         public const string VAULT_KEYSTORE_FILENAME = "keystore.cfg";
-
         public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
 
         public static class FileSystemId
@@ -27,15 +24,15 @@
 
         internal static class Caching
         {
-            public const int MAX_CACHED_CHUNKS = 6;
-            public const int MAX_CACHED_DIRECTORY_IDS = 1000;
-            public const int MAX_CACHED_CIPHERTEXT_FILENAMES = 2000;
-            public const int MAX_CACHED_CLEARTEXT_FILENAMES = 2000;
+            public const int CHUNK_CACHE_SIZE = 6;
+            public const int DIRECTORY_ID_CACHE_SIZE = 1000;
+            public const int CIPHERTEXT_FILENAMES_CACHE_SIZE = 2000;
+            public const int CLEARTEXT_FILENAMES_CACHE_SIZE = 2000;
         }
 
         public static class KeyChains
         {
-            public const int ENCRYPTIONKEY_LENGTH = 32;
+            public const int ENCKEY_LENGTH = 32;
             public const int MACKEY_LENGTH = 32;
             public const int SALT_LENGTH = 16;
         }
