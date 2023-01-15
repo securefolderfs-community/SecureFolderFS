@@ -77,14 +77,10 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (handle == null || !handle.FileAccess.HasFlag(FileAccess.Write))
                 return -EBADF;
 
-            var fd = open(ToUtf8ByteArray(ciphertextPath), O_WRONLY);
-            if (fd == -1)
-                return -errno;
+            if (mode == 0)
+                handle.Stream.SetLength((long)offset + length);
 
-            var result = fallocate(fd, mode, (long)offset, length);
-            close(fd);
-
-            return result == -1 ? -errno : 0;
+            return 0;
         }
 
         public override int Flush(ReadOnlySpan<byte> path, ref FuseFileInfo fi)

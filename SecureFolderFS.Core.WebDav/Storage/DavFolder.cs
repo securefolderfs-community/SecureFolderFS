@@ -17,11 +17,11 @@ namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IDavFolder"/>
     /// <typeparam name="TCapability">An interface that represents capabilities of this folder.</typeparam>
-    internal sealed class DavFolder<TCapability> : DavStorable<IDavFolder, TCapability>, IDavFolder
+    internal class DavFolder<TCapability> : DavStorable<IDavFolder, TCapability>, IDavFolder
         where TCapability : IFolder
     {
         /// <inheritdoc/>
-        public string Path => StorableInternal.TryGetPath() ?? string.Empty;
+        public string Path => Inner.TryGetPath() ?? string.Empty;
 
         /// <inheritdoc/>
         public EnumerationDepthMode DepthMode { get; } = EnumerationDepthMode.Assume0;
@@ -35,9 +35,9 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<IFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
+        public virtual async Task<IFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is not IFolderExtended folderExtended)
+            if (Inner is not IFolderExtended folderExtended)
                 throw new NotSupportedException("Retrieving individual files is not supported.");
 
             var file = await folderExtended.GetFileAsync(fileName, cancellationToken);
@@ -45,9 +45,9 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
+        public virtual async Task<IFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is not IFolderExtended folderExtended)
+            if (Inner is not IFolderExtended folderExtended)
                 throw new NotSupportedException("Retrieving individual folders is not supported.");
 
             var folder = await folderExtended.GetFolderAsync(folderName, cancellationToken);
@@ -55,9 +55,9 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public virtual async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            await foreach (var item in StorableInternal.GetItemsAsync(kind, cancellationToken))
+            await foreach (var item in Inner.GetItemsAsync(kind, cancellationToken))
             {
                 if (item is IFile file)
                     yield return new DavFile<IFile>(file);
@@ -68,9 +68,9 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is not ILocatableStorable locatableStorable)
+            if (Inner is not ILocatableStorable locatableStorable)
                 return null;
 
             var parentFolder = await locatableStorable.GetParentAsync(cancellationToken);
@@ -81,36 +81,50 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(IStorable item, bool permanently = false, CancellationToken cancellationToken = default)
+        public virtual Task DeleteAsync(IStorable item, bool permanently = false, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is IModifiableFolder modifiableFolder)
-                return modifiableFolder.DeleteAsync(item, permanently, cancellationToken);
+            if (Inner is not IModifiableFolder modifiableFolder)
+                throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            throw new NotSupportedException("Modifying folder contents is not supported.");
+            return modifiableFolder.DeleteAsync(item, permanently, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is IModifiableFolder modifiableFolder)
-                return modifiableFolder.CreateCopyOfAsync(itemToCopy, overwrite, cancellationToken);
+            if (Inner is not IModifiableFolder modifiableFolder)
+                throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            throw new NotSupportedException("Modifying folder contents is not supported.");
+            var copiedItem = await modifiableFolder.CreateCopyOfAsync(itemToCopy, overwrite, cancellationToken);
+            if (copiedItem is IFile file)
+                return new DavFile<IFile>(file);
+
+            if (copiedItem is IFolder folder)
+                return new DavFolder<IFolder>(folder);
+
+            throw new InvalidOperationException("The copied item is neither a file nor a folder.");
         }
 
         /// <inheritdoc/>
-        public Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is IModifiableFolder modifiableFolder)
-                return modifiableFolder.MoveFromAsync(itemToMove, source, overwrite, cancellationToken);
+            if (Inner is not IModifiableFolder modifiableFolder)
+                throw new NotSupportedException("Modifying folder contents is not supported.");
+            
+            var movedItem = await modifiableFolder.MoveFromAsync(itemToMove, source, overwrite, cancellationToken);
+            if (movedItem is IFile file)
+                return new DavFile<IFile>(file);
 
-            throw new NotSupportedException("Modifying folder contents is not supported.");
+            if (movedItem is IFolder folder)
+                return new DavFolder<IFolder>(folder);
+
+            throw new InvalidOperationException("The moved item is neither a file nor a folder.");
         }
 
         /// <inheritdoc/>
-        public async Task<IFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<IFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is not IModifiableFolder modifiableFolder)
+            if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
             var file = await modifiableFolder.CreateFileAsync(desiredName, overwrite, cancellationToken);
@@ -118,9 +132,9 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is not IModifiableFolder modifiableFolder)
+            if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
             var folder = await modifiableFolder.CreateFolderAsync(desiredName, overwrite, cancellationToken);

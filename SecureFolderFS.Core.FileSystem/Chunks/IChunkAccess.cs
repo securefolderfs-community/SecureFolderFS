@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         /// <param name="chunkNumber">The number of chunk to copy from.</param>
         /// <param name="destination">The destination buffer to copy to.</param>
         /// <param name="offsetInChunk">The offset in chunk to start copying from.</param>
-        /// <returns>The amount of bytes copied. Value is -1 if copy failed.</returns>
+        /// <returns>The amount of bytes copied. If successful, value is non-negative, otherwise -1.</returns>
         int CopyFromChunk(long chunkNumber, Span<byte> destination, int offsetInChunk);
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         /// <param name="chunkNumber">The number of chunk to copy to.</param>
         /// <param name="source">The source buffer to copy from.</param>
         /// <param name="offsetInChunk">The offset in chunk to start copying to.</param>
-        /// <returns>The amount of bytes copied. Value is -1 if copy failed.</returns>
+        /// <returns>The amount of bytes copied. If successful, value is non-negative, otherwise -1.</returns>
         int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk);
 
         /// <summary>

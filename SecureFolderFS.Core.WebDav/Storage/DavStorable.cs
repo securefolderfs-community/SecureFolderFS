@@ -10,19 +10,19 @@ namespace SecureFolderFS.Core.WebDav.Storage
         where TStorableInternal : IStorable
         where TImplementation : IDavStorable
     {
-        private IBasicProperties? _propertiesCache;
+        private IBasicProperties? _properties;
 
         /// <inheritdoc/>
-        public virtual TStorableInternal StorableInternal { get; }
+        public TStorableInternal Inner { get; }
 
         /// <inheritdoc/>
-        public virtual string Id => StorableInternal.Id;
+        public virtual string Id => Inner.Id;
 
         /// <inheritdoc/>
-        public virtual string Name => StorableInternal.Name;
+        public virtual string Name => Inner.Name;
 
         /// <inheritdoc/>
-        public virtual IBasicProperties Properties => InitializeProperties((_propertiesCache ??= new DavStorageProperties<TImplementation>()));
+        public virtual IBasicProperties Properties => InitializeProperties((_properties ??= new DavStorageProperties<TImplementation>()));
 
         /// <summary>
         /// Gets the implementor which is represented by <typeparamref name="TImplementation"/> type.
@@ -31,8 +31,8 @@ namespace SecureFolderFS.Core.WebDav.Storage
 
         protected DavStorable(TStorableInternal storableInternal, IBasicProperties? properties = null)
         {
-            StorableInternal = storableInternal;
-            _propertiesCache = properties;
+            Inner = storableInternal;
+            _properties = properties;
         }
 
         private IBasicProperties InitializeProperties(IBasicProperties properties)
