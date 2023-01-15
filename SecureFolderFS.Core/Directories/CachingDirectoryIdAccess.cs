@@ -11,11 +11,13 @@ namespace SecureFolderFS.Core.Directories
     public sealed class CachingDirectoryIdAccess : BaseDirectoryIdAccess
     {
         private readonly Dictionary<string, DirectoryIdBuffer> _directoryIdCache;
+        private readonly object _lock;
 
         public CachingDirectoryIdAccess(IDirectoryIdStreamAccess directoryIdStreamAccess, IFileSystemStatistics? fileSystemStatistics, IFileSystemHealthStatistics? fileSystemHealthStatistics)
             : base(directoryIdStreamAccess, fileSystemStatistics, fileSystemHealthStatistics)
         {
             _directoryIdCache = new(Constants.Caching.DIRECTORY_ID_CACHE_SIZE);
+            _lock = new();
         }
 
         /// <inheritdoc/>
@@ -25,25 +27,28 @@ namespace SecureFolderFS.Core.Directories
             if (directoryId.Length != FileSystem.Constants.DIRECTORY_ID_SIZE)
                 return false;
 
-            if (!_directoryIdCache.TryGetValue(ciphertextPath, out var directoryIdBuffer))
+            lock (_lock)
             {
-                // Cache miss, update stats
-                fileSystemStatistics?.NotifyDirectoryIdCacheMiss();
+                if (!_directoryIdCache.TryGetValue(ciphertextPath, out var directoryIdBuffer))
+                {
+                    // Cache miss, update stats
+                    fileSystemStatistics?.NotifyDirectoryIdCacheMiss();
 
-                // Get directory ID from file
-                if (!base.GetDirectoryId(ciphertextPath, directoryId))
-                    return false;
+                    // Get directory ID from file
+                    if (!base.GetDirectoryId(ciphertextPath, directoryId))
+                        return false;
 
-                // Copy the directory ID to cache
-                UpdateCache(ciphertextPath, directoryId);
-            }
-            else
-            {
-                // Cache hit, update stats
-                fileSystemStatistics?.NotifyDirectoryIdAccess();
-                fileSystemStatistics?.NotifyDirectoryIdCacheHit();
+                    // Copy the directory ID to cache
+                    UpdateCache(ciphertextPath, directoryId);
+                }
+                else
+                {
+                    // Cache hit, update stats
+                    fileSystemStatistics?.NotifyDirectoryIdAccess();
+                    fileSystemStatistics?.NotifyDirectoryIdCacheHit();
 
-                directoryIdBuffer.Buffer.CopyTo(directoryId);
+                    directoryIdBuffer.Buffer.CopyTo(directoryId);
+                }
             }
 
             return true;
@@ -52,12 +57,15 @@ namespace SecureFolderFS.Core.Directories
         /// <inheritdoc/>
         public override bool SetDirectoryId(string ciphertextPath, ReadOnlySpan<byte> directoryId)
         {
-            // Update directory ID in file
-            if (!base.SetDirectoryId(ciphertextPath, directoryId))
-                return false;
+            lock (_lock)
+            {
+                // Update directory ID in file
+                if (!base.SetDirectoryId(ciphertextPath, directoryId))
+                    return false;
 
-            // Update cache after successfully setting the directory ID
-            UpdateCache(ciphertextPath, directoryId);
+                // Update cache after successfully setting the directory ID
+                UpdateCache(ciphertextPath, directoryId);
+            }
 
             return true;
         }
@@ -65,7 +73,10 @@ namespace SecureFolderFS.Core.Directories
         /// <inheritdoc/>
         public override void RemoveDirectoryId(string ciphertextPath)
         {
-            _ = _directoryIdCache.Remove(ciphertextPath);
+            lock (_lock)
+            {
+                _ = _directoryIdCache.Remove(ciphertextPath);
+            }
         }
 
         private void UpdateCache(string ciphertextPath, ReadOnlySpan<byte> directoryId)

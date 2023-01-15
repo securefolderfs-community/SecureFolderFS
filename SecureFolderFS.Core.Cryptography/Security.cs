@@ -60,6 +60,7 @@ namespace SecureFolderFS.Core.Cryptography
         /// <inheritdoc/>
         public void Dispose()
         {
+            CipherProvider.Dispose();
             ContentCrypt.Dispose();
             HeaderCrypt.Dispose();
         }
