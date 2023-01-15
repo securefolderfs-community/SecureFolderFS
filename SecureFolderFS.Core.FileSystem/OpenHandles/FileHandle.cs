@@ -1,11 +1,11 @@
 ﻿using System.IO;
 
-namespace SecureFolderFS.Core.Dokany.OpenHandles
+namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {
     /// <summary>
     /// Represents a file handle on the virtual file system.
     /// </summary>
-    internal abstract class FileHandle : ObjectHandle
+    public abstract class FileHandle : ObjectHandle
     {
         /// <summary>
         /// Gets the stream of the file.
