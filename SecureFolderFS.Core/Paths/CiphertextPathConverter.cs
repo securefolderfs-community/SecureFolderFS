@@ -4,6 +4,7 @@ using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.Paths
 {
@@ -34,30 +35,43 @@ namespace SecureFolderFS.Core.Paths
         }
 
         /// <inheritdoc/>
-        public string? GetCleartextFileName(string cleartextFilePath)
+        [SkipLocalsInit]
+        public string? GetCleartextFileName(string ciphertextFilePath)
         {
-            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, _vaultRootPath);
-            if (directoryIdPath is null)
-                return null;
-
-            var directoryId = _directoryIdAccess.GetDirectoryId(directoryIdPath);
-            if (directoryId is null)
-                return null;
-
-            return _fileNameAccess.GetCleartextName(Path.GetFileName(cleartextFilePath), directoryId).ToString();
-        }
-
-        private string? GetCiphertextFileName(string ciphertextFilePath)
-        {
+            // Construct directory ID path for the parent directory of ciphertextFilePath
             var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, _vaultRootPath);
             if (directoryIdPath is null)
                 return null;
 
-            var directoryId = _directoryIdAccess.GetDirectoryId(directoryIdPath);
-            if (directoryId is null)
+            // Allocate byte* for directory ID, or empty if path is root
+            var directoryId = directoryIdPath.Length == 0 ? Span<byte>.Empty : stackalloc byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+
+            // Get the directory ID
+            if (directoryId.Length != 0 && !_directoryIdAccess.GetDirectoryId(directoryIdPath, directoryId))
                 return null;
 
-            return _fileNameAccess.GetCiphertextName(Path.GetFileName(ciphertextFilePath), directoryId).ToString();
+            // Get cleartext name
+            return _fileNameAccess.GetCleartextName(Path.GetFileName(ciphertextFilePath), directoryId).ToString();
+        }
+
+        /// <inheritdoc/>
+        [SkipLocalsInit]
+        public string? GetCiphertextFileName(string cleartextFilePath)
+        {
+            // Construct directory ID path for the parent directory of cleartextFilePath
+            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, _vaultRootPath);
+            if (directoryIdPath is null)
+                return null;
+
+            // Allocate byte* for directory ID, or empty if path is root
+            var directoryId = directoryIdPath.Length == 0 ? Span<byte>.Empty : stackalloc byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+
+            // Get the directory ID
+            if (directoryId.Length != 0 && !_directoryIdAccess.GetDirectoryId(directoryIdPath, directoryId))
+                return null;
+
+            // Get ciphertext name
+            return _fileNameAccess.GetCiphertextName(Path.GetFileName(cleartextFilePath), directoryId).ToString();
         }
 
         // TODO: Refactor

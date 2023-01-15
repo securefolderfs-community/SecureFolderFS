@@ -6,7 +6,6 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileNames;
-using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -28,15 +27,16 @@ namespace SecureFolderFS.Core.ComponentBuilders
 
         public required IFolder ContentFolder { get; init; }
 
-        public (Security, IDirectoryIdAccess, IPathConverter, IStreamsAccess) BuildComponents(SecretKey encKey, SecretKey macKey, IFileSystemHealthStatistics? healthStatistics)
+        public (Security, IDirectoryIdAccess, IPathConverter, IStreamsAccess) BuildComponents(SecretKey encKey, SecretKey macKey)
         {
             var security = Security.CreateNew(encKey.CreateCopy(), macKey.CreateCopy(), ConfigDataModel.ContentCipherScheme, ConfigDataModel.FileNameCipherScheme);
 
+            var directoryIdStreamAccess = new DirectoryIdStreamAccess(); // TODO: Provide from consumer
             IDirectoryIdAccess directoryIdAccess = FileSystemOptions.DirectoryIdCachingStrategy switch
             {
                 // TODO: Use correct impl
-                DirectoryIdCachingStrategy.RandomAccessMemoryCache => new DeprecatedDirectoryIdAccessImpl(healthStatistics),
-                DirectoryIdCachingStrategy.NoCache => new DeprecatedDirectoryIdAccessImpl(healthStatistics),
+                DirectoryIdCachingStrategy.NoCache => new InstantDirectoryIdAccess(directoryIdStreamAccess, FileSystemOptions.FileSystemStatistics, FileSystemOptions.HealthStatistics),
+                DirectoryIdCachingStrategy.RandomAccessMemoryCache => new (directoryIdStreamAccess, FileSystemOptions.FileSystemStatistics, FileSystemOptions.HealthStatistics),
                 _ => throw new ArgumentOutOfRangeException(nameof(FileSystemOptions.DirectoryIdCachingStrategy))
             };
 

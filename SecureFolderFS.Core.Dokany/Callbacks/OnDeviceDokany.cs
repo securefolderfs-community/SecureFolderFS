@@ -87,7 +87,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                             // Initialize directory with directory ID
                             var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
-                            _ = DirectoryIdAccess.SetDirectoryId(directoryIdPath, DirectoryId.CreateNew()); // TODO: Maybe nodiscard?
+                            _ = DirectoryIdAccess.SetDirectoryId(directoryIdPath, Guid.NewGuid().ToByteArray()); // TODO: Maybe nodiscard?
 
                             break;
                     }

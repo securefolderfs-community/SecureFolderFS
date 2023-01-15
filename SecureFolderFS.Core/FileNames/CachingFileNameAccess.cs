@@ -1,6 +1,5 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Analytics;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using System;
 using System.Collections.Generic;
@@ -17,16 +16,16 @@ namespace SecureFolderFS.Core.FileNames
         public CachingFileNameAccess(Security security, IFileSystemStatistics? fileSystemStatistics)
             : base(security, fileSystemStatistics)
         {
-            _cleartextNames = new(Constants.Caching.MAX_CACHED_CLEARTEXT_FILENAMES);
-            _ciphertextNames = new(Constants.Caching.MAX_CACHED_CIPHERTEXT_FILENAMES);
+            _cleartextNames = new(Constants.Caching.CLEARTEXT_FILENAMES_CACHE_SIZE);
+            _ciphertextNames = new(Constants.Caching.CIPHERTEXT_FILENAMES_CACHE_SIZE);
         }
 
         /// <inheritdoc/>
-        public override ReadOnlySpan<char> GetCleartextName(ReadOnlySpan<char> ciphertextName, DirectoryId directoryId)
+        public override ReadOnlySpan<char> GetCleartextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
             lock (_cleartextNames)
             {
-                if (!_cleartextNames.TryGetValue(new(directoryId, ciphertextName.ToArray()), out var cleartextName))
+                if (!_cleartextNames.TryGetValue(new(directoryId.ToArray(), ciphertextName.ToArray()), out var cleartextName))
                 {
                     // Not found in cache
                     fileSystemStatistics?.NotifyFileNameCacheMiss();
@@ -51,11 +50,11 @@ namespace SecureFolderFS.Core.FileNames
         }
 
         /// <inheritdoc/>
-        public override ReadOnlySpan<char> GetCiphertextName(ReadOnlySpan<char> cleartextName, DirectoryId directoryId)
+        public override ReadOnlySpan<char> GetCiphertextName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
         {
             lock (_ciphertextNames)
             {
-                if (!_ciphertextNames.TryGetValue(new(directoryId, cleartextName.ToArray()), out var ciphertextName))
+                if (!_ciphertextNames.TryGetValue(new(directoryId.ToArray(), cleartextName.ToArray()), out var ciphertextName))
                 {
                     // Not found in cache
                     fileSystemStatistics?.NotifyFileNameCacheMiss();
@@ -79,22 +78,23 @@ namespace SecureFolderFS.Core.FileNames
             }
         }
 
-        private void SetCleartextName(ReadOnlyMemory<char> cleartextName, ReadOnlyMemory<char> ciphertextName, DirectoryId directoryId)
+        private void SetCleartextName(ReadOnlyMemory<char> cleartextName, ReadOnlyMemory<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            if (_cleartextNames.Count >= Constants.Caching.MAX_CACHED_CLEARTEXT_FILENAMES)
+            if (_cleartextNames.Count >= Constants.Caching.CLEARTEXT_FILENAMES_CACHE_SIZE)
                 _cleartextNames.Remove(_cleartextNames.Keys.First(), out _);
 
-            _cleartextNames[new(directoryId, ciphertextName)] = cleartextName;
+            _cleartextNames[new(directoryId.ToArray(), ciphertextName)] = cleartextName;
         }
 
-        private void SetCiphertextName(ReadOnlyMemory<char> ciphertextName, ReadOnlyMemory<char> cleartextName, DirectoryId directoryId)
+        private void SetCiphertextName(ReadOnlyMemory<char> ciphertextName, ReadOnlyMemory<char> cleartextName, ReadOnlySpan<byte> directoryId)
         {
-            if (_ciphertextNames.Count >= Constants.Caching.MAX_CACHED_CIPHERTEXT_FILENAMES)
+            if (_ciphertextNames.Count >= Constants.Caching.CIPHERTEXT_FILENAMES_CACHE_SIZE)
                 _ciphertextNames.Remove(_ciphertextNames.Keys.First(), out _);
 
-            _ciphertextNames[new(directoryId, cleartextName)] = ciphertextName;
+            _ciphertextNames[new(directoryId.ToArray(), cleartextName)] = ciphertextName;
         }
 
-        private sealed record NameWithDirectoryId(DirectoryId DirectoryId, ReadOnlyMemory<char> FileName);
+        // TODO: Replace with something else. Perhaps GetHashCode()?
+        private sealed record NameWithDirectoryId(ReadOnlyMemory<byte> DirectoryId, ReadOnlyMemory<char> FileName);
     }
 }

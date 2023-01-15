@@ -84,13 +84,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public virtual NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
         {
-            if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is { } fileHandle)
-            {
-                fileHandle.Stream.SetLength(length);
-                return DokanResult.Success;
-            }
+            if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
+                return DokanResult.InvalidHandle;
 
-            return DokanResult.InvalidHandle;
+            fileHandle.Stream.SetLength(length);
+            return DokanResult.Success;
         }
 
         /// <inheritdoc/>

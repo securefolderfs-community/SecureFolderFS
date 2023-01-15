@@ -216,7 +216,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             // Initialize directory with directory ID
             var directoryIdPath = Path.Combine(ciphertextPath, Constants.DIRECTORY_ID_FILENAME);
-            _ = DirectoryIdAccess.SetDirectoryId(directoryIdPath, DirectoryId.CreateNew());
+            _ = DirectoryIdAccess.SetDirectoryId(directoryIdPath, Guid.NewGuid().ToByteArray()); // TODO: Maybe nodiscard?
 
             return 0;
         }

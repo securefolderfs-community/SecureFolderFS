@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace SecureFolderFS.Core.FileSystem.Directories
 {
@@ -12,8 +11,9 @@ namespace SecureFolderFS.Core.FileSystem.Directories
         /// Gets the directory ID of provided <paramref name="ciphertextPath"/> directory ID file path.
         /// </summary>
         /// <param name="ciphertextPath">The path to the ciphertext directory ID file.</param>
-        /// <returns>Value is <see cref="DirectoryId"/> if the directory ID was retrieved successfully, otherwise null.</returns>
-        DirectoryId? GetDirectoryId(string ciphertextPath);
+        /// <param name="directoryId">The <see cref="Span{T}"/> to fill the directory ID into.</param>
+        /// <returns>If the <paramref name="directoryId"/> was retrieved successfully, return true, otherwise false.</returns>
+        bool GetDirectoryId(string ciphertextPath, Span<byte> directoryId);
 
         /// <summary>
         /// Sets the directory ID of provided <paramref name="ciphertextPath"/> directory ID file path.
@@ -21,24 +21,7 @@ namespace SecureFolderFS.Core.FileSystem.Directories
         /// <param name="ciphertextPath">The path to the ciphertext directory ID file.</param>
         /// <param name="directoryId">The <see cref="DirectoryId"/> to set for the directory.</param>
         /// <returns>Value is true if directory ID was successfully set, otherwise false.</returns>
-        bool SetDirectoryId(string ciphertextPath, DirectoryId directoryId);
-
-        /// <summary>
-        /// Gets the directory ID of provided <paramref name="ciphertextPath"/> directory path.
-        /// </summary>
-        /// <param name="ciphertextPath">The path to the ciphertext directory.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="DirectoryId"/> if the directory ID was retrieved successfully, otherwise null.</returns>
-        Task<DirectoryId?> GetDirectoryIdAsync(string ciphertextPath, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Sets the directory ID of provided <paramref name="ciphertextPath"/> directory path.
-        /// </summary>
-        /// <param name="ciphertextPath">The path to the ciphertext directory.</param>
-        /// <param name="directoryId">The <see cref="DirectoryId"/> to set for the directory.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is true if directory ID was successfully set, otherwise false.</returns>
-        Task<bool> SetDirectoryIdAsync(string ciphertextPath, DirectoryId directoryId, CancellationToken cancellationToken = default);
+        bool SetDirectoryId(string ciphertextPath, ReadOnlySpan<byte> directoryId);
 
         /// <summary>
         /// Removes associated directory ID from the list of known IDs.

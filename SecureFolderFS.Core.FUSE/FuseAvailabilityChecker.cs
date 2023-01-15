@@ -10,6 +10,7 @@ namespace SecureFolderFS.Core.FUSE
         /// <inheritdoc/>
         public Task<FileSystemAvailabilityType> DetermineAvailabilityAsync()
         {
+
             return Task.FromResult(Fuse.CheckDependencies() ? FileSystemAvailabilityType.Available : FileSystemAvailabilityType.ModuleNotAvailable);
         }
     }
