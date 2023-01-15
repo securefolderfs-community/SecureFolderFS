@@ -12,11 +12,11 @@ namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IDavFile"/>
     /// <typeparam name="TCapability">An interface that represents capabilities of this file.</typeparam>
-    internal sealed class DavFile<TCapability> : DavStorable<IDavFile, TCapability>, IDavFile
+    internal class DavFile<TCapability> : DavStorable<IDavFile, TCapability>, IDavFile
         where TCapability : IFile
     {
         /// <inheritdoc/>
-        public string Path => StorableInternal.TryGetPath() ?? string.Empty;
+        public string Path => Inner.TryGetPath() ?? string.Empty;
 
         /// <inheritdoc/>
         protected override IDavFile Implementation => this;
@@ -27,24 +27,24 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
+        public virtual Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
         {
-            return StorableInternal.OpenStreamAsync(access, cancellationToken);
+            return Inner.OpenStreamAsync(access, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
+        public virtual Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is IFileExtended fileExtended)
+            if (Inner is IFileExtended fileExtended)
                 return fileExtended.OpenStreamAsync(access, share, cancellationToken);
 
-            return StorableInternal.OpenStreamAsync(access, cancellationToken);
+            return Inner.OpenStreamAsync(access, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            if (StorableInternal is not ILocatableStorable locatableStorable)
+            if (Inner is not ILocatableStorable locatableStorable)
                 return null;
 
             var parentFolder = await locatableStorable.GetParentAsync(cancellationToken);

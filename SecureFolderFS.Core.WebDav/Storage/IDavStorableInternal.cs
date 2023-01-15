@@ -1,11 +1,12 @@
 ﻿using NWebDav.Server.Storage;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.WebDav.Storage
 {
-    internal interface IDavStorableInternal<out TStorableInternal> : IDavStorable
+    // TODO: Add docs
+    public interface IDavStorableInternal<out TStorableInternal> : IWrapper<TStorableInternal>, IDavStorable
         where TStorableInternal : IStorable
     {
-        TStorableInternal StorableInternal { get; }
     }
 }

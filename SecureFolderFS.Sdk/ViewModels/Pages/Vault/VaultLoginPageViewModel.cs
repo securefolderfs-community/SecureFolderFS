@@ -96,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 _ = dokanyFileSystem;
                 _ = webDavFileSystem;
 
-                var vaultUnlockingModel = new VaultUnlockingModel(webDavFileSystem);
+                var vaultUnlockingModel = new VaultUnlockingModel(dokanyFileSystem);
                 LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
             }
             else

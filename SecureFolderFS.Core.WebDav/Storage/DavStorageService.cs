@@ -9,30 +9,30 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IStorageService"/>
-    internal sealed class DavStorageService : IStorageService
+    internal class DavStorageService : IStorageService
     {
-        private readonly ILocatableFolder _baseDirectory;
-        private readonly IStorageService _storageService;
+        protected readonly ILocatableFolder baseDirectory;
+        protected readonly IStorageService storageService;
 
         public DavStorageService(ILocatableFolder baseDirectory, IStorageService storageService)
         {
-            _baseDirectory = baseDirectory;
-            _storageService = storageService;
+            this.baseDirectory = baseDirectory;
+            this.storageService = storageService;
         }
 
         /// <inheritdoc/>
-        public Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default)
+        public virtual Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default)
         {
-            return _storageService.IsAccessibleAsync(cancellationToken);
+            return storageService.IsAccessibleAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default)
         {
             try
             {
                 var realPath = GetPathFromUriPath(path);
-                return await _storageService.FileExistsAsync(realPath, cancellationToken);
+                return await storageService.FileExistsAsync(realPath, cancellationToken);
             }
             catch (Exception)
             {
@@ -41,12 +41,12 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<bool> DirectoryExistsAsync(string path, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> DirectoryExistsAsync(string path, CancellationToken cancellationToken = default)
         {
             try
             {
                 var realPath = GetPathFromUriPath(path);
-                return await _storageService.DirectoryExistsAsync(realPath, cancellationToken);
+                return await storageService.DirectoryExistsAsync(realPath, cancellationToken);
             }
             catch (Exception)
             {
@@ -55,20 +55,20 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder> GetFolderFromPathAsync(string path, CancellationToken cancellationToken = default)
+        public virtual async Task<ILocatableFolder> GetFolderFromPathAsync(string path, CancellationToken cancellationToken = default)
         {
             var realPath = GetPathFromUriPath(path);
-            var folder = await _storageService.GetFolderFromPathAsync(realPath, cancellationToken);
+            var folder = await storageService.GetFolderFromPathAsync(realPath, cancellationToken);
             var davFolder = new DavFolder<ILocatableFolder>(folder);
 
             return davFolder;
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile> GetFileFromPathAsync(string path, CancellationToken cancellationToken = default)
+        public virtual async Task<ILocatableFile> GetFileFromPathAsync(string path, CancellationToken cancellationToken = default)
         {
             var realPath = GetPathFromUriPath(path);
-            var file = await _storageService.GetFileFromPathAsync(realPath, cancellationToken);
+            var file = await storageService.GetFileFromPathAsync(realPath, cancellationToken);
             var davFile = new DavFile<ILocatableFile>(file);
 
             return davFile;
@@ -77,9 +77,9 @@ namespace SecureFolderFS.Core.WebDav.Storage
         private string GetPathFromUriPath(string uriPath)
         {
             var decodedPath = uriPath.Substring(1).Replace('/', Path.DirectorySeparatorChar);
-            var fullPath = Path.Combine(_baseDirectory.Path, decodedPath);
+            var fullPath = Path.Combine(baseDirectory.Path, decodedPath);
 
-            if (fullPath != _baseDirectory.Path && !fullPath.StartsWith(_baseDirectory.Path + Path.DirectorySeparatorChar))
+            if (fullPath != baseDirectory.Path && !fullPath.StartsWith(baseDirectory.Path + Path.DirectorySeparatorChar))
                 throw new SecurityException($"The requested path was outside base directory.");
 
             return fullPath;

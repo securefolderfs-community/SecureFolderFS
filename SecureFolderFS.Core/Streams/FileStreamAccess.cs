@@ -24,15 +24,10 @@ namespace SecureFolderFS.Core.Streams
             try
             {
                 // Get or create encrypted file from the file system
-                var openCryptFile = _cryptFileManager.TryGet(ciphertextPath)
-                                    ?? _cryptFileManager.CreateNew(ciphertextPath, new HeaderBuffer(_security.HeaderCrypt.HeaderCleartextSize));
-
-                // Check if something went wrong
-                if (openCryptFile is null)
-                    return null;
+                var openCryptFile = _cryptFileManager.TryGet(ciphertextPath) ?? _cryptFileManager.CreateNew(ciphertextPath, new HeaderBuffer(_security.HeaderCrypt.HeaderCleartextSize));
 
                 // Open a new stream for that file registering existing ciphertext stream
-                return openCryptFile.OpenStream(ciphertextStream);
+                return openCryptFile?.OpenStream(ciphertextStream);
             }
             catch (Exception)
             {
