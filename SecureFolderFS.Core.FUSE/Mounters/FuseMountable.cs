@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
@@ -41,6 +40,10 @@ namespace SecureFolderFS.Core.FUSE.Mounters
                 throw new ArgumentException($"{nameof(FuseMountOptions)}.{nameof(fuseMountOptions.AllowOtherUserAccess)} and " +
                                             $"{nameof(FuseMountOptions)}.{nameof(fuseMountOptions.AllowRootUserAccess)} are mutually exclusive.");
 
+            if ((fuseMountOptions.AllowOtherUserAccess || fuseMountOptions.AllowRootUserAccess) && !CanAllowOtherUsers())
+                throw new ArgumentException($"{nameof(fuseMountOptions.AllowOtherUserAccess)} has been specified but user_allow_other is not uncommented " +
+                                            "in /etc/fuse.conf.");
+
             var mountPoint = fuseMountOptions.MountPoint;
             if (mountPoint == null)
                 Cleanup();
@@ -51,13 +54,7 @@ namespace SecureFolderFS.Core.FUSE.Mounters
                 throw new ArgumentException("A filesystem is already mounted in the specified path.");
 
             if (mountPoint == null)
-            {
-                mountPoint = Path.Combine(DefaultMountDirectory, _vaultName);
-
-                var i = 1;
-                while (IsMountPoint(mountPoint))
-                    mountPoint = Path.Combine(DefaultMountDirectory, $"{_vaultName} ({i++})");
-            }
+                mountPoint = GetFreeMountPoint(_vaultName);
 
             if (!Directory.Exists(mountPoint))
                 Directory.CreateDirectory(mountPoint);
@@ -99,6 +96,17 @@ namespace SecureFolderFS.Core.FUSE.Mounters
             return stat.st_dev != parentStat.st_dev;
         }
 
+        private static string GetFreeMountPoint(string vaultName)
+        {
+            var mountPoint = Path.Combine(DefaultMountDirectory, vaultName);
+
+            var i = 1;
+            while (IsMountPoint(mountPoint))
+                mountPoint = Path.Combine(DefaultMountDirectory, $"{vaultName} ({i++})");
+
+            return mountPoint;
+        }
+
         /// <summary>
         /// Removes mount points without a connected transport endpoint in the default mount directory.
         /// </summary>
@@ -122,6 +130,20 @@ namespace SecureFolderFS.Core.FUSE.Mounters
             {
                 Fuse.LazyUnmount(directory);
                 Directory.Delete(directory);
+            }
+        }
+
+        /// <returns>Whether the user_allow_other option is uncommented in /etc/fuse.conf</returns>
+        private static bool CanAllowOtherUsers()
+        {
+            try
+            {
+                return File.ReadAllLines("/etc/fuse.conf")
+                    .Any(x => x.Trim() == "user_allow_other");
+            }
+            catch
+            {
+                return false;
             }
         }
     }
