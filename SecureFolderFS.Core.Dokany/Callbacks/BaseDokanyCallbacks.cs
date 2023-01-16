@@ -4,6 +4,7 @@ using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Exceptions;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Paths;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
     internal abstract class BaseDokanyCallbacks : IDokanOperationsUnsafe
     {
         protected readonly IPathConverter pathConverter;
-        protected readonly HandlesManager handlesManager;
+        protected readonly BaseHandlesManager handlesManager;
         protected readonly DokanyVolumeModel volumeModel;
         protected readonly IFileSystemHealthStatistics? fileSystemHealthStatistics;
 
-        protected BaseDokanyCallbacks(IPathConverter pathConverter, HandlesManager handlesManager, DokanyVolumeModel volumeModel, IFileSystemHealthStatistics? fileSystemHealthStatistics)
+        protected BaseDokanyCallbacks(IPathConverter pathConverter, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel, IFileSystemHealthStatistics? fileSystemHealthStatistics)
         {
             this.pathConverter = pathConverter;
             this.handlesManager = handlesManager;
@@ -135,7 +136,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             IDokanFileInfo info)
         {
             var ciphertextPath = GetCiphertextPath(fileName);
-            var contextHandle = Constants.FileSystem.INVALID_HANDLE;
+            var contextHandle = FileSystem.Constants.INVALID_HANDLE;
             var openedNewHandle = false;
 
             // Check if the path is correct
@@ -149,7 +150,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (IsContextInvalid(info) || handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
-                contextHandle = handlesManager.OpenHandleToFile(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
+                contextHandle = handlesManager.OpenFileHandle(ciphertextPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.Read, FileOptions.None);
                 fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle)!;
                 openedNewHandle = true;
             }
@@ -199,7 +200,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
             var ciphertextPath = GetCiphertextPath(fileName);
             var appendToFile = offset == -1;
-            var contextHandle = Constants.FileSystem.INVALID_HANDLE;
+            var contextHandle = FileSystem.Constants.INVALID_HANDLE;
             var openedNewHandle = false;
 
             // Check if the path is correct
@@ -213,7 +214,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (IsContextInvalid(info) || handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
             {
                 // Invalid handle...
-                contextHandle = handlesManager.OpenHandleToFile(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
+                contextHandle = handlesManager.OpenFileHandle(ciphertextPath, appendToFile ? FileMode.Append : FileMode.Open, System.IO.FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
                 fileHandle = handlesManager.GetHandle<FileHandle>(contextHandle)!;
                 openedNewHandle = true;
             }
@@ -321,19 +322,19 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static bool IsContextInvalid(IDokanFileInfo info)
         {
-            return GetContextValue(info) == Constants.FileSystem.INVALID_HANDLE;
+            return GetContextValue(info) == FileSystem.Constants.INVALID_HANDLE;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static void InvalidateContext(IDokanFileInfo info)
         {
-            info.Context = Constants.FileSystem.INVALID_HANDLE;
+            info.Context = FileSystem.Constants.INVALID_HANDLE;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static long GetContextValue(IDokanFileInfo info)
+        protected static ulong GetContextValue(IDokanFileInfo info)
         {
-            return info.Context is long ctxLong ? ctxLong : Constants.FileSystem.INVALID_HANDLE;
+            return info.Context is ulong ctxUlong ? ctxUlong : FileSystem.Constants.INVALID_HANDLE;
         }
 
         protected static int AlignSizeForPagingIo(int bufferLength, long offset, long streamLength, IDokanFileInfo info)

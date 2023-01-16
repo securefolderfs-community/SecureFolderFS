@@ -24,7 +24,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override bool SupportsMultiThreading => true;
 
-        public OnDeviceFuse(IPathConverter pathConverter, HandlesManager handlesManager)
+        public OnDeviceFuse(IPathConverter pathConverter, FuseHandlesManager handlesManager)
             : base(pathConverter, handlesManager)
         {
         }
@@ -133,7 +133,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOENT;
 
             foreach (var handle in handlesManager.OpenHandles)
-                if (handle is FuseFileHandle fuseFileHandle && fuseFileHandle.Directory == Path.GetDirectoryName(ciphertextPath))
+                if (handle is FuseFileHandle fuseFileHandle && Path.GetDirectoryName(ciphertextPath)!.StartsWith(fuseFileHandle.Directory))
                     fuseFileHandle.Stream.Flush();
 
             if (onlyData)
@@ -247,11 +247,11 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 options |= FileOptions.DeleteOnClose;
 
             var access = mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite;
-            var handle = handlesManager.OpenHandleToFile(ciphertextPath, mode, access, FileShare.ReadWrite, options);
-            if (handle == null)
+            var handle = handlesManager.OpenFileHandle(ciphertextPath, mode, access, FileShare.ReadWrite, options);
+            if (handle == Constants.INVALID_HANDLE)
                 return -EACCES;
 
-            fi.fh = handle.Value;
+            fi.fh = handle;
             return 0;
         }
 
@@ -376,8 +376,8 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             FuseFileHandle? handle;
             if (fiRef.IsNull)
             {
-                var newHandle = handlesManager.OpenHandleToFile(ciphertextPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.None);
-                if (newHandle == null)
+                var newHandle = handlesManager.OpenFileHandle(ciphertextPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.None);
+                if (newHandle == Constants.INVALID_HANDLE)
                     return -EIO;
 
                 handle = handlesManager.GetHandle<FuseFileHandle>(newHandle)!;

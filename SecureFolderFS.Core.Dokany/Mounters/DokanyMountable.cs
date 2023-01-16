@@ -2,6 +2,7 @@
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
+using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.AppModels;
@@ -62,7 +63,7 @@ namespace SecureFolderFS.Core.Dokany.Mounters
                                      | FileSystemFeatures.SupportsRemoteStorage
                                      | FileSystemFeatures.UnicodeOnDisk
             };
-            var dokanyCallbacks = new OnDeviceDokany(pathConverter, new(streamsAccess), volumeModel, fileSystemHealthStatistics)
+            var dokanyCallbacks = new OnDeviceDokany(pathConverter, new DokanyHandlesManager(streamsAccess), volumeModel, fileSystemHealthStatistics)
             {
                 LocatableContentFolder = locatableContentFolder,
                 DirectoryIdAccess = directoryIdAccess,

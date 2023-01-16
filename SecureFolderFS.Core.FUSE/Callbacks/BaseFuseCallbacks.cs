@@ -8,9 +8,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
     internal abstract class BaseFuseCallbacks : FuseFileSystemBase
     {
         protected readonly IPathConverter pathConverter;
-        protected readonly HandlesManager handlesManager;
+        protected readonly FuseHandlesManager handlesManager;
 
-        protected BaseFuseCallbacks(IPathConverter pathConverter, HandlesManager handlesManager)
+        protected BaseFuseCallbacks(IPathConverter pathConverter, FuseHandlesManager handlesManager)
         {
             this.pathConverter = pathConverter;
             this.handlesManager = handlesManager;

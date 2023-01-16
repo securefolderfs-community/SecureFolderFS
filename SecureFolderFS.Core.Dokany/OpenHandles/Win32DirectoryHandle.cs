@@ -2,10 +2,8 @@
 
 namespace SecureFolderFS.Core.Dokany.OpenHandles
 {
-    /// <summary>
-    /// Represents a directory handle on the virtual file system.
-    /// </summary>
-    internal sealed class DirectoryHandle : ObjectHandle
+    /// <inheritdoc cref="DirectoryHandle"/>
+    internal sealed class Win32DirectoryHandle : DirectoryHandle
     {
         /// <inheritdoc/>
         public override void Dispose()
