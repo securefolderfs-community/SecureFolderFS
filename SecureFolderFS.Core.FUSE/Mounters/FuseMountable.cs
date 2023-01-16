@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.FUSE.Mounters
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class FuseMountable : IMountableFileSystem
     {
-        private static readonly string DefaultMountDirectory = 
+        private static readonly string DefaultMountDirectory =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), nameof(SecureFolderFS), "mount");
 
         private readonly FuseWrapper _fuseWrapper;
@@ -36,6 +36,10 @@ namespace SecureFolderFS.Core.FUSE.Mounters
         {
             if (mountOptions is not FuseMountOptions fuseMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(FuseMountOptions)}.");
+
+            if (fuseMountOptions.AllowOtherUserAccess && fuseMountOptions.AllowRootUserAccess)
+                throw new ArgumentException($"{nameof(FuseMountOptions)}.{nameof(fuseMountOptions.AllowOtherUserAccess)} and " +
+                                            $"{nameof(FuseMountOptions)}.{nameof(fuseMountOptions.AllowRootUserAccess)} are mutually exclusive.");
 
             var mountPoint = fuseMountOptions.MountPoint;
             if (mountPoint == null)
@@ -58,7 +62,7 @@ namespace SecureFolderFS.Core.FUSE.Mounters
             if (!Directory.Exists(mountPoint))
                 Directory.CreateDirectory(mountPoint);
 
-            _fuseWrapper.StartFileSystem(mountPoint);
+            _fuseWrapper.StartFileSystem(fuseMountOptions);
             var fuseFileSystem = new FuseFileSystem(_fuseWrapper, new SimpleFolder(mountPoint));
 
             return Task.FromResult<IVirtualFileSystem>(fuseFileSystem);

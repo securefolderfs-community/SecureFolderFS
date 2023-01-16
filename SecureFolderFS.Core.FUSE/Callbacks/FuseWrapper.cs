@@ -1,4 +1,5 @@
 using SecureFolderFS.Core.FileSystem.Enums;
+using SecureFolderFS.Core.FUSE.AppModels;
 using Tmds.Fuse;
 
 namespace SecureFolderFS.Core.FUSE.Callbacks
@@ -13,11 +14,17 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             _fuseCallbacks = fuseCallbacks;
         }
 
-        public void StartFileSystem(string mountPoint)
+        public void StartFileSystem(FuseMountOptions mountOptions)
         {
-            _fuseMount = Fuse.Mount(mountPoint, _fuseCallbacks, new MountOptions
+            var rawOptions = "default_permissions";
+            if (mountOptions.AllowOtherUserAccess)
+                rawOptions += ",allow_other";
+            else if (mountOptions.AllowRootUserAccess)
+                rawOptions += ",allow_root";
+
+            _fuseMount = Fuse.Mount(mountOptions.MountPoint, _fuseCallbacks, new MountOptions
             {
-                Options = "default_permissions"
+                Options = rawOptions
             });
         }
 
