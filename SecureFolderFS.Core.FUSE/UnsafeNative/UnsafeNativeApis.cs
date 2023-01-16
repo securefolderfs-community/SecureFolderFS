@@ -4,6 +4,10 @@ namespace SecureFolderFS.Core.FUSE.UnsafeNative
 {
     internal static unsafe class UnsafeNativeApis
     {
+        public const int RENAME_NOREPLACE = 1 << 0;
+        public const int RENAME_EXCHANGE = 1 << 1;
+        public const int RENAME_WHITEOUT = 1 << 2;
+
         [DllImport("libc.so.6", SetLastError = true, EntryPoint = "getxattr")]
         public static extern int GetXAttr(byte *path, byte *name, void *value, int size);
 
