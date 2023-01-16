@@ -35,5 +35,15 @@ namespace SecureFolderFS.Core.FUSE.AppModels
         /// </para>
         /// </remarks>
         public bool AllowOtherUserAccess { get; init; }
+
+        /// <summary>
+        /// Gets whether the filesystem is read-only.
+        /// </summary>
+        public bool IsReadOnly { get; init; }
+
+        /// <summary>
+        /// Gets whether to print debugging information to the console.
+        /// </summary>
+        public bool PrintDebugInformation { get; init; }
     }
 }

@@ -1,4 +1,5 @@
 using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.OpenHandles;
 using Tmds.Fuse;
 
@@ -14,6 +15,11 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             this.pathConverter = pathConverter;
             this.handlesManager = handlesManager;
         }
+
+        /// <remarks>
+        /// Null before the filesystem has been mounted.
+        /// </remarks>
+        public FuseMountOptions? MountOptions { get; set; }
 
         protected abstract string? GetCiphertextPath(ReadOnlySpan<byte> cleartextName);
     }

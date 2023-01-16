@@ -6,10 +6,10 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 {
     internal sealed class FuseWrapper
     {
-        private readonly OnDeviceFuse _fuseCallbacks;
+        private readonly BaseFuseCallbacks _fuseCallbacks;
         private IFuseMount? _fuseMount;
 
-        public FuseWrapper(OnDeviceFuse fuseCallbacks)
+        public FuseWrapper(BaseFuseCallbacks fuseCallbacks)
         {
             _fuseCallbacks = fuseCallbacks;
         }
@@ -22,6 +22,14 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             else if (mountOptions.AllowRootUserAccess)
                 rawOptions += ",allow_root";
 
+            if (mountOptions.IsReadOnly)
+            {
+                rawOptions += ",ro";
+            }
+            if (mountOptions.PrintDebugInformation)
+                rawOptions += ",debug";
+
+            _fuseCallbacks.MountOptions = mountOptions;
             _fuseMount = Fuse.Mount(mountOptions.MountPoint, _fuseCallbacks, new MountOptions
             {
                 Options = rawOptions

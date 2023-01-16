@@ -34,6 +34,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int ChMod(ReadOnlySpan<byte> path, mode_t mode, FuseFileInfoRef fiRef)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -47,6 +50,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Chown(ReadOnlySpan<byte> path, uint uid, uint gid, FuseFileInfoRef fiRef)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -60,6 +66,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Create(ReadOnlySpan<byte> path, mode_t mode, ref FuseFileInfo fi)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -81,6 +90,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override int FAllocate(ReadOnlySpan<byte> path, int mode, ulong offset, long length, ref FuseFileInfo fi)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -115,7 +127,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         public override unsafe int FSync(ReadOnlySpan<byte> path, bool onlyData, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
-            if (handle is null)
+            if (handle is null || !handle.FileAccess.HasFlag(FileAccess.Write))
                 return -EBADF;
 
             var ciphertextPath = GetCiphertextPath(path);
@@ -145,6 +157,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override unsafe int FSyncDir(ReadOnlySpan<byte> path, bool onlyData, ref FuseFileInfo fi)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -240,6 +255,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int MkDir(ReadOnlySpan<byte> path, mode_t mode)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -279,6 +297,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             }
             if ((fi.flags & O_TMPFILE) != 0)
                 options |= FileOptions.DeleteOnClose;
+
+            if (MountOptions!.IsReadOnly && (mode == FileMode.Create || mode == FileMode.Truncate || (fi.flags & O_WRONLY) != 0 || (fi.flags & O_RDWR) != 0))
+                return -EROFS;
 
             var access = mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite;
             var handle = handlesManager.OpenFileHandle(ciphertextPath, mode, access, FileShare.ReadWrite, options);
@@ -346,6 +367,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int RemoveXAttr(ReadOnlySpan<byte> path, ReadOnlySpan<byte> name)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -360,6 +384,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int Rename(ReadOnlySpan<byte> path, ReadOnlySpan<byte> newPath, int flags)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             var newCiphertextPath = GetCiphertextPath(newPath);
             if (ciphertextPath is null || newCiphertextPath is null)
@@ -375,6 +402,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int RmDir(ReadOnlySpan<byte> path)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -394,6 +424,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int SetXAttr(ReadOnlySpan<byte> path, ReadOnlySpan<byte> name, ReadOnlySpan<byte> value, int flags)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -424,6 +457,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override int Truncate(ReadOnlySpan<byte> path, ulong length, FuseFileInfoRef fiRef)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -461,6 +497,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         /// </remarks>
         public override unsafe int Unlink(ReadOnlySpan<byte> path)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (!File.Exists(ciphertextPath))
                 return -ENOENT;
@@ -476,6 +515,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public override unsafe int UpdateTimestamps(ReadOnlySpan<byte> path, ref timespec atime, ref timespec mtime, FuseFileInfoRef fiRef)
         {
+            if (MountOptions!.IsReadOnly)
+                return -EROFS;
+
             var ciphertextPath = GetCiphertextPath(path);
             if (ciphertextPath is null)
                 return -ENOENT;
@@ -520,7 +562,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         public override int Write(ReadOnlySpan<byte> path, ulong offset, ReadOnlySpan<byte> buffer, ref FuseFileInfo fi)
         {
             var handle = handlesManager.GetHandle<FuseFileHandle>(fi.fh);
-            if (handle is null)
+            if (handle is null || !handle.FileAccess.HasFlag(FileAccess.Write))
                 return -EBADF;
 
             if (handle.FileMode == FileMode.Append)
