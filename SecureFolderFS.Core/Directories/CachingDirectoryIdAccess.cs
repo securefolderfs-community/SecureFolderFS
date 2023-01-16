@@ -10,14 +10,13 @@ namespace SecureFolderFS.Core.Directories
     /// <inheritdoc cref="IDirectoryIdAccess"/>
     public sealed class CachingDirectoryIdAccess : BaseDirectoryIdAccess
     {
+        private readonly object _lock = new();
         private readonly Dictionary<string, DirectoryIdBuffer> _directoryIdCache;
-        private readonly object _lock;
 
         public CachingDirectoryIdAccess(IDirectoryIdStreamAccess directoryIdStreamAccess, IFileSystemStatistics? fileSystemStatistics, IFileSystemHealthStatistics? fileSystemHealthStatistics)
             : base(directoryIdStreamAccess, fileSystemStatistics, fileSystemHealthStatistics)
         {
             _directoryIdCache = new(Constants.Caching.DIRECTORY_ID_CACHE_SIZE);
-            _lock = new();
         }
 
         /// <inheritdoc/>
