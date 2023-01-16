@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
                 // FileMode.Write would cause an error when writing, as the stream needs to be readable.
                 Mode = mode == FileMode.Append ? FileMode.Open : mode,
                 Access = FileAccess.ReadWrite,
-                Share = share,
+                Share = share | FileShare.Delete,
                 Options = options
             });
 

@@ -495,6 +495,9 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (handle.FileMode == FileMode.Append)
                 offset = (ulong)handle.Stream.Length;
 
+            if ((long)offset + buffer.Length > handle.Stream.Length)
+                handle.Stream.SetLength((long)offset + buffer.Length);
+
             handle.Stream.Position = (long)offset;
             handle.Stream.Write(buffer);
 
