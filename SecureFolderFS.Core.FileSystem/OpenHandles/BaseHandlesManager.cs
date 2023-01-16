@@ -14,6 +14,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
     public abstract class BaseHandlesManager : IDisposable
     {
         protected bool disposed;
+        protected readonly object handlesLock = new();
         protected readonly IStreamsAccess streamsAccess;
         protected readonly HandlesGenerator handlesGenerator;
         protected readonly Dictionary<ulong, ObjectHandle> handles;
@@ -55,10 +56,13 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             if (disposed || handleId == Constants.INVALID_HANDLE)
                 return null;
 
-            if (!handles.TryGetValue(handleId, out var handleObject))
-                return null;
+            lock (handlesLock)
+            {
+                if (!handles.TryGetValue(handleId, out var handleObject))
+                    return null;
 
-            return (THandle?)handleObject;
+                return (THandle?)handleObject;
+            }
         }
 
         /// <summary>
@@ -67,11 +71,14 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         /// <param name="handleId">The ID of the handle.</param>
         public virtual void CloseHandle(ulong handleId)
         {
-            if (handleId == Constants.INVALID_HANDLE)
+            if (disposed || handleId == Constants.INVALID_HANDLE)
                 return;
 
-            if (handles.Remove(handleId, out var handleObject))
-                handleObject.Dispose();
+            lock (handlesLock)
+            {
+                if (handles.Remove(handleId, out var handleObject))
+                    handleObject.Dispose();
+            }
         }
 
         /// <inheritdoc/>
@@ -81,8 +88,11 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
                 return;
 
             disposed = true;
-            handles.Values.DisposeCollection();
-            handles.Clear();
+            lock (handlesLock)
+            {
+                handles.Values.DisposeCollection();
+                handles.Clear();
+            }
         }
 
         protected sealed class HandlesGenerator

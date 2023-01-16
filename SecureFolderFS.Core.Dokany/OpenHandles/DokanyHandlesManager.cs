@@ -15,7 +15,12 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
         /// <inheritdoc/>
         public override ulong OpenFileHandle(string ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
         {
-            share = FileShare.ReadWrite | FileShare.Delete; // TODO: Temporary fix for file share issue
+            // Make sure the handles manager was not disposed
+            if (disposed)
+                return FileSystem.Constants.INVALID_HANDLE;
+
+            // TODO: Temporary fix for file share issue
+            share = FileShare.ReadWrite | FileShare.Delete;
 
             // Open ciphertext stream
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
@@ -26,7 +31,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             if (cleartextStream is null)
                 return FileSystem.Constants.INVALID_HANDLE;
 
-            // Flush ChunkAccess if the opened to Truncate
+            // Flush ChunkAccess if opened with Truncate flag
             if (mode == FileMode.Truncate)
                 cleartextStream.Flush();
 
@@ -34,8 +39,9 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             var fileHandle = new Win32FileHandle(cleartextStream); // TODO: For now it's Win32FileHandle
             var handleId = handlesGenerator.ThreadSafeIncrement();
 
-            // Add handle
-            handles.Add(handleId, fileHandle);
+            // Lock collection and add handle
+            lock (handlesLock)
+                handles.Add(handleId, fileHandle);
 
             return handleId;
         }
