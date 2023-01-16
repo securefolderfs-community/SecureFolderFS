@@ -20,29 +20,32 @@ namespace SecureFolderFS.Core.Chunks
         {
             // Rent buffer
             var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
-            var realCleartextChunk = cleartextChunk.AsSpan(0, contentCrypt.ChunkCleartextSize);
-
-            // Read chunk
-            var read = chunkReader.ReadChunk(chunkNumber, realCleartextChunk);
-
-            // Check for errors
-            if (read < 0)
+            try
             {
-                ArrayPool<byte>.Shared.Return(cleartextChunk);
-                return read;
+                // ArrayPool may return larger array than requested
+                var realCleartextChunk = cleartextChunk.AsSpan(0, contentCrypt.ChunkCleartextSize);
+
+                // Read chunk
+                var read = chunkReader.ReadChunk(chunkNumber, realCleartextChunk);
+
+                // Check for any errors
+                if (read < 0)
+                    return read;
+
+                // Copy from chunk
+                var count = Math.Min(read - offsetInChunk, destination.Length);
+                if (count <= 0)
+                    return 0;
+
+                realCleartextChunk.Slice(offsetInChunk, count).CopyTo(destination);
+
+                return count;
             }
-
-            // Copy from chunk
-            var count = Math.Min(read - offsetInChunk, destination.Length);
-            if (count <= 0)
-                return 0;
-
-            realCleartextChunk.Slice(offsetInChunk, count).CopyTo(destination);
-
-            // Return buffer
-            ArrayPool<byte>.Shared.Return(cleartextChunk);
-
-            return count;
+            finally
+            {
+                // Return buffer
+                ArrayPool<byte>.Shared.Return(cleartextChunk);
+            }
         }
 
         /// <inheritdoc/>
@@ -50,46 +53,65 @@ namespace SecureFolderFS.Core.Chunks
         {
             // Rent buffer
             var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
-            var realCleartextChunk = cleartextChunk.AsSpan(0, contentCrypt.ChunkCleartextSize);
-
-            // Read chunk
-            var read = chunkReader.ReadChunk(chunkNumber, realCleartextChunk);
-
-            // Check for errors
-            if (read < 0)
+            try
             {
-                ArrayPool<byte>.Shared.Return(cleartextChunk);
-                return read;
+                // ArrayPool may return larger array than requested
+                var realCleartextChunk = cleartextChunk.AsSpan(0, contentCrypt.ChunkCleartextSize);
+
+                // Read chunk
+                var read = chunkReader.ReadChunk(chunkNumber, realCleartextChunk);
+
+                // Check for any errors
+                if (read < 0)
+                    return read;
+
+                // Copy to chunk
+                var count = Math.Min(contentCrypt.ChunkCleartextSize - offsetInChunk, source.Length);
+                if (count <= 0)
+                    return 0;
+
+                var destination = realCleartextChunk.Slice(offsetInChunk, count);
+                source.Slice(0, count).CopyTo(destination);
+
+                // Write to chunk
+                chunkWriter.WriteChunk(chunkNumber, destination);
+
+                return count;
             }
-
-            // Copy to chunk
-            var count = Math.Min(contentCrypt.ChunkCleartextSize - offsetInChunk, source.Length);
-            if (count <= 0)
-                return 0;
-
-            var destination = realCleartextChunk.Slice(offsetInChunk, count);
-            source.Slice(0, count).CopyTo(destination);
-
-            // Write to chunk
-            chunkWriter.WriteChunk(chunkNumber, destination);
-
-            // Return buffer
-            ArrayPool<byte>.Shared.Return(cleartextChunk);
-
-            return count;
+            finally
+            {
+                // Return buffer
+                ArrayPool<byte>.Shared.Return(cleartextChunk);
+            }
         }
 
         /// <inheritdoc/>
         public override void SetChunkLength(long chunkNumber, int length)
         {
-            var cleartextChunk = new byte[contentCrypt.ChunkCleartextSize];
-            var read = chunkReader.ReadChunk(chunkNumber, cleartextChunk);
-            if (read == -1)
-                throw new CryptographicException();
+            // Rent buffer
+            var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
+            try
+            {
+                // ArrayPool may return larger array than requested
+                var realCleartextChunk = cleartextChunk.AsSpan(0, contentCrypt.ChunkCleartextSize);
 
-            var newLengthCleartextChunk = cleartextChunk.AsSpan(0, Math.Min(read, length));
+                // Read chunk
+                var read = chunkReader.ReadChunk(chunkNumber, realCleartextChunk);
 
-            chunkWriter.WriteChunk(chunkNumber, newLengthCleartextChunk);
+                // Check for any errors
+                if (read < 0)
+                    throw new CryptographicException();
+
+                // Slice the chunk
+                var truncatedCleartextChunk = realCleartextChunk.Slice(0, Math.Min(read, length));
+
+                chunkWriter.WriteChunk(chunkNumber, truncatedCleartextChunk);
+            }
+            finally
+            {
+                // Return buffer
+                ArrayPool<byte>.Shared.Return(cleartextChunk);
+            }
         }
 
         /// <inheritdoc/>

@@ -8,7 +8,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
     public interface IChunkAccess : IDisposable
     {
         /// <summary>
-        /// Copies bytes from chunk into <paramref name="destination"/>.
+        /// Copies bytes from chunk at specified <paramref name="chunkNumber"/> into <paramref name="destination"/>.
         /// </summary>
         /// <param name="chunkNumber">The number of chunk to copy from.</param>
         /// <param name="destination">The destination buffer to copy to.</param>
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         int CopyFromChunk(long chunkNumber, Span<byte> destination, int offsetInChunk);
 
         /// <summary>
-        /// Copies bytes from <paramref name="source"/> into chunk.
+        /// Copies bytes from <paramref name="source"/> into chunk at specified <paramref name="chunkNumber"/>.
         /// </summary>
         /// <param name="chunkNumber">The number of chunk to copy to.</param>
         /// <param name="source">The source buffer to copy from.</param>

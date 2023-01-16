@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
 
             // Lock collection and add handle
             lock (handlesLock)
-                handles.Add(handleId, fileHandle);
+                handles.TryAdd(handleId, fileHandle);
 
             return handleId;
         }
