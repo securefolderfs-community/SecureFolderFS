@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Shared.Utils;
 using System.IO;
 
 #pragma warning disable CA1416 // Callsite is not supported on all platforms
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
 
             SafeFileHandle? GetHandle()
             {
-                if (Stream is CleartextStream { BaseStream: FileStream fileStream })
+                if (Stream is IWrapper<Stream> { Inner: FileStream fileStream })
                     return fileStream.SafeFileHandle;
 
                 if (Stream is FileStream fileStream2)
@@ -46,27 +46,15 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
         /// <inheritdoc cref="FileStream.Lock"/>
         public void Lock(long position, long length)
         {
-            if (Stream is CleartextStream { BaseStream: FileStream fileStream })
-            {
+            if (Stream is IWrapper<Stream> { Inner: FileStream fileStream })
                 fileStream.Lock(position, length);
-            }
-            else if (Stream is FileStream fileStream2)
-            {
-                fileStream2.Lock(position, length);
-            }
         }
 
         /// <inheritdoc cref="FileStream.Unlock"/>
         public void Unlock(long position, long length)
         {
-            if (Stream is CleartextStream { BaseStream: FileStream fileStream })
-            {
+            if (Stream is IWrapper<Stream> { Inner: FileStream fileStream })
                 fileStream.Unlock(position, length);
-            }
-            else if (Stream is FileStream fileStream2)
-            {
-                fileStream2.Unlock(position, length);
-            }
         }
     }
 }

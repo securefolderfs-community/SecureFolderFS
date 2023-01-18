@@ -18,6 +18,9 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;
 
+        /// <inheritdoc/>
+        public override int ChunkFirstReservedSize { get; } = CHUNK_NONCE_SIZE;
+
         public AesCtrHmacContentCrypt(SecretKey macKey, CipherProvider cipherProvider)
             : base(cipherProvider)
         {
