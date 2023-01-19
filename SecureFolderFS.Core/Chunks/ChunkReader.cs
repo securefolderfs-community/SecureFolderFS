@@ -3,6 +3,7 @@ using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.Buffers;
@@ -13,8 +14,6 @@ namespace SecureFolderFS.Core.Chunks
     /// <inheritdoc cref="IChunkReader"/>
     internal sealed class ChunkReader : IChunkReader
     {
-        private static byte[]? ZerosReserved { get; set; }
-
         private readonly Security _security;
         private readonly BufferHolder _fileHeader;
         private readonly IStreamsManager _streamsManager;
@@ -26,8 +25,6 @@ namespace SecureFolderFS.Core.Chunks
             _fileHeader = fileHeader;
             _streamsManager = streamsManager;
             _fileSystemStatistics = fileSystemStatistics;
-
-            ZerosReserved ??= new byte[security.ContentCrypt.ChunkFirstReservedSize];
         }
 
         /// <inheritdoc/>
@@ -58,17 +55,14 @@ namespace SecureFolderFS.Core.Chunks
 
                 _fileSystemStatistics?.NotifyBytesRead(read);
 
-                if (ZerosReserved is null)
-                    throw new UnreachableException("ZerosReserved null was not expected.");
-
                 // Get reserved part for ciphertext chunk
                 var chunkReservedSize = Math.Min(read, _security.ContentCrypt.ChunkFirstReservedSize);
                 var chunkReserved = realCiphertextChunk.Slice(0, chunkReservedSize);
 
                 // Check if the reserved part is all zeros in which case the decryption will be skipped (the chunk was extended)
-                if (chunkReserved.SequenceEqual(ZerosReserved.AsSpan(0, chunkReservedSize)))
+                if (SpanExtensions.IsAllZeros(chunkReserved))
                 {
-                    cleartextChunk.Slice(0, read).Clear();
+                    cleartextChunk.Clear();
                     return read;
                 }
 

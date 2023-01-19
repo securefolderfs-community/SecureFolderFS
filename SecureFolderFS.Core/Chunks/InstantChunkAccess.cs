@@ -86,7 +86,7 @@ namespace SecureFolderFS.Core.Chunks
         }
 
         /// <inheritdoc/>
-        public override void SetChunkLength(long chunkNumber, int length)
+        public override void SetChunkLength(long chunkNumber, int length, bool includeCurrentLength = false)
         {
             // Rent buffer
             var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
@@ -102,10 +102,31 @@ namespace SecureFolderFS.Core.Chunks
                 if (read < 0)
                     throw new CryptographicException();
 
-                // Slice the chunk
-                var truncatedCleartextChunk = realCleartextChunk.Slice(0, Math.Min(read, length));
+                // Add read length of existing chunk data to the full length if specified
+                length += includeCurrentLength ? read : 0;
+                length = Math.Max(length, 0);
 
-                chunkWriter.WriteChunk(chunkNumber, truncatedCleartextChunk);
+                Span<byte> newCleartextChunk;
+
+                // Determine whether to extend or truncate the chunk
+                if (length < read)
+                {
+                    // Truncate chunk
+                    newCleartextChunk = realCleartextChunk.Slice(0, Math.Min(read, length));
+                }
+                else if (read < length)
+                {
+                    // Clear residual data from ArrayPool and append zeros
+                    realCleartextChunk.Slice(read).Clear();
+
+                    // Extend chunk
+                    newCleartextChunk = realCleartextChunk.Slice(0, Math.Min(length, contentCrypt.ChunkCleartextSize));
+                }
+                else
+                    return; // Ignore resizing the same length
+                
+                // Save newly modified chunk
+                chunkWriter.WriteChunk(chunkNumber, newCleartextChunk);
             }
             finally
             {

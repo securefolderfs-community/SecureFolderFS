@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.Chunks
         public abstract int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk);
 
         /// <inheritdoc/>
-        public abstract void SetChunkLength(long chunkNumber, int length);
+        public abstract void SetChunkLength(long chunkNumber, int length, bool includeReadLength = false);
 
         /// <inheritdoc/>
         public abstract void Flush();

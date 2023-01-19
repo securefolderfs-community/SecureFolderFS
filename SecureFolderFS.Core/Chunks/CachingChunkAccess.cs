@@ -63,18 +63,32 @@ namespace SecureFolderFS.Core.Chunks
         }
 
         /// <inheritdoc/>
-        public override void SetChunkLength(long chunkNumber, int length)
+        public override void SetChunkLength(long chunkNumber, int length, bool includeCurrentLength = false)
         {
             // Get chunk
             var cleartextChunk = GetChunk(chunkNumber);
             if (cleartextChunk is null)
                 return;
 
-            if (cleartextChunk.ActualLength > length)
+            // Add read length of existing chunk data to the full length if specified
+            length += includeCurrentLength ? cleartextChunk.ActualLength : 0;
+            length = Math.Max(length, 0);
+
+            // Determine whether to extend or truncate the chunk
+            if (length < cleartextChunk.ActualLength)
             {
-                cleartextChunk.ActualLength = length;
-                cleartextChunk.WasModified = true;
+                // Truncate chunk
+                cleartextChunk.ActualLength = Math.Min(cleartextChunk.ActualLength, length);
             }
+            else if (cleartextChunk.ActualLength < length)
+            {
+                // Extend chunk
+                cleartextChunk.ActualLength = Math.Min(length, contentCrypt.ChunkCleartextSize);
+            }
+            else
+                return; // Ignore resizing the same length
+
+            cleartextChunk.WasModified = true;
         }
 
         /// <inheritdoc/>

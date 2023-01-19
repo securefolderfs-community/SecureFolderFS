@@ -157,15 +157,13 @@ namespace SecureFolderFS.Core.Streams
                 // Flush remaining chunks before base stream is accessed
                 _chunkAccess.Flush();
 
+                // Calculate cleartext size here because cleartext Length might not be initialized yet
                 var cleartextFileSize = _security.ContentCrypt.CalculateCleartextSize(Inner.Length - _security.HeaderCrypt.HeaderCiphertextSize);
                 var lastChunkNumber = cleartextFileSize / cleartextChunkSize;
                 var amountToWrite = cleartextFileSize % cleartextChunkSize != 0 ? (int)Math.Min(cleartextChunkSize, value - cleartextFileSize) : 0;
 
-                var cleartextChunk = new byte[cleartextChunkSize];
-                var read = _chunkAccess.CopyFromChunk(lastChunkNumber, cleartextChunk, 0);
-
-                amountToWrite = Math.Min(amountToWrite + read, cleartextChunkSize);
-                _chunkAccess.CopyToChunk(lastChunkNumber, cleartextChunk.AsSpan(0, amountToWrite), 0);
+                // Extend the chunk including already existing data
+                _chunkAccess.SetChunkLength(lastChunkNumber, amountToWrite, true);
             }
 
             // Calculate ciphertext size based on new cleartext length
