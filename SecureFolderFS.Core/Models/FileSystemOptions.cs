@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.Models
         /// <summary>
         /// Gets the data caching strategy for decrypted content chunks.
         /// </summary>
-        public ChunkCachingStrategy ChunkCachingStrategy { get; init; } = ChunkCachingStrategy.NoCache;
+        public ChunkCachingStrategy ChunkCachingStrategy { get; init; } = ChunkCachingStrategy.RandomAccessMemoryCache;
 
         /// <summary>
         /// Gets the caching strategy for ciphertext and cleartext names.

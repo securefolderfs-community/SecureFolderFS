@@ -7,20 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel
+    <Border
         Height="32"
         Padding="16,6"
-        IsHitTestVisible="True"
-        Orientation="Horizontal"
-        Spacing="16">
-
-        <!--  App icon  -->
-        <Image
-            Width="16"
-            Height="16"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Source="../Assets/Square44x44Logo.png" />
+        IsHitTestVisible="True">
 
         <!--  Title  -->
         <StackPanel
@@ -40,5 +30,5 @@
                 Opacity="0.8"
                 Text="BETA" />
         </StackPanel>
-    </StackPanel>
+    </Border>
 </UserControl>
