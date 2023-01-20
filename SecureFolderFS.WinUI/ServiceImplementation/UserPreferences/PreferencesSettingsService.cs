@@ -36,7 +36,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         /// <inheritdoc/>
         public bool OpenFolderOnUnlock
         {
-            get => GetSetting(() => false);
+            get => GetSetting(() => true);
             set => SetSetting(value);
         }
     }
