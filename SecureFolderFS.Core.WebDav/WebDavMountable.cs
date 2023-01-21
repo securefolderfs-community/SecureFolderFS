@@ -5,6 +5,7 @@ using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.AppModels;
@@ -18,16 +19,22 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.WebDav.Mounters
+namespace SecureFolderFS.Core.WebDav
 {
     /// <inheritdoc cref="IMountableFileSystem"/>
-    public sealed class WebDavWindowsMountable : IMountableFileSystem
+    public sealed class WebDavMountable : IMountableFileSystem, IAvailabilityChecker
     {
         private readonly IRequestDispatcher _requestDispatcher;
 
-        private WebDavWindowsMountable(IRequestDispatcher requestDispatcher)
+        private WebDavMountable(IRequestDispatcher requestDispatcher)
         {
             _requestDispatcher = requestDispatcher;
+        }
+
+        /// <inheritdoc/>
+        public static FileSystemAvailabilityType IsSupported()
+        {
+            return FileSystemAvailabilityType.Available;
         }
 
         /// <inheritdoc/>
@@ -36,7 +43,7 @@ namespace SecureFolderFS.Core.WebDav.Mounters
             if (mountOptions is not WebDavMountOptions webDavMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
-            if (!int.TryParse(webDavMountOptions.Port, out var portNumber) || (portNumber > 9999 || portNumber <= 0))
+            if (!int.TryParse(webDavMountOptions.Port, out var portNumber) || portNumber > 9999 || portNumber <= 0)
                 throw new ArgumentException($"Parameter {nameof(WebDavMountOptions.Port)} is invalid.");
 
             var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
@@ -61,7 +68,7 @@ namespace SecureFolderFS.Core.WebDav.Mounters
             var davStorageService = new DavStorageService(locatableContentFolder, storageService);
             var dispatcher = new WebDavDispatcher(new DiskStore(locatableContentFolder.Path), davStorageService, new RequestHandlerProvider(), null);
 
-            return new WebDavWindowsMountable(dispatcher);
+            return new WebDavMountable(dispatcher);
         }
     }
 }

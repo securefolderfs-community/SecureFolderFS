@@ -4,10 +4,12 @@ using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.Storage;
+using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Sdk.Storage;
@@ -18,16 +20,52 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Dokany.Mounters
+namespace SecureFolderFS.Core.Dokany
 {
     /// <inheritdoc cref="IMountableFileSystem"/>
-    public sealed class DokanyMountable : IMountableFileSystem
+    public sealed class DokanyMountable : IMountableFileSystem, IAvailabilityChecker
     {
         private readonly DokanyWrapper _dokanyWrapper;
 
         private DokanyMountable(BaseDokanyCallbacks baseDokanyCallbacks)
         {
             _dokanyWrapper = new(baseDokanyCallbacks);
+        }
+
+        /// <inheritdoc/>
+        public static FileSystemAvailabilityType IsSupported()
+        {
+            ulong dokanVersion;
+            ulong dokanDriverVersion;
+
+            try
+            {
+                dokanVersion = UnsafeNativeApis.DokanVersion();
+                if (dokanVersion <= 0)
+                    return FileSystemAvailabilityType.ModuleNotAvailable;
+            }
+            catch (Exception)
+            {
+                return FileSystemAvailabilityType.ModuleNotAvailable;
+            }
+
+            try
+            {
+                dokanDriverVersion = UnsafeNativeApis.DokanDriverVersion();
+                if (dokanDriverVersion <= 0)
+                    return FileSystemAvailabilityType.CoreNotAvailable;
+            }
+            catch (Exception)
+            {
+                return FileSystemAvailabilityType.CoreNotAvailable;
+            }
+
+            var error = FileSystemAvailabilityType.None;
+            error |= dokanVersion > Constants.DOKAN_MAX_VERSION ? FileSystemAvailabilityType.VersionTooHigh : error;
+            error |= dokanVersion < Constants.DOKAN_VERSION ? FileSystemAvailabilityType.VersionTooLow : error;
+
+            error = error == FileSystemAvailabilityType.None ? FileSystemAvailabilityType.Available : error;
+            return error;
         }
 
         /// <inheritdoc/>

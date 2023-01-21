@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.AppModels;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 {
     public sealed class CipherItemViewModel : ObservableObject
     {
-        public ICipherInfoModel CipherInfoModel { get; }
+        public CipherInfoModel CipherInfoModel { get; }
 
         public string Name { get; }
 
-        public CipherItemViewModel(ICipherInfoModel cipherInfoModel)
+        public CipherItemViewModel(CipherInfoModel cipherInfoModel)
         {
             CipherInfoModel = cipherInfoModel;
             Name = cipherInfoModel.Name;

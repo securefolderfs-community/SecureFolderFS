@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -29,32 +30,31 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public IAsyncValidator<IFolder> GetVaultValidator()
         {
-            return new VaultValidator(StreamSerializer.Instance);
+            return VaultHelpers.NewVaultValidator(StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
         public async IAsyncEnumerable<IFileSystemInfoModel> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            yield return new DokanyFileSystemDescriptor(new DokanyAvailabilityChecker());
-            yield return new WebDavFileSystemDescriptor(new WebDavAvailabilityChecker());
+            yield return new DokanyFileSystemDescriptor();
+            yield return new WebDavFileSystemDescriptor();
 
             await Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ICipherInfoModel> GetContentCiphersAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<CipherInfoModel> GetContentCiphersAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            yield return new CipherDescriptor("XChaCha20-Poly1305", Core.Constants.CipherId.XCHACHA20_POLY1305);
-            yield return new CipherDescriptor("AES-GCM", Core.Constants.CipherId.AES_GCM);
-            yield return new CipherDescriptor("AES-CTR + HMAC-SHA256", Core.Constants.CipherId.AES_CTR_HMAC);
+            yield return new CipherInfoModel("XChaCha20-Poly1305", Core.Constants.CipherId.XCHACHA20_POLY1305);
+            yield return new CipherInfoModel("AES-GCM", Core.Constants.CipherId.AES_GCM);
             await Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ICipherInfoModel> GetFileNameCiphersAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<CipherInfoModel> GetFileNameCiphersAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            yield return new CipherDescriptor("AES-SIV", Core.Constants.CipherId.AES_SIV);
-            yield return new CipherDescriptor("None", Core.Constants.CipherId.NONE);
+            yield return new CipherInfoModel("AES-SIV", Core.Constants.CipherId.AES_SIV);
+            yield return new CipherInfoModel("None", Core.Constants.CipherId.NONE);
             await Task.CompletedTask;
         }
     }

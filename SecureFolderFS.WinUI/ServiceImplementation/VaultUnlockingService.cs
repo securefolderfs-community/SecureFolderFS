@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Core;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
@@ -28,7 +28,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public async Task<IResult> SetVaultFolderAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
         {
             _unlockRoutine?.Dispose();
-            _unlockRoutine ??= VaultRoutines.NewUnlockRoutine();
+            _unlockRoutine ??= VaultHelpers.NewUnlockRoutine();
 
             try
             {

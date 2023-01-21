@@ -1,8 +1,9 @@
 ﻿using DokanNet;
 using DokanNet.Logging;
+using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.FileSystem.Enums;
 
-namespace SecureFolderFS.Core.Dokany.Callbacks
+namespace SecureFolderFS.Core.Dokany
 {
     internal sealed class DokanyWrapper
     {

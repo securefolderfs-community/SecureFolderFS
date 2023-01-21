@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.FileSystem;
+﻿using SecureFolderFS.Core;
+using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Helpers;
@@ -12,36 +13,20 @@ namespace SecureFolderFS.WinUI.AppModels
     /// <inheritdoc cref="IFileSystemInfoModel"/>
     internal sealed class WebDavFileSystemDescriptor : IFileSystemInfoModel
     {
-        private IFileSystemAvailabilityChecker _availabilityChecker;
-
         /// <inheritdoc/>
         public string Name { get; } = "WebDav";
 
         /// <inheritdoc/>
         public string Id { get; } = Core.Constants.FileSystemId.WEBDAV_ID;
 
-        public WebDavFileSystemDescriptor(IFileSystemAvailabilityChecker availabilityChecker)
-        {
-            _availabilityChecker = availabilityChecker;
-        }
-
         /// <inheritdoc/>
-        public async Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
+        public Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
         {
-            var availabilityType = await _availabilityChecker.DetermineAvailabilityAsync();
-            if (availabilityType == FileSystemAvailabilityType.Available)
-                return CommonResult.Success;
+            var result = VaultHelpers.DetermineAvailability(FileSystemAdapterType.WebDavAdapter);
+            if (result == FileSystemAvailabilityType.Available)
+                return Task.FromResult<IResult>(CommonResult.Success);
 
-            return new CommonResult(new NotSupportedException($"WebDav file system is not supported: {availabilityType.ToString()}."));
-        }
-
-        /// <inheritdoc/>
-        public bool Equals(IFileSystemInfoModel? other)
-        {
-            if (other is null)
-                return false;
-
-            return other.Id.Equals(Id);
+            return Task.FromResult<IResult>(new CommonResult(new NotSupportedException($"WebDav file system is not supported: {result}.")));
         }
     }
 }

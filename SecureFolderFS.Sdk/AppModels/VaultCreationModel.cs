@@ -56,7 +56,7 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel nameCipher, CancellationToken cancellationToken = default)
+        public async Task<bool> SetCipherSchemeAsync(CipherInfoModel contentCipher, CipherInfoModel nameCipher, CancellationToken cancellationToken = default)
         {
             var setCipherResult = await VaultCreationService.SetCipherSchemeAsync(contentCipher, nameCipher, cancellationToken);
             if (!setCipherResult.Successful)

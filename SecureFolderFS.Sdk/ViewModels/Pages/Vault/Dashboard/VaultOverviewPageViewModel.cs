@@ -1,4 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -9,6 +13,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
     public sealed class VaultOverviewPageViewModel : BaseDashboardPageViewModel
     {
+        private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
+
+        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
+
         public WidgetsListViewModel WidgetsViewModel { get; }
 
         public VaultControlsViewModel VaultControlsViewModel { get; }
@@ -23,6 +31,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            if (PreferencesSettingsService.OpenFolderOnUnlock && UnlockedVaultViewModel.UnlockedVaultModel.RootFolder is ILocatableFolder locatableRootFolder)
+                _ = FileExplorerService.OpenInFileExplorerAsync(locatableRootFolder, cancellationToken);
+
             await WidgetsViewModel.InitAsync(cancellationToken);
         }
 

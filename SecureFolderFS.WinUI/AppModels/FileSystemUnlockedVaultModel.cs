@@ -12,7 +12,7 @@ namespace SecureFolderFS.WinUI.AppModels
         private readonly IVirtualFileSystem _virtualFileSystem;
 
         /// <inheritdoc/>
-        public IFolder UnlockedFolder { get; }
+        public IFolder RootFolder { get; }
 
         /// <inheritdoc/>
         public IVaultStatisticsModel VaultStatisticsModel { get; }
@@ -20,7 +20,7 @@ namespace SecureFolderFS.WinUI.AppModels
         public FileSystemUnlockedVaultModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel)
         {
             _virtualFileSystem = virtualFileSystem;
-            UnlockedFolder = virtualFileSystem.RootFolder;
+            RootFolder = virtualFileSystem.RootFolder;
             VaultStatisticsModel = vaultStatisticsModel;
         }
 

@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.Generic;
@@ -39,13 +40,13 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of content ciphers.</returns>
-        IAsyncEnumerable<ICipherInfoModel> GetContentCiphersAsync(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<CipherInfoModel> GetContentCiphersAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets all filename ciphers that are supported by SecureFolderFS.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of filename ciphers.</returns>
-        IAsyncEnumerable<ICipherInfoModel> GetFileNameCiphersAsync(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<CipherInfoModel> GetFileNameCiphersAsync(CancellationToken cancellationToken = default);
     }
 }

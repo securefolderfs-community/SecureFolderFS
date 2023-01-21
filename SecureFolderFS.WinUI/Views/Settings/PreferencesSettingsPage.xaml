@@ -132,10 +132,7 @@
                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.ContinueOnLastVault, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl
-                Title="Open vault folder"
-                Description="Automatically open folder when vault is unlocked"
-                IsEnabled="False">
+            <ucab:ActionBlockControl Title="Open vault folder" Description="Automatically open folder when vault is unlocked">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xED25;" />
                 </ucab:ActionBlockControl.Icon>

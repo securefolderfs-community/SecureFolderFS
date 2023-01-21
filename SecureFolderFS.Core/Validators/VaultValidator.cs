@@ -1,12 +1,11 @@
-﻿using SecureFolderFS.Core.Routines;
-using SecureFolderFS.Sdk.Storage;
+﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.WinUI.AppModels
+namespace SecureFolderFS.Core.Validators
 {
     /// <inheritdoc cref="IAsyncValidator{T}"/>
     internal sealed class VaultValidator : IAsyncValidator<IFolder>
@@ -21,11 +20,11 @@ namespace SecureFolderFS.WinUI.AppModels
         /// <inheritdoc/>
         public async Task<IResult> ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
         {
-            var contentFolderResult = await value.GetFolderWithResultAsync(Core.Constants.CONTENT_FOLDERNAME, cancellationToken);
+            var contentFolderResult = await value.GetFolderWithResultAsync(Constants.CONTENT_FOLDERNAME, cancellationToken);
             if (!contentFolderResult.Successful)
                 return contentFolderResult;
 
-            var configFileResult = await value.GetFileWithResultAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            var configFileResult = await value.GetFileWithResultAsync(Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             if (!configFileResult.Successful)
                 return configFileResult;
 
@@ -35,7 +34,7 @@ namespace SecureFolderFS.WinUI.AppModels
 
             await using (configStreamResult.Value)
             {
-                var versionValidator = VaultRoutines.NewVersionValidator(_serializer);
+                var versionValidator = VaultHelpers.NewVersionValidator(_serializer);
                 return await versionValidator.ValidateAsync(configStreamResult.Value!, cancellationToken);
             }
         }
