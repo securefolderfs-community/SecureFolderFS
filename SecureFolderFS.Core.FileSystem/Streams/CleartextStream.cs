@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecureFolderFS.Shared.Utils;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,16 +9,16 @@ namespace SecureFolderFS.Core.FileSystem.Streams
     /// <summary>
     /// Represents a decrypting stream used to read/write encrypted data.
     /// </summary>
-    public abstract class CleartextStream : Stream
+    public abstract class CleartextStream : Stream, IWrapper<Stream>
     {
         /// <summary>
         /// Gets the underlying ciphertext stream.
         /// </summary>
-        public Stream BaseStream { get; }
+        public Stream Inner { get; }
 
-        protected CleartextStream(Stream baseStream)
+        protected CleartextStream(Stream innerStream)
         {
-            BaseStream = baseStream;
+            Inner = innerStream;
         }
 
         /// <inheritdoc/>

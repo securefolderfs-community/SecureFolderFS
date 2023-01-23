@@ -42,8 +42,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus CreateFile(string fileName, DokanNet.FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, IDokanFileInfo info)
         {
-            var ciphertextPath = GetCiphertextPath(fileName);
             var result = DokanResult.Success;
+            var ciphertextPath = GetCiphertextPath(fileName);
+            if (ciphertextPath is null)
+                return DokanResult.PathNotFound;
 
             if (info.IsDirectory)
             {

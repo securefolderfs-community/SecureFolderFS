@@ -2,14 +2,13 @@
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Dokany.Mounters;
+using SecureFolderFS.Core.Dokany;
 using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.Exceptions;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Validators;
-using SecureFolderFS.Core.WebDav.Mounters;
+using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Extensions;
@@ -21,7 +20,7 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FUSE.Mounters;
+using SecureFolderFS.Core.FUSE;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {
@@ -60,7 +59,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             IAsyncValidator<Stream> versionValidator = new VersionValidator(serializer);
             var validationResult = await versionValidator.ValidateAsync(configStream, cancellationToken);
             if (!validationResult.Successful)
-                throw validationResult.Exception ?? new UnsupportedVaultException();
+                throw validationResult.Exception ?? new NotSupportedException();
 
             _configDataModel = await serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(configStream, cancellationToken);
             if (_configDataModel is null)
@@ -132,8 +131,8 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             var mountable = fileSystemOptions.AdapterType switch
             {
                 FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess, fileSystemOptions.HealthStatistics),
-                FileSystemAdapterType.WebDavAdapter => WebDavWindowsMountable.CreateMountable(_storageService, _vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
                 FileSystemAdapterType.FuseAdapter => FuseMountable.CreateMountable(_vaultFolder.Name, pathConverter, _contentFolder, security, directoryIdAccess, streamsAccess),
+                FileSystemAdapterType.WebDavAdapter => WebDavMountable.CreateMountable(_storageService, _vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
                 _ => throw new ArgumentOutOfRangeException(nameof(fileSystemOptions.AdapterType))
             };
 

@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Dokany;
-using SecureFolderFS.Core.WebDav;
+﻿using SecureFolderFS.Core;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -8,15 +7,24 @@ using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.WinUI.AppModels;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultService"/>
     internal sealed class VaultService : IVaultService
     {
+        private readonly Dictionary<string, IFileSystemInfoModel> _fileSystems;
+
+        public VaultService()
+        {
+            _fileSystems = new()
+            {
+                { Core.Constants.FileSystemId.DOKAN_ID, new DokanyFileSystemDescriptor() },
+                { Core.Constants.FileSystemId.WEBDAV_ID, new WebDavFileSystemDescriptor() }
+            };
+        }
+
         /// <inheritdoc/>
         public bool IsFileNameReserved(string? fileName)
         {
@@ -29,33 +37,34 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public IAsyncValidator<IFolder> GetVaultValidator()
         {
-            return new VaultValidator(StreamSerializer.Instance);
+            return VaultHelpers.NewVaultValidator(StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IFileSystemInfoModel> GetFileSystemsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public IFileSystemInfoModel? GetFileSystemById(string id)
         {
-            yield return new DokanyFileSystemDescriptor(new DokanyAvailabilityChecker());
-            yield return new WebDavFileSystemDescriptor(new WebDavAvailabilityChecker());
-
-            await Task.CompletedTask;
+            return _fileSystems.Values.FirstOrDefault(x => x.Id.Equals(id));
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ICipherInfoModel> GetContentCiphersAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public IEnumerable<IFileSystemInfoModel> GetFileSystems()
         {
-            yield return new CipherDescriptor("XChaCha20-Poly1305", Core.Constants.CipherId.XCHACHA20_POLY1305);
-            yield return new CipherDescriptor("AES-GCM", Core.Constants.CipherId.AES_GCM);
-            yield return new CipherDescriptor("AES-CTR + HMAC-SHA256", Core.Constants.CipherId.AES_CTR_HMAC);
-            await Task.CompletedTask;
+            foreach (var item in _fileSystems.Values)
+                yield return item;
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ICipherInfoModel> GetFileNameCiphersAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public IEnumerable<CipherInfoModel> GetContentCiphers()
         {
-            yield return new CipherDescriptor("AES-SIV", Core.Constants.CipherId.AES_SIV);
-            yield return new CipherDescriptor("None", Core.Constants.CipherId.NONE);
-            await Task.CompletedTask;
+            yield return new CipherInfoModel("XChaCha20-Poly1305", Core.Constants.CipherId.XCHACHA20_POLY1305);
+            yield return new CipherInfoModel("AES-GCM", Core.Constants.CipherId.AES_GCM);
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<CipherInfoModel> GetFileNameCiphers()
+        {
+            yield return new CipherInfoModel("AES-SIV", Core.Constants.CipherId.AES_SIV);
+            yield return new CipherInfoModel("None", Core.Constants.CipherId.NONE);
         }
     }
 }

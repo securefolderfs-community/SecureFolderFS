@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Dokany.Callbacks;
-using SecureFolderFS.Core.FileSystem;
+﻿using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Storage;
 using System.Threading.Tasks;

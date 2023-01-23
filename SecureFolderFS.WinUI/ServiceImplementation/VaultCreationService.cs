@@ -1,8 +1,7 @@
-﻿using SecureFolderFS.Core.Cryptography.Enums;
-using SecureFolderFS.Core.Routines;
+﻿using SecureFolderFS.Core;
+using SecureFolderFS.Core.Cryptography.Enums;
 using SecureFolderFS.Core.Routines.CreationRoutines;
 using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
@@ -29,7 +28,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public async Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
         {
             _folder = folder;
-            _creationRoutine = VaultRoutines.NewCreationRoutine();
+            _creationRoutine = VaultHelpers.NewCreationRoutine();
 
             try
             {
@@ -100,7 +99,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IResult> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel nameCipher, CancellationToken cancellationToken = default)
+        public Task<IResult> SetCipherSchemeAsync(CipherInfoModel contentCipher, CipherInfoModel nameCipher, CancellationToken cancellationToken = default)
         {
             if (_creationRoutine is null || _configStream is null)
                 return Task.FromResult<IResult>(new CommonResult(false));

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers
@@ -19,9 +20,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsCoreFile(string fileName)
+        public static bool IsCoreFile(ReadOnlySpan<char> fileName)
         {
-            return fileName.Contains(Constants.DIRECTORY_ID_FILENAME);
+            return fileName.Contains(Constants.DIRECTORY_ID_FILENAME, StringComparison.Ordinal);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

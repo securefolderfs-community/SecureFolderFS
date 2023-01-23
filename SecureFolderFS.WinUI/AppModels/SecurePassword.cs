@@ -1,5 +1,5 @@
-﻿using System;
-using SecureFolderFS.Shared.Utils;
+﻿using SecureFolderFS.Shared.Utils;
+using System;
 
 namespace SecureFolderFS.WinUI.AppModels
 {

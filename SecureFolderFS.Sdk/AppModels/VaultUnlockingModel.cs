@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,14 +16,11 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <inheritdoc cref="IVaultUnlockingModel"/>
     public sealed class VaultUnlockingModel : IVaultUnlockingModel
     {
-        private readonly IFileSystemInfoModel _fileSystemInfoModel;
+        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
+
+        private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
 
         private IVaultUnlockingService VaultUnlockingService { get; } = Ioc.Default.GetRequiredService<IVaultUnlockingService>();
-
-        public VaultUnlockingModel(IFileSystemInfoModel fileSystemInfoModel)
-        {
-            _fileSystemInfoModel = fileSystemInfoModel;
-        }
 
         /// <inheritdoc/>
         public async Task<IResult> SetFolderAsync(IFolder folder, CancellationToken cancellationToken = default)
@@ -62,7 +61,12 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<IResult<IUnlockedVaultModel?>> UnlockAsync(IPassword password, CancellationToken cancellationToken = default)
         {
-            var fileSystemResult = await VaultUnlockingService.SetFileSystemAsync(_fileSystemInfoModel, cancellationToken);
+            // Get file system
+            var fileSystem = VaultService.GetFileSystemById(PreferencesSettingsService.PreferredFileSystemId);
+            if (fileSystem is null)
+                return new CommonResult<IUnlockedVaultModel?>(new ArgumentException($"File System descriptor '{PreferencesSettingsService.PreferredFileSystemId}' was not found."));
+
+            var fileSystemResult = await VaultUnlockingService.SetFileSystemAsync(fileSystem, cancellationToken);
             if (!fileSystemResult.Successful)
                 return new CommonResult<IUnlockedVaultModel?>(fileSystemResult.Exception);
 

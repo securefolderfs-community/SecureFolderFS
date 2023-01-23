@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.FileSystem;
+﻿using SecureFolderFS.Core;
+using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Helpers;
@@ -12,23 +13,16 @@ namespace SecureFolderFS.WinUI.AppModels
     /// <inheritdoc cref="IFileSystemInfoModel"/>
     internal sealed class DokanyFileSystemDescriptor : IFileSystemInfoModel
     {
-        private IFileSystemAvailabilityChecker _availabilityChecker;
-
         /// <inheritdoc/>
         public string Name { get; } = "Dokany";
 
         /// <inheritdoc/>
         public string Id { get; } = Core.Constants.FileSystemId.DOKAN_ID;
 
-        public DokanyFileSystemDescriptor(IFileSystemAvailabilityChecker availabilityChecker)
-        {
-            _availabilityChecker = availabilityChecker;
-        }
-
         /// <inheritdoc/>
-        public async Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
+        public Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
         {
-            var result = await _availabilityChecker.DetermineAvailabilityAsync();
+            var result = VaultHelpers.DetermineAvailability(FileSystemAdapterType.DokanAdapter);
             if (result != FileSystemAvailabilityType.Available)
             {
                 // TODO: Use translation strings
@@ -41,19 +35,10 @@ namespace SecureFolderFS.WinUI.AppModels
                     _ => "SecureFolderFS cannot work with installed Dokany version. Please install requested version of Dokany."
                 };
 
-                return new CommonResult(new NotSupportedException(message));
+                return Task.FromResult<IResult>(new CommonResult(new NotSupportedException(message)));
             }
 
-            return CommonResult.Success;
-        }
-
-        /// <inheritdoc/>
-        public bool Equals(IFileSystemInfoModel? other)
-        {
-            if (other is null)
-                return false;
-
-            return other.Id.Equals(Id);
+            return Task.FromResult<IResult>(CommonResult.Success);
         }
     }
 }

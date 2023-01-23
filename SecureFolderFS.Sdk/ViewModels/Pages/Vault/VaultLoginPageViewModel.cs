@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -27,9 +28,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         [ObservableProperty]
         private BaseLoginStrategyViewModel? _LoginStrategyViewModel;
 
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
+
+        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel)
             : base(vaultViewModel, new WeakReferenceMessenger())
@@ -40,15 +41,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             _vaultWatcherModel.VaultChangedEvent += VaultWatcherModel_VaultChangedEvent;
 
             WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
-        }
-
-        private async void VaultWatcherModel_VaultChangedEvent(object? sender, IResult e)
-        {
-            if (!e.Successful)
-            {
-                await ThreadingService.ExecuteOnUiThreadAsync();
-                await DetermineLoginStrategyAsync();
-            }
         }
 
         /// <inheritdoc/>
@@ -72,6 +64,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 Dispose();
         }
 
+        private async void VaultWatcherModel_VaultChangedEvent(object? sender, IResult e)
+        {
+            if (!e.Successful)
+            {
+                await ThreadingService.ExecuteOnUiThreadAsync();
+                await DetermineLoginStrategyAsync();
+            }
+        }
+
         // TODO: Move to separate method and add file system watcher for any vault changes.
         private async Task DetermineLoginStrategyAsync(CancellationToken cancellationToken = default)
         {
@@ -88,15 +89,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 
             if (validationResult.Successful)
             {
-                var fileSystems = await VaultService.GetFileSystemsAsync(cancellationToken).ToListAsync(cancellationToken);
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
+                var vaultUnlockingModel = new VaultUnlockingModel();
 
-                var dokanyFileSystem = fileSystems[0];
-                var webDavFileSystem = fileSystems[1];
-                _ = dokanyFileSystem;
-                _ = webDavFileSystem;
-
-                var vaultUnlockingModel = new VaultUnlockingModel(dokanyFileSystem);
                 LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
             }
             else

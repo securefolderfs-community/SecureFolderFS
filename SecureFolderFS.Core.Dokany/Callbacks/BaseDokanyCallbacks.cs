@@ -1,7 +1,6 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
-using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;

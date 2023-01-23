@@ -1,9 +1,9 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.WinUI.AppModels
 {
