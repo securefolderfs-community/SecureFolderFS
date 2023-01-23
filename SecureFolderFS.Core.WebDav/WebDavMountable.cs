@@ -9,8 +9,8 @@ using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.AppModels;
+using SecureFolderFS.Core.WebDav.EncryptingStorage;
 using SecureFolderFS.Core.WebDav.Enums;
-using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
@@ -18,6 +18,7 @@ using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.WebDav.Storage;
 
 namespace SecureFolderFS.Core.WebDav
 {
@@ -65,7 +66,7 @@ namespace SecureFolderFS.Core.WebDav
             if (contentFolder is not ILocatableFolder locatableContentFolder)
                 throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
 
-            var davStorageService = new DavStorageService(locatableContentFolder, storageService);
+            var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter);
             var dispatcher = new WebDavDispatcher(new DiskStore(locatableContentFolder.Path), davStorageService, new RequestHandlerProvider(), null);
 
             return new WebDavMountable(dispatcher);
