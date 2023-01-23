@@ -79,6 +79,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public async Task<IResult> SetFileSystemAsync(IFileSystemInfoModel fileSystemInfoModel, CancellationToken cancellationToken = default)
         {
+            // Check if the file system is supported
             var isSupportedResult = await fileSystemInfoModel.IsSupportedAsync(cancellationToken);
             if (!isSupportedResult.Successful)
                 return isSupportedResult;

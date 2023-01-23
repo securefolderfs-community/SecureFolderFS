@@ -34,7 +34,6 @@ namespace SecureFolderFS.Core.ComponentBuilders
             var directoryIdStreamAccess = new DirectoryIdStreamAccess(); // TODO: Provide from consumer
             IDirectoryIdAccess directoryIdAccess = FileSystemOptions.DirectoryIdCachingStrategy switch
             {
-                // TODO: Use correct impl
                 DirectoryIdCachingStrategy.NoCache => new InstantDirectoryIdAccess(directoryIdStreamAccess, FileSystemOptions.FileSystemStatistics, FileSystemOptions.HealthStatistics),
                 DirectoryIdCachingStrategy.RandomAccessMemoryCache => new CachingDirectoryIdAccess(directoryIdStreamAccess, FileSystemOptions.FileSystemStatistics, FileSystemOptions.HealthStatistics),
                 _ => throw new ArgumentOutOfRangeException(nameof(FileSystemOptions.DirectoryIdCachingStrategy))

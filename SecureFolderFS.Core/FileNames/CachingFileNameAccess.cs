@@ -88,7 +88,7 @@ namespace SecureFolderFS.Core.FileNames
             _ciphertextNames[new(directoryId.ToArray(), cleartextName)] = ciphertextName;
         }
 
-        // TODO: Replace with something else. Perhaps GetHashCode()?
+        // TODO: Replace with something else
         private sealed record NameWithDirectoryId(ReadOnlyMemory<byte> DirectoryId, ReadOnlyMemory<char> FileName);
     }
 }

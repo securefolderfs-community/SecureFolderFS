@@ -31,8 +31,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (PreferencesSettingsService.OpenFolderOnUnlock && UnlockedVaultViewModel.UnlockedVaultModel.RootFolder is ILocatableFolder locatableRootFolder)
-                _ = FileExplorerService.OpenInFileExplorerAsync(locatableRootFolder, cancellationToken);
+            if (PreferencesSettingsService.OpenFolderOnUnlock && UnlockedVaultViewModel.UnlockedVaultModel.RootFolder is ILocatableFolder rootFolder)
+                _ = FileExplorerService.OpenInFileExplorerAsync(rootFolder, cancellationToken);
 
             await WidgetsViewModel.InitAsync(cancellationToken);
         }

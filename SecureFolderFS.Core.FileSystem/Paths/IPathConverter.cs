@@ -10,14 +10,14 @@
         /// <summary>
         /// Converts <paramref name="cleartextPath"/> into ciphertext.
         /// </summary>
-        /// <param name="cleartextPath">The cleartext path to convert from.</param>
+        /// <param name="cleartextPath">The relative cleartext path to convert from.</param>
         /// <returns>If successful, value represents a ciphertext path, otherwise null.</returns>
         string? ToCiphertext(string cleartextPath);
 
         /// <summary>
         /// Converts <paramref name="ciphertextPath"/> into cleartext.
         /// </summary>
-        /// <param name="ciphertextPath">The ciphertext path to convert from.</param>
+        /// <param name="ciphertextPath">The relative ciphertext path to convert from.</param>
         /// <returns>If successful, value represents a cleartext path, otherwise null.</returns>
         string? ToCleartext(string ciphertextPath);
 

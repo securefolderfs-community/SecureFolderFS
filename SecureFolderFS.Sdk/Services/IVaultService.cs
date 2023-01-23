@@ -25,28 +25,32 @@ namespace SecureFolderFS.Sdk.Services
         IAsyncValidator<IFolder> GetVaultValidator();
 
         /// <summary>
+        /// Gets a a file system model by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the file system.</param>
+        /// <returns>If found, value is <see cref="IFileSystemInfoModel"/>, otherwise null.</returns>
+        IFileSystemInfoModel? GetFileSystemById(string id);
+
+        /// <summary>
         /// Gets all file systems that are supported by SecureFolderFS.
         /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <remarks>
         /// Returned file systems that are available, may not be supported on this device. 
         /// Use <see cref="IFileSystemInfoModel.IsSupportedAsync(CancellationToken)"/> to check if a given file system is supported.
         /// </remarks>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of available file systems.</returns>
-        IAsyncEnumerable<IFileSystemInfoModel> GetFileSystemsAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of available file systems.</returns>
+        IEnumerable<IFileSystemInfoModel> GetFileSystems();
 
         /// <summary>
         /// Gets all content ciphers that are supported by SecureFolderFS.
         /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of content ciphers.</returns>
-        IAsyncEnumerable<CipherInfoModel> GetContentCiphersAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of content ciphers.</returns>
+        IEnumerable<CipherInfoModel> GetContentCiphers();
 
         /// <summary>
         /// Gets all filename ciphers that are supported by SecureFolderFS.
         /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of filename ciphers.</returns>
-        IAsyncEnumerable<CipherInfoModel> GetFileNameCiphersAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of filename ciphers.</returns>
+        IEnumerable<CipherInfoModel> GetFileNameCiphers();
     }
 }

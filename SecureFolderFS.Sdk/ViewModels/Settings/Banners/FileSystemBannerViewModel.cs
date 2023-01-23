@@ -28,12 +28,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
             FileSystemAdapters = new();
         }
 
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in VaultService.GetFileSystemsAsync(cancellationToken))
-            {
+            foreach (var item in VaultService.GetFileSystems())
                 FileSystemAdapters.Add(new(item));
-            }
+
+            return Task.CompletedTask;
         }
     }
 }
