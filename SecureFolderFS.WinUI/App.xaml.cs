@@ -126,7 +126,7 @@ namespace SecureFolderFS.WinUI
             Debugger.Break(); // Please check "Output Window" for exception details (On Visual Studio, View -> Output Window or Ctr+Alt+O)
 
 #if !DEBUG
-            ExceptionHelpers.LogExceptionToFile(formattedException);
+            ExceptionHelpers.LogExceptionToFile(ApplicationData.Current.LocalFolder.Path, formattedException);
 #endif
         }
 
