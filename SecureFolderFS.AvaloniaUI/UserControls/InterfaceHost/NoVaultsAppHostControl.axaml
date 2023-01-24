@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.NoVaultsAppHostControl">
 
@@ -40,10 +41,29 @@
                 Grid.Row="4"
                 Padding="32,6"
                 HorizontalAlignment="Center"
+                Command="{Binding ViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                 Content="Add vault"
                 Classes="accent" />
         </Grid>
 
         <!-- Settings -->
+        <Button
+            Grid.RowSpan="2"
+            Width="36"
+            Height="36"
+            Margin="0,0,16,16"
+            Padding="8"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Background="Transparent"
+            BorderThickness="0"
+            Command="{Binding ViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
+            <Button.Content>
+                <!-- TODO use animated icon -->
+                <ui:SymbolIcon Symbol="Setting" />
+            </Button.Content>
+        </Button>
     </Grid>
 </UserControl>
