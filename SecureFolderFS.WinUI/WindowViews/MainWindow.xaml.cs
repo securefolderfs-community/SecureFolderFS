@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
+using SecureFolderFS.UI;
 using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,

@@ -1,13 +1,16 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ui="using:FluentAvalonia.UI.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SecureFolderFS.AvaloniaUI.UserControls.Navigation.NavigationControl">
+<UserControl
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.Navigation.NavigationControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
     <ui:Frame
         x:Name="ContentFrame"
         x:FieldModifier="protected"
-        Navigated="ContentFrame_OnNavigated"/>
+        Navigated="ContentFrame_OnNavigated" />
 </UserControl>

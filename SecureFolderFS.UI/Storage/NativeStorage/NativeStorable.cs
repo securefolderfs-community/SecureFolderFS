@@ -20,7 +20,7 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
 
         protected NativeStorable(string path)
         {
-            Path = path;
+            Path = FormatPath(path);
             Name = System.IO.Path.GetFileName(path);
         }
 
@@ -32,6 +32,19 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
                 return Task.FromResult<ILocatableFolder?>(null);
 
             return Task.FromResult<ILocatableFolder?>(new NativeFolder(parentPath));
+        }
+
+        protected static string FormatPath(string path)
+        {
+            path = path.Replace("file:///", string.Empty);
+
+            if ('/' != System.IO.Path.DirectorySeparatorChar)
+                return path.Replace('/', System.IO.Path.DirectorySeparatorChar);
+
+            if ('\\' != System.IO.Path.DirectorySeparatorChar)
+                return path.Replace('\\', System.IO.Path.DirectorySeparatorChar);
+
+            return path;
         }
     }
 }

@@ -1,14 +1,14 @@
-﻿using Windows.System;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.WinUI.AppModels;
+using SecureFolderFS.UI.AppModels;
+using System.Text;
+using System.Threading.Tasks;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
