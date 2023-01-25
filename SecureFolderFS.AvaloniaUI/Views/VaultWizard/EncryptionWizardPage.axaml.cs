@@ -73,5 +73,12 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
             foreach (var item in VaultService.GetFileNameCiphers())
                 FileNameCiphers.Add(new(item));
         }
+
+        // TODO Replace this workaround with something better
+        private void ComboBox_OnLoaded(object? sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+                comboBox.SelectedIndex = 0;
+        }
     }
 }
