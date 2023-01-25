@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using FluentAvalonia.UI.Controls;
@@ -8,26 +9,25 @@ namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
     /// Template selector wrapper for <see cref="DataTemplateSelector"/> with generics support.
     /// </summary>
     /// <typeparam name="TItem">The type of item.</typeparam>
-    internal abstract class GenericTemplateSelector<TItem> : DataTemplateSelector
+    internal abstract class GenericTemplateSelector<TItem> : IDataTemplate
     {
-        protected sealed override IDataTemplate? SelectTemplateCore(object item)
+        public IControl? Build(object? param)
         {
-            return base.SelectTemplateCore(item);
+            if (param is not TItem item)
+                throw new ArgumentException(nameof(param));
+
+            var template = SelectTemplateCore(item);
+            return template?.Build(item);
         }
 
-        protected sealed override IDataTemplate? SelectTemplateCore(object item, IControl container)
+        public bool Match(object? data)
         {
-            return base.SelectTemplateCore(item, container);
+            if (data is not TItem item)
+                return false;
+
+            return SelectTemplateCore(item) != null;
         }
 
-        protected virtual IDataTemplate? SelectTemplateCore(TItem? item)
-        {
-            return base.SelectTemplateCore(item);
-        }
-
-        protected virtual IDataTemplate? SelectTemplateCore(TItem? item, IControl container)
-        {
-            return base.SelectTemplateCore(item, container);
-        }
+        protected abstract IDataTemplate? SelectTemplateCore(TItem? item);
     }
 }

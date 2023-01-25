@@ -31,14 +31,13 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         public EncryptionWizardPage()
         {
-            InitializeComponent();
-
             ContentCiphers = new();
             FileNameCiphers = new();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            InitializeComponent();
             if (e.Parameter is VaultWizardEncryptionViewModel viewModel)
                 ViewModel = viewModel;
 

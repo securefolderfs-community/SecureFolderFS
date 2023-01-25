@@ -36,6 +36,9 @@ namespace SecureFolderFS.AvaloniaUI
 
         public override void Initialize()
         {
+            if (Debugger.IsAttached)
+                this.AttachDevTools();
+
             AvaloniaXamlLoader.Load(this);
         }
 

@@ -4,7 +4,7 @@ using SecureFolderFS.Shared.Utils;
 namespace SecureFolderFS.WinUI.Helpers
 {
     /// <inheritdoc cref="IEventDispatchFlag"/>
-    internal sealed class EventDispatchFlagHelper : IEventDispatchFlag
+    public sealed class EventDispatchFlagHelper : IEventDispatchFlag
     {
         private readonly Action _flagCallback;
 

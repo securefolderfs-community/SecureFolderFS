@@ -12,13 +12,13 @@ namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
 
         public DataTemplate? NoVaultsAppHostDataTemplate { get; set; }
 
-        protected override IDataTemplate? SelectTemplateCore(INotifyPropertyChanged? item, IControl container)
+        protected override IDataTemplate? SelectTemplateCore(INotifyPropertyChanged? item)
         {
             return item switch
             {
                 MainAppHostViewModel => MainAppHostDataTemplate,
                 NoVaultsAppHostViewModel => NoVaultsAppHostDataTemplate,
-                _ => base.SelectTemplateCore(item, container)
+                _ => null
             };
         }
     }

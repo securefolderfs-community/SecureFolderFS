@@ -1,0 +1,47 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault"
+    Width="464"
+    Loaded="EncryptionWizardPage_Loaded"
+    DataContext="{x:Type uc:Page}"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:DataType="vm2:VaultWizardEncryptionViewModel"
+    x:CompileBindings="True"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.VaultWizard.EncryptionWizardPage">
+
+    <Grid RowDefinitions="*,16,*">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Data encryption" />
+            <ComboBox
+                DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type uc:Page}, Tree=Logical}}"
+                Items="{CompiledBinding ContentCiphers}"
+                SelectedItem="{Binding ViewModel.ContentCipherItemViewModel, Mode=TwoWay, RelativeSource={RelativeSource Tree=Logical, AncestorType={x:Type uc:Page}}}"
+                SelectedIndex="0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CipherItemViewModel">
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Spacing="4">
+            <TextBlock Text="File name encryption" />
+            <ComboBox
+                Items="{Binding FileNameCiphers, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}, Tree=Logical}}"
+                SelectedItem="{Binding ViewModel.FileNameCipherItemViewModel, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}, Tree=Logical}}"
+                SelectedIndex="0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CipherItemViewModel">
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+    </Grid>
+</uc:Page>

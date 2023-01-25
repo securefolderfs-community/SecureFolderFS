@@ -15,14 +15,14 @@ namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
 
         public DataTemplate? InvalidTemplate { get; set; }
 
-        protected override IDataTemplate? SelectTemplateCore(ObservableObject? item, IControl container)
+        protected override IDataTemplate? SelectTemplateCore(ObservableObject? item)
         {
             return item switch
             {
                 LoginKeystoreSelectionViewModel => AuthenticateTemplate,
                 LoginCredentialsViewModel => LoginTemplate,
                 LoginInvalidVaultViewModel => InvalidTemplate,
-                _ => base.SelectTemplateCore(item, container)
+                _ => null
             };
         }
     }

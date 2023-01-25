@@ -3,7 +3,7 @@
 namespace SecureFolderFS.UI.AppModels
 {
     /// <inheritdoc cref="IPassword"/>
-    internal sealed class SecurePassword : IPassword
+    public sealed class SecurePassword : IPassword
     {
         private readonly byte[] _password;
 
