@@ -16,8 +16,8 @@
             <Grid Width="32" Height="32">
                 <Ellipse Margin="0,-2,0,2" Fill="LimeGreen" />
                 <!-- TODO Animation  -->
-                <TextBlock FontSize="20" Text="Vault has been added" />
             </Grid>
+            <TextBlock FontSize="20" Text="Vault has been added" />
         </StackPanel>
 
         <!-- TODO ToolTipService  -->
