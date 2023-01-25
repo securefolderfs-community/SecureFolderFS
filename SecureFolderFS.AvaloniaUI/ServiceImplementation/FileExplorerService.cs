@@ -40,10 +40,10 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
                     : filter.Select(x => new FilePickerFileType(x)).ToList().AsReadOnly()
             });
 
-            if (file.IsEmpty())
+            if (!file.First().TryGetUri(out var uri))
                 return null;
 
-            return file.First().TryGetUri(out var uri) ? new NativeFile(uri.ToString()) : null;
+            return new NativeFile(uri.AbsolutePath);
         }
 
         /// <inheritdoc/>
@@ -57,7 +57,10 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             if (folder.IsEmpty())
                 return null;
 
-            return folder.First().TryGetUri(out var uri) ? new NativeFolder(uri.ToString()) : null;
+            if (!folder.First().TryGetUri(out var uri))
+                return null;
+
+            return new NativeFolder(uri.AbsolutePath);
         }
     }
 }
