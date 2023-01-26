@@ -18,6 +18,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             _fileSystems = new()
             {
                 { Core.Constants.FileSystemId.DOKAN_ID, new DokanyFileSystemDescriptor() },
+                { Core.Constants.FileSystemId.FUSE_ID, new FuseFileSystemDescriptor() },
                 { Core.Constants.FileSystemId.WEBDAV_ID, new WebDavFileSystemDescriptor() }
             };
         }
@@ -47,7 +48,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public IEnumerable<IFileSystemInfoModel> GetFileSystems()
         {
             foreach (var item in _fileSystems.Values)
+            {
+                // Don't include filesystems not supported on the current OS
+                if ((item.Id == Core.Constants.FileSystemId.DOKAN_ID && !OperatingSystem.IsWindows())
+                    || (item.Id == Core.Constants.FileSystemId.FUSE_ID && !OperatingSystem.IsLinux()))
+                    continue;
+
                 yield return item;
+            }
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SecureFolderFS.AvaloniaUI.AppModels;
@@ -14,6 +16,10 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         /// <inheritdoc/>
         public Task<bool> IsClipboardAvailableAsync()
         {
+            // TODO handle macOS
+            if (OperatingSystem.IsLinux())
+                return Task.FromResult(File.Exists("/usr/bin/xsel"));
+
             return Task.FromResult(true);
         }
 

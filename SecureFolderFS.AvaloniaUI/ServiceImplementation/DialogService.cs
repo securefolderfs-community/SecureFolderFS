@@ -22,7 +22,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         {
             _dialogs = new Dictionary<Type, Func<ContentDialog>>
             {
-                // { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
+                { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() }
             };
         }

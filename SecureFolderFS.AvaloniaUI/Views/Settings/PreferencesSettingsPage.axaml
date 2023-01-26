@@ -1,0 +1,146 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
+    xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.InfoBars"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Settings.Banners"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    Loaded="PreferencesSettingsPage_OnLoaded"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.PreferencesSettingsPage">
+
+    <uc:Page.Resources>
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+
+        <DataTemplate x:Key="DokanyUnavailableInfoBarTemplate" x:DataType="uc2:DokanyInfoBar">
+            <ui:InfoBar
+                IsClosable="{Binding CanBeClosed}"
+                IsOpen="True"
+                Message="{Binding Message}"
+                Severity="{Binding InfoBarSeverity, Converter={StaticResource GenericEnumConverter}}"
+                IsVisible="{Binding IsOpen, Mode=OneWay}">
+
+                <Border Padding="16,8,16,8">
+                    <ui:HyperlinkButton
+                        Margin="0,-16,0,0"
+                        HorizontalAlignment="Right"
+                        Command="{Binding OpenWebsiteCommand}"
+                        Content="Open website" />
+                </Border>
+
+                <!-- TODO Transitions -->
+                <!-- <anim:Implicit.ShowAnimations> -->
+                <!--     <anim:TranslationAnimation -->
+                <!--         From="0,-15,0" -->
+                <!--         To="0" -->
+                <!--         Duration="0:0:0.4" /> -->
+                <!--     <anim:OpacityAnimation -->
+                <!--         From="0" -->
+                <!--         To="1.0" -->
+                <!--         Duration="0:0:0.6" /> -->
+                <!-- </anim:Implicit.ShowAnimations> -->
+                <!-- <anim:Implicit.HideAnimations> -->
+                <!--     <anim:OpacityAnimation -->
+                <!--         From="1.0" -->
+                <!--         To="0.0" -->
+                <!--         Duration="0:0:0.2" /> -->
+                <!--     <anim:TranslationAnimation -->
+                <!--         From="0" -->
+                <!--         To="0,-15,0" -->
+                <!--         Duration="0:0:0.2" /> -->
+                <!-- </anim:Implicit.HideAnimations> -->
+            </ui:InfoBar>
+        </DataTemplate>
+    </uc:Page.Resources>
+
+    <Border Padding="16,16,16,8">
+        <Grid
+            x:Name="RootGrid"
+            Loaded="RootGrid_Loaded"
+            RowDefinitions="Auto,12,*">
+            <Grid.RowDefinitions>
+                <!--  Banner  -->
+                <RowDefinition Height="Auto" />
+                <!--  Other settings  -->
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!--  Banner  -->
+            <uc:BannerControl >
+                <uc:BannerControl.LeftSide>
+                    <StackPanel Spacing="2">
+                        <TextBlock
+                            FontSize="21"
+                            FontWeight="SemiBold"
+                            Text="File system provider" />
+                        <TextBlock
+                            FontSize="11"
+                            Opacity="0.8"
+                            Text="Choose preferred virtual file system type" />
+                    </StackPanel>
+                </uc:BannerControl.LeftSide>
+                <uc:BannerControl.RightSide>
+                    <ComboBox
+                        x:Name="FileSystemAdapterChoice"
+                        VerticalAlignment="Center"
+                        Items="{Binding ViewModel.BannerViewModel.FileSystemAdapters, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        SelectionChanged="FileSystemComboBox_SelectionChanged">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:FileSystemAdapterItemViewModel">
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </uc:BannerControl.RightSide>
+                <uc:BannerControl.AdditionalBottomContent>
+                    <!--  File system InfoBar  -->
+                    <ContentControl
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Content="{Binding FileSystemInfoBar, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                        <ContentControl.DataTemplates>
+                            <ts:FileSystemInfoBarTemplateSelector DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}" />
+                        </ContentControl.DataTemplates>
+                    </ContentControl>
+                </uc:BannerControl.AdditionalBottomContent>
+            </uc:BannerControl>
+
+            <!--  Other settings  -->
+            <StackPanel Grid.Row="1" Spacing="4">
+                <ui:SettingsExpander
+                    Header="Start with system"
+                    Description="Launch SecureFolderFS on system startup"
+                    IsEnabled="False">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource Symbol="Placeholder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.StartOnSystemStartup, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+                <ui:SettingsExpander Header="Continue where you left off" Description="Start on previously selected vault">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource Symbol="Placeholder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.ContinueOnLastVault, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+                <ui:SettingsExpander Header="Open vault folder" Description="Automatically open folder when vault is unlocked">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <ui:SymbolIconSource Symbol="Folder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.OpenFolderOnUnlock, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+            </StackPanel>
+        </Grid>
+    </Border>
+</uc:Page>

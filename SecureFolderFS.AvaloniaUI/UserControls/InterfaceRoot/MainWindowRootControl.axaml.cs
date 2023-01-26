@@ -4,8 +4,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services.UserPreferences;
@@ -50,9 +52,14 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             var vaultCollectionModel = new LocalVaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
             var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
+            var platformSettingsService = Ioc.Default.GetRequiredService<IPlatformSettingsService>();
 
             // Initialize
-            var result = await Task.WhenAll(applicationSettingsService.LoadSettingsAsync(), settingsService.LoadSettingsAsync(), vaultCollectionModel.HasVaultsAsync());
+            var result = await Task.WhenAll(
+                applicationSettingsService.LoadSettingsAsync(),
+                settingsService.LoadSettingsAsync(),
+                platformSettingsService.LoadSettingsAsync(),
+                vaultCollectionModel.HasVaultsAsync());
 
             // Continue root initialization
             if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped
@@ -62,7 +69,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             }
             else
             {
-                if (result[2]) // Has vaults
+                if (result[3]) // Has vaults
                 {
                     // Show main app screen
                     _ = NavigateHostControlAsync(new MainAppHostViewModel(vaultCollectionModel));

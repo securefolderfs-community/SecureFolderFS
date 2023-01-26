@@ -1,8 +1,98 @@
-<ui:ContentDialog xmlns="https://github.com/avaloniaui"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  xmlns:ui="using:FluentAvalonia.UI.Controls"
-                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                  x:Class="SecureFolderFS.AvaloniaUI.Dialogs.SettingsDialog">
+<ui:ContentDialog
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:h="using:SecureFolderFS.AvaloniaUI.Helpers"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.SettingsDialog">
+
+    <ui:ContentDialog.Resources>
+        <ResourceDictionary>
+            <x:Double x:Key="ContentDialogMaxWidth">1300</x:Double>
+        </ResourceDictionary>
+    </ui:ContentDialog.Resources>
+
+    <ui:ContentDialog.Styles>
+        <!-- Hide empty button container -->
+        <Style Selector="#DialogSpace > Border">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+    </ui:ContentDialog.Styles>
+
+    <Grid
+        Height="500"
+        Margin="-24,-64,-24,-24"
+        Background="{DynamicResource ContentDialogBackground}">
+        <ui:NavigationView
+            IsBackButtonVisible="False"
+            IsSettingsVisible="False"
+            PaneDisplayMode="Top"
+            SelectionChanged="NavigationView_OnSelectionChanged">
+            <ui:NavigationView.MenuItems>
+                <!--  General  -->
+                <ui:NavigationViewItem
+                    AutomationProperties.Name="General"
+                    Content="General"
+                    IsSelected="True"
+                    Tag="0">
+                    <!-- TODO Icon  -->
+                    <ui:NavigationViewItem.Icon>
+
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <!--  Preferences  -->
+                <ui:NavigationViewItem
+                    AutomationProperties.Name="Preferences"
+                    Content="Preferences"
+                    Tag="1">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Repair" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <!--  Privacy  -->
+                <ui:NavigationViewItem
+                    AutomationProperties.Name="Privacy"
+                    Content="Privacy"
+                    Tag="2">
+                    <!-- TODO Icon  -->
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Placeholder" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <!--  About  -->
+                <ui:NavigationViewItem
+                    Margin="0,0,45,0"
+                    Content="About"
+                    Tag="3">
+                    <!-- TODO Icon -->
+                    <ui:NavigationViewItem.Icon>
+                        <!-- <ui:SymbolIcon Symbol="Inf" /> -->
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+
+            <!--  Display frame  -->
+            <ScrollViewer Width="644">
+                <uc:SettingsNavigationControl x:Name="Navigation" />
+            </ScrollViewer>
+        </ui:NavigationView>
+
+        <Button
+            Width="34"
+            Height="34"
+            Margin="0,8,8,0"
+            Padding="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            BorderThickness="0"
+            Click="Button_OnClick"
+            CornerRadius="20">
+            <!-- TODO Icon -->
+            <ui:SymbolIcon Symbol="Cancel" />
+        </Button>
+    </Grid>
 </ui:ContentDialog>

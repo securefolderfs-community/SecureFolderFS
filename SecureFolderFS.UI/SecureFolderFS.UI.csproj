@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="Assets\*" />
+        <None Remove="Assets\AppAssets\AppTitle.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg" />
+        <None Remove="Assets\AppAssets\Vault_dark.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg" />
+        <None Remove="Assets\AppAssets\Vault_light.svg" />
         <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg" />
     </ItemGroup>
 

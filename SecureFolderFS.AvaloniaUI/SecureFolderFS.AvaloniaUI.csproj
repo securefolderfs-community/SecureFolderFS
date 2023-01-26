@@ -32,7 +32,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="UserControls\Widgets" />
-      <Folder Include="Views\Settings" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />

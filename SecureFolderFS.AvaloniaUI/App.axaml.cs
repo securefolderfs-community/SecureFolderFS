@@ -7,7 +7,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.ServiceImplementation;
+using SecureFolderFS.AvaloniaUI.ServiceImplementation.UserPreferences;
+using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.AvaloniaUI.WindowViews;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
@@ -55,6 +58,8 @@ namespace SecureFolderFS.AvaloniaUI
                 ServiceProvider = ConfigureServices(settingsFolder);
                 Ioc.Default.ConfigureServices(ServiceProvider);
 
+                ThemeHelper.Instance.UpdateTheme();
+
                 desktop.MainWindow = new MainWindow();
             }
 
@@ -78,6 +83,7 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
                 .AddSingleton<IVaultsWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder))
+                .AddSingleton<IPlatformSettingsService, PlatformSettingsService>(_ => new PlatformSettingsService(settingsFolder))
                 .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
                 .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
                 .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))

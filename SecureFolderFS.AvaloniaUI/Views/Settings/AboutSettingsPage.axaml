@@ -1,0 +1,101 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:svg="using:Avalonia.Svg.Skia"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.AboutSettingsPage">
+
+    <Border Padding="16,16,16,8">
+        <Grid RowDefinitions="Auto,12,*">
+
+            <!--  Banner  -->
+            <uc:BannerControl>
+                <uc:BannerControl.LeftSide>
+                    <Image
+                        Margin="0,0,0,-10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Stretch="None"
+                        Source="{svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.AppTitle.svg?assembly=SecureFolderFS.UI'}" />
+                </uc:BannerControl.LeftSide>
+                <uc:BannerControl.RightSide>
+                    <StackPanel
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <Button x:Name="VersionButton" Click="VersionButton_OnClick">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <!-- TODO Icon  -->
+                                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                    <TextBlock FontWeight="SemiBold" Text="Version" />
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{DynamicResource ApplicationSecondaryForegroundThemeBrush}"
+                                        Text="{Binding ViewModel.AppVersion, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding ViewModel.OpenGitHubRepositoryCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ui:SymbolIcon Symbol="Favorite" />
+                                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                    <TextBlock FontWeight="SemiBold" Text="GitHub" />
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{DynamicResource ApplicationSecondaryForegroundThemeBrush}"
+                                        Text="View repository" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </uc:BannerControl.RightSide>
+            </uc:BannerControl>
+
+            <ui:TeachingTip
+                x:Name="VersionCopiedTeachingTip"
+                Title="Copied to clipboard"
+                Grid.Row="0"
+                IsLightDismissEnabled="True"
+                PreferredPlacement="Bottom"
+                Target="{Binding ElementName=VersionButton}">
+                <ui:TeachingTip.IconSource>
+                    <ui:SymbolIconSource Symbol="Checkmark" />
+                </ui:TeachingTip.IconSource>
+            </ui:TeachingTip>
+
+            <StackPanel Grid.Row="2" Spacing="4">
+                <ui:SettingsExpander Header="Social" Description="Join the discussion!">
+                    <ui:SettingsExpander.IconSource>
+                        <ui:SymbolIconSource Symbol="Message" />
+                    </ui:SettingsExpander.IconSource>
+
+                    <ui:SettingsExpander.Footer>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <ui:HyperlinkButton Command="{Binding ViewModel.OpenDiscordSocialCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" Content="Discord" />
+                        </StackPanel>
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+                <!-- TODO Icon -->
+                <ui:SettingsExpander
+                    Header="Privacy policy"
+                    Command="{Binding ViewModel.OpenPrivacyPolicyCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Description="View the privacy policy statement"
+                    IsClickEnabled="True" />
+
+                <ui:SettingsExpander
+                    Header="Open log location"
+                    Command="{Binding ViewModel.OpenLogLocationCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Description="Launches file explorer where log file is located"
+                    IsClickEnabled="True">
+                    <ui:SettingsExpander.IconSource>
+                        <ui:SymbolIconSource Symbol="Folder" />
+                    </ui:SettingsExpander.IconSource>
+                </ui:SettingsExpander>
+            </StackPanel>
+        </Grid>
+    </Border>
+</uc:Page>

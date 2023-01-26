@@ -12,6 +12,7 @@
             public const string APPLICATION_SETTINGS_FILENAME = "application_settings.json";
             public const string SAVED_VAULTS_FILENAME = "saved_vaults.json";
             public const string USER_SETTINGS_FILENAME = "user_settings.json";
+            public const string PLATFORM_SETTINGS_FILENAME = "platform_settings.json";
         }
 
         public static class AppLocalSettings

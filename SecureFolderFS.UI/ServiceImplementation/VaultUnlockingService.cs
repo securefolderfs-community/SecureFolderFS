@@ -84,6 +84,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             _fileSystemAdapterType = fileSystemInfoModel.Id switch
             {
                 Core.Constants.FileSystemId.DOKAN_ID => FileSystemAdapterType.DokanAdapter,
+                Core.Constants.FileSystemId.FUSE_ID => FileSystemAdapterType.FuseAdapter,
                 Core.Constants.FileSystemId.WEBDAV_ID => FileSystemAdapterType.WebDavAdapter,
                 _ => throw new ArgumentOutOfRangeException(nameof(IFileSystemInfoModel.Id))
             };

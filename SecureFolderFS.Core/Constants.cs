@@ -10,6 +10,7 @@
         public static class FileSystemId
         {
             public const string DOKAN_ID = "DOKANY";
+            public const string FUSE_ID = "FUSE";
             public const string WEBDAV_ID = "WEBDAV";
         }
 

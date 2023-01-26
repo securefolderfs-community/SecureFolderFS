@@ -1,7 +1,9 @@
+using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Messaging;
 using ExCSS;
@@ -22,7 +24,7 @@ using Dispatcher = Avalonia.Threading.Dispatcher;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
-    public partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>
+    public partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>, IStyleable
     {
         private bool _hasNavigationAnimatedOnLoaded;
         private bool _isBackAnimationState;
@@ -38,6 +40,8 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         {
             AvaloniaXamlLoader.Load(this);
         }
+
+        public Type StyleKey => typeof(ContentDialog);
 
         /// <inheritdoc/>
         public async Task<DialogResult> ShowAsync()

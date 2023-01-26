@@ -1,0 +1,61 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.PrivacySettingsPage">
+
+    <Border Padding="16,16,16,8">
+        <Grid RowDefinitions="Auto,12,*">
+            <!--  Banner  -->
+            <!--<uc:BannerControl Grid.Row="0">
+                <uc:BannerControl.LeftSide>
+                    <StackPanel
+                </uc:BannerControl.LeftSide>
+            </uc:BannerControl>-->
+
+            <!--  Other settings  -->
+            <StackPanel Grid.Row="2" Spacing="4">
+                <ui:SettingsExpander Header="Disable recently accessed list" Description="Temporarily disable recent files list when unlocking vaults">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource Symbol="Placeholder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <ToggleSwitch
+                            MinWidth="0"
+                            IsEnabled="False"
+                            IsChecked="{Binding ViewModel.AutoLockVaults, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+                <ui:SettingsExpander Header="Automatically lock vaults" Description="Lock all vaults when device is locked">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource Symbol="Placeholder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <ToggleSwitch
+                            MinWidth="0"
+                            IsEnabled="False"
+                            IsChecked="{Binding ViewModel.AutoLockVaults, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+                <ui:SettingsExpander Header="Enable telemetry" Description="Send anonymous crash reports and usage data">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource Symbol="Placeholder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <ToggleSwitch
+                            MinWidth="0"
+                            IsEnabled="False"
+                            IsChecked="{Binding ViewModel.IsTelemetryEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+            </StackPanel>
+        </Grid>
+    </Border>
+</uc:Page>

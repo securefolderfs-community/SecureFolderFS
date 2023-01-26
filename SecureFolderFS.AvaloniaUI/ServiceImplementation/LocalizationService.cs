@@ -27,7 +27,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         /// <inheritdoc/>
         public IEnumerable<ILanguageModel> GetLanguages()
         {
-            throw new System.NotImplementedException();
+            return new[] { CurrentLanguage };
         }
     }
 }

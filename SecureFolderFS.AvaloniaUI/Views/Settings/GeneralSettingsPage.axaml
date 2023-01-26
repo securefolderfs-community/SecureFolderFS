@@ -1,0 +1,168 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
+    Loaded="Control_OnLoaded"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.GeneralSettingsPage">
+
+    <uc:Page.Resources>
+        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+    </uc:Page.Resources>
+
+    <Border Padding="16,16,16,8">
+        <Grid
+            x:Name="RootGrid"
+            Loaded="RootGrid_OnLoaded"
+            RowDefinitions="Auto,12,*">
+            <!--  Banner  -->
+            <StackPanel Grid.Row="0">
+                <uc:BannerControl>
+                    <uc:BannerControl.LeftSide>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Text="{Binding ViewModel.BannerViewModel.UpdateText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                            <StackPanel
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="2">
+                                <TextBlock
+                                    FontSize="11"
+                                    Opacity="0.8"
+                                    Text="Last checked:" />
+                                <TextBlock
+                                    FontSize="11"
+                                    Opacity="0.8"
+                                    Text="{Binding ViewModel.BannerViewModel.LastChecked, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </uc:BannerControl.LeftSide>
+                    <uc:BannerControl.RightSide>
+                        <Grid>
+                            <Button
+                                Command="{Binding ViewModel.BannerViewModel.UpdateAppCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                                IsEnabled="{Binding ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <ui:SymbolIcon
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Symbol="Refresh" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        Text="Check for updates" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </uc:BannerControl.RightSide>
+                    <uc:BannerControl.AdditionalBottomContent>
+                        <!--  Version InfoBar  -->
+                        <ui:InfoBar
+                            IsClosable="{Binding ViewModel.BannerViewModel.UpdateInfoBar.CanBeClosed, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                            IsOpen="True"
+                            Message="{Binding ViewModel.BannerViewModel.UpdateInfoBar.Message, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                            Severity="{Binding ViewModel.BannerViewModel.UpdateInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                            IsVisible="{Binding ViewModel.BannerViewModel.UpdateInfoBar.IsOpen, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+
+                            <!-- TODO animation -->
+                            <!-- <anim:Implicit.ShowAnimations> -->
+                            <!--     <anim:TranslationAnimation -->
+                            <!--         From="0,-15,0" -->
+                            <!--         To="0" -->
+                            <!--         Duration="0:0:0.4" /> -->
+                            <!--     <anim:OpacityAnimation -->
+                            <!--         From="0" -->
+                            <!--         To="1.0" -->
+                            <!--         Duration="0:0:0.6" /> -->
+                            <!-- </anim:Implicit.ShowAnimations> -->
+                            <!-- <anim:Implicit.HideAnimations> -->
+                            <!--     <anim:OpacityAnimation -->
+                            <!--         From="1.0" -->
+                            <!--         To="0.0" -->
+                            <!--         Duration="0:0:0.2" /> -->
+                            <!--     <anim:TranslationAnimation -->
+                            <!--         From="0" -->
+                            <!--         To="0,-15,0" -->
+                            <!--         Duration="0:0:0.2" /> -->
+                            <!-- </anim:Implicit.HideAnimations> -->
+                        </ui:InfoBar>
+                    </uc:BannerControl.AdditionalBottomContent>
+                </uc:BannerControl>
+            </StackPanel>
+
+            <!--  Other settings  -->
+            <StackPanel Grid.Row="1" Spacing="4">
+                <ui:SettingsExpander Header="Language" Description="Select the display language">
+                    <!-- TODO Icon -->
+                    <ui:SettingsExpander.ActionIconSource>
+                        <ui:SymbolIconSource Symbol="Placeholder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <ComboBox
+                            Items="{Binding ViewModel.LanguageSettingViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                            SelectedIndex="0"
+                            SelectionChanged="ComboBox_OnSelectionChanged"
+                            Loaded="ComboBox_OnLoaded">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="vm:LanguageViewModel">
+                                    <TextBlock Text="{Binding FriendlyName}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+                <ui:SettingsExpander Header="Theme" Description="Choose application theme">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource Symbol="ColorBackground"/>
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <ComboBox SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                            <ComboBox.Items>
+                                <ComboBoxItem Content="System default" />
+                                <ComboBoxItem Content="Light" />
+                                <ComboBoxItem Content="Dark" />
+                            </ComboBox.Items>
+                        </ComboBox>
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+                <ui:SettingsExpander Header="Configure settings" IsEnabled="False">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <ui:SymbolIconSource Symbol="Setting" />
+                    </ui:SettingsExpander.ActionIconSource>
+
+                    <StackPanel Margin="-16" Spacing="1">
+                        <ui:SettingsExpander Header="Import settings" IsClickEnabled="True">
+                            <ui:SettingsExpander.ActionIconSource>
+                                <ui:SymbolIconSource Symbol="Import" />
+                            </ui:SettingsExpander.ActionIconSource>
+                            <!-- TODO Icon -->
+                            <ui:SettingsExpander.Footer>
+                                <ui:SymbolIconSource Symbol="Placeholder" />
+                            </ui:SettingsExpander.Footer>
+                        </ui:SettingsExpander>
+                        <ui:SettingsExpander Header="Export settings" IsClickEnabled="True">
+                            <ui:SettingsExpander.ActionIconSource>
+                                <!-- TODO Icon -->
+                                <ui:SymbolIconSource Symbol="Placeholder" />
+                            </ui:SettingsExpander.ActionIconSource>
+                            <!-- TODO Icon -->
+                            <ui:SettingsExpander.Footer>
+                                <ui:SymbolIconSource Symbol="Placeholder" />
+                            </ui:SettingsExpander.Footer>
+                        </ui:SettingsExpander>
+                    </StackPanel>
+                </ui:SettingsExpander>
+            </StackPanel>
+        </Grid>
+    </Border>
+</uc:Page>
