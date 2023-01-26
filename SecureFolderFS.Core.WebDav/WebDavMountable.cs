@@ -18,6 +18,7 @@ using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Core.WebDav.Storage;
 
 namespace SecureFolderFS.Core.WebDav
@@ -67,7 +68,7 @@ namespace SecureFolderFS.Core.WebDav
                 throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
 
             var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter);
-            var dispatcher = new WebDavDispatcher(new DiskStore(locatableContentFolder.Path), davStorageService, new RequestHandlerProvider(), null);
+            var dispatcher = new WebDavDispatcher(new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter), davStorageService, new RequestHandlerProvider(), null);
 
             return new WebDavMountable(dispatcher);
         }

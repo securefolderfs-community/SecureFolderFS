@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{DA5AA2CC-F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Shared", "SecureFolderFS.Shared\SecureFolderFS.Shared.csproj", "{AD6D47C4-FCEE-4638-B667-403DD16E5824}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SecureFolderFS.FileSystems", "SecureFolderFS.FileSystems", "{F2ACE2B7-1599-4769-8FF4-41FA03B25D26}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FileSystems", "FileSystems", "{F2ACE2B7-1599-4769-8FF4-41FA03B25D26}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sdk", "Sdk", "{086CDAC6-2730-4F09-BA28-B41F737E6C4D}"
 EndProject
