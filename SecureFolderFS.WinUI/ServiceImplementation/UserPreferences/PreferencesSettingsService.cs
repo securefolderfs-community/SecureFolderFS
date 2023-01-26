@@ -15,7 +15,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         /// <inheritdoc/>
         public string PreferredFileSystemId
         {
-            get => GetSetting<string>(() => Core.Constants.FileSystemId.DOKAN_ID);
+            get => GetSetting<string>(() => Core.Constants.FileSystemId.WEBDAV_ID);
             set => SetSetting<string>(value);
         }
 
