@@ -1,0 +1,3 @@
+[submodule "lib/nwebdav"]
+	path = lib/nwebdav
+	url = https://github.com/securefolderfs-community/nwebdav.git

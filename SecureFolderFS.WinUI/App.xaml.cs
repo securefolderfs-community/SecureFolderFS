@@ -1,22 +1,22 @@
-﻿using Microsoft.UI.Xaml;
-using System;
-using System.Diagnostics;
-using System.IO;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.WinUI.ServiceImplementation;
-using SecureFolderFS.WinUI.WindowViews;
-using SecureFolderFS.WinUI.Helpers;
-using System.Threading.Tasks;
-using Windows.Storage;
+using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.WinUI.AppModels;
+using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.WinUI.ServiceImplementation;
 using SecureFolderFS.WinUI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.WinUI.Storage.NativeStorage;
+using SecureFolderFS.WinUI.WindowViews;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    public partial class App : Application
+    public sealed partial class App : Application
     {
         private Window? _window;
 
@@ -57,7 +57,7 @@ namespace SecureFolderFS.WinUI
 
             // Configure IoC
             ServiceProvider = ConfigureServices(settingsFolder);
-            Ioc.Default.ConfigureServices(ServiceProvider);
+            Ioc.Default.ConfigureServices(ServiceProvider!);
 
             _window = new MainWindow();
             _window.Activate();
@@ -91,7 +91,7 @@ namespace SecureFolderFS.WinUI
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>()
                 .AddSingleton<IVaultService, VaultService>()
-                .AddSingleton<IFileSystemService, NativeFileSystemService>()
+                .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
@@ -118,12 +118,12 @@ namespace SecureFolderFS.WinUI
             LogException(e.ExceptionObject as Exception);
         }
 
-        private void LogException(Exception? ex)
+        private static void LogException(Exception? ex)
         {
             var formattedException = ExceptionHelpers.FormatException(ex);
 
             Debug.WriteLine(formattedException);
-            Debugger.Break(); // Please check "Output Window" for exception details (View -> Output Window) (Ctr + Alt + O)
+            Debugger.Break(); // Please check "Output Window" for exception details (On Visual Studio, View -> Output Window or Ctr+Alt+O)
 
 #if !DEBUG
             ExceptionHelpers.LogExceptionToFile(formattedException);
@@ -135,7 +135,7 @@ namespace SecureFolderFS.WinUI
             Func<IDatabaseModel<string>, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
         {
             var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
-            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl!);
+            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl);
         }
     }
 }

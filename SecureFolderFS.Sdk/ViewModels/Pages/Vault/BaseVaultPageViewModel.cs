@@ -1,10 +1,10 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
@@ -12,11 +12,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
     {
         protected IMessenger Messenger { get; }
 
-        public IVaultModel VaultModel { get; }
+        public VaultViewModel VaultViewModel { get; }
 
-        protected BaseVaultPageViewModel(IVaultModel vaultModel, IMessenger messenger)
+        protected BaseVaultPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
         {
-            VaultModel = vaultModel;
+            VaultViewModel = vaultViewModel;
             Messenger = messenger;
         }
 
@@ -24,6 +24,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public virtual void Dispose() { }
+        public abstract void Dispose();
     }
 }

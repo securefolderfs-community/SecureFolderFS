@@ -42,7 +42,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
                 ViewModel = viewModel;
 
             Navigation.Navigate(ViewModel.CurrentPage, new EntranceNavigationTransitionInfo());
-            BreadcrumbItems.Add(new(ViewModel.VaultModel.VaultName, true));
+            BreadcrumbItems.Add(new(ViewModel.VaultViewModel.VaultModel.VaultName, true));
 
             base.OnNavigatedTo(e);
         }

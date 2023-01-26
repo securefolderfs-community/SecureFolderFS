@@ -1,9 +1,9 @@
-﻿using System.Threading;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Shared.Helpers;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.WinUI.Helpers;
 
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
@@ -21,10 +21,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         public string Name { get; protected set; }
 
         /// <inheritdoc/>
-        public virtual string Id
-        {
-            get => _computedId ??= ChecksumHelpers.CalculateChecksumForPath(Path);
-        }
+        public virtual string Id => _computedId ??= ChecksumHelpers.CalculateChecksumForPath(Path);
 
         protected WindowsStorable(TStorage storage)
         {

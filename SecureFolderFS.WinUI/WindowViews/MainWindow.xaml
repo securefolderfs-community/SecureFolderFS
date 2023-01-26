@@ -9,9 +9,9 @@
     mc:Ignorable="d">
 
     <winuiex:WindowEx.Backdrop>
-        <winuiex:MicaSystemBackdrop DarkTintOpacity="0.8" />
+        <winuiex:MicaSystemBackdrop />
     </winuiex:WindowEx.Backdrop>
 
     <!--  UI Root  -->
-    <uc:MainWindowRootControl x:Name="HostControl" />
+    <uc:MainWindowRootControl x:Name="HostControl" Loaded="HostControl_Loaded" />
 </winuiex:WindowEx>

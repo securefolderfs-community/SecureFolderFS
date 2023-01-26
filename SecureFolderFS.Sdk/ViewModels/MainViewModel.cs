@@ -1,14 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
     public sealed partial class MainViewModel : ObservableObject
     {
         [ObservableProperty]
-        private ObservableObject? _AppContentViewModel;
-
-        public MainViewModel()
-        {
-        }
+        private INotifyPropertyChanged? _AppContentViewModel;
     }
 }

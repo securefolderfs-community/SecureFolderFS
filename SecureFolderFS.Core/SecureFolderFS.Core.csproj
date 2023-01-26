@@ -1,31 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
 	<LangVersion>10.0</LangVersion>
 	<Platforms>AnyCPU;x64</Platforms>
 	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	<Nullable>enable</Nullable>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Storage\**" />
-    <EmbeddedResource Remove="Storage\**" />
-    <None Remove="Storage\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="DokanNet" Version="2.0.5.1" />
-    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.0" />
-    <PackageReference Include="Miscreant" Version="0.3.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NSec.Cryptography" Version="22.4.0" />
-    <PackageReference Include="RFC3394" Version="1.0.0" />
-    <PackageReference Include="System.Runtime.Caching" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SecureFolderFS.Core.Sdk\SecureFolderFS.Core.Sdk.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core.Dokany\SecureFolderFS.Core.Dokany.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
   </ItemGroup>

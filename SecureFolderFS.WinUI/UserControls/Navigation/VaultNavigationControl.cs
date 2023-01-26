@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.Models;
+﻿using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.WinUI.Views.Vault;
+using System;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
     /// <inheritdoc cref="NavigationControl"/>
     internal sealed class VaultNavigationControl : NavigationControl
     {
-        public Dictionary<IVaultModel, BaseVaultPageViewModel> NavigationCache { get; }
+        public Dictionary<VaultViewModel, BaseVaultPageViewModel> NavigationCache { get; }
 
         public VaultNavigationControl()
         {
@@ -23,12 +23,15 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
             if (viewModel is not BaseVaultPageViewModel pageViewModel)
                 throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");
 
-            // Make sure we dispose the old value
-            if (NavigationCache.TryGetValue(pageViewModel.VaultModel, out var existing))
-                existing.Dispose();
-            
+            // Dashboard closing animation
+            if (pageViewModel is VaultLoginPageViewModel && (NavigationCache.TryGetValue(pageViewModel.VaultViewModel, out var existing)) && existing is VaultDashboardPageViewModel)
+                transitionInfo ??= new ContinuumNavigationTransitionInfo();
+
+            // Standard animation
+            transitionInfo ??= new EntranceNavigationTransitionInfo();
+
             // Set or update the view model for individual page
-            NavigationCache[pageViewModel.VaultModel] = pageViewModel;
+            NavigationCache[pageViewModel.VaultViewModel] = pageViewModel;
 
             var pageType = viewModel switch
             {

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
@@ -15,6 +15,12 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         public WindowsStorageFile(StorageFile storage)
             : base(storage)
         {
+        }
+
+        /// <inheritdoc/>
+        public Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
+        {
+            return OpenStreamAsync(access, FileShare.None, cancellationToken);
         }
 
         /// <inheritdoc/>

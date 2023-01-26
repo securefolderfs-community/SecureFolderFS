@@ -1,15 +1,17 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.WinUI.UserControls.InfoBars;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +28,10 @@ namespace SecureFolderFS.WinUI.Views.Settings
             get => (PreferencesSettingsPageViewModel)DataContext;
             set => DataContext = value;
         }
+
+        //public InfoBarViewModel? FileSystemInfoBar { get; private set; }
+
+        //public bool IsInfoBarOpen => FileSystemInfoBar?.IsOpen ?? false;
 
         public PreferencesSettingsPage()
         {
@@ -63,11 +69,18 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 return;
 
             var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
-            if (fileSystemAdapterResult.IsSuccess && FileSystemInfoBar is not null)
+            if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
+            {
+                FileSystemInfoBar = new WebDavInfoBar();
+                FileSystemInfoBar.IsOpen = true;
+                FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
+                FileSystemInfoBar.CanBeClosed = false;
+            }
+            else if (fileSystemAdapterResult.Successful && FileSystemInfoBar is not null)
             {
                 FileSystemInfoBar.IsOpen = false;
             }
-            else if (!fileSystemAdapterResult.IsSuccess)
+            else if (!fileSystemAdapterResult.Successful)
             {
                 FileSystemInfoBar = fileSystemAdapter.Id switch
                 {
@@ -77,11 +90,14 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 if (FileSystemInfoBar is null)
                     return;
 
+                await Task.Delay(800, cancellationToken);
                 FileSystemInfoBar.IsOpen = true;
                 FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Error;
                 FileSystemInfoBar.CanBeClosed = false;
-                FileSystemInfoBar.Message = fileSystemAdapterResult.Exception?.Message ?? "EMPTY MSG";
+                FileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
             }
+
+            IsInfoBarOpen = FileSystemInfoBar?.IsOpen ?? false;
         }
 
         private async Task<FileSystemAdapterItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
@@ -89,19 +105,39 @@ namespace SecureFolderFS.WinUI.Views.Settings
             foreach (var item in ViewModel.BannerViewModel.FileSystemAdapters)
             {
                 var isSupportedResult = await item.FileSystemInfoModel.IsSupportedAsync(cancellationToken);
-                if (isSupportedResult.IsSuccess)
+                if (isSupportedResult.Successful)
                     return item;
             }
 
             return ViewModel.BannerViewModel.FileSystemAdapters.FirstOrDefault();
         }
 
-        public InfoBarViewModel? FileSystemInfoBar
+        private void RootGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            get => (InfoBarViewModel?)GetValue(FileSystemInfoBarProperty);
+            _ = AddItemsTransitionAsync();
+        }
+
+        private async Task AddItemsTransitionAsync()
+        {
+            // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
+            await Task.Delay(400);
+            RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
+        }
+
+        public InfoBarViewModel FileSystemInfoBar
+        {
+            get => (InfoBarViewModel)GetValue(FileSystemInfoBarProperty);
             set => SetValue(FileSystemInfoBarProperty, value);
         }
         public static readonly DependencyProperty FileSystemInfoBarProperty =
             DependencyProperty.Register(nameof(FileSystemInfoBar), typeof(InfoBarViewModel), typeof(PreferencesSettingsPage), new PropertyMetadata(null));
+
+        public bool IsInfoBarOpen
+        {
+            get => (bool)GetValue(IsInfoBarOpenProperty);
+            set => SetValue(IsInfoBarOpenProperty, value);
+        }
+        public static readonly DependencyProperty IsInfoBarOpenProperty =
+            DependencyProperty.Register(nameof(IsInfoBarOpen), typeof(bool), typeof(PreferencesSettingsPage), new PropertyMetadata(false));
     }
 }

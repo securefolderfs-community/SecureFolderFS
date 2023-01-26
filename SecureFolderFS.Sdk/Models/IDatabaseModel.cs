@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="key">The name of the value to get.</param>
         /// <param name="defaultValue">Retrieves the default value. If <paramref name="defaultValue"/> is null, returns the default value of <typeparamref name="TValue"/>.</param>
         /// <returns>A value from the database. The value is determined by the availability in the storage or by the <paramref name="defaultValue"/>.</returns>
-        TValue? GetValue<TValue>(TKey key, Func<TValue?>? defaultValue);
+        TValue? GetValue<TValue>(TKey key, Func<TValue?>? defaultValue = null);
 
         /// <summary>
         /// Sets a value in the database.

@@ -36,6 +36,7 @@
 
         <!--  Main Content  -->
         <ContentControl
+            x:Name="AppContent"
             Grid.Row="1"
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Stretch"

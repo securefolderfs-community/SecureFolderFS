@@ -1,13 +1,13 @@
-﻿using System;
+﻿using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using System;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,33 +24,33 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
             _graphClickSemaphore = new(1, 1);
         }
 
-        private async Task StartGraphHideStoryboard(UIElement element, [CallerArgumentExpression("element")] string? name = null)
+        private async Task StartGraphHideStoryboard(UIElement element)
         {
-            Storyboard.SetTargetName(GraphHideStoryboard.Children[0], name);
-            Storyboard.SetTargetName(GraphHideStoryboard.Children[1], name);
+            Storyboard.SetTarget(GraphHideStoryboard.Children[0], element);
+            Storyboard.SetTarget(GraphHideStoryboard.Children[1], element);
             await GraphHideStoryboard.BeginAsync();
             element.Visibility = Visibility.Collapsed;
             GraphHideStoryboard.Stop();
         }
 
-        private async Task StartGraphExtendStoryboard(FrameworkElement element, [CallerArgumentExpression("element")] string? name = null)
+        private async Task StartGraphExtendStoryboard(UIElement element)
         {
-            Storyboard.SetTargetName(GraphExtendStoryboard.Children[0], name);
+            Storyboard.SetTarget(GraphExtendStoryboard.Children[0], element);
             await GraphExtendStoryboard.BeginAsync();
             GraphExtendStoryboard.Stop();
         }
 
-        private async Task StartGraphRetractStoryboard(UIElement element, [CallerArgumentExpression("element")] string? name = null)
+        private async Task StartGraphRetractStoryboard(UIElement element)
         {
-            Storyboard.SetTargetName(GraphRetractStoryboard.Children[0], name);
+            Storyboard.SetTarget(GraphRetractStoryboard.Children[0], element);
             await GraphRetractStoryboard.BeginAsync();
             GraphRetractStoryboard.Stop();
         }
 
-        private async Task StartGraphRestoreStoryboard(UIElement element, [CallerArgumentExpression("element")] string? name = null)
+        private async Task StartGraphRestoreStoryboard(UIElement element)
         {
-            Storyboard.SetTargetName(GraphRestoreStoryboard.Children[0], name);
-            Storyboard.SetTargetName(GraphRestoreStoryboard.Children[1], name);
+            Storyboard.SetTarget(GraphRestoreStoryboard.Children[0], element);
+            Storyboard.SetTarget(GraphRestoreStoryboard.Children[1], element);
             element.Visibility = Visibility.Visible;
             await GraphRestoreStoryboard.BeginAsync();
             GraphRestoreStoryboard.Stop();
@@ -69,28 +69,40 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
 
         private async void ReadGraph_Click(object sender, RoutedEventArgs e)
         {
+            bool result;
+            if (!ReadGraphIsExtended)
+                result = await GraphExtendAnimationAsync(ReadGraph, WriteGraph, WriteColumn);
+            else
+                result = await GraphRetractAnimationAsync(ReadGraph, WriteGraph, WriteColumn);
+
+            ReadGraphIsExtended = result ? !ReadGraphIsExtended : ReadGraphIsExtended;
+        }
+
+        private async void WriteGraph_Click(object sender, RoutedEventArgs e)
+        {
+            bool result;
+            if (!WriteGraphIsExtended)
+                result = await GraphExtendAnimationAsync(WriteGraph, ReadGraph, ReadColumn);
+            else
+                result = await GraphRetractAnimationAsync(WriteGraph, ReadGraph, ReadColumn);
+
+            WriteGraphIsExtended = result ? !WriteGraphIsExtended : WriteGraphIsExtended;
+        }
+
+        private async Task<bool> GraphExtendAnimationAsync(UIElement clickedGraph, UIElement otherGraph, ColumnDefinition column)
+        {
             if (!await _graphClickSemaphore.WaitAsync(0))
-            {
-                return;
-            }
+                return false;
 
             try
             {
-                if (!ReadGraphIsExtended)
-                {
-                    await StartGraphHideStoryboard(WriteGraph);
-                    GraphsGrid.ColumnSpacing = 0;
-                    HideColumn(WriteColumn);
-                    await StartGraphExtendStoryboard(ReadGraph);
-                }
-                else
-                {
-                    RestoreColumn(WriteColumn);
-                    await StartGraphRetractStoryboard(ReadGraph);
-                    await StartGraphRestoreStoryboard(WriteGraph);
-                }
+                _ = StartGraphHideStoryboard(otherGraph);
+                await Task.Delay(90);
+                GraphsGrid.ColumnSpacing = 0;
+                HideColumn(column);
+                await StartGraphExtendStoryboard(clickedGraph);
 
-                ReadGraphIsExtended = !ReadGraphIsExtended;
+                return true;
             }
             finally
             {
@@ -98,30 +110,19 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
             }
         }
 
-        private async void WriteGraph_Click(object sender, RoutedEventArgs e)
+        private async Task<bool> GraphRetractAnimationAsync(UIElement clickedGraph, UIElement otherGraph, ColumnDefinition column)
         {
             if (!await _graphClickSemaphore.WaitAsync(0))
-            {
-                return;
-            }
+                return false;
 
             try
             {
-                if (!WriteGraphIsExtended)
-                {
-                    await StartGraphHideStoryboard(ReadGraph);
-                    GraphsGrid.ColumnSpacing = 0;
-                    HideColumn(ReadColumn);
-                    await StartGraphExtendStoryboard(WriteGraph);
-                }
-                else
-                {
-                    RestoreColumn(ReadColumn);
-                    await StartGraphRetractStoryboard(WriteGraph);
-                    await StartGraphRestoreStoryboard(ReadGraph);
-                }
+                RestoreColumn(column);
+                _ = StartGraphRetractStoryboard(clickedGraph);
+                await Task.Delay(30);
+                await StartGraphRestoreStoryboard(otherGraph);
 
-                WriteGraphIsExtended = !WriteGraphIsExtended;
+                return true;
             }
             finally
             {
@@ -145,10 +146,10 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
             }
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
-            ReadGraph?.Dispose();
-            WriteGraph?.Dispose();
+            _graphClickSemaphore.Dispose();
         }
 
         public bool ReadGraphIsExtended
@@ -159,7 +160,6 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
         public static readonly DependencyProperty ReadGraphIsExtendedProperty =
             DependencyProperty.Register(nameof(ReadGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
 
-
         public bool WriteGraphIsExtended
         {
             get => (bool)GetValue(WriteGraphIsExtendedProperty);
@@ -168,39 +168,33 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
         public static readonly DependencyProperty WriteGraphIsExtendedProperty =
             DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
 
-
-        // TODO: Make it independent of GraphPointViewModel. Maybe use IList?
-        public ObservableCollection<GraphPointViewModel> ReadGraphData
+        public IList? ReadGraphData
         {
-            get => (ObservableCollection<GraphPointViewModel>)GetValue(ReadGraphDataProperty);
+            get => (IList?)GetValue(ReadGraphDataProperty);
             set => SetValue(ReadGraphDataProperty, value);
         }
         public static readonly DependencyProperty ReadGraphDataProperty =
             DependencyProperty.Register(nameof(ReadGraphData), typeof(ObservableCollection<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
 
-
-        // TODO: Make it independent of GraphPointViewModel. Maybe use IList?
-        public ObservableCollection<GraphPointViewModel> WriteGraphData
+        public IList? WriteGraphData
         {
-            get => (ObservableCollection<GraphPointViewModel>)GetValue(WriteGraphDataProperty);
+            get => (IList?)GetValue(WriteGraphDataProperty);
             set => SetValue(WriteGraphDataProperty, value);
         }
         public static readonly DependencyProperty WriteGraphDataProperty =
             DependencyProperty.Register(nameof(WriteGraphData), typeof(ObservableCollection<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
 
-
-        public string ReadGraphSubheader
+        public string? ReadGraphSubheader
         {
-            get => (string)GetValue(ReadGraphSubheaderProperty);
+            get => (string?)GetValue(ReadGraphSubheaderProperty);
             set => SetValue(ReadGraphSubheaderProperty, value);
         }
         public static readonly DependencyProperty ReadGraphSubheaderProperty =
             DependencyProperty.Register(nameof(ReadGraphSubheader), typeof(string), typeof(GraphsWidget), new PropertyMetadata(null));
 
-
-        public string WriteGraphSubheader
+        public string? WriteGraphSubheader
         {
-            get => (string)GetValue(WriteGraphSubheaderProperty);
+            get => (string?)GetValue(WriteGraphSubheaderProperty);
             set => SetValue(WriteGraphSubheaderProperty, value);
         }
         public static readonly DependencyProperty WriteGraphSubheaderProperty =

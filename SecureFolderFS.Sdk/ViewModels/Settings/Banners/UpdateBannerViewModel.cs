@@ -44,6 +44,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 
             if (!updatesSupported || !isInitialized)
             {
+                await Task.Delay(800);
+
                 AreUpdatesSupported = false;
                 UpdateInfoBar.IsOpen = true;
                 UpdateInfoBar.Message = "Updates are not supported for the sideloaded version.";

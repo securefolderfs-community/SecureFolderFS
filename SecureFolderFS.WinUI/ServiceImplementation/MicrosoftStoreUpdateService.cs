@@ -45,7 +45,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<AppUpdateResult> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
+        public async Task<AppUpdateResultType> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
         {
             AssertInitialized();
 
@@ -55,16 +55,16 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             return result.OverallState switch
             {
-                StorePackageUpdateState.Pending => AppUpdateResult.InProgress,
-                StorePackageUpdateState.Downloading => AppUpdateResult.InProgress,
-                StorePackageUpdateState.Deploying => AppUpdateResult.InProgress,
-                StorePackageUpdateState.Completed => AppUpdateResult.Completed,
-                StorePackageUpdateState.Canceled => AppUpdateResult.Canceled,
-                StorePackageUpdateState.OtherError => AppUpdateResult.FailedUnknownError,
-                StorePackageUpdateState.ErrorLowBattery => AppUpdateResult.FailedDeviceError,
-                StorePackageUpdateState.ErrorWiFiRecommended => AppUpdateResult.FailedNetworkError,
-                StorePackageUpdateState.ErrorWiFiRequired => AppUpdateResult.FailedNetworkError,
-                _ => AppUpdateResult.FailedUnknownError
+                StorePackageUpdateState.Pending => AppUpdateResultType.InProgress,
+                StorePackageUpdateState.Downloading => AppUpdateResultType.InProgress,
+                StorePackageUpdateState.Deploying => AppUpdateResultType.InProgress,
+                StorePackageUpdateState.Completed => AppUpdateResultType.Completed,
+                StorePackageUpdateState.Canceled => AppUpdateResultType.Canceled,
+                StorePackageUpdateState.OtherError => AppUpdateResultType.FailedUnknownError,
+                StorePackageUpdateState.ErrorLowBattery => AppUpdateResultType.FailedDeviceError,
+                StorePackageUpdateState.ErrorWiFiRecommended => AppUpdateResultType.FailedNetworkError,
+                StorePackageUpdateState.ErrorWiFiRequired => AppUpdateResultType.FailedNetworkError,
+                _ => AppUpdateResultType.FailedUnknownError
             };
         }
 

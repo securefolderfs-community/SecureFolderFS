@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -7,6 +6,9 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Sdk.ViewModels.Vault;
+using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
@@ -14,46 +16,55 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
     {
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
-        public IVaultModel VaultModel { get; }
+        public VaultViewModel VaultViewModel { get; }
 
         [ObservableProperty]
         private bool _CanRemoveVault = true;
 
-        public SidebarItemViewModel(IVaultModel vaultModel)
+        [ObservableProperty]
+        private DateTime? _LastAccessDate;
+
+        public SidebarItemViewModel(IVaultModel vaultModel, IVaultContextModel vaultContextModel, IWidgetsContextModel widgetsContextModel)
         {
-            VaultModel = vaultModel;
+            VaultViewModel = new(vaultModel, vaultContextModel, widgetsContextModel);
 
             WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
         /// <inheritdoc/>
-        public void Receive(VaultUnlockedMessage message)
+        public async void Receive(VaultUnlockedMessage message)
         {
-            if (VaultModel.Equals(message.VaultModel))
+            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
+            {
+                // Prevent from removing vault if it is unlocked
                 CanRemoveVault = false;
+
+                // Update last accessed date
+                LastAccessDate = await VaultViewModel.VaultContextModel.GetLastAccessedDate();
+            }
         }
 
         /// <inheritdoc/>
         public void Receive(VaultLockedMessage message)
         {
-            if (VaultModel.Equals(message.VaultModel))
+            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
                 CanRemoveVault = true;
         }
 
         [RelayCommand]
         private void RemoveVault()
         {
-            WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(VaultModel));
+            WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(VaultViewModel.VaultModel));
         }
 
         [RelayCommand]
         private Task ShowInFileExplorerAsync()
         {
-            if (VaultModel.Folder is not ILocatableFolder vaultFolder)
+            if (VaultViewModel.VaultModel.Folder is not ILocatableFolder locatableVaultFolder)
                 return Task.CompletedTask;
 
-            return FileExplorerService.OpenInFileExplorerAsync(vaultFolder);
+            return FileExplorerService.OpenInFileExplorerAsync(locatableVaultFolder);
         }
     }
 }

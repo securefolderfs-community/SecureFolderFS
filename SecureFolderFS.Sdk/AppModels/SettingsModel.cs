@@ -1,9 +1,9 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Models;
+using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -11,22 +11,33 @@ namespace SecureFolderFS.Sdk.AppModels
     public abstract class SettingsModel : ISettingsModel
     {
         /// <summary>
-        /// Gets the <see cref="IModifiableFolder"/> where settings files are stored.
-        /// </summary>
-        protected IModifiableFolder? SettingsFolder { get; set; }
-
-        /// <summary>
         /// Gets the <see cref="IDatabaseModel{T}"/> where settings are stored.
         /// </summary>
         protected IDatabaseModel<string>? SettingsDatabase { get; set; }
 
-        /// <summary>
-        /// Gets the name of the settings store.
-        /// </summary>
-        protected abstract string? SettingsStorageName { get; }
-
         /// <inheritdoc/>
         public virtual bool IsAvailable { get; protected set; }
+
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <inheritdoc/>
+        public virtual async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
+        {
+            if (SettingsDatabase is null)
+                return false;
+
+            return await SettingsDatabase.LoadAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
+        {
+            if (SettingsDatabase is null)
+                return false;
+
+            return await SettingsDatabase.SaveAsync(cancellationToken);
+        }
 
         /// <summary>
         /// Gets a value of a setting defined by <paramref name="settingName"/>.
@@ -35,7 +46,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <param name="defaultValue">Retrieves the default value. If <paramref name="defaultValue"/> is null, returns the default value of <typeparamref name="T"/>.</param>
         /// <param name="settingName">The name of the setting.</param>
         /// <returns>A requested setting. The value is determined by the availability of the setting in the storage or by the <paramref name="defaultValue"/>.</returns>
-        protected virtual T? GetSetting<T>(Func<T?>? defaultValue, [CallerMemberName] string settingName = "")
+        protected virtual T? GetSetting<T>(Func<T?>? defaultValue = null, [CallerMemberName] string settingName = "")
         {
             if (!IsAvailable || SettingsDatabase is null || string.IsNullOrEmpty(settingName))
                 return defaultValue is not null ? defaultValue() : default;
@@ -55,25 +66,23 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!IsAvailable || SettingsDatabase is null || string.IsNullOrEmpty(settingName))
                 return false;
 
-            return SettingsDatabase.SetValue(settingName, value);
+            if (SettingsDatabase.SetValue(settingName, value))
+            {
+                OnPropertyChanged(this, settingName);
+                return true;
+            }
+
+            return false;
         }
 
-        /// <inheritdoc/>
-        public virtual async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Invokes <see cref="PropertyChanged"/> event notifying that a value of a specific property has changed.
+        /// </summary>
+        /// <param name="sender">The object that called this method.</param>
+        /// <param name="propertyName">The name of the property whose value has changed.</param>
+        protected void OnPropertyChanged(object? sender, string propertyName)
         {
-            if (SettingsDatabase is null)
-                return false;
-
-            return await SettingsDatabase.LoadAsync(cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public virtual async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
-        {
-            if (SettingsDatabase is null)
-                return false;
-
-            return await SettingsDatabase.SaveAsync(cancellationToken);
+            PropertyChanged?.Invoke(sender, new(propertyName));
         }
     }
 }

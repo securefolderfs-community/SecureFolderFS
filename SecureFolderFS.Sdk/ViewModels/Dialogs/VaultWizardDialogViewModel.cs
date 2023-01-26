@@ -1,11 +1,11 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.Shared.Utils;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {

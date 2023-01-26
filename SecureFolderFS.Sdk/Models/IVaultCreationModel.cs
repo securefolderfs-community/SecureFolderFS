@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Utils;
 
@@ -24,7 +25,7 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         /// <param name="keystoreModel">The keystore to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the action.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that represents the action.</returns>
         Task<IResult> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -39,16 +40,16 @@ namespace SecureFolderFS.Sdk.Models
         /// Sets the cipher scheme to be used for encryption.
         /// </summary>
         /// <param name="contentCipher">The content cipher scheme to use.</param>
-        /// <param name="fileNameCipher">The filename cipher scheme to use.</param>
+        /// <param name="nameCipher">The filename cipher scheme to use.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the cipher scheme is supported and was properly set, returns true, otherwise false.</returns>
-        Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel fileNameCipher, CancellationToken cancellationToken = default);
+        Task<bool> SetCipherSchemeAsync(CipherInfoModel contentCipher, CipherInfoModel nameCipher, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Finalizes the creation routine.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of <see cref="IVaultModel"/> of the action.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of <see cref="IVaultModel"/> that represents the action.</returns>
         Task<IResult<IVaultModel?>> DeployAsync(CancellationToken cancellationToken = default);
     }
 }

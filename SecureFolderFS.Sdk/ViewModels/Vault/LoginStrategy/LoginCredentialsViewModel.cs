@@ -1,38 +1,31 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
-    public sealed partial class LoginCredentialsViewModel : BaseLoginStrategyViewModel, IAsyncInitialize
+    public sealed partial class LoginCredentialsViewModel : BaseLoginStrategyViewModel
     {
-        private readonly IAsyncValidator<IFolder> _vaultValidator;
+        private readonly VaultViewModel _vaultViewModel;
         private readonly IVaultUnlockingModel _vaultUnlockingModel;
+        private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IKeystoreModel _keystoreModel;
-        private readonly IVaultModel _vaultModel;
         private readonly IMessenger _messenger;
 
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
-        public LoginCredentialsViewModel(IVaultUnlockingModel vaultUnlockingModel, IKeystoreModel keystoreModel, IVaultModel vaultModel, IMessenger messenger)
+        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel, IMessenger messenger)
         {
+            _vaultViewModel = vaultViewModel;
             _vaultUnlockingModel = vaultUnlockingModel;
+            _vaultWatcherModel = vaultWatcherModel;
             _keystoreModel = keystoreModel;
-            _vaultModel = vaultModel;
             _messenger = messenger;
-            _vaultValidator = VaultService.GetVaultValidator();
         }
 
         [RelayCommand]
@@ -41,27 +34,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             if (password is null)
                 return;
 
-            // Check if the folder is accessible
-            if (!await _vaultModel.IsAccessibleAsync(cancellationToken))
-                return; // TODO: Report the issue
-
             IUnlockedVaultModel? unlockedVaultModel;
-
-            _ = await _vaultModel.LockFolderAsync(cancellationToken);
-            using (_vaultModel.FolderLock)
+            using (_vaultWatcherModel.LockFolderAsync(cancellationToken))
             using (_vaultUnlockingModel)
             using (password)
             {
-                var setFolderResult = await _vaultUnlockingModel.SetFolderAsync(_vaultModel.Folder, cancellationToken);
-                if (!setFolderResult.IsSuccess)
+                var setFolderResult = await _vaultUnlockingModel.SetFolderAsync(_vaultViewModel.VaultModel.Folder, cancellationToken);
+                if (!setFolderResult.Successful)
                     return; // TODO: Report the issue
 
                 var setKeystoreResult = await _vaultUnlockingModel.SetKeystoreAsync(_keystoreModel, cancellationToken);
-                if (!setKeystoreResult.IsSuccess)
+                if (!setKeystoreResult.Successful)
                     return; // TODO: Report the issue
 
                 var unlockResult = await _vaultUnlockingModel.UnlockAsync(password, cancellationToken);
-                if (!unlockResult.IsSuccess)
+                if (!unlockResult.Successful)
                     return; // TODO: Report the issue
 
                 unlockedVaultModel = unlockResult.Value;
@@ -73,22 +60,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             if (unlockedVaultModel is null)
                 throw new InvalidOperationException($"Invalid state. {nameof(unlockedVaultModel)} shouldn't be null.");
 
-            var widgetsContextModel = new SavedWidgetsContextModel(_vaultModel); // TODO: Reuse the instance
-            var vaultViewModel = new VaultViewModel(unlockedVaultModel, widgetsContextModel, _vaultModel);
-            var dashboardPage = new VaultDashboardPageViewModel(vaultViewModel, _messenger);
+            // Update last access date
+            await _vaultViewModel.VaultContextModel.SetLastAccessedDate(DateTime.Now, cancellationToken);
+
+            var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, _messenger);
             _ = dashboardPage.InitAsync(cancellationToken);
 
-            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultModel));
+            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultWatcherModel.VaultModel));
             WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardPage));
-        }
-
-        /// <inheritdoc/>
-        public async Task InitAsync(CancellationToken cancellationToken = default)
-        {
-            // Check if the vault is supported
-            var vaultValidationResult = await _vaultValidator.ValidateAsync(_vaultModel.Folder, cancellationToken);
-            if (!vaultValidationResult.IsSuccess)
-                return; // TODO: Report the issue
         }
 
         /// <inheritdoc/>

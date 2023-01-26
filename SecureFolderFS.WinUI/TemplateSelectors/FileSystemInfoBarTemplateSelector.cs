@@ -8,10 +8,15 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
     {
         public DataTemplate? DokanyUnavailableInfoBarTemplate { get; set; }
 
+        public DataTemplate? WebDavExperimentalInfoBarTemplate { get; set; }
+
         protected override DataTemplate? SelectTemplateCore(InfoBarViewModel? item, DependencyObject container)
         {
             if (item is DokanyInfoBar)
                 return DokanyUnavailableInfoBarTemplate;
+
+            if (item is WebDavInfoBar)
+                return WebDavExperimentalInfoBarTemplate;
 
             return base.SelectTemplateCore(item, container);
         }

@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
@@ -10,6 +7,10 @@ using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -27,23 +28,22 @@ namespace SecureFolderFS.Sdk.AppModels
                 return new CommonResult(false);
 
             var configurationResult = await VaultCreationService.PrepareConfigurationAsync(cancellationToken);
-            if (!configurationResult.IsSuccess)
+            if (!configurationResult.Successful)
                 return configurationResult;
 
-            var readmeFile = await folder.TryCreateFileAsync(Constants.VaultReadme.VAULT_README_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            var readmeFile = await folder.TryCreateFileAsync(Constants.VaultInformation.VAULT_README_FILENAME, false, cancellationToken);
             if (readmeFile is not null)
-                await readmeFile.WriteAllTextAsync(Constants.VaultReadme.VAULT_README_MESSAGE, cancellationToken);
+                await readmeFile.WriteAllTextAsync(Constants.VaultInformation.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
 
             _vaultFolder = folder;
-
-            return new CommonResult();
+            return CommonResult.Success;
         }
 
         /// <inheritdoc/>
         public async Task<IResult> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default)
         {
             var keystoreStreamResult = await keystoreModel.GetKeystoreStreamAsync(FileAccess.ReadWrite, cancellationToken);
-            if (!keystoreStreamResult.IsSuccess || keystoreStreamResult.Value is null)
+            if (keystoreStreamResult.Value is null || !keystoreStreamResult.Successful)
                 return keystoreStreamResult;
 
             return await VaultCreationService.PrepareKeystoreAsync(keystoreStreamResult.Value, keystoreModel.KeystoreSerializer, cancellationToken);
@@ -56,12 +56,10 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SetCipherSchemeAsync(ICipherInfoModel contentCipher, ICipherInfoModel fileNameCipher, CancellationToken cancellationToken = default)
+        public async Task<bool> SetCipherSchemeAsync(CipherInfoModel contentCipher, CipherInfoModel nameCipher, CancellationToken cancellationToken = default)
         {
-            if (!await VaultCreationService.SetContentCipherSchemeAsync(contentCipher, cancellationToken))
-                return false;
-
-            if (!await VaultCreationService.SetFileNameCipherSchemeAsync(fileNameCipher, cancellationToken))
+            var setCipherResult = await VaultCreationService.SetCipherSchemeAsync(contentCipher, nameCipher, cancellationToken);
+            if (!setCipherResult.Successful)
                 return false;
 
             return true;
@@ -74,17 +72,11 @@ namespace SecureFolderFS.Sdk.AppModels
                 return new CommonResult<IVaultModel?>(null);
 
             var deployResult = await VaultCreationService.DeployAsync(cancellationToken);
-            if (!deployResult.IsSuccess)
+            if (!deployResult.Successful)
                 return new CommonResult<IVaultModel?>(deployResult.Exception);
 
             // Create vault model
             IVaultModel vaultModel = new LocalVaultModel(_vaultFolder);
-
-            // Set up widgets
-            IWidgetsContextModel widgetsContextModel = new SavedWidgetsContextModel(vaultModel); // TODO: Reuse it!
-
-            await widgetsContextModel.AddWidgetAsync(Constants.Widgets.HEALTH_WIDGET_ID, cancellationToken);
-            await widgetsContextModel.AddWidgetAsync(Constants.Widgets.GRAPHS_WIDGET_ID, cancellationToken);
 
             return new CommonResult<IVaultModel?>(vaultModel);
         }

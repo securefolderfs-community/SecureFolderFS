@@ -34,7 +34,7 @@ namespace SecureFolderFS.WinUI.Helpers
 
             try
             {
-                var filePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.Application.EXCEPTIONLOG_FILENAME);
+                var filePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.Application.EXCEPTION_LOG_FILENAME);
 
                 var existing = File.ReadAllText(filePath);
                 existing += formattedException;

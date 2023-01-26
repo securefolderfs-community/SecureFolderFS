@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,16 +45,13 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             base.OnNavigatedTo(e);
         }
 
-        private async void EncryptionWizardPage_Loaded(object sender, RoutedEventArgs e)
+        private void EncryptionWizardPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await foreach (var item in VaultService.GetContentCiphersAsync())
-            {
+            foreach (var item in VaultService.GetContentCiphers())
                 ContentCiphers.Add(new(item));
-            }
-            await foreach (var item in VaultService.GetFileNameCiphersAsync())
-            {
+
+            foreach (var item in VaultService.GetFileNameCiphers())
                 FileNameCiphers.Add(new(item));
-            }
         }
     }
 }

@@ -6,12 +6,12 @@
     public enum ChunkCachingStrategy : uint
     {
         /// <summary>
-        /// No caching strategy is used.
+        /// No caching is used.
         /// </summary>
         NoCache = 0,
 
         /// <summary>
-        /// Simple cache based on dictionary of chunks.
+        /// Simple in-memory cache of chunks.
         /// </summary>
         RandomAccessMemoryCache = 1
     }

@@ -9,9 +9,7 @@ namespace SecureFolderFS.WinUI.ValueConverters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is not bool boolParam)
-            {
                 return Visibility.Collapsed;
-            }
 
             if (parameter is not string stringParam)
             {

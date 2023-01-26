@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Shared.Utils;
+using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 {
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 
         public ObservableCollection<FileSystemAdapterItemViewModel> FileSystemAdapters { get; }
 
-        public string PreferredFileSystemId
+        public string? PreferredFileSystemId
         {
             get => PreferencesSettingsService.PreferredFileSystemId;
             set => PreferencesSettingsService.PreferredFileSystemId = value;
@@ -28,12 +28,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
             FileSystemAdapters = new();
         }
 
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in VaultService.GetFileSystemsAsync(cancellationToken))
-            {
+            foreach (var item in VaultService.GetFileSystems())
                 FileSystemAdapters.Add(new(item));
-            }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,142 +1,161 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.Routines;
-using SecureFolderFS.Core.VaultCreator.Routine;
-using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Core;
+using SecureFolderFS.Core.Cryptography.Enums;
+using SecureFolderFS.Core.Routines.CreationRoutines;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
-using SecureFolderFS.WinUI.AppModels;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultCreationService"/>
     internal sealed class VaultCreationService : IVaultCreationService
     {
-        private IVaultCreationRoutineStep3? _step3;
-        private IVaultCreationRoutineStep4? _step4;
-        private IVaultCreationRoutineStep6? _step6;
-        private IVaultCreationRoutineStep9? _step9;
-        private IVaultCreationRoutineStep10? _step10;
-        private IVaultCreationRoutineStep11? _step11;
+        private Stream? _configStream;
+        private Stream? _keystoreStream;
         private IModifiableFolder? _folder;
+        private ICreationRoutine? _creationRoutine;
+        private ContentCipherScheme _contentCipherScheme;
+        private FileNameCipherScheme _fileNameCipherScheme;
 
         /// <inheritdoc/>
-        public Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
+        public async Task<bool> SetVaultFolderAsync(IModifiableFolder folder, CancellationToken cancellationToken = default)
         {
-            if (folder is not ILocatableFolder vaultFolder)
+            _folder = folder;
+            _creationRoutine = VaultHelpers.NewCreationRoutine();
+
+            try
+            {
+                await _creationRoutine.CreateContentFolderAsync(folder, cancellationToken);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> SetPasswordAsync(IPassword password, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+
+            if (_creationRoutine is null)
                 return Task.FromResult(false);
 
-            _folder = folder;
-            _step3 = VaultRoutines.NewVaultCreationRoutine()
-                .EstablishRoutine()
-                .SetVaultFolder(vaultFolder)
-                .AddFileOperations();
-
+            _creationRoutine.SetVaultPassword(password);
             return Task.FromResult(true);
         }
 
         /// <inheritdoc/>
         public async Task<IResult> PrepareConfigurationAsync(CancellationToken cancellationToken = default)
         {
-            _ = _step3 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
-
             if (_folder is null)
                 return new CommonResult(false);
 
-            var configFile = await _folder.TryCreateFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, CreationCollisionOption.OpenIfExists, cancellationToken);
+            var configFile = await _folder.TryCreateFileAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, false, cancellationToken);
             if (configFile is null)
                 return new CommonResult(false);
 
-            var configStream = await configFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
-            if (configStream is null)
+            // Make sure to dispose previous configuration file stream
+            if (_configStream is not null)
+            {
+                await _configStream.DisposeAsync();
+                _configStream = null;
+            }
+
+            // Open the configuration file stream
+            var configStreamResult = await configFile.OpenStreamWithResultAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
+            if (!configStreamResult.Successful)
+                return configStreamResult;
+
+            _configStream = configStreamResult.Value;
+            return CommonResult.Success;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
+        {
+            if (_creationRoutine is null)
                 return new CommonResult(false);
 
-            _step4 = _step3.CreateConfigurationFile(new StreamConfigDiscoverer(configStream));
-            return new CommonResult();
+            try
+            {
+                await _creationRoutine.WriteKeystoreAsync(keystoreStream, serializer, cancellationToken);
+                _keystoreStream = keystoreStream;
+
+                return CommonResult.Success;
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult(ex);
+            }
         }
 
         /// <inheritdoc/>
-        public Task<IResult> PrepareKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer,
-            CancellationToken cancellationToken = default)
+        public Task<IResult> SetCipherSchemeAsync(CipherInfoModel contentCipher, CipherInfoModel nameCipher, CancellationToken cancellationToken = default)
         {
-            _ = _step4 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
+            if (_creationRoutine is null || _configStream is null)
+                return Task.FromResult<IResult>(new CommonResult(false));
 
-            _step6 = _step4.CreateKeystoreFile(new StreamKeystoreDiscoverer(keystoreStream))
-                .CreateContentFolder();
-
-            return Task.FromResult<IResult>(new CommonResult());
-        }
-
-        /// <inheritdoc/>
-        public Task<bool> SetPasswordAsync(IPassword password, CancellationToken cancellationToken = default)
-        {
-            _ = _step6 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
-
-            _step9 = _step6
-                .AddEncryptionAlgorithmBuilder()
-                .InitializeKeystoreData(password)
-                .ContinueKeystoreFileInitialization();
-
-            return Task.FromResult(true);
-        }
-
-        /// <inheritdoc/>
-        public Task<bool> SetContentCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default)
-        {
-            _ = _step9 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
-
-            var contentCipherScheme = cipherScheme.Id switch
+            _contentCipherScheme = contentCipher.Id switch
             {
                 Core.Constants.CipherId.AES_CTR_HMAC => ContentCipherScheme.AES_CTR_HMAC,
                 Core.Constants.CipherId.AES_GCM => ContentCipherScheme.AES_GCM,
                 Core.Constants.CipherId.XCHACHA20_POLY1305 => ContentCipherScheme.XChaCha20_Poly1305,
-                _ => throw new ArgumentOutOfRangeException(nameof(cipherScheme.Id))
+                _ => throw new ArgumentOutOfRangeException(nameof(contentCipher.Id))
             };
-
-            _step10 = _step9.SetContentCipherScheme(contentCipherScheme);
-            return Task.FromResult(true);
-        }
-
-        /// <inheritdoc/>
-        public Task<bool> SetFileNameCipherSchemeAsync(ICipherInfoModel cipherScheme, CancellationToken cancellationToken = default)
-        {
-            _ = _step10 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
-
-            var fileNameCipherScheme = cipherScheme.Id switch
+            _fileNameCipherScheme = nameCipher.Id switch
             {
                 Core.Constants.CipherId.NONE => FileNameCipherScheme.None,
                 Core.Constants.CipherId.AES_SIV => FileNameCipherScheme.AES_SIV,
-                _ => throw new ArgumentOutOfRangeException(nameof(cipherScheme.Id))
+                _ => throw new ArgumentOutOfRangeException(nameof(nameCipher.Id))
             };
 
-            _step11 = _step10.SetFileNameCipherScheme(fileNameCipherScheme);
-            return Task.FromResult(true);
+            return Task.FromResult<IResult>(CommonResult.Success);
         }
 
         /// <inheritdoc/>
-        public Task<IResult> DeployAsync(CancellationToken cancellationToken = default)
+        public async Task<IResult> DeployAsync(CancellationToken cancellationToken = default)
         {
-            _ = _step11 ?? throw new InvalidOperationException("Vault folder has not been set yet.");
+            if (_creationRoutine is null || _configStream is null || _keystoreStream is null)
+                return new CommonResult(false);
 
-            _step11
-                .ContinueConfigurationFileInitialization()
-                .Finalize()
-                .Deploy();
+            try
+            {
+                await _creationRoutine.WriteConfigurationAsync(
+                    new(_contentCipherScheme, _fileNameCipherScheme),
+                    _configStream,
+                    StreamSerializer.Instance,
+                    cancellationToken);
+                await _configStream.FlushAsync(cancellationToken);
+                _configStream.Close();
 
-            return Task.FromResult<IResult>(new CommonResult());
+                await _creationRoutine.WriteKeystoreAsync(_keystoreStream, StreamSerializer.Instance,
+                    cancellationToken);
+                await _keystoreStream.FlushAsync(cancellationToken);
+                _keystoreStream.Close();
+
+                return CommonResult.Success;
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult(ex);
+            }
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
+            _configStream?.Dispose();
+            _keystoreStream?.Dispose();
+            _creationRoutine?.Dispose();
         }
     }
 }

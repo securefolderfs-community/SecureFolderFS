@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Shared.Extensions;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.UserPreferences;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -54,8 +54,6 @@ namespace SecureFolderFS.Sdk.AppModels
             {
                 yield return new LocalWidgetModel(item.Key, SettingsService, item.Value);
             }
-
-            await Task.CompletedTask;
         }
     }
 }

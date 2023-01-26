@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -19,23 +19,21 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
             ExpanderExpandingCommand?.Execute(null);
         }
 
-        public IRelayCommand ClickCommand
+        public ICommand? ClickCommand
         {
-            get => (IRelayCommand)GetValue(ClickCommandProperty);
+            get => (ICommand?)GetValue(ClickCommandProperty);
             set => SetValue(ClickCommandProperty, value);
         }
         public static readonly DependencyProperty ClickCommandProperty =
-            DependencyProperty.Register(nameof(ClickCommand), typeof(IRelayCommand), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ClickCommand), typeof(ICommand), typeof(ActionBlockControl), new PropertyMetadata(null));
 
-
-        public IRelayCommand ExpanderExpandingCommand
+        public ICommand? ExpanderExpandingCommand
         {
-            get => (IRelayCommand)GetValue(ExpanderExpandingCommandProperty);
+            get => (ICommand?)GetValue(ExpanderExpandingCommandProperty);
             set => SetValue(ExpanderExpandingCommandProperty, value);
         }
         public static readonly DependencyProperty ExpanderExpandingCommandProperty =
-            DependencyProperty.Register(nameof(ExpanderExpandingCommand), typeof(IRelayCommand), typeof(ActionBlockControl), new PropertyMetadata(null));
-
+            DependencyProperty.Register(nameof(ExpanderExpandingCommand), typeof(ICommand), typeof(ActionBlockControl), new PropertyMetadata(null));
 
         public FrameworkElement ExpanderContent
         {
@@ -45,7 +43,6 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         public static readonly DependencyProperty ExpanderContentProperty =
             DependencyProperty.Register(nameof(ExpanderContent), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
 
-
         public bool IsClickable
         {
             get => (bool)GetValue(IsClickableProperty);
@@ -53,7 +50,6 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         }
         public static readonly DependencyProperty IsClickableProperty =
             DependencyProperty.Register(nameof(IsClickable), typeof(bool), typeof(ActionBlockControl), new PropertyMetadata(false));
-
 
         public IconElement Icon
         {
@@ -63,7 +59,6 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         public static readonly DependencyProperty IconProperty =
             DependencyProperty.Register(nameof(Icon), typeof(IconElement), typeof(ActionBlockControl), new PropertyMetadata(null));
 
-
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);
@@ -71,7 +66,6 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         }
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(nameof(Title), typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
-
 
         public string? Description
         {
@@ -81,7 +75,6 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         public static readonly DependencyProperty DescriptionProperty =
             DependencyProperty.Register(nameof(Description), typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
 
-
         public FrameworkElement CustomDescription
         {
             get => (FrameworkElement)GetValue(CustomDescriptionProperty);
@@ -90,7 +83,6 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         public static readonly DependencyProperty CustomDescriptionProperty =
             DependencyProperty.Register(nameof(CustomDescription), typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
 
-
         public FrameworkElement ActionElement
         {
             get => (FrameworkElement)GetValue(ActionElementProperty);
@@ -98,7 +90,6 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         }
         public static readonly DependencyProperty ActionElementProperty =
             DependencyProperty.Register(nameof(ActionElement), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
-
 
         public FrameworkElement AdditionalActionElement
         {

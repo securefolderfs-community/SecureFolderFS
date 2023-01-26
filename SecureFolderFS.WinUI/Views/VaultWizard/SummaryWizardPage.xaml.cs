@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.WinUI.Helpers;
-using SecureFolderFS.WinUI.WindowViews;
 using System;
 using System.Threading.Tasks;
 
@@ -27,11 +26,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         public SummaryWizardPage()
         {
             InitializeComponent();
-
-            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].RegisterForThemeChangedCallback(nameof(SummaryWizardPage), _ =>
-            {
-                CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);
-            });
+            ThemeHelper.Instance.OnThemeChangedEvent += ThemeHelper_OnThemeChangedEvent;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -42,19 +37,27 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             base.OnNavigatedTo(e);
         }
 
+        private void ThemeHelper_OnThemeChangedEvent(object? sender, ElementTheme e)
+        {
+            CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);
+        }
+
         private async void VisualPlayer_Loaded(object sender, RoutedEventArgs e)
         {
             CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);
             VisualPlayer.Visibility = Visibility.Collapsed;
+
             await Task.Delay(600);
             _ = VisualPlayer.PlayAsync(CheckVisualSource.Markers["NormalOffToNormalOn_Start"], CheckVisualSource.Markers["NormalOffToNormalOn_End"], false);
             await Task.Delay(20);
+
             VisualPlayer.Visibility = Visibility.Visible;
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
-            ThemeHelper.ThemeHelpers[MainWindow.Instance!.AppWindow!].UnregisterForThemeChangedCallback(nameof(SummaryWizardPage));
+            ThemeHelper.Instance.OnThemeChangedEvent -= ThemeHelper_OnThemeChangedEvent;
         }
     }
 }

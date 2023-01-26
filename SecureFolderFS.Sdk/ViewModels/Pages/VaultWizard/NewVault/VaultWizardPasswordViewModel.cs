@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 {

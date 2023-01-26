@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         /// <param name="access">Represents the access to give to the keystore stream.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of <see cref="Stream"/> of the action.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of <see cref="Stream"/> that represents the action.</returns>
         Task<IResult<Stream?>> GetKeystoreStreamAsync(FileAccess access = FileAccess.Read, CancellationToken cancellationToken = default);
     }
 }

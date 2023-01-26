@@ -66,6 +66,7 @@
             x:Name="ReadGraph"
             Grid.Column="0"
             ChartPrimaryColor="#4C00AED4"
+            ChartStrokeColor="#00AED4"
             Click="ReadGraph_Click"
             Data="{x:Bind ReadGraphData, Mode=OneWay}"
             GraphHeader="Read speeds"
@@ -73,9 +74,6 @@
             <uc:GraphControl.RenderTransform>
                 <ScaleTransform />
             </uc:GraphControl.RenderTransform>
-            <uc:GraphControl.ChartStroke>
-                <SolidColorBrush Color="#00AED4" />
-            </uc:GraphControl.ChartStroke>
         </uc:GraphControl>
 
         <!--  Write  -->
@@ -83,6 +81,7 @@
             x:Name="WriteGraph"
             Grid.Column="1"
             ChartPrimaryColor="#4C008d74"
+            ChartStrokeColor="#008D74"
             Click="WriteGraph_Click"
             Data="{x:Bind WriteGraphData, Mode=OneWay}"
             GraphHeader="Write speeds"
@@ -91,9 +90,6 @@
             <uc:GraphControl.RenderTransform>
                 <ScaleTransform />
             </uc:GraphControl.RenderTransform>
-            <uc:GraphControl.ChartStroke>
-                <SolidColorBrush Color="#008D74" />
-            </uc:GraphControl.ChartStroke>
         </uc:GraphControl>
     </Grid>
 </UserControl>

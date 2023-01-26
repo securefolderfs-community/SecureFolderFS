@@ -1,14 +1,13 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage.Enums;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -32,11 +31,11 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue)
+        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null)
             where TValue : default
         {
             if (settingsCache.TryGetValue(key, out var value))
-                return (TValue?)value.Data;
+                return value.Data.TryCast(defaultValue);
 
             var fallback = defaultValue is not null ? defaultValue() : default;
             settingsCache[key] = new(typeof(TValue), fallback); // The data needs to be saved
@@ -81,7 +80,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     try
                     {
                         // Get type string
-                        var typeString = await StorageIOExtensions.ReadStringAsync(typeFile, Encoding.UTF8, cancellationToken);
+                        var typeString = await typeFile.ReadAllTextAsync(Encoding.UTF8, cancellationToken);
                         if (string.IsNullOrEmpty(typeString))
                             continue;
 
@@ -103,6 +102,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     }
                     catch (Exception)
                     {
+                        // TODO: Re-throw exceptions in some cases?
                         continue;
                     }
                 }
@@ -111,6 +111,7 @@ namespace SecureFolderFS.Sdk.AppModels
             }
             catch (Exception)
             {
+                // If the exception was re-thrown...
                 return false;
             }
             finally
@@ -134,8 +135,8 @@ namespace SecureFolderFS.Sdk.AppModels
                         if (FlushOnlyChangedValues && !item.Value.IsDirty)
                             continue;
 
-                        var dataFile = await _databaseFolder.TryCreateFileAsync(item.Key, CreationCollisionOption.OpenIfExists, cancellationToken);
-                        var typeFile = await _databaseFolder.TryCreateFileAsync($"{item.Key}{TYPE_FILE_SUFFIX}", CreationCollisionOption.OpenIfExists, cancellationToken);
+                        var dataFile = await _databaseFolder.TryCreateFileAsync(item.Key, false, cancellationToken);
+                        var typeFile = await _databaseFolder.TryCreateFileAsync($"{item.Key}{TYPE_FILE_SUFFIX}", false, cancellationToken);
                         if (dataFile is null || typeFile is null)
                             continue;
 
@@ -149,11 +150,12 @@ namespace SecureFolderFS.Sdk.AppModels
                         if (dataStream is null)
                             continue;
 
-                        // Reset the stream
-                        dataStream.Seek(0, SeekOrigin.Begin);
+                        // Overwrite existing content
+                        dataStream.Position = 0L;
                         dataStream.SetLength(0L);
 
                         // Copy contents
+                        serializedDataStream.Position = 0L;
                         await serializedDataStream.CopyToAsync(dataStream, cancellationToken);
 
                         // Type file part
@@ -173,11 +175,12 @@ namespace SecureFolderFS.Sdk.AppModels
                         // Write contents
                         await typeStream.WriteAsync(typeBuffer, cancellationToken);
 
-                        // Setting saved, set IsDirty to false
+                        // Setting saved, setting is no longer dirty
                         item.Value.IsDirty = false;
                     }
                     catch (Exception)
                     {
+                        // TODO: Re-throw exceptions in some cases?
                         continue;
                     }
                 }
@@ -195,7 +198,7 @@ namespace SecureFolderFS.Sdk.AppModels
             }
         }
 
-        public record SettingValue(Type Type, object? Data, bool IsDirty = true)
+        public sealed record SettingValue(Type Type, object? Data, bool IsDirty = true)
         {
             public object? Data { get; set; } = Data;
 

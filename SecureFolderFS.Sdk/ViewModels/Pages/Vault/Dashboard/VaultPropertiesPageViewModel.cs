@@ -1,14 +1,14 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
     public sealed class VaultPropertiesPageViewModel : BaseDashboardPageViewModel
     {
-        public VaultPropertiesPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
-            : base(vaultViewModel, messenger)
+        public VaultPropertiesPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IMessenger messenger)
+            : base(unlockedVaultViewModel, messenger)
         {
         }
 

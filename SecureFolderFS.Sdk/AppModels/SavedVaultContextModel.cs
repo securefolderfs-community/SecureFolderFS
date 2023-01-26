@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services.UserPreferences;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 
 namespace SecureFolderFS.Sdk.AppModels
 {

@@ -15,16 +15,18 @@
     <UserControl.Resources>
         <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
         <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+        <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
     </UserControl.Resources>
 
     <NavigationView
         x:Name="Sidebar"
-        ExpandedModeThresholdWidth="864"
+        ExpandedModeThresholdWidth="816"
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="True"
         IsSettingsVisible="False"
         MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
-        OpenPaneLength="284"
+        OpenPaneLength="260"
         PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
@@ -110,8 +112,8 @@
             <DataTemplate x:DataType="vm:SidebarItemViewModel">
                 <NavigationViewItem
                     Height="64"
-                    AutomationProperties.Name="{x:Bind VaultModel.VaultName, Mode=OneWay}"
-                    ToolTipService.ToolTip="{x:Bind VaultModel.VaultName, Mode=OneWay}">
+                    AutomationProperties.Name="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                    ToolTipService.ToolTip="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xF540;" />
                     </NavigationViewItem.Icon>
@@ -120,13 +122,16 @@
                             <!--  Vault name  -->
                             <TextBlock
                                 FontWeight="SemiBold"
-                                Text="{x:Bind VaultModel.VaultName, Mode=OneWay}"
+                                Text="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
                                 TextTrimming="CharacterEllipsis" />
+
                             <!--  Last opened  -->
                             <TextBlock
-                                FontSize="14"
+                                x:Name="LastOpenedText"
+                                x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+                                FontSize="12"
                                 Opacity="0.6"
-                                Text="Undefined" />
+                                Text="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                         </StackPanel>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>

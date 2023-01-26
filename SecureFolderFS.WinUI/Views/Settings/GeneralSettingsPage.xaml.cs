@@ -1,8 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.WinUI.Helpers;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -18,6 +21,12 @@ namespace SecureFolderFS.WinUI.Views.Settings
         {
             get => (GeneralSettingsPageViewModel)DataContext;
             set => DataContext = value;
+        }
+
+        public int SelectedThemeIndex
+        {
+            get => (int)ThemeHelper.Instance.CurrentTheme;
+            set => ThemeHelper.Instance.CurrentTheme = (ElementTheme)value;
         }
 
         public GeneralSettingsPage()
@@ -41,8 +50,20 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private void AppLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ComboBox comboBox && comboBox.SelectedItem is ILanguageModel language)
+            if (sender is ComboBox { SelectedItem: ILanguageModel language })
                 ViewModel.LanguageSettingViewModel.UpdateCurrentLanguage(language);
+        }
+
+        private void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            _ = AddItemsTransitionAsync();
+        }
+
+        private async Task AddItemsTransitionAsync()
+        {
+            // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
+            await Task.Delay(400);
+            RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
         }
     }
 }

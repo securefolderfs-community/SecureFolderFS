@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 {
@@ -41,12 +41,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
                 return; // TODO: Report issue
 
             var deployResult = await _vaultCreationModel.DeployAsync(cancellationToken);
-            if (!deployResult.IsSuccess || deployResult.Value is null)
+            if (!deployResult.Successful)
                 return; // TODO: Report issue
 
             // TODO: Handle adding vault to VaultCollectionModel here...
 
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(deployResult.Value, Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(deployResult.Value!, Messenger, DialogViewModel)));
         }
     }
 }

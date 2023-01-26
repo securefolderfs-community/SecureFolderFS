@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Models
@@ -6,7 +7,7 @@ namespace SecureFolderFS.Sdk.Models
     /// <summary>
     /// Manages all actions related with storing app settings.
     /// </summary>
-    public interface ISettingsModel
+    public interface ISettingsModel : INotifyPropertyChanged
     {
         /// <summary>
         /// Determines whether the settings store is available.

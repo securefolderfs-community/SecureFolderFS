@@ -18,6 +18,12 @@ namespace SecureFolderFS.Shared.Extensions
                 collection.Add(item);
         }
 
+        public static void ClearAndAdd<T>(this ICollection<T> collection, T item)
+        {
+            collection.Clear();
+            collection.Add(item);
+        }
+
         public static void EnumeratedAdd<T>(this ICollection<T> collection, IEnumerable<T> source)
         {
             foreach (var item in source)

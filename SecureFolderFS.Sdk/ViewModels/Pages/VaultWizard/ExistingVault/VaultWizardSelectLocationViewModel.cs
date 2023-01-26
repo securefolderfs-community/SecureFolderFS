@@ -26,19 +26,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault
             flag?.NoForwarding();
 
             var deployResult = await _vaultExistingCreationModel.DeployAsync(cancellationToken);
-            if (!deployResult.IsSuccess || deployResult.Value is null)
+            if (!deployResult.Successful)
                 return; // TODO: Report issue
 
             // TODO: Handle adding vault to VaultCollectionModel here...
 
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(deployResult.Value, Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(deployResult.Value!, Messenger, DialogViewModel)));
         }
 
         /// <inheritdoc/>
         public override async Task<bool> SetLocationAsync(ILocatableFolder storage, CancellationToken cancellationToken = default)
         {
             var setFolderResult = await _vaultExistingCreationModel.SetFolderAsync(storage, cancellationToken);
-            if (!setFolderResult.IsSuccess)
+            if (!setFolderResult.Successful)
                 return false;
 
             SelectedLocation = storage;

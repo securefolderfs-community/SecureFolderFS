@@ -2,39 +2,82 @@
     x:Class="SecureFolderFS.WinUI.UserControls.InterfaceHost.NoVaultsAppHostControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.UserControls.InterfaceHost"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        RowSpacing="40">
-        <Grid.RowDefinitions>
-            <!--  Title  -->
-            <RowDefinition />
-            <!--  Continue button  -->
-            <RowDefinition />
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0" Spacing="3">
-            <TextBlock
-                HorizontalAlignment="Center"
-                FontSize="22"
-                FontWeight="SemiBold"
-                Text="Welcome to SecureFolderFS" />
-            <TextBlock
-                HorizontalAlignment="Center"
-                Opacity="0.8"
-                Text="You haven't added any vaults yet. Let's start making your files more secure." />
-        </StackPanel>
-
-        <Button
-            Grid.Row="1"
+    <Grid>
+        <Grid
             HorizontalAlignment="Center"
-            Content="Get started"
-            Command="{x:Bind ViewModel.AddNewVaultCommand}"
-            Style="{ThemeResource AccentButtonStyle}" />
+            VerticalAlignment="Center"
+            RowSpacing="24">
+            <Grid.RowDefinitions>
+                <!--  Banner  -->
+                <RowDefinition Height="Auto" />
+                <!--  Title  -->
+                <RowDefinition />
+                <!--  Continue button  -->
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!--  Banner  -->
+            <Image
+                Grid.Row="0"
+                Width="296"
+                Stretch="UniformToFill"
+                Style="{ThemeResource AddNewVaultBanner}" />
+
+            <!--  Title  -->
+            <StackPanel Grid.Row="1" Spacing="3">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="22"
+                    FontWeight="SemiBold"
+                    Text="Welcome to SecureFolderFS" />
+
+                <TextBlock
+                    MaxWidth="450"
+                    HorizontalAlignment="Center"
+                    Opacity="0.6"
+                    Text="You haven't added any vaults yet. Create a new one or add existing to begin!"
+                    TextAlignment="Center"
+                    TextWrapping="WrapWholeWords" />
+            </StackPanel>
+
+            <!--  Continue button  -->
+            <Button
+                Grid.Row="2"
+                Padding="32,6"
+                HorizontalAlignment="Center"
+                Command="{x:Bind ViewModel.AddNewVaultCommand}"
+                Content="Add vault"
+                Style="{ThemeResource AccentButtonStyle}" />
+        </Grid>
+
+        <!--  Settings  -->
+        <Button
+            Grid.RowSpan="2"
+            Width="36"
+            Height="36"
+            Margin="0,0,16,16"
+            Padding="8"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Background="Transparent"
+            BorderThickness="0"
+            Command="{x:Bind ViewModel.OpenSettingsCommand}">
+            <AnimatedIcon>
+                <AnimatedIcon.Source>
+                    <animvis:AnimatedSettingsVisualSource />
+                </AnimatedIcon.Source>
+                <AnimatedIcon.FallbackIconSource>
+                    <SymbolIconSource Symbol="Setting" />
+                </AnimatedIcon.FallbackIconSource>
+            </AnimatedIcon>
+        </Button>
     </Grid>
 </UserControl>

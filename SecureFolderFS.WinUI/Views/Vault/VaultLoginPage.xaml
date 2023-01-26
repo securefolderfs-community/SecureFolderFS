@@ -42,7 +42,6 @@
                         Loaded="VaultPasswordBox_Loaded"
                         PlaceholderText="Password" />
                 </StackPanel>
-
                 <!--  Login  -->
                 <Button
                     x:Name="ContinueButton"
@@ -52,6 +51,21 @@
                     Content="Unlock"
                     Loaded="ContinueButton_Loaded"
                     Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginInvalidVaultViewModel">
+            <StackPanel Spacing="4">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="17"
+                    Text="Vault could not be loaded" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="12"
+                    HorizontalTextAlignment="Center"
+                    IsTextSelectionEnabled="True"
+                    Opacity="0.8"
+                    Text="{x:Bind ErrorMessage, Mode=OneWay}" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
@@ -95,8 +109,16 @@
                     HorizontalContentAlignment="Center"
                     Content="{x:Bind ViewModel.LoginStrategyViewModel, Mode=OneWay}">
                     <ContentControl.ContentTemplateSelector>
-                        <ts:LoginMethodTemplateSelector AuthenticateTemplate="{StaticResource AuthenticateTemplate}" LoginTemplate="{StaticResource LoginTemplate}" />
+                        <ts:LoginMethodTemplateSelector
+                            AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
+                            InvalidTemplate="{StaticResource VaultInvalidTemplate}"
+                            LoginTemplate="{StaticResource LoginTemplate}" />
                     </ContentControl.ContentTemplateSelector>
+                    <ContentControl.ContentTransitions>
+                        <TransitionCollection>
+                            <ContentThemeTransition />
+                        </TransitionCollection>
+                    </ContentControl.ContentTransitions>
                 </ContentControl>
             </Grid>
         </Grid>
