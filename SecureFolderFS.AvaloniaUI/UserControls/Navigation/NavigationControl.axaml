@@ -12,5 +12,6 @@
     <ui:Frame
         x:Name="ContentFrame"
         x:FieldModifier="protected"
+        CacheSize="0"
         Navigated="ContentFrame_OnNavigated" />
 </UserControl>

@@ -1,8 +1,119 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<uc:Page xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+             xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+             xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy"
+             xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultLoginPage">
-    Welcome to Avalonia!
-</UserControl>
+
+    <uc:Page.Resources>
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+
+        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreSelectionViewModel">
+            <StackPanel Spacing="24">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="Provide keystore to continue" />
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{Binding SelectKeystoreCommand}"
+                    Content="Authenticate"
+                    Classes="accent" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginCredentialsViewModel">
+            <StackPanel Spacing="24">
+                <!--  Password Control  -->
+                <StackPanel Width="364" Spacing="8">
+                    <TextBlock Opacity="0.8" Text="Enter password" />
+                    <TextBox
+                        x:Name="VaultPasswordBox"
+                        MinWidth="300"
+                        PasswordChar="*"
+                        RevealPassword="True"
+                        KeyUp="VaultPasswordBox_OnKeyUp"
+                        Loaded="VaultPasswordBox_OnLoaded"
+                        Watermark="Password" />
+                </StackPanel>
+                <!--  Login  -->
+                <Button
+                    x:Name="ContinueButton"
+                    Padding="32,6"
+                    HorizontalAlignment="Center"
+                    Click="ContinueButton_OnClick"
+                    Content="Unlock"
+                    Loaded="ContinueButton_OnLoaded"
+                    Classes="accent" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginInvalidVaultViewModel">
+            <StackPanel Spacing="4">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="17"
+                    Text="Vault could not be loaded" />
+                <!-- TODO Text selection -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="12"
+                    TextAlignment="Center"
+                    Opacity="0.8"
+                    Text="{Binding ErrorMessage, Mode=OneWay}" />
+            </StackPanel>
+        </DataTemplate>
+    </uc:Page.Resources>
+
+    <ScrollViewer>
+        <Grid>
+            <Grid
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                RowDefinitions="Auto,32,Auto,32,*">
+
+                <!--  Header  -->
+                <StackPanel Spacing="6">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="26"
+                        FontWeight="SemiBold"
+                        Text="{Binding ViewModel.VaultName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip.Tip="{Binding ViewModel.VaultName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                    </TextBlock>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="14"
+                        Opacity="0.6"
+                        Text="Vault is locked" />
+                </StackPanel>
+
+                <!--  Image  -->
+                <Image Grid.Row="2" />
+
+                <!--  Input  -->
+                <ContentControl
+                    Grid.Row="4"
+                    HorizontalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Content="{Binding ViewModel.LoginStrategyViewModel, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                    <ContentControl.DataTemplates>
+                        <ts:LoginMethodTemplateSelector
+                            AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
+                            InvalidTemplate="{StaticResource VaultInvalidTemplate}"
+                            LoginTemplate="{StaticResource LoginTemplate}" />
+                    </ContentControl.DataTemplates>
+                    <ContentControl.Transitions>
+                        <!-- TODO Transition  -->
+                    </ContentControl.Transitions>
+                </ContentControl>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</uc:Page>
