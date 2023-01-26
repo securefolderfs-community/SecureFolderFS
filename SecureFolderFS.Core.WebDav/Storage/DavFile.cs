@@ -16,13 +16,18 @@ namespace SecureFolderFS.Core.WebDav.Storage
         where TCapability : IFile
     {
         /// <inheritdoc/>
-        public string Path => Inner.TryGetPath() ?? string.Empty;
+        public virtual string Path => Inner.TryGetPath() ?? string.Empty;
 
         /// <inheritdoc/>
         protected override IDavFile Implementation => this;
 
-        public DavFile(TCapability storableInternal, IBasicProperties? properties = null)
-            : base(storableInternal, properties)
+        public DavFile(TCapability inner)
+            : base(inner)
+        {
+        }
+
+        public DavFile(TCapability inner, IBasicProperties? properties = null)
+            : base(inner, properties)
         {
         }
 
@@ -51,7 +56,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
             if (parentFolder is null)
                 return null;
 
-            return new DavFolder<ILocatableFolder>(parentFolder);
+            return NewFolder(parentFolder);
         }
     }
 }

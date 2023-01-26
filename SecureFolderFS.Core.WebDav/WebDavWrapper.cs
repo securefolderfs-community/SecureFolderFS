@@ -48,6 +48,7 @@ namespace SecureFolderFS.Core.WebDav
             _ = closeMethod; // TODO: Implement close method
             _ = _fileSystemTask;
             _fileSystemCts.Cancel();
+            _httpListener.Close();
 
             return true;
         }

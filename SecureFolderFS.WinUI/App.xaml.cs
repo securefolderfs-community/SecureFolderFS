@@ -59,7 +59,7 @@ namespace SecureFolderFS.WinUI
 
             // Configure IoC
             ServiceProvider = ConfigureServices(settingsFolder);
-            Ioc.Default.ConfigureServices(ServiceProvider);
+            Ioc.Default.ConfigureServices(ServiceProvider!);
 
             _window = new MainWindow();
             _window.Activate();

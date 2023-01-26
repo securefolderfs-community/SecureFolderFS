@@ -67,7 +67,7 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(IStorable item, bool permanently = false, CancellationToken cancellationToken = default)
+        public Task DeleteAsync(IStorable item, bool permanently = default, CancellationToken cancellationToken = default)
         {
             _ = permanently;
 

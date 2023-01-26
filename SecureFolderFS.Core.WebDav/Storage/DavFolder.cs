@@ -21,16 +21,21 @@ namespace SecureFolderFS.Core.WebDav.Storage
         where TCapability : IFolder
     {
         /// <inheritdoc/>
-        public string Path => Inner.TryGetPath() ?? string.Empty;
+        public virtual string Path => Inner.TryGetPath() ?? string.Empty;
 
         /// <inheritdoc/>
-        public EnumerationDepthMode DepthMode { get; } = EnumerationDepthMode.Assume0;
+        public virtual EnumerationDepthMode DepthMode { get; } = EnumerationDepthMode.Assume0;
 
         /// <inheritdoc/>
         protected override IDavFolder Implementation => this;
 
-        public DavFolder(TCapability storableInternal, IBasicProperties? properties = null)
-            : base(storableInternal, properties)
+        public DavFolder(TCapability inner)
+            : base(inner)
+        {
+        }
+
+        public DavFolder(TCapability inner, IBasicProperties properties)
+            : base(inner, properties)
         {
         }
 
@@ -40,8 +45,10 @@ namespace SecureFolderFS.Core.WebDav.Storage
             if (Inner is not IFolderExtended folderExtended)
                 throw new NotSupportedException("Retrieving individual files is not supported.");
 
-            var file = await folderExtended.GetFileAsync(fileName, cancellationToken);
-            return new DavFile<IFile>(file);
+            var formattedName = FormatName(fileName);
+            var file = await folderExtended.GetFileAsync(formattedName, cancellationToken);
+
+            return NewFile(file);
         }
 
         /// <inheritdoc/>
@@ -50,8 +57,10 @@ namespace SecureFolderFS.Core.WebDav.Storage
             if (Inner is not IFolderExtended folderExtended)
                 throw new NotSupportedException("Retrieving individual folders is not supported.");
 
-            var folder = await folderExtended.GetFolderAsync(folderName, cancellationToken);
-            return new DavFolder<IFolder>(folder);
+            var formattedName = FormatName(folderName);
+            var folder = await folderExtended.GetFolderAsync(formattedName, cancellationToken);
+
+            return NewFolder(folder);
         }
 
         /// <inheritdoc/>
@@ -60,10 +69,10 @@ namespace SecureFolderFS.Core.WebDav.Storage
             await foreach (var item in Inner.GetItemsAsync(kind, cancellationToken))
             {
                 if (item is IFile file)
-                    yield return new DavFile<IFile>(file);
+                    yield return NewFile(file);
 
                 if (item is IFolder folder)
-                    yield return new DavFolder<IFolder>(folder);
+                    yield return NewFolder(folder);
             }
         }
 
@@ -77,11 +86,11 @@ namespace SecureFolderFS.Core.WebDav.Storage
             if (parentFolder is null)
                 return null;
 
-            return new DavFolder<ILocatableFolder>(parentFolder);
+            return NewFolder(parentFolder);
         }
 
         /// <inheritdoc/>
-        public virtual Task DeleteAsync(IStorable item, bool permanently = false, CancellationToken cancellationToken = default)
+        public virtual Task DeleteAsync(IStorable item, bool permanently = default, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
@@ -97,10 +106,10 @@ namespace SecureFolderFS.Core.WebDav.Storage
 
             var copiedItem = await modifiableFolder.CreateCopyOfAsync(itemToCopy, overwrite, cancellationToken);
             if (copiedItem is IFile file)
-                return new DavFile<IFile>(file);
+                return NewFile(file);
 
             if (copiedItem is IFolder folder)
-                return new DavFolder<IFolder>(folder);
+                return NewFolder(folder);
 
             throw new InvalidOperationException("The copied item is neither a file nor a folder.");
         }
@@ -113,10 +122,10 @@ namespace SecureFolderFS.Core.WebDav.Storage
             
             var movedItem = await modifiableFolder.MoveFromAsync(itemToMove, source, overwrite, cancellationToken);
             if (movedItem is IFile file)
-                return new DavFile<IFile>(file);
+                return NewFile(file);
 
             if (movedItem is IFolder folder)
-                return new DavFolder<IFolder>(folder);
+                return NewFolder(folder);
 
             throw new InvalidOperationException("The moved item is neither a file nor a folder.");
         }
@@ -127,8 +136,10 @@ namespace SecureFolderFS.Core.WebDav.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var file = await modifiableFolder.CreateFileAsync(desiredName, overwrite, cancellationToken);
-            return new DavFile<IFile>(file);
+            var formattedName = FormatName(desiredName);
+            var file = await modifiableFolder.CreateFileAsync(formattedName, overwrite, cancellationToken);
+
+            return NewFile(file);
         }
 
         /// <inheritdoc/>
@@ -137,8 +148,20 @@ namespace SecureFolderFS.Core.WebDav.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var folder = await modifiableFolder.CreateFolderAsync(desiredName, overwrite, cancellationToken);
-            return new DavFolder<IFolder>(folder);
+            var formattedName = FormatName(desiredName);
+            var folder = await modifiableFolder.CreateFolderAsync(formattedName, overwrite, cancellationToken);
+
+            return NewFolder(folder);
+        }
+
+        /// <summary>
+        /// Formats specified <paramref name="name"/> if necessary.
+        /// </summary>
+        /// <param name="name">The name to format.</param>
+        /// <returns>A formatted name which can be used to communicate with additional abstraction layer.</returns>
+        protected virtual string FormatName(string name)
+        {
+            return name;
         }
     }
 }

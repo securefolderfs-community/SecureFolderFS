@@ -4,26 +4,22 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sf="using:Syncfusion.UI.Xaml.Charts"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     x:Name="Graph"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
-
-        <Style x:Key="ChartLine" TargetType="Line">
-            <Setter Property="Stroke" Value="Transparent" />
-        </Style>
     </UserControl.Resources>
 
     <Button
         Height="232"
         Padding="12,12,12,22"
         HorizontalAlignment="Stretch"
-        HorizontalContentAlignment="Center"
-        VerticalContentAlignment="Center"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
         BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
         Click="RootButton_Click"
         Loaded="RootButton_Loaded">
@@ -59,51 +55,11 @@
                 x:Load="{x:Bind GraphLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
 
             <!--  Chart  -->
-            <sf:SfCartesianChart
-                x:Name="CartesianChart"
+            <lvc:CartesianChart
+                x:Name="Chart"
                 Grid.Row="2"
                 Margin="0,8,0,0"
-                x:DeferLoadStrategy="Lazy"
-                Loaded="CartesianChart_Loaded">
-                <sf:SfCartesianChart.XAxes>
-                    <sf:DateTimeAxis
-                        AxisLineStyle="{StaticResource ChartLine}"
-                        ShowMajorGridLines="False"
-                        ShowMinorGridLines="False"
-                        Visibility="Collapsed" />
-                </sf:SfCartesianChart.XAxes>
-                <sf:SfCartesianChart.YAxes>
-                    <sf:NumericalAxis
-                        AxisLineStyle="{StaticResource ChartLine}"
-                        Minimum="0"
-                        MinorTickLineSize="8"
-                        ShowMajorGridLines="False"
-                        ShowMinorGridLines="False"
-                        TickLineSize="0">
-                        <sf:NumericalAxis.LabelStyle>
-                            <sf:LabelStyle Foreground="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
-                        </sf:NumericalAxis.LabelStyle>
-                    </sf:NumericalAxis>
-                </sf:SfCartesianChart.YAxes>
-
-                <sf:SfCartesianChart.Series>
-                    <!--  Must use Binding instead of x:Bind due to x:DeferLoadStrategy="Lazy" breaking compiled bindings when loaded  -->
-                    <sf:AreaSeries
-                        ItemsSource="{Binding Data, ElementName=Graph, Mode=OneWay}"
-                        Stroke="{Binding ChartStroke, ElementName=Graph, Mode=OneWay}"
-                        StrokeThickness="1"
-                        XBindingPath="Date"
-                        YBindingPath="Value">
-                        <sf:AreaSeries.Fill>
-                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                <GradientStop Offset="0.2" Color="{x:Bind ChartPrimaryColor}" />
-                                <GradientStop Offset="1.3" Color="{x:Bind ChartSecondaryColor}" />
-                            </LinearGradientBrush>
-                        </sf:AreaSeries.Fill>
-                    </sf:AreaSeries>
-                </sf:SfCartesianChart.Series>
-            </sf:SfCartesianChart>
+                Loaded="Chart_Loaded" />
         </Grid>
     </Button>
-
 </UserControl>
