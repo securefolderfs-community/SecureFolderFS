@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.FUSE
             _fuseCallbacks = fuseCallbacks;
         }
 
-        public void StartFileSystem(FuseMountOptions mountOptions)
+        public void StartFileSystem(string mountPoint, FuseMountOptions mountOptions)
         {
             var rawOptions = "default_permissions";
             if (mountOptions.AllowOtherUserAccess)
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.FUSE
                 rawOptions += ",debug";
 
             _fuseCallbacks.MountOptions = mountOptions;
-            _fuseMount = Fuse.Mount(mountOptions.MountPoint, _fuseCallbacks, new MountOptions
+            _fuseMount = Fuse.Mount(mountPoint, _fuseCallbacks, new MountOptions
             {
                 Options = rawOptions
             });

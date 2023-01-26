@@ -1,8 +1,59 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultDashboardPage">
-    Welcome to Avalonia!
-</UserControl>
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
+    xmlns:uc3="using:SecureFolderFS.UI.UserControls.BreadcrumbBar"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultDashboardPage">
+
+    <uc:Page.Resources>
+        <DataTemplate x:Key="StandardBreadcrumbItem" x:DataType="uc3:OrderedBreadcrumbBarItem">
+            <TextBlock
+                FontSize="24"
+                FontWeight="SemiBold"
+                Opacity="0.8"
+                Text="{Binding Name}"
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding Name}" />
+        </DataTemplate>
+        <DataTemplate x:Key="LeadingBreadcrumbItem" x:DataType="uc3:OrderedBreadcrumbBarItem">
+            <TextBlock
+                FontSize="24"
+                FontWeight="SemiBold"
+                Text="{Binding Name}"
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding Name}" />
+        </DataTemplate>
+    </uc:Page.Resources>
+
+    <Border Padding="32,16">
+        <Grid
+            MaxWidth="960"
+            RowDefinitions="Auto,24,*">
+
+            <!--  Navigation breadcrumb  -->
+            <!-- TODO Use BreadcrumbBar -->
+            <ListBox
+                x:Name="Breadcrumb"
+                Grid.Row="0"
+                Items="{Binding BreadcrumbItems, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="uc3:OrderedBreadcrumbBarItem">
+                        <ListBoxItem DataContext="{Binding}">
+                            <ListBoxItem.DataTemplates>
+                                <ts:OrderedBreadcrumbBarItemTemplateSelector LeadingItemTemplate="{StaticResource LeadingBreadcrumbItem}" StandardItemTemplate="{StaticResource StandardBreadcrumbItem}" />
+                            </ListBoxItem.DataTemplates>
+                        </ListBoxItem>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!--  Content  -->
+            <uc2:VaultDashboardNavigationControl x:Name="Navigation" Grid.Row="2" />
+        </Grid>
+    </Border>
+</uc:Page>

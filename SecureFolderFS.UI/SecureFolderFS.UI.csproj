@@ -14,6 +14,8 @@
         <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg" />
         <None Remove="Assets\AppAssets\Vault_light.svg" />
         <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg" />
+        <None Remove="Assets\AppAssets\GreenShield.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg" />
     </ItemGroup>
 
     <ItemGroup>

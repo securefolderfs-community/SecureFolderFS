@@ -53,5 +53,11 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             if (ContentFrame.Content is Page page)
                 page.OnNavigatedTo(e);
         }
+
+        private void ContentFrame_OnNavigating(object sender, NavigatingCancelEventArgs e)
+        {
+            if (ContentFrame.Content is Page page)
+                page.OnNavigatingFrom(e);
+        }
     }
 }

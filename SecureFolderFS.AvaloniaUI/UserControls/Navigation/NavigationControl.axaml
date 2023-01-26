@@ -13,5 +13,6 @@
         x:Name="ContentFrame"
         x:FieldModifier="protected"
         CacheSize="0"
-        Navigated="ContentFrame_OnNavigated" />
+        Navigated="ContentFrame_OnNavigated"
+        Navigating="ContentFrame_OnNavigating" />
 </UserControl>

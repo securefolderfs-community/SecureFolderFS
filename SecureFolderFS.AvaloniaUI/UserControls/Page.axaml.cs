@@ -20,5 +20,9 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         public virtual void OnNavigatedTo(NavigationEventArgs e)
         {
         }
+
+        public virtual void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+        }
     }
 }

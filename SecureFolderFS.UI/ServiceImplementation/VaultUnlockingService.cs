@@ -3,6 +3,7 @@ using SecureFolderFS.Core;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
@@ -115,6 +116,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 MountOptions mountOptions = _fileSystemAdapterType switch
                 {
                     FileSystemAdapterType.DokanAdapter => new DokanyMountOptions(),
+                    FileSystemAdapterType.FuseAdapter => new FuseMountOptions(),
                     FileSystemAdapterType.WebDavAdapter => new WebDavMountOptions() { Domain = "localhost", Port = "4949" }
                 };
 

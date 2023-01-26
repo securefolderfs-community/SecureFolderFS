@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:SecureFolderFS.AvaloniaUI.UserControls"
+             xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+             xmlns:svg="using:Avalonia.Svg.Skia"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SecureFolderFS.AvaloniaUI.UserControls.VaultHealthControl">
+
+    <UserControl.Resources>
+        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+        <vc:VaultHealthStateToStringConverter x:Key="VaultHealthStateToStringConverter" />
+
+        <DataTemplate x:Key="WithDetailedHealthTemplate" x:DataType="local:VaultHealthControl">
+            <StackPanel Margin="0,-4,0,0">
+                <!--  Vault status  -->
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontWeight="Medium"
+                    Text="{Binding Path=VaultHealthState, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource VaultHealthStateToStringConverter}}"
+                    TextTrimming="CharacterEllipsis" />
+                <!--  Last checked  -->
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Opacity="0.6"
+                    Text="{Binding Path=VaultHealthLastCheckedDate, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}"
+                    TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="WithoutDetailedHealthTemplate" x:DataType="local:VaultHealthControl">
+            <Grid />
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid ColumnDefinitions="Auto,8,*,8,Auto">
+        <!--  Icon  -->
+        <Grid Margin="-8,0,0,0">
+            <Image
+                Width="64"
+                Height="64"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Source="{svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.GreenShield.svg?assembly=SecureFolderFS.UI'}"
+                Stretch="UniformToFill" />
+        </Grid>
+
+        <!--  Health status  -->
+        <ContentPresenter
+            x:Name="DetailedHealthContentPresenter"
+            Grid.Column="2"
+            VerticalContentAlignment="Center"
+            ZIndex="1" />
+
+        <!--  Start scanning  -->
+        <StackPanel
+            Grid.Column="4"
+            Margin="0,-6,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="4">
+            <Button
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                VerticalContentAlignment="Center"
+                Command="{Binding StartScanningCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                Content="Start scanning" />
+            <Button
+                Width="36"
+                Height="35"
+                Padding="0"
+                HorizontalAlignment="Center"
+                Command="{Binding OpenVaultHealthCommand, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                ToolTip.Tip="Go to Vault Health">
+                <ui:SymbolIcon Symbol="ChevronRight" />
+            </Button>
+        </StackPanel>
+
+        <!-- TODO  -->
+        <!-- <VisualStateManager.VisualStateGroups> -->
+        <!--     <VisualStateGroup> -->
+        <!--         ~1~  Default window  @1@ -->
+        <!--         <VisualState> -->
+        <!--             <VisualState.StateTriggers> -->
+        <!--                 <AdaptiveTrigger MinWindowWidth="350" /> -->
+        <!--             </VisualState.StateTriggers> -->
+        <!--             <VisualState.Setters> -->
+        <!--                 <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithDetailedHealthTemplate}" /> -->
+        <!--             </VisualState.Setters> -->
+        <!--         </VisualState> -->
+        <!--         ~1~  Small window  @1@ -->
+        <!--         <VisualState> -->
+        <!--             <VisualState.StateTriggers> -->
+        <!--                 <AdaptiveTrigger MinWindowWidth="0" /> -->
+        <!--             </VisualState.StateTriggers> -->
+        <!--             <VisualState.Setters> -->
+        <!--                 <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithoutDetailedHealthTemplate}" /> -->
+        <!--             </VisualState.Setters> -->
+        <!--         </VisualState> -->
+        <!--     </VisualStateGroup> -->
+        <!-- </VisualStateManager.VisualStateGroups> -->
+    </Grid>
+</UserControl>

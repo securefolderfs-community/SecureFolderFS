@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.FUSE
             if (!Directory.Exists(mountPoint))
                 Directory.CreateDirectory(mountPoint);
 
-            _fuseWrapper.StartFileSystem(fuseMountOptions);
+            _fuseWrapper.StartFileSystem(mountPoint, fuseMountOptions);
             var fuseFileSystem = new FuseFileSystem(_fuseWrapper, new SimpleFolder(mountPoint));
 
             return Task.FromResult<IVirtualFileSystem>(fuseFileSystem);

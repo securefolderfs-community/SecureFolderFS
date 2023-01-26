@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.WinUI.UserControls.BreadcrumbBar
+﻿namespace SecureFolderFS.UI.UserControls.BreadcrumbBar
 {
     public sealed class OrderedBreadcrumbBarItem
     {

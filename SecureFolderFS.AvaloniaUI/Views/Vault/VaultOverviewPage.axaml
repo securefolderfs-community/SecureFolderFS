@@ -1,0 +1,119 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultOverviewPage">
+
+    <uc:Page.Resources>
+        <!--  Vault Health  -->
+        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:VaultHealthWidgetViewModel">
+            <uc:VaultHealthControl
+                OpenVaultHealthCommand="{Binding OpenVaultHealthCommand}"
+                StartScanningCommand="{Binding StartScanningCommand}"
+                VaultHealthLastCheckedDate="{Binding VaultHealthLastCheckedDate}"
+                VaultHealthState="{Binding VaultHealthState}" />
+        </DataTemplate>
+
+        <!--  Resource Graphs  -->
+        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
+            <!-- TODO Graph -->
+            <!-- <ucw:GraphsWidget -->
+            <!--     ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}" -->
+            <!--     ReadGraphIsExtended="False" -->
+            <!--     ReadGraphSubheader="{x:Bind ReadGraphViewModel.GraphSubheader, Mode=OneWay}" -->
+            <!--     WriteGraphData="{x:Bind WriteGraphViewModel.Data, Mode=OneWay}" -->
+            <!--     WriteGraphIsExtended="False" -->
+            <!--     WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubheader, Mode=OneWay}" /> -->
+        </DataTemplate>
+    </uc:Page.Resources>
+
+    <!--  Margins are to align the scrollbar to prevent overlap with content  -->
+    <ScrollViewer Margin="-12,0,-12,0">
+        <StackPanel Margin="12,0,12,0" Spacing="8">
+            <!--  Widgets  -->
+            <ListBox Items="{Binding ViewModel.WidgetsViewModel.Widgets, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                <!--  Remove Reveal Highlight Effect  -->
+                <!-- TODO -->
+                <!-- <ListBox.ItemContainerTheme> -->
+                <!--     <ControlTheme TargetType="ListBoxItem"> -->
+                <!--         <ControlTheme.Setters> -->
+                <!--             <Setter Property="Template"> -->
+                <!--                 <Setter.Value> -->
+                <!--                     <ControlTemplate TargetType="ListBoxItem"> -->
+                <!--                         <ListBoxItem -->
+                <!--                             x:Name="Root" -->
+                <!--                             HorizontalContentAlignment="Stretch" -->
+                <!--                             VerticalContentAlignment="Stretch" -->
+                <!--                             RevealBackground="{ThemeResource GridViewItemRevealBackground}" -->
+                <!--                             RevealBorderBrush="{ThemeResource GridViewItemRevealBorderBrush}" -->
+                <!--                             RevealBorderThickness="0" /> -->
+                <!--                     </ControlTemplate> -->
+                <!--                 </Setter.Value> -->
+                <!--             </Setter> -->
+                <!--         </ControlTheme.Setters> -->
+                <!--     </ControlTheme> -->
+                <!-- </ListBox.ItemContainerTheme> -->
+                <ListBox.DataTemplates>
+                    <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+                </ListBox.DataTemplates>
+            </ListBox>
+
+            <!--  Vault options  -->
+            <StackPanel Spacing="4">
+                <!--  Open in File Explorer  -->
+                <ui:SettingsExpander
+                    Header="View vault"
+                    Command="{Binding ViewModel.VaultControlsViewModel.ShowInFileExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Description="Show this vault in File Explorer"
+                    IsClickEnabled="True">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource Symbol="Folder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+
+                <!--  Vault properties  -->
+                <ui:SettingsExpander
+                    Header="Vault properties"
+                    Command="{Binding ViewModel.VaultControlsViewModel.OpenPropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Description="View information about this vault"
+                    IsClickEnabled="True">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+
+                <!--  Lock vault  -->
+                <ui:SettingsExpander
+                    Header="Lock vault"
+                    Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Description="Securely lock this vault and close the dashboard"
+                    IsClickEnabled="True">
+                    <ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
+                    </ui:SettingsExpander.ActionIconSource>
+                    <ui:SettingsExpander.Footer>
+                        <!-- TODO Icon -->
+                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
+                    </ui:SettingsExpander.Footer>
+                </ui:SettingsExpander>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</uc:Page>
