@@ -3,18 +3,19 @@ using SecureFolderFS.Core.WebDav.EncryptingStorage;
 using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IDavStorable"/>
-    internal abstract class DavStorable<TImplementation, TStorableInternal> : IDavStorableInternal<TStorableInternal>, IInstantiableDavStorage, IDavStorable
-        where TStorableInternal : IStorable
+    internal abstract class DavStorable<TImplementation, TCapability> : IWrapper<TCapability>, IInstantiableDavStorage, IDavStorable
+        where TCapability : IStorable
         where TImplementation : IDavStorable
     {
         private IBasicProperties? _properties;
 
         /// <inheritdoc/>
-        public TStorableInternal Inner { get; }
+        public TCapability Inner { get; }
 
         /// <inheritdoc/>
         public virtual string Id => Inner.Id;
@@ -40,21 +41,21 @@ namespace SecureFolderFS.Core.WebDav.Storage
         /// </summary>
         protected abstract TImplementation Implementation { get; }
 
-        protected DavStorable(TStorableInternal inner, IBasicProperties? properties = null)
+        protected DavStorable(TCapability inner, IBasicProperties? properties = null)
         {
             Inner = inner;
             _properties = properties;
         }
 
         /// <inheritdoc/>
-        public virtual DavFile<T> NewFile<T>(T inner)
+        public virtual IDavFile NewFile<T>(T inner)
             where T : IFile
         {
             return new DavFile<T>(inner);
         }
 
         /// <inheritdoc/>
-        public virtual DavFolder<T> NewFolder<T>(T inner)
+        public virtual IDavFolder NewFolder<T>(T inner)
             where T : IFolder
         {
             return new DavFolder<T>(inner);

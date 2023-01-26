@@ -29,6 +29,10 @@ namespace SecureFolderFS.WinUI.Views.Settings
             set => DataContext = value;
         }
 
+        //public InfoBarViewModel? FileSystemInfoBar { get; private set; }
+
+        //public bool IsInfoBarOpen => FileSystemInfoBar?.IsOpen ?? false;
+
         public PreferencesSettingsPage()
         {
             InitializeComponent();
@@ -65,7 +69,14 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 return;
 
             var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
-            if (fileSystemAdapterResult.Successful && FileSystemInfoBar is not null)
+            if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
+            {
+                FileSystemInfoBar = new WebDavInfoBar();
+                FileSystemInfoBar.IsOpen = true;
+                FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
+                FileSystemInfoBar.CanBeClosed = false;
+            }
+            else if (fileSystemAdapterResult.Successful && FileSystemInfoBar is not null)
             {
                 FileSystemInfoBar.IsOpen = false;
             }
@@ -85,6 +96,8 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 FileSystemInfoBar.CanBeClosed = false;
                 FileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
             }
+
+            IsInfoBarOpen = FileSystemInfoBar?.IsOpen ?? false;
         }
 
         private async Task<FileSystemAdapterItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
@@ -99,14 +112,6 @@ namespace SecureFolderFS.WinUI.Views.Settings
             return ViewModel.BannerViewModel.FileSystemAdapters.FirstOrDefault();
         }
 
-        public InfoBarViewModel? FileSystemInfoBar
-        {
-            get => (InfoBarViewModel?)GetValue(FileSystemInfoBarProperty);
-            set => SetValue(FileSystemInfoBarProperty, value);
-        }
-        public static readonly DependencyProperty FileSystemInfoBarProperty =
-            DependencyProperty.Register(nameof(FileSystemInfoBar), typeof(InfoBarViewModel), typeof(PreferencesSettingsPage), new PropertyMetadata(null));
-
         private void RootGrid_Loaded(object sender, RoutedEventArgs e)
         {
             _ = AddItemsTransitionAsync();
@@ -118,5 +123,21 @@ namespace SecureFolderFS.WinUI.Views.Settings
             await Task.Delay(400);
             RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
         }
+
+        public InfoBarViewModel FileSystemInfoBar
+        {
+            get => (InfoBarViewModel)GetValue(FileSystemInfoBarProperty);
+            set => SetValue(FileSystemInfoBarProperty, value);
+        }
+        public static readonly DependencyProperty FileSystemInfoBarProperty =
+            DependencyProperty.Register(nameof(FileSystemInfoBar), typeof(InfoBarViewModel), typeof(PreferencesSettingsPage), new PropertyMetadata(null));
+
+        public bool IsInfoBarOpen
+        {
+            get => (bool)GetValue(IsInfoBarOpenProperty);
+            set => SetValue(IsInfoBarOpenProperty, value);
+        }
+        public static readonly DependencyProperty IsInfoBarOpenProperty =
+            DependencyProperty.Register(nameof(IsInfoBarOpen), typeof(bool), typeof(PreferencesSettingsPage), new PropertyMetadata(false));
     }
 }

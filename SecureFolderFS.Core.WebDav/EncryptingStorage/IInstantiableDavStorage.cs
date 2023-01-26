@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.WebDav.Storage;
+﻿using NWebDav.Server.Storage;
 using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage
@@ -9,19 +9,19 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
     internal interface IInstantiableDavStorage
     {
         /// <summary>
-        /// Creates an instance of <see cref="DavFile{T}"/>.
+        /// Creates an instance of <see cref="IDavFile"/>.
         /// </summary>
         /// <typeparam name="T">The capability for the implementor.</typeparam>
         /// <param name="inner">The inner object that is wrapped by the implementation.</param>
-        /// <returns>A new instance of <see cref="DavFile{T}"/> wrapping <paramref name="inner"/>.</returns>
-        DavFile<T> NewFile<T>(T inner) where T : IFile;
+        /// <returns>A new instance of <see cref="IDavFile"/> wrapping <paramref name="inner"/>.</returns>
+        IDavFile NewFile<T>(T inner) where T : IFile;
 
         /// <summary>
-        /// Creates an instance of <see cref="DavFolder{T}"/>.
+        /// Creates an instance of <see cref="IDavFolder"/>.
         /// </summary>
         /// <typeparam name="T">The capability for the implementor.</typeparam>
         /// <param name="inner">The inner object that is wrapped by the implementation.</param>
-        /// <returns>A new instance of <see cref="DavFolder{T}"/> wrapping <paramref name="inner"/>.</returns>
-        DavFolder<T> NewFolder<T>(T inner) where T : IFolder;
+        /// <returns>A new instance of <see cref="IDavFolder"/> wrapping <paramref name="inner"/>.</returns>
+        IDavFolder NewFolder<T>(T inner) where T : IFolder;
     }
 }

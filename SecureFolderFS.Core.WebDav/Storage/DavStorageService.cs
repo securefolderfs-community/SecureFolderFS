@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.WebDav.EncryptingStorage;
+﻿using NWebDav.Server.Storage;
+using SecureFolderFS.Core.WebDav.EncryptingStorage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
@@ -75,13 +76,13 @@ namespace SecureFolderFS.Core.WebDav.Storage
 
         
         /// <inheritdoc/>
-        public virtual DavFile<T> NewFile<T>(T inner) where T : IFile
+        public virtual IDavFile NewFile<T>(T inner) where T : IFile
         {
             return new DavFile<T>(inner);
         }
 
         /// <inheritdoc/>
-        public virtual DavFolder<T> NewFolder<T>(T inner) where T : IFolder
+        public virtual IDavFolder NewFolder<T>(T inner) where T : IFolder
         {
             return new DavFolder<T>(inner);
         }
