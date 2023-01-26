@@ -1,0 +1,166 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Sidebar"
+    Loaded="MainAppHostControl_OnLoaded"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.MainAppHostControl">
+
+    <UserControl.Resources>
+        <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+    </UserControl.Resources>
+
+    <ui:NavigationView
+        x:Name="Sidebar"
+        ExpandedModeThresholdWidth="816"
+        IsBackButtonVisible="False"
+        IsPaneToggleButtonVisible="True"
+        IsSettingsVisible="False"
+        MenuItems="{Binding ViewModel.SidebarViewModel.SidebarItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+        OpenPaneLength="260"
+        PaneTitle="{Binding IsPaneOpen, Mode=OneWay, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
+        SelectedItem="{Binding ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+        SelectionChanged="Sidebar_OnSelectionChanged">
+
+        <uc2:VaultNavigationControl x:Name="Navigation" />
+
+        <ui:NavigationView.AutoCompleteBox>
+            <!-- TODO Search icon -->
+            <AutoCompleteBox
+                Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                Watermark="Search"
+                SelectionChanged="AutoCompleteBox_OnSelectionChanged"
+                TextChanged="AutoCompleteBox_OnTextChanged" />
+        </ui:NavigationView.AutoCompleteBox>
+
+        <ui:NavigationView.PaneFooter>
+            <Border
+                HorizontalAlignment="Center"
+                Width="230">
+
+                <Grid
+                    ColumnDefinitions="Auto,*"
+                    HorizontalAlignment="Stretch">
+
+                    <Button
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                        Classes="accent"
+                        IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <!-- TODO Use proper icon -->
+                            <ui:SymbolIcon
+
+                                FontSize="16"
+                                Symbol="Add" />
+                            <TextBlock Text="New vault" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- TODO Add x:Load (doesn't exist in Avalonia) -->
+                    <Button
+                        x:Name="CompactAddVaultButton"
+                        Grid.Column="1"
+                        Height="36"
+                        Margin="0,0,-2,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                        Classes="accent"
+                        IsVisible="{Binding Path=!IsPaneOpen, ElementName=Sidebar}">
+
+                        <!-- TODO Use proper icon -->
+                        <ui:SymbolIcon
+                            FontSize="16"
+                            Symbol="Add" />
+                    </Button>
+
+                    <Button
+                        Grid.Column="1"
+                        Width="36"
+                        Height="36"
+                        Padding="8"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                        IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar}">
+
+                        <!-- TODO Use animated icon -->
+                         <ui:SymbolIcon
+                             FontSize="16"
+                             Symbol="Settings" />
+                    </Button>
+                </Grid>
+            </Border>
+        </ui:NavigationView.PaneFooter>
+
+        <ui:NavigationView.MenuItemTemplate>
+            <DataTemplate x:DataType="vm:SidebarItemViewModel">
+                <!-- TODO Tooltip -->
+                <ui:NavigationViewItem
+                    Height="64"
+                    AutomationProperties.Name="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
+
+                    <ui:NavigationViewItem.Icon>
+                        <!-- TODO Placeholder icon  -->
+                        <ui:SymbolIcon Symbol="Placeholder" />
+                    </ui:NavigationViewItem.Icon>
+
+                    <ui:NavigationViewItem.Content>
+                        <StackPanel>
+                            <!--  Vault name  -->
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Text="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis" />
+
+                            <!--  Last opened  -->
+                            <!-- TODO Use x:Load -->
+                            <TextBlock
+                                x:Name="LastOpenedText"
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                        </StackPanel>
+                    </ui:NavigationViewItem.Content>
+
+                    <ui:NavigationViewItem.ContextFlyout>
+                        <MenuFlyout>
+                            <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
+                            <ui:MenuFlyoutItem Command="{Binding ShowInFileExplorerCommand}" Text="Show encrypted vault in File Explorer">
+                                <ui:MenuFlyoutItem.Icon>
+                                    <ui:SymbolIcon Symbol="OpenFolder" />
+                                </ui:MenuFlyoutItem.Icon>
+                            </ui:MenuFlyoutItem>
+
+                            <ui:MenuFlyoutItem
+                                Command="{Binding RemoveVaultCommand}"
+                                IsEnabled="{Binding CanRemoveVault, Mode=OneWay}"
+                                Text="Remove vault from the list">
+                                <ui:MenuFlyoutItem.Icon>
+                                    <ui:SymbolIcon Symbol="Remove" />
+                                </ui:MenuFlyoutItem.Icon>
+                            </ui:MenuFlyoutItem>
+                        </MenuFlyout>
+                    </ui:NavigationViewItem.ContextFlyout>
+                </ui:NavigationViewItem>
+            </DataTemplate>
+        </ui:NavigationView.MenuItemTemplate>
+    </ui:NavigationView>
+</UserControl>

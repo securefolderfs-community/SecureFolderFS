@@ -11,7 +11,7 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainAppHostViewModel">
-            <uc2:NoVaultsAppHostControl ViewModel="{TemplateBinding}"/>
+            <uc2:MainAppHostControl ViewModel="{Binding .}"/>
         </DataTemplate>
         <DataTemplate x:Key="NoVaultsAppHostDataTemplate" x:DataType="vm:NoVaultsAppHostViewModel">
             <uc2:NoVaultsAppHostControl ViewModel="{Binding .}"/>
