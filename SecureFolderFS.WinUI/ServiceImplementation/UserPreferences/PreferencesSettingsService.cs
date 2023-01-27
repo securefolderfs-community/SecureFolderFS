@@ -13,10 +13,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation.UserPreferences
         }
 
         /// <inheritdoc/>
-        public string? PreferredFileSystemId
+        public string PreferredFileSystemId
         {
-            get => GetSetting<string?>(() => null);
-            set => SetSetting<string?>(value);
+            get => GetSetting<string>(() => Core.Constants.FileSystemId.WEBDAV_ID);
+            set => SetSetting<string>(value);
         }
 
         /// <inheritdoc/>

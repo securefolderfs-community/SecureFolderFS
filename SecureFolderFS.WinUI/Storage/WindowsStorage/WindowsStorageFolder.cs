@@ -88,7 +88,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task DeleteAsync(IStorable item, bool permanently = false, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(IStorable item, bool permanently = default, CancellationToken cancellationToken = default)
         {
             if (item is WindowsStorable<StorageFile> storageFile)
             {

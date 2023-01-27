@@ -3,6 +3,7 @@ using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.OpenHandles;
+using SecureFolderFS.Core.Dokany.Storage;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Analytics;
@@ -10,6 +11,7 @@ using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -18,7 +20,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.Storage;
 
 namespace SecureFolderFS.Core.Dokany
 {

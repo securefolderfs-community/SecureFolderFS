@@ -11,7 +11,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
 using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
@@ -76,7 +75,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-	    public virtual NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
+        public virtual NtStatus FindFiles(string fileName, out IList<FileInformation> files, IDokanFileInfo info)
         {
             return FindFilesWithPattern(fileName, "*", out files, info);
         }

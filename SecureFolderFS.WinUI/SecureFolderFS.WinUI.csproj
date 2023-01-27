@@ -1,220 +1,220 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
-    <RootNamespace>SecureFolderFS.WinUI</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x86;x64;arm64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-    <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
-    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <!-- Added manually, prevent from removing framework package references -->
-  <Target Name="_RemoveFrameworkReferences" />
-  <ItemGroup>
-    <Content Remove="Assets\AppAssets\AppTitle.svg" />
-    <Content Remove="Assets\AppAssets\GreenShield.svg" />
-    <Content Remove="Assets\AppAssets\Vault_dark.svg" />
-    <Content Remove="Assets\AppAssets\Vault_light.svg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Dialogs\SettingsDialog.xaml" />
-    <None Remove="Dialogs\VaultWizardDialog.xaml" />
-    <None Remove="ResourceDictionaries\ImageResources.xaml" />
-    <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
-    <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
-    <None Remove="UserControls\GraphControl.xaml" />
-    <None Remove="UserControls\InstallationControl.xaml" />
-    <None Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
-    <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
-    <None Remove="UserControls\MainWindowHostControl.xaml" />
-    <None Remove="UserControls\NavigationControl.xaml" />
-    <None Remove="UserControls\TitleBarControl.xaml" />
-    <None Remove="UserControls\VaultHealthControl.xaml" />
-    <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
-    <None Remove="Views\Settings\AboutSettingsPage.xaml" />
-    <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
-    <None Remove="Views\Settings\PreferencesSettingsPage.xaml" />
-    <None Remove="Views\Settings\PrivacySettingsPage.xaml" />
-    <None Remove="Views\VaultDashboardPage.xaml" />
-    <None Remove="Views\VaultDashboardPropertiesPage.xaml" />
-    <None Remove="Views\VaultLoginPage.xaml" />
-    <None Remove="Views\VaultMainDashboardPage.xaml" />
-    <None Remove="Views\VaultWizard\AddExistingWizardPage.xaml" />
-    <None Remove="Views\VaultWizard\CreationPathWizardPage.xaml" />
-    <None Remove="Views\VaultWizard\EncryptionWizardPage.xaml" />
-    <None Remove="Views\VaultWizard\MainWizardPage.xaml" />
-    <None Remove="Views\VaultWizard\PasswordWizardPage.xaml" />
-    <None Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Assets\SplashScreen.scale-200.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\LockScreenLogo.scale-200.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Square150x150Logo.scale-200.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.scale-200.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Wide310x150Logo.scale-200.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Update="Assets\AppAssets\AppTitle.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\AppAssets\GreenShield.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\AppAssets\Vault_dark.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\AppAssets\Vault_light.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Page Update="ResourceDictionaries\ImageResources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\InstallationControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\InterfaceHost\MainAppHostControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\InterfaceHost\MainWindowRootControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\Navigation\NavigationControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\Widgets\GraphsWidget.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
-    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-    <PackageReference Include="Syncfusion.Chart.WinUI" Version="20.4.0.43" />
-    <PackageReference Include="WinUIEx" Version="2.1.0" />
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
-
-  <!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
-       Tools extension to be activated for this project even if the Windows App SDK Nuget
-       package has not yet been restored -->
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Dialogs\SettingsDialog.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\Vault\VaultDashboardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\Vault\VaultLoginPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="UserControls\TitleBarControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-      <Page Update="Views\Settings\PreferencesSettingsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Settings\PrivacySettingsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Settings\GeneralSettingsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Settings\AboutSettingsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\VaultWizard\EncryptionWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\VaultWizard\PasswordWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\VaultWizard\SummaryWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\VaultWizard\CreationPathWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\VaultWizard\AddExistingWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\VaultWizard\MainWizardPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Dialogs\VaultWizardDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\ActionBlocks\ActionBlockContentControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\ActionBlocks\ActionBlockControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\GraphControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="UserControls\VaultHealthControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\Vault\VaultPropertiesPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\Vault\VaultOverviewPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <!-- TODO: Remove when WindowsAppSDK 1.2 is released https://docs.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps -->
-  <Target Name="_RemoveFrameworkReferences" BeforeTargets="_ConvertItems;_CalculateInputsForGenerateCurrentProjectAppxManifest">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+        <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+        <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
+        <RootNamespace>SecureFolderFS.WinUI</RootNamespace>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <Platforms>x86;x64;arm64</Platforms>
+        <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+        <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+        <UseWinUI>true</UseWinUI>
+        <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+        <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+        <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <!-- Added manually, prevent from removing framework package references -->
+    <Target Name="_RemoveFrameworkReferences" />
     <ItemGroup>
-      <FrameworkSdkReference Remove="@(FrameworkSdkReference)" Condition="$([System.String]::Copy('%(FrameworkSdkReference.SDKName)').StartsWith('Microsoft.WindowsAppRuntime.'))" />
+        <Content Remove="Assets\AppAssets\AppTitle.svg" />
+        <Content Remove="Assets\AppAssets\GreenShield.svg" />
+        <Content Remove="Assets\AppAssets\Vault_dark.svg" />
+        <Content Remove="Assets\AppAssets\Vault_light.svg" />
     </ItemGroup>
-  </Target>
+    <ItemGroup>
+        <None Remove="Dialogs\SettingsDialog.xaml" />
+        <None Remove="Dialogs\VaultWizardDialog.xaml" />
+        <None Remove="ResourceDictionaries\ImageResources.xaml" />
+        <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
+        <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
+        <None Remove="UserControls\GraphControl.xaml" />
+        <None Remove="UserControls\InstallationControl.xaml" />
+        <None Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
+        <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
+        <None Remove="UserControls\MainWindowHostControl.xaml" />
+        <None Remove="UserControls\NavigationControl.xaml" />
+        <None Remove="UserControls\TitleBarControl.xaml" />
+        <None Remove="UserControls\VaultHealthControl.xaml" />
+        <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
+        <None Remove="Views\Settings\AboutSettingsPage.xaml" />
+        <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
+        <None Remove="Views\Settings\PreferencesSettingsPage.xaml" />
+        <None Remove="Views\Settings\PrivacySettingsPage.xaml" />
+        <None Remove="Views\VaultDashboardPage.xaml" />
+        <None Remove="Views\VaultDashboardPropertiesPage.xaml" />
+        <None Remove="Views\VaultLoginPage.xaml" />
+        <None Remove="Views\VaultMainDashboardPage.xaml" />
+        <None Remove="Views\VaultWizard\AddExistingWizardPage.xaml" />
+        <None Remove="Views\VaultWizard\CreationPathWizardPage.xaml" />
+        <None Remove="Views\VaultWizard\EncryptionWizardPage.xaml" />
+        <None Remove="Views\VaultWizard\MainWizardPage.xaml" />
+        <None Remove="Views\VaultWizard\PasswordWizardPage.xaml" />
+        <None Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="Assets\SplashScreen.scale-200.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\LockScreenLogo.scale-200.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\Square150x150Logo.scale-200.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\Square44x44Logo.scale-200.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\Wide310x150Logo.scale-200.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Update="Assets\AppAssets\AppTitle.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\AppAssets\GreenShield.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\AppAssets\Vault_dark.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\AppAssets\Vault_light.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <Page Update="ResourceDictionaries\ImageResources.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\InstallationControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\InterfaceHost\MainAppHostControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\InterfaceHost\MainWindowRootControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\Navigation\NavigationControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\Widgets\GraphsWidget.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
+        <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-beta.701" />
+        <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
+        <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+        <PackageReference Include="WinUIEx" Version="2.1.0" />
+        <Manifest Include="$(ApplicationManifest)" />
+    </ItemGroup>
+
+    <!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+         Tools extension to be activated for this project even if the Windows App SDK Nuget
+         package has not yet been restored -->
+    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+        <ProjectCapability Include="Msix" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Dialogs\SettingsDialog.xaml">
+            <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Views\Vault\VaultDashboardPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Views\Vault\VaultLoginPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="UserControls\TitleBarControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Views\Settings\PreferencesSettingsPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\Settings\PrivacySettingsPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\Settings\GeneralSettingsPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\Settings\AboutSettingsPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\VaultWizard\EncryptionWizardPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\VaultWizard\PasswordWizardPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\VaultWizard\SummaryWizardPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\VaultWizard\CreationPathWizardPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\VaultWizard\AddExistingWizardPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Views\VaultWizard\MainWizardPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Dialogs\VaultWizardDialog.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\ActionBlocks\ActionBlockContentControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\ActionBlocks\ActionBlockControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\GraphControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\VaultHealthControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Views\Vault\VaultPropertiesPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Views\Vault\VaultOverviewPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+
+    <!-- TODO: Remove when WindowsAppSDK 1.2 is released https://docs.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps -->
+    <Target Name="_RemoveFrameworkReferences" BeforeTargets="_ConvertItems;_CalculateInputsForGenerateCurrentProjectAppxManifest">
+        <ItemGroup>
+            <FrameworkSdkReference Remove="@(FrameworkSdkReference)" Condition="$([System.String]::Copy('%(FrameworkSdkReference.SDKName)').StartsWith('Microsoft.WindowsAppRuntime.'))" />
+        </ItemGroup>
+    </Target>
 </Project>

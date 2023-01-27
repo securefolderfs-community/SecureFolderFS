@@ -1,8 +1,8 @@
-﻿using SecureFolderFS.Shared.Utils;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {

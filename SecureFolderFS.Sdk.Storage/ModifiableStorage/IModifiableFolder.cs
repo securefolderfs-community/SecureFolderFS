@@ -11,7 +11,7 @@ namespace SecureFolderFS.Sdk.Storage.ModifiableStorage
         /// <summary>
         /// Deletes the provided storable item from this folder.
         /// </summary>
-        Task DeleteAsync(IStorable item, bool permanently = false, CancellationToken cancellationToken = default);
+        Task DeleteAsync(IStorable item, bool permanently = default, CancellationToken cancellationToken = default);
     
         /// <summary>
         /// Creates a copy of the provided storable item in this folder.

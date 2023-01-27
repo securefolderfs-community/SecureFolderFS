@@ -1,4 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Storage;
+using NWebDav.Server.Storage;
+using SecureFolderFS.Core.WebDav.EncryptingStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.IO;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IStorageService"/>
-    internal class DavStorageService : IStorageService
+    internal class DavStorageService : IStorageService, IInstantiableDavStorage
     {
         protected readonly ILocatableFolder baseDirectory;
         protected readonly IStorageService storageService;
@@ -31,7 +33,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         {
             try
             {
-                var realPath = GetPathFromUriPath(path);
+                var realPath = GetPathFromUri(path);
                 return await storageService.FileExistsAsync(realPath, cancellationToken);
             }
             catch (Exception)
@@ -45,7 +47,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         {
             try
             {
-                var realPath = GetPathFromUriPath(path);
+                var realPath = GetPathFromUri(path);
                 return await storageService.DirectoryExistsAsync(realPath, cancellationToken);
             }
             catch (Exception)
@@ -57,30 +59,50 @@ namespace SecureFolderFS.Core.WebDav.Storage
         /// <inheritdoc/>
         public virtual async Task<ILocatableFolder> GetFolderFromPathAsync(string path, CancellationToken cancellationToken = default)
         {
-            var realPath = GetPathFromUriPath(path);
+            var realPath = GetPathFromUri(path);
             var folder = await storageService.GetFolderFromPathAsync(realPath, cancellationToken);
-            var davFolder = new DavFolder<ILocatableFolder>(folder);
 
-            return davFolder;
+            return NewFolder(folder);
         }
 
         /// <inheritdoc/>
         public virtual async Task<ILocatableFile> GetFileFromPathAsync(string path, CancellationToken cancellationToken = default)
         {
-            var realPath = GetPathFromUriPath(path);
+            var realPath = GetPathFromUri(path);
             var file = await storageService.GetFileFromPathAsync(realPath, cancellationToken);
-            var davFile = new DavFile<ILocatableFile>(file);
 
-            return davFile;
+            return NewFile(file);
         }
 
-        private string GetPathFromUriPath(string uriPath)
+
+        /// <inheritdoc/>
+        public virtual IDavFile NewFile<T>(T inner) where T : IFile
+        {
+            return new DavFile<T>(inner);
+        }
+
+        /// <inheritdoc/>
+        public virtual IDavFolder NewFolder<T>(T inner) where T : IFolder
+        {
+            return new DavFolder<T>(inner);
+        }
+
+        /// <summary>
+        /// Converts an <see cref="Uri"/> represented by a <see cref="string"/> into file system friendly path.
+        /// </summary>
+        /// <param name="uriPath">An <see cref="string"/> in <see cref="Uri"/> format that points to a file/folder.</param>
+        /// <returns>If successful, returns a filepath, otherwise false.</returns>
+        /// <remarks>
+        /// This method does not guarantee existence of the resource that the returned path points to.
+        /// </remarks>
+        /// <exception cref="SecurityException">Thrown when provided <paramref name="uriPath"/> points to a resource outside the base directory.</exception>
+        protected virtual string GetPathFromUri(string uriPath)
         {
             var decodedPath = uriPath.Substring(1).Replace('/', Path.DirectorySeparatorChar);
             var fullPath = Path.Combine(baseDirectory.Path, decodedPath);
 
             if (fullPath != baseDirectory.Path && !fullPath.StartsWith(baseDirectory.Path + Path.DirectorySeparatorChar))
-                throw new SecurityException($"The requested path was outside base directory.");
+                throw new SecurityException("The requested path was outside base directory.");
 
             return fullPath;
         }

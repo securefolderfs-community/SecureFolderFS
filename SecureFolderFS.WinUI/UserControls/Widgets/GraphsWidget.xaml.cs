@@ -150,8 +150,6 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
         public void Dispose()
         {
             _graphClickSemaphore.Dispose();
-            ReadGraph?.Dispose();
-            WriteGraph?.Dispose();
         }
 
         public bool ReadGraphIsExtended

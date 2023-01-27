@@ -3,7 +3,6 @@ using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Shared.Utils;
 using System.IO;
-using SecureFolderFS.Core.FileSystem.OpenHandles;
 
 #pragma warning disable CA1416 // Callsite is not supported on all platforms
 
@@ -29,7 +28,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             var hFile = GetHandle();
             if (hFile is null)
                 return false;
-            
+
             return UnsafeNativeApis.SetFileTime(hFile, ref creationTime, ref lastAccessTime, ref lastWriteTime);
 
             SafeFileHandle? GetHandle()

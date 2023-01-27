@@ -1,17 +1,24 @@
-﻿using Microsoft.UI.Xaml;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.UI;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.Kernel.Sketches;
+using SkiaSharp;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.WinUI.UserControls
 {
-    public sealed partial class GraphControl : UserControl, IDisposable
+    public sealed partial class GraphControl : UserControl
     {
         public event RoutedEventHandler? Click;
 
@@ -26,7 +33,7 @@ namespace SecureFolderFS.WinUI.UserControls
             try
             {
                 // Realize the chart and load it to view
-                _ = FindName(nameof(CartesianChart));
+                _ = FindName(nameof(Chart));
             }
             catch (Exception ex)
             {
@@ -34,8 +41,38 @@ namespace SecureFolderFS.WinUI.UserControls
             }
         }
 
-        private async void CartesianChart_Loaded(object sender, RoutedEventArgs e)
+        private async void Chart_Loaded(object sender, RoutedEventArgs e)
         {
+            Chart.Series = new ISeries[]
+            {
+                new LineSeries<DateTimePoint>()
+                {
+                    Values = new DateTimePoint[] { },
+                    Fill = new LinearGradientPaint(
+                        new(ChartPrimaryColor.R, ChartPrimaryColor.G, ChartPrimaryColor.B, ChartPrimaryColor.A),
+                        new(ChartSecondaryColor.R, ChartSecondaryColor.G, ChartSecondaryColor.B, ChartSecondaryColor.A),
+                        new(0.5f, 0f), new(0.5f, 1.0f)),
+                    GeometrySize = 0d,
+                    Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2)
+                }
+            };
+            Chart.XAxes = new ICartesianAxis[]
+            {
+                new Axis()
+                {
+                    Labeler = x => string.Empty,
+                    ShowSeparatorLines = false
+                }
+            };
+            Chart.YAxes = new ICartesianAxis[]
+            {
+                new Axis()
+                {
+                    ShowSeparatorLines = false,
+                    LabelsPaint = new SolidColorPaint(SKColors.Gray),
+                }
+            };
+
             await Task.Delay(25);
             GraphLoaded = true;
         }
@@ -43,12 +80,6 @@ namespace SecureFolderFS.WinUI.UserControls
         private void RootButton_Click(object sender, RoutedEventArgs e)
         {
             Click?.Invoke(sender, e);
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            CartesianChart?.Dispose();
         }
 
         public IList? Data
@@ -75,13 +106,13 @@ namespace SecureFolderFS.WinUI.UserControls
         public static readonly DependencyProperty GraphSubheaderProperty =
             DependencyProperty.Register(nameof(GraphSubheader), typeof(string), typeof(GraphControl), new PropertyMetadata(null));
 
-        public Brush? ChartStroke
+        public Color ChartStrokeColor
         {
-            get => (Brush?)GetValue(ChartStrokeProperty);
-            set => SetValue(ChartStrokeProperty, value);
+            get => (Color)GetValue(ChartStrokeColorProperty);
+            set => SetValue(ChartStrokeColorProperty, value);
         }
-        public static readonly DependencyProperty ChartStrokeProperty =
-            DependencyProperty.Register(nameof(ChartStroke), typeof(Brush), typeof(GraphControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty ChartStrokeColorProperty =
+            DependencyProperty.Register(nameof(ChartStrokeColor), typeof(Brush), typeof(GraphControl), new PropertyMetadata(default));
 
         public Color ChartPrimaryColor
         {
@@ -89,7 +120,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(ChartPrimaryColorProperty, value);
         }
         public static readonly DependencyProperty ChartPrimaryColorProperty =
-            DependencyProperty.Register(nameof(ChartPrimaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ChartPrimaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(default));
 
         public Color ChartSecondaryColor
         {
@@ -97,7 +128,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(ChartSecondaryColorProperty, value);
         }
         public static readonly DependencyProperty ChartSecondaryColorProperty =
-            DependencyProperty.Register(nameof(ChartSecondaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ChartSecondaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(default));
 
         public bool GraphLoaded
         {

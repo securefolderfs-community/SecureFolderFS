@@ -2,18 +2,20 @@
 using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
+using SecureFolderFS.Core.WebDav.EncryptingStorage;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IDavStorable"/>
-    internal abstract class DavStorable<TImplementation, TStorableInternal> : IDavStorableInternal<TStorableInternal>, IDavStorable
-        where TStorableInternal : IStorable
+    internal abstract class DavStorable<TImplementation, TCapability> : IWrapper<TCapability>, IInstantiableDavStorage, IDavStorable
+        where TCapability : IStorable
         where TImplementation : IDavStorable
     {
         private IBasicProperties? _properties;
 
         /// <inheritdoc/>
-        public TStorableInternal Inner { get; }
+        public TCapability Inner { get; }
 
         /// <inheritdoc/>
         public virtual string Id => Inner.Id;
@@ -22,25 +24,41 @@ namespace SecureFolderFS.Core.WebDav.Storage
         public virtual string Name => Inner.Name;
 
         /// <inheritdoc/>
-        public virtual IBasicProperties Properties => InitializeProperties((_properties ??= new DavStorageProperties<TImplementation>()));
+        public virtual IBasicProperties Properties
+        {
+            get
+            {
+                _properties ??= new DavStorageProperties<TImplementation>();
+                if (_properties is DavStorageProperties<TImplementation> { Storable: null } davStorageProperties)
+                    davStorageProperties.Storable = Implementation;
+
+                return _properties;
+            }
+        }
 
         /// <summary>
         /// Gets the implementor which is represented by <typeparamref name="TImplementation"/> type.
         /// </summary>
         protected abstract TImplementation Implementation { get; }
 
-        protected DavStorable(TStorableInternal storableInternal, IBasicProperties? properties = null)
+        protected DavStorable(TCapability inner, IBasicProperties? properties = null)
         {
-            Inner = storableInternal;
+            Inner = inner;
             _properties = properties;
         }
 
-        private IBasicProperties InitializeProperties(IBasicProperties properties)
+        /// <inheritdoc/>
+        public virtual IDavFile NewFile<T>(T inner)
+            where T : IFile
         {
-            if (properties is DavStorageProperties<TImplementation> { Storable: null } davStorageProperties)
-                davStorageProperties.Storable = Implementation;
+            return new DavFile<T>(inner);
+        }
 
-            return properties;
+        /// <inheritdoc/>
+        public virtual IDavFolder NewFolder<T>(T inner)
+            where T : IFolder
+        {
+            return new DavFolder<T>(inner);
         }
     }
 }
