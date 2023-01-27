@@ -46,8 +46,7 @@
                 x:Name="Chart"
                 Grid.Row="2"
                 Margin="0,8,0,0"
-                Loaded="Chart_Loaded"
-                IsVisible="False"/>
+                Loaded="Chart_Loaded" />
         </Grid>
     </Button>
 </UserControl>

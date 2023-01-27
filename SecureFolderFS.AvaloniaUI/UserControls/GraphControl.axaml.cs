@@ -11,9 +11,11 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SkiaSharp;
 using Brush = System.Drawing.Brush;
 
@@ -37,31 +39,37 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         {
             Chart.Series = new ISeries[]
             {
-                new LineSeries<DateTimePoint>
+                new LineSeries<GraphPointViewModel>()
                 {
-                    Values = new DateTimePoint[] { },
-                    Fill = new LinearGradientPaint(
-                        new(ChartPrimaryColor.R, ChartPrimaryColor.G, ChartPrimaryColor.B, ChartPrimaryColor.A),
-                        new(ChartSecondaryColor.R, ChartSecondaryColor.G, ChartSecondaryColor.B, ChartSecondaryColor.A),
-                        new(0.5f, 0f), new(0.5f, 1.0f)),
+                    Values = Data,
+                    Fill = new LinearGradientPaint(new SKColor[] {
+                            new(ChartPrimaryColor.R, ChartPrimaryColor.G, ChartPrimaryColor.B, ChartPrimaryColor.A),
+                            new(ChartSecondaryColor.R, ChartSecondaryColor.G, ChartSecondaryColor.B, ChartSecondaryColor.A) },
+                        new(0.5f, 0f), new(0.5f, 1.0f), new[] { 0.2f, 1.3f }),
                     GeometrySize = 0d,
-                    Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2)
+                    Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2),
+                    Mapping = (model, point) => { point.PrimaryValue = Convert.ToDouble(model.Value); point.SecondaryValue = model.Date.Ticks; },
+                    LineSmoothness = 0d,
+                    DataPadding = new(0.3f, 0),
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(150),
                 }
             };
             Chart.XAxes = new ICartesianAxis[]
             {
-                new Axis
+                new Axis()
                 {
                     Labeler = x => string.Empty,
-                    ShowSeparatorLines = false
+                    ShowSeparatorLines = false,
                 }
             };
             Chart.YAxes = new ICartesianAxis[]
             {
-                new Axis
+                new Axis()
                 {
                     ShowSeparatorLines = false,
+                    Padding = new Padding(16, 0, 0, 0),
                     LabelsPaint = new SolidColorPaint(SKColors.Gray),
+                    MinLimit = 0d
                 }
             };
 
@@ -74,13 +82,13 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
             Click?.Invoke(sender, e);
         }
 
-        public IList? Data
+        public IList<GraphPointViewModel>? Data
         {
             get => GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
-        public static readonly StyledProperty<IList?> DataProperty =
-            AvaloniaProperty.Register<GraphControl, IList?>(nameof(Data));
+        public static readonly StyledProperty<IList<GraphPointViewModel>?> DataProperty =
+            AvaloniaProperty.Register<GraphControl, IList<GraphPointViewModel>?>(nameof(Data));
 
         public string? GraphHeader
         {
