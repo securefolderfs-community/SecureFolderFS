@@ -23,7 +23,8 @@
                 IsClosable="{x:Bind CanBeClosed, Mode=OneWay}"
                 IsOpen="True"
                 Message="{x:Bind Message, Mode=OneWay}"
-                Severity="{x:Bind InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}">
+                Severity="{x:Bind InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
+                Visibility="{x:Bind IsOpen, Mode=OneWay}">
                 <InfoBar.Content>
                     <Grid Padding="16,8,16,8">
                         <HyperlinkButton
@@ -33,6 +34,27 @@
                             Content="Open website" />
                     </Grid>
                 </InfoBar.Content>
+
+                <anim:Implicit.ShowAnimations>
+                    <anim:TranslationAnimation
+                        From="0,-15,0"
+                        To="0"
+                        Duration="0:0:0.4" />
+                    <anim:OpacityAnimation
+                        From="0"
+                        To="1.0"
+                        Duration="0:0:0.6" />
+                </anim:Implicit.ShowAnimations>
+                <anim:Implicit.HideAnimations>
+                    <anim:OpacityAnimation
+                        From="1.0"
+                        To="0.0"
+                        Duration="0:0:0.2" />
+                    <anim:TranslationAnimation
+                        From="0"
+                        To="0,-15,0"
+                        Duration="0:0:0.2" />
+                </anim:Implicit.HideAnimations>
             </InfoBar>
         </DataTemplate>
         <DataTemplate x:Key="WebDavExperimentalInfoBarTemplate" x:DataType="uc2:WebDavInfoBar">
