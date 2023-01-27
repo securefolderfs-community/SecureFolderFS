@@ -74,7 +74,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 
         private void Sidebar_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
         {
-            // TODO Selection is not visible
             if (e.SelectedItem is SidebarItemViewModel itemViewModel)
                 NavigateToItem(itemViewModel.VaultViewModel);
         }

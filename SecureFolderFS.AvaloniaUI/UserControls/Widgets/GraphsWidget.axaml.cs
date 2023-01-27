@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -7,9 +9,12 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
 {
     internal sealed partial class GraphsWidget : UserControl
     {
+        private readonly SemaphoreSlim _graphClickSemaphore;
+
         public GraphsWidget()
         {
             InitializeComponent();
+            _graphClickSemaphore = new(1, 1);
         }
 
         private void InitializeComponent()
@@ -76,5 +81,21 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
         }
         public static readonly StyledProperty<string?> WriteGraphSubheaderProperty =
             AvaloniaProperty.Register<GraphsWidget, string?>(nameof(WriteGraphSubheader));
+
+        public IList? ReadGraphData
+        {
+            get => GetValue(ReadGraphDataProperty);
+            set => SetValue(ReadGraphDataProperty, value);
+        }
+        public static readonly StyledProperty<IList?> ReadGraphDataProperty =
+            AvaloniaProperty.Register<GraphsWidget, IList?>(nameof(ReadGraphData));
+
+        public IList? WriteGraphData
+        {
+            get => GetValue(WriteGraphDataProperty);
+            set => SetValue(WriteGraphDataProperty, value);
+        }
+        public static readonly StyledProperty<IList?> WriteGraphDataProperty =
+            AvaloniaProperty.Register<GraphsWidget, IList?>(nameof(WriteGraphData));
     }
 }

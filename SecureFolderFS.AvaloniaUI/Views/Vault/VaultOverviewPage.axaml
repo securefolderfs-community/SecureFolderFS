@@ -28,8 +28,10 @@
             <ucw:GraphsWidget
                 ReadGraphIsExtended="False"
                 ReadGraphSubheader="{Binding ReadGraphViewModel.GraphSubheader}"
+                ReadGraphData="{Binding ReadGraphViewModel.Data}"
                 WriteGraphIsExtended="False"
-                WriteGraphSubheader="{Binding WriteGraphViewModel.GraphSubheader}" />
+                WriteGraphSubheader="{Binding WriteGraphViewModel.GraphSubheader}"
+                WriteGraphData="{Binding WriteGraphViewModel.Data}"/>
         </DataTemplate>
     </uc:Page.Resources>
 

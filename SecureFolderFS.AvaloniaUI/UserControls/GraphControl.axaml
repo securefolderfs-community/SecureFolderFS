@@ -1,0 +1,52 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.GraphControl">
+
+    <Button
+        Height="232"
+        Padding="12,12,12,22"
+        HorizontalAlignment="Stretch"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+        Click="RootButton_Click">
+
+        <Grid RowDefinitions="Auto,Auto,*">
+            <!--  Header (small)  -->
+            <TextBlock
+                Grid.Row="0"
+                Opacity="0.8"
+                Text="{Binding GraphHeader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                IsVisible="{Binding GraphLoaded, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+
+            <!--  Subheader (big)  -->
+            <TextBlock
+                Grid.Row="1"
+                FontSize="24"
+                FontWeight="SemiBold"
+                Text="{Binding GraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                IsVisible="{Binding GraphLoaded, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+
+            <!--  Load progress  -->
+            <ProgressBar
+                x:Name="LoadProgress"
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                IsIndeterminate="True"
+                IsVisible="{Binding !GraphLoaded, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+
+            <!--  Chart  -->
+            <lvc:CartesianChart
+                x:Name="Chart"
+                Grid.Row="2"
+                Margin="0,8,0,0"
+                Loaded="Chart_Loaded" />
+        </Grid>
+    </Button>
+</UserControl>

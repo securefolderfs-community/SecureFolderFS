@@ -4,6 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.UserControls.Widgets.GraphsWidget">
     <!-- TODO Animations -->
@@ -14,28 +15,34 @@
         ColumnDefinitions="*,8,*">
 
         <!--  Read  -->
-        <ui:SettingsExpander
+        <uc:GraphControl
             x:Name="ReadGraph"
             Click="ReadGraph_OnClick"
-            Header="Read speeds"
-            Description="{Binding ReadGraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            ChartPrimaryColor="#4C00AED4"
+            ChartStrokeColor="#00AED4"
+            GraphHeader="Read speeds"
+            Data="{Binding ReadGraphData, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            GraphSubheader="{Binding ReadGraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
             RenderTransformOrigin="1.0,0.0">
-            <ui:SettingsExpander.RenderTransform>
+            <uc:GraphControl.RenderTransform>
                 <ScaleTransform />
-            </ui:SettingsExpander.RenderTransform>
-        </ui:SettingsExpander>
+            </uc:GraphControl.RenderTransform>
+        </uc:GraphControl>
 
         <!--  Write  -->
-        <ui:SettingsExpander
+        <uc:GraphControl
             x:Name="WriteGraph"
             Grid.Column="2"
+            ChartPrimaryColor="#4C008d74"
+            ChartStrokeColor="#008D74"
             Click="WriteGraph_OnClick"
-            Header="Write speeds"
-            Description="{Binding WriteGraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            GraphHeader="Write speeds"
+            Data="{Binding WriteGraphData, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            GraphSubheader="{Binding WriteGraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
             RenderTransformOrigin="1.0,0.0">
-            <ui:SettingsExpander.RenderTransform>
+            <uc:GraphControl.RenderTransform>
                 <ScaleTransform />
-            </ui:SettingsExpander.RenderTransform>
-        </ui:SettingsExpander>
+            </uc:GraphControl.RenderTransform>
+        </uc:GraphControl>
     </Grid>
 </UserControl>
