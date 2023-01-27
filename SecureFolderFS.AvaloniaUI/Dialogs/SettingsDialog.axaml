@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:h="using:SecureFolderFS.AvaloniaUI.Helpers"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Dialogs.SettingsDialog">
@@ -37,41 +38,26 @@
                     AutomationProperties.Name="General"
                     Content="General"
                     IsSelected="True"
-                    Tag="0">
-                    <!-- TODO Icon  -->
-                    <ui:NavigationViewItem.Icon>
-
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
+                    Tag="0"
+                    Icon="{ic:FluentIcon AppGeneric24Regular}"/>
                 <!--  Preferences  -->
                 <ui:NavigationViewItem
                     AutomationProperties.Name="Preferences"
                     Content="Preferences"
-                    Tag="1">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="Repair" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
+                    Tag="1"
+                    Icon="{ic:FluentIcon Wrench24Regular}" />
                 <!--  Privacy  -->
                 <ui:NavigationViewItem
                     AutomationProperties.Name="Privacy"
                     Content="Privacy"
-                    Tag="2">
-                    <!-- TODO Icon  -->
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="Placeholder" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
+                    Tag="2"
+                    Icon="{ic:FluentIcon Shield24Regular}" />
                 <!--  About  -->
                 <ui:NavigationViewItem
                     Margin="0,0,45,0"
                     Content="About"
-                    Tag="3">
-                    <!-- TODO Icon -->
-                    <ui:NavigationViewItem.Icon>
-                        <!-- <ui:SymbolIcon Symbol="Inf" /> -->
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
+                    Tag="3"
+                    Icon="{ic:FluentIcon Info24Regular}" />
             </ui:NavigationView.MenuItems>
 
             <!--  Display frame  -->
@@ -91,8 +77,7 @@
             BorderThickness="0"
             Click="Button_OnClick"
             CornerRadius="20">
-            <!-- TODO Icon -->
-            <ui:SymbolIcon Symbol="Cancel" />
+            <ic:FluentIcon Icon="Dismiss48Regular" Width="10"/>
         </Button>
     </Grid>
 </ui:ContentDialog>

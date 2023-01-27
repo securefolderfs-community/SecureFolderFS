@@ -71,29 +71,24 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             {
                 case MainVaultWizardPageViewModel:
                     TitleText.Text = "Add new vault";
-                    PrimaryButtonText = string.Empty;
                     break;
 
                 case VaultWizardSelectLocationViewModel:
                     TitleText.Text = "Add existing vault";
-                    PrimaryButtonText = "Continue";
                     canGoBack = true;
                     break;
 
                 case VaultWizardCreationPathViewModel:
                     TitleText.Text = "Create new vault";
-                    PrimaryButtonText = "Continue";
                     canGoBack = true;
                     break;
 
                 case VaultWizardPasswordViewModel:
                     TitleText.Text = "Set password";
-                    PrimaryButtonText = "Continue";
                     break;
 
                 case VaultWizardEncryptionViewModel:
                     TitleText.Text = "Choose encryption";
-                    PrimaryButtonText = "Continue";
                     break;
 
                 case VaultWizardSummaryViewModel:

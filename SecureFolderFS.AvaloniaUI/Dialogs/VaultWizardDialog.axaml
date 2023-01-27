@@ -6,11 +6,12 @@
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
     xmlns:local="using:SecureFolderFS.AvaloniaUI.Dialogs"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
     HorizontalAlignment="Stretch"
     HorizontalContentAlignment="Stretch"
     Closing="VaultWizardDialog_OnClosing"
     DefaultButton="Primary"
-    PrimaryButtonText=" "
+    PrimaryButtonText="Continue"
     IsPrimaryButtonEnabled="{Binding ViewModel.PrimaryButtonEnabled, RelativeSource={RelativeSource Self}}"
     Loaded="VaultWizardDialog_OnLoaded"
     PrimaryButtonClick="VaultWizardDialog_OnPrimaryButtonClick"
@@ -18,14 +19,6 @@
     SecondaryButtonText="Cancel"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Dialogs.VaultWizardDialog">
-
-    <ui:ContentDialog.Resources>
-        <ResourceDictionary>
-            <ControlTheme x:Key="{x:Type local:VaultWizardDialog}"
-                          TargetType="local:VaultWizardDialog"
-                          BasedOn="{StaticResource {x:Type ui:ContentDialog}}" />
-        </ResourceDictionary>
-    </ui:ContentDialog.Resources>
 
     <!-- TODO transitions -->
 
@@ -42,7 +35,7 @@
                 Command="{Binding ViewModel.GoBackCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}">
 
                 <!-- TODO animated icon -->
-                <ui:SymbolIcon Symbol="Back" />
+                <ic:FluentIcon Icon="ArrowLeft48Regular" />
             </Button>
 
             <TextBlock

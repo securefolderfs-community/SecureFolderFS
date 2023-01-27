@@ -7,6 +7,7 @@
     xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultOverviewPage">
 
@@ -71,48 +72,27 @@
                     Header="View vault"
                     Command="{Binding ViewModel.VaultControlsViewModel.ShowInFileExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Description="Show this vault in File Explorer"
-                    IsClickEnabled="True">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource Symbol="Folder" />
-                    </ui:SettingsExpander.ActionIconSource>
-                    <ui:SettingsExpander.Footer>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
-                    </ui:SettingsExpander.Footer>
-                </ui:SettingsExpander>
+                    IsClickEnabled="True"
+                    IconSource="{ic:FluentIconSource FolderOpen24Regular}"
+                    ActionIconSource="{ic:FluentIconSource Open48Regular}" />
 
                 <!--  Vault properties  -->
                 <ui:SettingsExpander
                     Header="Vault properties"
                     Command="{Binding ViewModel.VaultControlsViewModel.OpenPropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Description="View information about this vault"
-                    IsClickEnabled="True">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
-                    </ui:SettingsExpander.ActionIconSource>
-                    <ui:SettingsExpander.Footer>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
-                    </ui:SettingsExpander.Footer>
-                </ui:SettingsExpander>
+                    IsClickEnabled="True"
+                    IconSource="{ic:FluentIconSource Info28Regular}"
+                    ActionIconSource="{ic:FluentIconSource ChevronRight48Regular}" />
 
                 <!--  Lock vault  -->
                 <ui:SettingsExpander
                     Header="Lock vault"
                     Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Description="Securely lock this vault and close the dashboard"
-                    IsClickEnabled="True">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
-                    </ui:SettingsExpander.ActionIconSource>
-                    <ui:SettingsExpander.Footer>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource FontSize="14" Symbol="Placeholder" />
-                    </ui:SettingsExpander.Footer>
-                </ui:SettingsExpander>
+                    IsClickEnabled="True"
+                    IconSource="{ic:FluentIconSource LockClosed32Regular}"
+                    ActionIconSource="{ic:FluentIconSource Power28Regular}"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

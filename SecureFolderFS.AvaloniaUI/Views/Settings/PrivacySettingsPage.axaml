@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.PrivacySettingsPage">
 
@@ -19,11 +20,10 @@
 
             <!--  Other settings  -->
             <StackPanel Grid.Row="2" Spacing="4">
-                <ui:SettingsExpander Header="Disable recently accessed list" Description="Temporarily disable recent files list when unlocking vaults">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource Symbol="Placeholder" />
-                    </ui:SettingsExpander.ActionIconSource>
+                <ui:SettingsExpander
+                    Header="Disable recently accessed list"
+                    Description="Temporarily disable recent files list when unlocking vaults"
+                    IconSource="{ic:FluentIconSource History48Regular}">
                     <ui:SettingsExpander.Footer>
                         <ToggleSwitch
                             MinWidth="0"
@@ -31,11 +31,10 @@
                             IsChecked="{Binding ViewModel.AutoLockVaults, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                     </ui:SettingsExpander.Footer>
                 </ui:SettingsExpander>
-                <ui:SettingsExpander Header="Automatically lock vaults" Description="Lock all vaults when device is locked">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource Symbol="Placeholder" />
-                    </ui:SettingsExpander.ActionIconSource>
+                <ui:SettingsExpander
+                    Header="Automatically lock vaults"
+                    Description="Lock all vaults when device is locked"
+                    IconSource="{ic:FluentIconSource LockClosed32Regular}">
                     <ui:SettingsExpander.Footer>
                         <ToggleSwitch
                             MinWidth="0"
@@ -43,11 +42,10 @@
                             IsChecked="{Binding ViewModel.AutoLockVaults, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                     </ui:SettingsExpander.Footer>
                 </ui:SettingsExpander>
-                <ui:SettingsExpander Header="Enable telemetry" Description="Send anonymous crash reports and usage data">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource Symbol="Placeholder" />
-                    </ui:SettingsExpander.ActionIconSource>
+                <ui:SettingsExpander
+                    Header="Enable telemetry"
+                    Description="Send anonymous crash reports and usage data"
+                    IconSource="{ic:FluentIconSource ChartMultiple24Regular}">
                     <ui:SettingsExpander.Footer>
                         <ToggleSwitch
                             MinWidth="0"

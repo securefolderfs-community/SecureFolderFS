@@ -7,6 +7,7 @@
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
     Loaded="Control_OnLoaded"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.GeneralSettingsPage">
@@ -22,7 +23,7 @@
             Loaded="RootGrid_OnLoaded"
             RowDefinitions="Auto,12,*">
             <!--  Banner  -->
-            <StackPanel Grid.Row="0">
+            <StackPanel>
                 <uc:BannerControl>
                     <uc:BannerControl.LeftSide>
                         <StackPanel VerticalAlignment="Center">
@@ -52,10 +53,10 @@
                                 Command="{Binding ViewModel.BannerViewModel.UpdateAppCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                                 IsEnabled="{Binding ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <ui:SymbolIcon
+                                    <ic:FluentIcon
                                         VerticalAlignment="Center"
-                                        FontSize="14"
-                                        Symbol="Refresh" />
+                                        Width="14"
+                                        Icon="ArrowClockwise28Regular" />
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         FontWeight="SemiBold"
@@ -100,12 +101,11 @@
             </StackPanel>
 
             <!--  Other settings  -->
-            <StackPanel Grid.Row="1" Spacing="4">
-                <ui:SettingsExpander Header="Language" Description="Select the display language">
-                    <!-- TODO Icon -->
-                    <ui:SettingsExpander.ActionIconSource>
-                        <ui:SymbolIconSource Symbol="Placeholder" />
-                    </ui:SettingsExpander.ActionIconSource>
+            <StackPanel Grid.Row="2" Spacing="4">
+                <ui:SettingsExpander
+                    Header="Language"
+                    Description="Select the display language"
+                    IconSource="{ic:FluentIconSource LocalLanguage28Regular}">
                     <ui:SettingsExpander.Footer>
                         <ComboBox
                             Items="{Binding ViewModel.LanguageSettingViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
@@ -120,11 +120,10 @@
                         </ComboBox>
                     </ui:SettingsExpander.Footer>
                 </ui:SettingsExpander>
-                <ui:SettingsExpander Header="Theme" Description="Choose application theme">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource Symbol="ColorBackground"/>
-                    </ui:SettingsExpander.ActionIconSource>
+                <ui:SettingsExpander
+                    Header="Theme"
+                    Description="Choose application theme"
+                    IconSource="{ic:FluentIconSource Color24Regular}">
                     <ui:SettingsExpander.Footer>
                         <ComboBox SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                             <ComboBox.Items>
@@ -135,11 +134,10 @@
                         </ComboBox>
                     </ui:SettingsExpander.Footer>
                 </ui:SettingsExpander>
-                <ui:SettingsExpander Header="Configure settings" IsEnabled="False">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <ui:SymbolIconSource Symbol="Setting" />
-                    </ui:SettingsExpander.ActionIconSource>
-
+                <ui:SettingsExpander
+                    Header="Configure settings"
+                    IsEnabled="False"
+                    IconSource="{ic:FluentIconSource Settings48Regular}">
                     <StackPanel Margin="-16" Spacing="1">
                         <ui:SettingsExpander Header="Import settings" IsClickEnabled="True">
                             <ui:SettingsExpander.ActionIconSource>

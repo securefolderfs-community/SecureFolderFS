@@ -6,6 +6,7 @@
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:svg="using:Avalonia.Svg.Skia"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.AboutSettingsPage">
 
@@ -29,7 +30,10 @@
                         Spacing="8">
                         <Button x:Name="VersionButton" Click="VersionButton_OnClick">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <!-- TODO Icon  -->
+                                <ic:FluentIcon
+                                    Icon="Info28Regular"
+                                    Width="14"
+                                    VerticalAlignment="Center" />
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                                     <TextBlock FontWeight="SemiBold" Text="Version" />
                                     <TextBlock
@@ -41,7 +45,10 @@
                         </Button>
                         <Button Command="{Binding ViewModel.OpenGitHubRepositoryCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <ui:SymbolIcon Symbol="Favorite" />
+                                <ic:FluentIcon
+                                    Icon="Star48Regular"
+                                    Width="14"
+                                    VerticalAlignment="Center" />
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                                     <TextBlock FontWeight="SemiBold" Text="GitHub" />
                                     <TextBlock
@@ -63,38 +70,38 @@
                 PreferredPlacement="Bottom"
                 Target="{Binding ElementName=VersionButton}">
                 <ui:TeachingTip.IconSource>
-                    <ui:SymbolIconSource Symbol="Checkmark" />
+                    <!-- TODO Checkmark doesn't stretch horizontally -->
+                    <ic:FluentIconSource Stretch="None" Icon="Checkmark48Regular" />
                 </ui:TeachingTip.IconSource>
             </ui:TeachingTip>
 
             <StackPanel Grid.Row="2" Spacing="4">
-                <ui:SettingsExpander Header="Social" Description="Join the discussion!">
-                    <ui:SettingsExpander.IconSource>
-                        <ui:SymbolIconSource Symbol="Message" />
-                    </ui:SettingsExpander.IconSource>
-
+                <ui:SettingsExpander
+                    Header="Social"
+                    Description="Join the discussion!"
+                    IconSource="{ic:FluentIconSource Chat48Regular}">
                     <ui:SettingsExpander.Footer>
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <ui:HyperlinkButton Command="{Binding ViewModel.OpenDiscordSocialCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" Content="Discord" />
                         </StackPanel>
                     </ui:SettingsExpander.Footer>
                 </ui:SettingsExpander>
-                <!-- TODO Icon -->
+
                 <ui:SettingsExpander
                     Header="Privacy policy"
                     Command="{Binding ViewModel.OpenPrivacyPolicyCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Description="View the privacy policy statement"
-                    IsClickEnabled="True" />
+                    IsClickEnabled="True"
+                    IconSource="{ic:FluentIconSource Shield48Regular}"
+                    ActionIconSource="{ic:FluentIconSource Open48Regular}"/>
 
                 <ui:SettingsExpander
                     Header="Open log location"
                     Command="{Binding ViewModel.OpenLogLocationCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Description="Launches file explorer where log file is located"
-                    IsClickEnabled="True">
-                    <ui:SettingsExpander.IconSource>
-                        <ui:SymbolIconSource Symbol="Folder" />
-                    </ui:SettingsExpander.IconSource>
-                </ui:SettingsExpander>
+                    IsClickEnabled="True"
+                    IconSource="{ic:FluentIconSource FolderOpen24Regular}"
+                    ActionIconSource="{ic:FluentIconSource Open48Regular}"/>
             </StackPanel>
         </Grid>
     </Border>

@@ -9,6 +9,7 @@
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Settings.Banners"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
     Loaded="PreferencesSettingsPage_OnLoaded"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.PreferencesSettingsPage">
@@ -62,12 +63,6 @@
             x:Name="RootGrid"
             Loaded="RootGrid_Loaded"
             RowDefinitions="Auto,12,*">
-            <Grid.RowDefinitions>
-                <!--  Banner  -->
-                <RowDefinition Height="Auto" />
-                <!--  Other settings  -->
-                <RowDefinition />
-            </Grid.RowDefinitions>
 
             <!--  Banner  -->
             <uc:BannerControl >
@@ -110,32 +105,28 @@
             </uc:BannerControl>
 
             <!--  Other settings  -->
-            <StackPanel Grid.Row="1" Spacing="4">
+            <StackPanel Grid.Row="2" Spacing="4">
                 <ui:SettingsExpander
                     Header="Start with system"
                     Description="Launch SecureFolderFS on system startup"
-                    IsEnabled="False">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource Symbol="Placeholder" />
-                    </ui:SettingsExpander.ActionIconSource>
+                    IsEnabled="False"
+                    IconSource="{ic:FluentIconSource ShareScreenStart48Regular}">
                     <ui:SettingsExpander.Footer>
                         <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.StartOnSystemStartup, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                     </ui:SettingsExpander.Footer>
                 </ui:SettingsExpander>
-                <ui:SettingsExpander Header="Continue where you left off" Description="Start on previously selected vault">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
-                        <ui:SymbolIconSource Symbol="Placeholder" />
-                    </ui:SettingsExpander.ActionIconSource>
+                <ui:SettingsExpander
+                    Header="Continue where you left off"
+                    Description="Start on previously selected vault"
+                    IconSource="{ic:FluentIconSource Power28Regular}">
                     <ui:SettingsExpander.Footer>
                         <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.ContinueOnLastVault, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                     </ui:SettingsExpander.Footer>
                 </ui:SettingsExpander>
-                <ui:SettingsExpander Header="Open vault folder" Description="Automatically open folder when vault is unlocked">
-                    <ui:SettingsExpander.ActionIconSource>
-                        <ui:SymbolIconSource Symbol="Folder" />
-                    </ui:SettingsExpander.ActionIconSource>
+                <ui:SettingsExpander
+                    Header="Open vault folder"
+                    Description="Automatically open folder when vault is unlocked"
+                    IconSource="{ic:FluentIconSource FolderOpen24Regular}">
                     <ui:SettingsExpander.Footer>
                         <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.OpenFolderOnUnlock, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                     </ui:SettingsExpander.Footer>
