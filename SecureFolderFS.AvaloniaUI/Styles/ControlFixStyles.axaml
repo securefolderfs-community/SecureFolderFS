@@ -7,4 +7,9 @@
         <Setter Property="Height" Value="19" />
         <Setter Property="FontSize" Value="15" />
     </Style>
+
+    <!-- Remove white shadow making disabled SettingsExpander look bigger  -->
+    <Style Selector="ui|SettingsExpander:disabled ui|FABorder">
+        <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}"/>
+    </Style>
 </Styles>
