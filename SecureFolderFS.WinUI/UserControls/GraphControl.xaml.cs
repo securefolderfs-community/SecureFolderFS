@@ -1,17 +1,17 @@
 ﻿using LiveChartsCore;
+using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using SkiaSharp;
 using System;
-using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.Kernel.Sketches;
-using SkiaSharp;
+using LiveChartsCore.Drawing;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,15 +45,19 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             Chart.Series = new ISeries[]
             {
-                new LineSeries<DateTimePoint>()
+                new LineSeries<GraphPointViewModel>()
                 {
-                    Values = new DateTimePoint[] { },
-                    Fill = new LinearGradientPaint(
+                    Values = Data,
+                    Fill = new LinearGradientPaint(new SKColor[] {
                         new(ChartPrimaryColor.R, ChartPrimaryColor.G, ChartPrimaryColor.B, ChartPrimaryColor.A),
-                        new(ChartSecondaryColor.R, ChartSecondaryColor.G, ChartSecondaryColor.B, ChartSecondaryColor.A),
-                        new(0.5f, 0f), new(0.5f, 1.0f)),
+                        new(ChartSecondaryColor.R, ChartSecondaryColor.G, ChartSecondaryColor.B, ChartSecondaryColor.A) },
+                        new(0.5f, 0f), new(0.5f, 1.0f), new[] { 0.2f, 1.3f }),
                     GeometrySize = 0d,
-                    Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2)
+                    Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2),
+                    Mapping = (model, point) => { point.PrimaryValue = Convert.ToDouble(model.Value); point.SecondaryValue = model.Date.Ticks; },
+                    LineSmoothness = 0d,
+                    DataPadding = new(0.3f, 0),
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(150),
                 }
             };
             Chart.XAxes = new ICartesianAxis[]
@@ -61,7 +65,7 @@ namespace SecureFolderFS.WinUI.UserControls
                 new Axis()
                 {
                     Labeler = x => string.Empty,
-                    ShowSeparatorLines = false
+                    ShowSeparatorLines = false,
                 }
             };
             Chart.YAxes = new ICartesianAxis[]
@@ -69,7 +73,9 @@ namespace SecureFolderFS.WinUI.UserControls
                 new Axis()
                 {
                     ShowSeparatorLines = false,
+                    Padding = new Padding(16, 0, 0, 0),
                     LabelsPaint = new SolidColorPaint(SKColors.Gray),
+                    MinLimit = 0d
                 }
             };
 
@@ -82,13 +88,13 @@ namespace SecureFolderFS.WinUI.UserControls
             Click?.Invoke(sender, e);
         }
 
-        public IList? Data
+        public IList<GraphPointViewModel>? Data
         {
-            get => (IList?)GetValue(DataProperty);
+            get => (IList<GraphPointViewModel>?)GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register(nameof(Data), typeof(IList), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Data), typeof(IList<GraphPointViewModel>), typeof(GraphControl), new PropertyMetadata(null));
 
         public string? GraphHeader
         {
