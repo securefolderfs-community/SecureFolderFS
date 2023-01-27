@@ -35,8 +35,8 @@
                     <TextBox
                         x:Name="VaultPasswordBox"
                         MinWidth="300"
-                        PasswordChar="*"
-                        RevealPassword="True"
+                        PasswordChar="●"
+                        RevealPassword="False"
                         KeyUp="VaultPasswordBox_OnKeyUp"
                         Loaded="VaultPasswordBox_OnLoaded"
                         Watermark="Password" />
