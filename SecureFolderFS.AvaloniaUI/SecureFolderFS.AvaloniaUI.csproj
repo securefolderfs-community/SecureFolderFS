@@ -45,4 +45,8 @@
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Styles\ControlConsistencyStyles.axaml" />
+      <UpToDateCheckInput Remove="Styles\ControlConsistencyStyles.axaml" />
+    </ItemGroup>
 </Project>

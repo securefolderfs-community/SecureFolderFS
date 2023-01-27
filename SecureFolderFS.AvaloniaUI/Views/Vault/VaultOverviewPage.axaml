@@ -24,7 +24,6 @@
 
         <!--  Resource Graphs  -->
         <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
-            <!-- TODO Graph -->
             <ucw:GraphsWidget
                 ReadGraphIsExtended="False"
                 ReadGraphSubheader="{Binding ReadGraphViewModel.GraphSubheader}"
@@ -35,36 +34,21 @@
         </DataTemplate>
     </uc:Page.Resources>
 
+    <uc:Page.Styles>
+        <Style Selector="ListBox > ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+        </Style>
+    </uc:Page.Styles>
+
     <!--  Margins are to align the scrollbar to prevent overlap with content  -->
     <ScrollViewer Margin="-12,0,-12,0">
         <StackPanel Margin="12,0,12,0" Spacing="8">
             <!--  Widgets  -->
-            <ListBox Items="{Binding ViewModel.WidgetsViewModel.Widgets, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
-                <!--  Remove Reveal Highlight Effect  -->
-                <!-- TODO -->
-                <!-- <ListBox.ItemContainerTheme> -->
-                <!--     <ControlTheme TargetType="ListBoxItem"> -->
-                <!--         <ControlTheme.Setters> -->
-                <!--             <Setter Property="Template"> -->
-                <!--                 <Setter.Value> -->
-                <!--                     <ControlTemplate TargetType="ListBoxItem"> -->
-                <!--                         <ListBoxItem -->
-                <!--                             x:Name="Root" -->
-                <!--                             HorizontalContentAlignment="Stretch" -->
-                <!--                             VerticalContentAlignment="Stretch" -->
-                <!--                             RevealBackground="{ThemeResource GridViewItemRevealBackground}" -->
-                <!--                             RevealBorderBrush="{ThemeResource GridViewItemRevealBorderBrush}" -->
-                <!--                             RevealBorderThickness="0" /> -->
-                <!--                     </ControlTemplate> -->
-                <!--                 </Setter.Value> -->
-                <!--             </Setter> -->
-                <!--         </ControlTheme.Setters> -->
-                <!--     </ControlTheme> -->
-                <!-- </ListBox.ItemContainerTheme> -->
-                <ListBox.DataTemplates>
+            <ItemsControl Items="{Binding ViewModel.WidgetsViewModel.Widgets, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                <ItemsControl.DataTemplates>
                     <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
-                </ListBox.DataTemplates>
-            </ListBox>
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
 
             <!--  Vault options  -->
             <StackPanel Spacing="4">

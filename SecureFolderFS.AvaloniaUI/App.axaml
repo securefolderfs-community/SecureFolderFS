@@ -11,6 +11,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/ResourceDictionaries/ImageResources.axaml" />
+                <ResourceInclude Source="/ResourceDictionaries/ControlConsistencyResources.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
