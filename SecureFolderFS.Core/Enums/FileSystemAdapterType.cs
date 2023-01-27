@@ -15,6 +15,9 @@
         /// </summary>
         WebDavAdapter = 1,
 
+        /// <summary>
+        /// FUSE file system adapter.
+        /// </summary>
         FuseAdapter = 2
     }
 }

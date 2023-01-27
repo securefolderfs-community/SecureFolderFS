@@ -5,6 +5,7 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Dokany;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FUSE;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Validators;
@@ -20,7 +21,6 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FUSE;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {

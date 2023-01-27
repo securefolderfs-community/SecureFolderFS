@@ -1,6 +1,8 @@
-﻿using SecureFolderFS.Shared.Utils;
-using System;
+﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
@@ -29,6 +31,18 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         public sealed override void Write(byte[] buffer, int offset, int count)
         {
             Write(buffer.AsSpan(offset, count));
+        }
+
+        /// <inheritdoc/>
+        public sealed override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            return ReadAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
+        }
+
+        /// <inheritdoc/>
+        public sealed override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            return WriteAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
         }
 
         /// <inheritdoc/>

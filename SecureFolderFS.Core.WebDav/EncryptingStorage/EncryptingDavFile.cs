@@ -1,7 +1,7 @@
-﻿using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
+﻿using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.IO;

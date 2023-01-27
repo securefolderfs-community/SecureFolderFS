@@ -3,6 +3,7 @@ using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace SecureFolderFS.Core.FileNames
