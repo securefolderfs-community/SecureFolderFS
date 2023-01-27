@@ -8,6 +8,7 @@ using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
@@ -18,14 +19,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IKeystoreModel _keystoreModel;
         private readonly IMessenger _messenger;
+        private readonly IThreadingService _threadingService;
 
-        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel, IMessenger messenger)
+        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel, IMessenger messenger, IThreadingService threadingService)
         {
             _vaultViewModel = vaultViewModel;
             _vaultUnlockingModel = vaultUnlockingModel;
             _vaultWatcherModel = vaultWatcherModel;
             _keystoreModel = keystoreModel;
             _messenger = messenger;
+            _threadingService = threadingService;
         }
 
         [RelayCommand]
@@ -68,7 +71,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             _ = dashboardPage.InitAsync(cancellationToken);
 
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultWatcherModel.VaultModel));
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardPage));
+            await _threadingService.ExecuteOnUiThreadAsync(() =>
+            {
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardPage));
+            });
         }
 
         /// <inheritdoc/>

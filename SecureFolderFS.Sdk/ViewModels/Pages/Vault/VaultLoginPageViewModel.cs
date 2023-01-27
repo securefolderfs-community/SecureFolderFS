@@ -92,7 +92,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
                 var vaultUnlockingModel = new VaultUnlockingModel();
 
-                LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
+                LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger, ThreadingService);
             }
             else
                 LoginStrategyViewModel = new LoginInvalidVaultViewModel(validationResult.GetMessage("Vault is inaccessible."));

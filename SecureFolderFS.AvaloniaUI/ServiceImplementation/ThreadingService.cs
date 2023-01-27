@@ -14,7 +14,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 
         public ThreadingService()
         {
-            _dispatcher = new Dispatcher(new InternalPlatformThreadingInterface());
+            _dispatcher = Dispatcher.UIThread;
         }
 
         /// <inheritdoc/>
