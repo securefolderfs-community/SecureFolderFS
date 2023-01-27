@@ -20,12 +20,12 @@
             <TextBlock FontSize="20" Text="Vault has been added" />
         </StackPanel>
 
-        <!-- TODO ToolTipService  -->
         <TextBlock
             Grid.Row="2"
             HorizontalAlignment="Center"
             Opacity="0.8"
             Text="{Binding ViewModel.VaultName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-            TextTrimming="CharacterEllipsis" />
+            TextTrimming="CharacterEllipsis"
+            ToolTip.Tip="{Binding ViewModel.VaultName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"/>
     </Grid>
 </uc:Page>

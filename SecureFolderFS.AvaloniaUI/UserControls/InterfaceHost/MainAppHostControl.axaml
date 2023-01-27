@@ -108,6 +108,7 @@
                 <ui:NavigationViewItem
                     Height="64"
                     AutomationProperties.Name="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                    ToolTip.Tip="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
                     Icon="{ic:FluentIcon Vault16Regular}">
 
                     <ui:NavigationViewItem.Content>
