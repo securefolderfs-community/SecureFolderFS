@@ -68,7 +68,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 
             var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);
             var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, _messenger);
-            _ = dashboardPage.InitAsync(cancellationToken);
+            _ = _threadingService.ExecuteOnUiThreadAsync(() => _ = dashboardPage.InitAsync(cancellationToken));
 
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultWatcherModel.VaultModel));
             await _threadingService.ExecuteOnUiThreadAsync(() =>
