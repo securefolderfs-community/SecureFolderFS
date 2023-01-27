@@ -5,6 +5,7 @@
     <Application.Styles>
         <sty:FluentAvaloniaTheme />
         <StyleInclude Source="avares://FluentAvalonia.UI.Windowing/Styles/FAWindowingStyles.axaml" />
+        <StyleInclude Source="/Styles/ControlFixStyles.axaml" />
     </Application.Styles>
 
     <Application.Resources>
