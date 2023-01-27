@@ -1,6 +1,6 @@
 using Avalonia.Markup.Xaml.Templates;
-using SecureFolderFS.AvaloniaUI.UserControls.InfoBars;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.UI.UserControls.InfoBars;
 
 namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
 {
@@ -8,12 +8,19 @@ namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
     {
         public DataTemplate? DokanyUnavailableInfoBarTemplate { get; set; }
 
+        public DataTemplate? FuseExperimentalInfoBarTemplate { get; set; }
+
+        public DataTemplate? WebDavExperimentalInfoBarTemplate { get; set; }
+
         protected override DataTemplate? SelectTemplateCore(InfoBarViewModel? item)
         {
-            if (item is DokanyInfoBar)
-                return DokanyUnavailableInfoBarTemplate;
-
-            return null;
+            return item switch
+            {
+                DokanyInfoBar => DokanyUnavailableInfoBarTemplate,
+                FuseInfoBar => FuseExperimentalInfoBarTemplate,
+                WebDavInfoBar => WebDavExperimentalInfoBarTemplate,
+                _ => null
+            };
         }
     }
 }

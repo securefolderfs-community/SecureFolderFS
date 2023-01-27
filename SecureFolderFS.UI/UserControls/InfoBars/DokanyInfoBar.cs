@@ -1,13 +1,11 @@
-using System;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 
-namespace SecureFolderFS.AvaloniaUI.UserControls.InfoBars
+namespace SecureFolderFS.UI.UserControls.InfoBars
 {
-    internal sealed class DokanyInfoBar : InfoBarViewModel
+    public sealed class DokanyInfoBar : InfoBarViewModel
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 

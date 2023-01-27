@@ -5,9 +5,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
-    xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.InfoBars"
+    xmlns:uc2="using:SecureFolderFS.UI.UserControls.InfoBars"
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Settings.Banners"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
     Loaded="PreferencesSettingsPage_OnLoaded"
@@ -22,8 +23,7 @@
                 IsClosable="{Binding CanBeClosed}"
                 IsOpen="True"
                 Message="{Binding Message}"
-                Severity="{Binding InfoBarSeverity, Converter={StaticResource GenericEnumConverter}}"
-                IsVisible="{Binding IsOpen, Mode=OneWay}">
+                Severity="{Binding InfoBarSeverity, Converter={StaticResource GenericEnumConverter}}">
 
                 <Border Padding="16,8,16,8">
                     <ui:HyperlinkButton
@@ -32,29 +32,14 @@
                         Command="{Binding OpenWebsiteCommand}"
                         Content="Open website" />
                 </Border>
-
-                <!-- TODO Transitions -->
-                <!-- <anim:Implicit.ShowAnimations> -->
-                <!--     <anim:TranslationAnimation -->
-                <!--         From="0,-15,0" -->
-                <!--         To="0" -->
-                <!--         Duration="0:0:0.4" /> -->
-                <!--     <anim:OpacityAnimation -->
-                <!--         From="0" -->
-                <!--         To="1.0" -->
-                <!--         Duration="0:0:0.6" /> -->
-                <!-- </anim:Implicit.ShowAnimations> -->
-                <!-- <anim:Implicit.HideAnimations> -->
-                <!--     <anim:OpacityAnimation -->
-                <!--         From="1.0" -->
-                <!--         To="0.0" -->
-                <!--         Duration="0:0:0.2" /> -->
-                <!--     <anim:TranslationAnimation -->
-                <!--         From="0" -->
-                <!--         To="0,-15,0" -->
-                <!--         Duration="0:0:0.2" /> -->
-                <!-- </anim:Implicit.HideAnimations> -->
             </ui:InfoBar>
+        </DataTemplate>
+        <DataTemplate x:Key="GenericInfoBarTemplate" x:DataType="vm2:InfoBarViewModel">
+            <ui:InfoBar
+                IsClosable="{Binding CanBeClosed}"
+                IsOpen="True"
+                Message="{Binding Message}"
+                Severity="{Binding InfoBarSeverity, Converter={StaticResource GenericEnumConverter}}" />
         </DataTemplate>
     </uc:Page.Resources>
 
@@ -96,10 +81,16 @@
                     <ContentControl
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
-                        Content="{Binding FileSystemInfoBar, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                        Content="{Binding FileSystemInfoBar, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        IsVisible="{Binding IsInfoBarOpen, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}">
                         <ContentControl.DataTemplates>
-                            <ts:FileSystemInfoBarTemplateSelector DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}" />
+                            <ts:FileSystemInfoBarTemplateSelector
+                                DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}"
+                                WebDavExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}"
+                                FuseExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}" />
                         </ContentControl.DataTemplates>
+
+                        <!-- TODO Transitions -->
                     </ContentControl>
                 </uc:BannerControl.AdditionalBottomContent>
             </uc:BannerControl>

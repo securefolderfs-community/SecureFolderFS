@@ -7,13 +7,13 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using FluentAvalonia.UI.Navigation;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.AvaloniaUI.UserControls.InfoBars;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.UserControls.InfoBars;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
@@ -69,7 +69,21 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 return;
 
             var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
-            if (fileSystemAdapterResult.Successful && FileSystemInfoBar is not null)
+            if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
+            {
+                FileSystemInfoBar = new WebDavInfoBar();
+                FileSystemInfoBar.IsOpen = true;
+                FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
+                FileSystemInfoBar.CanBeClosed = false;
+            }
+            else if (fileSystemAdapter.Id == Core.Constants.FileSystemId.FUSE_ID)
+            {
+                FileSystemInfoBar = new FuseInfoBar();
+                FileSystemInfoBar.IsOpen = true;
+                FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
+                FileSystemInfoBar.CanBeClosed = false;
+            }
+            else if (fileSystemAdapterResult.Successful && FileSystemInfoBar is not null)
             {
                 FileSystemInfoBar.IsOpen = false;
             }
@@ -78,6 +92,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 FileSystemInfoBar = fileSystemAdapter.Id switch
                 {
                     Core.Constants.FileSystemId.DOKAN_ID => new DokanyInfoBar(),
+                    Core.Constants.FileSystemId.FUSE_ID => new FuseInfoBar(),
                     _ => null
                 };
                 if (FileSystemInfoBar is null)
@@ -89,6 +104,8 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 FileSystemInfoBar.CanBeClosed = false;
                 FileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
             }
+
+            IsInfoBarOpen = FileSystemInfoBar?.IsOpen ?? false;
         }
 
         private async Task<FileSystemAdapterItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
@@ -102,15 +119,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 
             return ViewModel.BannerViewModel.FileSystemAdapters.FirstOrDefault();
         }
-
-        public InfoBarViewModel? FileSystemInfoBar
-        {
-            get => GetValue(FileSystemInfoBarProperty);
-            set => SetValue(FileSystemInfoBarProperty, value);
-        }
-
-        public static readonly StyledProperty<InfoBarViewModel?> FileSystemInfoBarProperty =
-            AvaloniaProperty.Register<PreferencesSettingsPage, InfoBarViewModel?>(nameof(FileSystemInfoBar));
 
         private void RootGrid_Loaded(object sender, RoutedEventArgs e)
         {
@@ -129,5 +137,21 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         {
             throw new System.NotImplementedException();
         }
+
+        public InfoBarViewModel? FileSystemInfoBar
+        {
+            get => GetValue(FileSystemInfoBarProperty);
+            set => SetValue(FileSystemInfoBarProperty, value);
+        }
+        public static readonly StyledProperty<InfoBarViewModel?> FileSystemInfoBarProperty =
+            AvaloniaProperty.Register<PreferencesSettingsPage, InfoBarViewModel?>(nameof(FileSystemInfoBar));
+
+        public bool IsInfoBarOpen
+        {
+            get => GetValue(IsInfoBarOpenProperty);
+            set => SetValue(IsInfoBarOpenProperty, value);
+        }
+        public static readonly StyledProperty<bool> IsInfoBarOpenProperty =
+            AvaloniaProperty.Register<PreferencesSettingsPage, bool>(nameof(IsInfoBarOpen));
     }
 }
