@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             var hFile = GetHandle();
             if (hFile is null)
                 return false;
-            
+
             return UnsafeNativeApis.SetFileTime(hFile, ref creationTime, ref lastAccessTime, ref lastWriteTime);
 
             SafeFileHandle? GetHandle()

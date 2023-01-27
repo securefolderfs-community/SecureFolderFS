@@ -5,6 +5,7 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Dokany;
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FUSE;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.Validators;
@@ -130,6 +131,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             var mountable = fileSystemOptions.AdapterType switch
             {
                 FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess, fileSystemOptions.HealthStatistics),
+                FileSystemAdapterType.FuseAdapter => FuseMountable.CreateMountable(_vaultFolder.Name, pathConverter, _contentFolder, security, directoryIdAccess, streamsAccess),
                 FileSystemAdapterType.WebDavAdapter => WebDavMountable.CreateMountable(_storageService, _vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
                 _ => throw new ArgumentOutOfRangeException(nameof(fileSystemOptions.AdapterType))
             };

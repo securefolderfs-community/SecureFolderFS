@@ -13,6 +13,11 @@
         /// <summary>
         /// WebDav server file system adapter.
         /// </summary>
-        WebDavAdapter = 1
+        WebDavAdapter = 1,
+
+        /// <summary>
+        /// FUSE file system adapter.
+        /// </summary>
+        FuseAdapter = 2
     }
 }

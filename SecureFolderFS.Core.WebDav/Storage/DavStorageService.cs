@@ -1,6 +1,6 @@
-﻿using NWebDav.Server.Storage;
+﻿using SecureFolderFS.Sdk.Storage;
+using NWebDav.Server.Storage;
 using SecureFolderFS.Core.WebDav.EncryptingStorage;
-using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.IO;
@@ -74,7 +74,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
             return NewFile(file);
         }
 
-        
+
         /// <inheritdoc/>
         public virtual IDavFile NewFile<T>(T inner) where T : IFile
         {

@@ -11,6 +11,7 @@ using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -79,7 +80,7 @@ namespace SecureFolderFS.Core.Dokany
                 throw new DirectoryNotFoundException("No available free mount points for vault file system");
 
             _dokanyWrapper.StartFileSystem(mountPath);
-            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SimpleDokanyFolder(mountPath)); // TODO: For now SimpleDokanyFolder until cloud storage is implemented
+            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SimpleFolder(mountPath)); // TODO: For now SimpleDokanyFolder until cloud storage is implemented
 
             return Task.FromResult<IVirtualFileSystem>(dokanyFileSystem);
         }

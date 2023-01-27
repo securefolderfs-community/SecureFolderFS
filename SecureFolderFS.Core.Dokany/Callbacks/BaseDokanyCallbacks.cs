@@ -45,14 +45,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             bytesRead = 0;
             return DokanResult.NotImplemented;
         }
-        
+
         #endregion
 
         /// <inheritdoc/>
         public virtual void CloseFile(string fileName, IDokanFileInfo info)
         {
             _ = fileName;
-            
+
             CloseHandle(info);
             InvalidateContext(info);
         }
@@ -232,7 +232,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var bufferSpan = new ReadOnlySpan<byte>(buffer.ToPointer(), alignedBytesToCopy);
                 fileHandle.Stream.Write(bufferSpan);
                 bytesWritten = alignedBytesToCopy;
-                
+
                 return DokanResult.Success;
             }
             catch (PathTooLongException)

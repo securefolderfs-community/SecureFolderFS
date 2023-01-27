@@ -85,7 +85,6 @@ namespace SecureFolderFS.Core.WebDav.Storage
             var parentFolder = await locatableStorable.GetParentAsync(cancellationToken);
             if (parentFolder is null)
                 return null;
-
             return NewFolder(parentFolder);
         }
 
@@ -119,7 +118,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
-            
+
             var movedItem = await modifiableFolder.MoveFromAsync(itemToMove, source, overwrite, cancellationToken);
             if (movedItem is IFile file)
                 return NewFile(file);
