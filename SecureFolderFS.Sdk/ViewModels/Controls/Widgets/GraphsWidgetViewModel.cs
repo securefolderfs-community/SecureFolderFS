@@ -36,13 +36,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         }
         
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            await ReadGraphViewModel.InitAsync(cancellationToken);
+            await WriteGraphViewModel.InitAsync(cancellationToken);
+
             InitializeCallbacks();
 
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
-            return Task.CompletedTask;
         }
 
         private async Task InitializeBlockingTimer(CancellationToken cancellationToken)
@@ -70,16 +72,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             var now = DateTime.Now;
 
             // Update graph for read
-            var readPoint = ReadGraphViewModel.RentGraphPoint();
+            var readPoint = ReadGraphViewModel.Data[0];
             readPoint.Date = now;
             readPoint.Value = read;
-            ReadGraphViewModel.ReturnGraphPoint(readPoint);
+            ReadGraphViewModel.UpdateLastPoint();
 
             // Update graph for write
-            var writePoint = WriteGraphViewModel.RentGraphPoint();
+            var writePoint = WriteGraphViewModel.Data[0];
             writePoint.Date = now;
             writePoint.Value = write;
-            WriteGraphViewModel.ReturnGraphPoint(writePoint);
+            WriteGraphViewModel.UpdateLastPoint();
             
             // Reset amounts
             _currentReadAmount = 0;

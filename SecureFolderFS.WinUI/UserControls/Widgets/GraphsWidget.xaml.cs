@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -168,21 +169,21 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
         public static readonly DependencyProperty WriteGraphIsExtendedProperty =
             DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
 
-        public IList? ReadGraphData
+        public IList<GraphPointViewModel>? ReadGraphData
         {
-            get => (IList?)GetValue(ReadGraphDataProperty);
+            get => (IList<GraphPointViewModel>?)GetValue(ReadGraphDataProperty);
             set => SetValue(ReadGraphDataProperty, value);
         }
         public static readonly DependencyProperty ReadGraphDataProperty =
-            DependencyProperty.Register(nameof(ReadGraphData), typeof(ObservableCollection<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ReadGraphData), typeof(IList<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
 
-        public IList? WriteGraphData
+        public IList<GraphPointViewModel>? WriteGraphData
         {
-            get => (IList?)GetValue(WriteGraphDataProperty);
+            get => (IList<GraphPointViewModel>?)GetValue(WriteGraphDataProperty);
             set => SetValue(WriteGraphDataProperty, value);
         }
         public static readonly DependencyProperty WriteGraphDataProperty =
-            DependencyProperty.Register(nameof(WriteGraphData), typeof(ObservableCollection<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(WriteGraphData), typeof(IList<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
 
         public string? ReadGraphSubheader
         {
