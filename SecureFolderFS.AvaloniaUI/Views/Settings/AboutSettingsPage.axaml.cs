@@ -39,5 +39,11 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             ViewModel.CopyVersionCommand?.Execute(null);
             VersionCopiedTeachingTip.IsOpen = true;
         }
+
+        private async void DiscordButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            // SettingsExpander sets e.Handled to true, which prevents the command from executing.
+            await ViewModel.OpenDiscordSocialCommand.ExecuteAsync(null);
+        }
     }
 }
