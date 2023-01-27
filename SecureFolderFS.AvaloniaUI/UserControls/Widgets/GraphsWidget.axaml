@@ -1,0 +1,41 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.Widgets.GraphsWidget">
+    <!-- TODO Animations -->
+
+    <Grid
+        x:Name="GraphsGrid"
+        Margin="0,8,0,0"
+        ColumnDefinitions="*,8,*">
+
+        <!--  Read  -->
+        <ui:SettingsExpander
+            x:Name="ReadGraph"
+            Click="ReadGraph_OnClick"
+            Header="Read speeds"
+            Description="{Binding ReadGraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            RenderTransformOrigin="1.0,0.0">
+            <ui:SettingsExpander.RenderTransform>
+                <ScaleTransform />
+            </ui:SettingsExpander.RenderTransform>
+        </ui:SettingsExpander>
+
+        <!--  Write  -->
+        <ui:SettingsExpander
+            x:Name="WriteGraph"
+            Grid.Column="2"
+            Click="WriteGraph_OnClick"
+            Header="Write speeds"
+            Description="{Binding WriteGraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            RenderTransformOrigin="1.0,0.0">
+            <ui:SettingsExpander.RenderTransform>
+                <ScaleTransform />
+            </ui:SettingsExpander.RenderTransform>
+        </ui:SettingsExpander>
+    </Grid>
+</UserControl>
