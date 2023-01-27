@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using FluentAvalonia.UI.Windowing;
 
 namespace SecureFolderFS.AvaloniaUI
 {
@@ -16,6 +17,7 @@ namespace SecureFolderFS.AvaloniaUI
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
+                .UseFAWindowing()
                 .LogToTrace();
     }
 }

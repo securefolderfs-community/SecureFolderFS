@@ -25,6 +25,7 @@
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-preview4" />
         <PackageReference Include="Avalonia.Svg" Version="11.0.0-preview4" />
         <PackageReference Include="Avalonia.Svg.Skia" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.0-preview4" />
         <PackageReference Include="FluentAvalonia.UI.Windowing" Version="2.0.0-preview4" />
         <PackageReference Include="FluentAvaloniaUI" Version="2.0.0-preview4" />
         <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-beta.700-11.0.0-preview4" />

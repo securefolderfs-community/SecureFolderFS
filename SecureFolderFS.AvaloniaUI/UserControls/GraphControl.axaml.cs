@@ -52,6 +52,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
                     LineSmoothness = 0d,
                     DataPadding = new(0.3f, 0),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(150),
+                    GeometryStroke = new SolidColorPaint(SKColors.Transparent),
+                    IsHoverable = false
                 }
             };
             Chart.XAxes = new ICartesianAxis[]
@@ -59,7 +61,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
                 new Axis()
                 {
                     Labeler = x => string.Empty,
-                    ShowSeparatorLines = false,
+                    ShowSeparatorLines = false
                 }
             };
             Chart.YAxes = new ICartesianAxis[]
@@ -132,7 +134,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
 
         public bool GraphLoaded
         {
-            get => (bool)GetValue(GraphLoadedProperty);
+            get => GetValue(GraphLoadedProperty);
             private set => SetValue(GraphLoadedProperty, value);
         }
         public static readonly StyledProperty<bool> GraphLoadedProperty =

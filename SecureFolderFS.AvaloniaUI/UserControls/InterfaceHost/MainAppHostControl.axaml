@@ -37,12 +37,13 @@
                 Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                 Watermark="Search"
                 SelectionChanged="AutoCompleteBox_OnSelectionChanged"
-                TextChanged="AutoCompleteBox_OnTextChanged" />
+                TextChanged="AutoCompleteBox_OnTextChanged"
+                Width="230"/>
         </ui:NavigationView.AutoCompleteBox>
 
         <ui:NavigationView.PaneFooter>
             <Border
-                HorizontalAlignment="Center"
+                HorizontalAlignment="Stretch"
                 Width="230">
 
                 <Grid
@@ -69,7 +70,7 @@
                         x:Name="CompactAddVaultButton"
                         Grid.Column="1"
                         Height="36"
-                        Margin="0,0,-2,0"
+                        Margin="0,0,-4,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Center"
@@ -104,7 +105,6 @@
 
         <ui:NavigationView.MenuItemTemplate>
             <DataTemplate x:DataType="vm:SidebarItemViewModel">
-                <!-- TODO Tooltip -->
                 <ui:NavigationViewItem
                     Height="64"
                     AutomationProperties.Name="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}"

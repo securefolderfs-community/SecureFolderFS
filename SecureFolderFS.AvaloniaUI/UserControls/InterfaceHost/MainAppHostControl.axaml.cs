@@ -80,8 +80,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 
         private async void AutoCompleteBox_OnTextChanged(object? sender, TextChangedEventArgs e)
         {
-            // TODO
-            await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery((sender as AutoCompleteBox).Text ?? string.Empty);
+            await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery((sender as AutoCompleteBox)?.Text ?? string.Empty);
         }
 
         private void AutoCompleteBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -89,7 +88,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             if (sender is null)
                 return;
 
-            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(((AutoCompleteBox)sender).SelectedItem!.ToString()));
+            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(((AutoCompleteBox)sender).SelectedItem?.ToString()));
             if (chosenItem is null)
                 return;
 

@@ -37,6 +37,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             _ = NavigateHostControlAsync(message.ViewModel);
         }
 
+
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

@@ -24,11 +24,13 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
 
         private void HideColumn(ColumnDefinition column)
         {
+            GraphsGrid.ColumnDefinitions[1].Width = new(0, GridUnitType.Star);
             column.Width = new(0, GridUnitType.Star);
         }
 
         private void RestoreColumn(ColumnDefinition column)
         {
+            GraphsGrid.ColumnDefinitions[1].Width = new(8, GridUnitType.Pixel);
             column.Width = new(1, GridUnitType.Star);
         }
 

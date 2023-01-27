@@ -45,7 +45,10 @@
             <lvc:CartesianChart
                 x:Name="Chart"
                 Grid.Row="2"
-                Margin="0,8,0,0"
+                Margin="-12,8,-16,-12"
+                Padding="2"
+                IsHitTestVisible="False"
+
                 Loaded="Chart_Loaded" />
         </Grid>
     </Button>
