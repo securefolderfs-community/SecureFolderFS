@@ -37,9 +37,9 @@
 
             <!--  Navigation breadcrumb  -->
             <!-- TODO Use BreadcrumbBar -->
+            <!-- TODO Disable selection  -->
             <ListBox
                 x:Name="Breadcrumb"
-                Grid.Row="0"
                 Items="{Binding BreadcrumbItems, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="uc3:OrderedBreadcrumbBarItem">

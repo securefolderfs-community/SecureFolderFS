@@ -23,6 +23,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
         public VaultDashboardPage()
         {
             InitializeComponent();
+            BreadcrumbItems = new();
         }
 
         private void InitializeComponent()

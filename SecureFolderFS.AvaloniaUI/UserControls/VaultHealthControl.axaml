@@ -13,21 +13,21 @@
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:VaultHealthStateToStringConverter x:Key="VaultHealthStateToStringConverter" />
 
-        <DataTemplate x:Key="WithDetailedHealthTemplate" x:DataType="local:VaultHealthControl">
+        <DataTemplate x:Key="WithDetailedHealthTemplate">
             <StackPanel Margin="0,-4,0,0">
                 <!--  Vault status  -->
                 <TextBlock
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     FontWeight="Medium"
-                    Text="{Binding Path=VaultHealthState, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource VaultHealthStateToStringConverter}}"
+                    Text="{Binding VaultHealthState, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource VaultHealthStateToStringConverter}}"
                     TextTrimming="CharacterEllipsis" />
                 <!--  Last checked  -->
                 <TextBlock
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Opacity="0.6"
-                    Text="{Binding Path=VaultHealthLastCheckedDate, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}"
+                    Text="{Binding VaultHealthLastCheckedDate, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}"
                     TextTrimming="CharacterEllipsis" />
             </StackPanel>
         </DataTemplate>
@@ -53,7 +53,8 @@
             x:Name="DetailedHealthContentPresenter"
             Grid.Column="2"
             VerticalContentAlignment="Center"
-            ZIndex="1" />
+            ZIndex="1"
+            ContentTemplate="{StaticResource WithDetailedHealthTemplate}"/>
 
         <!--  Start scanning  -->
         <StackPanel
