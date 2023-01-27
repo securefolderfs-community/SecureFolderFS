@@ -58,8 +58,6 @@ namespace SecureFolderFS.AvaloniaUI
                 ServiceProvider = ConfigureServices(settingsFolder);
                 Ioc.Default.ConfigureServices(ServiceProvider);
 
-                ThemeHelper.Instance.UpdateTheme();
-
                 desktop.MainWindow = new MainWindow();
             }
 

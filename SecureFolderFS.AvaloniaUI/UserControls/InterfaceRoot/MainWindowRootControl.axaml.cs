@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
@@ -60,6 +61,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
                 settingsService.LoadSettingsAsync(),
                 platformSettingsService.LoadSettingsAsync(),
                 vaultCollectionModel.HasVaultsAsync());
+
+            ThemeHelper.Instance.UpdateTheme();
 
             // Continue root initialization
             if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped

@@ -4,9 +4,10 @@
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot"
                xmlns:wnd="using:FluentAvalonia.UI.Windowing"
+               Closing="Window_OnClosing"
                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                x:Class="SecureFolderFS.AvaloniaUI.WindowViews.MainWindow"
-               Title="SecureFolderFS.AvaloniaUI">
+               Title="SecureFolderFS">
 
     <!-- TODO Loaded event -->
     <uc:MainWindowRootControl x:Name="HostControl" />
