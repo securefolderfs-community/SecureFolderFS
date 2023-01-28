@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
@@ -80,7 +81,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             if (itemToRemove is null)
                 return;
 
-            SidebarItems.Remove(itemToRemove);
+            try
+            {
+                SidebarItems.Remove(itemToRemove);
+            }
+            catch (NullReferenceException)
+            {
+                // TODO This happens rarely but the vault is actually removed
+            }
+
             SelectedItem = SidebarItems.FirstOrDefault();
 
             await VaultCollectionModel.RemoveVaultAsync(message.VaultModel);

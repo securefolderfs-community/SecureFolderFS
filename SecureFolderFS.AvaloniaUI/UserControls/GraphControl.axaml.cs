@@ -88,6 +88,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         }
 
         // Fix major graphical glitches when a dialog and a chart are visible at the same time
+        // Disabling deferred rendering does solve this, but it causes invisible elements to appear
+        // on the screen and prevent the user from pressing buttons.
         public void Receive(DialogShownMessage message)
         {
             Chart.IsVisible = false;
