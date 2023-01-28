@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using SecureFolderFS.AvaloniaUI.Helpers;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
@@ -10,9 +11,9 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
     internal sealed class ApplicationService : IApplicationService
     {
         /// <inheritdoc/>
-        public Version GetAppVersion()
+        public AppVersion GetAppVersion()
         {
-            return Assembly.GetExecutingAssembly().GetName().Version!;
+            return new(Assembly.GetExecutingAssembly().GetName().Version!, "AvaloniaUI");
         }
 
         /// <inheritdoc/>

@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.UI.AppModels;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.System;

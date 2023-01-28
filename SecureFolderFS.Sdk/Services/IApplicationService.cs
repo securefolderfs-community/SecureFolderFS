@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.AppModels;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -12,7 +13,7 @@ namespace SecureFolderFS.Sdk.Services
         /// Gets the version of the app.
         /// </summary>
         /// <returns><see cref="Version"/> of the app.</returns>
-        Version GetAppVersion();
+        AppVersion GetAppVersion();
 
         /// <summary>
         /// Launches an URI from app. This can be an URL, folder path, etc.

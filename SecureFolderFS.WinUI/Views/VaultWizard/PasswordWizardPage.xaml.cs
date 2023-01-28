@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
-using SecureFolderFS.UI.AppModels;
 using System.Linq;
 using System.Text;
 
