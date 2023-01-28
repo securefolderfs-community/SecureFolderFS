@@ -20,8 +20,6 @@
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Dialogs.VaultWizardDialog">
 
-    <!-- TODO transitions -->
-
     <ui:ContentDialog.Title>
         <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
             <Button

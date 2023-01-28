@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Messaging;
@@ -10,6 +14,7 @@ using ExCSS;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
 using Microsoft.AspNetCore.Components;
+using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
 using SecureFolderFS.AvaloniaUI.WindowViews;
@@ -36,6 +41,102 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             get => (VaultWizardDialogViewModel)DataContext;
             set => DataContext = value;
         }
+
+        private IEnumerable<Animations.Animation> ShowBackButtonStoryboard => new List<Animations.Animation>
+        {
+            new()
+            {
+                Duration = TimeSpan.Parse("0:0:0.2"),
+                Target = GoBack,
+                FillMode = FillMode.Forward,
+                Children =
+                {
+                    new KeyFrame
+                    {
+                        Setters =
+                        {
+                            new Setter(OpacityProperty, 0d),
+                            new Setter(IsVisibleProperty, true)
+                        },
+                        KeyTime = TimeSpan.Zero
+                    },
+                    new KeyFrame
+                    {
+                        Setters =
+                        {
+                            new Setter(OpacityProperty, 1d),
+                            new Setter(IsVisibleProperty, true)
+                        },
+                        KeyTime = TimeSpan.Parse("0:0:0.2")
+                    }
+                }
+            },
+            new()
+            {
+                Duration = TimeSpan.Parse("0:0:0.2"),
+                Easing = new CircularEaseInOut(),
+                Target = TitleText,
+                Children =
+                {
+                    new KeyFrame
+                    {
+                        Setters = { new Setter(TranslateTransform.XProperty, -48d) },
+                        KeyTime = TimeSpan.Zero
+                    },
+                    new KeyFrame
+                    {
+                        Setters = { new Setter(TranslateTransform.XProperty, 0d) },
+                        KeyTime = TimeSpan.Parse("0:0:0.2")
+                    }
+                }
+            }
+        };
+
+        private IEnumerable<Animations.Animation> HideBackButtonStoryboard => new List<Animations.Animation>
+        {
+            new()
+            {
+                Duration = TimeSpan.Parse("0:0:0.2"),
+                Target = GoBack,
+                FillMode = FillMode.Forward,
+                Children =
+                {
+                    new KeyFrame
+                    {
+                        Setters = { new Setter(OpacityProperty, 1d) },
+                        KeyTime = TimeSpan.Zero
+                    },
+                    new KeyFrame
+                    {
+                        Setters =
+                        {
+                            new Setter(OpacityProperty, 0d),
+                            new Setter(IsVisibleProperty, false)
+                        },
+                        KeyTime = TimeSpan.Parse("0:0:0.2")
+                    }
+                }
+            },
+            new()
+            {
+                Duration = TimeSpan.Parse("0:0:0.2"),
+                Easing = new CircularEaseInOut(),
+                Target = TitleText,
+                Children =
+                {
+                    new KeyFrame
+                    {
+                        Setters = { new Setter(TranslateTransform.XProperty, 0d) },
+                        KeyTime = TimeSpan.Zero
+                    },
+                    new KeyFrame
+                    {
+                        Setters = {  new Setter(TranslateTransform.XProperty, -48d) },
+                        KeyTime = TimeSpan.Parse("0:0:0.2")
+                    }
+                }
+            }
+        };
 
         private void InitializeComponent()
         {
@@ -107,19 +208,13 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             else if (!_isBackAnimationState && (canGoBack && Navigation.CanGoBack))
             {
                 _isBackAnimationState = true;
-                GoBack.IsVisible = true;
-                //await ShowBackButtonStoryboard.BeginAsync();
-                //ShowBackButtonStoryboard.Stop();
+                await Animations.Animation.PlayAsync(ShowBackButtonStoryboard);
             }
             else if (_isBackAnimationState && !(canGoBack && Navigation.CanGoBack))
             {
                 _isBackAnimationState = false;
-                //await HideBackButtonStoryboard.BeginAsync();
-                //HideBackButtonStoryboard.Stop();
-                GoBack.IsVisible = false;
+                await Animations.Animation.PlayAsync(HideBackButtonStoryboard);
             }
-
-            GoBack.IsVisible = canGoBack && Navigation.CanGoBack;
         }
 
         private void VaultWizardDialog_OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
