@@ -45,7 +45,7 @@
                         <Button Command="{Binding ViewModel.OpenGitHubRepositoryCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <ic:FluentIcon
-                                    Icon="Star48Regular"
+                                    Icon="Star48Filled"
                                     Width="14"
                                     VerticalAlignment="Center" />
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
