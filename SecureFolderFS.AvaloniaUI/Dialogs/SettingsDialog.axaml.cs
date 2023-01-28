@@ -8,6 +8,7 @@ using Avalonia.Styling;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
+using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
@@ -61,6 +62,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         private void Button_OnClick(object? sender, RoutedEventArgs e)
         {
             Hide();
+            WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
         }
     }
 }

@@ -10,6 +10,7 @@ using ExCSS;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
 using Microsoft.AspNetCore.Components;
+using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
 using SecureFolderFS.AvaloniaUI.WindowViews;
 using SecureFolderFS.Sdk.Enums;
@@ -125,6 +126,8 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         {
             if (!args.Cancel)
                 Navigation.Dispose();
+
+            WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
         }
 
         private void VaultWizardDialog_OnLoaded(object? sender, RoutedEventArgs e)

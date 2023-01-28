@@ -9,25 +9,28 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Messaging;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SkiaSharp;
-using Brush = System.Drawing.Brush;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls
 {
-    internal sealed partial class GraphControl : UserControl
+    internal sealed partial class GraphControl : UserControl, IRecipient<DialogShownMessage>, IRecipient<DialogHiddenMessage>
     {
         public event EventHandler<RoutedEventArgs>? Click;
 
         public GraphControl()
         {
             InitializeComponent();
+            WeakReferenceMessenger.Default.Register<DialogShownMessage>(this);
+            WeakReferenceMessenger.Default.Register<DialogHiddenMessage>(this);
         }
 
         private void InitializeComponent()
@@ -82,6 +85,18 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         private void RootButton_Click(object sender, RoutedEventArgs e)
         {
             Click?.Invoke(sender, e);
+        }
+
+        // Fix major graphical glitches when a dialog and a chart are visible at the same time
+        public void Receive(DialogShownMessage message)
+        {
+            Chart.IsVisible = false;
+        }
+
+        public async void Receive(DialogHiddenMessage message)
+        {
+            await Task.Delay(250); // Make sure it's closed
+            Chart.IsVisible = true;
         }
 
         public IList<GraphPointViewModel>? Data

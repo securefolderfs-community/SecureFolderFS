@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Dialogs;
+using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.AvaloniaUI.WindowViews;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
@@ -42,6 +44,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 
         public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {
+            WeakReferenceMessenger.Default.Send(new DialogShownMessage());
             return GetDialog(viewModel).ShowAsync();
         }
     }
