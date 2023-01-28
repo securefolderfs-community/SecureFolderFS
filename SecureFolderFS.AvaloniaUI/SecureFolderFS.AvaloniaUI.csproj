@@ -40,6 +40,7 @@
     </ItemGroup>
     <ItemGroup>
       <AvaloniaResource Include="..\SecureFolderFS.UI\Assets\*" />
+      <AvaloniaResource Remove="..\SecureFolderFS.UI\Assets\**" />
     </ItemGroup>
     <ItemGroup>
       <Compile Update="WindowViews\MainWindow.axaml.cs">
