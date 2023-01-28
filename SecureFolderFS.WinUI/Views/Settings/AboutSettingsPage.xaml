@@ -9,7 +9,7 @@
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     mc:Ignorable="d">
 
-    <Grid Padding="16,16,16,8" RowSpacing="12">
+    <Grid RowSpacing="12">
         <Grid.RowDefinitions>
             <!--  Banner  -->
             <RowDefinition Height="Auto" />
@@ -111,6 +111,17 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                 </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl Title="Third party licenses">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xF000;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ExpanderContent>
+                    <StackPanel Spacing="8">
+                        <HyperlinkButton Content="Tmds.Fuse" NavigateUri="https://github.com/tmds/Tmds.Fuse/blob/master/LICENSE" />
+                        <HyperlinkButton Content="NWebDav" NavigateUri="https://github.com/ramondeklein/nwebdav/blob/master/LICENSE" />
+                    </StackPanel>
+                </ucab:ActionBlockControl.ExpanderContent>
             </ucab:ActionBlockControl>
         </StackPanel>
     </Grid>

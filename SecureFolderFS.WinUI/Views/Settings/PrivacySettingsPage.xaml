@@ -9,7 +9,7 @@
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     mc:Ignorable="d">
 
-    <Grid Padding="16,16,16,8" RowSpacing="12">
+    <Grid RowSpacing="12">
         <Grid.RowDefinitions>
             <!--  Banner  -->
             <RowDefinition Height="Auto" />

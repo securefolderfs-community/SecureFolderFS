@@ -58,6 +58,7 @@ namespace SecureFolderFS.WinUI.UserControls
                     LineSmoothness = 0d,
                     DataPadding = new(0.3f, 0),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(150),
+                    IsHoverable = false
                 }
             };
             Chart.XAxes = new ICartesianAxis[]

@@ -68,7 +68,6 @@
 
     <Grid
         x:Name="RootGrid"
-        Padding="16,16,16,8"
         Loaded="RootGrid_Loaded"
         RowSpacing="12">
         <Grid.RowDefinitions>
