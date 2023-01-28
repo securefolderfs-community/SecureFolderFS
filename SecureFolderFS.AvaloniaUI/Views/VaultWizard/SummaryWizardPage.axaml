@@ -4,6 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
     Width="464"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.VaultWizard.SummaryWizardPage">
@@ -14,7 +15,12 @@
             Orientation="Vertical"
             Spacing="8">
             <Grid Width="32" Height="32">
-                <Ellipse Margin="0,-2,0,2" Fill="LimeGreen" />
+                <Ellipse Fill="LimeGreen" />
+                <ic:FluentIcon
+                    Icon="Checkmark48Regular"
+                    Width="16"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
                 <!-- TODO Animation  -->
             </Grid>
             <TextBlock FontSize="20" Text="Vault has been added" />
