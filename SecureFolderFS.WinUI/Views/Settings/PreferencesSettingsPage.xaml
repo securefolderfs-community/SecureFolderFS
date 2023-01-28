@@ -30,8 +30,8 @@
                         <HyperlinkButton
                             Margin="0,-16,0,0"
                             HorizontalAlignment="Right"
-                            Command="{x:Bind OpenWebsiteCommand}"
-                            Content="Open website" />
+                            Content="Open website"
+                            NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000" />
                     </Grid>
                 </InfoBar.Content>
 

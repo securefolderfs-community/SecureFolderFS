@@ -120,6 +120,19 @@
                     <StackPanel Spacing="8">
                         <HyperlinkButton Content="Tmds.Fuse" NavigateUri="https://github.com/tmds/Tmds.Fuse/blob/master/LICENSE" />
                         <HyperlinkButton Content="NWebDav" NavigateUri="https://github.com/ramondeklein/nwebdav/blob/master/LICENSE" />
+                        <HyperlinkButton Content="Dokan .NET" NavigateUri="https://github.com/dokan-dev/dokan-dotnet/blob/master/license.txt" />
+                        <HyperlinkButton Content=".NET Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/WindowsCommunityToolkit/blob/main/License.md" />
+                        <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/dotnet/blob/main/License.md" />
+                        <HyperlinkButton Content="WinUIEx" NavigateUri="https://github.com/dotMorten/WinUIEx/blob/main/LICENSE" />
+                        <HyperlinkButton Content="ByteSize" NavigateUri="https://github.com/omar/ByteSize/blob/master/LICENSE" />
+                        <HyperlinkButton Content="Miscreant" NavigateUri="https://raw.githubusercontent.com/miscreant/miscreant/master/LICENSE.txt" />
+                        <HyperlinkButton Content="Konscious.Security.Cryptography" NavigateUri="https://github.com/kmaragon/Konscious.Security.Cryptography/blob/master/LICENSE" />
+                        <HyperlinkButton Content="NSec Cryptography" NavigateUri="https://licenses.nuget.org/MIT" />
+                        <HyperlinkButton Content="LiveCharts2" NavigateUri="https://licenses.nuget.org/MIT" />
+                        <HyperlinkButton Content="Windows App SDK" NavigateUri="https://www.nuget.org/packages/Microsoft.WindowsAppSDK/1.2.230118.102/license" />
+                        <HyperlinkButton Content="Microsoft.Extensions.DependencyInjection" NavigateUri="https://licenses.nuget.org/MIT" />
+                        <HyperlinkButton Content="AppCenter" NavigateUri="https://licenses.nuget.org/MIT" />
+                        <HyperlinkButton Content="Windows SDK Build Tools" NavigateUri="https://download.microsoft.com/download/0/F/F/0FF2B061-47DD-4F55-89B6-FD1D8C44F14D/sdk_license.rtf" />
                     </StackPanel>
                 </ucab:ActionBlockControl.ExpanderContent>
             </ucab:ActionBlockControl>
