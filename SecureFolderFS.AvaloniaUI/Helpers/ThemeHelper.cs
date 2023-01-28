@@ -4,6 +4,7 @@ using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.Styling;
+using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.UI.Enums;
 
@@ -13,7 +14,7 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
     {
         public static ThemeHelper Instance { get; } = new();
 
-        public event EventHandler<ApplicationTheme>? OnThemeChangedEvent;
+        public event EventHandler<GenericEventArgs<ApplicationTheme>>? OnThemeChangedEvent;
 
         private readonly IPlatformSettingsService _platformSettingsService;
         private readonly FluentAvaloniaTheme _fluentAvaloniaTheme;
@@ -30,7 +31,7 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
                     _platformSettingsService.Theme = value;
                     UpdateTheme();
 
-                    OnThemeChangedEvent?.Invoke(this, value);
+                    OnThemeChangedEvent?.Invoke(this, new(value));
                 }
             }
         }

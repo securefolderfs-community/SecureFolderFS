@@ -12,4 +12,9 @@
     <Style Selector="ui|SettingsExpander:disabled ui|FABorder">
         <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}"/>
     </Style>
+
+    <!-- Fix icons being offset to the left -->
+    <Style Selector="ui|SettingsExpanderItem Viewbox#IconHost">
+        <Setter Property="Margin" Value="6,0,0,0"></Setter>
+    </Style>
 </Styles>
