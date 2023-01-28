@@ -208,12 +208,12 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             else if (!_isBackAnimationState && (canGoBack && Navigation.CanGoBack))
             {
                 _isBackAnimationState = true;
-                await Animations.Animation.PlayAsync(ShowBackButtonStoryboard);
+                await Animations.Animation.RunAsync(ShowBackButtonStoryboard);
             }
             else if (_isBackAnimationState && !(canGoBack && Navigation.CanGoBack))
             {
                 _isBackAnimationState = false;
-                await Animations.Animation.PlayAsync(HideBackButtonStoryboard);
+                await Animations.Animation.RunAsync(HideBackButtonStoryboard);
             }
         }
 

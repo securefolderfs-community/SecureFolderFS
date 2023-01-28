@@ -1,20 +1,25 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
+using Avalonia.Styling;
+using Animation = SecureFolderFS.AvaloniaUI.Animations.Animation;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
 {
     internal sealed partial class GraphsWidget : UserControl
     {
-        private readonly SemaphoreSlim _graphClickSemaphore;
-
         public GraphsWidget()
         {
             InitializeComponent();
-            _graphClickSemaphore = new(1, 1);
         }
 
         private void InitializeComponent()
@@ -38,18 +43,103 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
         {
             ReadGraphIsExtended = !ReadGraphIsExtended;
             if (ReadGraphIsExtended)
-                HideColumn(GraphsGrid.ColumnDefinitions[2]);
+                _ = ExtendGraphAsync(ReadGraph, WriteGraph, GraphsGrid.ColumnDefinitions[2]);
             else
-                RestoreColumn(GraphsGrid.ColumnDefinitions[2]);
+                _ = RetractGraphAsync(ReadGraph, WriteGraph, GraphsGrid.ColumnDefinitions[2]);
         }
 
         private void WriteGraph_OnClick(object? sender, RoutedEventArgs e)
         {
             WriteGraphIsExtended = !WriteGraphIsExtended;
             if (WriteGraphIsExtended)
-                HideColumn(GraphsGrid.ColumnDefinitions[0]);
+                _ = ExtendGraphAsync(WriteGraph, ReadGraph, GraphsGrid.ColumnDefinitions[0]);
             else
-                RestoreColumn(GraphsGrid.ColumnDefinitions[0]);
+                _ = RetractGraphAsync(WriteGraph, ReadGraph, GraphsGrid.ColumnDefinitions[0]);
+        }
+
+        private async Task ExtendGraphAsync(GraphControl clickedGraph, GraphControl otherGraph, ColumnDefinition column)
+        {
+            _ = PlayGraphHideAnimationAsync(otherGraph);
+            await Task.Delay(90);
+            HideColumn(column);
+            await PlayGraphExtendAnimationAsync(clickedGraph);
+        }
+
+        private async Task RetractGraphAsync(GraphControl clickedGraph, GraphControl otherGraph, ColumnDefinition column)
+        {
+            RestoreColumn(column);
+            _ = PlayGraphRetractAnimationAsync(clickedGraph);
+            await Task.Delay(30);
+            await PlayGraphRestoreAnimationAsync(otherGraph);
+        }
+
+        private Task PlayGraphHideAnimationAsync(GraphControl graph)
+        {
+            return Animation.RunAsync(new List<Animation>
+            {
+                new()
+                {
+                    Delay = TimeSpan.Parse("0:0:0.02"),
+                    Duration = TimeSpan.Parse("0:0:0.10"),
+                    To = { new Setter(OpacityProperty, 0d) },
+                    FillMode = FillMode.Forward,
+                    Target = graph
+                },
+                new()
+                {
+                    Duration = TimeSpan.Parse("0:0:0.12"),
+                    To = { new Setter(ScaleTransform.ScaleXProperty, 0d) },
+                    Easing = new SineEaseIn(),
+                    FillMode = FillMode.Forward,
+                    Target = graph
+                }
+            });
+        }
+
+        private Task PlayGraphExtendAnimationAsync(GraphControl graph)
+        {
+            return new Animation
+            {
+                Duration = TimeSpan.Parse("0:0:0.12"),
+                From = { new Setter(ScaleTransform.ScaleXProperty, 0.5d) },
+                To = { new Setter(ScaleTransform.ScaleXProperty, 1d) },
+                Easing = new SineEaseOut(),
+                Target = graph
+            }.RunAsync();
+        }
+
+        private Task PlayGraphRetractAnimationAsync(GraphControl graph)
+        {
+            return new Animation
+            {
+                Duration = TimeSpan.Parse("0:0:0.12"),
+                From = { new Setter(ScaleTransform.ScaleXProperty, 2d) },
+                To = { new Setter(ScaleTransform.ScaleXProperty, 1d) },
+                Easing = new SineEaseOut(),
+                Target = graph
+            }.RunAsync();
+        }
+
+        private Task PlayGraphRestoreAnimationAsync(GraphControl graph)
+        {
+            return Animation.RunAsync(new List<Animation>
+            {
+                new()
+                {
+                    Delay = TimeSpan.Parse("0:0:0.02"),
+                    Duration = TimeSpan.Parse("0:0:0.10"),
+                    To = { new Setter(OpacityProperty, 1d) },
+                    FillMode = FillMode.Forward,
+                    Target = graph
+                },
+                new()
+                {
+                    Duration = TimeSpan.Parse("0:0:0.12"),
+                    To = { new Setter(ScaleTransform.ScaleXProperty, 1d) },
+                    FillMode = FillMode.Forward,
+                    Target = graph
+                }
+            });
         }
 
         public bool ReadGraphIsExtended

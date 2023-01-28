@@ -23,7 +23,7 @@
             GraphHeader="Read speeds"
             Data="{Binding ReadGraphData, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
             GraphSubheader="{Binding ReadGraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-            RenderTransformOrigin="1.0,0.0">
+            RenderTransformOrigin="0.0,0.0">
             <uc:GraphControl.RenderTransform>
                 <ScaleTransform />
             </uc:GraphControl.RenderTransform>
@@ -39,7 +39,7 @@
             GraphHeader="Write speeds"
             Data="{Binding WriteGraphData, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
             GraphSubheader="{Binding WriteGraphSubheader, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-            RenderTransformOrigin="1.0,0.0">
+            RenderTransformOrigin="100%,0%">
             <uc:GraphControl.RenderTransform>
                 <ScaleTransform />
             </uc:GraphControl.RenderTransform>

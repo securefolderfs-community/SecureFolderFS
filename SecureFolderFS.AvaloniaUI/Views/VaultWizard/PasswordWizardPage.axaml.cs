@@ -2,7 +2,7 @@ using System.Linq;
 using System.Text;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using FluentAvalonia.UI.Navigation;
+using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.UI.AppModels;

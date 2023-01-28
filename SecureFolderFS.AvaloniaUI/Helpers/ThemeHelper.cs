@@ -19,7 +19,6 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
         private readonly IPlatformSettingsService _platformSettingsService;
         private readonly FluentAvaloniaTheme _fluentAvaloniaTheme;
 
-
         private ApplicationTheme _CurrentTheme;
         public ApplicationTheme CurrentTheme
         {
@@ -45,6 +44,9 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
             _fluentAvaloniaTheme.PreferSystemTheme = _platformSettingsService.Theme == ApplicationTheme.Default;
         }
 
+        /// <summary>
+        /// Sets the application's theme according to the user's preferences.
+        /// </summary>
         public void UpdateTheme()
         {
             if (_platformSettingsService.Theme == ApplicationTheme.Default)

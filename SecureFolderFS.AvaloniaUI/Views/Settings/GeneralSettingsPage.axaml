@@ -8,6 +8,8 @@
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:i="using:Avalonia.Xaml.Interactivity"
+    xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
     Loaded="Control_OnLoaded"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.GeneralSettingsPage">
@@ -68,40 +70,45 @@
                     <uc:BannerControl.AdditionalBottomContent>
                         <!--  Version InfoBar  -->
                         <ui:InfoBar
+                            x:Name="VersionInfoBar"
                             IsClosable="{Binding ViewModel.BannerViewModel.UpdateInfoBar.CanBeClosed, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                             IsOpen="True"
                             Message="{Binding ViewModel.BannerViewModel.UpdateInfoBar.Message, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                             Severity="{Binding ViewModel.BannerViewModel.UpdateInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                            IsVisible="{Binding ViewModel.BannerViewModel.UpdateInfoBar.IsOpen, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                            IsVisible="{Binding ViewModel.BannerViewModel.UpdateInfoBar.IsOpen, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                            Opacity="0"
+                            LayoutUpdated="VersionInfoBar_OnLayoutUpdated">
+                            <ui:InfoBar.RenderTransform>
+                                <TranslateTransform />
+                            </ui:InfoBar.RenderTransform>
 
-                            <!-- TODO animation -->
-                            <!-- <anim:Implicit.ShowAnimations> -->
-                            <!--     <anim:TranslationAnimation -->
-                            <!--         From="0,-15,0" -->
-                            <!--         To="0" -->
-                            <!--         Duration="0:0:0.4" /> -->
-                            <!--     <anim:OpacityAnimation -->
-                            <!--         From="0" -->
-                            <!--         To="1.0" -->
-                            <!--         Duration="0:0:0.6" /> -->
-                            <!-- </anim:Implicit.ShowAnimations> -->
-                            <!-- <anim:Implicit.HideAnimations> -->
-                            <!--     <anim:OpacityAnimation -->
-                            <!--         From="1.0" -->
-                            <!--         To="0.0" -->
-                            <!--         Duration="0:0:0.2" /> -->
-                            <!--     <anim:TranslationAnimation -->
-                            <!--         From="0" -->
-                            <!--         To="0,-15,0" -->
-                            <!--         Duration="0:0:0.2" /> -->
-                            <!-- </anim:Implicit.HideAnimations> -->
+                            <i:Interaction.Behaviors>
+                                <ia:DataTriggerBehavior
+                                    Binding="{Binding ElementName=VersionInfoBar, Path=IsVisible}"
+                                    ComparisonCondition="Equal"
+                                    Value="true">
+                                    <ia:CallMethodAction
+                                        TargetObject="{Binding Path=., RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                                        MethodName="PlayShowInfoBarAnimation" />
+                                </ia:DataTriggerBehavior>
+                                <ia:DataTriggerBehavior
+                                    Binding="{Binding ElementName=VersionInfoBar, Path=IsVisible}"
+                                    ComparisonCondition="Equal"
+                                    Value="false">
+                                    <ia:CallMethodAction MethodName="PlayInfoBarHideAnimation"></ia:CallMethodAction>
+                                </ia:DataTriggerBehavior>
+                            </i:Interaction.Behaviors>
                         </ui:InfoBar>
                     </uc:BannerControl.AdditionalBottomContent>
                 </uc:BannerControl>
             </StackPanel>
 
             <!--  Other settings  -->
-            <StackPanel Grid.Row="2" Spacing="4">
+            <StackPanel x:Name="OtherSettings" Grid.Row="2" Spacing="4">
+                <StackPanel.RenderTransform>
+                    <TranslateTransform />
+                </StackPanel.RenderTransform>
+
                 <ui:SettingsExpander
                     Header="Language"
                     Description="Select the display language"

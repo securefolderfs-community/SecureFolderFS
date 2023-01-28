@@ -1,10 +1,12 @@
+using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using FluentAvalonia.Styling;
-using FluentAvalonia.UI.Navigation;
+using Avalonia.Media;
+using SecureFolderFS.AvaloniaUI.Animations;
+using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.Models;
@@ -15,6 +17,8 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
     internal sealed partial class GeneralSettingsPage : Page
     {
+        private bool _playInfoBarEmergeAnimation;
+
         public GeneralSettingsPageViewModel ViewModel
         {
             get => (GeneralSettingsPageViewModel)DataContext;
@@ -37,8 +41,12 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         {
             if (e.Parameter is GeneralSettingsPageViewModel viewModel)
                 ViewModel = viewModel;
+        }
 
-            base.OnNavigatedTo(e);
+        /// <inheritdoc/>
+        public override void OnNavigatingFrom()
+        {
+            _ = PlayInfoBarHideAnimation();
         }
 
         private void InitializeComponent()
@@ -75,6 +83,32 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         {
             if (sender is ComboBox comboBox)
                 comboBox.SelectedIndex = 0; // TODO Remove this when fixing languages
+        }
+
+        public async Task PlayShowInfoBarAnimation(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            _playInfoBarEmergeAnimation = true;
+            // Prevent bouncing, as the animation takes a while to load
+            //((TranslateTransform)OtherSettings.RenderTransform).Y = -54d;
+             //await Animation.PlayAsync(CommonAnimations.CreateEmergeInfoBarFromBannerAnimation(VersionInfoBar, OtherSettings));
+        }
+
+        private async Task PlayInfoBarHideAnimation()
+        {
+            if (!VersionInfoBar.IsVisible)
+                return;
+
+            await Animation.RunAsync(CommonAnimations.CreateMergeInfoBarIntoBannerAnimation(VersionInfoBar, OtherSettings, true));
+        }
+
+        private void VersionInfoBar_OnLayoutUpdated(object? sender, EventArgs e)
+        {
+            if (_playInfoBarEmergeAnimation)
+            {
+                ((TranslateTransform)OtherSettings.RenderTransform!).Y = -VersionInfoBar.Bounds.Height;
+                Animation.RunAsync(CommonAnimations.CreateEmergeInfoBarFromBannerAnimation(VersionInfoBar, OtherSettings));
+                _playInfoBarEmergeAnimation = !_playInfoBarEmergeAnimation;
+            }
         }
     }
 }

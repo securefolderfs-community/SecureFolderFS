@@ -20,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
             };
 
-            ContentFrame.Navigate(pageType, viewModel, transitionInfo);
+            Navigate(pageType, viewModel, transitionInfo);
         }
     }
 }

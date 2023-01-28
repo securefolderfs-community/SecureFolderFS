@@ -94,10 +94,14 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                        Click="SettingsButton_OnClick"
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar}">
 
-                        <!-- TODO Use animated icon -->
-                        <ic:FluentIcon Icon="Settings16Regular" Width="16"/>
+                        <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings16Regular" Width="16">
+                            <ic:FluentIcon.RenderTransform>
+                                <RotateTransform />
+                            </ic:FluentIcon.RenderTransform>
+                        </ic:FluentIcon>
                     </Button>
                 </Grid>
             </Border>

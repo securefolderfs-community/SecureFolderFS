@@ -10,8 +10,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     {
         public override void Receive(BackNavigationRequestedMessage message)
         {
-            if (ContentFrame.CanGoBack)
-                ContentFrame.GoBack();
+            if (CanGoBack)
+                GoBack();
         }
 
         public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
@@ -25,7 +25,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
             };
 
-            ContentFrame.Navigate(pageType, viewModel, new SlideNavigationTransitionInfo());
+            Navigate(pageType, viewModel, new SlideNavigationTransitionInfo());
         }
     }
 }

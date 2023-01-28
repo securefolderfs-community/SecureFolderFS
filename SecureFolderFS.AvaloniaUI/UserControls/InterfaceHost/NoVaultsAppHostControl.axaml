@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:ic="using:FluentAvalonia.FluentIcons"
              xmlns:ex="using:SecureFolderFS.AvaloniaUI.MarkupExtensions"
              xmlns:svg="using:Avalonia.Svg.Skia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -18,8 +19,8 @@
             <Image
                 Width="296"
                 Stretch="UniformToFill"
-                Source="{ex:ThemeResource LightResource={svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.Vault_light.svg?assembly=SecureFolderFS.UI'},
-                                          DarkResource={svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.Vault_dark.svg?assembly=SecureFolderFS.UI'}}">
+                Source="{ex:ThemeResource LightValue={svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.Vault_light.svg?assembly=SecureFolderFS.UI'},
+                                          DarkValue={svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.Vault_dark.svg?assembly=SecureFolderFS.UI'}}">
             </Image>
 
             <!-- Title -->
@@ -62,10 +63,14 @@
             VerticalContentAlignment="Center"
             Background="Transparent"
             BorderThickness="0"
-            Command="{Binding ViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
+            Command="{Binding ViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+            Click="SettingsButton_OnClick">
             <Button.Content>
-                <!-- TODO use animated icon -->
-                <ui:SymbolIcon Symbol="Setting" />
+                <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings48Regular">
+                    <ic:FluentIcon.RenderTransform>
+                        <RotateTransform />
+                    </ic:FluentIcon.RenderTransform>
+                </ic:FluentIcon>
             </Button.Content>
         </Button>
     </Grid>

@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using SecureFolderFS.AvaloniaUI.Animations;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
@@ -17,6 +19,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             AvaloniaXamlLoader.Load(this);
         }
 
+
+
         public NoVaultsAppHostViewModel ViewModel
         {
             get => GetValue(ViewModelProperty);
@@ -25,5 +29,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 
         public static readonly StyledProperty<NoVaultsAppHostViewModel> ViewModelProperty
             = AvaloniaProperty.Register<NoVaultsAppHostControl, NoVaultsAppHostViewModel>(nameof(ViewModel));
+
+        private void SettingsButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            CommonAnimations.CreateSpinningIconAnimation(SettingsButtonIcon).RunAsync();
+        }
     }
 }

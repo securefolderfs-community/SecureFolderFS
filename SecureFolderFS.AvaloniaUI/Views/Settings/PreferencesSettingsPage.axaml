@@ -50,7 +50,7 @@
             RowDefinitions="Auto,12,*">
 
             <!--  Banner  -->
-            <uc:BannerControl >
+            <uc:BannerControl>
                 <uc:BannerControl.LeftSide>
                     <StackPanel Spacing="2">
                         <TextBlock
@@ -79,24 +79,32 @@
                 <uc:BannerControl.AdditionalBottomContent>
                     <!--  File system InfoBar  -->
                     <ContentControl
+                        x:Name="FileSystemInfoBarContainer"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         Content="{Binding FileSystemInfoBar, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                        IsVisible="{Binding IsInfoBarOpen, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}">
+                        IsVisible="{Binding IsInfoBarOpen, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}"
+                        Opacity="0">
+                        <ContentControl.RenderTransform>
+                            <TranslateTransform />
+                        </ContentControl.RenderTransform>
+
                         <ContentControl.DataTemplates>
                             <ts:FileSystemInfoBarTemplateSelector
                                 DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}"
                                 WebDavExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}"
                                 FuseExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}" />
                         </ContentControl.DataTemplates>
-
-                        <!-- TODO Transitions -->
                     </ContentControl>
                 </uc:BannerControl.AdditionalBottomContent>
             </uc:BannerControl>
 
             <!--  Other settings  -->
-            <StackPanel Grid.Row="2" Spacing="4">
+            <StackPanel x:Name="OtherSettings" Grid.Row="2" Spacing="4">
+                <StackPanel.RenderTransform>
+                    <TranslateTransform />
+                </StackPanel.RenderTransform>
+
                 <ui:SettingsExpander
                     Header="Start with system"
                     Description="Launch SecureFolderFS on system startup"

@@ -16,17 +16,27 @@ namespace SecureFolderFS.AvaloniaUI.MarkupExtensions
     [ObservableObject]
     internal sealed partial class ThemeResource : MarkupExtension
     {
-        public object? Resource
+        /// <summary>
+        /// Gets the currently provided value.
+        /// </summary>
+        public object? Value
         {
             get
             {
                 var theme = AvaloniaLocator.Current.GetRequiredService<FluentAvaloniaTheme>();
-                return theme.RequestedTheme == FluentAvaloniaTheme.LightModeString ? LightResource : DarkResource;
+                return theme.RequestedTheme == FluentAvaloniaTheme.LightModeString ? LightValue : DarkValue;
             }
         }
 
-        public object? LightResource { get; set; }
-        public object? DarkResource { get; set; }
+        /// <summary>
+        /// Gets or sets the value to provide when the application's theme is light.
+        /// </summary>
+        public object? LightValue { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the value to provide when the application's theme is dark.
+        /// </summary>
+        public object? DarkValue { get; set; }
 
         public ThemeResource()
         {
@@ -39,13 +49,13 @@ namespace SecureFolderFS.AvaloniaUI.MarkupExtensions
             return new Binding
             {
                 Source = this,
-                Path = nameof(Resource)
+                Path = nameof(Value)
             };
         }
 
         private void OnThemeChanged(object? sender, GenericEventArgs<ApplicationTheme> e)
         {
-            OnPropertyChanged(nameof(Resource));
+            OnPropertyChanged(nameof(Value));
         }
     }
 }

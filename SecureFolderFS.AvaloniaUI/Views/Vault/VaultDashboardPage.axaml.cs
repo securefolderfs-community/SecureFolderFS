@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using FluentAvalonia.UI.Media.Animation;
-using FluentAvalonia.UI.Navigation;
+using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;

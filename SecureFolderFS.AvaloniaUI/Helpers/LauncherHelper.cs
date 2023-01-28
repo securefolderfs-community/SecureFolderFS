@@ -6,6 +6,10 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
 {
     internal static class LauncherHelper
     {
+        /// <summary>
+        /// Launches the specified URL.
+        /// </summary>
+        /// <param name="url">A file, folder or a website.</param>
         public static void Launch(string url)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -23,6 +27,10 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
             }
         }
 
+        /// <summary>
+        /// Launches the specified URI.
+        /// </summary>
+        /// <param name="uri">A file, folder or a website.</param>
         public static void Launch(Uri uri)
         {
             Launch(uri.ToString());

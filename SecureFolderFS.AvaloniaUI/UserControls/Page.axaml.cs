@@ -1,7 +1,7 @@
-using Avalonia;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using FluentAvalonia.UI.Navigation;
+using SecureFolderFS.AvaloniaUI.Events;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls
 {
@@ -21,7 +21,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         {
         }
 
-        public virtual void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        public virtual void OnNavigatingFrom()
         {
         }
     }

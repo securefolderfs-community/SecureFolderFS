@@ -1,7 +1,8 @@
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using FluentAvalonia.UI.Navigation;
+using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 
@@ -27,11 +28,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
-        }
-
-        /// <inheritdoc/>
-        public override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
         }
 
         private void InitializeComponent()

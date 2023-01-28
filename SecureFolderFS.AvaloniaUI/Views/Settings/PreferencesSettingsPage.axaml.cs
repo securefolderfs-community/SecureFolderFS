@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -5,7 +6,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using FluentAvalonia.UI.Navigation;
+using Avalonia.Media;
+using SecureFolderFS.AvaloniaUI.Animations;
+using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
@@ -19,6 +22,8 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
     internal sealed partial class PreferencesSettingsPage : Page
     {
+        private bool _hasPlayedFileSystemInfoBarAnimation;
+
         public PreferencesSettingsPageViewModel ViewModel
         {
             get => (PreferencesSettingsPageViewModel)DataContext;
@@ -41,6 +46,12 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
+        }
+
+        public override void OnNavigatingFrom()
+        {
+            if (IsInfoBarOpen)
+                Animation.RunAsync(CommonAnimations.CreateMergeInfoBarIntoBannerAnimation(FileSystemInfoBarContainer, OtherSettings, true));
         }
 
         private async void PreferencesSettingsPage_OnLoaded(object sender, RoutedEventArgs e)
@@ -68,44 +79,68 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             if (fileSystemAdapter is null)
                 return;
 
+            var newFileSystemInfoBar = FileSystemInfoBar;
             var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
             if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
             {
-                FileSystemInfoBar = new WebDavInfoBar();
-                FileSystemInfoBar.IsOpen = true;
-                FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
-                FileSystemInfoBar.CanBeClosed = false;
+                newFileSystemInfoBar = new WebDavInfoBar();
+                newFileSystemInfoBar.IsOpen = true;
+                newFileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
+                newFileSystemInfoBar.CanBeClosed = false;
             }
             else if (fileSystemAdapter.Id == Core.Constants.FileSystemId.FUSE_ID)
             {
-                FileSystemInfoBar = new FuseInfoBar();
-                FileSystemInfoBar.IsOpen = true;
-                FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
-                FileSystemInfoBar.CanBeClosed = false;
+                newFileSystemInfoBar = new FuseInfoBar();
+                newFileSystemInfoBar.IsOpen = true;
+                newFileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
+                newFileSystemInfoBar.CanBeClosed = false;
             }
-            else if (fileSystemAdapterResult.Successful && FileSystemInfoBar is not null)
+            else if (fileSystemAdapterResult.Successful && newFileSystemInfoBar is not null)
             {
-                FileSystemInfoBar.IsOpen = false;
+                newFileSystemInfoBar.IsOpen = false;
             }
             else if (!fileSystemAdapterResult.Successful)
             {
-                FileSystemInfoBar = fileSystemAdapter.Id switch
+                newFileSystemInfoBar = fileSystemAdapter.Id switch
                 {
                     Core.Constants.FileSystemId.DOKAN_ID => new DokanyInfoBar(),
                     Core.Constants.FileSystemId.FUSE_ID => new FuseInfoBar(),
                     _ => null
                 };
-                if (FileSystemInfoBar is null)
+                if (newFileSystemInfoBar is null)
                     return;
 
                 await Task.Delay(800, cancellationToken);
-                FileSystemInfoBar.IsOpen = true;
-                FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Error;
-                FileSystemInfoBar.CanBeClosed = false;
-                FileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
+                newFileSystemInfoBar.IsOpen = true;
+                newFileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Error;
+                newFileSystemInfoBar.CanBeClosed = false;
+                newFileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
             }
 
-            IsInfoBarOpen = FileSystemInfoBar?.IsOpen ?? false;
+            var wasOpen = IsInfoBarOpen;
+            var isOpen = newFileSystemInfoBar?.IsOpen ?? false;
+
+            if (wasOpen)
+                await Animation.RunAsync(CommonAnimations.CreateMergeInfoBarIntoBannerAnimation(FileSystemInfoBarContainer, OtherSettings));
+
+            FileSystemInfoBar = newFileSystemInfoBar;
+            IsInfoBarOpen = isOpen;
+
+            if (isOpen)
+            {
+                if (!_hasPlayedFileSystemInfoBarAnimation)
+                {
+                    _hasPlayedFileSystemInfoBarAnimation = true;
+                    await Task.Delay(50); // Wait until layout is loaded (TODO do it properly)
+                    ((TranslateTransform)FileSystemInfoBarContainer.RenderTransform!).Y = -FileSystemInfoBarContainer.Bounds.Height;
+                    ((TranslateTransform)OtherSettings.RenderTransform!).Y = -FileSystemInfoBarContainer.Bounds.Height;
+                    await Task.Delay(500);
+                }
+
+                await Animation.RunAsync(CommonAnimations.CreateEmergeInfoBarFromBannerAnimation(FileSystemInfoBarContainer, OtherSettings));
+            }
+
+            _hasPlayedFileSystemInfoBarAnimation = true;
         }
 
         private async Task<FileSystemAdapterItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)

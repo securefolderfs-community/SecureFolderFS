@@ -13,14 +13,11 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     /// <inheritdoc cref="NavigationControl"/>
     internal sealed class VaultWizardNavigationControl : NavigationControl
     {
-        /// <inheritdoc cref="Frame.CanGoBack"/>
-        public bool CanGoBack => ContentFrame.CanGoBack;
-
         /// <inheritdoc/>
         public override void Receive(BackNavigationRequestedMessage message)
         {
-            if (ContentFrame.CanGoBack)
-                ContentFrame.GoBack();
+            if (CanGoBack)
+                GoBack();
         }
 
         /// <inheritdoc/>
@@ -38,7 +35,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
             };
 
-            ContentFrame.Navigate(pageType, viewModel, transitionInfo);
+            Navigate(pageType, viewModel, transitionInfo);
         }
     }
 }
