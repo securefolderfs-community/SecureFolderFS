@@ -8,6 +8,7 @@ using Avalonia.Styling;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages.Navigation;
@@ -56,7 +57,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             var tag = Convert.ToInt32((e.SelectedItem as NavigationViewItem)?.Tag);
             var viewModel = GetViewModelForTag(tag);
 
-            Navigation.Navigate(viewModel, new EntranceNavigationTransitionInfo());
+            Navigation.Navigate(viewModel, new EntranceNavigationTransition());
         }
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)

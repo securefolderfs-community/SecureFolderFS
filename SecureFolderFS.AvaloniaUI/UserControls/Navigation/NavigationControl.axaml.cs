@@ -17,8 +17,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
 using FluentAvalonia.UI.Navigation;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Shared.Extensions;
+using SuppressNavigationTransitionInfo = FluentAvalonia.UI.Media.Animation.SuppressNavigationTransitionInfo;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
@@ -30,8 +33,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         private readonly Stack<(Type, object)> _backStack;
 
         public bool CanGoBack => !_backStack.IsEmpty();
-
-        private ContentPresenter ContentPresenter => (ContentPresenter)this.GetVisualChildren().First();
 
         private (Type, object)? _currentPage;
 
@@ -45,7 +46,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         public void GoBack()
         {
             var x = _backStack.Pop();
-            SetContent(x.Item1, x.Item2, new SlideNavigationTransitionInfo());
+            SetContent(x.Item1, x.Item2, new SlideNavigationTransition(SlideNavigationTransition.Side.Left, SlideNavigationTransition.BigOffset));
         }
 
         private void InitializeComponent()
@@ -65,111 +66,56 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             _ = message;
         }
 
-        public virtual void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        public virtual void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
             where TViewModel : class, INotifyPropertyChanged
         {
         }
 
-        public async Task Navigate(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
+        public async Task Navigate(Type pageType, object parameter, TransitionBase? transition)
         {
             if (_currentPage is not null)
                 _backStack.Push(_currentPage.Value);
 
-            SetContent(pageType, parameter, transitionInfo);
+            SetContent(pageType, parameter, transition);
         }
 
-        public async Task SetContent(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
+        public async Task SetContent(Type pageType, object parameter, TransitionBase? transition)
         {
-            if (Content is Page currentPage)
+            if (CurrentContent is Page currentPage)
                 currentPage.OnNavigatingFrom();
             await Task.Delay(50);
 
             // TODO Caching
             var instance = Activator.CreateInstance(pageType);
-            await FadeOldContentAnimation();
+            if (transition is not SuppressNavigationTransition)
+                await FadeOutContentStoryboard.RunAnimationsAsync();
 
             if (instance is Page page)
-                page.OnNavigatedTo(new Events.NavigationEventArgs(instance, NavigationMode.New, transitionInfo, parameter, pageType));
+                page.OnNavigatedTo(new Events.NavigationEventArgs(instance, NavigationMode.New, transition, parameter, pageType));
 
-            Content = instance;
+            CurrentContent = instance;
             _currentPage = new(pageType, parameter);
 
-            if (transitionInfo is SlideNavigationTransitionInfo)
+            if (transition is not null && transition is not SuppressNavigationTransition)
             {
-                ((TranslateTransform)ContentPresenter.RenderTransform!).X = 100d;
-                await SlideInNewContentFromRightAnimation();
-                return;
+                transition.Target = ContentPresenter;
+                await transition.RunAnimationAsync();
             }
-
-            ((TranslateTransform)ContentPresenter.RenderTransform!).Y = 200d;
-            await SlideInNewContentFromBottomAnimation();
         }
 
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            (Content as IDisposable)?.Dispose();
+            (CurrentContent as IDisposable)?.Dispose();
         }
 
-        private async Task FadeOldContentAnimation()
-        {
-            var animation = new Animation
-            {
-                Duration = TimeSpan.Parse("0:0:0:0.1"),
-                FillMode = FillMode.Backward,
-                Children =
-                {
-                    new KeyFrame
-                    {
-                        Cue = new(0),
-                        Setters = { new Setter(OpacityProperty, 1d) }
-                    },
-                    new KeyFrame
-                    {
-                        Cue = new(1),
-                        Setters = { new Setter(OpacityProperty, 0d) }
-                    },
-                }
-            };
-            await animation.RunAsync(ContentPresenter, null);
-        }
+        public static readonly StyledProperty<object?> CurrentContentProperty
+            = AvaloniaProperty.Register<NavigationControl, object?>(nameof(CurrentContent));
 
-        private async Task SlideInNewContentFromBottomAnimation()
+        public object? CurrentContent
         {
-            var animation = new Animation
-            {
-                Duration = TimeSpan.Parse("0:0:0:0.3"),
-                FillMode = FillMode.Forward,
-                Easing = new CubicEaseOut(),
-                Children =
-                {
-                    new KeyFrame
-                    {
-                        Cue = new(0),
-                        Setters = { new Setter(TranslateTransform.YProperty, 200d) }
-                    },
-                    new KeyFrame
-                    {
-                        Cue = new(1),
-                        Setters = { new Setter(TranslateTransform.YProperty, 0d) }
-                    },
-                }
-            };
-            await animation.RunAsync(ContentPresenter, null);
-        }
-
-        private Task SlideInNewContentFromRightAnimation()
-        {
-            var animation = new Animations.Animation
-            {
-                Duration = TimeSpan.Parse("0:0:0:0.3"),
-                FillMode = FillMode.Forward,
-                Easing = new CubicEaseOut(),
-                Target = ContentPresenter,
-                From = { new Setter(TranslateTransform.XProperty, 100d) },
-                To = { new Setter(TranslateTransform.XProperty, 0d) }
-            };
-            return animation.RunAsync();
+            get => GetValue(CurrentContentProperty);
+            set => SetValue(CurrentContentProperty, value);
         }
     }
 }

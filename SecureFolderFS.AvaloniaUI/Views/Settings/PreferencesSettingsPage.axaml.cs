@@ -51,7 +51,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         public override void OnNavigatingFrom()
         {
             if (IsInfoBarOpen)
-                Animation.RunAsync(CommonAnimations.CreateMergeInfoBarIntoBannerAnimation(FileSystemInfoBarContainer, OtherSettings, true));
+                QuickHideFileSystemInfoBarStoryboard.RunAnimationsAsync();
         }
 
         private async void PreferencesSettingsPage_OnLoaded(object sender, RoutedEventArgs e)
@@ -121,7 +121,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             var isOpen = newFileSystemInfoBar?.IsOpen ?? false;
 
             if (wasOpen)
-                await Animation.RunAsync(CommonAnimations.CreateMergeInfoBarIntoBannerAnimation(FileSystemInfoBarContainer, OtherSettings));
+                await HideFileSystemInfoBarStoryboard.RunAnimationsAsync();
 
             FileSystemInfoBar = newFileSystemInfoBar;
             IsInfoBarOpen = isOpen;
@@ -137,7 +137,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                     await Task.Delay(500);
                 }
 
-                await Animation.RunAsync(CommonAnimations.CreateEmergeInfoBarFromBannerAnimation(FileSystemInfoBarContainer, OtherSettings));
+                await ShowFileSystemInfoBarStoryboard.RunAnimationsAsync();
             }
 
             _hasPlayedFileSystemInfoBarAnimation = true;

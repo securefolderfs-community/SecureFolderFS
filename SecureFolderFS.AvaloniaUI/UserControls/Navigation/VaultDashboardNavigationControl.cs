@@ -1,5 +1,8 @@
 using System;
 using FluentAvalonia.UI.Media.Animation;
+using SecureFolderFS.AvaloniaUI.Animations;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
@@ -14,7 +17,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 GoBack();
         }
 
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        public override void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
         {
             // TODO: Cache navigation
 
@@ -25,7 +28,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
             };
 
-            Navigate(pageType, viewModel, new SlideNavigationTransitionInfo());
+            Navigate(pageType, viewModel, new EntranceNavigationTransition());
         }
     }
 }

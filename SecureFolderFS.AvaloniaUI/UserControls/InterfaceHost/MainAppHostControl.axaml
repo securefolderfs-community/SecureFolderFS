@@ -8,6 +8,8 @@
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Sidebar"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
     Loaded="MainAppHostControl_OnLoaded"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.MainAppHostControl">
@@ -83,6 +85,7 @@
                     </Button>
 
                     <Button
+                        x:Name="SettingsButton"
                         Grid.Column="1"
                         Width="36"
                         Height="36"
@@ -94,13 +97,31 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                        Click="SettingsButton_OnClick"
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar}">
 
                         <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings16Regular" Width="16">
                             <ic:FluentIcon.RenderTransform>
                                 <RotateTransform />
                             </ic:FluentIcon.RenderTransform>
+
+                            <anim:Storyboard.Storyboards>
+                                <anim:Storyboard x:Name="SpinSettingsIconStoryboard">
+                                    <trans:RotateTransition
+                                        Duration="0:0:1"
+                                        To="360"
+                                        Target="SettingsButtonIcon">
+                                        <trans:RotateTransition.Easing>
+                                            <BackEaseInOut />
+                                        </trans:RotateTransition.Easing>
+                                    </trans:RotateTransition>
+                                </anim:Storyboard>
+                            </anim:Storyboard.Storyboards>
+
+                            <Interaction.Behaviors>
+                                <EventTriggerBehavior SourceObject="SettingsButton" EventName="Click">
+                                    <CallMethodAction TargetObject="SpinSettingsIconStoryboard" MethodName="RunAnimations" />
+                                </EventTriggerBehavior>
+                            </Interaction.Behaviors>
                         </ic:FluentIcon>
                     </Button>
                 </Grid>

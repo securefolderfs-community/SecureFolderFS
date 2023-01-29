@@ -14,6 +14,7 @@ using ExCSS;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
 using Microsoft.AspNetCore.Components;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
@@ -41,102 +42,6 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             get => (VaultWizardDialogViewModel)DataContext;
             set => DataContext = value;
         }
-
-        private IEnumerable<Animations.Animation> ShowBackButtonStoryboard => new List<Animations.Animation>
-        {
-            new()
-            {
-                Duration = TimeSpan.Parse("0:0:0.2"),
-                Target = GoBack,
-                FillMode = FillMode.Forward,
-                Children =
-                {
-                    new KeyFrame
-                    {
-                        Setters =
-                        {
-                            new Setter(OpacityProperty, 0d),
-                            new Setter(IsVisibleProperty, true)
-                        },
-                        KeyTime = TimeSpan.Zero
-                    },
-                    new KeyFrame
-                    {
-                        Setters =
-                        {
-                            new Setter(OpacityProperty, 1d),
-                            new Setter(IsVisibleProperty, true)
-                        },
-                        KeyTime = TimeSpan.Parse("0:0:0.2")
-                    }
-                }
-            },
-            new()
-            {
-                Duration = TimeSpan.Parse("0:0:0.2"),
-                Easing = new CircularEaseInOut(),
-                Target = TitleText,
-                Children =
-                {
-                    new KeyFrame
-                    {
-                        Setters = { new Setter(TranslateTransform.XProperty, -48d) },
-                        KeyTime = TimeSpan.Zero
-                    },
-                    new KeyFrame
-                    {
-                        Setters = { new Setter(TranslateTransform.XProperty, 0d) },
-                        KeyTime = TimeSpan.Parse("0:0:0.2")
-                    }
-                }
-            }
-        };
-
-        private IEnumerable<Animations.Animation> HideBackButtonStoryboard => new List<Animations.Animation>
-        {
-            new()
-            {
-                Duration = TimeSpan.Parse("0:0:0.2"),
-                Target = GoBack,
-                FillMode = FillMode.Forward,
-                Children =
-                {
-                    new KeyFrame
-                    {
-                        Setters = { new Setter(OpacityProperty, 1d) },
-                        KeyTime = TimeSpan.Zero
-                    },
-                    new KeyFrame
-                    {
-                        Setters =
-                        {
-                            new Setter(OpacityProperty, 0d),
-                            new Setter(IsVisibleProperty, false)
-                        },
-                        KeyTime = TimeSpan.Parse("0:0:0.2")
-                    }
-                }
-            },
-            new()
-            {
-                Duration = TimeSpan.Parse("0:0:0.2"),
-                Easing = new CircularEaseInOut(),
-                Target = TitleText,
-                Children =
-                {
-                    new KeyFrame
-                    {
-                        Setters = { new Setter(TranslateTransform.XProperty, 0d) },
-                        KeyTime = TimeSpan.Zero
-                    },
-                    new KeyFrame
-                    {
-                        Setters = {  new Setter(TranslateTransform.XProperty, -48d) },
-                        KeyTime = TimeSpan.Parse("0:0:0.2")
-                    }
-                }
-            }
-        };
 
         private void InitializeComponent()
         {
@@ -208,12 +113,12 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             else if (!_isBackAnimationState && (canGoBack && Navigation.CanGoBack))
             {
                 _isBackAnimationState = true;
-                await Animations.Animation.RunAsync(ShowBackButtonStoryboard);
+                await ShowBackButtonStoryboard.RunAnimationsAsync();
             }
             else if (_isBackAnimationState && !(canGoBack && Navigation.CanGoBack))
             {
                 _isBackAnimationState = false;
-                await Animations.Animation.RunAsync(HideBackButtonStoryboard);
+                await HideBackButtonStoryboard.RunAnimationsAsync();
             }
         }
 
@@ -234,7 +139,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             ViewModel.Messenger.Register<BackNavigationRequestedMessage>(this);
 
             var viewModel = new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel);
-            Navigation.Navigate(viewModel, new SuppressNavigationTransitionInfo());
+            Navigation.Navigate(viewModel, new SuppressNavigationTransition());
             _ = FinalizeNavigationAnimationAsync(viewModel);
         }
 

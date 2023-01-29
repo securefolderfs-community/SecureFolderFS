@@ -1,5 +1,7 @@
 using System;
 using FluentAvalonia.UI.Media.Animation;
+using SecureFolderFS.AvaloniaUI.Animations;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Views.Settings;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 
@@ -9,7 +11,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     internal sealed class SettingsNavigationControl : NavigationControl
     {
         /// <inheritdoc/>
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        public override void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
         {
             var pageType = viewModel switch
             {
@@ -20,7 +22,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
             };
 
-            Navigate(pageType, viewModel, transitionInfo);
+            Navigate(pageType, viewModel, transition);
         }
     }
 }

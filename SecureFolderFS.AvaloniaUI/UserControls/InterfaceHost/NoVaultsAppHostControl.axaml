@@ -1,13 +1,15 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ui="using:FluentAvalonia.UI.Controls"
-             xmlns:ic="using:FluentAvalonia.FluentIcons"
-             xmlns:ex="using:SecureFolderFS.AvaloniaUI.MarkupExtensions"
-             xmlns:svg="using:Avalonia.Svg.Skia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.NoVaultsAppHostControl">
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:ex="using:SecureFolderFS.AvaloniaUI.MarkupExtensions"
+    xmlns:svg="using:Avalonia.Svg.Skia"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.NoVaultsAppHostControl">
 
     <Grid>
         <Grid
@@ -52,6 +54,7 @@
 
         <!-- Settings -->
         <Button
+            x:Name="SettingsButton"
             Grid.RowSpan="2"
             Width="36"
             Height="36"
@@ -63,13 +66,31 @@
             VerticalContentAlignment="Center"
             Background="Transparent"
             BorderThickness="0"
-            Command="{Binding ViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-            Click="SettingsButton_OnClick">
+            Command="{Binding ViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
             <Button.Content>
                 <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings48Regular">
                     <ic:FluentIcon.RenderTransform>
                         <RotateTransform />
                     </ic:FluentIcon.RenderTransform>
+
+                    <anim:Storyboard.Storyboards>
+                        <anim:Storyboard x:Name="SpinSettingsIconStoryboard">
+                            <trans:RotateTransition
+                                Duration="0:0:1"
+                                To="360"
+                                Target="SettingsButtonIcon">
+                                <trans:RotateTransition.Easing>
+                                    <BackEaseInOut />
+                                </trans:RotateTransition.Easing>
+                            </trans:RotateTransition>
+                        </anim:Storyboard>
+                    </anim:Storyboard.Storyboards>
+
+                    <Interaction.Behaviors>
+                        <EventTriggerBehavior SourceObject="SettingsButton" EventName="Click">
+                            <CallMethodAction TargetObject="SpinSettingsIconStoryboard" MethodName="RunAnimations" />
+                        </EventTriggerBehavior>
+                    </Interaction.Behaviors>
                 </ic:FluentIcon>
             </Button.Content>
         </Button>

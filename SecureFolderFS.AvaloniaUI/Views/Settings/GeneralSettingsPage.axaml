@@ -3,6 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
@@ -82,6 +84,21 @@
                                 <TranslateTransform />
                             </ui:InfoBar.RenderTransform>
 
+                            <anim:Storyboard.Storyboards>
+                                <anim:Storyboard x:Name="ShowVersionInfoBarStoryboard">
+                                    <trans:InfoBarTransition
+                                        Target="VersionInfoBar"
+                                        ContentBelow="OtherSettings"
+                                        AnimationMode="Show" />
+                                </anim:Storyboard>
+                                <anim:Storyboard x:Name="QuickHideVersionInfoBarStoryboard">
+                                    <trans:InfoBarTransition
+                                        Target="VersionInfoBar"
+                                        ContentBelow="OtherSettings"
+                                        AnimationMode="QuickHide" />
+                                </anim:Storyboard>
+                            </anim:Storyboard.Storyboards>
+
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior
                                     Binding="{Binding ElementName=VersionInfoBar, Path=IsVisible}"
@@ -90,12 +107,6 @@
                                     <ia:CallMethodAction
                                         TargetObject="{Binding Path=., RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                                         MethodName="PlayShowInfoBarAnimation" />
-                                </ia:DataTriggerBehavior>
-                                <ia:DataTriggerBehavior
-                                    Binding="{Binding ElementName=VersionInfoBar, Path=IsVisible}"
-                                    ComparisonCondition="Equal"
-                                    Value="false">
-                                    <ia:CallMethodAction MethodName="PlayInfoBarHideAnimation"></ia:CallMethodAction>
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
                         </ui:InfoBar>

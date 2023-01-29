@@ -4,7 +4,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
-    xmlns:local="using:SecureFolderFS.AvaloniaUI.Dialogs"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
     HorizontalAlignment="Stretch"
@@ -22,6 +23,43 @@
 
     <ui:ContentDialog.Title>
         <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+            <anim:Storyboard.Storyboards>
+                <anim:Storyboard x:Name="HideBackButtonStoryboard">
+                    <trans:FadeTransition
+                        Target="GoBack"
+                        Duration="0:0:0.2"
+                        Mode="Out"
+                        UpdateVisibility="True" />
+                    <trans:TranslateTransition
+                        Target="TitleText"
+                        From="0,0"
+                        To="-48,0"
+                        Duration="0:0:0.2"
+                        FillMode="None">
+                        <trans:TranslateTransition.Easing>
+                            <CircularEaseInOut />
+                        </trans:TranslateTransition.Easing>
+                    </trans:TranslateTransition>
+                </anim:Storyboard>
+                <anim:Storyboard x:Name="ShowBackButtonStoryboard">
+                    <trans:FadeTransition
+                        Target="GoBack"
+                        Duration="0:0:0.2"
+                        Mode="In"
+                        UpdateVisibility="True" />
+                    <trans:TranslateTransition
+                        Target="TitleText"
+                        From="-48,0"
+                        To="0,0"
+                        Duration="0:0:0.2"
+                        FillMode="None">
+                        <trans:TranslateTransition.Easing>
+                            <CircularEaseInOut />
+                        </trans:TranslateTransition.Easing>
+                    </trans:TranslateTransition>
+                </anim:Storyboard>
+            </anim:Storyboard.Storyboards>
+
             <Button
                 x:Name="GoBack"
                 Width="32"

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using FluentAvalonia.UI.Media.Animation;
+using SecureFolderFS.AvaloniaUI.Animations;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -17,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             NavigationCache = new();
         }
 
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        public override void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
         {
             if (viewModel is not BaseVaultPageViewModel pageViewModel)
                 throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");
@@ -27,7 +30,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             //    transitionInfo ??= new ContinuumNavigationTransitionInfo();
 
             // Standard animation
-            transitionInfo ??= new EntranceNavigationTransitionInfo();
+            transition ??= new EntranceNavigationTransition();
 
             // Set or update the view model for individual page
             NavigationCache[pageViewModel.VaultViewModel] = pageViewModel;
@@ -39,7 +42,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 _ => throw new ArgumentNullException(nameof(viewModel))
             };
 
-             Navigate(pageType, viewModel, transitionInfo);
+             Navigate(pageType, viewModel, transition);
         }
 
         public void ClearContent()

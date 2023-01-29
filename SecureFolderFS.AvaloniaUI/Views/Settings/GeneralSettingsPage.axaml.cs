@@ -17,7 +17,10 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
     internal sealed partial class GeneralSettingsPage : Page
     {
-        private bool _playInfoBarEmergeAnimation;
+        /// <summary>
+        /// Whether to play the InfoBar show animation after its layout is updated.
+        /// </summary>
+        private bool _playShowBarEmergeAnimation;
 
         public GeneralSettingsPageViewModel ViewModel
         {
@@ -46,7 +49,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         /// <inheritdoc/>
         public override void OnNavigatingFrom()
         {
-            _ = PlayInfoBarHideAnimation();
+            QuickHideVersionInfoBarStoryboard.RunAnimationsAsync();
         }
 
         private void InitializeComponent()
@@ -87,27 +90,16 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 
         public async Task PlayShowInfoBarAnimation(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-            _playInfoBarEmergeAnimation = true;
-            // Prevent bouncing, as the animation takes a while to load
-            //((TranslateTransform)OtherSettings.RenderTransform).Y = -54d;
-             //await Animation.PlayAsync(CommonAnimations.CreateEmergeInfoBarFromBannerAnimation(VersionInfoBar, OtherSettings));
-        }
-
-        private async Task PlayInfoBarHideAnimation()
-        {
-            if (!VersionInfoBar.IsVisible)
-                return;
-
-            await Animation.RunAsync(CommonAnimations.CreateMergeInfoBarIntoBannerAnimation(VersionInfoBar, OtherSettings, true));
+            _playShowBarEmergeAnimation = true;
         }
 
         private void VersionInfoBar_OnLayoutUpdated(object? sender, EventArgs e)
         {
-            if (_playInfoBarEmergeAnimation)
+            if (_playShowBarEmergeAnimation)
             {
                 ((TranslateTransform)OtherSettings.RenderTransform!).Y = -VersionInfoBar.Bounds.Height;
-                Animation.RunAsync(CommonAnimations.CreateEmergeInfoBarFromBannerAnimation(VersionInfoBar, OtherSettings));
-                _playInfoBarEmergeAnimation = !_playInfoBarEmergeAnimation;
+                ShowVersionInfoBarStoryboard.RunAnimationsAsync();
+                _playShowBarEmergeAnimation = !_playShowBarEmergeAnimation;
             }
         }
     }

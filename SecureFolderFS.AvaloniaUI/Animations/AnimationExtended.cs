@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Collections;
+using Avalonia.Xaml.Interactivity;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations
 {
-    internal sealed class Animation : Avalonia.Animation.Animation
+    internal class AnimationExtended : Animation
     {
         /// <summary>
         /// Gets or sets the animated control.
@@ -17,22 +19,22 @@ namespace SecureFolderFS.AvaloniaUI.Animations
         /// <summary>
         /// Gets or sets the setters of the first frame in the animation.
         /// </summary>
-        /// <remarks>This property won't take effect if <see cref="Animation.Children"/> is not empty.</remarks>
+        /// <remarks>This property won't take effect if <see cref="AnimationExtended.Children"/> is not empty.</remarks>
         public AvaloniaList<IAnimationSetter> From { get; set; }
 
         /// <summary>
-        /// Gets or sets the setters of the first frame in the animation.
+        /// Gets or sets the setters of the last frame in the animation.
         /// </summary>
-        /// <remarks>This property won't take effect if <see cref="Animation.Children"/> is not empty.</remarks>
+        /// <remarks>This property won't take effect if <see cref="AnimationExtended.Children"/> is not empty.</remarks>
         public AvaloniaList<IAnimationSetter> To { get; set; }
 
-        public Animation()
+        public AnimationExtended()
         {
             From = new();
             To = new();
         }
 
-        public Task RunAsync()
+        public Task RunAnimationAsync()
         {
             if (Children.IsEmpty() && (!From.IsEmpty() || !To.IsEmpty()))
             {
@@ -52,14 +54,6 @@ namespace SecureFolderFS.AvaloniaUI.Animations
             }
 
             return RunAsync(Target, null);
-        }
-
-        /// <summary>
-        /// Runs all animations in the provided list in parallel.
-        /// </summary>
-        public static Task RunAsync(IEnumerable<Animation> animations)
-        {
-            return Task.WhenAll(animations.Select(x => x.RunAsync()));
         }
     }
 }

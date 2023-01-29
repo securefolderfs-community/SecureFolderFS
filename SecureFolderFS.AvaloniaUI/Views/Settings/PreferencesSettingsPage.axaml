@@ -11,6 +11,8 @@
     xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
     Loaded="PreferencesSettingsPage_OnLoaded"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.PreferencesSettingsPage">
@@ -95,6 +97,27 @@
                                 WebDavExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}"
                                 FuseExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}" />
                         </ContentControl.DataTemplates>
+
+                        <anim:Storyboard.Storyboards>
+                            <anim:Storyboard x:Name="ShowFileSystemInfoBarStoryboard">
+                                <trans:InfoBarTransition
+                                    Target="FileSystemInfoBarContainer"
+                                    ContentBelow="OtherSettings"
+                                    AnimationMode="Show" />
+                            </anim:Storyboard>
+                            <anim:Storyboard x:Name="HideFileSystemInfoBarStoryboard">
+                                <trans:InfoBarTransition
+                                    Target="FileSystemInfoBarContainer"
+                                    ContentBelow="OtherSettings"
+                                    AnimationMode="Hide" />
+                            </anim:Storyboard>
+                            <anim:Storyboard x:Name="QuickHideFileSystemInfoBarStoryboard">
+                                <trans:InfoBarTransition
+                                    Target="FileSystemInfoBarContainer"
+                                    ContentBelow="OtherSettings"
+                                    AnimationMode="QuickHide" />
+                            </anim:Storyboard>
+                        </anim:Storyboard.Storyboards>
                     </ContentControl>
                 </uc:BannerControl.AdditionalBottomContent>
             </uc:BannerControl>

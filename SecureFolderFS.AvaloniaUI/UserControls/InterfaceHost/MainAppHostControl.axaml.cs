@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
 using SecureFolderFS.AvaloniaUI.Animations;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
@@ -47,7 +48,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             }
 
             // Navigate
-            Navigation.Navigate(destination, new EntranceNavigationTransitionInfo());
+            Navigation.Navigate(destination, new EntranceNavigationTransition());
         }
 
         private void InitializeComponent()
@@ -95,11 +96,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 
             Sidebar.SelectedItem = chosenItem;
             NavigateToItem(chosenItem.VaultViewModel);
-        }
-
-        private void SettingsButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            CommonAnimations.CreateSpinningIconAnimation(SettingsButtonIcon).RunAsync();
         }
     }
 }

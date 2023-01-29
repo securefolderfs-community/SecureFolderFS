@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using FluentAvalonia.UI.Media.Animation;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
@@ -36,7 +37,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
             if (e.Parameter is VaultDashboardPageViewModel viewModel)
                 ViewModel = viewModel;
 
-            Navigation.Navigate(ViewModel.CurrentPage, new EntranceNavigationTransitionInfo());
+            Navigation.Navigate(ViewModel.CurrentPage, new EntranceNavigationTransition());
             BreadcrumbItems.Add(new(ViewModel.VaultViewModel.VaultModel.VaultName, true));
 
             base.OnNavigatedTo(e);

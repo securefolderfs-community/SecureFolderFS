@@ -11,7 +11,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
-using Animation = SecureFolderFS.AvaloniaUI.Animations.Animation;
+using SecureFolderFS.AvaloniaUI.Animations;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
 {
@@ -59,87 +59,46 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
 
         private async Task ExtendGraphAsync(GraphControl clickedGraph, GraphControl otherGraph, ColumnDefinition column)
         {
-            _ = PlayGraphHideAnimationAsync(otherGraph);
+            _ = HideGraphAsync(otherGraph);
             await Task.Delay(90);
             HideColumn(column);
-            await PlayGraphExtendAnimationAsync(clickedGraph);
+            await ExtendGraphAsync(clickedGraph);
         }
 
         private async Task RetractGraphAsync(GraphControl clickedGraph, GraphControl otherGraph, ColumnDefinition column)
         {
             RestoreColumn(column);
-            _ = PlayGraphRetractAnimationAsync(clickedGraph);
+            _ = RetractGraphAsync(clickedGraph);
             await Task.Delay(30);
-            await PlayGraphRestoreAnimationAsync(otherGraph);
+            await RestoreGraphAsync(otherGraph);
         }
 
-        private Task PlayGraphHideAnimationAsync(GraphControl graph)
+        private Task HideGraphAsync(GraphControl graph)
         {
-            return Animation.RunAsync(new List<Animation>
-            {
-                new()
-                {
-                    Delay = TimeSpan.Parse("0:0:0.02"),
-                    Duration = TimeSpan.Parse("0:0:0.10"),
-                    To = { new Setter(OpacityProperty, 0d) },
-                    FillMode = FillMode.Forward,
-                    Target = graph
-                },
-                new()
-                {
-                    Duration = TimeSpan.Parse("0:0:0.12"),
-                    To = { new Setter(ScaleTransform.ScaleXProperty, 0d) },
-                    Easing = new SineEaseIn(),
-                    FillMode = FillMode.Forward,
-                    Target = graph
-                }
-            });
+            HideGraphStoryboard.Animations[0].Target = graph;
+            HideGraphStoryboard.Animations[1].Target = graph;
+
+            return HideGraphStoryboard.RunAnimationsAsync();
         }
 
-        private Task PlayGraphExtendAnimationAsync(GraphControl graph)
+        private Task ExtendGraphAsync(GraphControl graph)
         {
-            return new Animation
-            {
-                Duration = TimeSpan.Parse("0:0:0.12"),
-                From = { new Setter(ScaleTransform.ScaleXProperty, 0.5d) },
-                To = { new Setter(ScaleTransform.ScaleXProperty, 1d) },
-                Easing = new SineEaseOut(),
-                Target = graph
-            }.RunAsync();
+            ExtendGraphStoryboard.Animations[0].Target = graph;
+            return ExtendGraphStoryboard.RunAnimationsAsync();
         }
 
-        private Task PlayGraphRetractAnimationAsync(GraphControl graph)
+        private Task RetractGraphAsync(GraphControl graph)
         {
-            return new Animation
-            {
-                Duration = TimeSpan.Parse("0:0:0.12"),
-                From = { new Setter(ScaleTransform.ScaleXProperty, 2d) },
-                To = { new Setter(ScaleTransform.ScaleXProperty, 1d) },
-                Easing = new SineEaseOut(),
-                Target = graph
-            }.RunAsync();
+            RetractGraphStoryboard.Animations[0].Target = graph;
+            return RetractGraphStoryboard.RunAnimationsAsync();
         }
 
-        private Task PlayGraphRestoreAnimationAsync(GraphControl graph)
+        private Task RestoreGraphAsync(GraphControl graph)
         {
-            return Animation.RunAsync(new List<Animation>
-            {
-                new()
-                {
-                    Delay = TimeSpan.Parse("0:0:0.02"),
-                    Duration = TimeSpan.Parse("0:0:0.10"),
-                    To = { new Setter(OpacityProperty, 1d) },
-                    FillMode = FillMode.Forward,
-                    Target = graph
-                },
-                new()
-                {
-                    Duration = TimeSpan.Parse("0:0:0.12"),
-                    To = { new Setter(ScaleTransform.ScaleXProperty, 1d) },
-                    FillMode = FillMode.Forward,
-                    Target = graph
-                }
-            });
+            RestoreGraphStoryboard.Animations[0].Target = graph;
+            RestoreGraphStoryboard.Animations[1].Target = graph;
+
+            return RestoreGraphStoryboard.RunAnimationsAsync();
         }
 
         public bool ReadGraphIsExtended
