@@ -30,8 +30,8 @@
                         <HyperlinkButton
                             Margin="0,-16,0,0"
                             HorizontalAlignment="Right"
-                            Command="{x:Bind OpenWebsiteCommand}"
-                            Content="Open website" />
+                            Content="Open website"
+                            NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000" />
                     </Grid>
                 </InfoBar.Content>
 
@@ -68,7 +68,6 @@
 
     <Grid
         x:Name="RootGrid"
-        Padding="16,16,16,8"
         Loaded="RootGrid_Loaded"
         RowSpacing="12">
         <Grid.RowDefinitions>

@@ -10,100 +10,98 @@
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.AboutSettingsPage">
 
-    <Border Padding="16,16,16,8">
-        <Grid RowDefinitions="Auto,12,*">
+    <Grid RowDefinitions="Auto,12,*">
 
-            <!--  Banner  -->
-            <uc:BannerControl>
-                <uc:BannerControl.LeftSide>
-                    <Image
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Stretch="None"
-                        Source="{svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.AppTitle.svg?assembly=SecureFolderFS.UI'}" />
-                </uc:BannerControl.LeftSide>
-                <uc:BannerControl.RightSide>
-                    <StackPanel
-                        HorizontalAlignment="Right"
-                        Orientation="Horizontal"
-                        Spacing="8">
-                        <Button x:Name="VersionButton" Click="VersionButton_OnClick">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <ic:FluentIcon
-                                    Icon="Info28Regular"
-                                    Width="14"
-                                    VerticalAlignment="Center" />
-                                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                    <TextBlock FontWeight="SemiBold" Text="Version" />
-                                    <TextBlock
-                                        FontSize="12"
-                                        Foreground="{DynamicResource ApplicationSecondaryForegroundThemeBrush}"
-                                        Text="{Binding ViewModel.AppVersion, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
-                                </StackPanel>
-                            </StackPanel>
-                        </Button>
-                        <Button Command="{Binding ViewModel.OpenGitHubRepositoryCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <ic:FluentIcon
-                                    Icon="Star48Filled"
-                                    Width="14"
-                                    VerticalAlignment="Center" />
-                                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                    <TextBlock FontWeight="SemiBold" Text="GitHub" />
-                                    <TextBlock
-                                        FontSize="12"
-                                        Foreground="{DynamicResource ApplicationSecondaryForegroundThemeBrush}"
-                                        Text="View repository" />
-                                </StackPanel>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </uc:BannerControl.RightSide>
-            </uc:BannerControl>
-
-            <ui:TeachingTip
-                x:Name="VersionCopiedTeachingTip"
-                Title="Copied to clipboard"
-                Grid.Row="0"
-                IsLightDismissEnabled="True"
-                PreferredPlacement="Bottom"
-                Target="{Binding ElementName=VersionButton}">
-                <ui:TeachingTip.IconSource>
-                    <!-- TODO Checkmark doesn't stretch horizontally -->
-                    <ic:FluentIconSource Stretch="None" Icon="Checkmark48Regular" />
-                </ui:TeachingTip.IconSource>
-            </ui:TeachingTip>
-
-            <StackPanel Grid.Row="2" Spacing="4">
-                <ui:SettingsExpander
-                    Header="Social"
-                    Description="Join the discussion!"
-                    IconSource="{ic:FluentIconSource Chat48Regular}">
-                    <ui:SettingsExpander.Footer>
+        <!--  Banner  -->
+        <uc:BannerControl>
+            <uc:BannerControl.LeftSide>
+                <Image
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Stretch="None"
+                    Source="{svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.AppTitle.svg?assembly=SecureFolderFS.UI'}" />
+            </uc:BannerControl.LeftSide>
+            <uc:BannerControl.RightSide>
+                <StackPanel
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Button x:Name="VersionButton" Click="VersionButton_OnClick">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <ui:HyperlinkButton
-                                Click="DiscordButton_OnClick"
-                                Content="Discord" />
+                            <ic:FluentIcon
+                                Icon="Info28Regular"
+                                Width="14"
+                                VerticalAlignment="Center" />
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <TextBlock FontWeight="SemiBold" Text="Version" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="{DynamicResource ApplicationSecondaryForegroundThemeBrush}"
+                                    Text="{Binding ViewModel.AppVersion, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                            </StackPanel>
                         </StackPanel>
-                    </ui:SettingsExpander.Footer>
-                </ui:SettingsExpander>
+                    </Button>
+                    <Button Command="{Binding ViewModel.OpenGitHubRepositoryCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <ic:FluentIcon
+                                Icon="Star48Filled"
+                                Width="14"
+                                VerticalAlignment="Center" />
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                                <TextBlock FontWeight="SemiBold" Text="GitHub" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="{DynamicResource ApplicationSecondaryForegroundThemeBrush}"
+                                    Text="View repository" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </uc:BannerControl.RightSide>
+        </uc:BannerControl>
 
-                <ui:SettingsExpander
-                    Header="Privacy policy"
-                    Command="{Binding ViewModel.OpenPrivacyPolicyCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                    Description="View the privacy policy statement"
-                    IsClickEnabled="True"
-                    IconSource="{ic:FluentIconSource Shield48Regular}"
-                    ActionIconSource="{ic:FluentIconSource Open48Regular}"/>
+        <ui:TeachingTip
+            x:Name="VersionCopiedTeachingTip"
+            Title="Copied to clipboard"
+            Grid.Row="0"
+            IsLightDismissEnabled="True"
+            PreferredPlacement="Bottom"
+            Target="{Binding ElementName=VersionButton}">
+            <ui:TeachingTip.IconSource>
+                <!-- TODO Checkmark doesn't stretch horizontally -->
+                <ic:FluentIconSource Stretch="None" Icon="Checkmark48Regular" />
+            </ui:TeachingTip.IconSource>
+        </ui:TeachingTip>
 
-                <ui:SettingsExpander
-                    Header="Open log location"
-                    Command="{Binding ViewModel.OpenLogLocationCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                    Description="Launches file explorer where log file is located"
-                    IsClickEnabled="True"
-                    IconSource="{ic:FluentIconSource FolderOpen24Regular}"
-                    ActionIconSource="{ic:FluentIconSource Open48Regular}"/>
-            </StackPanel>
-        </Grid>
-    </Border>
+        <StackPanel Grid.Row="2" Spacing="4">
+            <ui:SettingsExpander
+                Header="Social"
+                Description="Join the discussion!"
+                IconSource="{ic:FluentIconSource Chat48Regular}">
+                <ui:SettingsExpander.Footer>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <ui:HyperlinkButton
+                            Click="DiscordButton_OnClick"
+                            Content="Discord" />
+                    </StackPanel>
+                </ui:SettingsExpander.Footer>
+            </ui:SettingsExpander>
+
+            <ui:SettingsExpander
+                Header="Privacy policy"
+                Command="{Binding ViewModel.OpenPrivacyPolicyCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                Description="View the privacy policy statement"
+                IsClickEnabled="True"
+                IconSource="{ic:FluentIconSource Shield48Regular}"
+                ActionIconSource="{ic:FluentIconSource Open48Regular}"/>
+
+            <ui:SettingsExpander
+                Header="Open log location"
+                Command="{Binding ViewModel.OpenLogLocationCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                Description="Launches file explorer where log file is located"
+                IsClickEnabled="True"
+                IconSource="{ic:FluentIconSource FolderOpen24Regular}"
+                ActionIconSource="{ic:FluentIconSource Open48Regular}"/>
+        </StackPanel>
+    </Grid>
 </uc:Page>

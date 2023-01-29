@@ -21,164 +21,162 @@
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
     </uc:Page.Resources>
 
-    <Border Padding="16,16,16,8">
-        <Grid
-            x:Name="RootGrid"
-            Loaded="RootGrid_OnLoaded"
-            RowDefinitions="Auto,12,*">
-            <!--  Banner  -->
-            <StackPanel>
-                <uc:BannerControl>
-                    <uc:BannerControl.LeftSide>
-                        <StackPanel VerticalAlignment="Center">
+    <Grid
+        x:Name="RootGrid"
+        Loaded="RootGrid_OnLoaded"
+        RowDefinitions="Auto,12,*">
+        <!--  Banner  -->
+        <StackPanel>
+            <uc:BannerControl>
+                <uc:BannerControl.LeftSide>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            FontWeight="SemiBold"
+                            Text="{Binding ViewModel.BannerViewModel.UpdateText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                        <StackPanel
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="2">
                             <TextBlock
-                                VerticalAlignment="Center"
-                                FontSize="18"
-                                FontWeight="SemiBold"
-                                Text="{Binding ViewModel.BannerViewModel.UpdateText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
-                            <StackPanel
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal"
-                                Spacing="2">
-                                <TextBlock
-                                    FontSize="11"
-                                    Opacity="0.8"
-                                    Text="Last checked:" />
-                                <TextBlock
-                                    FontSize="11"
-                                    Opacity="0.8"
-                                    Text="{Binding ViewModel.BannerViewModel.LastChecked, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
-                            </StackPanel>
+                                FontSize="11"
+                                Opacity="0.8"
+                                Text="Last checked:" />
+                            <TextBlock
+                                FontSize="11"
+                                Opacity="0.8"
+                                Text="{Binding ViewModel.BannerViewModel.LastChecked, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                         </StackPanel>
-                    </uc:BannerControl.LeftSide>
-                    <uc:BannerControl.RightSide>
-                        <Grid>
-                            <Button
-                                Command="{Binding ViewModel.BannerViewModel.UpdateAppCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                                IsEnabled="{Binding ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <ic:FluentIcon
-                                        VerticalAlignment="Center"
-                                        Width="14"
-                                        Icon="ArrowClockwise28Regular" />
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontWeight="SemiBold"
-                                        Text="Check for updates" />
-                                </StackPanel>
-                            </Button>
-                        </Grid>
-                    </uc:BannerControl.RightSide>
-                    <uc:BannerControl.AdditionalBottomContent>
-                        <!--  Version InfoBar  -->
-                        <ui:InfoBar
-                            x:Name="VersionInfoBar"
-                            IsClosable="{Binding ViewModel.BannerViewModel.UpdateInfoBar.CanBeClosed, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                            IsOpen="True"
-                            Message="{Binding ViewModel.BannerViewModel.UpdateInfoBar.Message, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                            Severity="{Binding ViewModel.BannerViewModel.UpdateInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                            IsVisible="{Binding ViewModel.BannerViewModel.UpdateInfoBar.IsOpen, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                            Opacity="0"
-                            LayoutUpdated="VersionInfoBar_OnLayoutUpdated">
-                            <ui:InfoBar.RenderTransform>
-                                <TranslateTransform />
-                            </ui:InfoBar.RenderTransform>
-
-                            <anim:Storyboard.Storyboards>
-                                <anim:Storyboard x:Name="ShowVersionInfoBarStoryboard">
-                                    <trans:InfoBarTransition
-                                        Target="VersionInfoBar"
-                                        ContentBelow="OtherSettings"
-                                        AnimationMode="Show" />
-                                </anim:Storyboard>
-                                <anim:Storyboard x:Name="QuickHideVersionInfoBarStoryboard">
-                                    <trans:InfoBarTransition
-                                        Target="VersionInfoBar"
-                                        ContentBelow="OtherSettings"
-                                        AnimationMode="QuickHide" />
-                                </anim:Storyboard>
-                            </anim:Storyboard.Storyboards>
-
-                            <i:Interaction.Behaviors>
-                                <ia:DataTriggerBehavior
-                                    Binding="{Binding ElementName=VersionInfoBar, Path=IsVisible}"
-                                    ComparisonCondition="Equal"
-                                    Value="true">
-                                    <ia:CallMethodAction
-                                        TargetObject="{Binding Path=., RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                                        MethodName="PlayShowInfoBarAnimation" />
-                                </ia:DataTriggerBehavior>
-                            </i:Interaction.Behaviors>
-                        </ui:InfoBar>
-                    </uc:BannerControl.AdditionalBottomContent>
-                </uc:BannerControl>
-            </StackPanel>
-
-            <!--  Other settings  -->
-            <StackPanel x:Name="OtherSettings" Grid.Row="2" Spacing="4">
-                <StackPanel.RenderTransform>
-                    <TranslateTransform />
-                </StackPanel.RenderTransform>
-
-                <ui:SettingsExpander
-                    Header="Language"
-                    Description="Select the display language"
-                    IconSource="{ic:FluentIconSource LocalLanguage28Regular}">
-                    <ui:SettingsExpander.Footer>
-                        <ComboBox
-                            Items="{Binding ViewModel.LanguageSettingViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                            SelectedIndex="0"
-                            SelectionChanged="ComboBox_OnSelectionChanged"
-                            Loaded="ComboBox_OnLoaded">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate x:DataType="vm:LanguageViewModel">
-                                    <TextBlock Text="{Binding FriendlyName}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </ui:SettingsExpander.Footer>
-                </ui:SettingsExpander>
-                <ui:SettingsExpander
-                    Header="Theme"
-                    Description="Choose application theme"
-                    IconSource="{ic:FluentIconSource Color24Regular}">
-                    <ui:SettingsExpander.Footer>
-                        <ComboBox SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
-                            <ComboBox.Items>
-                                <ComboBoxItem Content="System default" />
-                                <ComboBoxItem Content="Light" />
-                                <ComboBoxItem Content="Dark" />
-                            </ComboBox.Items>
-                        </ComboBox>
-                    </ui:SettingsExpander.Footer>
-                </ui:SettingsExpander>
-                <ui:SettingsExpander
-                    Header="Configure settings"
-                    IsEnabled="False"
-                    IconSource="{ic:FluentIconSource Settings48Regular}">
-                    <StackPanel Margin="-16" Spacing="1">
-                        <ui:SettingsExpander Header="Import settings" IsClickEnabled="True">
-                            <ui:SettingsExpander.ActionIconSource>
-                                <ui:SymbolIconSource Symbol="Import" />
-                            </ui:SettingsExpander.ActionIconSource>
-                            <!-- TODO Icon -->
-                            <ui:SettingsExpander.Footer>
-                                <ui:SymbolIconSource Symbol="Placeholder" />
-                            </ui:SettingsExpander.Footer>
-                        </ui:SettingsExpander>
-                        <ui:SettingsExpander Header="Export settings" IsClickEnabled="True">
-                            <ui:SettingsExpander.ActionIconSource>
-                                <!-- TODO Icon -->
-                                <ui:SymbolIconSource Symbol="Placeholder" />
-                            </ui:SettingsExpander.ActionIconSource>
-                            <!-- TODO Icon -->
-                            <ui:SettingsExpander.Footer>
-                                <ui:SymbolIconSource Symbol="Placeholder" />
-                            </ui:SettingsExpander.Footer>
-                        </ui:SettingsExpander>
                     </StackPanel>
-                </ui:SettingsExpander>
-            </StackPanel>
-        </Grid>
-    </Border>
+                </uc:BannerControl.LeftSide>
+                <uc:BannerControl.RightSide>
+                    <Grid>
+                        <Button
+                            Command="{Binding ViewModel.BannerViewModel.UpdateAppCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                            IsEnabled="{Binding ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ic:FluentIcon
+                                    VerticalAlignment="Center"
+                                    Width="14"
+                                    Icon="ArrowClockwise28Regular" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="Check for updates" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </uc:BannerControl.RightSide>
+                <uc:BannerControl.AdditionalBottomContent>
+                    <!--  Version InfoBar  -->
+                    <ui:InfoBar
+                        x:Name="VersionInfoBar"
+                        IsClosable="{Binding ViewModel.BannerViewModel.UpdateInfoBar.CanBeClosed, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        IsOpen="True"
+                        Message="{Binding ViewModel.BannerViewModel.UpdateInfoBar.Message, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        Severity="{Binding ViewModel.BannerViewModel.UpdateInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        IsVisible="{Binding ViewModel.BannerViewModel.UpdateInfoBar.IsOpen, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        Opacity="0"
+                        LayoutUpdated="VersionInfoBar_OnLayoutUpdated">
+                        <ui:InfoBar.RenderTransform>
+                            <TranslateTransform />
+                        </ui:InfoBar.RenderTransform>
+
+                        <anim:Storyboard.Storyboards>
+                            <anim:Storyboard x:Name="ShowVersionInfoBarStoryboard">
+                                <trans:InfoBarTransition
+                                    Target="VersionInfoBar"
+                                    ContentBelow="OtherSettings"
+                                    AnimationMode="Show" />
+                            </anim:Storyboard>
+                            <anim:Storyboard x:Name="QuickHideVersionInfoBarStoryboard">
+                                <trans:InfoBarTransition
+                                    Target="VersionInfoBar"
+                                    ContentBelow="OtherSettings"
+                                    AnimationMode="QuickHide" />
+                            </anim:Storyboard>
+                        </anim:Storyboard.Storyboards>
+
+                        <i:Interaction.Behaviors>
+                            <ia:DataTriggerBehavior
+                                Binding="{Binding ElementName=VersionInfoBar, Path=IsVisible}"
+                                ComparisonCondition="Equal"
+                                Value="true">
+                                <ia:CallMethodAction
+                                    TargetObject="{Binding Path=., RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                                    MethodName="PlayShowInfoBarAnimation" />
+                            </ia:DataTriggerBehavior>
+                        </i:Interaction.Behaviors>
+                    </ui:InfoBar>
+                </uc:BannerControl.AdditionalBottomContent>
+            </uc:BannerControl>
+        </StackPanel>
+
+        <!--  Other settings  -->
+        <StackPanel x:Name="OtherSettings" Grid.Row="2" Spacing="4">
+            <StackPanel.RenderTransform>
+                <TranslateTransform />
+            </StackPanel.RenderTransform>
+
+            <ui:SettingsExpander
+                Header="Language"
+                Description="Select the display language"
+                IconSource="{ic:FluentIconSource LocalLanguage28Regular}">
+                <ui:SettingsExpander.Footer>
+                    <ComboBox
+                        Items="{Binding ViewModel.LanguageSettingViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        SelectedIndex="0"
+                        SelectionChanged="ComboBox_OnSelectionChanged"
+                        Loaded="ComboBox_OnLoaded">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:LanguageViewModel">
+                                <TextBlock Text="{Binding FriendlyName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </ui:SettingsExpander.Footer>
+            </ui:SettingsExpander>
+            <ui:SettingsExpander
+                Header="Theme"
+                Description="Choose application theme"
+                IconSource="{ic:FluentIconSource Color24Regular}">
+                <ui:SettingsExpander.Footer>
+                    <ComboBox SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="System default" />
+                            <ComboBoxItem Content="Light" />
+                            <ComboBoxItem Content="Dark" />
+                        </ComboBox.Items>
+                    </ComboBox>
+                </ui:SettingsExpander.Footer>
+            </ui:SettingsExpander>
+            <ui:SettingsExpander
+                Header="Configure settings"
+                IsEnabled="False"
+                IconSource="{ic:FluentIconSource Settings48Regular}">
+                <StackPanel Margin="-16" Spacing="1">
+                    <ui:SettingsExpander Header="Import settings" IsClickEnabled="True">
+                        <ui:SettingsExpander.ActionIconSource>
+                            <ui:SymbolIconSource Symbol="Import" />
+                        </ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SettingsExpander.Footer>
+                            <ui:SymbolIconSource Symbol="Placeholder" />
+                        </ui:SettingsExpander.Footer>
+                    </ui:SettingsExpander>
+                    <ui:SettingsExpander Header="Export settings" IsClickEnabled="True">
+                        <ui:SettingsExpander.ActionIconSource>
+                            <!-- TODO Icon -->
+                            <ui:SymbolIconSource Symbol="Placeholder" />
+                        </ui:SettingsExpander.ActionIconSource>
+                        <!-- TODO Icon -->
+                        <ui:SettingsExpander.Footer>
+                            <ui:SymbolIconSource Symbol="Placeholder" />
+                        </ui:SettingsExpander.Footer>
+                    </ui:SettingsExpander>
+                </StackPanel>
+            </ui:SettingsExpander>
+        </StackPanel>
+    </Grid>
 </uc:Page>

@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.Validators
             hmacSha256Crypt.Update(BitConverter.GetBytes((uint)value.FileNameCipherScheme));
             hmacSha256Crypt.Update(BitConverter.GetBytes((uint)value.ContentCipherScheme));
 
-            var payloadMac = new byte[_cipherProvider.HmacSha256Crypt.MacSize];
+            Span<byte> payloadMac = stackalloc byte[_cipherProvider.HmacSha256Crypt.MacSize];
             hmacSha256Crypt.GetHash(payloadMac);
 
             // Check if stored hash equals to computed hash
