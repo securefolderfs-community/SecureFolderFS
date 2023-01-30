@@ -24,6 +24,7 @@
         <Content Remove="Assets\AppAssets\Vault_light.svg" />
     </ItemGroup>
     <ItemGroup>
+        <None Remove="Dialogs\LicensesDialog.xaml" />
         <None Remove="Dialogs\SettingsDialog.xaml" />
         <None Remove="Dialogs\VaultWizardDialog.xaml" />
         <None Remove="ResourceDictionaries\ImageResources.xaml" />
@@ -67,6 +68,10 @@
         <None Update="Assets\AppAssets\Vault_light.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <Page Update="Dialogs\LicensesDialog.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+        </Page>
         <Page Update="ResourceDictionaries\ImageResources.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>

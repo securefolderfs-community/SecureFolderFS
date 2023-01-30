@@ -23,6 +23,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         {
             _dialogs = new Dictionary<Type, Func<ContentDialog>>()
             {
+                { typeof(LicensesDialogViewModel), () => new LicensesDialog() },
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() }
             };

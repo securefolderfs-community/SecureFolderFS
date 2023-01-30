@@ -1,14 +1,13 @@
-using Avalonia.Data.Converters;
+﻿using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections;
-using System.Globalization;
 using System.Linq;
 
-namespace SecureFolderFS.AvaloniaUI.ValueConverters
+namespace SecureFolderFS.WinUI.ValueConverters
 {
     internal sealed class OnlyFirstElementOrNullConverter : IValueConverter
     {
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is IEnumerable enumerable)
             {
@@ -20,7 +19,7 @@ namespace SecureFolderFS.AvaloniaUI.ValueConverters
             return null;
         }
 
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
         }
