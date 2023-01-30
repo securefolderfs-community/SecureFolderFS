@@ -44,8 +44,9 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
                 var projectWebsiteUri = projectWebsite is null ? null : new Uri(projectWebsite);
                 var licenses = licenseLink.Split(',').Select(x => new Uri(x));
 
-                // Reset position
+                // Reset position and make sure cached data isn't combined when reading full text again
                 stream.Position = 0L;
+                sr.DiscardBufferedData();
                 var fullText = await sr.ReadToEndAsync(cancellationToken);
 
                 yield return new LicenseModel(packageName, licenses, licenseName, projectWebsiteUri, fullText);
