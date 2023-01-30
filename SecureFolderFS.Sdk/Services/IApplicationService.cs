@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.AppModels;
 
@@ -21,5 +23,8 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="uri">The URI to launch.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task OpenUriAsync(Uri uri);
+
+        // TODO Add docs
+        IAsyncEnumerable<LicenseModel> GetLicensesAsync(CancellationToken cancellationToken = default);
     }
 }

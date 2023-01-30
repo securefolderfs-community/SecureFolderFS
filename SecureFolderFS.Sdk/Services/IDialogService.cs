@@ -25,5 +25,10 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="viewModel">The view model of the dialog.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="DialogResult"/> based on the selected option.</returns>
         Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged;
+
+        /// <summary>
+        /// Hides the currently shown dialog if possible.
+        /// </summary>
+        void HideCurrentDialog();
     }
 }

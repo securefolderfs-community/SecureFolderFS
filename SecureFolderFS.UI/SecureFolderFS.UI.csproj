@@ -16,6 +16,30 @@
         <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg" />
         <None Remove="Assets\AppAssets\GreenShield.svg" />
         <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg" />
+        <None Remove="Assets\Licenses\Tmds.Fuse LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\Tmds.Fuse LICENSE" />
+        <None Remove="Assets\Licenses\NWebDav LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\NWebDav LICENSE" />
+        <None Remove="Assets\Licenses\DokanNet LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\DokanNet LICENSE" />
+        <None Remove="Assets\Licenses\DotnetCommunityToolkit LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\DotnetCommunityToolkit LICENSE" />
+        <None Remove="Assets\Licenses\WindowsCommunityToolkit LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WindowsCommunityToolkit LICENSE" />
+        <None Remove="Assets\Licenses\WinUIEx LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WinUIEx LICENSE" />
+        <None Remove="Assets\Licenses\ByteSize LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\ByteSize LICENSE" />
+        <None Remove="Assets\Licenses\Miscreant LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\Miscreant LICENSE" />
+        <None Remove="Assets\Licenses\Konscious.Security.Cryptography LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\KonsciousSecurityCryptography LICENSE" />
+        <None Remove="Assets\Licenses\NSec LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\NSec LICENSE" />
+        <None Remove="Assets\Licenses\LiveCharts2 LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\LiveCharts2 LICENSE" />
+        <None Remove="Assets\Licenses\WindowsAppSDK LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WindowsAppSDK LICENSE" />
     </ItemGroup>
 
     <ItemGroup>
