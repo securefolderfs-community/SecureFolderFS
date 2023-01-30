@@ -17,6 +17,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class DialogService : IDialogService
     {
         private readonly IReadOnlyDictionary<Type, Func<ContentDialog>> _dialogs;
+        private IDialog? _currentDialog;
 
         public DialogService()
         {
@@ -50,7 +51,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel)
             where TViewModel : class, INotifyPropertyChanged
         {
-            return GetDialog(viewModel).ShowAsync();
+            _currentDialog?.Hide();
+            _currentDialog = GetDialog(viewModel);
+            return _currentDialog.ShowAsync();
         }
     }
 }

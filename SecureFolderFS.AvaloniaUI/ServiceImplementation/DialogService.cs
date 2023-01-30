@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Dialogs;
 using SecureFolderFS.AvaloniaUI.Messages;
-using SecureFolderFS.AvaloniaUI.WindowViews;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
@@ -19,7 +17,6 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
     internal sealed class DialogService : IDialogService
     {
         private readonly IReadOnlyDictionary<Type, Func<ContentDialog>> _dialogs;
-
         private IDialog? _currentDialog;
 
         public DialogService()
@@ -32,6 +29,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             };
         }
 
+        /// <inheritdoc/>
         public IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {
             if (!_dialogs.TryGetValue(typeof(TViewModel), out var initializer))
@@ -45,17 +43,14 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             return dialog;
         }
 
+        /// <inheritdoc/>
         public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {
-            WeakReferenceMessenger.Default.Send(new DialogShownMessage());
+            _currentDialog?.Hide();
             _currentDialog = GetDialog(viewModel);
+            WeakReferenceMessenger.Default.Send(new DialogShownMessage());
 
             return _currentDialog.ShowAsync();
-        }
-
-        public void HideCurrentDialog()
-        {
-            _currentDialog?.Hide();
         }
     }
 }

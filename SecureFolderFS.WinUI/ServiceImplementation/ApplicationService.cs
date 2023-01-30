@@ -1,8 +1,11 @@
 ﻿using SecureFolderFS.Sdk.Services;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.System;
+using SecureFolderFS.Sdk.AppModels;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -10,16 +13,22 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class ApplicationService : IApplicationService
     {
         /// <inheritdoc/>
-        public Version GetAppVersion()
+        public AppVersion GetAppVersion()
         {
             var packageVersion = Package.Current.Id.Version;
-            return new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+            return new(new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision), "WinUI");
         }
 
         /// <inheritdoc/>
         public async Task OpenUriAsync(Uri uri)
         {
             await Launcher.LaunchUriAsync(uri);
+        }
+
+        /// <inheritdoc/>
+        public IAsyncEnumerable<LicenseModel> GetLicensesAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

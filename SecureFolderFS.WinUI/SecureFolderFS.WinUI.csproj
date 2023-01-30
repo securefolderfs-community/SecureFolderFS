@@ -113,6 +113,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
+        <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Page Update="Dialogs\SettingsDialog.xaml">

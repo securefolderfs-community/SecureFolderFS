@@ -60,7 +60,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
         [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenLicensesDialogAsync()
         {
-            DialogService.HideCurrentDialog();
             return DialogService.ShowDialogAsync(new LicensesDialogViewModel());
         }
     }

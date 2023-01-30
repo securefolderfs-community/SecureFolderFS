@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.WinUI.UserControls.InfoBars;
+using SecureFolderFS.UI.UserControls.InfoBars;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
