@@ -20,10 +20,13 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
     {
         private readonly IReadOnlyDictionary<Type, Func<ContentDialog>> _dialogs;
 
+        private IDialog? _currentDialog;
+
         public DialogService()
         {
             _dialogs = new Dictionary<Type, Func<ContentDialog>>
             {
+                { typeof(LicensesDialogViewModel), () => new LicensesDialog() },
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() }
             };
@@ -45,7 +48,14 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {
             WeakReferenceMessenger.Default.Send(new DialogShownMessage());
-            return GetDialog(viewModel).ShowAsync();
+            _currentDialog = GetDialog(viewModel);
+
+            return _currentDialog.ShowAsync();
+        }
+
+        public void HideCurrentDialog()
+        {
+            _currentDialog?.Hide();
         }
     }
 }

@@ -102,6 +102,13 @@
                 IsClickEnabled="True"
                 IconSource="{ic:FluentIconSource FolderOpen24Regular}"
                 ActionIconSource="{ic:FluentIconSource Open48Regular}"/>
+
+            <ui:SettingsExpander
+                Header="Third party licenses"
+                Command="{Binding ViewModel.OpenLicensesDialogCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                IsClickEnabled="True"
+                IconSource="{ic:FluentIconSource DocumentText24Regular}"
+                ActionIconSource="{ic:FluentIconSource Open48Regular}"/>
         </StackPanel>
     </Grid>
 </uc:Page>

@@ -1,0 +1,79 @@
+<ui:ContentDialog
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:h="using:SecureFolderFS.AvaloniaUI.Helpers"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
+    xmlns:m="using:SecureFolderFS.Sdk.AppModels"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.LicensesDialog">
+
+    <ui:ContentDialog.Resources>
+        <ResourceDictionary>
+            <x:Double x:Key="ContentDialogMaxWidth">1300</x:Double>
+            <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+            <vc:OnlyFirstElementOrNullConverter x:Key="OnlyFirstElementOrNullConverter" />
+        </ResourceDictionary>
+    </ui:ContentDialog.Resources>
+
+    <ui:ContentDialog.Styles>
+        <!-- Hide empty button container -->
+        <Style Selector="#DialogSpace > Border">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+    </ui:ContentDialog.Styles>
+
+    <Grid
+        Height="500"
+        Margin="-24,-64,-24,-24"
+        Background="{DynamicResource ContentDialogBackground}">
+
+        <ScrollViewer Width="644" Margin="16,48,16,8">
+            <ItemsControl
+                Items="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}"
+                Loaded="Control_OnLoaded">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type m:LicenseModel}">
+                        <ui:SettingsExpander
+                            Header="{Binding PackageName}"
+                            Description="{Binding LicenseName}"
+                            DataContext="{Binding .}">
+                            <ui:SettingsExpander.Footer>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <ui:HyperlinkButton
+                                        Content="Project website"
+                                        NavigateUri="{Binding ProjectWebsiteUri}"
+                                        IsVisible="{Binding ProjectWebsiteUri, Converter={StaticResource NullToBooleanConverter}}" />
+                                    <ui:HyperlinkButton
+                                        Content="License"
+                                        NavigateUri="{Binding LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}"
+                                        IsVisible="{Binding NavigateUri, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToBooleanConverter}}" />
+                                </StackPanel>
+                            </ui:SettingsExpander.Footer>
+
+                            <TextBlock Text="{Binding DataContext.License, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}" />
+                        </ui:SettingsExpander>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Button
+            Width="34"
+            Height="34"
+            Margin="0,8,8,0"
+            Padding="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            BorderThickness="0"
+            Click="Button_OnClick"
+            CornerRadius="20">
+            <ic:FluentIcon Icon="Dismiss48Regular" Width="10"/>
+        </Button>
+    </Grid>
+</ui:ContentDialog>
