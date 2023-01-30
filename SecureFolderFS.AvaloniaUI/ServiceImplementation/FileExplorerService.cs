@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Avalonia.Platform.Storage;
 using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.WindowViews;
@@ -43,7 +44,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             if (!file.First().TryGetUri(out var uri))
                 return null;
 
-            return new NativeFile(uri.AbsolutePath);
+            return new NativeFile(HttpUtility.UrlDecode(uri.AbsolutePath));
         }
 
         /// <inheritdoc/>
@@ -60,7 +61,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             if (!folder.First().TryGetUri(out var uri))
                 return null;
 
-            return new NativeFolder(uri.AbsolutePath);
+            return new NativeFolder(HttpUtility.UrlDecode(uri.AbsolutePath));
         }
     }
 }
