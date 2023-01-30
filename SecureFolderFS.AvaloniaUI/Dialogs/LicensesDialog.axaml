@@ -55,7 +55,7 @@
                                 </StackPanel>
                             </ui:SettingsExpander.Footer>
 
-                            <TextBlock Text="{Binding DataContext.License, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}" />
+                            <SelectableTextBlock Text="{Binding DataContext.License, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}" />
                         </ui:SettingsExpander>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
