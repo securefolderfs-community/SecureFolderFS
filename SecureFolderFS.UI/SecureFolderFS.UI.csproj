@@ -41,7 +41,8 @@
         <None Remove="Assets\Licenses\WindowsAppSDK LICENSE" />
         <EmbeddedResource Include="Assets\Licenses\WindowsAppSDK LICENSE" />
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection" />
-        <EmbeddedResource Include="Assets\Licenses\MicrosoftExtensionsDependencyInjection" />
+        <None Remove="Assets\Licenses\AppCenter LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\AppCenter LICENSE" />
     </ItemGroup>
 
     <ItemGroup>
