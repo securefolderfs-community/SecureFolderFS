@@ -1,7 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
@@ -11,6 +7,8 @@ using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {

@@ -1,16 +1,18 @@
 <ui:ContentDialog
+    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.LicensesDialog"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:h="using:SecureFolderFS.AvaloniaUI.Helpers"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
-    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
     xmlns:m="using:SecureFolderFS.Sdk.AppModels"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.LicensesDialog">
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
     <ui:ContentDialog.Resources>
         <ResourceDictionary>
@@ -21,7 +23,7 @@
     </ui:ContentDialog.Resources>
 
     <ui:ContentDialog.Styles>
-        <!-- Hide empty button container -->
+        <!--  Hide empty button container  -->
         <Style Selector="#DialogSpace > Border">
             <Setter Property="IsVisible" Value="False" />
         </Style>
@@ -33,25 +35,23 @@
         Background="{DynamicResource ContentDialogBackground}">
 
         <ScrollViewer Width="644" Margin="16,48,16,8">
-            <ItemsControl
-                Items="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}"
-                Loaded="Control_OnLoaded">
+            <ItemsControl Items="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}" Loaded="Control_OnLoaded">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type m:LicenseModel}">
                         <ui:SettingsExpander
-                            Header="{Binding PackageName}"
+                            DataContext="{Binding .}"
                             Description="{Binding LicenseName}"
-                            DataContext="{Binding .}">
+                            Header="{Binding PackageName}">
                             <ui:SettingsExpander.Footer>
-                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
                                     <ui:HyperlinkButton
                                         Content="Project website"
-                                        NavigateUri="{Binding ProjectWebsiteUri}"
-                                        IsVisible="{Binding ProjectWebsiteUri, Converter={StaticResource NullToBooleanConverter}}" />
+                                        IsVisible="{Binding ProjectWebsiteUri, Converter={StaticResource NullToBooleanConverter}}"
+                                        NavigateUri="{Binding ProjectWebsiteUri}" />
                                     <ui:HyperlinkButton
                                         Content="License"
-                                        NavigateUri="{Binding LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}"
-                                        IsVisible="{Binding NavigateUri, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToBooleanConverter}}" />
+                                        IsVisible="{Binding NavigateUri, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToBooleanConverter}}"
+                                        NavigateUri="{Binding LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}" />
                                 </StackPanel>
                             </ui:SettingsExpander.Footer>
 
@@ -73,7 +73,7 @@
             BorderThickness="0"
             Click="Button_OnClick"
             CornerRadius="20">
-            <ic:FluentIcon Icon="Dismiss48Regular" Width="10"/>
+            <ic:FluentIcon Width="10" Icon="Dismiss48Regular" />
         </Button>
     </Grid>
 </ui:ContentDialog>

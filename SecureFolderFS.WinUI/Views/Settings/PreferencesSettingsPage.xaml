@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
-    xmlns:uc2="using:SecureFolderFS.WinUI.UserControls.InfoBars"
+    xmlns:uc2="using:SecureFolderFS.UI.UserControls.InfoBars"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Settings.Banners"
