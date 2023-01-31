@@ -1,12 +1,13 @@
-﻿using SecureFolderFS.Core.FileSystem.Streams;
+﻿using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Directories;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage
 {
@@ -16,15 +17,17 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
     {
         private readonly IStreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
+        private readonly IDirectoryIdAccess _directoryIdAccess;
 
         /// <inheritdoc/>
         public override string Path => _pathConverter.ToCleartext(base.Path) ?? string.Empty;
 
-        public EncryptingDavFile(TCapability inner, IStreamsAccess streamsAccess, IPathConverter pathConverter)
+        public EncryptingDavFile(TCapability inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess)
             : base(inner)
         {
             _streamsAccess = streamsAccess;
             _pathConverter = pathConverter;
+            _directoryIdAccess = directoryIdAccess;
         }
 
         /// <inheritdoc/>
@@ -44,7 +47,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         /// <inheritdoc/>
         public override DavFolder<T> NewFolder<T>(T inner)
         {
-            return new EncryptingDavFolder<T>(inner, _streamsAccess, _pathConverter);
+            return new EncryptingDavFolder<T>(inner, _streamsAccess, _pathConverter, _directoryIdAccess);
         }
 
         private Stream OpenCleartextStream(Stream ciphertextStream)

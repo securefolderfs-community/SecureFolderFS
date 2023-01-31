@@ -182,11 +182,11 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             {
                 // Add all directories
                 foreach (var subDirectory in _directoryInfo.GetDirectories())
-                    yield return new DiskStoreCollection(LockingManager, subDirectory, IsWritable);
+                    yield return new EncryptingDiskStoreCollection(LockingManager, subDirectory, IsWritable, _streamsAccess, _pathConverter);
 
                 // Add all files
                 foreach (var file in _directoryInfo.GetFiles())
-                    yield return new DiskStoreItem(LockingManager, file, IsWritable);
+                    yield return new EncryptingDiskStoreItem(LockingManager, file, IsWritable, _streamsAccess, _pathConverter);
             }
 
             return Task.FromResult(GetItemsInternal());
