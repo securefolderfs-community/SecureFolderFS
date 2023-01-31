@@ -40,6 +40,8 @@
         <EmbeddedResource Include="Assets\Licenses\LiveCharts2 LICENSE" />
         <None Remove="Assets\Licenses\WindowsAppSDK LICENSE" />
         <EmbeddedResource Include="Assets\Licenses\WindowsAppSDK LICENSE" />
+        <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection" />
+        <EmbeddedResource Include="Assets\Licenses\MicrosoftExtensionsDependencyInjection" />
     </ItemGroup>
 
     <ItemGroup>

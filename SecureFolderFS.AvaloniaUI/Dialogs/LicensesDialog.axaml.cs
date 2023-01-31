@@ -46,5 +46,10 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         {
             _ = ViewModel.InitAsync();
         }
+
+        private void CloseButton_OnClick(object? sender, RoutedEventArgs e)
+        {
+            Hide();
+        }
     }
 }
