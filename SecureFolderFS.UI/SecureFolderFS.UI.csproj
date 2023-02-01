@@ -43,6 +43,20 @@
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection" />
         <None Remove="Assets\Licenses\AppCenter LICENSE" />
         <EmbeddedResource Include="Assets\Licenses\AppCenter LICENSE" />
+        <None Remove="Assets\Licenses\WindowsSDKBuildTools LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WindowsSDKBuildTools LICENSE" />
+        <None Remove="Assets\Licenses\Avalonia LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\Avalonia LICENSE" />
+        <None Remove="Assets\Licenses\SvgSkia LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\SvgSkia LICENSE" />
+        <None Remove="Assets\Licenses\AvaloniaBehaviors LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\AvaloniaBehaviors LICENSE" />
+        <None Remove="Assets\Licenses\TextCopy LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\TextCopy LICENSE" />
+        <None Remove="Assets\Licenses\AvaloniaNameGenerator LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\AvaloniaNameGenerator LICENSE" />
+        <None Remove="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
     </ItemGroup>
 
     <ItemGroup>
