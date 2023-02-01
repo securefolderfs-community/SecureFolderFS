@@ -1,5 +1,4 @@
-﻿using System;
-using SecureFolderFS.Shared.Utils;
+﻿using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.WinUI.Helpers
 {

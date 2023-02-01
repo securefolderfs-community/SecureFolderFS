@@ -1,6 +1,3 @@
-using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;

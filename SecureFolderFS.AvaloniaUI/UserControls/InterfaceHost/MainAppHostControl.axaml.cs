@@ -5,8 +5,6 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using FluentAvalonia.UI.Media.Animation;
-using SecureFolderFS.AvaloniaUI.Animations;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;

@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Collections;
-using Avalonia.Xaml.Interactivity;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations

@@ -2,7 +2,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI;

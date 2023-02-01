@@ -1,8 +1,5 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.UI.Windowing;

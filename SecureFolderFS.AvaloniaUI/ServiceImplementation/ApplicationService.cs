@@ -1,6 +1,3 @@
-using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +6,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.AvaloniaUI.Helpers;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {

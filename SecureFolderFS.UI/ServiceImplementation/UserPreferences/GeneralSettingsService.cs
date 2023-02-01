@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.UserPreferences;
-using SecureFolderFS.Sdk.AppModels;
 
 namespace SecureFolderFS.UI.ServiceImplementation.UserPreferences
 {

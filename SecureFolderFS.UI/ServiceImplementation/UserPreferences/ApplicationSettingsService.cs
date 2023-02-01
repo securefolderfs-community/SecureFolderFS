@@ -2,8 +2,6 @@
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation.UserPreferences
 {

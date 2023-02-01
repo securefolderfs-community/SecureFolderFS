@@ -1,5 +1,4 @@
 using System;
-using System.Reactive;
 using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;

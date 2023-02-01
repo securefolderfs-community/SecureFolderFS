@@ -1,6 +1,7 @@
+#region
+
 using System.Text;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -10,6 +11,8 @@ using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 using SecureFolderFS.UI.AppModels;
+
+#endregion
 
 namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {

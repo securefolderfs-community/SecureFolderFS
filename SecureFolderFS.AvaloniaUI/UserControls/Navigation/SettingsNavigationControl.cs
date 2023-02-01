@@ -1,6 +1,4 @@
 using System;
-using FluentAvalonia.UI.Media.Animation;
-using SecureFolderFS.AvaloniaUI.Animations;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Views.Settings;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;

@@ -1,7 +1,6 @@
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard

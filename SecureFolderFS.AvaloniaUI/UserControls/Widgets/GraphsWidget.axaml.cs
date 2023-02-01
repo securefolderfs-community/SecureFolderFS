@@ -1,17 +1,9 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Animation;
-using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using Avalonia.Styling;
-using SecureFolderFS.AvaloniaUI.Animations;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
 {

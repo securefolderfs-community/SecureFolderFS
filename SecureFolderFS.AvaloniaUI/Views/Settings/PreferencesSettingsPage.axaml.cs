@@ -7,9 +7,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using SecureFolderFS.AvaloniaUI.Animations;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
+using SecureFolderFS.Core;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
@@ -86,8 +86,8 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             {
                 newFileSystemInfoBar = fileSystemAdapter.Id switch
                 {
-                    Core.Constants.FileSystemId.DOKAN_ID => new DokanyInfoBar(),
-                    Core.Constants.FileSystemId.FUSE_ID => new FuseInfoBar(),
+                    Constants.FileSystemId.DOKAN_ID => new DokanyInfoBar(),
+                    Constants.FileSystemId.FUSE_ID => new FuseInfoBar(),
                     _ => null
                 };
                 if (newFileSystemInfoBar is null)
@@ -99,7 +99,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 newFileSystemInfoBar.CanBeClosed = false;
                 newFileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
             }
-            else if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
+            else if (fileSystemAdapter.Id == Constants.FileSystemId.WEBDAV_ID)
             {
                 newFileSystemInfoBar = new WebDavInfoBar();
                 newFileSystemInfoBar.IsOpen = true;
@@ -168,7 +168,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 
         private void FileSystemAdapterChoice_OnLoaded(object? sender, RoutedEventArgs e)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public InfoBarViewModel? FileSystemInfoBar

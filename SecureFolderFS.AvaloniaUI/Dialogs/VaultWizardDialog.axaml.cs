@@ -1,24 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Avalonia.Animation;
-using Avalonia.Animation.Easings;
-using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Avalonia.Styling;
-using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Messaging;
-using ExCSS;
 using FluentAvalonia.UI.Controls;
-using FluentAvalonia.UI.Media.Animation;
-using Microsoft.AspNetCore.Components;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
-using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.Messages;
-using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
-using SecureFolderFS.AvaloniaUI.WindowViews;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
@@ -27,7 +15,6 @@ using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.WinUI.Helpers;
-using Dispatcher = Avalonia.Threading.Dispatcher;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {

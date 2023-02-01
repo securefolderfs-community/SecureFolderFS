@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml.Templates;
 using SecureFolderFS.Sdk.ViewModels.AppHost;

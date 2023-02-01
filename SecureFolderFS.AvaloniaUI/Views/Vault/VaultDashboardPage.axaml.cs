@@ -1,8 +1,5 @@
 using System.Collections.ObjectModel;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using FluentAvalonia.UI.Media.Animation;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;

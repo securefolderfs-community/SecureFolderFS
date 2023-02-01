@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
@@ -21,7 +22,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         /// <inheritdoc/>
         public void SetCurrentLanguage(ILanguageModel language)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>

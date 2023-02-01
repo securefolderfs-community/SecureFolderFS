@@ -1,7 +1,7 @@
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.AvaloniaUI.Events;
+using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Settings

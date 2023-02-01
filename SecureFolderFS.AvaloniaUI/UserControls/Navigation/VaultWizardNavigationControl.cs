@@ -1,8 +1,4 @@
 ﻿using System;
-using Avalonia.Controls;
-using FluentAvalonia.UI.Controls;
-using FluentAvalonia.UI.Media.Animation;
-using SecureFolderFS.AvaloniaUI.Animations;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.VaultWizard;

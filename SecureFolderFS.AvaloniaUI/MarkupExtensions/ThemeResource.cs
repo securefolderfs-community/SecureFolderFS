@@ -1,12 +1,10 @@
 using System;
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentAvalonia.Styling;
-using Microsoft.Extensions.DependencyInjection;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.UI.Enums;

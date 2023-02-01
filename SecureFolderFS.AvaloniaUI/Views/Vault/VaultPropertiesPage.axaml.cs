@@ -1,5 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.UserControls;
 

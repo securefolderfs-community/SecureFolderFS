@@ -1,8 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using SecureFolderFS.AvaloniaUI.Animations;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost

@@ -7,7 +7,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.ServiceImplementation;
 using SecureFolderFS.AvaloniaUI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.AvaloniaUI.Services;
@@ -107,7 +106,7 @@ namespace SecureFolderFS.AvaloniaUI
             LogException(e.Exception);
         }
 
-        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             LogException(e.ExceptionObject as Exception);
         }

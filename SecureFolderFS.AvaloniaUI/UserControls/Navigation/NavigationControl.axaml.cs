@@ -1,27 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Animation;
-using Avalonia.Animation.Easings;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using Avalonia.Styling;
-using Avalonia.Threading;
-using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Messaging;
-using FluentAvalonia.UI.Controls;
-using FluentAvalonia.UI.Media.Animation;
 using FluentAvalonia.UI.Navigation;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Shared.Extensions;
-using SuppressNavigationTransitionInfo = FluentAvalonia.UI.Media.Animation.SuppressNavigationTransitionInfo;
+using NavigationEventArgs = SecureFolderFS.AvaloniaUI.Events.NavigationEventArgs;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
@@ -91,7 +81,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 await FadeOutContentStoryboard.RunAnimationsAsync();
 
             if (instance is Page page)
-                page.OnNavigatedTo(new Events.NavigationEventArgs(instance, NavigationMode.New, transition, parameter, pageType));
+                page.OnNavigatedTo(new NavigationEventArgs(instance, NavigationMode.New, transition, parameter, pageType));
 
             CurrentContent = instance;
             _currentPage = new(pageType, parameter);

@@ -1,8 +1,12 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
+
+#endregion
 
 namespace SecureFolderFS.AvaloniaUI.ValueConverters
 {

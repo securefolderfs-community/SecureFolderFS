@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Avalonia.Controls.Platform;
 using Avalonia.Threading;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utils;

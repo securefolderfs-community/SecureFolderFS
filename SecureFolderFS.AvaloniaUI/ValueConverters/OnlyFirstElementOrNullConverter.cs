@@ -1,8 +1,8 @@
-using Avalonia.Data.Converters;
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Linq;
+using Avalonia.Data.Converters;
 
 namespace SecureFolderFS.AvaloniaUI.ValueConverters
 {

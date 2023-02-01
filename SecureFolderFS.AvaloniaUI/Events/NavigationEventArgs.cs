@@ -1,5 +1,4 @@
 using System;
-using FluentAvalonia.UI.Media.Animation;
 using FluentAvalonia.UI.Navigation;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 
