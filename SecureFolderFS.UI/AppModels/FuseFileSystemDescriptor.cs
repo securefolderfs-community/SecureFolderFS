@@ -24,7 +24,7 @@ namespace SecureFolderFS.UI.AppModels
                 {
                     FileSystemAvailabilityType.ModuleNotAvailable or
                     FileSystemAvailabilityType.CoreNotAvailable => "libfuse3 has not been detected. Please install libfuse3 to continue using SecureFolderFS.",
-                    _ => "SecureFolderFS cannot work with installed libfuse version. Please install requested version of libfuse (3)."
+                    _ => "SecureFolderFS cannot work with the installed libfuse version. Please install libfuse3."
                 };
 
                 return Task.FromResult<IResult>(new CommonResult(new NotSupportedException(message)));

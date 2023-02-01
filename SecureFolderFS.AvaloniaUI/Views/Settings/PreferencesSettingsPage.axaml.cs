@@ -81,25 +81,8 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 
             var newFileSystemInfoBar = FileSystemInfoBar;
             var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
-            if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
-            {
-                newFileSystemInfoBar = new WebDavInfoBar();
-                newFileSystemInfoBar.IsOpen = true;
-                newFileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
-                newFileSystemInfoBar.CanBeClosed = false;
-            }
-            else if (fileSystemAdapter.Id == Core.Constants.FileSystemId.FUSE_ID)
-            {
-                newFileSystemInfoBar = new FuseInfoBar();
-                newFileSystemInfoBar.IsOpen = true;
-                newFileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
-                newFileSystemInfoBar.CanBeClosed = false;
-            }
-            else if (fileSystemAdapterResult.Successful && newFileSystemInfoBar is not null)
-            {
-                newFileSystemInfoBar.IsOpen = false;
-            }
-            else if (!fileSystemAdapterResult.Successful)
+
+            if (!fileSystemAdapterResult.Successful)
             {
                 newFileSystemInfoBar = fileSystemAdapter.Id switch
                 {
@@ -115,6 +98,17 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 newFileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Error;
                 newFileSystemInfoBar.CanBeClosed = false;
                 newFileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
+            }
+            else if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
+            {
+                newFileSystemInfoBar = new WebDavInfoBar();
+                newFileSystemInfoBar.IsOpen = true;
+                newFileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
+                newFileSystemInfoBar.CanBeClosed = false;
+            }
+            else if (fileSystemAdapterResult.Successful && newFileSystemInfoBar is not null)
+            {
+                newFileSystemInfoBar.IsOpen = false;
             }
 
             var wasOpen = IsInfoBarOpen;
