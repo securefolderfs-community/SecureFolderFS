@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Threading.Tasks;
 using Avalonia;
@@ -8,8 +6,6 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.VisualTree;
-
-#endregion
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {

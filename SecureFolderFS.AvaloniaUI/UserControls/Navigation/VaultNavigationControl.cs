@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Collections.Generic;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
@@ -7,8 +5,6 @@ using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault;
-
-#endregion
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
