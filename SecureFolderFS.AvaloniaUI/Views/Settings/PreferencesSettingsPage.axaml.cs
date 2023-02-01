@@ -22,7 +22,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
     internal sealed partial class PreferencesSettingsPage : Page
     {
-        private bool _hasPlayedFileSystemInfoBarAnimation;
+        private bool _adapterStatusUpdated;
 
         public PreferencesSettingsPageViewModel ViewModel
         {
@@ -128,19 +128,23 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 
             if (isOpen)
             {
-                if (!_hasPlayedFileSystemInfoBarAnimation)
-                {
-                    _hasPlayedFileSystemInfoBarAnimation = true;
-                    await Task.Delay(50); // Wait until layout is loaded (TODO do it properly)
-                    ((TranslateTransform)FileSystemInfoBarContainer.RenderTransform!).Y = -FileSystemInfoBarContainer.Bounds.Height;
-                    ((TranslateTransform)OtherSettings.RenderTransform!).Y = -FileSystemInfoBarContainer.Bounds.Height;
+                // TODO fix bouncing
+                await Task.Delay(50); // Wait until layout is loaded (TODO do it properly)
+                ((TranslateTransform)FileSystemInfoBarContainer.RenderTransform!).Y = -FileSystemInfoBarContainer.Bounds.Height;
+                ((TranslateTransform)OtherSettings.RenderTransform!).Y = -FileSystemInfoBarContainer.Bounds.Height;
+
+                if (!_adapterStatusUpdated)
                     await Task.Delay(500);
-                }
 
                 await ShowFileSystemInfoBarStoryboard.RunAnimationsAsync();
             }
+            else
+            {
+                ((TranslateTransform)FileSystemInfoBarContainer.RenderTransform!).Y = 0;
+                ((TranslateTransform)OtherSettings.RenderTransform!).Y = 0;
+            }
 
-            _hasPlayedFileSystemInfoBarAnimation = true;
+            _adapterStatusUpdated = true;
         }
 
         private async Task<FileSystemAdapterItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
