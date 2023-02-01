@@ -42,8 +42,7 @@ namespace SecureFolderFS.Core.FUSE
             if (_fuseMount == null)
                 throw new InvalidOperationException("The filesystem has not been started.");
 
-            _ = closeMethod; // TODO: Implement close method
-            return _fuseMount.UnmountAsync();
+            return _fuseMount.UnmountAsync(force: closeMethod == FileSystemCloseMethod.CloseForcefully);
         }
     }
 }
