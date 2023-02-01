@@ -1,11 +1,15 @@
 ﻿using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +35,22 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         }
 
         /// <inheritdoc/>
+        public override async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (var item in Inner.GetItemsAsync(kind, cancellationToken))
+            {
+                if (PathHelpers.IsCoreFile(item.Name))
+                    continue;
+
+                if (item is IFile file)
+                    yield return NewFile(file);
+
+                if (item is IFolder folder)
+                    yield return NewFolder(folder);
+            }
+        }
+
+        /// <inheritdoc/>
         public override async Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
@@ -49,6 +69,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
             return NewFolder(folder);
         }
 
+        /// <inheritdoc/>
         public override Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             // TODO: When copying, directory ID should be updated as well

@@ -13,6 +13,7 @@ using NWebDav.Server.Props;
 using System.Xml.Linq;
 using NWebDav.Server;
 using NWebDav.Server.Stores;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 
@@ -182,11 +183,21 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             {
                 // Add all directories
                 foreach (var subDirectory in _directoryInfo.GetDirectories())
+                {
+                    if (PathHelpers.IsCoreFile(subDirectory.Name))
+                        continue;
+
                     yield return new EncryptingDiskStoreCollection(LockingManager, subDirectory, IsWritable, _streamsAccess, _pathConverter);
+                }
 
                 // Add all files
                 foreach (var file in _directoryInfo.GetFiles())
+                {
+                    if (PathHelpers.IsCoreFile(file.Name))
+                        continue;
+                    
                     yield return new EncryptingDiskStoreItem(LockingManager, file, IsWritable, _streamsAccess, _pathConverter);
+                }
             }
 
             return Task.FromResult(GetItemsInternal());
