@@ -10,13 +10,13 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <ContentControl
+    <ContentPresenter
         x:Name="ContentPresenter"
         x:FieldModifier="protected"
         Content="{Binding CurrentContent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
-        <ContentControl.RenderTransform>
+        <ContentPresenter.RenderTransform>
             <TranslateTransform />
-        </ContentControl.RenderTransform>
+        </ContentPresenter.RenderTransform>
 
         <anim:Storyboard.Storyboards>
             <anim:Storyboard x:Name="FadeOutContentStoryboard">
@@ -27,5 +27,5 @@
                     Mode="Out" />
             </anim:Storyboard>
         </anim:Storyboard.Storyboards>
-    </ContentControl>
+    </ContentPresenter>
 </UserControl>

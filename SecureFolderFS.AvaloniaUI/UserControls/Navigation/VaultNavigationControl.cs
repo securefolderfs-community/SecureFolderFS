@@ -47,7 +47,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 
         public void ClearContent()
         {
-            Content = null;
+            CurrentContent = null;
         }
     }
 }
