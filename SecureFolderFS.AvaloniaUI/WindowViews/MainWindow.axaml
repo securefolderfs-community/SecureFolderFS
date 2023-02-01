@@ -1,0 +1,14 @@
+<wnd:AppWindow xmlns="https://github.com/avaloniaui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot"
+               xmlns:wnd="using:FluentAvalonia.UI.Windowing"
+               Closing="Window_OnClosing"
+               mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+               x:Class="SecureFolderFS.AvaloniaUI.WindowViews.MainWindow"
+               Title="SecureFolderFS">
+
+    <!-- TODO Loaded event -->
+    <uc:MainWindowRootControl x:Name="HostControl" />
+</wnd:AppWindow>

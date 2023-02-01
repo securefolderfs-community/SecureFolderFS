@@ -24,6 +24,7 @@
         <Content Remove="Assets\AppAssets\Vault_light.svg" />
     </ItemGroup>
     <ItemGroup>
+        <None Remove="Dialogs\LicensesDialog.xaml" />
         <None Remove="Dialogs\SettingsDialog.xaml" />
         <None Remove="Dialogs\VaultWizardDialog.xaml" />
         <None Remove="ResourceDictionaries\ImageResources.xaml" />
@@ -55,24 +56,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="Assets\SplashScreen.scale-200.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Assets\LockScreenLogo.scale-200.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Assets\Square150x150Logo.scale-200.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Assets\Square44x44Logo.scale-200.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Assets\Wide310x150Logo.scale-200.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
         <None Update="Assets\AppAssets\AppTitle.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -85,6 +68,10 @@
         <None Update="Assets\AppAssets\Vault_light.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <Page Update="Dialogs\LicensesDialog.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+        </Page>
         <Page Update="ResourceDictionaries\ImageResources.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
@@ -131,6 +118,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
+        <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Page Update="Dialogs\SettingsDialog.xaml">
@@ -209,6 +197,60 @@
         <Page Update="Views\Vault\VaultOverviewPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Assets\LargeTile.scale-100.png" />
+      <EmbeddedResource Include="Assets\LargeTile.scale-125.png" />
+      <EmbeddedResource Include="Assets\LargeTile.scale-150.png" />
+      <EmbeddedResource Include="Assets\LargeTile.scale-200.png" />
+      <EmbeddedResource Include="Assets\LargeTile.scale-400.png" />
+      <EmbeddedResource Include="Assets\LockScreenLogo.scale-200.png" />
+      <EmbeddedResource Include="Assets\SmallTile.scale-100.png" />
+      <EmbeddedResource Include="Assets\SmallTile.scale-125.png" />
+      <EmbeddedResource Include="Assets\SmallTile.scale-150.png" />
+      <EmbeddedResource Include="Assets\SmallTile.scale-200.png" />
+      <EmbeddedResource Include="Assets\SmallTile.scale-400.png" />
+      <EmbeddedResource Include="Assets\SplashScreen.scale-100.png" />
+      <EmbeddedResource Include="Assets\SplashScreen.scale-125.png" />
+      <EmbeddedResource Include="Assets\SplashScreen.scale-150.png" />
+      <EmbeddedResource Include="Assets\SplashScreen.scale-200.png" />
+      <EmbeddedResource Include="Assets\SplashScreen.scale-400.png" />
+      <EmbeddedResource Include="Assets\Square150x150Logo.scale-100.png" />
+      <EmbeddedResource Include="Assets\Square150x150Logo.scale-125.png" />
+      <EmbeddedResource Include="Assets\Square150x150Logo.scale-150.png" />
+      <EmbeddedResource Include="Assets\Square150x150Logo.scale-200.png" />
+      <EmbeddedResource Include="Assets\Square150x150Logo.scale-400.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.scale-100.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.scale-125.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.scale-150.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.scale-200.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.scale-400.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-16.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-24.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-256.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-32.png" />
+      <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-48.png" />
+      <EmbeddedResource Include="Assets\StoreLogo.backup.png" />
+      <EmbeddedResource Include="Assets\StoreLogo.scale-100.png" />
+      <EmbeddedResource Include="Assets\StoreLogo.scale-125.png" />
+      <EmbeddedResource Include="Assets\StoreLogo.scale-150.png" />
+      <EmbeddedResource Include="Assets\StoreLogo.scale-200.png" />
+      <EmbeddedResource Include="Assets\StoreLogo.scale-400.png" />
+      <EmbeddedResource Include="Assets\Wide310x150Logo.scale-100.png" />
+      <EmbeddedResource Include="Assets\Wide310x150Logo.scale-125.png" />
+      <EmbeddedResource Include="Assets\Wide310x150Logo.scale-150.png" />
+      <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
+      <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
     </ItemGroup>
 
     <!-- TODO: Remove when WindowsAppSDK 1.2 is released https://docs.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps -->

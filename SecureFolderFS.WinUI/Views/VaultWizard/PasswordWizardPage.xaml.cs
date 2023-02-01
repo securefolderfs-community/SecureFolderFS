@@ -1,9 +1,9 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.UI.AppModels;
 using System.Linq;
 using System.Text;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
-using SecureFolderFS.WinUI.AppModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

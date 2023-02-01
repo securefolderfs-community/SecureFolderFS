@@ -1,0 +1,89 @@
+<ui:ContentDialog
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    HorizontalAlignment="Stretch"
+    HorizontalContentAlignment="Stretch"
+    Closing="VaultWizardDialog_OnClosing"
+    DefaultButton="Primary"
+    PrimaryButtonText="Continue"
+    IsPrimaryButtonEnabled="{Binding ViewModel.PrimaryButtonEnabled, RelativeSource={RelativeSource Self}}"
+    Loaded="VaultWizardDialog_OnLoaded"
+    PrimaryButtonClick="VaultWizardDialog_OnPrimaryButtonClick"
+    SecondaryButtonClick="VaultWizardDialog_OnSecondaryButtonClick"
+    SecondaryButtonText="Cancel"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.VaultWizardDialog">
+
+    <ui:ContentDialog.Title>
+        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+            <anim:Storyboard.Storyboards>
+                <anim:Storyboard x:Name="HideBackButtonStoryboard">
+                    <trans:FadeTransition
+                        Target="GoBack"
+                        Duration="0:0:0.2"
+                        Mode="Out"
+                        UpdateVisibility="True" />
+                    <trans:TranslateTransition
+                        Target="TitleText"
+                        From="0,0"
+                        To="-48,0"
+                        Duration="0:0:0.2"
+                        FillMode="None">
+                        <trans:TranslateTransition.Easing>
+                            <CircularEaseInOut />
+                        </trans:TranslateTransition.Easing>
+                    </trans:TranslateTransition>
+                </anim:Storyboard>
+                <anim:Storyboard x:Name="ShowBackButtonStoryboard">
+                    <trans:FadeTransition
+                        Target="GoBack"
+                        Duration="0:0:0.2"
+                        Mode="In"
+                        UpdateVisibility="True" />
+                    <trans:TranslateTransition
+                        Target="TitleText"
+                        From="-48,0"
+                        To="0,0"
+                        Duration="0:0:0.2"
+                        FillMode="None">
+                        <trans:TranslateTransition.Easing>
+                            <CircularEaseInOut />
+                        </trans:TranslateTransition.Easing>
+                    </trans:TranslateTransition>
+                </anim:Storyboard>
+            </anim:Storyboard.Storyboards>
+
+            <Button
+                x:Name="GoBack"
+                Width="32"
+                Height="32"
+                Margin="0,0,16,0"
+                Padding="8"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{Binding ViewModel.GoBackCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}">
+
+                <!-- TODO animated icon -->
+                <ic:FluentIcon Icon="ArrowLeft48Regular" />
+            </Button>
+
+            <TextBlock
+                x:Name="TitleText"
+                FontSize="22"
+                FontWeight="SemiBold">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform />
+                </TextBlock.RenderTransform>
+            </TextBlock>
+        </StackPanel>
+    </ui:ContentDialog.Title>
+
+    <uc:VaultWizardNavigationControl x:Name="Navigation" />
+</ui:ContentDialog>

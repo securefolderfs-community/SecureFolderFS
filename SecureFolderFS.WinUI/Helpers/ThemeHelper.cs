@@ -4,6 +4,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using SecureFolderFS.UI;
 using System;
 using Windows.Storage;
 using Windows.UI;

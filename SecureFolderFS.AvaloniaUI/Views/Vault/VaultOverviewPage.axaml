@@ -1,0 +1,84 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:ucw="using:SecureFolderFS.AvaloniaUI.UserControls.Widgets"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultOverviewPage">
+
+    <uc:Page.Resources>
+        <!--  Vault Health  -->
+        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:VaultHealthWidgetViewModel">
+            <uc:VaultHealthControl
+                OpenVaultHealthCommand="{Binding OpenVaultHealthCommand}"
+                StartScanningCommand="{Binding StartScanningCommand}"
+                VaultHealthLastCheckedDate="{Binding VaultHealthLastCheckedDate}"
+                VaultHealthState="{Binding VaultHealthState}" />
+        </DataTemplate>
+
+        <!--  Resource Graphs  -->
+        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
+            <ucw:GraphsWidget
+                ReadGraphIsExtended="False"
+                ReadGraphSubheader="{Binding ReadGraphViewModel.GraphSubheader}"
+                ReadGraphData="{Binding ReadGraphViewModel.Data}"
+                WriteGraphIsExtended="False"
+                WriteGraphSubheader="{Binding WriteGraphViewModel.GraphSubheader}"
+                WriteGraphData="{Binding WriteGraphViewModel.Data}"/>
+        </DataTemplate>
+    </uc:Page.Resources>
+
+    <uc:Page.Styles>
+        <Style Selector="ListBox > ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+        </Style>
+    </uc:Page.Styles>
+
+    <!--  Margins are to align the scrollbar to prevent overlap with content  -->
+    <ScrollViewer Margin="-12,0,-12,0">
+        <StackPanel Margin="12,0,12,0" Spacing="8">
+            <!--  Widgets  -->
+            <ItemsControl Items="{Binding ViewModel.WidgetsViewModel.Widgets, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                <ItemsControl.DataTemplates>
+                    <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
+
+            <!--  Vault options  -->
+            <StackPanel Spacing="4">
+                <!--  Open in File Explorer  -->
+                <ui:SettingsExpander
+                    Header="View vault"
+                    Command="{Binding ViewModel.VaultControlsViewModel.ShowInFileExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Description="Show this vault in File Explorer"
+                    IsClickEnabled="True"
+                    IconSource="{ic:FluentIconSource FolderOpen24Regular}"
+                    ActionIconSource="{ic:FluentIconSource Open48Regular}" />
+
+                <!--  Vault properties  -->
+                <ui:SettingsExpander
+                    Header="Vault properties"
+                    Command="{Binding ViewModel.VaultControlsViewModel.OpenPropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Description="View information about this vault"
+                    IsClickEnabled="True"
+                    IconSource="{ic:FluentIconSource Info28Regular}"
+                    ActionIconSource="{ic:FluentIconSource ChevronRight48Regular}" />
+
+                <!--  Lock vault  -->
+                <ui:SettingsExpander
+                    Header="Lock vault"
+                    Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Description="Securely lock this vault and close the dashboard"
+                    IsClickEnabled="True"
+                    IconSource="{ic:FluentIconSource LockClosed32Regular}"
+                    ActionIconSource="{ic:FluentIconSource Power28Regular}"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</uc:Page>

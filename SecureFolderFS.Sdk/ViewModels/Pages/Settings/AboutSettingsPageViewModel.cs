@@ -5,12 +5,15 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
 {
     public sealed partial class AboutSettingsPageViewModel : ObservableObject
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
+
+        private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
 
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
@@ -52,6 +55,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
         private Task OpenLogLocationAsync()
         {
             return FileExplorerService.OpenAppFolderAsync();
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private Task OpenLicensesDialogAsync()
+        {
+            return DialogService.ShowDialogAsync(new LicensesDialogViewModel());
         }
     }
 }

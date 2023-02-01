@@ -1,0 +1,20 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="using:FluentAvalonia.UI.Controls">
+
+    <!-- Fix pane title being cut off at the bottom -->
+    <Style Selector="ui|NavigationView /template/ TextBlock#PaneTitleTextBlock">
+        <Setter Property="Height" Value="19" />
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <!-- Remove white shadow making disabled SettingsExpander look bigger  -->
+    <Style Selector="ui|SettingsExpander:disabled ui|FABorder">
+        <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}"/>
+    </Style>
+
+    <!-- Fix icons being offset to the left -->
+    <Style Selector="ui|SettingsExpanderItem Viewbox#IconHost">
+        <Setter Property="Margin" Value="6,0,0,0"></Setter>
+    </Style>
+</Styles>

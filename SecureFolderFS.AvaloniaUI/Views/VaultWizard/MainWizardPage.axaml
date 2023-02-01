@@ -1,0 +1,27 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    Width="464"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.VaultWizard.MainWizardPage">
+
+    <StackPanel HorizontalAlignment="Stretch" Spacing="8">
+        <ui:SettingsExpander
+            Header="Add existing vault"
+            Command="{Binding ViewModel.AddExistingVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+            Description="Select an existing vault from your device"
+            IsClickEnabled="True"
+            IconSource="{ic:FluentIconSource FolderOpen24Regular}" />
+        <ui:SettingsExpander
+            Header="Create new vault"
+            Command="{Binding ViewModel.CreateNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+            Description="Create new SecureFolderFS vault"
+            IsClickEnabled="True"
+            IconSource="{ic:FluentIconSource Add28Regular}" />
+    </StackPanel>
+</uc:Page>

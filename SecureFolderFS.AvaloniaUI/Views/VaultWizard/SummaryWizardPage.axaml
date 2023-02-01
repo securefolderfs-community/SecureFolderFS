@@ -1,0 +1,37 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    Width="464"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.VaultWizard.SummaryWizardPage">
+
+    <Grid RowDefinitions="*,32,*">
+        <StackPanel
+            HorizontalAlignment="Center"
+            Orientation="Vertical"
+            Spacing="8">
+            <Grid Width="32" Height="32">
+                <Ellipse Fill="LimeGreen" />
+                <ic:FluentIcon
+                    Icon="Checkmark48Regular"
+                    Width="16"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+                <!-- TODO Animation  -->
+            </Grid>
+            <TextBlock FontSize="20" Text="Vault has been added" />
+        </StackPanel>
+
+        <TextBlock
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            Opacity="0.8"
+            Text="{Binding ViewModel.VaultName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+            TextTrimming="CharacterEllipsis"
+            ToolTip.Tip="{Binding ViewModel.VaultName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"/>
+    </Grid>
+</uc:Page>

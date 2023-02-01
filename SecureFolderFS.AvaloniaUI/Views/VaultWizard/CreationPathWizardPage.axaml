@@ -1,0 +1,34 @@
+<uc:Page
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    Width="464"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="SecureFolderFS.AvaloniaUI.Views.VaultWizard.CreationPathWizardPage">
+
+    <Border Padding="0,16,0,8">
+        <Grid
+            HorizontalAlignment="Center"
+            RowDefinitions="Auto,16,*">
+
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="18"
+                Text="Select vault path" />
+
+            <StackPanel Grid.Row="2" Spacing="8">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="{Binding ViewModel.VaultName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}" />
+
+                <Button
+                    HorizontalAlignment="Center"
+                    Command="{Binding ViewModel.BrowseLocationCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    Content="Browse" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</uc:Page>

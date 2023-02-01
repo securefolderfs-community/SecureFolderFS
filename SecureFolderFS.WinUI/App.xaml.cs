@@ -1,16 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.WinUI.AppModels;
-using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.UI;
+using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.UI.ServiceImplementation;
+using SecureFolderFS.UI.ServiceImplementation.UserPreferences;
+using SecureFolderFS.UI.Storage.NativeStorage;
 using SecureFolderFS.WinUI.ServiceImplementation;
-using SecureFolderFS.WinUI.ServiceImplementation.UserPreferences;
-using SecureFolderFS.WinUI.Storage.NativeStorage;
 using SecureFolderFS.WinUI.WindowViews;
 using System;
 using System.Diagnostics;
@@ -126,7 +128,7 @@ namespace SecureFolderFS.WinUI
             Debugger.Break(); // Please check "Output Window" for exception details (On Visual Studio, View -> Output Window or Ctr+Alt+O)
 
 #if !DEBUG
-            ExceptionHelpers.LogExceptionToFile(formattedException);
+            ExceptionHelpers.LogExceptionToFile(ApplicationData.Current.LocalFolder.Path, formattedException);
 #endif
         }
 

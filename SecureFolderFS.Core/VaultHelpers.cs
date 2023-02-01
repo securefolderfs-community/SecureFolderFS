@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.IO;
+using SecureFolderFS.Core.FUSE;
 
 namespace SecureFolderFS.Core
 {
@@ -43,6 +44,7 @@ namespace SecureFolderFS.Core
             return adapterType switch
             {
                 FileSystemAdapterType.DokanAdapter => CheckAvailability<DokanyMountable>(),
+                FileSystemAdapterType.FuseAdapter => CheckAvailability<FuseMountable>(),
                 FileSystemAdapterType.WebDavAdapter => CheckAvailability<WebDavMountable>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(adapterType))
             };
