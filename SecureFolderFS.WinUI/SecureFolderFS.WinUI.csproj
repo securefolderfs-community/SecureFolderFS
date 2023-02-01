@@ -18,12 +18,10 @@
     <!-- Added manually, prevent from removing framework package references -->
     <Target Name="_RemoveFrameworkReferences" />
     <ItemGroup>
-        <Content Remove="Assets\AppAssets\AppTitle.svg" />
-        <Content Remove="Assets\AppAssets\GreenShield.svg" />
-        <Content Remove="Assets\AppAssets\Vault_dark.svg" />
-        <Content Remove="Assets\AppAssets\Vault_light.svg" />
-    </ItemGroup>
-    <ItemGroup>
+        <None Remove="Assets\AppAssets\AppTitle.svg" />
+        <None Remove="Assets\AppAssets\GreenShield.svg" />
+        <None Remove="Assets\AppAssets\Vault_dark.svg" />
+        <None Remove="Assets\AppAssets\Vault_light.svg" />
         <None Remove="Dialogs\LicensesDialog.xaml" />
         <None Remove="Dialogs\SettingsDialog.xaml" />
         <None Remove="Dialogs\VaultWizardDialog.xaml" />
@@ -199,6 +197,10 @@
         </Page>
     </ItemGroup>
     <ItemGroup>
+      <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg" />
+      <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg" />
+      <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg" />
+      <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg" />
       <EmbeddedResource Include="Assets\LargeTile.scale-100.png" />
       <EmbeddedResource Include="Assets\LargeTile.scale-125.png" />
       <EmbeddedResource Include="Assets\LargeTile.scale-150.png" />

@@ -14,7 +14,8 @@
 
     <ui:ContentDialog.Resources>
         <ResourceDictionary>
-            <x:Double x:Key="ContentDialogMinWidth">900</x:Double>
+            <x:Double x:Key="ContentDialogMinWidth">800</x:Double>
+            <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
             <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
             <vc:OnlyFirstElementOrNullConverter x:Key="OnlyFirstElementOrNullConverter" />
         </ResourceDictionary>
