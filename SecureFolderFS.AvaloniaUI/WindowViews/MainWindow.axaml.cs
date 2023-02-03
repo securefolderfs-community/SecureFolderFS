@@ -1,6 +1,9 @@
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.UI.Windowing;
 using SecureFolderFS.AvaloniaUI.Services;
@@ -16,14 +19,29 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
 
         public MainWindow()
         {
+            Instance = this;
             InitializeComponent();
 
-            Instance = this;
+            EnsureEarlyWindow();
         }
 
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        private void EnsureEarlyWindow()
+        {
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, build: 22000))
+                return;
+
+            // Extend title bar
+            TitleBar.ExtendsContentIntoTitleBar = true;
+
+            TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+
+            IsCustomTitleBarVisible = true;
         }
 
         private async void Window_OnClosing(object? sender, CancelEventArgs e)
@@ -37,6 +55,15 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
                 applicationSettingsService.SaveSettingsAsync(),
                 platformSettingsService.SaveSettingsAsync()
             );
+        }
+
+        public static readonly StyledProperty<bool> IsCustomTitleBarVisibleProperty =
+            AvaloniaProperty.Register<MainWindow, bool>(nameof(IsCustomTitleBarVisible));
+
+        public bool IsCustomTitleBarVisible
+        {
+            get => GetValue(IsCustomTitleBarVisibleProperty);
+            set => SetValue(IsCustomTitleBarVisibleProperty, value);
         }
     }
 }
