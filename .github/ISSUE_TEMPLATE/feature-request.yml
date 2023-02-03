@@ -13,7 +13,7 @@ body:
         Make sure that all fields are filled out and do not miss any information that might be essential with the progress of your request.
   - type: textarea
     attributes:
-      label: Describe the feature and how would it impact the app
+      label: Describe the feature and how it would impact the app
       description: Try to be precise about the feature or an enhancement. Attach additional screenshots if necessary
     validations:
       required: true
