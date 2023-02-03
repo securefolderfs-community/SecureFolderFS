@@ -73,24 +73,25 @@
                         <RotateTransform />
                     </ic:FluentIcon.RenderTransform>
 
-                    <anim:Storyboard.Storyboards>
-                        <anim:Storyboard x:Name="SpinSettingsIconStoryboard">
+					<anim:Storyboard.Storyboards>
+                        <anim:Storyboard x:Name="SpinSettingsIconPointerPressedStoryboard">
+                            <trans:RotateTransition
+                                Duration="0:0:0.1"
+                                To="-20"
+                                Target="SettingsButtonIcon" />
+                        </anim:Storyboard>
+                        <anim:Storyboard x:Name="SpinSettingsIconPointerReleasedStoryboard">
                             <trans:RotateTransition
                                 Duration="0:0:1"
+                                From="-20"
                                 To="360"
                                 Target="SettingsButtonIcon">
                                 <trans:RotateTransition.Easing>
-                                    <BackEaseInOut />
+                                    <QuarticEaseOut />
                                 </trans:RotateTransition.Easing>
                             </trans:RotateTransition>
                         </anim:Storyboard>
                     </anim:Storyboard.Storyboards>
-
-                    <Interaction.Behaviors>
-                        <EventTriggerBehavior SourceObject="SettingsButton" EventName="Click">
-                            <CallMethodAction TargetObject="SpinSettingsIconStoryboard" MethodName="RunAnimations" />
-                        </EventTriggerBehavior>
-                    </Interaction.Behaviors>
                 </ic:FluentIcon>
             </Button.Content>
         </Button>
