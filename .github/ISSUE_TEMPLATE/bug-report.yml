@@ -24,14 +24,6 @@ body:
     attributes:
       label: App Version
       description: |
-        Please provide the version of SecureFolderFS that the issue occurred on.
-        (You can copy the version number by going to Settings > About > Version)
-    validations:
-      required: true
-  - type: input
-    attributes:
-      label: App Version
-      decription: |
         Please provide SecureFolderFS version that the issue occurred on.
         (You can copy the version number by going to Settings > About > Version)
     validations:
