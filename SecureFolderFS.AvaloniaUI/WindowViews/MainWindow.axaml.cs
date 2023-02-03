@@ -15,6 +15,8 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
 {
     public sealed partial class MainWindow : AppWindow
     {
+        private bool _hasBackgroundChangedAfterThemeChange = true;
+
 #nullable disable
         public static MainWindow Instance { get; private set; }
 #nullable enable
@@ -25,6 +27,14 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             InitializeComponent();
 
             EnsureEarlyWindow();
+        }
+
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+        {
+            if (change.Property == BackgroundProperty)
+                _hasBackgroundChangedAfterThemeChange = true;
+
+            base.OnPropertyChanged(change);
         }
 
         private void InitializeComponent()
@@ -68,11 +78,16 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
 
         private void PrepareBackgroundForMica()
         {
-            var background = (SolidColorBrush)Background;
-            background.Opacity = 0.8d;
+            if (_hasBackgroundChangedAfterThemeChange)
+            {
+                _hasBackgroundChangedAfterThemeChange = false;
 
-            // Darken background to make up for the lesser opacity
-            background.Color = Color.FromArgb(background.Color.A, (byte)(background.Color.R - 4), (byte)(background.Color.G - 4), (byte)(background.Color.B - 4));
+                var background = (SolidColorBrush)Background;
+                background.Opacity = 0.8d;
+
+                // Darken background to make up for the lesser opacity
+                background.Color = Color.FromArgb(background.Color.A, (byte)(background.Color.R - 4), (byte)(background.Color.G - 4), (byte)(background.Color.B - 4));
+            }
         }
 
         private async void Window_OnClosing(object? sender, CancelEventArgs e)
