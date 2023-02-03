@@ -35,12 +35,27 @@
 
         <ui:NavigationView.AutoCompleteBox>
             <!-- TODO Search icon -->
-            <AutoCompleteBox
-                Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                Watermark="Search"
-                SelectionChanged="AutoCompleteBox_OnSelectionChanged"
-                TextChanged="AutoCompleteBox_OnTextChanged"
-                Width="230"/>
+            <AutoCompleteBox>
+                <AutoCompleteBox.Template>
+                    <ControlTemplate>
+                        <Panel>
+                            <AutoCompleteBox
+                                Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                Watermark="Search"
+                                SelectionChanged="AutoCompleteBox_OnSelectionChanged"
+                                TextChanged="AutoCompleteBox_OnTextChanged"
+                                Width="230" />
+
+                            <ic:FluentIcon
+                                Margin="0,0,15,0"
+                                Icon="Search48Regular"
+                                HorizontalAlignment="Right"
+                                IsEnabled="False"
+                                Width="12" />
+                        </Panel>
+                    </ControlTemplate>
+                </AutoCompleteBox.Template>
+            </AutoCompleteBox>
         </ui:NavigationView.AutoCompleteBox>
 
         <ui:NavigationView.PaneFooter>
