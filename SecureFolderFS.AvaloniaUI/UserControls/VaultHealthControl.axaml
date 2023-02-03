@@ -65,6 +65,7 @@
             Orientation="Horizontal"
             Spacing="4">
             <Button
+                Height="33"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
