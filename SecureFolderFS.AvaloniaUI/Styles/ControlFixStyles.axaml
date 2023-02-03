@@ -5,7 +5,7 @@
     <!-- Fix pane title being cut off at the bottom -->
     <Style Selector="ui|NavigationView /template/ TextBlock#PaneTitleTextBlock">
         <Setter Property="Height" Value="19" />
-        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontSize" Value="14" />
     </Style>
 
     <!-- Remove white shadow making disabled SettingsExpander look bigger  -->
