@@ -15,8 +15,8 @@ body:
     attributes:
       label: Describe the feature and how would it impact the app
       description: Try to be precise about the feature or an enhancement. Attach additional screenshots if necessary
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Requirements
@@ -26,8 +26,8 @@ body:
         - This proposal will add/enhance X
         - This proposal will not modify Z
         - This proposal will replace Y
-      validations:
-        required: true
+    validations:
+      required: true
   - type: input
     attributes:
       label: App Version
