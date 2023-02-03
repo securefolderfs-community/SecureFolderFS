@@ -9,7 +9,7 @@
 
     <Button
         Height="232"
-        Padding="12,12,12,22"
+        Padding="12,12,12,0"
         HorizontalAlignment="Stretch"
         HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"

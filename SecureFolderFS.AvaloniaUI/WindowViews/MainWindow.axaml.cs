@@ -37,7 +37,6 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             if (!OperatingSystem.IsWindowsVersionAtLeast(10, build: 22000))
                 return;
 
-
             // Extend title bar
             TitleBar.ExtendsContentIntoTitleBar = true;
 
