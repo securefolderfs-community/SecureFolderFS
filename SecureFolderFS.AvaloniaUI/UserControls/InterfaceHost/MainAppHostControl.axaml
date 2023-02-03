@@ -114,7 +114,7 @@
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar}">
 
-                        <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings32Regular" Width="16">
+                        <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings48Regular" Width="18">
                             <ic:FluentIcon.RenderTransform>
                                 <RotateTransform />
                             </ic:FluentIcon.RenderTransform>
