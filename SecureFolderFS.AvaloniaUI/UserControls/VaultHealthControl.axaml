@@ -40,8 +40,8 @@
         <!--  Icon  -->
         <Grid Margin="-8,0,0,0">
             <Image
-                Width="64"
-                Height="64"
+                Width="60"
+                Height="60"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Source="{svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.GreenShield.svg?assembly=SecureFolderFS.UI'}"
