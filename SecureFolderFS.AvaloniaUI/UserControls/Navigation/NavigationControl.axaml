@@ -15,7 +15,10 @@
         x:FieldModifier="protected"
         Content="{Binding CurrentContent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
         <ContentPresenter.RenderTransform>
-            <TranslateTransform />
+            <TransformGroup>
+                <TranslateTransform />
+                <ScaleTransform />
+            </TransformGroup>
         </ContentPresenter.RenderTransform>
 
         <anim:Storyboard.Storyboards>

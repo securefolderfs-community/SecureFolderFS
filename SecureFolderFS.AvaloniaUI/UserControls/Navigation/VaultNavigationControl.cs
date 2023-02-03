@@ -23,9 +23,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             if (viewModel is not BaseVaultPageViewModel pageViewModel)
                 throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");
 
-            // TODO Dashboard closing animation
-            // if (pageViewModel is VaultLoginPageViewModel && (NavigationCache.TryGetValue(pageViewModel.VaultViewModel, out var existing)) && existing is VaultDashboardPageViewModel)
-            //    transitionInfo ??= new ContinuumNavigationTransitionInfo();
+            if (pageViewModel is VaultLoginPageViewModel && (NavigationCache.TryGetValue(pageViewModel.VaultViewModel, out var existing)) && existing is VaultDashboardPageViewModel)
+                transition ??= new PopUpNavigationTransition();
 
             // Standard animation
             transition ??= new EntranceNavigationTransition();
