@@ -37,11 +37,15 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             if (!OperatingSystem.IsWindowsVersionAtLeast(10, build: 22000))
                 return;
 
+
             // Extend title bar
             TitleBar.ExtendsContentIntoTitleBar = true;
 
+            // Set window buttons background to transparent
             TitleBar.ButtonBackgroundColor = Colors.Transparent;
             TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+
+            TitleBar.ButtonInactiveForegroundColor = Colors.DimGray;
 
             IsCustomTitleBarVisible = true;
 
@@ -65,7 +69,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
 
         private void PrepareBackgroundForMica()
         {
-            var background = ((SolidColorBrush)Background);
+            var background = (SolidColorBrush)Background;
             background.Opacity = 0.8d;
 
             // Darken background to make up for the lesser opacity
