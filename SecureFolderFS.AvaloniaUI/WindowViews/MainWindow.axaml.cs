@@ -45,6 +45,12 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
 
             IsCustomTitleBarVisible = true;
 
+            FontFamily = FontFamily.Parse("Segoe UI Variable");
+            Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                { "ContentControlThemeFontFamily", FontFamily }
+            });
+
             // Use Mica
             TransparencyLevelHint = WindowTransparencyLevel.Mica;
             PrepareBackgroundForMica();

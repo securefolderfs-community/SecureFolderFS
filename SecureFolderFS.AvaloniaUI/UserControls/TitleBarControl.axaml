@@ -18,12 +18,12 @@
             Spacing="6">
             <TextBlock
                 VerticalAlignment="Center"
-                FontSize="13"
+                FontSize="12"
                 Text="SecureFolderFS" />
             <TextBlock
                 Margin="0,0,0,2"
                 VerticalAlignment="Bottom"
-                FontSize="10"
+                FontSize="9"
                 FontWeight="Thin"
                 Opacity="0.8"
                 Text="BETA" />
