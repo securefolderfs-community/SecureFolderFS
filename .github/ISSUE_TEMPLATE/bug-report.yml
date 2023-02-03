@@ -26,9 +26,8 @@ body:
   - type: textarea
     attributes:
       label: Evidence
-      description: |
-        If applicable, add screenshots or videos to help explain your problem.
-        (You can upload files by dragging them onto the text field)
+      description: If applicable, add screenshots or videos to help explain your problem.
+      placeholder: (You can upload files by dragging them onto the text field)
   - type: input
     attributes:
       label: App Version
@@ -50,3 +49,4 @@ body:
       description: |
         If applicable, add a log file containing additional information. Do not copy contents of the file -- this field is for attaching the file only!
         (The log file can be found by going to Settings > About > Open log location)
+      placeholder: (You can upload files by dragging them onto the text field)
