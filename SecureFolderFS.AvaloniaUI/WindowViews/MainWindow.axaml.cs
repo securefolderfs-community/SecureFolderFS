@@ -45,6 +45,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
 
             IsCustomTitleBarVisible = true;
 
+            // Set font
             FontFamily = FontFamily.Parse("Segoe UI Variable");
             Resources.MergedDictionaries.Add(new ResourceDictionary
             {
@@ -68,7 +69,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             background.Opacity = 0.8d;
 
             // Darken background to make up for the lesser opacity
-            background.Color = Color.FromArgb(background.Color.A, (byte)(background.Color.R - 10), (byte)(background.Color.G - 10), (byte)(background.Color.B - 10));
+            background.Color = Color.FromArgb(background.Color.A, (byte)(background.Color.R - 4), (byte)(background.Color.G - 4), (byte)(background.Color.B - 4));
         }
 
         private async void Window_OnClosing(object? sender, CancelEventArgs e)
