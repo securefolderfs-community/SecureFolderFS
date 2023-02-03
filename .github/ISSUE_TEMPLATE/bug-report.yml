@@ -2,6 +2,15 @@ name: Bug Report
 description: Create a bug report to help improve SecureFolderFS
 labels: [bug]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Please read before you begin!
+        > **Warning**
+        > Ignoring these instructions may result in your request being closed
+        
+        We highly value well-written and concise feedback as it simplifies the review process of your proposal.
+        Make sure that all fields are filled out and do not miss any information that might be essential with the progress of your request.
   - type: textarea
     attributes:
       label: Description
