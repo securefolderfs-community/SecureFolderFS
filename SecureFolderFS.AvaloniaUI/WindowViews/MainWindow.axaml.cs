@@ -2,10 +2,12 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.UI.Windowing;
+using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 
@@ -32,7 +34,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
 
         private void EnsureEarlyWindow()
         {
-            if (OperatingSystem.IsWindowsVersionAtLeast(10, build: 22000))
+            if (!OperatingSystem.IsWindowsVersionAtLeast(10, build: 22000))
                 return;
 
             // Extend title bar
@@ -42,6 +44,25 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
             IsCustomTitleBarVisible = true;
+
+            // Use Mica
+            TransparencyLevelHint = WindowTransparencyLevel.Mica;
+            PrepareBackgroundForMica();
+            ThemeHelper.Instance.OnThemeChangedEvent += OnApplicationThemeChanged;
+        }
+
+        private void OnApplicationThemeChanged(object? sender, EventArgs e)
+        {
+            PrepareBackgroundForMica();
+        }
+
+        private void PrepareBackgroundForMica()
+        {
+            var background = ((SolidColorBrush)Background);
+            background.Opacity = 0.8d;
+
+            // Darken background to make up for the lesser opacity
+            background.Color = Color.FromArgb(background.Color.A, (byte)(background.Color.R - 10), (byte)(background.Color.G - 10), (byte)(background.Color.B - 10));
         }
 
         private async void Window_OnClosing(object? sender, CancelEventArgs e)
