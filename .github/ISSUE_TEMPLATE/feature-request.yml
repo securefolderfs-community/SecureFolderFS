@@ -22,10 +22,9 @@ body:
       label: Requirements
       description: Provide a scope of the feature and additional considerations
       placeholder: |
-        examples:
         - This proposal will add/enhance X
-        - This proposal will not modify Z
         - This proposal will replace Y
+        - This proposal will not modify Z
     validations:
       required: true
   - type: input
