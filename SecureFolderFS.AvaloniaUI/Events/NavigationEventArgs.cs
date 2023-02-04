@@ -1,6 +1,5 @@
 using System;
 using FluentAvalonia.UI.Navigation;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 
 namespace SecureFolderFS.AvaloniaUI.Events

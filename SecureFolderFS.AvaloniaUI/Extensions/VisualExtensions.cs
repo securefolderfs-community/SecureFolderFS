@@ -1,7 +1,7 @@
-﻿using Avalonia.Media;
-using Avalonia.VisualTree;
-using System;
+﻿using System;
 using System.Linq;
+using Avalonia.Media;
+using Avalonia.VisualTree;
 
 namespace SecureFolderFS.AvaloniaUI.Extensions
 {

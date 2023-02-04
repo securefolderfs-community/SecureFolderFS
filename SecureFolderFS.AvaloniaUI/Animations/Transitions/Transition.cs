@@ -1,12 +1,9 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
-using Avalonia.Media;
-using Avalonia.VisualTree;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {
