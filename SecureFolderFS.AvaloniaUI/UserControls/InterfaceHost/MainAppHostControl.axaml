@@ -34,7 +34,6 @@
         <uc2:VaultNavigationControl x:Name="Navigation" />
 
         <ui:NavigationView.AutoCompleteBox>
-            <!-- TODO Search icon -->
             <AutoCompleteBox>
                 <AutoCompleteBox.Template>
                     <ControlTemplate>
