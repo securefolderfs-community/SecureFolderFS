@@ -5,10 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:SecureFolderFS.WinUI.Helpers"
     xmlns:local="using:SecureFolderFS.WinUI.Dialogs"
-    xmlns:m="using:SecureFolderFS.Sdk.AppModels"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     RequestedTheme="{x:Bind h:ThemeHelper.Instance.CurrentTheme, Mode=OneWay}"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
@@ -58,7 +58,7 @@
         <ScrollViewer Grid.Row="1">
             <ItemsControl ItemsSource="{x:Bind ViewModel.Licenses}" Loaded="Licenses_OnLoaded">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="m:LicenseModel">
+                    <DataTemplate x:DataType="vm:LicenseViewModel">
                         <ucab:ActionBlockControl Title="{x:Bind PackageName}" Description="{x:Bind LicenseName}">
                             <ucab:ActionBlockControl.ActionElement>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -83,7 +83,5 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-
     </Grid>
-
 </ContentDialog>

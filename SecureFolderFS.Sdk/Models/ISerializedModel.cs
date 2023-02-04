@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a model that holds serialized data.
     /// </summary>
-    public interface ISerializedData
+    public interface ISerializedModel
     {
         /// <summary>
         /// Retrieves requested <typeparamref name="T"/> of the serialized data.

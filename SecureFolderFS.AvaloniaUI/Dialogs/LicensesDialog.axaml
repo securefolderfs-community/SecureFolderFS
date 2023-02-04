@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
-    xmlns:m="using:SecureFolderFS.Sdk.AppModels"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
@@ -57,7 +57,7 @@
         <ScrollViewer Grid.Row="1">
             <ItemsControl Items="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}" Loaded="Control_OnLoaded">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type m:LicenseModel}">
+                    <DataTemplate DataType="{x:Type vm:LicenseViewModel}">
                         <ui:SettingsExpander
                             DataContext="{Binding .}"
                             Description="{Binding LicenseName}"

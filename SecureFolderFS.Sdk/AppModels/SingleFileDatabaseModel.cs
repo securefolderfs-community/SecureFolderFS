@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="BaseDictionaryDatabaseModel{TDictionaryValue}"/>
-    public sealed class SingleFileDatabaseModel : BaseDictionaryDatabaseModel<ISerializedData>
+    public sealed class SingleFileDatabaseModel : BaseDictionaryDatabaseModel<ISerializedModel>
     {
         private readonly IFile _databaseFile;
 
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     if (item.Key is not string key)
                         continue;
 
-                    if (item.Value is ISerializedData serializedData)
+                    if (item.Value is ISerializedModel serializedData)
                     {
                         settingsCache[key] = serializedData;
                     }
@@ -95,7 +95,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (dataStream is null)
                     return false;
 
-                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, ISerializedData>>(settingsCache, cancellationToken);
+                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, ISerializedModel>>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
                 dataStream.Position = 0L;
@@ -113,8 +113,8 @@ namespace SecureFolderFS.Sdk.AppModels
             }
         }
 
-        /// <inheritdoc cref="ISerializedData"/>
-        private sealed class NonSerializedData : ISerializedData
+        /// <inheritdoc cref="ISerializedModel"/>
+        private sealed class NonSerializedData : ISerializedModel
         {
             private readonly object? _value;
 

@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.Services;
 using System.Runtime.CompilerServices;
 using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -21,7 +22,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public virtual async IAsyncEnumerable<LicenseModel> GetLicensesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public virtual async IAsyncEnumerable<LicenseViewModel> GetLicensesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "SecureFolderFS.UI")!;
             foreach (var item in assembly.GetManifestResourceNames().Where(resource => resource.StartsWith("SecureFolderFS.UI.Assets.Licenses")))
@@ -44,7 +45,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 streamReader.DiscardBufferedData();
                 var fullText = await streamReader.ReadToEndAsync(cancellationToken);
 
-                yield return new LicenseModel(packageName, licenses, licenseName, projectWebsiteUri, fullText);
+                yield return new LicenseViewModel(packageName, licenses, licenseName, projectWebsiteUri, fullText);
             }
         }
 
