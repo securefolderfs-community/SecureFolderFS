@@ -1,28 +1,23 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Animation;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
 {
-    internal sealed class EntranceNavigationTransition : SlideNavigationTransition
+    internal abstract class NavigationTransition
     {
-        [SetsRequiredMembers]
-        public EntranceNavigationTransition()
-            : base(Side.Bottom, 200)
-        {
-        }
-
-        public override Task AnimateOldContentAsync(Visual oldContent)
+        public virtual Task AnimateOldContentAsync(Visual oldContent)
         {
             return new FadeTransition
             {
                 Target = oldContent,
-                Duration = TimeSpan.FromMilliseconds(100),
                 FillMode = FillMode.None,
+                Duration = TimeSpan.FromMilliseconds(100),
                 Mode = FadeTransition.AnimationMode.Out
             }.RunAnimationAsync();
         }
+
+        public abstract Task AnimateNewContentAsync(Visual newContent);
     }
 }

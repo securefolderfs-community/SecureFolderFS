@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
@@ -18,7 +17,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             NavigationCache = new();
         }
 
-        public override void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
+        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransition? transition)
         {
             if (viewModel is not BaseVaultPageViewModel pageViewModel)
                 throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");

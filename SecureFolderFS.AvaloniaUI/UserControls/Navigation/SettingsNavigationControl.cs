@@ -1,5 +1,5 @@
 using System;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Settings;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 
@@ -9,7 +9,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     internal sealed class SettingsNavigationControl : NavigationControl
     {
         /// <inheritdoc/>
-        public override void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
+        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransition? transition)
         {
             var pageType = viewModel switch
             {

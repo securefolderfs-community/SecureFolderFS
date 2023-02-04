@@ -10,7 +10,7 @@ using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 namespace SecureFolderFS.AvaloniaUI.Animations
 {
     /// <summary>
-    /// A collection of animations.
+    /// A collection of animations, attachable to any control.
     /// </summary>
     internal sealed class Storyboard : Control
     {
@@ -30,11 +30,11 @@ namespace SecureFolderFS.AvaloniaUI.Animations
             RunAnimationsAsync();
         }
 
-        public static readonly StyledProperty<AvaloniaList<TransitionBase>> AnimationsProperty =
-            AvaloniaProperty.Register<Storyboard, AvaloniaList<TransitionBase>>(nameof(Animations));
+        public static readonly StyledProperty<AvaloniaList<Transition>> AnimationsProperty =
+            AvaloniaProperty.Register<Storyboard, AvaloniaList<Transition>>(nameof(Animations));
 
         [Content]
-        public AvaloniaList<TransitionBase> Animations
+        public AvaloniaList<Transition> Animations
         {
             get => GetValue(AnimationsProperty);
             set => SetValue(AnimationsProperty, value);

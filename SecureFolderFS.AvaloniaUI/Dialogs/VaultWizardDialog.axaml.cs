@@ -126,7 +126,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             ViewModel.Messenger.Register<BackNavigationRequestedMessage>(this);
 
             var viewModel = new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel);
-            Navigation.Navigate(viewModel, new SuppressNavigationTransition());
+            Navigation.Navigate(viewModel, null);
             _ = FinalizeNavigationAnimationAsync(viewModel);
         }
 

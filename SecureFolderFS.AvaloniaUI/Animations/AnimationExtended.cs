@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Collections;
 using Avalonia.Media;
@@ -14,7 +15,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations
         /// <summary>
         /// Gets or sets the animated control.
         /// </summary>
-        public required Animatable Target { get; set; }
+        public required Visual Target { get; set; }
 
         /// <summary>
         /// Gets or sets the setters of the first frame in the animation.
@@ -63,7 +64,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations
                 else if (setter.Property == ScaleTransform.ScaleXProperty || setter.Property == ScaleTransform.ScaleYProperty)
                     visualTarget.GetTransform<ScaleTransform>().SetValue(setter.Property, setter.Value);
                 else
-                    Target.SetValue(setter.Property, setter.Value);
+                    Target.SetValue(setter.Property!, setter.Value);
             }
 
             return RunAsync(Target, null);

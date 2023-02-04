@@ -1,5 +1,4 @@
 using System;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.Messages.Navigation;
@@ -15,7 +14,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
                 GoBack();
         }
 
-        public override void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
+        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransition? transition)
         {
             // TODO: Cache navigation
 

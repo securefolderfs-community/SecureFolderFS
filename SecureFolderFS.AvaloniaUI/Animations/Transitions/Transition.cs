@@ -11,30 +11,39 @@ using Avalonia.VisualTree;
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {
     /// <summary>
-    /// Base class for animations and transitions.
+    /// Base class for transitions.
     /// </summary>
-    internal abstract class TransitionBase : AvaloniaObject
+    internal abstract class Transition : AvaloniaObject
     {
         public required TimeSpan Duration { get; init; }
-        public TimeSpan Delay { get; init; } = TimeSpan.Zero;
-        public Easing Easing { get; init; } = new LinearEasing();
-        public FillMode FillMode { get; init; } = FillMode.Forward;
+        public TimeSpan Delay { get; init; }
+        public Easing Easing { get; init; }
+        public FillMode FillMode { get; init; }
 
+        protected Transition()
+        {
+            Delay = TimeSpan.Zero;
+            Easing = new LinearEasing();
+            FillMode = FillMode.Forward;
+        }
+
+        /// <exception cref="ArgumentException">Target is null.</exception>
         public Task RunAnimationAsync()
         {
             if (Target is null)
                 throw new ArgumentException("Target cannot be null.");
 
-            if (Target is not IVisual visualTarget)
-                throw new ArgumentException("Target must implement IVisual.");
-
-            return RunAnimationAsync(visualTarget);
+            return RunAnimationAsync(Target);
         }
 
-        protected abstract Task RunAnimationAsync(IVisual target);
+        protected abstract Task RunAnimationAsync(Visual target);
 
+        /// <exception cref="ArgumentException">Target is null.</exception>
         protected AnimationExtended GetBaseAnimation()
         {
+            if (Target is null)
+                throw new ArgumentException("Target cannot be null.");
+
             return new AnimationExtended
             {
                 Target = Target,
@@ -45,11 +54,11 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
             };
         }
 
-        public static readonly StyledProperty<Animatable?> TargetProperty =
-            AvaloniaProperty.Register<TransitionBase, Animatable?>(nameof(Target));
+        public static readonly StyledProperty<Visual?> TargetProperty =
+            AvaloniaProperty.Register<Transition, Visual?>(nameof(Target));
 
         [ResolveByName]
-        public Animatable? Target
+        public Visual? Target
         {
             get => GetValue(TargetProperty);
             set => SetValue(TargetProperty, value);

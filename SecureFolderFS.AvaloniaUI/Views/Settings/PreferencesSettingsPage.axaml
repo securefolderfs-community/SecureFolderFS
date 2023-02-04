@@ -103,19 +103,19 @@
                             <trans:InfoBarTransition
                                 Target="FileSystemInfoBarContainer"
                                 ContentBelow="OtherSettings"
-                                AnimationMode="Show" />
+                                Mode="Show" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="HideFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
                                 Target="FileSystemInfoBarContainer"
                                 ContentBelow="OtherSettings"
-                                AnimationMode="Hide" />
+                                Mode="Hide" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="QuickHideFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
                                 Target="FileSystemInfoBarContainer"
                                 ContentBelow="OtherSettings"
-                                AnimationMode="QuickHide" />
+                                Mode="QuickHide" />
                         </anim:Storyboard>
                     </anim:Storyboard.Storyboards>
                 </ContentControl>

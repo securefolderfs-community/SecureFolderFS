@@ -7,12 +7,18 @@ using SecureFolderFS.AvaloniaUI.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {
-    internal class ScaleTransition : TransitionBase
+    internal class ScaleTransition : Transition
     {
-        public Point From { get; set; } = new(1, 1);
-        public Point To { get; set; } = new(1, 1);
+        public Point From { get; set; }
+        public Point To { get; set; }
 
-        protected override Task RunAnimationAsync(IVisual target)
+        public ScaleTransition()
+        {
+            From = new(1, 1);
+            To = new(1, 1);
+        }
+
+        protected override Task RunAnimationAsync(Visual target)
         {
             target.GetTransform<ScaleTransform>();
 

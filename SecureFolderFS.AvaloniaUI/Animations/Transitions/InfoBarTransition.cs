@@ -12,20 +12,17 @@ using SecureFolderFS.AvaloniaUI.Extensions;
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {
     /// <remarks>This transition is not affected by duration.</remarks>
-    internal sealed class InfoBarTransition : TransitionBase
+    internal sealed class InfoBarTransition : Transition
     {
-        public required Mode AnimationMode { get; set; }
+        public required AnimationMode Mode { get; set; }
 
-        protected override Task RunAnimationAsync(IVisual target)
+        protected override Task RunAnimationAsync(Visual target)
         {
-            if (ContentBelow is not IVisual contentBelow)
-                throw new ArgumentException("ContentBelow must implement IVisual.");
+            Transition infoBarOpacityTransition;
+            Transition infoBarTranslateTransition;
+            Transition contentBelowTranslateTransition;
 
-            TransitionBase infoBarOpacityTransition;
-            TransitionBase infoBarTranslateTransition;
-            TransitionBase contentBelowTranslateTransition;
-
-            if (AnimationMode == Mode.Show)
+            if (Mode == AnimationMode.Show)
             {
                 infoBarOpacityTransition = new FadeTransition
                 {
@@ -55,7 +52,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
                 infoBarOpacityTransition = new FadeTransition
                 {
                     Target = Target,
-                    Duration = TimeSpan.FromMilliseconds(AnimationMode == Mode.QuickHide ? 200 : 600),
+                    Duration = TimeSpan.FromMilliseconds(Mode == AnimationMode.QuickHide ? 200 : 600),
                     Easing = new QuinticEaseOut(),
                     Mode = FadeTransition.AnimationMode.Out,
                     UpdateVisibility = true
@@ -63,14 +60,14 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
                 infoBarTranslateTransition = new TranslateTransition
                 {
                     Target = Target,
-                    Duration = TimeSpan.FromMilliseconds(AnimationMode == Mode.QuickHide ? 200 : 400),
+                    Duration = TimeSpan.FromMilliseconds(Mode == AnimationMode.QuickHide ? 200 : 400),
                     Easing = new QuinticEaseOut(),
                     To = new(0, -target.Bounds.Height)
                 };
                 contentBelowTranslateTransition = new TranslateTransition
                 {
                     Target = ContentBelow,
-                    Duration = TimeSpan.FromMilliseconds(AnimationMode == Mode.QuickHide ? 200 : 400),
+                    Duration = TimeSpan.FromMilliseconds(Mode == AnimationMode.QuickHide ? 200 : 400),
                     Easing = new QuinticEaseOut(),
                     To = new(0, -target.Bounds.Height)
                 };
@@ -81,24 +78,24 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     await infoBarOpacityTransition.RunAnimationAsync();
-                    contentBelow.GetTransform<TranslateTransform>().Y = 0;
+                    ContentBelow.GetTransform<TranslateTransform>().Y = 0;
                 }),
                 infoBarTranslateTransition.RunAnimationAsync(),
                 contentBelowTranslateTransition.RunAnimationAsync()
             );
         }
 
-        public static readonly StyledProperty<Animatable> ContentBelowProperty =
-            AvaloniaProperty.Register<InfoBarTransition, Animatable>(nameof(ContentBelow));
+        public static readonly StyledProperty<Visual> ContentBelowProperty =
+            AvaloniaProperty.Register<InfoBarTransition, Visual>(nameof(ContentBelow));
 
         [ResolveByName]
-        public Animatable ContentBelow
+        public Visual ContentBelow
         {
             get => GetValue(ContentBelowProperty);
             set => SetValue(ContentBelowProperty, value);
         }
 
-        public enum Mode
+        public enum AnimationMode
         {
             Show,
             Hide,

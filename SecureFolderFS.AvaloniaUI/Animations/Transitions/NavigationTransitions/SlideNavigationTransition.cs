@@ -1,21 +1,15 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Avalonia.Animation;
+using Avalonia;
 using Avalonia.Animation.Easings;
-using Avalonia.Collections;
-using Avalonia.Media;
-using Avalonia.Styling;
-using Avalonia.VisualTree;
-using Avalonia.Xaml.Interactions.Events;
-using SecureFolderFS.AvaloniaUI.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
 {
-    internal class SlideNavigationTransition : TransitionBase
+    internal class SlideNavigationTransition : NavigationTransition
     {
-        public const double BigOffset = 200d;
-        public const double SmallOffset = 100d;
+        private static readonly TimeSpan Duration = TimeSpan.FromMilliseconds(300);
+        private static readonly Easing Easing = new CubicEaseOut();
 
         /// <summary>
         /// Gets or sets the side to slide from.
@@ -25,57 +19,55 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
         public required double Offset { get; init; }
 
         /// <summary>
-        /// Whether to slide out the content from the opposite side, as specified in <see cref="From"/>, when navigating from the page.
+        /// Gets or sets whether old content should be animated before navigation.
         /// </summary>
-        public bool SlideOutWhenNavigatingFrom { get; set; }
+        public bool AnimateOldContent { get; init; }
 
         [SetsRequiredMembers]
-        public SlideNavigationTransition(Side from, double offset, bool slideOutWhenNavigatingFrom = false)
+        public SlideNavigationTransition(Side from, double offset, bool animateOldContent = false)
         {
-            Duration = TimeSpan.Parse("0:0:0:0.3");
-            Easing = new CubicEaseOut();
             From = from;
             Offset = offset;
+            AnimateOldContent = animateOldContent;
         }
 
-        protected override async Task RunAnimationAsync(IVisual target)
+        public override Task AnimateOldContentAsync(Visual oldContent)
         {
-            target.GetTransform<TranslateTransform>();
-            AvaloniaList<IAnimationSetter> fromSetters = null!;
+            if (!AnimateOldContent)
+                return Task.CompletedTask;
 
-            if (SlideOutWhenNavigatingFrom)
+            return new TranslateTransition
             {
-                await SlideAsync(target, From switch
+                Target = oldContent,
+                Duration = Duration,
+                Easing = Easing,
+                From = new(0, 0),
+                To = From switch
                 {
-                    Side.Left => Side.Right,
-                    Side.Right => Side.Left,
-                    Side.Top => Side.Bottom,
-                    Side.Bottom => Side.Top,
-                });
-            }
-
-            await SlideAsync(target, From);
+                    Side.Left => new(Offset, 0),
+                    Side.Right => new(-Offset, 0),
+                    Side.Top => new(0, Offset),
+                    Side.Bottom => new(0, -Offset)
+                },
+            }.RunAnimationAsync();
         }
 
-        private Task SlideAsync(IVisual target, Side side)
+        public override Task AnimateNewContentAsync(Visual newContent)
         {
-            target.GetTransform<TranslateTransform>();
-
-            var animation = GetBaseAnimation();
-            animation.From = From switch
+            return new TranslateTransition
             {
-                Side.Left => new(new Setter(TranslateTransform.XProperty, -Offset)),
-                Side.Right => new(new Setter(TranslateTransform.XProperty, Offset)),
-                Side.Top => new(new Setter(TranslateTransform.YProperty, -Offset)),
-                Side.Bottom => new(new Setter(TranslateTransform.YProperty, Offset))
-            };
-            animation.To = From switch
-            {
-                Side.Left or Side.Right => new(new Setter(TranslateTransform.XProperty, 0d)),
-                Side.Top or Side.Bottom => new(new Setter(TranslateTransform.YProperty, 0d))
-            };
-
-            return animation.RunAnimationAsync();
+                Target = newContent,
+                Duration = Duration,
+                Easing = Easing,
+                From = From switch
+                {
+                    Side.Left => new(-Offset, 0),
+                    Side.Right => new(Offset, 0),
+                    Side.Top => new(0, -Offset),
+                    Side.Bottom => new(0, Offset)
+                },
+                To = new(0, 0)
+            }.RunAnimationAsync();
         }
 
         public enum Side
