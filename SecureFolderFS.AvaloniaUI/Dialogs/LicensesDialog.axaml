@@ -65,13 +65,15 @@
                             <ui:SettingsExpander.Footer>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <ui:HyperlinkButton
-                                        Content="Project website"
                                         IsVisible="{Binding ProjectWebsiteUri, Converter={StaticResource NullToBooleanConverter}}"
-                                        NavigateUri="{Binding ProjectWebsiteUri}" />
+                                        NavigateUri="{Binding ProjectWebsiteUri}">
+                                        <TextBlock Text="Project website" />
+                                    </ui:HyperlinkButton>
                                     <ui:HyperlinkButton
-                                        Content="License"
                                         IsVisible="{Binding NavigateUri, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToBooleanConverter}}"
-                                        NavigateUri="{Binding LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}" />
+                                        NavigateUri="{Binding LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}">
+                                        <TextBlock Text="License" />
+                                    </ui:HyperlinkButton>
                                 </StackPanel>
                             </ui:SettingsExpander.Footer>
 

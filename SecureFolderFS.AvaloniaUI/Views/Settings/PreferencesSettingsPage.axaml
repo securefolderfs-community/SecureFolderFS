@@ -31,8 +31,9 @@
                     <ui:HyperlinkButton
                         Margin="0,-16,0,0"
                         HorizontalAlignment="Right"
-                        Content="Open website"
-                        NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000" />
+                        NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000">
+                        <TextBlock Text="Open website" />
+                    </ui:HyperlinkButton>
                 </Border>
             </ui:InfoBar>
         </DataTemplate>

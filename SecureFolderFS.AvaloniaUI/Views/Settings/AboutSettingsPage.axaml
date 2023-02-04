@@ -80,9 +80,9 @@
                 IconSource="{ic:FluentIconSource Chat48Regular}">
                 <ui:SettingsExpander.Footer>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <ui:HyperlinkButton
-                            Click="DiscordButton_OnClick"
-                            Content="Discord" />
+                        <ui:HyperlinkButton Click="DiscordButton_OnClick">
+                            <TextBlock Text="Discord" />
+                        </ui:HyperlinkButton>
                     </StackPanel>
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
