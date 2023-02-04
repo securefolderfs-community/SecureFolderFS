@@ -22,16 +22,32 @@ Running this command will clone the repository with all submodules into the curr
   ![image](https://user-images.githubusercontent.com/53011783/216186419-aed03f32-565a-469d-9815-b7ea9206bf57.png)
   
 ## Building AvaloniaUI
+
 ### 1. Prerequisites
-- [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) or other editor of choice.
-  - .NET 7 SDK
+- .NET 7 SDK
+- Optionally, [Visual Studio 2022](https://visualstudio.microsoft.com/vs/), [Rider](https://www.jetbrains.com/rider), or other editor of choice
 
 ### 2. Preparing workload
-> **Note**
-> The following instructions apply to Visual Studio 2022
-
-- Open SecureFolderFS.sln file which will launch Visual Studio.
-- Ensure that the following build settings match your configuration (toolbar):
-  - Selected "Any CPU"
-  - Startup project set to SecureFolderFS.AvaloniaUI (You can change the startup project by opening Solution Explorer > Right click SecureFolderFS.AvaloniaUI > "Set as startup project"
+- Visual Studio 2022
+  - Open SecureFolderFS.sln file which will launch Visual Studio
+  - Ensure that the following build settings match your configuration (toolbar):
+    - Selected "Any CPU"
+    - Startup project set to SecureFolderFS.AvaloniaUI (You can change the startup project by opening Solution Explorer > Right click SecureFolderFS.AvaloniaUI > "Set as startup project"
   ![image](https://user-images.githubusercontent.com/53011783/216189292-474db056-0e3b-419d-baae-e86e27b7a7e7.png)
+  
+- Rider
+  - Launch Rider
+  - In the welcome screen, click "Open" and select SecureFolderFS.sln
+  - Ensure that the following build settings match your configuration (toolbar):
+    - Selected "Any CPU" 
+      
+      ![image](https://user-images.githubusercontent.com/79316397/216768099-31526d98-8311-4ce6-bde4-667518761828.png)
+    - Startup project set to SecureFolderFS.AvaloniaUI 
+      
+      ![image](https://user-images.githubusercontent.com/79316397/216768141-9d62ee39-8054-4105-bc66-9cc54017a02b.png)
+- Terminal
+  ```powershell
+  cd SecureFolderFS
+  dotnet build SecureFolderFS.AvaloniaUI
+  # Add "-c Release" to build the Release configuration instead of Debug
+  ```
