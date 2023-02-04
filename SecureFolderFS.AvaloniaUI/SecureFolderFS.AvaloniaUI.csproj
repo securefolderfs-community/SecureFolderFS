@@ -53,4 +53,7 @@
       <UpToDateCheckInput Remove="Styles\ControlConsistencyStyles.axaml" />
       <UpToDateCheckInput Remove="Styles\ControlConsistencyStyles.axaml" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Extensions\" />
+    </ItemGroup>
 </Project>

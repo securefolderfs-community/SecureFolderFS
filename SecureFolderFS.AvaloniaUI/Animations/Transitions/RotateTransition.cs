@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
+using SecureFolderFS.AvaloniaUI.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {
@@ -12,7 +13,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 
         protected override Task RunAnimationAsync(IVisual target)
         {
-            GetTransform<RotateTransform>(target);
+            target.GetTransform<RotateTransform>();
             var animation = GetBaseAnimation();
             animation.From = new() { new Setter(RotateTransform.AngleProperty, From) };
             animation.To = new() { new Setter(RotateTransform.AngleProperty, To) };

@@ -3,16 +3,19 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
+using SecureFolderFS.AvaloniaUI.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {
-    internal sealed class ScaleTransition : TransitionBase
+    internal class ScaleTransition : TransitionBase
     {
         public Point From { get; set; } = new(1, 1);
         public Point To { get; set; } = new(1, 1);
 
         protected override Task RunAnimationAsync(IVisual target)
         {
+            target.GetTransform<ScaleTransform>();
+
             var animation = GetBaseAnimation();
             animation.From = new()
             {

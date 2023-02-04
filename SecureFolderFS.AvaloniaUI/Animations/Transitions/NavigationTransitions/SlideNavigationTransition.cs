@@ -7,6 +7,7 @@ using Avalonia.Collections;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
+using SecureFolderFS.AvaloniaUI.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
 {
@@ -33,28 +34,24 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
 
         protected override Task RunAnimationAsync(IVisual target)
         {
-            var translateTransform = GetTransform<TranslateTransform>(target);
+            target.GetTransform<TranslateTransform>();
             AvaloniaList<IAnimationSetter> fromSetters = null!;
 
             switch (From)
             {
                 case Side.Left:
-                    translateTransform.X = -Offset;
                     fromSetters = new(new Setter(TranslateTransform.XProperty, -Offset));
                     break;
 
                 case Side.Right:
-                    translateTransform.X = Offset;
                     fromSetters = new(new Setter(TranslateTransform.XProperty, Offset));
                     break;
 
                 case Side.Top:
-                    translateTransform.Y = -Offset;
                     fromSetters = new(new Setter(TranslateTransform.YProperty, -Offset));
                     break;
 
                 case Side.Bottom:
-                    translateTransform.Y = Offset;
                     fromSetters = new(new Setter(TranslateTransform.YProperty, Offset));
                     break;
             }

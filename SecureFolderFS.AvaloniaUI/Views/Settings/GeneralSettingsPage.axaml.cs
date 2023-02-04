@@ -19,7 +19,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         /// <summary>
         /// Whether to play the InfoBar show animation after its layout is updated.
         /// </summary>
-        private bool _playShowBarEmergeAnimation;
+        private bool _playShowVersionInfoBarAnimation;
 
         public GeneralSettingsPageViewModel ViewModel
         {
@@ -87,18 +87,17 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 comboBox.SelectedIndex = 0; // TODO Remove this when fixing languages
         }
 
-        public async Task PlayShowInfoBarAnimation(object? sender, AvaloniaPropertyChangedEventArgs e)
+        public void ShowVersionInfoBar(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-            _playShowBarEmergeAnimation = true;
+            _playShowVersionInfoBarAnimation = true;
         }
 
         private void VersionInfoBar_OnLayoutUpdated(object? sender, EventArgs e)
         {
-            if (_playShowBarEmergeAnimation)
+            if (_playShowVersionInfoBarAnimation)
             {
-                ((TranslateTransform)OtherSettings.RenderTransform!).Y = -VersionInfoBar.Bounds.Height;
                 ShowVersionInfoBarStoryboard.RunAnimationsAsync();
-                _playShowBarEmergeAnimation = !_playShowBarEmergeAnimation;
+                _playShowVersionInfoBarAnimation = false;
             }
         }
     }

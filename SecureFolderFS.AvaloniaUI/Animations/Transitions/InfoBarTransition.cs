@@ -5,7 +5,9 @@ using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
+using SecureFolderFS.AvaloniaUI.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {
@@ -25,13 +27,13 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 
             if (AnimationMode == Mode.Show)
             {
-                GetTransform<TranslateTransform>(contentBelow).Y = -target.Bounds.Height;
                 infoBarOpacityTransition = new FadeTransition
                 {
                     Target = Target,
                     Duration = TimeSpan.FromMilliseconds(600),
                     Easing = new QuinticEaseOut(),
-                    Mode = FadeTransition.AnimationMode.In
+                    Mode = FadeTransition.AnimationMode.In,
+                    UpdateVisibility = true
                 };
                 infoBarTranslateTransition = new TranslateTransition
                 {
@@ -55,7 +57,8 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
                     Target = Target,
                     Duration = TimeSpan.FromMilliseconds(AnimationMode == Mode.QuickHide ? 200 : 600),
                     Easing = new QuinticEaseOut(),
-                    Mode = FadeTransition.AnimationMode.Out
+                    Mode = FadeTransition.AnimationMode.Out,
+                    UpdateVisibility = true
                 };
                 infoBarTranslateTransition = new TranslateTransition
                 {
@@ -64,7 +67,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
                     Easing = new QuinticEaseOut(),
                     To = new(0, -target.Bounds.Height)
                 };
-                contentBelowTranslateTransition = new TranslateTransition()
+                contentBelowTranslateTransition = new TranslateTransition
                 {
                     Target = ContentBelow,
                     Duration = TimeSpan.FromMilliseconds(AnimationMode == Mode.QuickHide ? 200 : 400),
@@ -75,7 +78,11 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 
             return Task.WhenAll
             (
-                infoBarOpacityTransition.RunAnimationAsync(),
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await infoBarOpacityTransition.RunAnimationAsync();
+                    contentBelow.GetTransform<TranslateTransform>().Y = 0;
+                }),
                 infoBarTranslateTransition.RunAnimationAsync(),
                 contentBelowTranslateTransition.RunAnimationAsync()
             );

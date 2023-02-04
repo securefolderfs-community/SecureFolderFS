@@ -85,7 +85,8 @@
                     VerticalContentAlignment="Stretch"
                     Content="{Binding FileSystemInfoBar, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     IsVisible="{Binding IsInfoBarOpen, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}"
-                    Opacity="0">
+                    Opacity="0"
+                    LayoutUpdated="FileSystemInfoBarContainer_OnLayoutUpdated">
                     <ContentControl.RenderTransform>
                         <TranslateTransform />
                     </ContentControl.RenderTransform>
