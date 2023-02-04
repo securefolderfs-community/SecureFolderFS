@@ -170,7 +170,7 @@
                     </ui:NavigationViewItem.Content>
 
                     <ui:NavigationViewItem.ContextFlyout>
-                        <MenuFlyout>
+                        <ui:FAMenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
                             <ui:MenuFlyoutItem Command="{Binding ShowInFileExplorerCommand}" Text="Show encrypted vault in File Explorer">
                                 <ui:MenuFlyoutItem.Icon>
@@ -186,7 +186,7 @@
                                     <ui:SymbolIcon Symbol="Remove" />
                                 </ui:MenuFlyoutItem.Icon>
                             </ui:MenuFlyoutItem>
-                        </MenuFlyout>
+                        </ui:FAMenuFlyout>
                     </ui:NavigationViewItem.ContextFlyout>
                 </ui:NavigationViewItem>
             </DataTemplate>
