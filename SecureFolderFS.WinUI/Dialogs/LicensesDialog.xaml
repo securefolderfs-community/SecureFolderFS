@@ -76,7 +76,7 @@
                                 <TextBlock
                                     IsTextSelectionEnabled="True"
                                     Text="{x:Bind License}"
-                                    TextWrapping="WrapWholeWords" />
+                                    TextWrapping="Wrap" />
                             </ucab:ActionBlockControl.ExpanderContent>
                         </ucab:ActionBlockControl>
                     </DataTemplate>

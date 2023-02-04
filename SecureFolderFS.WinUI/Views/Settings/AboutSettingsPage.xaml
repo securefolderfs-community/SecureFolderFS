@@ -170,23 +170,24 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="Open log location"
-                ClickCommand="{x:Bind ViewModel.OpenLogLocationCommand}"
-                Description="Launches file explorer where log file is located"
+                Title="Third party licenses"
+                ClickCommand="{x:Bind ViewModel.OpenLicensesDialogCommand}"
+                Description="View libraries used by SecureFolderFS"
                 IsClickable="True">
                 <ucab:ActionBlockControl.Icon>
-                    <FontIcon Glyph="&#xE838;" />
+                    <FontIcon Glyph="&#xF000;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="Third party licenses"
-                ClickCommand="{x:Bind ViewModel.OpenLicensesDialogCommand}"
+                Title="Open log location"
+                ClickCommand="{x:Bind ViewModel.OpenLogLocationCommand}"
+                Description="Launches file explorer where log file is located"
                 IsClickable="True">
                 <ucab:ActionBlockControl.Icon>
-                    <FontIcon Glyph="&#xF000;" />
+                    <FontIcon Glyph="&#xE838;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
