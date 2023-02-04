@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -27,10 +28,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private async Task CopyVersionAsync()
+        private async Task CopyAppVersionAsync(CancellationToken cancellationToken)
         {
             if (await ClipboardService.IsClipboardAvailableAsync())
                 await ClipboardService.SetClipboardDataAsync(new ClipboardTextItemModel(AppVersion));
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private async Task CopySystemVersionAsync(CancellationToken cancellationToken)
+        {
+            if (await ClipboardService.IsClipboardAvailableAsync())
+            {
+                var systemVersion = ApplicationService.GetSystemVersion();
+                await ClipboardService.SetClipboardDataAsync(new ClipboardTextItemModel(systemVersion));
+            }
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]

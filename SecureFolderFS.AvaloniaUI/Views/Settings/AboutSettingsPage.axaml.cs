@@ -32,12 +32,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             base.OnNavigatedTo(e);
         }
 
-        private void VersionButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            ViewModel.CopyVersionCommand?.Execute(null);
-            VersionCopiedTeachingTip.IsOpen = true;
-        }
-
         private async void DiscordButton_OnClick(object? sender, RoutedEventArgs e)
         {
             // SettingsExpander sets e.Handled to true, which prevents the command from executing.
