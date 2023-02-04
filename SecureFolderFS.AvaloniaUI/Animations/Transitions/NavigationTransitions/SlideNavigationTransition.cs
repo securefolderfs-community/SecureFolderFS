@@ -7,6 +7,7 @@ using Avalonia.Collections;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
+using Avalonia.Xaml.Interactions.Events;
 using SecureFolderFS.AvaloniaUI.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
@@ -23,8 +24,13 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
 
         public required double Offset { get; init; }
 
+        /// <summary>
+        /// Whether to slide out the content from the opposite side, as specified in <see cref="From"/>, when navigating from the page.
+        /// </summary>
+        public bool SlideOutWhenNavigatingFrom { get; set; }
+
         [SetsRequiredMembers]
-        public SlideNavigationTransition(Side from, double offset)
+        public SlideNavigationTransition(Side from, double offset, bool slideOutWhenNavigatingFrom = false)
         {
             Duration = TimeSpan.Parse("0:0:0:0.3");
             Easing = new CubicEaseOut();
@@ -32,32 +38,37 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
             Offset = offset;
         }
 
-        protected override Task RunAnimationAsync(IVisual target)
+        protected override async Task RunAnimationAsync(IVisual target)
         {
             target.GetTransform<TranslateTransform>();
             AvaloniaList<IAnimationSetter> fromSetters = null!;
 
-            switch (From)
+            if (SlideOutWhenNavigatingFrom)
             {
-                case Side.Left:
-                    fromSetters = new(new Setter(TranslateTransform.XProperty, -Offset));
-                    break;
-
-                case Side.Right:
-                    fromSetters = new(new Setter(TranslateTransform.XProperty, Offset));
-                    break;
-
-                case Side.Top:
-                    fromSetters = new(new Setter(TranslateTransform.YProperty, -Offset));
-                    break;
-
-                case Side.Bottom:
-                    fromSetters = new(new Setter(TranslateTransform.YProperty, Offset));
-                    break;
+                await SlideAsync(target, From switch
+                {
+                    Side.Left => Side.Right,
+                    Side.Right => Side.Left,
+                    Side.Top => Side.Bottom,
+                    Side.Bottom => Side.Top,
+                });
             }
 
+            await SlideAsync(target, From);
+        }
+
+        private Task SlideAsync(IVisual target, Side side)
+        {
+            target.GetTransform<TranslateTransform>();
+
             var animation = GetBaseAnimation();
-            animation.From = fromSetters;
+            animation.From = From switch
+            {
+                Side.Left => new(new Setter(TranslateTransform.XProperty, -Offset)),
+                Side.Right => new(new Setter(TranslateTransform.XProperty, Offset)),
+                Side.Top => new(new Setter(TranslateTransform.YProperty, -Offset)),
+                Side.Bottom => new(new Setter(TranslateTransform.YProperty, Offset))
+            };
             animation.To = From switch
             {
                 Side.Left or Side.Right => new(new Setter(TranslateTransform.XProperty, 0d)),

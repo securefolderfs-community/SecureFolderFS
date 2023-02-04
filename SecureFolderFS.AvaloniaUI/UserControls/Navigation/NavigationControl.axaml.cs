@@ -77,6 +77,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 
             // TODO Caching
             var instance = Activator.CreateInstance(pageType);
+            if (transition)
             if (transition is not SuppressNavigationTransition)
                 await FadeOutContentStoryboard.RunAnimationsAsync();
 
