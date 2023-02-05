@@ -11,6 +11,7 @@
     <!-- TODO Animations -->
 
     <Grid
+        Loaded="GraphsGrid_Loaded"
         x:Name="GraphsGrid"
         Margin="0,8,0,0"
         ColumnDefinitions="*,8,*">

@@ -129,7 +129,7 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
             }
         }
 
-        public void RestoreGraphsState()
+        private void RestoreGraphsState()
         {
             if (ReadGraphIsExtended)
             {
@@ -143,6 +143,11 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
                 HideColumn(ReadColumn);
                 GraphsGrid.ColumnSpacing = 0;
             }
+        }
+
+        private void GraphsGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            RestoreGraphsState();
         }
 
         /// <inheritdoc/>

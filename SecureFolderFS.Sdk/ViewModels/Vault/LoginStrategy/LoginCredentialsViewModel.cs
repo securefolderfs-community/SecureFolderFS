@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
@@ -8,6 +9,7 @@ using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
@@ -18,6 +20,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IKeystoreModel _keystoreModel;
         private readonly IMessenger _messenger;
+
+        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
         public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel, IMessenger messenger)
         {
@@ -62,10 +66,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 
             // Update last access date
             await _vaultViewModel.VaultContextModel.SetLastAccessedDate(DateTime.Now, cancellationToken);
+            await ThreadingService.SwitchThreadAsync();
 
             var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);
             var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, _messenger);
             _ = dashboardPage.InitAsync(cancellationToken);
+
 
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultWatcherModel.VaultModel));
             WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardPage));

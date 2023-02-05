@@ -27,10 +27,10 @@
         <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
             <ucw:GraphsWidget
                 ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}"
-                ReadGraphIsExtended="False"
+                ReadGraphIsExtended="{x:Bind ReadGraphViewModel.IsExtended, Mode=TwoWay}"
                 ReadGraphSubheader="{x:Bind ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
                 WriteGraphData="{x:Bind WriteGraphViewModel.Data, Mode=OneWay}"
-                WriteGraphIsExtended="False"
+                WriteGraphIsExtended="{x:Bind WriteGraphViewModel.IsExtended, Mode=TwoWay}"
                 WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
         </DataTemplate>
     </Page.Resources>

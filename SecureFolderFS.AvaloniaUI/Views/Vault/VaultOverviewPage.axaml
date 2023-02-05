@@ -25,10 +25,10 @@
         <!--  Resource Graphs  -->
         <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
             <ucw:GraphsWidget
-                ReadGraphIsExtended="False"
+                ReadGraphIsExtended="{Binding ReadGraphViewModel.IsExtended, Mode=TwoWay}"
                 ReadGraphSubheader="{Binding ReadGraphViewModel.GraphSubheader}"
                 ReadGraphData="{Binding ReadGraphViewModel.Data}"
-                WriteGraphIsExtended="False"
+                WriteGraphIsExtended="{Binding WriteGraphViewModel.IsExtended, Mode=TwoWay}"
                 WriteGraphSubheader="{Binding WriteGraphViewModel.GraphSubheader}"
                 WriteGraphData="{Binding WriteGraphViewModel.Data}"/>
         </DataTemplate>

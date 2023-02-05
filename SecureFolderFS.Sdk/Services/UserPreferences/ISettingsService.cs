@@ -7,5 +7,6 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
     /// </summary>
     public interface ISettingsService : ISettingsModel
     {
+
     }
 }

@@ -12,6 +12,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public ObservableCollection<GraphPointViewModel> Data { get; }
 
         [ObservableProperty]
+        private bool _IsExtended;
+
+        [ObservableProperty]
         private string? _GraphSubheader = "0mb/s";
 
         public GraphControlViewModel()

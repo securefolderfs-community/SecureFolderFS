@@ -5,10 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
-    <Grid>
-        <TextBlock HorizontalAlignment="Center" Text="Coming soon" />
-    </Grid>
+    <StackPanel>
+        <ucab:ActionBlockControl
+            Title="Change password"
+            Description="Change the password used to unlock this vault"
+            IsClickable="True">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE8D7;" />
+            </ucab:ActionBlockControl.Icon>
+        </ucab:ActionBlockControl>
+    </StackPanel>
 </Page>
