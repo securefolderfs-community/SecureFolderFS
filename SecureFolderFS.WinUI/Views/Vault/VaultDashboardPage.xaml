@@ -57,6 +57,6 @@
         </BreadcrumbBar>
 
         <!--  Content  -->
-        <uc:VaultDashboardNavigationControl x:Name="Navigation" Grid.Row="1" />
+        <uc:VaultDashboardNavigationControl Loaded="Navigation_Loaded" x:Name="Navigation" Grid.Row="1" />
     </Grid>
 </Page>

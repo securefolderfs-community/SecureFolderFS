@@ -16,8 +16,6 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
 
         public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
         {
-            // TODO: Cache navigation
-
             var pageType = viewModel switch
             {
                 VaultOverviewPageViewModel => typeof(VaultOverviewPage),

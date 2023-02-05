@@ -1,9 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,7 +16,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class VaultDashboardPage : Page //, IRecipient<VaultLockedMessage>
+    public sealed partial class VaultDashboardPage : Page
     {
         public ObservableCollection<OrderedBreadcrumbBarItem> BreadcrumbItems { get; }
 
@@ -29,13 +32,6 @@ namespace SecureFolderFS.WinUI.Views.Vault
             BreadcrumbItems = new();
         }
 
-        //public async void Receive(VaultLockedMessage message)
-        //{
-        //    // Await and change the visibility so the page doesn't prevail on the lock animation
-        //    await Task.Delay(100);
-        //    Visibility = Visibility.Collapsed;
-        //}
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultDashboardPageViewModel viewModel)
@@ -47,12 +43,9 @@ namespace SecureFolderFS.WinUI.Views.Vault
             base.OnNavigatedTo(e);
         }
 
-        //private void BreadcrumbBar_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
-        //{
-        //    if (args.Item is NavigationItemViewModel itemViewModel)
-        //    {
-        //        itemViewModel.NavigationAction?.Invoke(ViewModel.NavigationBreadcrumbViewModel.DashboardNavigationItems.FirstOrDefault());
-        //    }
-        //}
+        private void Navigation_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
+        }
     }
 }

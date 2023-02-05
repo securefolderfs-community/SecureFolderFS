@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Utils;
 using System;
@@ -8,20 +9,26 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 {
-    public abstract class BaseDashboardPageViewModel : ObservableObject, IAsyncInitialize, IDisposable
+    public abstract class BaseDashboardPageViewModel : ObservableObject, INavigationTarget, IAsyncInitialize, IDisposable
     {
         protected UnlockedVaultViewModel UnlockedVaultViewModel { get; }
 
-        protected IMessenger Messenger { get; }
+        protected INavigationModel<DashboardPageType> NavigationModel { get; }
 
-        protected BaseDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IMessenger messenger)
+        protected BaseDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationModel<DashboardPageType> navigationModel)
         {
             UnlockedVaultViewModel = unlockedVaultViewModel;
-            Messenger = messenger;
+            NavigationModel = navigationModel;
         }
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
+
+        /// <inheritdoc/>
+        public virtual void OnNavigatingTo(NavigationType navigationType) { }
+
+        /// <inheritdoc/>
+        public virtual void OnNavigatingFrom() { }
 
         /// <inheritdoc/>
         public virtual void Dispose() { }

@@ -5,7 +5,6 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -68,7 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         {
             if (!e.Successful)
             {
-                await ThreadingService.ExecuteOnUiThreadAsync();
+                await ThreadingService.SwitchThreadAsync();
                 await DetermineLoginStrategyAsync();
             }
         }
@@ -92,7 +91,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
                 var vaultUnlockingModel = new VaultUnlockingModel();
 
-                LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger, ThreadingService);
+                LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
             }
             else
                 LoginStrategyViewModel = new LoginInvalidVaultViewModel(validationResult.GetMessage("Vault is inaccessible."));

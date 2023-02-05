@@ -18,12 +18,17 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static IEnumerable<T> IfEmptyThenAppend<T>(this IEnumerable<T> enumerable, T item)
+        public static bool TryFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, out TSource? value)
         {
-            if (enumerable.IsEmpty())
-                return enumerable.Append(item);
+            using var iterator = source.GetEnumerator();
+            if (!iterator.MoveNext() || !predicate(iterator.Current))
+            {
+                value = default;
+                return false;
+            }
 
-            return enumerable;
+            value = iterator.Current;
+            return true;
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using System.Threading;
@@ -9,12 +12,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IRecipient<VaultLockedMessage>
     {
+        public INavigationModel<DashboardPageType> NavigationModel { get; }
+
         public BaseDashboardPageViewModel CurrentPage { get; }
 
         public VaultDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IMessenger messenger)
             : base(unlockedVaultViewModel.VaultViewModel, messenger)
         {
-            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, messenger);
+            NavigationModel = new DashboardNavigationModel(messenger);
+            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, NavigationModel);
+
             WeakReferenceMessenger.Default.Register(this);
         }
 
@@ -27,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         /// <inheritdoc/>
         public void Receive(VaultLockedMessage message)
         {
-            // Free resources that used by the dashboard
+            // Free resources that are used by the dashboard
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
                 Dispose();
         }

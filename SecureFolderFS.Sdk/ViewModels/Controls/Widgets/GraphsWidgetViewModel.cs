@@ -92,8 +92,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             {
                 _updateTimeCount = 0;
 
-                var readRate = ByteSize.FromBytes(_readRates.Where(x => x != 0).IfEmptyThenAppend(0).Sum()).MegaBytes;
-                var writeRate = ByteSize.FromBytes(_writeRates.Where(x => x != 0).IfEmptyThenAppend(0).Sum()).MegaBytes;
+                var readRate = ByteSize.FromBytes(_readRates.Where(x => x != 0).Sum()).MegaBytes;
+                var writeRate = ByteSize.FromBytes(_writeRates.Where(x => x != 0).Sum()).MegaBytes;
 
                 ReadGraphViewModel.Report(readRate);
                 WriteGraphViewModel.Report(writeRate);
