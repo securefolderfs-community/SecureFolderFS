@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IWidgetsContextModel"/>
-    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVaultsWidgetsService>, IWidgetsContextModel
+    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVaultWidgetsService>, IWidgetsContextModel
     {
         /// <inheritdoc/>
         public IVaultModel VaultModel { get; }
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.AppModels
             var widgetsContext = SettingsService.GetWidgetsContextForId(VaultModel.Folder.Id);
             widgetsContext.WidgetDataModels.AddOrReplace(widgetId, new());
 
-            return await SettingsService.SaveSettingsAsync(cancellationToken);
+            return await SettingsService.SaveAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.AppModels
             var widgetsContext = SettingsService.GetWidgetsContextForId(VaultModel.Folder.Id);
             widgetsContext.WidgetDataModels.Remove(widgetId);
 
-            return await SettingsService.SaveSettingsAsync(cancellationToken);
+            return await SettingsService.SaveAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

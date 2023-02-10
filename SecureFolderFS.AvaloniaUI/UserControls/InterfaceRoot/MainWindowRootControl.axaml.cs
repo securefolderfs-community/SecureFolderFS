@@ -9,6 +9,7 @@ using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
@@ -52,20 +53,18 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
         {
             var vaultCollectionModel = new LocalVaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
             var platformSettingsService = Ioc.Default.GetRequiredService<IPlatformSettingsService>();
 
             // Initialize
             var result = await Task.WhenAll(
-                applicationSettingsService.LoadSettingsAsync(),
-                settingsService.LoadSettingsAsync(),
-                platformSettingsService.LoadSettingsAsync(),
+                settingsService.LoadAsync(),
+                platformSettingsService.LoadAsync(),
                 vaultCollectionModel.HasVaultsAsync());
 
             ThemeHelper.Instance.UpdateTheme();
 
             // Continue root initialization
-            if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped
+            if (false && settingsService.ApplicationSettings.IsIntroduced) // TODO: Always skipped
             {
                 //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
                 // TODO: Implement OOBE

@@ -1,10 +1,9 @@
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.UI.Windowing;
 using SecureFolderFS.AvaloniaUI.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services;
+using System.ComponentModel;
 
 namespace SecureFolderFS.AvaloniaUI.WindowViews
 {
@@ -29,14 +28,9 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
         private async void Window_OnClosing(object? sender, CancelEventArgs e)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
+            await settingsService.SaveAsync();
             var platformSettingsService = Ioc.Default.GetRequiredService<IPlatformSettingsService>();
-
-            await Task.WhenAll(
-                settingsService.SaveSettingsAsync(),
-                applicationSettingsService.SaveSettingsAsync(),
-                platformSettingsService.SaveSettingsAsync()
-            );
+            todo
         }
     }
 }

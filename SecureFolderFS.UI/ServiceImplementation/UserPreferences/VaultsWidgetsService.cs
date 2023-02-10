@@ -6,8 +6,8 @@ using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.UI.ServiceImplementation.UserPreferences
 {
-    /// <inheritdoc cref="IVaultsWidgetsService"/>
-    public sealed class VaultsWidgetsService : OnDeviceSettingsModel, IVaultsWidgetsService
+    /// <inheritdoc cref="IVaultWidgetsService"/>
+    public sealed class VaultsWidgetsService : LocalSettingsModel, IVaultWidgetsService
     {
         public VaultsWidgetsService(IModifiableFolder settingsFolder)
             : base(settingsFolder)
@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.UserPreferences
             if (folderOfSettings is not IModifiableFolder modifiableFolderOfSettings)
                 return;
 
-            SettingsDatabase = new MultipleFilesDatabaseModel(modifiableFolderOfSettings, StreamSerializer.Instance);
+            SettingsDatabase = new BatchDatabaseModel(modifiableFolderOfSettings, StreamSerializer.Instance);
             IsAvailable = true;
         }
     }

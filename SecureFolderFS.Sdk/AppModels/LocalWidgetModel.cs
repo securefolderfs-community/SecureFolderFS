@@ -1,20 +1,21 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.DataModels;
+﻿using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Utils;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IWidgetModel"/>
     public sealed class LocalWidgetModel : IWidgetModel
     {
-        private readonly ISettingsModel _widgetsStore;
+        private readonly IPersistable _widgetsStore;
         private readonly WidgetDataModel _widgetDataModel;
 
         /// <inheritdoc/>
         public string WidgetId { get; }
 
-        public LocalWidgetModel(string widgetId, ISettingsModel widgetsStore, WidgetDataModel widgetDataModel)
+        public LocalWidgetModel(string widgetId, IPersistable widgetsStore, WidgetDataModel widgetDataModel)
         {
             WidgetId = widgetId;
             _widgetsStore = widgetsStore;
@@ -34,8 +35,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public Task<bool> SetDataAsync(string key, string? value, CancellationToken cancellationToken = default)
         {
             _widgetDataModel.WidgetData[key] = value;
-
-            return _widgetsStore.SaveSettingsAsync(cancellationToken);
+            return _widgetsStore.SaveAsync(cancellationToken);
         }
     }
 }

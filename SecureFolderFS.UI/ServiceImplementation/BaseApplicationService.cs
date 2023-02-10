@@ -1,8 +1,7 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
-using System.Runtime.CompilerServices;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -12,7 +11,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual string GetSystemVersion()
         {
-            if (CompatibilityHelpers.IsPlatformWindows)
+            if (OperatingSystem.IsWindows())
             {
                 var windows = Environment.OSVersion;
                 return $"Windows {windows.Version}";

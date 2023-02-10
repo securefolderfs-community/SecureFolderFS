@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
@@ -84,11 +82,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
                 .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder))
                 .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
-                .AddSingleton<IVaultsWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
-                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder))
-                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
-                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
-                .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
+                .AddSingleton<IVaultWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
 
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>()
@@ -130,14 +124,6 @@ namespace SecureFolderFS.WinUI
 #if !DEBUG
             ExceptionHelpers.LogExceptionToFile(ApplicationData.Current.LocalFolder.Path, formattedException);
 #endif
-        }
-
-        // Terrible.
-        private static TSettingsService GetSettingsService<TSettingsService>(IServiceProvider serviceProvider,
-            Func<IDatabaseModel<string>, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
-        {
-            var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
-            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl);
         }
     }
 }

@@ -1,16 +1,33 @@
-﻿using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Shared.Utils;
+using System.ComponentModel;
 
-namespace SecureFolderFS.Sdk.Services.UserPreferences
+namespace SecureFolderFS.Sdk.Services.Settings
 {
     /// <summary>
-    /// A service to manage settings of user preferences.
+    /// An interface to manage user preferences and settings.
     /// </summary>
-    public interface IPreferencesSettingsService : ISettingsModel
+    public interface IUserSettings : IPersistable, INotifyPropertyChanged
     {
+        #region Privacy Settings
+
+        /// <summary>
+        /// Gets or sets the value that determines whether to lock all unlocked vaults when the system is locked.
+        /// </summary>
+        bool AutoLockVaults { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value that determines whether to use telemetry.
+        /// </summary>
+        bool IsTelemetryEnabled { get; set; }
+
+        #endregion
+
+        #region Preferences
+
         /// <summary>
         /// Gets or sets the value that determines the type of the preferred file system provider to use.
         /// </summary>
-        string? PreferredFileSystemId { get; set; }
+        string PreferredFileSystemId { get; set; }
 
         /// <summary>
         /// Gets or sets the value that determines whether to launch SecureFolderFS on system startup.
@@ -26,5 +43,7 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
         /// Gets or sets the value that determines whether to open the vault root folder when it is unlocked.
         /// </summary>
         bool OpenFolderOnUnlock { get; set; }
+
+        #endregion
     }
 }

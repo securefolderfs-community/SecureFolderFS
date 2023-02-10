@@ -11,13 +11,13 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <summary>
     /// Represents a dictionary-based database model.
     /// </summary>
-    public abstract class BaseDictionaryDatabaseModel<TDictionaryValue> : IDatabaseModel<string>
+    public abstract class BaseDatabaseModel<TDictionaryValue> : IDatabaseModel<string>
     {
         protected readonly IAsyncSerializer<Stream> serializer;
         protected readonly SemaphoreSlim storageSemaphore;
         protected readonly ConcurrentDictionary<string, TDictionaryValue> settingsCache;
 
-        protected BaseDictionaryDatabaseModel(IAsyncSerializer<Stream> serializer)
+        protected BaseDatabaseModel(IAsyncSerializer<Stream> serializer)
         {
             this.serializer = serializer;
             this.storageSemaphore = new(1, 1);
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public abstract TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null);
+        public abstract TValue? GetValue<TValue>(string key, Func<TValue>? defaultValue = null);
 
         /// <inheritdoc/>
         public abstract bool SetValue<TValue>(string key, TValue? value);

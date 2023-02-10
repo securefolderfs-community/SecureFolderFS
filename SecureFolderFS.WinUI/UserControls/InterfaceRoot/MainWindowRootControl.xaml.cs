@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
@@ -48,16 +49,15 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         {
             var vaultCollectionModel = new LocalVaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
 
             // Small delay for Mica material to load
             await Task.Delay(1);
 
             // Initialize
-            var result = await Task.WhenAll(applicationSettingsService.LoadSettingsAsync(), settingsService.LoadSettingsAsync(), vaultCollectionModel.HasVaultsAsync());
+            var result = await Task.WhenAll(settingsService.InitAsync(), vaultCollectionModel.HasVaultsAsync());
 
             // Continue root initialization
-            if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped
+            if (false && settingsService.ApplicationSettings.IsIntroduced) // TODO: Always skipped
             {
                 //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
                 // TODO: Implement OOBE

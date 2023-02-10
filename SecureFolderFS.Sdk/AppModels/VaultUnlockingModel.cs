@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Helpers;
@@ -18,7 +17,7 @@ namespace SecureFolderFS.Sdk.AppModels
     {
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         private IVaultUnlockingService VaultUnlockingService { get; } = Ioc.Default.GetRequiredService<IVaultUnlockingService>();
 
@@ -62,9 +61,9 @@ namespace SecureFolderFS.Sdk.AppModels
         public async Task<IResult<IUnlockedVaultModel?>> UnlockAsync(IPassword password, CancellationToken cancellationToken = default)
         {
             // Get file system
-            var fileSystem = VaultService.GetFileSystemById(PreferencesSettingsService.PreferredFileSystemId);
+            var fileSystem = VaultService.GetFileSystemById(SettingsService.UserSettings.PreferredFileSystemId);
             if (fileSystem is null)
-                return new CommonResult<IUnlockedVaultModel?>(new ArgumentException($"File System descriptor '{PreferencesSettingsService.PreferredFileSystemId}' was not found."));
+                return new CommonResult<IUnlockedVaultModel?>(new ArgumentException($"File System descriptor '{SettingsService.UserSettings.PreferredFileSystemId}' was not found."));
 
             var fileSystemResult = await VaultUnlockingService.SetFileSystemAsync(fileSystem, cancellationToken);
             if (!fileSystemResult.Successful)

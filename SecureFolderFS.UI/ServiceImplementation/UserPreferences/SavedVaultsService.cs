@@ -6,7 +6,7 @@ using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 namespace SecureFolderFS.UI.ServiceImplementation.UserPreferences
 {
     /// <inheritdoc cref="ISavedVaultsService"/>
-    public sealed class SavedVaultsService : OnDeviceSettingsModel, ISavedVaultsService
+    public sealed class SavedVaultsService : LocalSettingsModel, ISavedVaultsService
     {
         public SavedVaultsService(IModifiableFolder settingsFolder)
             : base(settingsFolder)

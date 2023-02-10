@@ -2,11 +2,12 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.WinUI.Helpers;
 using System.Threading.Tasks;
 using SecureFolderFS.UI;
 using WinUIEx;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.UserPreferences;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -67,9 +68,7 @@ namespace SecureFolderFS.WinUI.WindowViews
         private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
-
-            await Task.WhenAll(settingsService.SaveSettingsAsync(), applicationSettingsService.SaveSettingsAsync());
+            await settingsService.SaveAsync();
         }
 
         private void HostControl_Loaded(object sender, RoutedEventArgs e)

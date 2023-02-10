@@ -1,9 +1,9 @@
-using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.AvaloniaUI.Services
 {
-    internal interface IPlatformSettingsService : ISettingsModel
+    internal interface IPlatformSettingsService : IPersistable
     {
         /// <summary>
         /// Gets or sets the application theme.

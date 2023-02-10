@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -13,14 +12,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
     {
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         public ObservableCollection<FileSystemAdapterItemViewModel> FileSystemAdapters { get; }
 
-        public string? PreferredFileSystemId
+        public string PreferredFileSystemId
         {
-            get => PreferencesSettingsService.PreferredFileSystemId;
-            set => PreferencesSettingsService.PreferredFileSystemId = value;
+            get => SettingsService.UserSettings.PreferredFileSystemId;
+            set => SettingsService.UserSettings.PreferredFileSystemId = value;
         }
 
         public FileSystemBannerViewModel()

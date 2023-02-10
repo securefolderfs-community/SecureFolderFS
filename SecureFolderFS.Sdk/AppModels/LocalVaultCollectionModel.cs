@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -13,11 +13,13 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultCollectionModel"/>
-    public sealed class LocalVaultCollectionModel : BaseSerializedDataModel<ISavedVaultsService>, IVaultCollectionModel
+    public sealed class LocalVaultCollectionModel : IVaultCollectionModel
     {
         private List<IVaultModel>? _vaults;
 
         private IStorageService StorageService { get; } = Ioc.Default.GetRequiredService<IStorageService>();
+
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         /// <inheritdoc/>
         public async Task<bool> HasVaultsAsync(CancellationToken cancellationToken = default)
@@ -42,7 +44,7 @@ namespace SecureFolderFS.Sdk.AppModels
             SettingsService.VaultPaths ??= new();
             SettingsService.VaultPaths.Add(vaultFolder.Path);
 
-            return await SettingsService.SaveSettingsAsync(cancellationToken);
+            return await SettingsService.SaveAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -61,7 +63,7 @@ namespace SecureFolderFS.Sdk.AppModels
             _vaults?.Remove(vault);
             SettingsService.VaultPaths.RemoveAt(indexToRemove);
 
-            return await SettingsService.SaveSettingsAsync(cancellationToken);
+            return await SettingsService.SaveAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

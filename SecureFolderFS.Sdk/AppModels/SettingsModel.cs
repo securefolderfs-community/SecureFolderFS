@@ -1,42 +1,35 @@
 ﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="ISettingsModel"/>
-    public abstract class SettingsModel : ISettingsModel
+    /// <inheritdoc cref="IPersistable"/>
+    public abstract class SettingsModel : IPersistable, INotifyPropertyChanged
     {
         /// <summary>
         /// Gets the <see cref="IDatabaseModel{T}"/> where settings are stored.
         /// </summary>
-        protected IDatabaseModel<string>? SettingsDatabase { get; set; }
-
-        /// <inheritdoc/>
-        public virtual bool IsAvailable { get; protected set; }
+        protected abstract IDatabaseModel<string> SettingsDatabase { get; }
 
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <inheritdoc/>
-        public virtual async Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default)
+        public virtual Task<bool> LoadAsync(CancellationToken cancellationToken = default)
         {
-            if (SettingsDatabase is null)
-                return false;
-
-            return await SettingsDatabase.LoadAsync(cancellationToken);
+            return SettingsDatabase.LoadAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default)
+        public virtual Task<bool> SaveAsync(CancellationToken cancellationToken = default)
         {
-            if (SettingsDatabase is null)
-                return false;
-
-            return await SettingsDatabase.SaveAsync(cancellationToken);
+            return SettingsDatabase.SaveAsync(cancellationToken);
         }
 
         /// <summary>
@@ -46,9 +39,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <param name="defaultValue">Retrieves the default value. If <paramref name="defaultValue"/> is null, returns the default value of <typeparamref name="T"/>.</param>
         /// <param name="settingName">The name of the setting.</param>
         /// <returns>A requested setting. The value is determined by the availability of the setting in the storage or by the <paramref name="defaultValue"/>.</returns>
-        protected virtual T? GetSetting<T>(Func<T?>? defaultValue = null, [CallerMemberName] string settingName = "")
+        [return: NotNullIfNotNull(nameof(defaultValue))]
+        protected virtual T? GetSetting<T>(Func<T>? defaultValue = null, [CallerMemberName] string settingName = "")
         {
-            if (!IsAvailable || SettingsDatabase is null || string.IsNullOrEmpty(settingName))
+            if (string.IsNullOrEmpty(settingName))
                 return defaultValue is not null ? defaultValue() : default;
 
             return SettingsDatabase.GetValue(settingName, defaultValue);
@@ -63,16 +57,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <returns>If the setting has been updated, returns true otherwise false.</returns>
         protected virtual bool SetSetting<T>(T? value, [CallerMemberName] string settingName = "")
         {
-            if (!IsAvailable || SettingsDatabase is null || string.IsNullOrEmpty(settingName))
+            if (string.IsNullOrEmpty(settingName))
                 return false;
 
-            if (SettingsDatabase.SetValue(settingName, value))
-            {
-                OnPropertyChanged(this, settingName);
-                return true;
-            }
-
-            return false;
+            return SettingsDatabase.SetValue(settingName, value);
         }
 
         /// <summary>

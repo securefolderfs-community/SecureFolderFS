@@ -1,7 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -11,8 +7,6 @@ using SecureFolderFS.AvaloniaUI.ServiceImplementation;
 using SecureFolderFS.AvaloniaUI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.AvaloniaUI.WindowViews;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
@@ -22,6 +16,10 @@ using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.UI.Storage.NativeStorage;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI
 {
@@ -79,12 +77,9 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
                 .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder))
                 .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
-                .AddSingleton<IVaultsWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
-                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder))
+                .AddSingleton<IVaultWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
                 .AddSingleton<IPlatformSettingsService, PlatformSettingsService>(_ => new PlatformSettingsService(settingsFolder))
-                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
-                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
-                .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
+                .AddSingleton<ISettingsService, SettingsService>()
 
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>()
@@ -121,14 +116,6 @@ namespace SecureFolderFS.AvaloniaUI
 #if !DEBUG
             ExceptionHelpers.LogExceptionToFile(AppDirectory, formattedException);
 #endif
-        }
-
-        // Terrible.
-        private static TSettingsService GetSettingsService<TSettingsService>(IServiceProvider serviceProvider,
-            Func<IDatabaseModel<string>, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
-        {
-            var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
-            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl);
         }
     }
 }

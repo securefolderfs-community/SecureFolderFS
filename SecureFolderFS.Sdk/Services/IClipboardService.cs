@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Models;
+﻿using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -16,22 +14,10 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> IsClipboardAvailableAsync();
 
         /// <summary>
-        /// Sets the clipboard data.
+        /// Sets the current clipboard item to specified <paramref name="text"/>, if possible.
         /// </summary>
-        /// <param name="data">The data to upload to clipboard.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
-        Task<bool> SetClipboardDataAsync(IClipboardItemModel data);
-
-        /// <summary>
-        /// Gets the current clipboard data.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted, returns <see cref="IClipboardItemModel"/>, otherwise null.</returns>
-        Task<IClipboardItemModel?> RequestClipboardDataAsync();
-
-        /// <summary>
-        /// Gets the whole clipboard data.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and access is granted, returns <see cref="IEnumerable{T}"/> of type <see cref="IClipboardItemModel"/>, otherwise null.</returns>
-        Task<IEnumerable<IClipboardItemModel>> RequestFullClipboardDataAsync();
+        /// <param name="text">The text to set to the clipboard.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task SetTextAsync(string text);
     }
 }

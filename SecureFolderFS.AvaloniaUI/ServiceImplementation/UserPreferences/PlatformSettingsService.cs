@@ -9,7 +9,7 @@ using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation.UserPreferences
 {
-    internal sealed class PlatformSettingsService : OnDeviceSettingsModel, IPlatformSettingsService
+    internal sealed class PlatformSettingsService : LocalSettingsModel, IPlatformSettingsService
     {
         public PlatformSettingsService(IModifiableFolder settingsFolder)
             : base(settingsFolder)

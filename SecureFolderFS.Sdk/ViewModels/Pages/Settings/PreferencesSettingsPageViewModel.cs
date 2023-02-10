@@ -1,32 +1,32 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
 {
     public sealed class PreferencesSettingsPageViewModel : ObservableObject
     {
-        private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         public FileSystemBannerViewModel BannerViewModel { get; }
 
         public bool StartOnSystemStartup
         {
-            get => PreferencesSettingsService.StartOnSystemStartup;
-            set => PreferencesSettingsService.StartOnSystemStartup = value;
+            get => SettingsService.UserSettings.StartOnSystemStartup;
+            set => SettingsService.UserSettings.StartOnSystemStartup = value;
         }
 
         public bool ContinueOnLastVault
         {
-            get => PreferencesSettingsService.ContinueOnLastVault;
-            set => PreferencesSettingsService.ContinueOnLastVault = value;
+            get => SettingsService.UserSettings.ContinueOnLastVault;
+            set => SettingsService.UserSettings.ContinueOnLastVault = value;
         }
 
         public bool OpenFolderOnUnlock
         {
-            get => PreferencesSettingsService.OpenFolderOnUnlock;
-            set => PreferencesSettingsService.OpenFolderOnUnlock = value;
+            get => SettingsService.UserSettings.OpenFolderOnUnlock;
+            set => SettingsService.UserSettings.OpenFolderOnUnlock = value;
         }
 
         public PreferencesSettingsPageViewModel()

@@ -1,12 +1,12 @@
-﻿using System;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utils;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -16,9 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 {
     public sealed partial class SidebarViewModel : ObservableObject, IAsyncInitialize, IRecipient<AddVaultMessage>, IRecipient<RemoveVaultMessage>
     {
-        private IApplicationSettingsService ApplicationSettingsService { get; } = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
-
-        private IPreferencesSettingsService PreferencesSettingsService { get; } = Ioc.Default.GetRequiredService<IPreferencesSettingsService>();
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         private IVaultCollectionModel VaultCollectionModel { get; }
 
@@ -34,8 +32,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             get => _SelectedItem;
             set
             {
-                if (SetProperty(ref _SelectedItem, value) && PreferencesSettingsService.ContinueOnLastVault)
-                    ApplicationSettingsService.LastVaultFolderId = _SelectedItem?.VaultViewModel.VaultModel.Folder.Id;
+                if (SetProperty(ref _SelectedItem, value) && SettingsService.UserSettings.ContinueOnLastVault)
+                    SettingsService.ApplicationSettings.LastVaultFolderId = _SelectedItem?.VaultViewModel.VaultModel.Folder.Id;
             }
         }
 
@@ -58,8 +56,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
                 await AddVaultToSidebarAsync(item, cancellationToken);
             }
 
-            if (PreferencesSettingsService.ContinueOnLastVault)
-                SelectedItem = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(ApplicationSettingsService.LastVaultFolderId));
+            if (SettingsService.UserSettings.ContinueOnLastVault)
+                SelectedItem = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.ApplicationSettings.LastVaultFolderId));
 
             SelectedItem ??= SidebarItems.FirstOrDefault();
         }
@@ -87,11 +85,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             }
             catch (NullReferenceException)
             {
-                // TODO This happens rarely but the vault is actually removed
+                // TODO: This happens rarely but the vault is actually removed
             }
 
             SelectedItem = SidebarItems.FirstOrDefault();
-
             await VaultCollectionModel.RemoveVaultAsync(message.VaultModel);
         }
 

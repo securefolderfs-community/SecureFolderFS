@@ -1,31 +1,25 @@
-﻿using System.ComponentModel;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.Models
+namespace SecureFolderFS.Shared.Utils
 {
     /// <summary>
-    /// Manages all actions related with storing app settings.
+    /// Allows for data to be saved and loaded from a common persistence store.
     /// </summary>
-    public interface ISettingsModel : INotifyPropertyChanged
+    public interface IPersistable
     {
         /// <summary>
-        /// Determines whether the settings store is available.
-        /// </summary>
-        bool IsAvailable { get; }
-
-        /// <summary>
-        /// Loads all persisted settings and prepares them for use.
+        /// Asynchronously loads persisted data into memory.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
-        Task<bool> LoadSettingsAsync(CancellationToken cancellationToken = default);
+        Task<bool> LoadAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Writes and persists all settings.
+        /// Asynchronously saves data stored in memory.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
-        Task<bool> SaveSettingsAsync(CancellationToken cancellationToken = default);
+        Task<bool> SaveAsync(CancellationToken cancellationToken = default);
     }
 }

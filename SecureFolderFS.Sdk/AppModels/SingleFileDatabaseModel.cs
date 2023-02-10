@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="BaseDictionaryDatabaseModel{TDictionaryValue}"/>
-    public sealed class SingleFileDatabaseModel : BaseDictionaryDatabaseModel<ISerializedModel>
+    /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
+    public sealed class SingleFileDatabaseModel : BaseDatabaseModel<ISerializedModel>
     {
         private readonly IFile _databaseFile;
 
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null)
+        public override TValue? GetValue<TValue>(string key, Func<TValue>? defaultValue = null)
             where TValue : default
         {
             if (settingsCache.TryGetValue(key, out var value))

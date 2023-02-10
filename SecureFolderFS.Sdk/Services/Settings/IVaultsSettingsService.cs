@@ -6,7 +6,7 @@ namespace SecureFolderFS.Sdk.Services.UserPreferences
     /// <summary>
     /// A service to manage settings of saved vaults.
     /// </summary>
-    public interface IVaultsSettingsService : ISettingsModel
+    public interface IVaultsSettingsService : IPersistable
     {
         /// <summary>
         /// Gets vault context identified by <paramref name="id"/>.

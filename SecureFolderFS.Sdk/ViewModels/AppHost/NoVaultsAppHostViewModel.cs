@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using System.Threading.Tasks;
 
@@ -43,8 +42,8 @@ namespace SecureFolderFS.Sdk.ViewModels.AppHost
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {
-            await DialogService.ShowDialogAsync(new SettingsDialogViewModel());
-            await SettingsService.SaveSettingsAsync();
+            await DialogService.ShowDialogAsync(SettingsDialogViewModel.Instance);
+            await SettingsService.SaveAsync();
         }
     }
 }

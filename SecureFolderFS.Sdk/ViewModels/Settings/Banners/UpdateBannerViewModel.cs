@@ -1,19 +1,18 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 {
     public sealed partial class UpdateBannerViewModel : ObservableObject
     {
-        private IGeneralSettingsService GeneralSettingsService { get; } = Ioc.Default.GetRequiredService<IGeneralSettingsService>();
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         private IUpdateService UpdateService { get; } = Ioc.Default.GetRequiredService<IUpdateService>();
 
@@ -27,8 +26,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 
         public DateTime LastChecked
         {
-            get => GeneralSettingsService.UpdateLastChecked;
-            set => GeneralSettingsService.UpdateLastChecked = value;
+            get => SettingsService.ApplicationSettings.UpdateLastChecked;
+            set => SettingsService.ApplicationSettings.UpdateLastChecked = value;
         }
 
         public UpdateBannerViewModel()

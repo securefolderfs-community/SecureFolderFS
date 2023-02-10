@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="BaseDictionaryDatabaseModel{TDictionaryValue}"/>
-    public sealed class MultipleFilesDatabaseModel : BaseDictionaryDatabaseModel<MultipleFilesDatabaseModel.SettingValue>
+    /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
+    public sealed class BatchDatabaseModel : BaseDatabaseModel<BatchDatabaseModel.SettingValue>
     {
         private const string TYPE_FILE_SUFFIX = ".type";
 
@@ -24,14 +24,14 @@ namespace SecureFolderFS.Sdk.AppModels
         /// </summary>
         public bool FlushOnlyChangedValues { get; set; } // TODO: This should be easily accessible when initializing settings service!
 
-        public MultipleFilesDatabaseModel(IModifiableFolder databaseFolder, IAsyncSerializer<Stream> serializer)
+        public BatchDatabaseModel(IModifiableFolder databaseFolder, IAsyncSerializer<Stream> serializer)
             : base(serializer)
         {
             _databaseFolder = databaseFolder;
         }
 
         /// <inheritdoc/>
-        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null)
+        public override TValue? GetValue<TValue>(string key, Func<TValue>? defaultValue = null)
             where TValue : default
         {
             if (settingsCache.TryGetValue(key, out var value))

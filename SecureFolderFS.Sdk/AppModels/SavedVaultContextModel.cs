@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.AppModels
             var vaultContext = SettingsService.GetVaultContextForId(VaultModel.Folder.Id);
             vaultContext.LastAccessedDate = value;
 
-            return await SettingsService.SaveSettingsAsync(cancellationToken);
+            return await SettingsService.SaveAsync(cancellationToken);
         }
     }
 }

@@ -1,23 +1,23 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
 {
     public sealed class PrivacySettingsPageViewModel : ObservableObject
     {
-        private IPrivacySettingsService PrivacySettingsService { get; } = Ioc.Default.GetRequiredService<IPrivacySettingsService>();
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         public bool AutoLockVaults
         {
-            get => PrivacySettingsService.AutoLockVaults;
-            set => PrivacySettingsService.AutoLockVaults = value;
+            get => SettingsService.UserSettings.AutoLockVaults;
+            set => SettingsService.UserSettings.AutoLockVaults = value;
         }
 
         public bool IsTelemetryEnabled
         {
-            get => PrivacySettingsService.IsTelemetryEnabled;
-            set => PrivacySettingsService.IsTelemetryEnabled = value;
+            get => SettingsService.UserSettings.IsTelemetryEnabled;
+            set => SettingsService.UserSettings.IsTelemetryEnabled = value;
         }
     }
 }
