@@ -1,0 +1,57 @@
+name: Bug Report
+description: Create a bug report to help improve SecureFolderFS
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Please read before you begin!
+        > **Warning**
+        > Ignoring these instructions may result in your request being closed
+        
+        We highly value well-written and concise feedback as it simplifies the review process of your proposal.
+        Make sure that all fields are filled out and do not miss any information that might be essential with the progress of your request.
+  - type: textarea
+    attributes:
+      label: Description
+      description: A clear and concise description of what the issue is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce that result in incorrect behavior.
+      placeholder: |
+        1. Go to '....'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Evidence
+      description: If applicable, add screenshots or videos to help explain your problem.
+      placeholder: (You can upload files by dragging them onto the text field)
+  - type: input
+    attributes:
+      label: App Version
+      description: |
+        Please provide SecureFolderFS version that the issue occurred on.
+        (You can copy the version number by going to Settings > About > Version)
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: OS Version
+      description: |
+        Please provide OS version that the issue occurred on.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Diagnostic information
+      description: |
+        If applicable, add a log file containing additional information. Do not copy contents of the file -- this field is for attaching the file only!
+        (The log file can be found by going to Settings > About > Open log location)
+      placeholder: (You can upload files by dragging them onto the text field)

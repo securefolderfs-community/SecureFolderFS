@@ -9,6 +9,15 @@
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Storyboard x:Name="ChangeTextAnimation">
+            <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:0.40" />
+        </Storyboard>
+    </Page.Resources>
     <Grid RowSpacing="12">
         <Grid.RowDefinitions>
             <!--  Banner  -->
@@ -31,7 +40,79 @@
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <Button x:Name="VersionButton" Click="VersionButton_Click">
+                    <Button>
+                        <Button.Flyout>
+                            <Flyout Placement="Bottom">
+                                <Grid
+                                    MaxWidth="216"
+                                    Margin="-4"
+                                    RowSpacing="8">
+                                    <Grid.RowDefinitions>
+                                        <!--  Title  -->
+                                        <RowDefinition Height="Auto" />
+                                        <!--  Description  -->
+                                        <RowDefinition />
+                                        <!--  Options  -->
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!--  Title  -->
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        FontWeight="SemiBold"
+                                        Text="Copy version" />
+
+                                    <!--  Description  -->
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Opacity="0.8"
+                                        Text="Select which version to copy to clipboard"
+                                        TextWrapping="WrapWholeWords" />
+
+                                    <!--  Options  -->
+                                    <Grid
+                                        Grid.Row="2"
+                                        Margin="0,12,0,0"
+                                        RowSpacing="6">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <Button
+                                            Grid.Row="0"
+                                            HorizontalAlignment="Stretch"
+                                            Click="CopyAppVersion_Click">
+                                            <Grid x:Name="CopyAppVersionGrid">
+                                                <TextBlock HorizontalAlignment="Center" Text="Copy app version" />
+                                                <StackPanel
+                                                    Orientation="Horizontal"
+                                                    Spacing="4"
+                                                    Visibility="Collapsed">
+                                                    <FontIcon Glyph="&#xE73E;" />
+                                                    <TextBlock Text="Copied" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                        <Button
+                                            Grid.Row="1"
+                                            HorizontalAlignment="Stretch"
+                                            Click="CopySystemVersion_Click"
+                                            Command="{x:Bind ViewModel.CopySystemVersionCommand}">
+                                            <Grid x:Name="CopySystemVersionGrid">
+                                                <TextBlock Text="Copy OS version" />
+                                                <StackPanel
+                                                    Orientation="Horizontal"
+                                                    Spacing="4"
+                                                    Visibility="Collapsed">
+                                                    <FontIcon Glyph="&#xE73E;" />
+                                                    <TextBlock Text="Copied" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </Flyout>
+                        </Button.Flyout>
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon
                                 VerticalAlignment="Center"
@@ -64,18 +145,6 @@
                 </StackPanel>
             </uc:BannerControl.RightSide>
         </uc:BannerControl>
-
-        <TeachingTip
-            x:Name="VersionCopiedTeachingTip"
-            Title="Copied to clipboard"
-            Grid.Row="0"
-            IsLightDismissEnabled="True"
-            PreferredPlacement="Bottom"
-            Target="{x:Bind VersionButton}">
-            <TeachingTip.IconSource>
-                <FontIconSource Glyph="&#xE73E;" />
-            </TeachingTip.IconSource>
-        </TeachingTip>
 
         <StackPanel Grid.Row="1" Spacing="4">
             <ucab:ActionBlockControl Title="Social" Description="Join the discussion!">
