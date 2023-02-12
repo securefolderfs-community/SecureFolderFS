@@ -4,10 +4,10 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 {
@@ -37,7 +37,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
             UpdateText = "Latest version installed";
         }
 
-        public async Task ConfigureUpdates()
+        /// <inheritdoc/>
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var updatesSupported = await UpdateService.IsSupportedAsync();
             var isInitialized = updatesSupported && await UpdateService.InitializeAsync();

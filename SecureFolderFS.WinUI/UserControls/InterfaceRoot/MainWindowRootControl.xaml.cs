@@ -53,7 +53,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             await Task.Delay(1);
 
             // Initialize
-            var result = await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.HasVaultsAsync());
+            await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.InitAsync());
 
             // Continue root initialization
             if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
@@ -63,7 +63,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             }
             else
             {
-                if (result[1]) // Has vaults
+                if (!vaultCollectionModel.IsEmpty) // Has vaults
                 {
                     // Show main app screen
                     _ = NavigateHostControlAsync(new MainAppHostViewModel(vaultCollectionModel));
@@ -80,8 +80,12 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         {
             // Use transitions only when the initial page view model is not MainAppHostViewModel 
             if ((ViewModel.AppContentViewModel is null && viewModel is not MainAppHostViewModel)
-                || (ViewModel.AppContentViewModel is not MainAppHostViewModel && ViewModel.AppContentViewModel is not null && viewModel is MainAppHostViewModel))
-                AppContent?.ContentTransitions?.ClearAndAdd(new ContentThemeTransition());
+                || (ViewModel.AppContentViewModel is not MainAppHostViewModel &&
+                    ViewModel.AppContentViewModel is not null && viewModel is MainAppHostViewModel))
+            {
+                AppContent?.ContentTransitions?.Clear();
+                AppContent?.ContentTransitions?.Add(new ContentThemeTransition());
+            }
 
             ViewModel.AppContentViewModel = viewModel;
 

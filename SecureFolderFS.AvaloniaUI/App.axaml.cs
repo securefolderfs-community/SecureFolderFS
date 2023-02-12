@@ -71,7 +71,7 @@ namespace SecureFolderFS.AvaloniaUI
 
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
-                .AddSingleton<ISettingsService, SettingsService>()
+                .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new VaultPersistenceService(settingsFolder))
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>()
                 .AddSingleton<IVaultService, VaultService>()

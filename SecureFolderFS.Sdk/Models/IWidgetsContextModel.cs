@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SecureFolderFS.Shared.Utils;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,13 +8,8 @@ namespace SecureFolderFS.Sdk.Models
     /// <summary>
     /// Represents a context that holds widgets settings and layout of an individual vault.
     /// </summary>
-    public interface IWidgetsContextModel
+    public interface IWidgetsContextModel : IAsyncInitialize
     {
-        /// <summary>
-        /// Gets the vault model that is associated with this context.
-        /// </summary>
-        IVaultModel VaultModel { get; }
-
         /// <summary>
         /// Adds a new widget model identified by <paramref name="widgetId"/>.
         /// </summary>

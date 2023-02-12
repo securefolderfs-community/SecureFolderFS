@@ -66,14 +66,15 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
         {
-            if (!await EnsureSettingsFolderAsync(cancellationToken))
-                return false;
-
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
+                if (!await EnsureSettingsFolderAsync(cancellationToken))
+                    return false;
 
-                var allFiles = await _databaseFolder.GetFilesAsync(cancellationToken).ToListAsync(cancellationToken);
+                _ = _databaseFolder!;
+
+                var allFiles = await _databaseFolder!.GetFilesAsync(cancellationToken).ToListAsync(cancellationToken);
                 var nonTypeFiles = allFiles.Where(x => !x.Name.Contains(TYPE_FILE_SUFFIX, StringComparison.OrdinalIgnoreCase));
 
                 foreach (var dataFile in nonTypeFiles)
@@ -129,12 +130,13 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
         {
-            if (!await EnsureSettingsFolderAsync(cancellationToken))
-                return false;
-
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
+                if (!await EnsureSettingsFolderAsync(cancellationToken))
+                    return false;
+
+                _ = _databaseFolder!;
 
                 foreach (var item in settingsCache)
                 {

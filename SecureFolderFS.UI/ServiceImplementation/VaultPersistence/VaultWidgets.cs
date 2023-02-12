@@ -1,18 +1,18 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
-namespace SecureFolderFS.UI.ServiceImplementation.Settings
+namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 {
     /// <inheritdoc cref="IVaultWidgets"/>
-    public sealed class VaultsWidgetsService : SettingsModel, IVaultWidgets
+    public sealed class VaultsWidgets : SettingsModel, IVaultWidgets
     {
         /// <inheritdoc/>
         protected override IDatabaseModel<string> SettingsDatabase { get; }
 
-        public VaultsWidgetsService(IModifiableFolder settingsFolder)
+        public VaultsWidgets(IModifiableFolder settingsFolder)
         {
             SettingsDatabase = new BatchDatabaseModel(Constants.LocalSettings.VAULTS_WIDGETS_FOLDERNAME, settingsFolder, StreamSerializer.Instance);
         }

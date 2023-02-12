@@ -74,7 +74,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 var newItem = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
                 // Determine whether any of the changed files were integral parts of the vault
-                if (VaultService.IsFileNameReserved(oldItem) || VaultService.IsFileNameReserved(newItem))
+                if (VaultService.IsNameReserved(oldItem) || VaultService.IsNameReserved(newItem))
                     result = new CommonResult(false);
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -82,7 +82,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 var item = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
                 // Determine if the deleted file was an integral part of the vault
-                if (VaultService.IsFileNameReserved(item))
+                if (VaultService.IsNameReserved(item))
                     result = new CommonResult(false);
             }
 

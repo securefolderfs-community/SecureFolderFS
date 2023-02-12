@@ -40,7 +40,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.GetWindowHandle());
 
             if (filter is not null)
-                filePicker.FileTypeFilter.EnumeratedAdd(filter);
+            {
+                foreach (var item in filter)
+                {
+                    filePicker.FileTypeFilter.Add(item);
+                }
+            }
             else
                 filePicker.FileTypeFilter.Add("*");
 

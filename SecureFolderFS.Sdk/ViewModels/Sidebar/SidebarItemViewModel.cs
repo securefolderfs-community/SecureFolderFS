@@ -24,16 +24,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         [ObservableProperty]
         private DateTime? _LastAccessDate;
 
-        public SidebarItemViewModel(IVaultModel vaultModel, IVaultContextModel vaultContextModel, IWidgetsContextModel widgetsContextModel)
+        public SidebarItemViewModel(IVaultModel vaultModel, IWidgetsContextModel widgetsContextModel)
         {
-            VaultViewModel = new(vaultModel, vaultContextModel, widgetsContextModel);
+            VaultViewModel = new(vaultModel, widgetsContextModel);
 
             WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
         }
 
         /// <inheritdoc/>
-        public async void Receive(VaultUnlockedMessage message)
+        public void Receive(VaultUnlockedMessage message)
         {
             if (VaultViewModel.VaultModel.Equals(message.VaultModel))
             {
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
                 CanRemoveVault = false;
 
                 // Update last accessed date
-                LastAccessDate = await VaultViewModel.VaultContextModel.GetLastAccessedDate();
+                LastAccessDate = VaultViewModel.VaultModel.LastAccessDate;
             }
         }
 

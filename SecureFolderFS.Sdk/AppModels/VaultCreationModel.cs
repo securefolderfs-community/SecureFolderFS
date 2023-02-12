@@ -2,7 +2,6 @@
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
@@ -75,10 +74,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!deployResult.Successful)
                 return new CommonResult<IVaultModel?>(deployResult.Exception);
 
-            // Create vault model
-            IVaultModel vaultModel = new LocalVaultModel(_vaultFolder);
-
-            return new CommonResult<IVaultModel?>(vaultModel);
+            return new CommonResult<IVaultModel?>(new LocalVaultModel(_vaultFolder));
         }
 
         /// <inheritdoc/>

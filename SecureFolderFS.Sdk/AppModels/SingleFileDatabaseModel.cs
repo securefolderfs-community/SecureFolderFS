@@ -51,12 +51,14 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
         {
-            if (!await EnsureSettingsFileAsync(cancellationToken))
-                return false;
-
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
+                if (!await EnsureSettingsFileAsync(cancellationToken))
+                    return false;
+
+                _ = _databaseFile!;
+
                 await using var stream = await _databaseFile!.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
                 if (stream is null)
                     return false;
@@ -73,9 +75,7 @@ namespace SecureFolderFS.Sdk.AppModels
                         continue;
 
                     if (item.Value is ISerializedModel serializedData)
-                    {
                         settingsCache[key] = serializedData;
-                    }
                     else
                         settingsCache[key] = new NonSerializedData(item.Value);
                 }
@@ -95,16 +95,18 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
         {
-            if (!await EnsureSettingsFileAsync(cancellationToken))
-                return false;
-
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
+                if (!await EnsureSettingsFileAsync(cancellationToken))
+                    return false;
+
+                _ = _databaseFile!;
+
                 await using var dataStream = await _databaseFile!.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
                 if (dataStream is null)
                     return false;
-
+                
                 await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, ISerializedModel>>(settingsCache, cancellationToken);
 
                 // Overwrite existing content

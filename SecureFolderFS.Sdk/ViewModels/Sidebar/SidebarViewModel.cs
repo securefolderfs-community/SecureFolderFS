@@ -94,7 +94,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
 
         private async Task<SidebarItemViewModel> AddVaultToSidebarAsync(IVaultModel vaultModel, CancellationToken cancellationToken = default)
         {
-            IVaultContextModel vaultContextModel = new SavedVaultContextModel(vaultModel);
             IWidgetsContextModel widgetsContextModel = new SavedWidgetsContextModel(vaultModel);
 
             var item = new SidebarItemViewModel(vaultModel, vaultContextModel, widgetsContextModel);

@@ -60,7 +60,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ServiceImplementation\UserPreferences\" />
       <Folder Include="Storage" />
     </ItemGroup>
 

@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.Services.Settings
+namespace SecureFolderFS.Sdk.Services.VaultPersistence
 {
     /// <summary>
     /// A service to manage widgets of saved vaults.

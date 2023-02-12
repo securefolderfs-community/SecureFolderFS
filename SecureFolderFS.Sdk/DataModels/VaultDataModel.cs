@@ -3,11 +3,12 @@
 namespace SecureFolderFS.Sdk.DataModels
 {
     [Serializable]
-    public sealed record class VaultDataModel(string? Path, string? Name, DateTime? LastAccessedDate)
+    public sealed class VaultDataModel
     {
-        public VaultDataModel()
-            : this(null, null, null)
-        {
-        }
+        public string? Id { get; set; }
+
+        public string? Name { get; set; }
+
+        public DateTime? LastAccessDate { get; set; }
     }
 }

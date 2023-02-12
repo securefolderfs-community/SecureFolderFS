@@ -1,6 +1,5 @@
 ﻿using Miscreant;
 using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -42,7 +41,11 @@ namespace SecureFolderFS.Core.Cryptography.CryptImpl
             {
                 // The longKey will be split into two keys - one for S2V and the other one for CTR
                 var longKey = new byte[encKey.Length + macKey.Length];
-                longKey.EmplaceArrays(encKey.ToArray(), macKey.ToArray());
+                var longKeySpan = longKey.AsSpan();
+
+                // Copy keys
+                encKey.CopyTo(longKeySpan);
+                macKey.CopyTo(longKeySpan.Slice(encKey.Length));
 
                 _aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
             }

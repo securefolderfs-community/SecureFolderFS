@@ -10,7 +10,7 @@ namespace SecureFolderFS.Sdk.Services
     /// <summary>
     /// Represents a service to interact with vault-related data.
     /// </summary>
-    public interface IVaultService // TODO: Rename this service since it doesn't have any vault related members
+    public interface IVaultService
     {
         /// <summary>
         /// Determines whether provided <paramref name="name"/> is part of vault core configuration files.

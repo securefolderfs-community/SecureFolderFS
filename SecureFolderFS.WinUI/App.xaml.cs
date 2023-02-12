@@ -78,6 +78,7 @@ namespace SecureFolderFS.WinUI
 
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
+                .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new VaultPersistenceService(settingsFolder))
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>()
                 .AddSingleton<IVaultService, VaultService>()

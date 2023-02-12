@@ -3,7 +3,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
-namespace SecureFolderFS.UI.ServiceImplementation.Settings
+namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
 {
     /// <inheritdoc cref="IAppSettings"/>
     public sealed class AppSettings : SettingsModel, IAppSettings
