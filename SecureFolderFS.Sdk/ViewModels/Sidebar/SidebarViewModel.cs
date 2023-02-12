@@ -92,15 +92,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             await VaultCollectionModel.RemoveVaultAsync(message.VaultModel);
         }
 
-        private async Task<SidebarItemViewModel> AddVaultToSidebarAsync(IVaultModel vaultModel, CancellationToken cancellationToken = default)
+        private Task<SidebarItemViewModel> AddVaultToSidebarAsync(IVaultModel vaultModel, CancellationToken cancellationToken = default)
         {
-            IWidgetsContextModel widgetsContextModel = new SavedWidgetsContextModel(vaultModel);
+            var widgetsContextModel = new SavedWidgetsContextModel(vaultModel.Folder);
+            var sidebarItem = new SidebarItemViewModel(vaultModel, widgetsContextModel);
 
-            var item = new SidebarItemViewModel(vaultModel, vaultContextModel, widgetsContextModel);
-            item.LastAccessDate = await vaultContextModel.GetLastAccessedDate(cancellationToken);
-            SidebarItems.Add(item);
+            sidebarItem.LastAccessDate = vaultModel.LastAccessDate;
+            SidebarItems.Add(sidebarItem);
 
-            return item;
+            return Task.FromResult(sidebarItem);
         }
     }
 }

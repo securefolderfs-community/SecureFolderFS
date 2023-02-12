@@ -3,6 +3,7 @@ using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 {
@@ -20,8 +21,8 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
         /// <inheritdoc/>
         public WidgetsDataModel GetWidgetsContextForId(string id)
         {
-            var widgetsContext = GetSetting<WidgetsDataModel>(() => new(), id);
-            return widgetsContext;
+            var hashedId = ChecksumHelpers.CalculateChecksumForId(id);
+            return GetSetting<WidgetsDataModel>(() => new(), hashedId);
         }
     }
 }

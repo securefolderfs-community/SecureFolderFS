@@ -15,7 +15,7 @@
     IsPrimaryButtonEnabled="{x:Bind ViewModel.PrimaryButtonEnabled, Mode=OneWay}"
     Loaded="VaultWizardDialog_Loaded"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    RequestedTheme="{x:Bind h:WinUIThemeHelper.Instance.CurrentTheme, Mode=OneWay}"
+    RequestedTheme="{x:Bind h:WinUIThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
     SecondaryButtonText="Cancel"
     Style="{StaticResource DefaultContentDialogStyle}"

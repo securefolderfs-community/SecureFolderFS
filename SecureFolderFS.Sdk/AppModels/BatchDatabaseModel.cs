@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// Gets or sets a value that determines whether or not to flush settings that are unchanged in memory.
         /// Setting to true is recommended if you don't expect others to modify the settings files.
         /// </summary>
-        public bool FlushOnlyChangedValues { get; set; } // TODO: This should be easily accessible when initializing settings service!
+        public bool FlushOnlyChangedValues { get; set; }
 
         public BatchDatabaseModel(string folderName, IModifiableFolder settingsFolder, IAsyncSerializer<Stream> serializer)
             : base(serializer)

@@ -4,12 +4,12 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 {
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
                 throw new InvalidOperationException($"Invalid state. {nameof(unlockedVaultModel)} shouldn't be null.");
 
             // Update last access date
-            await _vaultViewModel.VaultContextModel.SetLastAccessedDate(DateTime.Now, cancellationToken);
+            await _vaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now, cancellationToken);
             await ThreadingService.SwitchThreadAsync();
 
             var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);

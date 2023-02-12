@@ -7,7 +7,7 @@
     xmlns:local="using:SecureFolderFS.WinUI.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
-    RequestedTheme="{x:Bind h:WinUIThemeHelper.Instance.CurrentTheme, Mode=OneWay}"
+    RequestedTheme="{x:Bind h:WinUIThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 

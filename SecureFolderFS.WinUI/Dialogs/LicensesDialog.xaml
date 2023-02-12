@@ -9,7 +9,7 @@
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
-    RequestedTheme="{x:Bind h:WinUIThemeHelper.Instance.CurrentTheme, Mode=OneWay}"
+    RequestedTheme="{x:Bind h:WinUIThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 

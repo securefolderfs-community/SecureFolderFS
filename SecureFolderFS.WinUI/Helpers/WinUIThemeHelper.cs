@@ -22,6 +22,11 @@ namespace SecureFolderFS.WinUI.Helpers
         /// <inheritdoc/>
         public static WinUIThemeHelper Instance { get; } = new();
 
+        /// <summary>
+        /// Gets the current theme represented by <see cref="ElementTheme"/>.
+        /// </summary>
+        public ElementTheme CurrentElementTheme => (ElementTheme)(uint)CurrentTheme;
+
         private WinUIThemeHelper()
         {
             _uiSettings = new();
