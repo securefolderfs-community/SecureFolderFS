@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
 {
@@ -31,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
         private async Task CopyAppVersionAsync(CancellationToken cancellationToken)
         {
             if (await ClipboardService.IsClipboardAvailableAsync())
-                await ClipboardService.SetClipboardDataAsync(new ClipboardTextItemModel(AppVersion));
+                await ClipboardService.SetTextAsync(AppVersion);
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
@@ -40,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
             if (await ClipboardService.IsClipboardAvailableAsync())
             {
                 var systemVersion = ApplicationService.GetSystemVersion();
-                await ClipboardService.SetClipboardDataAsync(new ClipboardTextItemModel(systemVersion));
+                await ClipboardService.SetTextAsync(systemVersion);
             }
         }
 
@@ -48,12 +47,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
         private Task OpenGitHubRepositoryAsync()
         {
             return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS"));
-        }
-
-        [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenDiscordSocialAsync()
-        {
-            return ApplicationService.OpenUriAsync(new Uri("https://discord.com/invite/NrTxXpJ2Zj"));
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]

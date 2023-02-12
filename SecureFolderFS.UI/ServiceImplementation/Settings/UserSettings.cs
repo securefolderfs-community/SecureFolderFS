@@ -1,19 +1,22 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using System.ComponentModel;
 
 namespace SecureFolderFS.UI.ServiceImplementation.Settings
 {
     /// <inheritdoc cref="IUserSettings"/>
-    public sealed class UserSettings : LocalSettingsModel, IUserSettings
+    public sealed class UserSettings : SettingsModel, IUserSettings
     {
+        /// <inheritdoc/>
+        protected override IDatabaseModel<string> SettingsDatabase { get; }
+
         public UserSettings(IModifiableFolder settingsFolder)
-            : base(settingsFolder)
         {
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.USER_SETTINGS_FILENAME, settingsFolder, StreamSerializer.Instance);
         }
 
-        #region Privacy Settings
+        #region Privacy
 
         /// <inheritdoc/>
         public bool AutoLockVaults
@@ -62,11 +65,5 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         #endregion
-
-        /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

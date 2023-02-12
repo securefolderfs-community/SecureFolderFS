@@ -9,21 +9,35 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public sealed class SettingsService : ISettingsService
     {
         /// <inheritdoc/>
-        public IUserSettings UserSettings { get; }
+        public IAppSettings AppSettings { get; }
 
         /// <inheritdoc/>
-        public IApplicationSettings ApplicationSettings { get; }
+        public IUserSettings UserSettings { get; }
 
         public SettingsService(IModifiableFolder settingsFolder)
         {
+            AppSettings = new AppSettings(settingsFolder);
             UserSettings = new UserSettings(settingsFolder);
-            ApplicationSettings = new ApplicationSettings(settingsFolder);
         }
 
         /// <inheritdoc/>
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
         {
-            await Task.WhenAll(ApplicationSettings.LoadAsync(cancellationToken), UserSettings.LoadAsync(cancellationToken));
+            var result = true;
+            result &= await AppSettings.LoadAsync(cancellationToken);
+            result &= await UserSettings.LoadAsync(cancellationToken);
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
+        {
+            var result = true;
+            result &= await AppSettings.SaveAsync(cancellationToken);
+            result &= await UserSettings.SaveAsync(cancellationToken);
+
+            return result;
         }
     }
 }

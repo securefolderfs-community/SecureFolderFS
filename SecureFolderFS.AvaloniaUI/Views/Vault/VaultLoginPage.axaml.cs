@@ -1,5 +1,3 @@
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -9,6 +7,8 @@ using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 using SecureFolderFS.UI.AppModels;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {

@@ -64,7 +64,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             ThemeHelper.Instance.UpdateTheme();
 
             // Continue root initialization
-            if (false && settingsService.ApplicationSettings.IsIntroduced) // TODO: Always skipped
+            if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
             {
                 //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
                 // TODO: Implement OOBE

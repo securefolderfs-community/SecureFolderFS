@@ -26,8 +26,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 
         public DateTime LastChecked
         {
-            get => SettingsService.ApplicationSettings.UpdateLastChecked;
-            set => SettingsService.ApplicationSettings.UpdateLastChecked = value;
+            get => SettingsService.AppSettings.UpdateLastChecked;
+            set => SettingsService.AppSettings.UpdateLastChecked = value;
         }
 
         public UpdateBannerViewModel()

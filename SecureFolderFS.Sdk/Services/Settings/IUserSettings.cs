@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.Services.Settings
     /// </summary>
     public interface IUserSettings : IPersistable, INotifyPropertyChanged
     {
-        #region Privacy Settings
+        #region Privacy
 
         /// <summary>
         /// Gets or sets the value that determines whether to lock all unlocked vaults when the system is locked.

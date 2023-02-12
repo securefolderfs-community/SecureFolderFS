@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             throw new NotImplementedException();
         }
 
-        public Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

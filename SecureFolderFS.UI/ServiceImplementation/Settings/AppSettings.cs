@@ -1,21 +1,19 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.Settings;
-using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
 namespace SecureFolderFS.UI.ServiceImplementation.Settings
 {
-    /// <inheritdoc cref="IApplicationSettings"/>
-    public sealed class ApplicationSettings : LocalSettingsModel, IApplicationSettings
+    /// <inheritdoc cref="IAppSettings"/>
+    public sealed class AppSettings : SettingsModel, IAppSettings
     {
         /// <inheritdoc/>
         protected override IDatabaseModel<string> SettingsDatabase { get; }
 
-        public ApplicationSettings(IModifiableFolder settingsFolder)
-            : base(settingsFolder)
+        public AppSettings(IModifiableFolder settingsFolder)
         {
-            SettingsDatabase = new SingleFileDatabaseModel()
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.APPLICATION_SETTINGS_FILENAME, settingsFolder, StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>
@@ -37,18 +35,6 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         {
             get => GetSetting(() => false);
             set => SetSetting(value);
-        }
-
-        /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
-        {
-            var settingsFile = await SettingsFolder.TryCreateFileAsync(Constants.LocalSettings.APPLICATION_SETTINGS_FILENAME, false, cancellationToken);
-            if (settingsFile is null)
-                return;
-
-            SettingsDatabase = new SingleFileDatabaseModel(settingsFile, DoubleSerializedStreamSerializer.Instance);
-
-            await LoadAsync(cancellationToken);
         }
     }
 }

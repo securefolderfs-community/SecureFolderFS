@@ -81,7 +81,7 @@
                 <ui:SettingsExpander.Footer>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ui:HyperlinkButton
-                            Click="DiscordButton_OnClick"
+                            NavigateUri="https://discord.com/invite/NrTxXpJ2Zj"
                             Content="Discord" />
                     </StackPanel>
                 </ui:SettingsExpander.Footer>

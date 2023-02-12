@@ -11,40 +11,36 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     /// <inheritdoc cref="ILocalizationService"/>
     internal sealed class LocalizationService : ILocalizationService
     {
-        private static readonly ResourceLoader ResourceLoader = new();
-        private IReadOnlyList<ILanguageModel>? _languageCache;
+        private readonly ResourceLoader _resourceLoader;
 
-        public LocalizationService()
-        {
-            CurrentLanguage = new AppLanguageModel(ApplicationLanguages.PrimaryLanguageOverride);
-        }
+        /// <inheritdoc/>
+        public IReadOnlyList<ILanguageModel> Languages { get; }
 
         /// <inheritdoc/>
         public ILanguageModel CurrentLanguage { get; }
 
+        public LocalizationService()
+        {
+            _resourceLoader = new();
+            CurrentLanguage = new AppLanguageModel(ApplicationLanguages.PrimaryLanguageOverride);
+            Languages = ApplicationLanguages.ManifestLanguages
+                .Select<string, ILanguageModel>(x => new AppLanguageModel(x))
+                .ToList();
+        }
+
         /// <inheritdoc/>
-        public string? LocalizeString(string resourceKey)
+        public string? GetString(string resourceKey)
         {
             return resourceKey;
 
             // TODO: Localize strings
-            // return ResourceLoader.GetString(resourceKey);
+            // return _resourceLoader.GetString(resourceKey);
         }
 
         /// <inheritdoc/>
         public void SetCurrentLanguage(ILanguageModel language)
         {
             ApplicationLanguages.PrimaryLanguageOverride = language.LanguageTag;
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<ILanguageModel> GetLanguages()
-        {
-            _languageCache ??= ApplicationLanguages.ManifestLanguages
-                .Select<string, ILanguageModel>(item => new AppLanguageModel(item))
-                .ToList();
-
-            return _languageCache;
         }
     }
 }

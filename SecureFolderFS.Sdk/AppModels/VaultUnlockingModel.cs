@@ -7,6 +7,7 @@ using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -61,7 +62,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public async Task<IResult<IUnlockedVaultModel?>> UnlockAsync(IPassword password, CancellationToken cancellationToken = default)
         {
             // Get file system
-            var fileSystem = VaultService.GetFileSystemById(SettingsService.UserSettings.PreferredFileSystemId);
+            var fileSystem = VaultService.GetFileSystems().FirstOrDefault(x => x.Id == SettingsService.UserSettings.PreferredFileSystemId);
             if (fileSystem is null)
                 return new CommonResult<IUnlockedVaultModel?>(new ArgumentException($"File System descriptor '{SettingsService.UserSettings.PreferredFileSystemId}' was not found."));
 

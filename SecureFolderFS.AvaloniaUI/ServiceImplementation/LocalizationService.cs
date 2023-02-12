@@ -14,7 +14,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         public ILanguageModel CurrentLanguage { get; } = new AppLanguageModel("en-US");
 
         /// <inheritdoc/>
-        public string? LocalizeString(string resourceKey)
+        public string? GetString(string resourceKey)
         {
             return resourceKey;
         }

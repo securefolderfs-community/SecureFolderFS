@@ -1,17 +1,17 @@
-﻿using SecureFolderFS.Sdk.DataModels;
-using SecureFolderFS.Sdk.Models;
+﻿using System.Collections.Generic;
+using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Services.UserPreferences
 {
     /// <summary>
-    /// A service to manage settings of saved vaults.
+    /// A service to manage vaults saved in SecureFolderFS.
     /// </summary>
     public interface IVaultsSettingsService : IPersistable
     {
         /// <summary>
-        /// Gets vault context identified by <paramref name="id"/>.
+        /// Gets or sets the list of saved vaults.
         /// </summary>
-        /// <param name="id">The id associated with a context.</param>
-        VaultContextDataModel GetVaultContextForId(string id);
+        IList<VaultDataModel> SavedVaults { get; set; }
     }
 }

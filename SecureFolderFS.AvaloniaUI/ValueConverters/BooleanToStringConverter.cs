@@ -25,7 +25,7 @@ namespace SecureFolderFS.AvaloniaUI.ValueConverters
             var valueSplit = formatString.Split(':');
             var splitOption = bValue ? valueSplit[3].Split('|') : valueSplit[1].Split('|');
 
-            return splitOption[0] == "LOCALIZE" ? LocalizationService.LocalizeString(splitOption[1]) : splitOption[1];
+            return splitOption[0] == "LOCALIZE" ? LocalizationService.GetString(splitOption[1]) : splitOption[1];
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

@@ -11,17 +11,12 @@ namespace SecureFolderFS.UI.ServiceImplementation
     /// <inheritdoc cref="IVaultService"/>
     public sealed class VaultService : IVaultService
     {
-        private readonly Dictionary<string, IFileSystemInfoModel> _fileSystems;
-
-        public VaultService()
+        private static Dictionary<string, IFileSystemInfoModel> FileSystems { get; } = new()
         {
-            _fileSystems = new()
-            {
-                { Core.Constants.FileSystemId.DOKAN_ID, new DokanyFileSystemDescriptor() },
-                { Core.Constants.FileSystemId.FUSE_ID, new FuseFileSystemDescriptor() },
-                { Core.Constants.FileSystemId.WEBDAV_ID, new WebDavFileSystemDescriptor() }
-            };
-        }
+            { Core.Constants.FileSystemId.DOKAN_ID, new DokanyFileSystemDescriptor() },
+            { Core.Constants.FileSystemId.FUSE_ID, new FuseFileSystemDescriptor() },
+            { Core.Constants.FileSystemId.WEBDAV_ID, new WebDavFileSystemDescriptor() }
+        };
 
         /// <inheritdoc/>
         public bool IsFileNameReserved(string? fileName)
@@ -39,21 +34,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IFileSystemInfoModel? GetFileSystemById(string id)
-        {
-            return _fileSystems.Values.FirstOrDefault(x => x.Id.Equals(id));
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<IFileSystemInfoModel> GetFileSystems()
         {
-            foreach (var item in _fileSystems.Values)
+            foreach (var item in FileSystems.Values)
             {
-                // Don't include filesystems not supported on the current OS
-                if ((item.Id == Core.Constants.FileSystemId.DOKAN_ID && !OperatingSystem.IsWindows())
-                    || (item.Id == Core.Constants.FileSystemId.FUSE_ID && !OperatingSystem.IsLinux()))
-                    continue;
-
                 yield return item;
             }
         }

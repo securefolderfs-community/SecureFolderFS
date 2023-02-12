@@ -6,7 +6,6 @@
 
         public static class LocalSettings
         {
-            public const string VAULTS_SETTINGS_FOLDERNAME = "vaults_settings";
             public const string VAULTS_WIDGETS_FOLDERNAME = "vaults_widgets";
             public const string SETTINGS_FOLDER_NAME = "settings";
             public const string APPLICATION_SETTINGS_FILENAME = "application_settings.json";

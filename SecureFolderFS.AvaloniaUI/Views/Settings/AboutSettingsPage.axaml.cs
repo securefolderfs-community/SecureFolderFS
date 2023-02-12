@@ -1,4 +1,3 @@
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
@@ -30,12 +29,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
-        }
-
-        private async void DiscordButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            // SettingsExpander sets e.Handled to true, which prevents the command from executing.
-            await ViewModel.OpenDiscordSocialCommand.ExecuteAsync(null);
         }
     }
 }

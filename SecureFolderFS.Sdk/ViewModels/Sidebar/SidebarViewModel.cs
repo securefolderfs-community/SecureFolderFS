@@ -33,7 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             set
             {
                 if (SetProperty(ref _SelectedItem, value) && SettingsService.UserSettings.ContinueOnLastVault)
-                    SettingsService.ApplicationSettings.LastVaultFolderId = _SelectedItem?.VaultViewModel.VaultModel.Folder.Id;
+                    SettingsService.AppSettings.LastVaultFolderId = _SelectedItem?.VaultViewModel.VaultModel.Folder.Id;
             }
         }
 
@@ -57,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             }
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
-                SelectedItem = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.ApplicationSettings.LastVaultFolderId));
+                SelectedItem = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
 
             SelectedItem ??= SidebarItems.FirstOrDefault();
         }

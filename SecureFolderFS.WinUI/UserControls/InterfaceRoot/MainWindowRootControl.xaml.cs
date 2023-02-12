@@ -54,17 +54,17 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             await Task.Delay(1);
 
             // Initialize
-            var result = await Task.WhenAll(settingsService.InitAsync(), vaultCollectionModel.HasVaultsAsync());
+            var result = await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.HasVaultsAsync());
 
             // Continue root initialization
-            if (false && settingsService.ApplicationSettings.IsIntroduced) // TODO: Always skipped
+            if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
             {
                 //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
                 // TODO: Implement OOBE
             }
             else
             {
-                if (result[2]) // Has vaults
+                if (result[1]) // Has vaults
                 {
                     // Show main app screen
                     _ = NavigateHostControlAsync(new MainAppHostViewModel(vaultCollectionModel));

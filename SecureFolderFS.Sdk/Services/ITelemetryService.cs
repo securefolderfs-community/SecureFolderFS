@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
@@ -27,10 +27,15 @@ namespace SecureFolderFS.Sdk.Services
         Task DisableTelemetryAsync();
 
         /// <summary>
-        /// Reports and sends the telemetry data.
+        /// Reports and sends specified <paramref name="eventName"/> to the telemetry service.
         /// </summary>
-        /// <param name="name">The name of the data.</param>
-        /// <param name="properties">Optional properties representing the data.</param>
-        void ReportTelemetry(string name, IDictionary<string, string>? properties = null);
+        /// <param name="eventName">The name of the event that occurred within the app.</param>
+        void TrackEvent(string eventName);
+
+        /// <summary>
+        /// Reports and sends specified <paramref name="exception"/> to the telemetry service.
+        /// </summary>
+        /// <param name="exception">The error that occurred during code execution.</param>
+        void TrackException(Exception exception);
     }
 }

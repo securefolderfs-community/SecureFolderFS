@@ -10,7 +10,7 @@ namespace SecureFolderFS.Sdk
         public static string ToLocalized(this string resourceKey, ILocalizationService? localizationService = null)
         {
             localizationService = GetLocalizationService(localizationService);
-            return localizationService?.LocalizeString(resourceKey) ?? string.Empty;
+            return localizationService?.GetString(resourceKey) ?? string.Empty;
         }
 
         private static ILocalizationService? GetLocalizationService(ILocalizationService? fallback)

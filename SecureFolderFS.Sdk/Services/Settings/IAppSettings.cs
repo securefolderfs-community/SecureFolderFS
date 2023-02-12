@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.Services.Settings
     /// <summary>
     /// An interface for storing application configuration and settings.
     /// </summary>
-    public interface IApplicationSettings : IPersistable, INotifyPropertyChanged
+    public interface IAppSettings : IPersistable, INotifyPropertyChanged
     {
         /// <summary>
         /// Gets or sets the date when the app last checked for updates.
