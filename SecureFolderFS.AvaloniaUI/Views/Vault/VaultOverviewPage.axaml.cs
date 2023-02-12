@@ -7,15 +7,15 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {
     internal sealed partial class VaultOverviewPage : Page
     {
-        public VaultOverviewPageViewModel ViewModel
+        public VaultOverviewPageViewModel? ViewModel
         {
-            get => (VaultOverviewPageViewModel)DataContext;
+            get => (VaultOverviewPageViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public VaultOverviewPage()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
         }
 
         /// <inheritdoc/>
@@ -25,11 +25,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
     }
 }

@@ -66,11 +66,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <summary>
         /// Invokes <see cref="PropertyChanged"/> event notifying that a value of a specific setting has changed.
         /// </summary>
-        /// <param name="sender">The object that called this method.</param>
         /// <param name="propertyName">The name of the property whose value has changed.</param>
-        protected void OnPropertyChanged(object? sender, string propertyName)
+        protected void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(sender, new(propertyName));
+            PropertyChanged?.Invoke(this, new(propertyName));
         }
     }
 }

@@ -16,7 +16,9 @@ namespace SecureFolderFS.Sdk.AppModels
     {
         private const string TYPE_FILE_SUFFIX = ".type";
 
-        private readonly IModifiableFolder _databaseFolder;
+        private readonly string _folderName;
+        private readonly IModifiableFolder _settingsFolder;
+        private IModifiableFolder? _databaseFolder;
 
         /// <summary>
         /// Gets or sets a value that determines whether or not to flush settings that are unchanged in memory.
@@ -24,10 +26,11 @@ namespace SecureFolderFS.Sdk.AppModels
         /// </summary>
         public bool FlushOnlyChangedValues { get; set; } // TODO: This should be easily accessible when initializing settings service!
 
-        public BatchDatabaseModel(IModifiableFolder databaseFolder, IAsyncSerializer<Stream> serializer)
+        public BatchDatabaseModel(string folderName, IModifiableFolder settingsFolder, IAsyncSerializer<Stream> serializer)
             : base(serializer)
         {
-            _databaseFolder = databaseFolder;
+            _folderName = folderName;
+            _settingsFolder = settingsFolder;
         }
 
         /// <inheritdoc/>
@@ -63,6 +66,9 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
         {
+            if (!await EnsureSettingsFolderAsync(cancellationToken))
+                return false;
+
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
@@ -123,6 +129,9 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public override async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
         {
+            if (!await EnsureSettingsFolderAsync(cancellationToken))
+                return false;
+
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
@@ -196,6 +205,15 @@ namespace SecureFolderFS.Sdk.AppModels
             {
                 _ = storageSemaphore.Release();
             }
+        }
+
+        private async Task<bool> EnsureSettingsFolderAsync(CancellationToken cancellationToken)
+        {
+            if (_databaseFolder is not null)
+                return true;
+
+            _databaseFolder = (IModifiableFolder?)await _settingsFolder.TryCreateFolderAsync(_folderName, false, cancellationToken);
+            return _databaseFolder is not null;
         }
 
         public sealed record SettingValue(Type Type, object? Data, bool IsDirty = true)

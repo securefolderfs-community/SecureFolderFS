@@ -10,9 +10,9 @@ namespace SecureFolderFS.Sdk.Services.Settings
     public interface IAppSettings : IPersistable, INotifyPropertyChanged
     {
         /// <summary>
-        /// Gets or sets the date when the app last checked for updates.
+        /// Gets or sets the value that determines whether Out of Box Experience was shown.
         /// </summary>
-        DateTime UpdateLastChecked { get; set; }
+        bool IsIntroduced { get; set; }
 
         /// <summary>
         /// Gets or sets the id associated with vault folder.
@@ -20,8 +20,13 @@ namespace SecureFolderFS.Sdk.Services.Settings
         string? LastVaultFolderId { get; set; }
 
         /// <summary>
-        /// Gets or sets the value that determines whether Out of Box Experience was shown.
+        /// Gets or sets the value containing information about the app theme.
         /// </summary>
-        bool IsIntroduced { get; set; }
+        string? ApplicationTheme { get; set; }
+
+        /// <summary>
+        /// Gets or sets the date when the app last checked for updates.
+        /// </summary>
+        DateTime UpdateLastChecked { get; set; }
     }
 }

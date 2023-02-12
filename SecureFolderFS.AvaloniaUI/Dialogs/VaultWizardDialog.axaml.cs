@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
@@ -15,6 +13,8 @@ using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.WinUI.Helpers;
+using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -24,15 +24,10 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         private bool _isBackAnimationState;
 
         /// <inheritdoc/>
-        public VaultWizardDialogViewModel ViewModel
+        public VaultWizardDialogViewModel? ViewModel
         {
-            get => (VaultWizardDialogViewModel)DataContext;
+            get => (VaultWizardDialogViewModel?)DataContext;
             set => DataContext = value;
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         public Type StyleKey => typeof(ContentDialog);
@@ -41,7 +36,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         public async Task<DialogResult> ShowAsync()
         {
             // Can't be in the constructor because ViewModel is set later
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
             return (DialogResult)await base.ShowAsync();
         }
 
@@ -54,7 +49,8 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         /// <inheritdoc/>
         public async void Receive(BackNavigationRequestedMessage message)
         {
-            await FinalizeNavigationAnimationAsync(ViewModel.CurrentPageViewModel!);
+            if (ViewModel?.CurrentPageViewModel is not null)
+                await FinalizeNavigationAnimationAsync(ViewModel.CurrentPageViewModel);
         }
 
         private async Task FinalizeNavigationAnimationAsync(BaseVaultWizardPageViewModel viewModel)

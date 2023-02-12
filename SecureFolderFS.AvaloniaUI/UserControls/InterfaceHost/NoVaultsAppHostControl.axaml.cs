@@ -9,21 +9,15 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
     {
         public NoVaultsAppHostControl()
         {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
             AvaloniaXamlLoader.Load(this);
         }
 
-        public NoVaultsAppHostViewModel ViewModel
+        public NoVaultsAppHostViewModel? ViewModel
         {
             get => GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
-
-        public static readonly StyledProperty<NoVaultsAppHostViewModel> ViewModelProperty
-            = AvaloniaProperty.Register<NoVaultsAppHostControl, NoVaultsAppHostViewModel>(nameof(ViewModel));
+        public static readonly StyledProperty<NoVaultsAppHostViewModel?> ViewModelProperty
+            = AvaloniaProperty.Register<NoVaultsAppHostControl, NoVaultsAppHostViewModel?>(nameof(ViewModel));
     }
 }

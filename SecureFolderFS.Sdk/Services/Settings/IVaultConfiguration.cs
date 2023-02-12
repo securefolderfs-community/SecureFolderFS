@@ -2,16 +2,16 @@
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.Services.UserPreferences
+namespace SecureFolderFS.Sdk.Services.Settings
 {
     /// <summary>
     /// A service to manage vaults saved in SecureFolderFS.
     /// </summary>
-    public interface IVaultsSettingsService : IPersistable
+    public interface IVaultConfiguration : IPersistable
     {
         /// <summary>
         /// Gets or sets the list of saved vaults.
         /// </summary>
-        IList<VaultDataModel> SavedVaults { get; set; }
+        IList<VaultDataModel>? SavedVaults { get; set; }
     }
 }

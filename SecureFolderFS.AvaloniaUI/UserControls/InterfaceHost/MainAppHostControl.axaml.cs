@@ -1,4 +1,3 @@
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -13,6 +12,7 @@ using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Extensions;
+using System.Linq;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 {
@@ -20,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
     {
         public MainAppHostControl()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
         }
 
         /// <inheritdoc/>
@@ -47,11 +47,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 
             // Navigate
             Navigation.Navigate(destination, new EntranceNavigationTransition());
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private async void MainAppHostControl_OnLoaded(object? sender, RoutedEventArgs e)

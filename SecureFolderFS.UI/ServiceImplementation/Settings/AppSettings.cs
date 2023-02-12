@@ -17,9 +17,9 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public DateTime UpdateLastChecked
+        public bool IsIntroduced
         {
-            get => GetSetting<DateTime>(() => new());
+            get => GetSetting(() => false);
             set => SetSetting(value);
         }
 
@@ -31,9 +31,16 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public bool IsIntroduced
+        public string? ApplicationTheme
         {
-            get => GetSetting(() => false);
+            get => GetSetting<string>();
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public DateTime UpdateLastChecked
+        {
+            get => GetSetting<DateTime>(() => new());
             set => SetSetting(value);
         }
     }

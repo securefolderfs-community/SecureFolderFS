@@ -1,46 +1,36 @@
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
 {
     public sealed partial class MainWindowRootControl : UserControl, IRecipient<RootNavigationRequestedMessage>
     {
-        public MainViewModel ViewModel
+        public MainViewModel? ViewModel
         {
-            get => (MainViewModel)DataContext;
+            get => (MainViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public MainWindowRootControl()
         {
-            InitializeComponent();
-
+            AvaloniaXamlLoader.Load(this);
             ViewModel = new();
         }
 
         public void Receive(RootNavigationRequestedMessage message)
         {
             _ = NavigateHostControlAsync(message.ViewModel);
-        }
-
-
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private void MainWindowRootControl_OnLoaded(object? sender, RoutedEventArgs e)
@@ -53,15 +43,13 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
         {
             var vaultCollectionModel = new LocalVaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var platformSettingsService = Ioc.Default.GetRequiredService<IPlatformSettingsService>();
 
             // Initialize
             var result = await Task.WhenAll(
                 settingsService.LoadAsync(),
-                platformSettingsService.LoadAsync(),
                 vaultCollectionModel.HasVaultsAsync());
 
-            ThemeHelper.Instance.UpdateTheme();
+            await AvaloniaThemeHelper.Instance.SetThemeAsync(AvaloniaThemeHelper.Instance.CurrentTheme);
 
             // Continue root initialization
             if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
@@ -71,7 +59,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             }
             else
             {
-                if (result[3]) // Has vaults
+                if (result[1]) // Has vaults
                 {
                     // Show main app screen
                     _ = NavigateHostControlAsync(new MainAppHostViewModel(vaultCollectionModel));

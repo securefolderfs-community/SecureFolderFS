@@ -31,6 +31,6 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public abstract Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default);
+        public abstract Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default);
     }
 }

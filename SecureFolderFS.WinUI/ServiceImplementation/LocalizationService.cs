@@ -1,46 +1,48 @@
 ﻿using Microsoft.Windows.ApplicationModel.Resources;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Globalization;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
+    // TODO: Implement localization
     /// <inheritdoc cref="ILocalizationService"/>
     internal sealed class LocalizationService : ILocalizationService
     {
         private readonly ResourceLoader _resourceLoader;
 
         /// <inheritdoc/>
-        public IReadOnlyList<ILanguageModel> Languages { get; }
+        public CultureInfo CurrentCulture { get; }
 
         /// <inheritdoc/>
-        public ILanguageModel CurrentLanguage { get; }
+        public IReadOnlyList<CultureInfo> AppLanguages { get; }
 
         public LocalizationService()
         {
             _resourceLoader = new();
-            CurrentLanguage = new AppLanguageModel(ApplicationLanguages.PrimaryLanguageOverride);
-            Languages = ApplicationLanguages.ManifestLanguages
-                .Select<string, ILanguageModel>(x => new AppLanguageModel(x))
+            CurrentCulture = new(ApplicationLanguages.PrimaryLanguageOverride);
+            AppLanguages = ApplicationLanguages.ManifestLanguages
+                .Select(x => new CultureInfo(x))
                 .ToList();
         }
 
         /// <inheritdoc/>
         public string? GetString(string resourceKey)
         {
-            return resourceKey;
-
             // TODO: Localize strings
             // return _resourceLoader.GetString(resourceKey);
+
+            return resourceKey;
         }
 
         /// <inheritdoc/>
-        public void SetCurrentLanguage(ILanguageModel language)
+        public Task SetCultureAsync(CultureInfo cultureInfo)
         {
-            ApplicationLanguages.PrimaryLanguageOverride = language.LanguageTag;
+            ApplicationLanguages.PrimaryLanguageOverride = cultureInfo.Name;
+            return Task.CompletedTask;
         }
     }
 }

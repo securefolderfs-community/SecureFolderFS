@@ -20,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         /// <inheritdoc/>
         public Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
         {
-            LauncherHelper.Launch(App.AppDirectory);
+            LauncherHelpers.Launch(App.AppDirectory);
             return Task.CompletedTask;
         }
 
@@ -30,7 +30,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             if (folder is not ILocatableFolder locatableFolder)
                 return Task.CompletedTask;
 
-            LauncherHelper.Launch(locatableFolder.Path);
+            LauncherHelpers.Launch(locatableFolder.Path);
             return Task.CompletedTask;
         }
 

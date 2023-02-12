@@ -1,17 +1,17 @@
 ﻿using SecureFolderFS.Sdk.DataModels;
-using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.Sdk.Services.UserPreferences
+namespace SecureFolderFS.Sdk.Services.Settings
 {
     /// <summary>
     /// A service to manage widgets of saved vaults.
     /// </summary>
-    public interface IVaultWidgetsService : IPersistable
+    public interface IVaultWidgets : IPersistable
     {
         /// <summary>
         /// Gets widget context identified by <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The id associated with a context.</param>
-        WidgetsContextDataModel GetWidgetsContextForId(string id);
+        WidgetsDataModel GetWidgetsContextForId(string id);
     }
 }

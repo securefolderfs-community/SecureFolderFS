@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
-    // TODO implement
+    // TODO: Implement telemetry
     /// <inheritdoc cref="ITelemetryService"/>
     internal sealed class TelemetryService : ITelemetryService
     {
@@ -18,19 +17,23 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         /// <inheritdoc/>
         public Task EnableTelemetryAsync()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
         public Task DisableTelemetryAsync()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public void ReportTelemetry(string name, IDictionary<string, string>? properties = null)
+        public void TrackEvent(string eventName)
         {
-            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public void TrackException(Exception exception)
+        {
         }
     }
 }

@@ -4,17 +4,13 @@ using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using SecureFolderFS.AvaloniaUI.ServiceImplementation;
-using SecureFolderFS.AvaloniaUI.ServiceImplementation.UserPreferences;
-using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.AvaloniaUI.WindowViews;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.UI.Storage.NativeStorage;
 using System;
 using System.Diagnostics;
@@ -75,12 +71,7 @@ namespace SecureFolderFS.AvaloniaUI
 
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
-                .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder))
-                .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
-                .AddSingleton<IVaultWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
-                .AddSingleton<IPlatformSettingsService, PlatformSettingsService>(_ => new PlatformSettingsService(settingsFolder))
                 .AddSingleton<ISettingsService, SettingsService>()
-
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>()
                 .AddSingleton<IVaultService, VaultService>()

@@ -7,10 +7,11 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
 {
-    public sealed partial class UpdateBannerViewModel : ObservableObject
+    public sealed partial class UpdateBannerViewModel : ObservableObject, IAsyncInitialize
     {
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 

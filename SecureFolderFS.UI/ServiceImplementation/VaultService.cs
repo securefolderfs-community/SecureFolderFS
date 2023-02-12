@@ -19,12 +19,12 @@ namespace SecureFolderFS.UI.ServiceImplementation
         };
 
         /// <inheritdoc/>
-        public bool IsFileNameReserved(string? fileName)
+        public bool IsNameReserved(string? name)
         {
-            return fileName is not null &&
-                   (fileName.Equals(Core.Constants.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
-                    fileName.Equals(Core.Constants.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal) ||
-                    fileName.Equals(Core.Constants.CONTENT_FOLDERNAME, StringComparison.Ordinal));
+            return name is not null && (
+                   name.Equals(Core.Constants.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
+                   name.Equals(Core.Constants.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal) ||
+                   name.Equals(Core.Constants.CONTENT_FOLDERNAME, StringComparison.Ordinal));
         }
 
         /// <inheritdoc/>

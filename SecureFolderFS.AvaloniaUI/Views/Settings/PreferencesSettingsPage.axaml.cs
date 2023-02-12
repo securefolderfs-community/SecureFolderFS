@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -17,6 +13,10 @@ using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.UserControls.InfoBars;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
@@ -24,18 +24,13 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
     {
         private bool _adapterStatusUpdated;
 
-        public PreferencesSettingsPageViewModel ViewModel
+        public PreferencesSettingsPageViewModel? ViewModel
         {
-            get => (PreferencesSettingsPageViewModel)DataContext;
+            get => (PreferencesSettingsPageViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public PreferencesSettingsPage()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }

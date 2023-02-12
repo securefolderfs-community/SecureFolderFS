@@ -10,7 +10,6 @@
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -112,9 +111,10 @@
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ComboBox
-                        ItemsSource="{x:Bind ViewModel.LanguageSettingViewModel.Languages}"
+                        x:Name="AppLanguageComboBox"
+                        ItemsSource="{x:Bind ViewModel.Languages}"
                         SelectedIndex="0"
-                        SelectionChanged="AppLanguage_SelectionChanged">
+                        SelectionChanged="AppLanguageComboBox_SelectionChanged">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:LanguageViewModel">
                                 <TextBlock Text="{x:Bind FriendlyName}" />
@@ -128,7 +128,10 @@
                     <FontIcon Glyph="&#xE790;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ComboBox SelectedIndex="{x:Bind SelectedThemeIndex, Mode=TwoWay}">
+                    <ComboBox
+                        x:Name="AppThemeComboBox"
+                        SelectedIndex="{x:Bind SelectedThemeIndex}"
+                        SelectionChanged="AppThemeComboBox_SelectionChanged">
                         <ComboBox.Items>
                             <ComboBoxItem Content="System default" />
                             <ComboBoxItem Content="Light" />

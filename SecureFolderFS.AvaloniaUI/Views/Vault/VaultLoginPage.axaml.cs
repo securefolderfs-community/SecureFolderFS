@@ -25,7 +25,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
 
         public VaultLoginPage()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
@@ -34,11 +34,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private async void VaultPasswordBox_OnKeyUp(object? sender, KeyEventArgs e)

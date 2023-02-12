@@ -25,13 +25,13 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public virtual Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        public virtual Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
             var parentPath = System.IO.Path.GetDirectoryName(Path);
             if (string.IsNullOrEmpty(parentPath))
-                return Task.FromResult<ILocatableFolder?>(null);
+                return Task.FromResult<IFolder?>(null);
 
-            return Task.FromResult<ILocatableFolder?>(new NativeFolder(parentPath));
+            return Task.FromResult<IFolder?>(new NativeFolder(parentPath));
         }
 
         protected static string FormatPath(string path)

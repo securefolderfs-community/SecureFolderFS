@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -8,9 +6,11 @@ using Avalonia.Media;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.UI.Enums;
+using System;
+using System.Globalization;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
@@ -21,21 +21,17 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         /// </summary>
         private bool _playShowBarEmergeAnimation;
 
-        public GeneralSettingsPageViewModel ViewModel
+        public GeneralSettingsPageViewModel? ViewModel
         {
-            get => (GeneralSettingsPageViewModel)DataContext;
+            get => (GeneralSettingsPageViewModel?)DataContext;
             set => DataContext = value;
         }
 
-        public int SelectedThemeIndex
-        {
-            get => (int)ThemeHelper.Instance.CurrentTheme;
-            set => ThemeHelper.Instance.CurrentTheme = (ApplicationTheme)value;
-        }
+        public int SelectedThemeIndex => (int)AvaloniaThemeHelper.Instance.CurrentTheme;
 
         public GeneralSettingsPage()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
         }
 
         /// <inheritdoc/>
@@ -51,14 +47,19 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             QuickHideVersionInfoBarStoryboard.RunAnimationsAsync();
         }
 
-        private void InitializeComponent()
+        private Task AddItemsTransitionAsync()
         {
-            AvaloniaXamlLoader.Load(this);
+            return Task.CompletedTask;
+            // TODO Transition
+            // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
+            // await Task.Delay(400);
+            // RootGrid?.Transitions?.Add(new ReorderThemeTransition());
         }
 
-        private void Control_OnLoaded(object? sender, RoutedEventArgs e)
+        public Task PlayShowInfoBarAnimation(object? sender, AvaloniaPropertyChangedEventArgs e)
         {
-            _ = ViewModel.BannerViewModel.ConfigureUpdates();
+            _playShowBarEmergeAnimation = true;
+            return Task.CompletedTask;
         }
 
         private void RootGrid_OnLoaded(object? sender, RoutedEventArgs e)
@@ -66,30 +67,17 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             _ = AddItemsTransitionAsync();
         }
 
-        private void ComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private async void AppLanguageComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (sender is ComboBox { SelectedItem: ILanguageModel language })
-                ViewModel.LanguageSettingViewModel.UpdateCurrentLanguage(language);
+            if (ViewModel is null || AppLanguageComboBox.SelectedItem is not CultureInfo cultureInfo)
+                return;
+
+            await ViewModel.LocalizationService.SetCultureAsync(cultureInfo);
         }
 
-        private async Task AddItemsTransitionAsync()
+        private async void AppThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // TODO Transition
-            // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
-            // await Task.Delay(400);
-            // RootGrid?.Transitions?.Add(new ReorderThemeTransition());
-        }
-
-        // TODO Replace this workaround with something better
-        private void ComboBox_OnLoaded(object? sender, RoutedEventArgs e)
-        {
-            if (sender is ComboBox comboBox)
-                comboBox.SelectedIndex = 0; // TODO Remove this when fixing languages
-        }
-
-        public async Task PlayShowInfoBarAnimation(object? sender, AvaloniaPropertyChangedEventArgs e)
-        {
-            _playShowBarEmergeAnimation = true;
+            await AvaloniaThemeHelper.Instance.SetThemeAsync((ThemeType)AppThemeComboBox.SelectedIndex);
         }
 
         private void VersionInfoBar_OnLayoutUpdated(object? sender, EventArgs e)

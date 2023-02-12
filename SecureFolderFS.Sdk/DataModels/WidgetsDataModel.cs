@@ -5,12 +5,12 @@ using System.Text.Json.Serialization;
 namespace SecureFolderFS.Sdk.DataModels
 {
     [Serializable]
-    public sealed class WidgetsContextDataModel
+    public sealed class WidgetsDataModel
     {
         public Dictionary<string, WidgetDataModel> WidgetDataModels { get; }
 
         [JsonConstructor]
-        public WidgetsContextDataModel(Dictionary<string, WidgetDataModel>? widgetDataModels = null)
+        public WidgetsDataModel(Dictionary<string, WidgetDataModel>? widgetDataModels = null)
         {
             WidgetDataModels = widgetDataModels ?? new();
         }

@@ -7,18 +7,13 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
     internal sealed partial class AddExistingWizardPage : Page
     {
-        public VaultWizardSelectLocationViewModel ViewModel
+        public VaultWizardSelectLocationViewModel? ViewModel
         {
-            get => (VaultWizardSelectLocationViewModel)DataContext;
+            get => (VaultWizardSelectLocationViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public AddExistingWizardPage()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }

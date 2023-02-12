@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
 using SecureFolderFS.Shared.Extensions;

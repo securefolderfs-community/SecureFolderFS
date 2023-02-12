@@ -1,14 +1,15 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 
-namespace SecureFolderFS.UI.ServiceImplementation.UserPreferences
+namespace SecureFolderFS.UI.ServiceImplementation.Settings
 {
-    /// <inheritdoc cref="IVaultsSettingsService"/>
-    public sealed class VaultsSettingsService : SettingsModel, IVaultsSettingsService
+    /// <inheritdoc cref="IVaultConfiguration"/>
+    public sealed class VaultsSettingsService : SettingsModel, IVaultConfiguration
     {
+        /// <inheritdoc/>
         protected override IDatabaseModel<string> SettingsDatabase { get; }
 
         public VaultsSettingsService(IModifiableFolder settingsFolder)
@@ -17,9 +18,10 @@ namespace SecureFolderFS.UI.ServiceImplementation.UserPreferences
         }
 
         /// <inheritdoc/>
-        public VaultDataModel GetVaultDataForId(string id)
+        public IList<VaultDataModel>? SavedVaults
         {
-            return GetSetting<VaultDataModel>(() => new(), id);
+            get => GetSetting<IList<VaultDataModel>>();
+            set => SetSetting(value);
         }
     }
 }

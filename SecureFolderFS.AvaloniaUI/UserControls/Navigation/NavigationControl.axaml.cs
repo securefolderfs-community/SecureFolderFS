@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -11,6 +7,10 @@ using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Shared.Extensions;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using NavigationEventArgs = SecureFolderFS.AvaloniaUI.Events.NavigationEventArgs;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
@@ -29,19 +29,13 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         public NavigationControl()
         {
             _backStack = new();
-
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
         }
 
         public void GoBack()
         {
             var x = _backStack.Pop();
             SetContent(x.Item1, x.Item2, new SlideNavigationTransition(SlideNavigationTransition.Side.Left, SlideNavigationTransition.BigOffset));
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         /// <inheritoc/>

@@ -1,71 +1,50 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.WinUI;
-using Microsoft.UI.Dispatching;
+﻿using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
-using SecureFolderFS.UI;
-using System;
-using Windows.Storage;
+using SecureFolderFS.UI.Enums;
+using SecureFolderFS.UI.Helpers;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
 namespace SecureFolderFS.WinUI.Helpers
 {
-    internal sealed class ThemeHelper : ObservableObject
+    /// <inheritdoc cref="IThemeHelper"/>
+    internal sealed class WinUIThemeHelper : ThemeHelper<WinUIThemeHelper>, IThemeHelper<WinUIThemeHelper>
     {
         private AppWindow? _appWindow;
         private FrameworkElement? _rootContent;
         private readonly UISettings _uiSettings;
         private readonly DispatcherQueue _dispatcherQueue;
 
-        public static ThemeHelper Instance { get; } = new();
+        /// <inheritdoc/>
+        public static WinUIThemeHelper Instance { get; } = new();
 
-        public event EventHandler<ElementTheme>? OnThemeChangedEvent;
-
-        private ElementTheme _CurrentTheme;
-        public ElementTheme CurrentTheme
-        {
-            get => _CurrentTheme;
-            set
-            {
-                if (SetProperty(ref _CurrentTheme, value))
-                {
-                    _CurrentTheme = value;
-                    ApplicationData.Current.LocalSettings.Values[Constants.AppLocalSettings.THEME_PREFERENCE_SETTING] = (int)value;
-                    UpdateTheme();
-                }
-            }
-        }
-
-        private ThemeHelper()
+        private WinUIThemeHelper()
         {
             _uiSettings = new();
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             _uiSettings.ColorValuesChanged += Settings_ColorValuesChanged;
-            _CurrentTheme = ((int?)ApplicationData.Current.LocalSettings.Values[Constants.AppLocalSettings.THEME_PREFERENCE_SETTING] ?? 0) switch
-            {
-                1 => ElementTheme.Light,
-                2 => ElementTheme.Dark,
-                _ => ElementTheme.Default
-            };
         }
 
-        public void UpdateTheme()
+        /// <inheritdoc/>
+        public override Task SetThemeAsync(ThemeType themeType, CancellationToken cancellationToken = default)
         {
             if (_rootContent is not null)
             {
-                if (CurrentTheme == ElementTheme.Default)
+                if (themeType == ThemeType.Default)
                     _rootContent.RequestedTheme = Application.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 else
-                    _rootContent.RequestedTheme = CurrentTheme;
+                    _rootContent.RequestedTheme = (ElementTheme)(uint)themeType;
             }
 
             if (_appWindow is not null && AppWindowTitleBar.IsCustomizationSupported())
             {
-                switch (CurrentTheme)
+                switch (themeType)
                 {
-                    case ElementTheme.Dark:
+                    case ThemeType.Dark:
                         _appWindow.TitleBar.ButtonForegroundColor = Color.FromArgb(255, 255, 255, 255);
                         _appWindow.TitleBar.ButtonHoverBackgroundColor = Color.FromArgb(21, 255, 255, 255);
                         _appWindow.TitleBar.ButtonHoverForegroundColor = Color.FromArgb(255, 255, 255, 255);
@@ -73,7 +52,7 @@ namespace SecureFolderFS.WinUI.Helpers
                         _appWindow.TitleBar.ButtonPressedForegroundColor = Color.FromArgb(255, 255, 255, 255);
                         break;
 
-                    case ElementTheme.Light:
+                    case ThemeType.Light:
                         _appWindow.TitleBar.ButtonForegroundColor = Color.FromArgb(228, 0, 0, 0);
                         _appWindow.TitleBar.ButtonHoverBackgroundColor = Color.FromArgb(128, 249, 249, 249);
                         _appWindow.TitleBar.ButtonHoverForegroundColor = Color.FromArgb(255, 0, 0, 0);
@@ -90,22 +69,19 @@ namespace SecureFolderFS.WinUI.Helpers
                         break;
                 }
             }
+
+            return base.SetThemeAsync(themeType, cancellationToken);
         }
 
         public void RegisterWindowInstance(AppWindow appWindow, FrameworkElement? rootContent)
         {
             _appWindow = appWindow;
             _rootContent = rootContent;
-            UpdateTheme();
         }
 
         private async void Settings_ColorValuesChanged(UISettings sender, object args)
         {
-            await _dispatcherQueue.EnqueueAsync(() =>
-            {
-                UpdateTheme();
-                OnThemeChangedEvent?.Invoke(this, _CurrentTheme);
-            }, DispatcherQueuePriority.Low);
+            await SetThemeAsync(CurrentTheme);
         }
     }
 }

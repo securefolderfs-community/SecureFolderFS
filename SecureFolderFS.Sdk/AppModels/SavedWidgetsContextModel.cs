@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IWidgetsContextModel"/>
-    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVaultWidgetsService>, IWidgetsContextModel
+    public sealed class SavedWidgetsContextModel : BaseSerializedDataModel<IVaultWidgets>, IWidgetsContextModel
     {
         /// <inheritdoc/>
         public IVaultModel VaultModel { get; }

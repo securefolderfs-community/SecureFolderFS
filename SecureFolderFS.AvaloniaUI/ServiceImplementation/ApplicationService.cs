@@ -20,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         /// <inheritdoc/>
         public override Task OpenUriAsync(Uri uri)
         {
-            LauncherHelper.Launch(uri);
+            LauncherHelpers.Launch(uri);
             return Task.CompletedTask;
         }
     }

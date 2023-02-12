@@ -14,6 +14,12 @@
             public const string PLATFORM_SETTINGS_FILENAME = "platform_settings.json";
         }
 
+        public static class AppThemes
+        {
+            public const string LIGHT_THEME = "LIGHT";
+            public const string DARK_THEME = "DARK";
+        }
+
         public static class AppLocalSettings
         {
             public const string THEME_PREFERENCE_SETTING = "ImmersiveTheme";

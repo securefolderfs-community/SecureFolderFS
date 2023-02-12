@@ -7,11 +7,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
     {
         public VaultPropertiesPage()
         {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
             AvaloniaXamlLoader.Load(this);
         }
     }

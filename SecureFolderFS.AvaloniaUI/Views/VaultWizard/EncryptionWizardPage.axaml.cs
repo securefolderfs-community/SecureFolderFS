@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -9,6 +8,7 @@ using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using System.Collections.ObjectModel;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
@@ -45,15 +45,9 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 
         public EncryptionWizardPage()
         {
-            InitializeComponent();
-
+            AvaloniaXamlLoader.Load(this);
             ContentCiphers = new();
             FileNameCiphers = new();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)

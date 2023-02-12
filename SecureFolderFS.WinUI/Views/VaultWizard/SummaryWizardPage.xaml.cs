@@ -3,8 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.WinUI.Helpers;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -26,7 +28,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         public SummaryWizardPage()
         {
             InitializeComponent();
-            ThemeHelper.Instance.OnThemeChangedEvent += ThemeHelper_OnThemeChangedEvent;
+            WinUIThemeHelper.Instance.PropertyChanged += ThemeHelper_PropertyChanged;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -37,8 +39,11 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             base.OnNavigatedTo(e);
         }
 
-        private void ThemeHelper_OnThemeChangedEvent(object? sender, ElementTheme e)
+        private void ThemeHelper_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName != nameof(IThemeHelper.CurrentTheme))
+                return;
+
             CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);
         }
 
@@ -57,7 +62,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         /// <inheritdoc/>
         public void Dispose()
         {
-            ThemeHelper.Instance.OnThemeChangedEvent -= ThemeHelper_OnThemeChangedEvent;
+            WinUIThemeHelper.Instance.PropertyChanged -= ThemeHelper_PropertyChanged;
         }
     }
 }

@@ -7,21 +7,16 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
     internal sealed partial class SummaryWizardPage : Page
     {
-        public VaultWizardSummaryViewModel ViewModel
+        public VaultWizardSummaryViewModel? ViewModel
         {
-            get => (VaultWizardSummaryViewModel)DataContext;
+            get => (VaultWizardSummaryViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public SummaryWizardPage()
         {
-            InitializeComponent();
-            // TODO OnThemeChangedEvent
-        }
-
-        private void InitializeComponent()
-        {
             AvaloniaXamlLoader.Load(this);
+            // TODO OnThemeChangedEvent
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)

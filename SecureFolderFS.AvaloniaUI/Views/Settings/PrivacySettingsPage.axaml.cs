@@ -7,18 +7,13 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
     internal sealed partial class PrivacySettingsPage : Page
     {
-        public PrivacySettingsPageViewModel ViewModel
+        public PrivacySettingsPageViewModel? ViewModel
         {
-            get => (PrivacySettingsPageViewModel)DataContext;
+            get => (PrivacySettingsPageViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public PrivacySettingsPage()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }

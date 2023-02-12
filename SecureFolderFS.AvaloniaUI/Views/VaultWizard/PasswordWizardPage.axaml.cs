@@ -1,28 +1,23 @@
-using System.Linq;
-using System.Text;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.UI.AppModels;
+using System.Linq;
+using System.Text;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
     internal sealed partial class PasswordWizardPage : Page
     {
-        public VaultWizardPasswordViewModel ViewModel
+        public VaultWizardPasswordViewModel? ViewModel
         {
-            get => (VaultWizardPasswordViewModel)DataContext;
+            get => (VaultWizardPasswordViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public PasswordWizardPage()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }
@@ -46,12 +41,14 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 
         private void FirstPassword_PasswordChanged(object sender, TextChangedEventArgs e)
         {
-            ViewModel.PrimaryButtonEnabled = CanContinue();
+            if (ViewModel is not null)
+                ViewModel.PrimaryButtonEnabled = CanContinue();
         }
 
         private void SecondPassword_PasswordChanged(object sender, TextChangedEventArgs e)
         {
-            ViewModel.PrimaryButtonEnabled = CanContinue();
+            if (ViewModel is not null)
+                ViewModel.PrimaryButtonEnabled = CanContinue();
         }
     }
 }

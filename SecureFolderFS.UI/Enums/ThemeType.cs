@@ -1,6 +1,6 @@
 namespace SecureFolderFS.UI.Enums
 {
-    public enum ApplicationTheme
+    public enum ThemeType : uint
     {
         Default = 0,
         Light = 1,

@@ -1,10 +1,10 @@
-using System.Collections.ObjectModel;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
+using System.Collections.ObjectModel;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {
@@ -12,30 +12,26 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
     {
         public ObservableCollection<OrderedBreadcrumbBarItem> BreadcrumbItems { get; }
 
-        public VaultDashboardPageViewModel ViewModel
+        public VaultDashboardPageViewModel? ViewModel
         {
-            get => (VaultDashboardPageViewModel)DataContext;
+            get => (VaultDashboardPageViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public VaultDashboardPage()
         {
-            InitializeComponent();
-            BreadcrumbItems = new();
-        }
-
-        private void InitializeComponent()
-        {
             AvaloniaXamlLoader.Load(this);
+            BreadcrumbItems = new();
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultDashboardPageViewModel viewModel)
-                ViewModel = viewModel;
+            if (e.Parameter is not VaultDashboardPageViewModel viewModel)
+                return;
 
-            Navigation.Navigate(ViewModel.CurrentPage, new EntranceNavigationTransition());
-            BreadcrumbItems.Add(new(ViewModel.VaultViewModel.VaultModel.VaultName, true));
+            ViewModel = viewModel;
+            Navigation.Navigate(viewModel.CurrentPage, new EntranceNavigationTransition());
+            BreadcrumbItems.Add(new(viewModel.VaultViewModel.VaultModel.VaultName, true));
 
             base.OnNavigatedTo(e);
         }

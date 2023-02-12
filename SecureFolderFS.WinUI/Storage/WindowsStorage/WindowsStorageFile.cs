@@ -36,7 +36,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public override async Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        public override async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
             var parentFolderTask = storage.GetParentAsync().AsTask(cancellationToken);
             var parentFolder = await parentFolderTask;

@@ -2,9 +2,10 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.UI.Enums;
 using SecureFolderFS.WinUI.Helpers;
+using System.Globalization;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -23,11 +24,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
             set => DataContext = value;
         }
 
-        public int SelectedThemeIndex
-        {
-            get => (int)ThemeHelper.Instance.CurrentTheme;
-            set => ThemeHelper.Instance.CurrentTheme = (ElementTheme)value;
-        }
+        public int SelectedThemeIndex => (int)WinUIThemeHelper.Instance.CurrentTheme;
 
         public GeneralSettingsPage()
         {
@@ -43,27 +40,29 @@ namespace SecureFolderFS.WinUI.Views.Settings
             base.OnNavigatedTo(e);
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            _ = ViewModel.BannerViewModel.ConfigureUpdates();
-        }
-
-        private void AppLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is ComboBox { SelectedItem: ILanguageModel language })
-                ViewModel.LanguageSettingViewModel.UpdateCurrentLanguage(language);
-        }
-
-        private void RootGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            _ = AddItemsTransitionAsync();
-        }
-
         private async Task AddItemsTransitionAsync()
         {
             // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
             await Task.Delay(400);
             RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
+        }
+
+        private async void AppLanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (AppLanguageComboBox.SelectedItem is not CultureInfo cultureInfo)
+                return;
+
+            await ViewModel.LocalizationService.SetCultureAsync(cultureInfo);
+        }
+
+        private async void AppThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await WinUIThemeHelper.Instance.SetThemeAsync((ThemeType)AppThemeComboBox.SelectedIndex);
+        }
+
+        private void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            _ = AddItemsTransitionAsync();
         }
     }
 }

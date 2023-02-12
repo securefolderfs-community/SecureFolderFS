@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -15,6 +12,9 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SkiaSharp;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls
 {
@@ -24,14 +24,9 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
 
         public GraphControl()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
             WeakReferenceMessenger.Default.Register<DialogShownMessage>(this);
             WeakReferenceMessenger.Default.Register<DialogHiddenMessage>(this);
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private async void Chart_Loaded(object sender, RoutedEventArgs e)
