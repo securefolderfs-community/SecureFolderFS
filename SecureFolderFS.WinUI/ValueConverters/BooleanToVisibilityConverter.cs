@@ -12,18 +12,12 @@ namespace SecureFolderFS.WinUI.ValueConverters
                 return Visibility.Collapsed;
 
             if (parameter is not string stringParam)
-            {
                 return boolParam ? Visibility.Visible : Visibility.Collapsed;
-            }
-            else
-            {
-                if (stringParam.ToLower() == "invert")
-                {
-                    return boolParam ? Visibility.Collapsed : Visibility.Visible;
-                }
 
-                return boolParam ? Visibility.Visible : Visibility.Collapsed;
-            }
+            if (stringParam.ToLower() == "invert")
+                return boolParam ? Visibility.Collapsed : Visibility.Visible;
+
+            return boolParam ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

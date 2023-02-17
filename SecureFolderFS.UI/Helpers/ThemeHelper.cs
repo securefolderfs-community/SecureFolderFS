@@ -12,23 +12,32 @@ namespace SecureFolderFS.UI.Helpers
         protected ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         private ThemeType _CurrentTheme;
-        public ThemeType CurrentTheme
+        public virtual ThemeType CurrentTheme
         {
             get => _CurrentTheme;
             protected set => SetProperty(ref _CurrentTheme, value);
         }
 
-        protected ThemeHelper()
-        {
-            _CurrentTheme = ConvertThemeString(SettingsService.AppSettings.ApplicationTheme);
-        }
+        /// <inheritdoc/>
+        public abstract void UpdateTheme();
 
         /// <inheritdoc/>
-        public virtual Task SetThemeAsync(ThemeType themeType, CancellationToken cancellationToken = default)
+        public Task SetThemeAsync(ThemeType themeType, CancellationToken cancellationToken = default)
         {
             CurrentTheme = themeType;
             SettingsService.AppSettings.ApplicationTheme = ConvertThemeType(themeType);
+
+            UpdateTheme();
             return SettingsService.AppSettings.SaveAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public virtual Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            CurrentTheme = ConvertThemeString(SettingsService.AppSettings.ApplicationTheme);
+            UpdateTheme();
+
+            return Task.CompletedTask;
         }
 
         protected static string? ConvertThemeType(ThemeType themeType)

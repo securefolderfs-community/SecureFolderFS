@@ -6,7 +6,6 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,7 +62,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (stream is null)
                     return false;
 
-                var settings = await serializer.DeserializeAsync<Stream, IDictionary?>(stream, cancellationToken);
+                var settings = await serializer.DeserializeAsync<Stream, IDictionary>(stream, cancellationToken);
                 settingsCache.Clear();
 
                 if (settings is null) // No settings saved, set cache to empty and return true.
@@ -107,7 +106,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (dataStream is null)
                     return false;
                 
-                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, ISerializedModel>>(settingsCache, cancellationToken);
+                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
                 dataStream.Position = 0L;

@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.UI.Enums;
+﻿using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.UI.Enums;
 using System.ComponentModel;
 
 namespace SecureFolderFS.UI.Helpers
@@ -6,12 +7,17 @@ namespace SecureFolderFS.UI.Helpers
     /// <summary>
     /// Represents a helper interface used 
     /// </summary>
-    public interface IThemeHelper : INotifyPropertyChanged
+    public interface IThemeHelper : IAsyncInitialize, INotifyPropertyChanged
     {
         /// <summary>
         /// Gets the current theme used by the app.
         /// </summary>
         ThemeType CurrentTheme { get; }
+
+        /// <summary>
+        /// Updates the UI to reflect the new changes, if necessary.
+        /// </summary>
+        void UpdateTheme();
 
         /// <summary>
         /// Updates the application's theme to specified <paramref name="themeType"/>.

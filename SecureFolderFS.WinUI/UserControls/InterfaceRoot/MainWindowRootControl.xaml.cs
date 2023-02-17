@@ -8,7 +8,8 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.AppHost;
-using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.WinUI.WindowViews;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -55,6 +56,12 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             // Initialize
             await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.InitAsync());
 
+            // First register the ThemeHelper
+            WinUIThemeHelper.Instance.RegisterWindowInstance(MainWindow.Instance.AppWindow, MainWindow.Instance.HostControl);
+
+            // Then, initialize it to refresh the theme and UI
+            await WinUIThemeHelper.Instance.InitAsync();
+             
             // Continue root initialization
             if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
             {

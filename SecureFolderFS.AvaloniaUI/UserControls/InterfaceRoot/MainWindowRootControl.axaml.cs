@@ -46,7 +46,9 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
 
             // Initialize
             await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.InitAsync());
-            await AvaloniaThemeHelper.Instance.SetThemeAsync(AvaloniaThemeHelper.Instance.CurrentTheme);
+
+            // Update UI to reflect the current theme
+            await AvaloniaThemeHelper.Instance.InitAsync();
 
             // Continue root initialization
             if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped

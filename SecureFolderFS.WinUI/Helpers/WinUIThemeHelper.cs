@@ -1,11 +1,10 @@
-﻿using Microsoft.UI.Dispatching;
+﻿using CommunityToolkit.WinUI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Helpers;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
@@ -27,6 +26,17 @@ namespace SecureFolderFS.WinUI.Helpers
         /// </summary>
         public ElementTheme CurrentElementTheme => (ElementTheme)(uint)CurrentTheme;
 
+        /// <inheritdoc/>
+        public override ThemeType CurrentTheme
+        {
+            get => base.CurrentTheme;
+            protected set
+            {
+                base.CurrentTheme = value;
+                OnPropertyChanged(nameof(CurrentElementTheme));
+            }
+        }
+
         private WinUIThemeHelper()
         {
             _uiSettings = new();
@@ -35,19 +45,19 @@ namespace SecureFolderFS.WinUI.Helpers
         }
 
         /// <inheritdoc/>
-        public override Task SetThemeAsync(ThemeType themeType, CancellationToken cancellationToken = default)
+        public override void UpdateTheme()
         {
             if (_rootContent is not null)
             {
-                if (themeType == ThemeType.Default)
+                if (CurrentTheme == ThemeType.Default)
                     _rootContent.RequestedTheme = Application.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 else
-                    _rootContent.RequestedTheme = (ElementTheme)(uint)themeType;
+                    _rootContent.RequestedTheme = (ElementTheme)(uint)CurrentTheme;
             }
 
             if (_appWindow is not null && AppWindowTitleBar.IsCustomizationSupported())
             {
-                switch (themeType)
+                switch (CurrentTheme)
                 {
                     case ThemeType.Dark:
                         _appWindow.TitleBar.ButtonForegroundColor = Color.FromArgb(255, 255, 255, 255);
@@ -74,8 +84,6 @@ namespace SecureFolderFS.WinUI.Helpers
                         break;
                 }
             }
-
-            return base.SetThemeAsync(themeType, cancellationToken);
         }
 
         public void RegisterWindowInstance(AppWindow appWindow, FrameworkElement? rootContent)
@@ -86,7 +94,7 @@ namespace SecureFolderFS.WinUI.Helpers
 
         private async void Settings_ColorValuesChanged(UISettings sender, object args)
         {
-            await SetThemeAsync(CurrentTheme);
+            await _dispatcherQueue.EnqueueAsync(UpdateTheme, DispatcherQueuePriority.Low);
         }
     }
 }

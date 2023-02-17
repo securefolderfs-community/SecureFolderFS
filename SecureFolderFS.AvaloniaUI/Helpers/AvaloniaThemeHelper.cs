@@ -22,9 +22,9 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
         }
 
         /// <inheritdoc/>
-        public override async Task SetThemeAsync(ThemeType themeType, CancellationToken cancellationToken = default)
+        public override void UpdateTheme()
         {
-            if (themeType == ThemeType.Default)
+            if (CurrentTheme == ThemeType.Default)
             {
                 _fluentAvaloniaTheme.PreferSystemTheme = true;
                 _fluentAvaloniaTheme.InvalidateThemingFromSystemThemeChanged();
@@ -32,13 +32,11 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
             }
 
             _fluentAvaloniaTheme.PreferSystemTheme = false;
-            _fluentAvaloniaTheme.RequestedTheme = themeType switch
+            _fluentAvaloniaTheme.RequestedTheme = CurrentTheme switch
             {
                 ThemeType.Light => FluentAvaloniaTheme.LightModeString,
                 _ => FluentAvaloniaTheme.DarkModeString,
             };
-
-            await base.SetThemeAsync(themeType, cancellationToken);
         }
     }
 }

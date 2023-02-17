@@ -13,7 +13,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
 
         public UserSettings(IModifiableFolder settingsFolder)
         {
-            SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.USER_SETTINGS_FILENAME, settingsFolder, StreamSerializer.Instance);
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.USER_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
         }
 
         #region Privacy
