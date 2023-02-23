@@ -26,8 +26,8 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<bool> AddWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
-            var widgetsContext = VaultWidgets.GetWidgetsContextForId(_vaultFolder.Id);
-            widgetsContext.WidgetDataModels.AddOrReplace(widgetId, new());
+            var widgetsContext = VaultWidgets.GetWidgetsData(_vaultFolder.Id);
+            widgetsContext.WidgetDataModels.AddOrReplace(widgetId, new(new Dictionary<string, string?>()));
 
             return await VaultWidgets.SaveAsync(cancellationToken);
         }
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<bool> RemoveWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
-            var widgetsContext = VaultWidgets.GetWidgetsContextForId(_vaultFolder.Id);
+            var widgetsContext = VaultWidgets.GetWidgetsData(_vaultFolder.Id);
             widgetsContext.WidgetDataModels.Remove(widgetId);
 
             return await VaultWidgets.SaveAsync(cancellationToken);
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async IAsyncEnumerable<IWidgetModel> GetWidgetsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var widgetsContext = VaultWidgets.GetWidgetsContextForId(_vaultFolder.Id);
+            var widgetsContext = VaultWidgets.GetWidgetsData(_vaultFolder.Id);
             foreach (var item in widgetsContext.WidgetDataModels)
             {
                 yield return new LocalWidgetModel(item.Key, VaultWidgets, item.Value);

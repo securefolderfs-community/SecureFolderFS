@@ -52,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
         [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenPrivacyPolicyAsync()
         {
-            return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/PRIVACY.md"));
+            return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md"));
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]

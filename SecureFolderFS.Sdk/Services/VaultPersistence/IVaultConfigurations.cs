@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using SecureFolderFS.Sdk.DataModels;
+﻿using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Shared.Utils;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.Sdk.Services.VaultPersistence
 {
@@ -12,6 +12,6 @@ namespace SecureFolderFS.Sdk.Services.VaultPersistence
         /// <summary>
         /// Gets or sets the list of saved vaults.
         /// </summary>
-        IList<VaultDataModel>? SavedVaults { get; set; }
+        ICollection<VaultDataModel>? SavedVaults { get; set; }
     }
 }

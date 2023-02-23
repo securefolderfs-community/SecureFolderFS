@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
@@ -32,16 +33,26 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public bool Equals(IVaultModel? other)
+        public async Task<bool> SetLastAccessDateAsync(DateTime? value, CancellationToken cancellationToken = default)
         {
-            if (other is null)
-                return false;
+            var result = await UpdateVaultConfigurationAsync(x => x.LastAccessDate = value, cancellationToken);
+            if (result)
+                LastAccessDate = value;
 
-            return Folder.Id.Equals(other.Folder.Id);
+            return result;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SetLastAccessDateAsync(DateTime? value, CancellationToken cancellationToken = default)
+        public async Task<bool> SetVaultNameAsync(string value, CancellationToken cancellationToken = default)
+        {
+            var result = await UpdateVaultConfigurationAsync(x => x.VaultName = value, cancellationToken);
+            if (result)
+                VaultName = value;
+
+            return result;
+        }
+
+        private async Task<bool> UpdateVaultConfigurationAsync(Action<VaultDataModel> updateAction, CancellationToken cancellationToken)
         {
             if (VaultConfigurations.SavedVaults is null)
                 return false;
@@ -50,13 +61,8 @@ namespace SecureFolderFS.Sdk.AppModels
             if (item is null)
                 return false;
 
-            item.LastAccessDate = value;
-            var result = await VaultConfigurations.SaveAsync(cancellationToken);
-
-            if (result)
-                LastAccessDate = value;
-
-            return result;
+            updateAction(item);
+            return await VaultConfigurations.SaveAsync(cancellationToken);
         }
     }
 }

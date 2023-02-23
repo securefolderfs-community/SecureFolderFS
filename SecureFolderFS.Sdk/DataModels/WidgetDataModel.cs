@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace SecureFolderFS.Sdk.DataModels
 {
     [Serializable]
-    public sealed class WidgetDataModel
+    public sealed record class WidgetDataModel(IDictionary<string, string?> WidgetsData)
     {
-        public Dictionary<string, string?> WidgetData { get; }
-
-        [JsonConstructor]
-        public WidgetDataModel(Dictionary<string, string?>? widgetData = null)
-        {
-            WidgetData = widgetData ?? new();
-        }
+        public IDictionary<string, string?> WidgetsData { get; } = WidgetsData;
     }
 }

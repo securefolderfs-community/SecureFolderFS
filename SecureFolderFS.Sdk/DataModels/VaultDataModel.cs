@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.DataModels
     {
         public string? Id { get; set; }
 
-        public string? Name { get; set; }
+        public string? VaultName { get; set; }
 
         public DateTime? LastAccessDate { get; set; }
     }

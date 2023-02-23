@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Shared.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,9 +20,11 @@ namespace SecureFolderFS.Sdk.AppModels
     {
         private List<IVaultModel>? _vaults;
 
-        private IStorageService StorageService { get; } = Ioc.Default.GetRequiredService<IStorageService>();
+        private IVaultWidgets VaultWidgets { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultWidgets;
 
         private IVaultConfigurations VaultConfigurations { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultConfigurations;
+
+        private IStorageService StorageService { get; } = Ioc.Default.GetRequiredService<IStorageService>();
 
         /// <inheritdoc/>
         public bool IsEmpty => VaultConfigurations.SavedVaults.IsEmpty();
@@ -35,7 +38,7 @@ namespace SecureFolderFS.Sdk.AppModels
             VaultConfigurations.SavedVaults.Add(new()
             {
                 Id = vaultModel.Folder.Id,
-                Name = vaultModel.Folder.Name,
+                VaultName = vaultModel.Folder.Name,
                 LastAccessDate = vaultModel.LastAccessDate
             });
 
@@ -51,12 +54,12 @@ namespace SecureFolderFS.Sdk.AppModels
             if (vault.Folder is not ILocatableFolder vaultFolder)
                 return false;
 
-            var indexToRemove = VaultConfigurations.SavedVaults.FindIndex(x => vaultFolder.Path == x.Id);
-            if (indexToRemove == -1)
+            var itemToRemove = VaultConfigurations.SavedVaults.FirstOrDefault(x => vaultFolder.Id == x.Id);
+            if (itemToRemove is null)
                 return false;
 
             _vaults?.Remove(vault);
-            VaultConfigurations.SavedVaults.RemoveAt(indexToRemove);
+            VaultConfigurations.SavedVaults.Remove(itemToRemove);
 
             return await VaultConfigurations.SaveAsync(cancellationToken);
         }
@@ -83,7 +86,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (folder is null)
                     continue;
 
-                var vaultModel = new LocalVaultModel(folder, item.Name, item.LastAccessDate);
+                var vaultModel = new LocalVaultModel(folder, item.VaultName, item.LastAccessDate);
                 _vaults.Add(vaultModel);
 
                 yield return vaultModel;

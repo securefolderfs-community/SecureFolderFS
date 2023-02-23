@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Sidebar
@@ -59,12 +60,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         }
 
         [RelayCommand]
-        private Task ShowInFileExplorerAsync()
+        private Task ShowInFileExplorerAsync(CancellationToken cancellationToken)
         {
             if (VaultViewModel.VaultModel.Folder is not ILocatableFolder locatableVaultFolder)
                 return Task.CompletedTask;
 
-            return FileExplorerService.OpenInFileExplorerAsync(locatableVaultFolder);
+            return FileExplorerService.OpenInFileExplorerAsync(locatableVaultFolder, cancellationToken);
         }
     }
 }
