@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,16 +21,17 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static bool TryFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, out TSource? value)
+        public static bool TryFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, [NotNullWhen(true)] out TSource? item)
+            where TSource : notnull
         {
             using var iterator = source.GetEnumerator();
             if (!iterator.MoveNext() || !predicate(iterator.Current))
             {
-                value = default;
+                item = default;
                 return false;
             }
 
-            value = iterator.Current;
+            item = iterator.Current;
             return true;
         }
 

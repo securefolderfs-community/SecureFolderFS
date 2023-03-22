@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         [ObservableProperty]
         private DateTime? _LastAccessDate;
 
-        public SidebarItemViewModel(IVaultModel vaultModel, IWidgetsContextModel widgetsContextModel)
+        public SidebarItemViewModel(IVaultModel vaultModel, IWidgetsCollectionModel widgetsContextModel)
         {
             VaultViewModel = new(vaultModel, widgetsContextModel);
 

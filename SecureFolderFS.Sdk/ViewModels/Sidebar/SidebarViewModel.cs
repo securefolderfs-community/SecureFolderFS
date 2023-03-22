@@ -53,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         {
             await foreach (var item in VaultCollectionModel.GetVaultsAsync(cancellationToken))
             {
-                await AddVaultToSidebarAsync(item, cancellationToken);
+                AddVaultToSidebar(item);
             }
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
@@ -63,13 +63,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
         }
 
         /// <inheritdoc/>
-        public async void Receive(AddVaultMessage message)
+        public void Receive(AddVaultMessage message)
         {
-            var sidebarItem = await AddVaultToSidebarAsync(message.VaultModel);
-            await VaultCollectionModel.AddVaultAsync(message.VaultModel);
-
-            await sidebarItem.VaultViewModel.WidgetsContextModel.AddWidgetAsync(Constants.Widgets.HEALTH_WIDGET_ID);
-            await sidebarItem.VaultViewModel.WidgetsContextModel.AddWidgetAsync(Constants.Widgets.GRAPHS_WIDGET_ID);
+            AddVaultToSidebar(message.VaultModel);
         }
 
         /// <inheritdoc/>
@@ -92,15 +88,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Sidebar
             await VaultCollectionModel.RemoveVaultAsync(message.VaultModel);
         }
 
-        private Task<SidebarItemViewModel> AddVaultToSidebarAsync(IVaultModel vaultModel, CancellationToken cancellationToken = default)
+        private void AddVaultToSidebar(IVaultModel vaultModel)
         {
-            var widgetsContextModel = new SavedWidgetsContextModel(vaultModel.Folder);
-            var sidebarItem = new SidebarItemViewModel(vaultModel, widgetsContextModel);
+            var widgetsCollection = new WidgetsCollectionModel(vaultModel.Folder);
+            var sidebarItem = new SidebarItemViewModel(vaultModel, widgetsCollection);
 
             sidebarItem.LastAccessDate = vaultModel.LastAccessDate;
             SidebarItems.Add(sidebarItem);
-
-            return Task.FromResult(sidebarItem);
         }
     }
 }

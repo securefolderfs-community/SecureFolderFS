@@ -1,24 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="IWidgetsContextModel"/>
-    public sealed class SavedWidgetsContextModel : IWidgetsContextModel
+    /// <inheritdoc cref="IWidgetsCollectionModel"/>
+    public sealed class WidgetsCollectionModel : IWidgetsCollectionModel
     {
         private readonly IFolder _vaultFolder;
 
         private IVaultWidgets VaultWidgets { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultWidgets;
 
-        public SavedWidgetsContextModel(IFolder vaultFolder)
+        public WidgetsCollectionModel(IFolder vaultFolder)
         {
             _vaultFolder = vaultFolder;
         }
@@ -26,8 +26,10 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<bool> AddWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
-            var widgetsContext = VaultWidgets.GetWidgetsData(_vaultFolder.Id);
-            widgetsContext.WidgetDataModels.AddOrReplace(widgetId, new(new Dictionary<string, string?>()));
+            var widgets = VaultWidgets.GetForVault(_vaultFolder.Id) ?? new List<WidgetDataModel>();
+
+            widgets.Add(new(widgetId));
+            VaultWidgets.SetForVault(_vaultFolder.Id, widgets);
 
             return await VaultWidgets.SaveAsync(cancellationToken);
         }
@@ -35,19 +37,31 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<bool> RemoveWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
         {
-            var widgetsContext = VaultWidgets.GetWidgetsData(_vaultFolder.Id);
-            widgetsContext.WidgetDataModels.Remove(widgetId);
+            var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
+
+            if (widgets is null)
+                return true;
+
+            if (!widgets.TryFirstOrDefault(x => x.WidgetId == widgetId, out var itemToRemove))
+                return true;
+
+            widgets.Remove(itemToRemove);
+            VaultWidgets.SetForVault(_vaultFolder.Id, widgets);
 
             return await VaultWidgets.SaveAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IWidgetModel> GetWidgetsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public IEnumerable<IWidgetModel> GetWidgets()
         {
-            var widgetsContext = VaultWidgets.GetWidgetsData(_vaultFolder.Id);
-            foreach (var item in widgetsContext.WidgetDataModels)
+            var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
+
+            if (widgets is null)
+                yield break;
+
+            foreach (var item in widgets)
             {
-                yield return new LocalWidgetModel(item.Key, VaultWidgets, item.Value);
+                yield return new LocalWidgetModel(item.WidgetId, VaultWidgets, item);
             }
         }
 

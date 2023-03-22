@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Shared.Utils;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.Sdk.Services.VaultPersistence
 {
@@ -9,17 +10,18 @@ namespace SecureFolderFS.Sdk.Services.VaultPersistence
     public interface IVaultWidgets : IPersistable
     {
         /// <summary>
-        /// Sets the widgets data for specified <paramref name="id"/>.
+        /// 
         /// </summary>
-        /// <param name="id">The unique ID of a vault.</param>
-        /// <param name="widgetDataModel">The widget data to set. If null, discards the saved data associated with <paramref name="id"/>.</param>
-        void SetWidgetsData(string id, WidgetDataModel? widgetDataModel);
+        /// <param name="vaultId"></param>
+        /// <returns></returns>
+        ICollection<WidgetDataModel>? GetForVault(string vaultId);
 
         /// <summary>
-        /// Gets the widgets data for specified <paramref name="id"/>.
+        /// 
         /// </summary>
-        /// <param name="id">The unique ID of a vault.</param>
-        /// <returns>If the widget data was present, returns <see cref="WidgetsCollectionDataModel"/>, otherwise null.</returns>
-        WidgetsCollectionDataModel? GetWidgetsData(string id);
+        /// <param name="vaultId"></param>
+        /// <param name="widgets"></param>
+        /// <returns></returns>
+        bool SetForVault(string vaultId, ICollection<WidgetDataModel>? widgets);
     }
 }

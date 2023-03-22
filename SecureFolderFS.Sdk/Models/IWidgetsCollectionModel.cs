@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.Models
     /// <summary>
     /// Represents a context that holds widgets settings and layout of an individual vault.
     /// </summary>
-    public interface IWidgetsContextModel : IAsyncInitialize
+    public interface IWidgetsCollectionModel : IAsyncInitialize
     {
         /// <summary>
         /// Adds a new widget model identified by <paramref name="widgetId"/>.
@@ -29,8 +29,7 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Gets all persisted widgets.
         /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IWidgetModel"/> of items in the directory.</returns>
-        IAsyncEnumerable<IWidgetModel> GetWidgetsAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns an <see cref="IAsyncEnumerable{T}"/> of type <see cref="IWidgetModel"/> of all widgets for a given vault.</returns>
+        IEnumerable<IWidgetModel> GetWidgets();
     }
 }

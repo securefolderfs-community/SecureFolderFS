@@ -23,18 +23,15 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public Task<string?> GetDataAsync(string key, CancellationToken cancellationToken = default)
+        public Task<string?> GetWidgetDataAsync(CancellationToken cancellationToken = default)
         {
-            if (_widgetDataModel.WidgetsData.TryGetValue(key, out var value))
-                return Task.FromResult(value);
-
-            return Task.FromResult<string?>(null);
+            return Task.FromResult(_widgetDataModel.WidgetsData);
         }
 
         /// <inheritdoc/>
-        public Task<bool> SetDataAsync(string key, string? value, CancellationToken cancellationToken = default)
+        public Task<bool> SetWidgetDataAsync(string? value, CancellationToken cancellationToken = default)
         {
-            _widgetDataModel.WidgetsData[key] = value;
+            _widgetDataModel.WidgetsData = value;
             return _widgetsStore.SaveAsync(cancellationToken);
         }
     }

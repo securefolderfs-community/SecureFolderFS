@@ -1,21 +1,21 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
-        private readonly IWidgetsContextModel _widgetsContextModel;
+        private readonly IWidgetsCollectionModel _widgetsContextModel;
         private readonly IUnlockedVaultModel _unlockedVaultModel;
 
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
-        public WidgetsListViewModel(IUnlockedVaultModel unlockedVaultModel, IWidgetsContextModel widgetsContextModel)
+        public WidgetsListViewModel(IUnlockedVaultModel unlockedVaultModel, IWidgetsCollectionModel widgetsContextModel)
         {
             _unlockedVaultModel = unlockedVaultModel;
             _widgetsContextModel = widgetsContextModel;
@@ -23,15 +23,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         }
 
         /// <inheritdoc/>
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in _widgetsContextModel.GetWidgetsAsync(cancellationToken))
+            foreach (var item in _widgetsContextModel.GetWidgets())
             {
                 var widgetViewModel = GetWidgetForModel(item);
                 _ = widgetViewModel.InitAsync(cancellationToken);
 
                 Widgets.Add(widgetViewModel);
             }
+
+            return Task.CompletedTask;
         }
 
         private BaseWidgetViewModel GetWidgetForModel(IWidgetModel widgetModel)

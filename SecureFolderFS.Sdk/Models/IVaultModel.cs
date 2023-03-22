@@ -18,7 +18,7 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Gets the name of the vault.
         /// </summary>
-        string? VaultName { get; }
+        string VaultName { get; }
 
         /// <summary>
         /// Gets the last accessed date for this vault.

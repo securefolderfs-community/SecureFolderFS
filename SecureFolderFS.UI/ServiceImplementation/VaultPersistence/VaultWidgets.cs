@@ -19,17 +19,17 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
         }
 
         /// <inheritdoc/>
-        public void SetWidgetsData(string id, WidgetDataModel? widgetDataModel)
+        public ICollection<WidgetDataModel>? GetForVault(string vaultId)
         {
-            var hashedId = ChecksumHelpers.CalculateChecksumForId(id);
-            SetSetting(widgetDataModel, hashedId);
+            var encodedId = EncodingHelpers.EncodeStorableId(vaultId);
+            return GetSetting<ICollection<WidgetDataModel>?>(null, encodedId);
         }
 
         /// <inheritdoc/>
-        public WidgetsCollectionDataModel? GetWidgetsData(string id)
+        public bool SetForVault(string vaultId, ICollection<WidgetDataModel>? widgets)
         {
-            var hashedId = ChecksumHelpers.CalculateChecksumForId(id);
-            return GetSetting<WidgetsCollectionDataModel>(null, hashedId);
+            var encodedId = EncodingHelpers.EncodeStorableId(vaultId);
+            return SetSetting(widgets, encodedId);
         }
     }
 }

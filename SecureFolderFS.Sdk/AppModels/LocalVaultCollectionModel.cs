@@ -35,30 +35,31 @@ namespace SecureFolderFS.Sdk.AppModels
             _vaults?.Add(vaultModel);
 
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
-            VaultConfigurations.SavedVaults.Add(new()
+            VaultConfigurations.SavedVaults.Add(new(vaultModel.Folder.Id, vaultModel.VaultName, vaultModel.LastAccessDate));
+            VaultWidgets.SetForVault(vaultModel.Folder.Id, new List<WidgetDataModel>()
             {
-                Id = vaultModel.Folder.Id,
-                VaultName = vaultModel.Folder.Name,
-                LastAccessDate = vaultModel.LastAccessDate
+                new(Constants.Widgets.HEALTH_WIDGET_ID),
+                new(Constants.Widgets.GRAPHS_WIDGET_ID)
             });
 
-            return await VaultConfigurations.SaveAsync(cancellationToken);
+            var results = await Task.WhenAll(VaultWidgets.SaveAsync(cancellationToken), VaultConfigurations.SaveAsync(cancellationToken));
+            return results[0] && results[1];
         }
 
         /// <inheritdoc/>
-        public async Task<bool> RemoveVaultAsync(IVaultModel vault, CancellationToken cancellationToken = default)
+        public async Task<bool> RemoveVaultAsync(IVaultModel vaultModel, CancellationToken cancellationToken = default)
         {
             if (VaultConfigurations.SavedVaults is null)
                 return false;
 
-            if (vault.Folder is not ILocatableFolder vaultFolder)
+            if (vaultModel.Folder is not ILocatableFolder vaultFolder)
                 return false;
 
             var itemToRemove = VaultConfigurations.SavedVaults.FirstOrDefault(x => vaultFolder.Id == x.Id);
             if (itemToRemove is null)
                 return false;
 
-            _vaults?.Remove(vault);
+            _vaults?.Remove(vaultModel);
             VaultConfigurations.SavedVaults.Remove(itemToRemove);
 
             return await VaultConfigurations.SaveAsync(cancellationToken);

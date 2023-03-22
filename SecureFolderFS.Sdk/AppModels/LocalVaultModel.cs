@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public IFolder Folder { get; }
 
         /// <inheritdoc/>
-        public string? VaultName { get; private set; }
+        public string VaultName { get; private set; }
 
         /// <inheritdoc/>
         public DateTime? LastAccessDate { get; private set; }
@@ -28,14 +28,14 @@ namespace SecureFolderFS.Sdk.AppModels
         public LocalVaultModel(IFolder folder, string? vaultName = null, DateTime? lastAccessDate = null)
         {
             Folder = folder;
-            VaultName = vaultName;
+            VaultName = vaultName ?? folder.Name;
             LastAccessDate = lastAccessDate;
         }
 
         /// <inheritdoc/>
         public async Task<bool> SetLastAccessDateAsync(DateTime? value, CancellationToken cancellationToken = default)
         {
-            var result = await UpdateVaultConfigurationAsync(x => x.LastAccessDate = value, cancellationToken);
+            var result = await UpdateConfigurationAsync(x => x.LastAccessDate = value, cancellationToken);
             if (result)
                 LastAccessDate = value;
 
@@ -45,14 +45,14 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<bool> SetVaultNameAsync(string value, CancellationToken cancellationToken = default)
         {
-            var result = await UpdateVaultConfigurationAsync(x => x.VaultName = value, cancellationToken);
+            var result = await UpdateConfigurationAsync(x => x.VaultName = value, cancellationToken);
             if (result)
                 VaultName = value;
 
             return result;
         }
 
-        private async Task<bool> UpdateVaultConfigurationAsync(Action<VaultDataModel> updateAction, CancellationToken cancellationToken)
+        private async Task<bool> UpdateConfigurationAsync(Action<VaultDataModel> updateAction, CancellationToken cancellationToken)
         {
             if (VaultConfigurations.SavedVaults is null)
                 return false;
@@ -61,7 +61,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (item is null)
                 return false;
 
-            updateAction(item);
+            updateAction.Invoke(item);
             return await VaultConfigurations.SaveAsync(cancellationToken);
         }
     }

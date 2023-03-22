@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace SecureFolderFS.Sdk.DataModels
 {
     [Serializable]
-    public sealed class VaultDataModel
+    public sealed record class VaultDataModel(string? Id, string? VaultName, DateTime? LastAccessDate)
     {
-        public string? Id { get; set; }
+        [JsonPropertyName("Name")]
+        public string? VaultName { get; set; } = VaultName;
 
-        public string? VaultName { get; set; }
-
-        public DateTime? LastAccessDate { get; set; }
+        [JsonPropertyName("LastAccessDate")]
+        public DateTime? LastAccessDate { get; set; } = LastAccessDate;
     }
 }

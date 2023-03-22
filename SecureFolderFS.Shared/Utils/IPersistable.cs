@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Shared.Utils
 {
     /// <summary>
-    /// Allows for data to be saved and loaded from a common persistence store.
+    /// Allows for data to be saved and loaded from a persistence store.
     /// </summary>
     public interface IPersistable
     {

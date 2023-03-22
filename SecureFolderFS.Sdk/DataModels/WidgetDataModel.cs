@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace SecureFolderFS.Sdk.DataModels
 {
     [Serializable]
-    public sealed record class WidgetDataModel(IDictionary<string, string?> WidgetsData)
+    public sealed record class WidgetDataModel(string WidgetId, string? WidgetsData = null)
     {
-        public IDictionary<string, string?> WidgetsData { get; } = WidgetsData;
+        public string? WidgetsData { get; set; } = WidgetsData;
     }
 }
