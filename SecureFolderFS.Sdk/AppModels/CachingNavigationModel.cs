@@ -6,34 +6,18 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="INavigationModel{T}"/>
-    public abstract class BaseNavigationModel<T> : INavigationModel<T>
-        where T : notnull
+    /// <inheritdoc cref="IStateNavigationModel"/>
+    public abstract class CachingNavigationModel : IStateNavigationModel
     {
-        protected readonly Dictionary<T, INavigationTarget> navigationTargets;
-
-        protected BaseNavigationModel()
-        {
-            navigationTargets = new();
-        }
+        /// <inheritdoc/>
+        public ICollection<INavigationTarget> Targets { get; }
 
         /// <inheritdoc/>
         public INavigationTarget? CurrentTarget { get; protected set; }
 
-        /// <inheritdoc/>
-        public virtual INavigationTarget? TryGet(T identifier)
+        protected CachingNavigationModel()
         {
-            navigationTargets.TryGetValue(identifier, out var target);
-            return target;
-        }
-
-        /// <inheritdoc/>
-        public virtual void Remove(INavigationTarget target)
-        {
-            if (navigationTargets.TryFirstOrDefault(x => x.Value.Equals(target), out var itemToRemove))
-                return;
-
-            navigationTargets.Remove(itemToRemove.Key);
+            Targets = new List<INavigationTarget>();
         }
 
         /// <inheritdoc/>
@@ -49,22 +33,19 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public virtual async Task<T> NavigateAsync(INavigationTarget target)
+        public virtual async Task NavigateAsync(INavigationTarget target)
         {
             // Notify the current target that it's being navigated from
             CurrentTarget?.OnNavigatingFrom();
 
-            // Start actual navigation
-            var identifier = await BeginNavigationAsync(target, NavigationType.Detached);
-
             // Notify the new target that it's been navigated to
             target.OnNavigatingTo(NavigationType.Detached);
 
-            // Update targets
-            navigationTargets[identifier] = target;
-            CurrentTarget = target;
+            // Start actual navigation
+            await BeginNavigationAsync(target, NavigationType.Detached);
 
-            return identifier;
+            // Update targets
+            CurrentTarget = target;
         }
 
         /// <summary>
@@ -73,6 +54,6 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <param name="target">The target to navigate to.</param>
         /// <param name="navigationType">The type of navigation to perform.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an identifier of type <typeparamref name="T"/> that can be associated with <paramref name="target"/>.</returns>
-        protected abstract Task<T> BeginNavigationAsync(INavigationTarget target, NavigationType navigationType);
+        protected abstract Task BeginNavigationAsync(INavigationTarget target, NavigationType navigationType);
     }
 }

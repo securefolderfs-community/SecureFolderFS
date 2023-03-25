@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
@@ -11,6 +10,7 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,11 +19,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     public sealed partial class VaultControlsViewModel : ObservableObject
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
-        private readonly INavigationModel<DashboardPageType> _navigationModel;
+        private readonly IStateNavigationModel _navigationModel;
 
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
-        public VaultControlsViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationModel<DashboardPageType> navigationModel)
+        public VaultControlsViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel navigationModel)
         {
             _unlockedVaultViewModel = unlockedVaultViewModel;
             _navigationModel = navigationModel;
@@ -53,9 +53,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private async Task OpenPropertiesAsync()
         {
-            var propertiesViewModel = _navigationModel.TryGet(DashboardPageType.PropertiesPage) 
-                                      ?? new VaultPropertiesPageViewModel(_unlockedVaultViewModel, _navigationModel);
-            _ = await _navigationModel.NavigateAsync(propertiesViewModel);
+            var target = _navigationModel.Targets.FirstOrDefault(x => x is VaultPropertiesPageViewModel)
+                         ?? new VaultPropertiesPageViewModel(_unlockedVaultViewModel, _navigationModel);
+
+            await _navigationModel.NavigateAsync(target);
         }
     }
 }

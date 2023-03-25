@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
@@ -12,7 +11,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IRecipient<VaultLockedMessage>
     {
-        public INavigationModel<DashboardPageType> NavigationModel { get; }
+        public IStateNavigationModel NavigationModel { get; }
 
         public BaseDashboardPageViewModel CurrentPage { get; }
 

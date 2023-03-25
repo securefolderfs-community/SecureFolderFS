@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 
         public VaultControlsViewModel VaultControlsViewModel { get; }
 
-        public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationModel<DashboardPageType> navigationModel)
+        public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel navigationModel)
             : base(unlockedVaultViewModel, navigationModel)
         {
             WidgetsViewModel = new(unlockedVaultViewModel.UnlockedVaultModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);

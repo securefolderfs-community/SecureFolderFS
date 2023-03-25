@@ -44,6 +44,10 @@
       <AvaloniaResource Remove="..\SecureFolderFS.UI\Assets\**" />
     </ItemGroup>
     <ItemGroup>
+      <Content Remove="C:\Users\szymo\.nuget\packages\fluentavalonia.fluenticons\2.0.0-alpha.7\contentFiles\any\net7.0\LICENSE" />
+      <Content Remove="C:\Users\szymo\.nuget\packages\fluentavalonia.fluenticons\2.0.0-alpha.7\contentFiles\any\net7.0\README.md" />
+    </ItemGroup>
+    <ItemGroup>
       <Compile Update="WindowViews\MainWindow.axaml.cs">
         <DependentUpon>MainWindow.axaml</DependentUpon>
         <SubType>Code</SubType>

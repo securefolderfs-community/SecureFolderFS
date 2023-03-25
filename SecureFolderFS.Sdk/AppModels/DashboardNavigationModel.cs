@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="INavigationModel{T}"/>
-    public sealed class DashboardNavigationModel : BaseNavigationModel<DashboardPageType>
+    /// <inheritdoc cref="IStateNavigationModel"/>
+    public sealed class DashboardNavigationModel : CachingNavigationModel
     {
         private readonly IMessenger _messenger;
 
