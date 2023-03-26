@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using SecureFolderFS.Sdk.ViewModels.AppHost;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 {
@@ -12,12 +12,12 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             AvaloniaXamlLoader.Load(this);
         }
 
-        public NoVaultsAppHostViewModel? ViewModel
+        public EmptyHostViewModel? ViewModel
         {
             get => GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
-        public static readonly StyledProperty<NoVaultsAppHostViewModel?> ViewModelProperty
-            = AvaloniaProperty.Register<NoVaultsAppHostControl, NoVaultsAppHostViewModel?>(nameof(ViewModel));
+        public static readonly StyledProperty<EmptyHostViewModel?> ViewModelProperty
+            = AvaloniaProperty.Register<NoVaultsAppHostControl, EmptyHostViewModel?>(nameof(ViewModel));
     }
 }

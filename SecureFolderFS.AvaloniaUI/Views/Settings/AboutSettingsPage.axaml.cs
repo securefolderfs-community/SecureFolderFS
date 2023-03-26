@@ -7,9 +7,9 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
     internal sealed partial class AboutSettingsPage : Page
     {
-        public AboutSettingsPageViewModel? ViewModel
+        public AboutSettingsViewModel? ViewModel
         {
-            get => (AboutSettingsPageViewModel?)DataContext;
+            get => (AboutSettingsViewModel?)DataContext;
             set => DataContext = value;
         }
 
@@ -20,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is AboutSettingsPageViewModel viewModel)
+            if (e.Parameter is AboutSettingsViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

@@ -16,7 +16,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         public bool CanGoBack => ContentFrame.CanGoBack;
 
         /// <inheritdoc/>
-        public override void Receive(BackNavigationRequestedMessage message)
+        public override void Receive(BackNavigationMessage message)
         {
             if (ContentFrame.CanGoBack)
                 ContentFrame.GoBack();

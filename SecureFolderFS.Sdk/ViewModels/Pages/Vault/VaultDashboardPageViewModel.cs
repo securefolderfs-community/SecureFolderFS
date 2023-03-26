@@ -11,15 +11,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IRecipient<VaultLockedMessage>
     {
-        public IStateNavigationModel NavigationModel { get; }
+        public IStateNavigationModel DashboardNavigationModel { get; }
 
         public BaseDashboardPageViewModel CurrentPage { get; }
 
-        public VaultDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IMessenger messenger)
-            : base(unlockedVaultViewModel.VaultViewModel, messenger)
+        public VaultDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
+            : base(unlockedVaultViewModel.VaultViewModel)
         {
-            NavigationModel = new DashboardNavigationModel(messenger);
-            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, NavigationModel);
+            DashboardNavigationModel = new DashboardNavigationModel(new WeakReferenceMessenger());
+            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, DashboardNavigationModel, );
 
             WeakReferenceMessenger.Default.Register(this);
         }

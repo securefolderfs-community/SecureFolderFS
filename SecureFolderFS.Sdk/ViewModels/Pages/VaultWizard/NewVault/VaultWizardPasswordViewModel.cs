@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
             if (!await _vaultCreationModel.SetPasswordAsync(InitializeWithPassword!(), cancellationToken))
                 return; // TODO: Report issue
 
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardEncryptionViewModel(_vaultCreationModel, Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationMessage(new VaultWizardEncryptionViewModel(_vaultCreationModel, Messenger, DialogViewModel)));
         }
     }
 }

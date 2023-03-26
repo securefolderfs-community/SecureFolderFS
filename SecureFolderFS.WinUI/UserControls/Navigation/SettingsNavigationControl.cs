@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.WinUI.Views.Settings;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
@@ -13,10 +14,10 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         {
             var pageType = viewModel switch
             {
-                GeneralSettingsPageViewModel => typeof(GeneralSettingsPage),
-                PreferencesSettingsPageViewModel => typeof(PreferencesSettingsPage),
-                PrivacySettingsPageViewModel => typeof(PrivacySettingsPage),
-                AboutSettingsPageViewModel => typeof(AboutSettingsPage),
+                GeneralSettingsViewModel => typeof(GeneralSettingsPage),
+                PreferencesSettingsViewModel => typeof(PreferencesSettingsPage),
+                PrivacySettingsViewModel => typeof(PrivacySettingsPage),
+                AboutSettingsViewModel => typeof(AboutSettingsPage),
                 _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
             };
 

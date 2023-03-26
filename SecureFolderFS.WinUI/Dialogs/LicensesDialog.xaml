@@ -75,7 +75,7 @@
                             <ucab:ActionBlockControl.ExpanderContent>
                                 <TextBlock
                                     IsTextSelectionEnabled="True"
-                                    Text="{x:Bind License}"
+                                    Text="{x:Bind LicenseContent}"
                                     TextWrapping="Wrap" />
                             </ucab:ActionBlockControl.ExpanderContent>
                         </ucab:ActionBlockControl>

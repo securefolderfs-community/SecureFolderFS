@@ -37,14 +37,21 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var licenseName = await streamReader.ReadLineAsync(cancellationToken) ?? string.Empty;
                 var projectWebsite = await streamReader.ReadLineAsync(cancellationToken);
                 var projectWebsiteUri = projectWebsite is null ? null : new Uri(projectWebsite);
-                var licenses = licenseLink.Split(',').Select(x => new Uri(x));
+                var licenseUris = licenseLink.Split(',').Select(x => new Uri(x)).ToArray();
 
                 // Reset position and make sure cached data isn't combined when reading full text again
                 stream.Position = 0L;
                 streamReader.DiscardBufferedData();
                 var fullText = await streamReader.ReadToEndAsync(cancellationToken);
 
-                yield return new LicenseViewModel(packageName, licenses, licenseName, projectWebsiteUri, fullText);
+                yield return new()
+                {
+                    PackageName = packageName,
+                    LicenseName = licenseName,
+                    LicenseContent = fullText,
+                    ProjectWebsiteUri = projectWebsiteUri,
+                    LicenseUris = licenseUris
+                };
             }
         }
 

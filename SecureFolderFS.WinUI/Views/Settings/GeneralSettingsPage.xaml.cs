@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.WinUI.Helpers;
 using System.Globalization;
@@ -18,9 +18,9 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// </summary>
     public sealed partial class GeneralSettingsPage : Page
     {
-        public GeneralSettingsPageViewModel ViewModel
+        public GeneralSettingsViewModel ViewModel
         {
-            get => (GeneralSettingsPageViewModel)DataContext;
+            get => (GeneralSettingsViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -34,7 +34,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is GeneralSettingsPageViewModel viewModel)
+            if (e.Parameter is GeneralSettingsViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

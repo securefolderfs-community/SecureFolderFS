@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultModel"/>
-    public sealed class LocalVaultModel : IVaultModel
+    public sealed class VaultModel : IVaultModel
     {
         private IVaultConfigurations VaultConfigurations { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultConfigurations;
 
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public DateTime? LastAccessDate { get; private set; }
 
-        public LocalVaultModel(IFolder folder, string? vaultName = null, DateTime? lastAccessDate = null)
+        public VaultModel(IFolder folder, string? vaultName = null, DateTime? lastAccessDate = null)
         {
             Folder = folder;
             VaultName = vaultName ?? folder.Name;

@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
+using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
+namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    public sealed class PreferencesSettingsPageViewModel : ObservableObject
+    public sealed class PreferencesSettingsViewModel : ObservableObject
     {
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
             set => SettingsService.UserSettings.OpenFolderOnUnlock = value;
         }
 
-        public PreferencesSettingsPageViewModel()
+        public PreferencesSettingsViewModel()
         {
             BannerViewModel = new();
         }

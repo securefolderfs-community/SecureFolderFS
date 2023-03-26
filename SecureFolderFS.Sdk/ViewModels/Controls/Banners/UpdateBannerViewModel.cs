@@ -3,13 +3,12 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
     public sealed partial class UpdateBannerViewModel : ObservableObject, IAsyncInitialize
     {

@@ -8,12 +8,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public sealed class NativeStorageService : IStorageService
     {
         /// <inheritdoc/>
-        public Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(true);
-        }
-
-        /// <inheritdoc/>
         public Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(File.Exists(path));

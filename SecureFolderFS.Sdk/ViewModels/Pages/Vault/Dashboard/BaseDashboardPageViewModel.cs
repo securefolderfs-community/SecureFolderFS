@@ -13,12 +13,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
     {
         protected UnlockedVaultViewModel UnlockedVaultViewModel { get; }
 
-        protected IStateNavigationModel NavigationModel { get; }
+        protected IStateNavigationModel DashboardNavigationModel { get; }
 
-        protected BaseDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel navigationModel)
+        protected BaseDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel dashboardNavigationModel)
         {
             UnlockedVaultViewModel = unlockedVaultViewModel;
-            NavigationModel = navigationModel;
+            DashboardNavigationModel = dashboardNavigationModel;
         }
 
         /// <inheritdoc/>

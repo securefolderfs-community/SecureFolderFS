@@ -8,15 +8,15 @@
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:uc2="using:SecureFolderFS.WinUI.UserControls.InterfaceHost"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.AppHost"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Host"
     Loaded="MainWindowRootControl_Loaded"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainAppHostViewModel">
+        <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainHostViewModel">
             <uc2:MainAppHostControl ViewModel="{x:Bind}" />
         </DataTemplate>
-        <DataTemplate x:Key="NoVaultsAppHostDataTemplate" x:DataType="vm:NoVaultsAppHostViewModel">
+        <DataTemplate x:Key="NoVaultsAppHostDataTemplate" x:DataType="vm:EmptyHostViewModel">
             <uc2:NoVaultsAppHostControl ViewModel="{x:Bind}" />
         </DataTemplate>
     </UserControl.Resources>

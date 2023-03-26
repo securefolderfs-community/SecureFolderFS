@@ -13,7 +13,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
     /// <summary>
     /// The base class to manage navigation of pages using messages.
     /// </summary>
-    public abstract partial class NavigationControl : UserControl, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>, IDisposable
+    public abstract partial class NavigationControl : UserControl, IRecipient<NavigationMessage>, IRecipient<BackNavigationMessage>, IDisposable
     {
         protected NavigationControl()
         {
@@ -21,13 +21,13 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         }
 
         /// <inheritoc/>
-        public virtual void Receive(NavigationRequestedMessage message)
+        public virtual void Receive(NavigationMessage message)
         {
             Navigate(message.ViewModel, null);
         }
 
         /// <inheritoc/>
-        public virtual void Receive(BackNavigationRequestedMessage message)
+        public virtual void Receive(BackNavigationMessage message)
         {
             _ = message;
         }

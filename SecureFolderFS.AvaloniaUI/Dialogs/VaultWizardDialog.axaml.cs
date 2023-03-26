@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
-    public partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>, IStyleable
+    public partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationMessage>, IRecipient<BackNavigationMessage>, IStyleable
     {
         private bool _hasNavigationAnimatedOnLoaded;
         private bool _isBackAnimationState;
@@ -41,13 +41,13 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         }
 
         /// <inheritdoc/>
-        public async void Receive(NavigationRequestedMessage message)
+        public async void Receive(NavigationMessage message)
         {
             await FinalizeNavigationAnimationAsync((message.ViewModel as BaseVaultWizardPageViewModel)!);
         }
 
         /// <inheritdoc/>
-        public async void Receive(BackNavigationRequestedMessage message)
+        public async void Receive(BackNavigationMessage message)
         {
             if (ViewModel?.CurrentPageViewModel is not null)
                 await FinalizeNavigationAnimationAsync(ViewModel.CurrentPageViewModel);
@@ -116,10 +116,10 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         private void VaultWizardDialog_OnLoaded(object? sender, RoutedEventArgs e)
         {
             // Register order is important!
-            ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
-            ViewModel.Messenger.Register<BackNavigationRequestedMessage>(Navigation);
-            ViewModel.Messenger.Register<NavigationRequestedMessage>(this);
-            ViewModel.Messenger.Register<BackNavigationRequestedMessage>(this);
+            ViewModel.Messenger.Register<NavigationMessage>(Navigation);
+            ViewModel.Messenger.Register<BackNavigationMessage>(Navigation);
+            ViewModel.Messenger.Register<NavigationMessage>(this);
+            ViewModel.Messenger.Register<BackNavigationMessage>(this);
 
             var viewModel = new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel);
             Navigation.Navigate(viewModel, new SuppressNavigationTransition());

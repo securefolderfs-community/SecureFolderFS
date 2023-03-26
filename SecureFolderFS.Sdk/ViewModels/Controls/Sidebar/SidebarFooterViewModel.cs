@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Sidebar
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 {
     public sealed partial class SidebarFooterViewModel : ObservableObject
     {

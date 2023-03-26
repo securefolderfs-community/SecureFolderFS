@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -37,18 +38,18 @@ namespace SecureFolderFS.WinUI.Dialogs
         {
             return tag switch
             {
-                0 => new GeneralSettingsPageViewModel(),
-                1 => new PreferencesSettingsPageViewModel(),
-                2 => new PrivacySettingsPageViewModel(),
-                3 => new AboutSettingsPageViewModel(),
-                _ => new GeneralSettingsPageViewModel()
+                0 => new GeneralSettingsViewModel(),
+                1 => new PreferencesSettingsViewModel(),
+                2 => new PrivacySettingsViewModel(),
+                3 => new AboutSettingsViewModel(),
+                _ => new GeneralSettingsViewModel()
             };
         }
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (!ViewModel.Messenger.IsRegistered<NavigationRequestedMessage>(Navigation))
-                ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
+            if (!ViewModel.Messenger.IsRegistered<NavigationMessage>(Navigation))
+                ViewModel.Messenger.Register<NavigationMessage>(Navigation);
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
             var viewModel = GetViewModelForTag(tag);

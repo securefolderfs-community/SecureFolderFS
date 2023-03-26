@@ -16,7 +16,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IAwaitable SwitchThreadAsync()
+        public IAwaitable ChangeThreadAsync()
         {
             return new ContextSwitchAwaitable(_dispatcher);
         }

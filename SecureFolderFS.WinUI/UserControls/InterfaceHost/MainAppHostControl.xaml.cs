@@ -4,10 +4,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.AppHost;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Shared.Extensions;
 using System.Linq;
 
@@ -52,7 +52,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
             WeakReferenceMessenger.Default.Register(this);
-            WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(Navigation);
+            WeakReferenceMessenger.Default.Register<NavigationMessage>(Navigation);
 
             await ViewModel.InitAsync();
             Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
@@ -80,12 +80,12 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
                 await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery(sender.Text);
         }
 
-        public MainAppHostViewModel ViewModel
+        public MainHostViewModel ViewModel
         {
-            get => (MainAppHostViewModel)GetValue(ViewModelProperty);
+            get => (MainHostViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(MainAppHostViewModel), typeof(MainAppHostControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ViewModel), typeof(MainHostViewModel), typeof(MainAppHostControl), new PropertyMetadata(null));
     }
 }

@@ -19,7 +19,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
         private readonly IVaultUnlockingModel _vaultUnlockingModel;
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IKeystoreModel _keystoreModel;
-        private readonly IMessenger _messenger;
 
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
@@ -66,15 +65,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
 
             // Update last access date
             await _vaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now, cancellationToken);
-            await ThreadingService.SwitchThreadAsync();
+            await ThreadingService.ChangeThreadAsync();
 
             var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);
-            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, _messenger);
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, );
             _ = dashboardPage.InitAsync(cancellationToken);
 
 
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultWatcherModel.VaultModel));
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(dashboardPage));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(dashboardPage));
         }
 
         /// <inheritdoc/>

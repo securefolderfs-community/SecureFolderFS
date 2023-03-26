@@ -1,7 +1,7 @@
-using System.ComponentModel;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml.Templates;
-using SecureFolderFS.Sdk.ViewModels.AppHost;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using System.ComponentModel;
 
 namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
 {
@@ -15,8 +15,8 @@ namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
         {
             return item switch
             {
-                MainAppHostViewModel => MainAppHostDataTemplate,
-                NoVaultsAppHostViewModel => NoVaultsAppHostDataTemplate,
+                MainHostViewModel => MainAppHostDataTemplate,
+                EmptyHostViewModel => NoVaultsAppHostDataTemplate,
                 _ => null
             };
         }

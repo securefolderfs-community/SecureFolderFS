@@ -7,7 +7,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
-using SecureFolderFS.Sdk.ViewModels.AppHost;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.WindowViews;
 using System.ComponentModel;
@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
 {
-    public sealed partial class MainWindowRootControl : UserControl, IRecipient<RootNavigationRequestedMessage>
+    public sealed partial class MainWindowRootControl : UserControl, IRecipient<RootNavigationMessage>
     {
         public MainViewModel ViewModel
         {
@@ -34,7 +34,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         }
 
         /// <inheritdoc/>
-        public void Receive(RootNavigationRequestedMessage message)
+        public void Receive(RootNavigationMessage message)
         {
             _ = NavigateHostControlAsync(message.ViewModel);
         }
@@ -47,7 +47,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
 
         private async Task EnsureRootAsync()
         {
-            var vaultCollectionModel = new LocalVaultCollectionModel();
+            var vaultCollectionModel = new VaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
 
             // Small delay for Mica material to load
@@ -73,12 +73,12 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
                 if (!vaultCollectionModel.IsEmpty) // Has vaults
                 {
                     // Show main app screen
-                    _ = NavigateHostControlAsync(new MainAppHostViewModel(vaultCollectionModel));
+                    _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel));
                 }
                 else // Doesn't have vaults
                 {
                     // Show no vaults screen
-                    _ = NavigateHostControlAsync(new NoVaultsAppHostViewModel(vaultCollectionModel));
+                    _ = NavigateHostControlAsync(new EmptyHostViewModel(vaultCollectionModel));
                 }
             }
         }
@@ -86,9 +86,9 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         private async Task NavigateHostControlAsync(INotifyPropertyChanged viewModel)
         {
             // Use transitions only when the initial page view model is not MainAppHostViewModel 
-            if ((ViewModel.AppContentViewModel is null && viewModel is not MainAppHostViewModel)
-                || (ViewModel.AppContentViewModel is not MainAppHostViewModel &&
-                    ViewModel.AppContentViewModel is not null && viewModel is MainAppHostViewModel))
+            if ((ViewModel.AppContentViewModel is null && viewModel is not MainHostViewModel)
+                || (ViewModel.AppContentViewModel is not MainHostViewModel &&
+                    ViewModel.AppContentViewModel is not null && viewModel is MainHostViewModel))
             {
                 AppContent?.ContentTransitions?.Clear();
                 AppContent?.ContentTransitions?.Add(new ContentThemeTransition());

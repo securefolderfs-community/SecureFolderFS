@@ -1,12 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Sidebar
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 {
     public sealed class SidebarSearchViewModel : ObservableObject
     {

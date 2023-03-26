@@ -17,7 +17,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IAwaitable SwitchThreadAsync()
+        public IAwaitable ChangeThreadAsync()
         {
             return new ContextSwitchAwaitable(_dispatcherQueue);
         }

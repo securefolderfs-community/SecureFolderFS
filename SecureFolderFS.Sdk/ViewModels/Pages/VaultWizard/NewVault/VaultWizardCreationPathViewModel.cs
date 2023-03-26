@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
             // We've already initialized the data
             if (_nextViewModel is not null)
             {
-                Messenger.Send(new NavigationRequestedMessage(_nextViewModel));
+                Messenger.Send(new NavigationMessage(_nextViewModel));
                 return;
             }
 
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
                 return; // TODO: Report issue
 
             _nextViewModel = new(_vaultCreationModel, Messenger, DialogViewModel);
-            Messenger.Send(new NavigationRequestedMessage(_nextViewModel));
+            Messenger.Send(new NavigationMessage(_nextViewModel));
         }
 
         /// <inheritdoc/>

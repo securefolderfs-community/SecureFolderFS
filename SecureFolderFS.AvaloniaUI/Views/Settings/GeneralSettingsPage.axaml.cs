@@ -6,7 +6,7 @@ using Avalonia.Media;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.UI.Enums;
 using System;
 using System.Globalization;
@@ -21,9 +21,9 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         /// </summary>
         private bool _playShowBarEmergeAnimation;
 
-        public GeneralSettingsPageViewModel? ViewModel
+        public GeneralSettingsViewModel? ViewModel
         {
-            get => (GeneralSettingsPageViewModel?)DataContext;
+            get => (GeneralSettingsViewModel?)DataContext;
             set => DataContext = value;
         }
 
@@ -37,7 +37,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         /// <inheritdoc/>
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is GeneralSettingsPageViewModel viewModel)
+            if (e.Parameter is GeneralSettingsViewModel viewModel)
                 ViewModel = viewModel;
         }
 

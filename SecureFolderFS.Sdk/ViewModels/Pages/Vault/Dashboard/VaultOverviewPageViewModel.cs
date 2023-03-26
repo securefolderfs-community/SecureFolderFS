@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -21,11 +20,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
 
         public VaultControlsViewModel VaultControlsViewModel { get; }
 
-        public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel navigationModel)
-            : base(unlockedVaultViewModel, navigationModel)
+        public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel dashboardNavigationModel, INavigationModel navigationModel)
+            : base(unlockedVaultViewModel, dashboardNavigationModel)
         {
             WidgetsViewModel = new(unlockedVaultViewModel.UnlockedVaultModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);
-            VaultControlsViewModel = new(unlockedVaultViewModel, navigationModel);
+            VaultControlsViewModel = new(unlockedVaultViewModel, dashboardNavigationModel, navigationModel);
         }
 
         /// <inheritdoc/>

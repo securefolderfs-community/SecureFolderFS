@@ -9,7 +9,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     public sealed partial class GraphControlViewModel : ObservableObject, IProgress<double>, IAsyncInitialize
     {
-        public ObservableCollection<GraphPointViewModel> Data { get; }
+        public ObservableCollection<Tuple<long, DateTime>> Data { get; }
 
         [ObservableProperty]
         private bool _IsExtended;

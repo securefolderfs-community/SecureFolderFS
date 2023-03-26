@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
+namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    public sealed class PrivacySettingsPageViewModel : ObservableObject
+    public sealed class PrivacySettingsViewModel : ObservableObject
     {
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 

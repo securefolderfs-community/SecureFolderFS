@@ -17,13 +17,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
         [RelayCommand]
         private void AddExistingVault()
         {
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSelectLocationViewModel(Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationMessage(new VaultWizardSelectLocationViewModel(Messenger, DialogViewModel)));
         }
 
         [RelayCommand]
         private void CreateNewVault()
         {
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardCreationPathViewModel(Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationMessage(new VaultWizardCreationPathViewModel(Messenger, DialogViewModel)));
         }
     }
 }

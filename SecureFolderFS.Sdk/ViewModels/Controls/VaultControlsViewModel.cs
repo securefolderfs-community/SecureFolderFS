@@ -19,13 +19,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     public sealed partial class VaultControlsViewModel : ObservableObject
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
-        private readonly IStateNavigationModel _navigationModel;
+        private readonly IStateNavigationModel _dashboardNavigationModel;
+        private readonly INavigationModel _navigationModel;
 
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
-        public VaultControlsViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel navigationModel)
+        public VaultControlsViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel dashboardNavigationModel, INavigationModel navigationModel)
         {
             _unlockedVaultViewModel = unlockedVaultViewModel;
+            _dashboardNavigationModel = dashboardNavigationModel;
             _navigationModel = navigationModel;
         }
 
@@ -47,14 +49,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             _ = loginPageViewModel.InitAsync(cancellationToken);
 
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultViewModel.VaultModel));
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage(loginPageViewModel));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(loginPageViewModel));
         }
 
         [RelayCommand]
         private async Task OpenPropertiesAsync()
         {
-            var target = _navigationModel.Targets.FirstOrDefault(x => x is VaultPropertiesPageViewModel)
-                         ?? new VaultPropertiesPageViewModel(_unlockedVaultViewModel, _navigationModel);
+            var target = _dashboardNavigationModel.Targets.FirstOrDefault(x => x is VaultPropertiesPageViewModel)
+                         ?? new VaultPropertiesPageViewModel(_unlockedVaultViewModel, _dashboardNavigationModel);
 
             await _navigationModel.NavigateAsync(target);
         }

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultCollectionModel"/>
-    public sealed class LocalVaultCollectionModel : IVaultCollectionModel
+    public sealed class VaultCollectionModel : IVaultCollectionModel
     {
         private List<IVaultModel>? _vaults;
 
@@ -87,7 +87,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (folder is null)
                     continue;
 
-                var vaultModel = new LocalVaultModel(folder, item.VaultName, item.LastAccessDate);
+                var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
                 _vaults.Add(vaultModel);
 
                 yield return vaultModel;

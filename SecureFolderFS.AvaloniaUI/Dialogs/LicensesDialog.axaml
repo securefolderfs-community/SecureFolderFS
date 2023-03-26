@@ -4,10 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -28,29 +28,35 @@
         </Style>
     </ui:ContentDialog.Styles>
 
-    <Grid Height="500" Margin="-8" RowDefinitions="Auto,*">
-        <Grid Margin="-16,-56,-16,8" Background="{StaticResource ContentDialogBackground}" Grid.Row="0">
-                <TextBlock
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    FontSize="16"
-                    Margin="16,0,0,0"
-                    FontWeight="SemiBold"
-                    Text="Licenses" />
+    <Grid
+        Height="500"
+        Margin="-8"
+        RowDefinitions="Auto,*">
+        <Grid
+            Grid.Row="0"
+            Margin="-16,-56,-16,8"
+            Background="{StaticResource ContentDialogBackground}">
+            <TextBlock
+                Margin="16,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontSize="16"
+                FontWeight="SemiBold"
+                Text="Licenses" />
 
-                <Button
-                    Width="34"
-                    Height="34"
-                    Margin="8"
-                    Padding="0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Click="CloseButton_OnClick"
-                    CornerRadius="20">
-                    <ic:FluentIcon Width="10" Icon="Dismiss48Regular" />
-                </Button>
+            <Button
+                Width="34"
+                Height="34"
+                Margin="8"
+                Padding="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="CloseButton_OnClick"
+                CornerRadius="20">
+                <ic:FluentIcon Width="10" Icon="Dismiss48Regular" />
+            </Button>
         </Grid>
 
 
@@ -75,9 +81,7 @@
                                 </StackPanel>
                             </ui:SettingsExpander.Footer>
 
-                            <SelectableTextBlock
-                                Text="{Binding DataContext.License, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}"
-                                TextWrapping="Wrap" />
+                            <SelectableTextBlock Text="{Binding DataContext.LicenseContent, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}" TextWrapping="Wrap" />
                         </ui:SettingsExpander>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

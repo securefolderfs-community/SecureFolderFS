@@ -46,7 +46,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 
             // TODO: Handle adding vault to VaultCollectionModel here...
 
-            Messenger.Send(new NavigationRequestedMessage(new VaultWizardSummaryViewModel(deployResult.Value!, Messenger, DialogViewModel)));
+            Messenger.Send(new NavigationMessage(new VaultWizardSummaryViewModel(deployResult.Value!, Messenger, DialogViewModel)));
         }
     }
 }

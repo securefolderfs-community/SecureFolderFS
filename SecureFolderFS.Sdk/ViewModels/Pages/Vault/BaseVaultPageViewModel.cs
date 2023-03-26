@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Utils;
 using System;
@@ -10,14 +9,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public abstract class BaseVaultPageViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
-        public IMessenger Messenger { get; }
-
         public VaultViewModel VaultViewModel { get; }
 
-        protected BaseVaultPageViewModel(VaultViewModel vaultViewModel, IMessenger messenger)
+        protected BaseVaultPageViewModel(VaultViewModel vaultViewModel)
         {
             VaultViewModel = vaultViewModel;
-            Messenger = messenger;
         }
 
         /// <inheritdoc/>

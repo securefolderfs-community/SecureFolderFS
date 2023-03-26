@@ -19,9 +19,9 @@ namespace SecureFolderFS.WinUI.Views.Settings
     {
         private bool _isBeingCopied;
 
-        public AboutSettingsPageViewModel ViewModel
+        public AboutSettingsViewModel ViewModel
         {
-            get => (AboutSettingsPageViewModel)DataContext;
+            get => (AboutSettingsViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -32,7 +32,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is AboutSettingsPageViewModel viewModel)
+            if (e.Parameter is AboutSettingsViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

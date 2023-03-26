@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IWidgetModel"/>
-    public sealed class LocalWidgetModel : IWidgetModel
+    public sealed class WidgetModel : IWidgetModel
     {
         private readonly IPersistable _widgetsStore;
         private readonly WidgetDataModel _widgetDataModel;
@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public string WidgetId { get; }
 
-        public LocalWidgetModel(string widgetId, IPersistable widgetsStore, WidgetDataModel widgetDataModel)
+        public WidgetModel(string widgetId, IPersistable widgetsStore, WidgetDataModel widgetDataModel)
         {
             WidgetId = widgetId;
             _widgetsStore = widgetsStore;

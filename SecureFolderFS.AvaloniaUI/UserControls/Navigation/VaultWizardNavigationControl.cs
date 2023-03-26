@@ -13,7 +13,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     internal sealed class VaultWizardNavigationControl : NavigationControl
     {
         /// <inheritdoc/>
-        public override void Receive(BackNavigationRequestedMessage message)
+        public override void Receive(BackNavigationMessage message)
         {
             if (CanGoBack)
                 GoBack();

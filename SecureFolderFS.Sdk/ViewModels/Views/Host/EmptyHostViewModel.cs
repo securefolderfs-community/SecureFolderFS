@@ -8,9 +8,9 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.AppHost
+namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
-    public sealed partial class NoVaultsAppHostViewModel : ObservableObject, IRecipient<AddVaultMessage>
+    public sealed partial class EmptyHostViewModel : ObservableObject, IRecipient<AddVaultMessage>
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.AppHost
 
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
-        public NoVaultsAppHostViewModel(IVaultCollectionModel vaultCollectionModel)
+        public EmptyHostViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             _vaultCollectionModel = vaultCollectionModel;
             WeakReferenceMessenger.Default.Register(this);
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.AppHost
         {
             await _vaultCollectionModel.AddVaultAsync(message.VaultModel);
 
-            WeakReferenceMessenger.Default.Send(new RootNavigationRequestedMessage(new MainAppHostViewModel(_vaultCollectionModel)));
+            WeakReferenceMessenger.Default.Send(new RootNavigationMessage(new MainHostViewModel(_vaultCollectionModel)));
             WeakReferenceMessenger.Default.Unregister<AddVaultMessage>(this);
         }
 

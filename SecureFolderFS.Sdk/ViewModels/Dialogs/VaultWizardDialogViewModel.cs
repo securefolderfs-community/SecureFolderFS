@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    public sealed partial class VaultWizardDialogViewModel : DialogViewModel, IRecipient<NavigationRequestedMessage>
+    public sealed partial class VaultWizardDialogViewModel : DialogViewModel, IRecipient<NavigationMessage>
     {
         public IMessenger Messenger { get; }
 
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         }
 
         /// <inheritdoc/>
-        public void Receive(NavigationRequestedMessage message)
+        public void Receive(NavigationMessage message)
         {
             CurrentPageViewModel = message.ViewModel as BaseVaultWizardPageViewModel;
         }
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         [RelayCommand]
         private void GoBack()
         {
-            Messenger.Send(new BackNavigationRequestedMessage());
+            Messenger.Send(new BackNavigationMessage());
         }
     }
 }

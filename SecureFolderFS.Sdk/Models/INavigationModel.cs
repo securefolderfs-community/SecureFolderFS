@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
     /// A model used for managing navigation targets.
     /// </summary>
-    public interface INavigationModel
+    public interface INavigationModel : IDisposable
     {
         /// <summary>
         /// Gets the currently navigated-to target.

@@ -61,7 +61,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
             foreach (var item in widgets)
             {
-                yield return new LocalWidgetModel(item.WidgetId, VaultWidgets, item);
+                yield return new WidgetModel(item.WidgetId, VaultWidgets, item);
             }
         }
 

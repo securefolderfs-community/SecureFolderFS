@@ -11,6 +11,6 @@ namespace SecureFolderFS.Sdk.Services
         /// Changes current thread to execute on UI thread.
         /// </summary>
         /// <returns>A <see cref="IAwaitable"/> that represents the asynchronous operation.</returns>
-        IAwaitable SwitchThreadAsync();
+        IAwaitable ChangeThreadAsync();
     }
 }

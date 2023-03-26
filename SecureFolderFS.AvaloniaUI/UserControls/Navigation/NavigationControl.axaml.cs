@@ -18,7 +18,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     /// <summary>
     /// The base class to manage navigation of pages using messages.
     /// </summary>
-    internal partial class NavigationControl : UserControl, IDisposable, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>
+    internal partial class NavigationControl : UserControl, IDisposable, IRecipient<NavigationMessage>, IRecipient<BackNavigationMessage>
     {
         private readonly Stack<(Type, object)> _backStack;
 
@@ -39,13 +39,13 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         }
 
         /// <inheritoc/>
-        public virtual void Receive(NavigationRequestedMessage message)
+        public virtual void Receive(NavigationMessage message)
         {
             Navigate(message.ViewModel, null);
         }
 
         /// <inheritoc/>
-        public virtual void Receive(BackNavigationRequestedMessage message)
+        public virtual void Receive(BackNavigationMessage message)
         {
             _ = message;
         }

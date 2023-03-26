@@ -2,6 +2,7 @@ using System;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Views.Settings;
 using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
@@ -13,10 +14,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         {
             var pageType = viewModel switch
             {
-                GeneralSettingsPageViewModel => typeof(GeneralSettingsPage),
-                PreferencesSettingsPageViewModel => typeof(PreferencesSettingsPage),
-                PrivacySettingsPageViewModel => typeof(PrivacySettingsPage),
-                AboutSettingsPageViewModel => typeof(AboutSettingsPage),
+                GeneralSettingsViewModel => typeof(GeneralSettingsPage),
+                PreferencesSettingsViewModel => typeof(PreferencesSettingsPage),
+                PrivacySettingsViewModel => typeof(PrivacySettingsPage),
+                AboutSettingsViewModel => typeof(AboutSettingsPage),
                 _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
             };
 

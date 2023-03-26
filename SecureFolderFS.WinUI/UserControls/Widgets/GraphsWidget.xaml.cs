@@ -172,21 +172,21 @@ namespace SecureFolderFS.WinUI.UserControls.Widgets
         public static readonly DependencyProperty WriteGraphIsExtendedProperty =
             DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
 
-        public IList<GraphPointViewModel>? ReadGraphData
+        public IList<Tuple<long, DateTime>>? ReadGraphData
         {
-            get => (IList<GraphPointViewModel>?)GetValue(ReadGraphDataProperty);
+            get => (IList<Tuple<long, DateTime>>?)GetValue(ReadGraphDataProperty);
             set => SetValue(ReadGraphDataProperty, value);
         }
         public static readonly DependencyProperty ReadGraphDataProperty =
-            DependencyProperty.Register(nameof(ReadGraphData), typeof(IList<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ReadGraphData), typeof(IList<Tuple<long, DateTime>>), typeof(GraphsWidget), new PropertyMetadata(null));
 
-        public IList<GraphPointViewModel>? WriteGraphData
+        public IList<Tuple<long, DateTime>>? WriteGraphData
         {
-            get => (IList<GraphPointViewModel>?)GetValue(WriteGraphDataProperty);
+            get => (IList<Tuple<long, DateTime>>?)GetValue(WriteGraphDataProperty);
             set => SetValue(WriteGraphDataProperty, value);
         }
         public static readonly DependencyProperty WriteGraphDataProperty =
-            DependencyProperty.Register(nameof(WriteGraphData), typeof(IList<GraphPointViewModel>), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(WriteGraphData), typeof(IList<Tuple<long, DateTime>>), typeof(GraphsWidget), new PropertyMetadata(null));
 
         public string? ReadGraphSubheader
         {

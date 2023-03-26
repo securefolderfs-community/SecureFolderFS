@@ -10,13 +10,6 @@ namespace SecureFolderFS.Sdk.Storage
     public interface IStorageService
     {
         /// <summary>
-        /// Checks if access to the file system is granted. Additionally, tries to obtain the permission to access rights to the file system.
-        /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is granted returns true, otherwise false.</returns>
-        Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Check if file exists at specified <paramref name="path"/>.
         /// </summary>
         /// <param name="path">The path to the file.</param>

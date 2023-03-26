@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
@@ -18,21 +19,33 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
 {
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel, IRecipient<VaultUnlockedMessage>, IRecipient<ChangeLoginOptionMessage>
     {
-        private readonly IVaultWatcherModel _vaultWatcherModel;
-        private readonly IAsyncValidator<IFolder> _vaultValidator;
-
         [ObservableProperty]
         private string? _VaultName;
 
         [ObservableProperty]
-        private BaseLoginStrategyViewModel? _LoginStrategyViewModel;
+        private INotifyPropertyChanged _StrategyViewModel;
+
+
+
+
+
+
+
+
+
+
+
+
+        private readonly IVaultWatcherModel _vaultWatcherModel;
+        private readonly IAsyncValidator<IFolder> _vaultValidator;
+
 
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        public VaultLoginPageViewModel(VaultViewModel vaultViewModel)
-            : base(vaultViewModel, new WeakReferenceMessenger())
+        public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationModel navigationModel)
+            : base(vaultViewModel)
         {
             VaultName = vaultViewModel.VaultModel.VaultName;
             _vaultValidator = VaultService.GetVaultValidator();
@@ -67,7 +80,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
         {
             if (!e.Successful)
             {
-                await ThreadingService.SwitchThreadAsync();
+                await ThreadingService.ChangeThreadAsync();
                 await DetermineLoginStrategyAsync();
             }
         }
@@ -91,7 +104,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
                 var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
                 var vaultUnlockingModel = new VaultUnlockingModel();
 
-                LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, Messenger);
+                LoginStrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel);
             }
             else
                 LoginStrategyViewModel = new LoginInvalidVaultViewModel(validationResult.GetMessage("Vault is inaccessible."));

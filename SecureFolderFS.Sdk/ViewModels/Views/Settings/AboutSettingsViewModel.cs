@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
 {
-    public sealed partial class AboutSettingsPageViewModel : ObservableObject
+    public sealed partial class AboutSettingsViewModel : ObservableObject
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
 
         public string AppVersion { get; }
 
-        public AboutSettingsPageViewModel()
+        public AboutSettingsViewModel()
         {
             AppVersion = ApplicationService.GetAppVersion().ToString();
         }

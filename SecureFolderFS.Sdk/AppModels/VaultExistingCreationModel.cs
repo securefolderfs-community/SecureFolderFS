@@ -36,7 +36,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 return Task.FromResult<IResult<IVaultModel?>>(new CommonResult<IVaultModel?>(null));
 
             // Create vault model
-            IVaultModel vaultModel = new LocalVaultModel(_vaultFolder);
+            IVaultModel vaultModel = new VaultModel(_vaultFolder);
 
             return Task.FromResult<IResult<IVaultModel?>>(new CommonResult<IVaultModel?>(vaultModel));
         }

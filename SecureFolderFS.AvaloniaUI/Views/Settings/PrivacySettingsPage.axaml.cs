@@ -1,15 +1,15 @@
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
     internal sealed partial class PrivacySettingsPage : Page
     {
-        public PrivacySettingsPageViewModel? ViewModel
+        public PrivacySettingsViewModel? ViewModel
         {
-            get => (PrivacySettingsPageViewModel?)DataContext;
+            get => (PrivacySettingsViewModel?)DataContext;
             set => DataContext = value;
         }
 
@@ -20,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is PrivacySettingsPageViewModel viewModel)
+            if (e.Parameter is PrivacySettingsViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

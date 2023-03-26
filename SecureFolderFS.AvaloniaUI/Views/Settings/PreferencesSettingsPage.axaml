@@ -1,21 +1,23 @@
 <uc:Page
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.PreferencesSettingsPage"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
-    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
-    xmlns:uc2="using:SecureFolderFS.UI.UserControls.InfoBars"
-    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Settings.Banners"
-    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls"
-    xmlns:ui="using:FluentAvalonia.UI.Controls"
-    xmlns:ic="using:FluentAvalonia.FluentIcons"
     xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
+    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:uc2="using:SecureFolderFS.UI.UserControls.InfoBars"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Banners"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
     Loaded="PreferencesSettingsPage_OnLoaded"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.PreferencesSettingsPage">
+    mc:Ignorable="d">
 
     <uc:Page.Resources>
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
@@ -93,28 +95,28 @@
                     <ContentControl.DataTemplates>
                         <ts:FileSystemInfoBarTemplateSelector
                             DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}"
-                            WebDavExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}"
-                            FuseExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}" />
+                            FuseExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}"
+                            WebDavExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}" />
                     </ContentControl.DataTemplates>
 
                     <anim:Storyboard.Storyboards>
                         <anim:Storyboard x:Name="ShowFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
-                                Target="FileSystemInfoBarContainer"
+                                AnimationMode="Show"
                                 ContentBelow="OtherSettings"
-                                AnimationMode="Show" />
+                                Target="FileSystemInfoBarContainer" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="HideFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
-                                Target="FileSystemInfoBarContainer"
+                                AnimationMode="Hide"
                                 ContentBelow="OtherSettings"
-                                AnimationMode="Hide" />
+                                Target="FileSystemInfoBarContainer" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="QuickHideFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
-                                Target="FileSystemInfoBarContainer"
+                                AnimationMode="QuickHide"
                                 ContentBelow="OtherSettings"
-                                AnimationMode="QuickHide" />
+                                Target="FileSystemInfoBarContainer" />
                         </anim:Storyboard>
                     </anim:Storyboard.Storyboards>
                 </ContentControl>
@@ -122,31 +124,34 @@
         </uc:BannerControl>
 
         <!--  Other settings  -->
-        <StackPanel x:Name="OtherSettings" Grid.Row="2" Spacing="4">
+        <StackPanel
+            x:Name="OtherSettings"
+            Grid.Row="2"
+            Spacing="4">
             <StackPanel.RenderTransform>
                 <TranslateTransform />
             </StackPanel.RenderTransform>
 
             <ui:SettingsExpander
-                Header="Start with system"
                 Description="Launch SecureFolderFS on system startup"
-                IsEnabled="False"
-                IconSource="{ic:FluentIconSource ShareScreenStart48Regular}">
+                Header="Start with system"
+                IconSource="{ic:FluentIconSource ShareScreenStart48Regular}"
+                IsEnabled="False">
                 <ui:SettingsExpander.Footer>
                     <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.StartOnSystemStartup, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
             <ui:SettingsExpander
-                Header="Continue where you left off"
                 Description="Start on previously selected vault"
+                Header="Continue where you left off"
                 IconSource="{ic:FluentIconSource Power28Regular}">
                 <ui:SettingsExpander.Footer>
                     <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.ContinueOnLastVault, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
             <ui:SettingsExpander
-                Header="Open vault folder"
                 Description="Automatically open folder when vault is unlocked"
+                Header="Open vault folder"
                 IconSource="{ic:FluentIconSource FolderOpen24Regular}">
                 <ui:SettingsExpander.Footer>
                     <ToggleSwitch MinWidth="0" IsChecked="{Binding ViewModel.OpenFolderOnUnlock, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />

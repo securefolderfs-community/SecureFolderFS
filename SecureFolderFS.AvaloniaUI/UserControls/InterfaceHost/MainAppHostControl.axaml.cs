@@ -7,10 +7,10 @@ using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.AppHost;
 using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Shared.Extensions;
 using System.Linq;
 
@@ -52,20 +52,20 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
         private async void MainAppHostControl_OnLoaded(object? sender, RoutedEventArgs e)
         {
             WeakReferenceMessenger.Default.Register(this);
-            WeakReferenceMessenger.Default.Register<NavigationRequestedMessage>(Navigation);
+            WeakReferenceMessenger.Default.Register<NavigationMessage>(Navigation);
 
             await ViewModel.InitAsync();
             Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
         }
 
-        public MainAppHostViewModel ViewModel
+        public MainHostViewModel ViewModel
         {
             get => GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
 
-        public static readonly StyledProperty<MainAppHostViewModel> ViewModelProperty =
-            AvaloniaProperty.Register<MainAppHostControl, MainAppHostViewModel>(nameof(ViewModel));
+        public static readonly StyledProperty<MainHostViewModel> ViewModelProperty =
+            AvaloniaProperty.Register<MainAppHostControl, MainHostViewModel>(nameof(ViewModel));
 
         private void Sidebar_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
         {

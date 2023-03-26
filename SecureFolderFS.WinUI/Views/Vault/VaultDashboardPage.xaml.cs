@@ -45,7 +45,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
 
         private void Navigation_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
+            ViewModel.Messenger.Register<NavigationMessage>(Navigation);
         }
     }
 }

@@ -74,7 +74,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!deployResult.Successful)
                 return new CommonResult<IVaultModel?>(deployResult.Exception);
 
-            return new CommonResult<IVaultModel?>(new LocalVaultModel(_vaultFolder));
+            return new CommonResult<IVaultModel?>(new VaultModel(_vaultFolder));
         }
 
         /// <inheritdoc/>

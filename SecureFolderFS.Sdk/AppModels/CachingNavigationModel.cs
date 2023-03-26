@@ -1,6 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -1,12 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
     public sealed class FileSystemBannerViewModel : ObservableObject, IAsyncInitialize
     {
@@ -33,6 +34,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Settings.Banners
                 FileSystemAdapters.Add(new(item));
 
             return Task.CompletedTask;
+        }
+    }
+
+    public sealed class FileSystemAdapterItemViewModel : ObservableObject
+    {
+        public IFileSystemInfoModel FileSystemInfoModel { get; }
+
+        public string Name { get; }
+
+        public FileSystemAdapterItemViewModel(IFileSystemInfoModel fileSystemInfoModel)
+        {
+            FileSystemInfoModel = fileSystemInfoModel;
+            Name = fileSystemInfoModel.Name;
         }
     }
 }
