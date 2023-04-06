@@ -1,6 +1,7 @@
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
@@ -21,6 +22,9 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
         public MainAppHostControl()
         {
             InitializeComponent();
+
+            SettingsButton.AddHandler(PointerPressedEvent, SettingsButton_OnPointerPressed, handledEventsToo: true);
+            SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_OnPointerReleased, handledEventsToo: true);
         }
 
         /// <inheritdoc/>
@@ -94,6 +98,16 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 
             Sidebar.SelectedItem = chosenItem;
             NavigateToItem(chosenItem.VaultViewModel);
+        }
+
+        private void SettingsButton_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            SpinSettingsIconPointerPressedStoryboard.RunAnimationsAsync();
+        }
+
+        private void SettingsButton_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+        {
+            SpinSettingsIconPointerReleasedStoryboard.RunAnimationsAsync();
         }
     }
 }

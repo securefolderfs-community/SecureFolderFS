@@ -6,7 +6,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Core;
@@ -22,6 +21,14 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
     internal sealed partial class PreferencesSettingsPage : Page
     {
+        /// <summary>
+        /// Whether to play the InfoBar show animation after its layout is updated.
+        /// </summary>
+        private bool _playShowFileSystemInfoBarAnimation;
+
+        /// <summary>
+        /// Whether the adapter status has been updated at least once since navigation.
+        /// </summary>
         private bool _adapterStatusUpdated;
 
         public PreferencesSettingsPageViewModel ViewModel
@@ -117,28 +124,14 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             if (wasOpen)
                 await HideFileSystemInfoBarStoryboard.RunAnimationsAsync();
 
+            if (!_adapterStatusUpdated)
+            {
+                await Task.Delay(500);
+                _adapterStatusUpdated = true;
+            }
+
             FileSystemInfoBar = newFileSystemInfoBar;
-            IsInfoBarOpen = isOpen;
-
-            if (isOpen)
-            {
-                // TODO fix bouncing
-                await Task.Delay(50); // Wait until layout is loaded (TODO do it properly)
-                ((TranslateTransform)FileSystemInfoBarContainer.RenderTransform!).Y = -FileSystemInfoBarContainer.Bounds.Height;
-                ((TranslateTransform)OtherSettings.RenderTransform!).Y = -FileSystemInfoBarContainer.Bounds.Height;
-
-                if (!_adapterStatusUpdated)
-                    await Task.Delay(500);
-
-                await ShowFileSystemInfoBarStoryboard.RunAnimationsAsync();
-            }
-            else
-            {
-                ((TranslateTransform)FileSystemInfoBarContainer.RenderTransform!).Y = 0;
-                ((TranslateTransform)OtherSettings.RenderTransform!).Y = 0;
-            }
-
-            _adapterStatusUpdated = true;
+            IsInfoBarOpen = _playShowFileSystemInfoBarAnimation = isOpen;
         }
 
         private async Task<FileSystemAdapterItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
@@ -151,6 +144,15 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             }
 
             return ViewModel.BannerViewModel.FileSystemAdapters.FirstOrDefault();
+        }
+
+        private void FileSystemInfoBarContainer_OnLayoutUpdated(object? sender, EventArgs e)
+        {
+            if (_playShowFileSystemInfoBarAnimation)
+            {
+                ShowFileSystemInfoBarStoryboard.RunAnimationsAsync();
+                _playShowFileSystemInfoBarAnimation = false;
+            }
         }
 
         private void RootGrid_Loaded(object sender, RoutedEventArgs e)

@@ -88,13 +88,13 @@
                                 <trans:InfoBarTransition
                                     Target="VersionInfoBar"
                                     ContentBelow="OtherSettings"
-                                    AnimationMode="Show" />
+                                    Mode="Show" />
                             </anim:Storyboard>
                             <anim:Storyboard x:Name="QuickHideVersionInfoBarStoryboard">
                                 <trans:InfoBarTransition
                                     Target="VersionInfoBar"
                                     ContentBelow="OtherSettings"
-                                    AnimationMode="QuickHide" />
+                                    Mode="QuickHide" />
                             </anim:Storyboard>
                         </anim:Storyboard.Storyboards>
 
@@ -105,7 +105,7 @@
                                 Value="true">
                                 <ia:CallMethodAction
                                     TargetObject="{Binding Path=., RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                                    MethodName="PlayShowInfoBarAnimation" />
+                                    MethodName="ShowVersionInfoBar" />
                             </ia:DataTriggerBehavior>
                         </i:Interaction.Behaviors>
                     </ui:InfoBar>

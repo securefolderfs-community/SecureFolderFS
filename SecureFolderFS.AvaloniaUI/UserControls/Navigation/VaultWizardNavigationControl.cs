@@ -1,5 +1,4 @@
 ﻿using System;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.VaultWizard;
 using SecureFolderFS.Sdk.Messages.Navigation;
@@ -20,9 +19,9 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         }
 
         /// <inheritdoc/>
-        public override void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
+        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransition? transition)
         {
-            transition ??= new SlideNavigationTransition(SlideNavigationTransition.Side.Right, SlideNavigationTransition.SmallOffset);
+            transition ??= new SlideNavigationTransition(SlideNavigationTransition.Side.Right, ContentPresenter.Bounds.Width, true);
             var pageType = viewModel switch
             {
                 MainVaultWizardPageViewModel => typeof(MainWizardPage),

@@ -7,7 +7,6 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Navigation;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Shared.Extensions;
@@ -35,8 +34,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 
         public void GoBack()
         {
-            var x = _backStack.Pop();
-            SetContent(x.Item1, x.Item2, new SlideNavigationTransition(SlideNavigationTransition.Side.Left, SlideNavigationTransition.BigOffset));
+            var page = _backStack.Pop();
+            _ = SetContentAsync(page.Item1, page.Item2, new SlideNavigationTransition(SlideNavigationTransition.Side.Left, ContentPresenter.Bounds.Width, true));
         }
 
         private void InitializeComponent()
@@ -56,40 +55,44 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             _ = message;
         }
 
-        public virtual void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
+        public virtual void Navigate<TViewModel>(TViewModel viewModel, NavigationTransition? transition)
             where TViewModel : class, INotifyPropertyChanged
         {
         }
 
-        public async Task Navigate(Type pageType, object parameter, TransitionBase? transition)
+        public void Navigate(Type pageType, object parameter, NavigationTransition? transition)
         {
             if (_currentPage is not null)
                 _backStack.Push(_currentPage.Value);
 
-            SetContent(pageType, parameter, transition);
+            _ = SetContentAsync(pageType, parameter, transition);
         }
 
-        public async Task SetContent(Type pageType, object parameter, TransitionBase? transition)
+        public async Task SetContentAsync(Type pageType, object parameter, NavigationTransition? transition)
         {
             if (CurrentContent is Page currentPage)
                 currentPage.OnNavigatingFrom();
             await Task.Delay(50);
 
+            Task? oldContentAnimationTask = null;
+            if (transition is not null)
+                oldContentAnimationTask = transition.AnimateOldContentAsync(ContentPresenter);
+
             // TODO Caching
             var instance = Activator.CreateInstance(pageType);
-            if (transition is not SuppressNavigationTransition)
-                await FadeOutContentStoryboard.RunAnimationsAsync();
 
             if (instance is Page page)
                 page.OnNavigatedTo(new NavigationEventArgs(instance, NavigationMode.New, transition, parameter, pageType));
 
+            if (oldContentAnimationTask is not null)
+                await oldContentAnimationTask;
+
             CurrentContent = instance;
             _currentPage = new(pageType, parameter);
 
-            if (transition is not null && transition is not SuppressNavigationTransition)
+            if (transition is not null)
             {
-                transition.Target = ContentPresenter;
-                await transition.RunAnimationAsync();
+                await transition.AnimateNewContentAsync(ContentPresenter);
             }
         }
 

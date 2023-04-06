@@ -32,12 +32,11 @@
                         UpdateVisibility="True" />
                     <trans:TranslateTransition
                         Target="TitleText"
-                        From="0,0"
                         To="-48,0"
                         Duration="0:0:0.2"
                         FillMode="None">
                         <trans:TranslateTransition.Easing>
-                            <CircularEaseInOut />
+							<ExponentialEaseInOut />
                         </trans:TranslateTransition.Easing>
                     </trans:TranslateTransition>
                 </anim:Storyboard>
@@ -50,11 +49,9 @@
                     <trans:TranslateTransition
                         Target="TitleText"
                         From="-48,0"
-                        To="0,0"
-                        Duration="0:0:0.2"
-                        FillMode="None">
+                        Duration="0:0:0.2">
                         <trans:TranslateTransition.Easing>
-                            <CircularEaseInOut />
+							<ExponentialEaseInOut />
                         </trans:TranslateTransition.Easing>
                     </trans:TranslateTransition>
                 </anim:Storyboard>

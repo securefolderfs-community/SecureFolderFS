@@ -4,8 +4,8 @@
     <!-- Fixes inconsistencies between FluentAvalonia and WinUI -->
 
     <!-- Reduce icon sizes -->
-    <x:Double x:Key="SettingsExpanderItemIconSize">18</x:Double>
-    <x:Double x:Key="SettingsExpanderItemActionIconSize">12</x:Double>
+    <x:Double x:Key="SettingsExpanderItemIconSize">19</x:Double>
+    <x:Double x:Key="SettingsExpanderItemActionIconSize">14</x:Double>
 
     <x:Double x:Key="NavigationViewItemOnLeftIconBoxHeight">14</x:Double>
 </ResourceDictionary>

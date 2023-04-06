@@ -1,6 +1,11 @@
+using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Collections;
+using Avalonia.Media;
+using Avalonia.VisualTree;
+using SecureFolderFS.AvaloniaUI.Extensions;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations
@@ -10,7 +15,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations
         /// <summary>
         /// Gets or sets the animated control.
         /// </summary>
-        public required Animatable Target { get; set; }
+        public required Visual Target { get; set; }
 
         /// <summary>
         /// Gets or sets the setters of the first frame in the animation.
@@ -47,6 +52,19 @@ namespace SecureFolderFS.AvaloniaUI.Animations
                     to.Setters.AddRange(To);
                     Children.Add(to);
                 }
+            }
+
+            // Apply setters of the first frame immediately
+            var visualTarget = (IVisual)Target;
+            foreach (var keyFrame in Children.Where(keyFrame => keyFrame.Cue.CueValue == 0))
+            foreach (var setter in keyFrame.Setters.Where(setter => setter.Property is not null))
+            {
+                if (setter.Property == TranslateTransform.XProperty || setter.Property == TranslateTransform.YProperty)
+                    visualTarget.GetTransform<TranslateTransform>().SetValue(setter.Property, setter.Value);
+                else if (setter.Property == ScaleTransform.ScaleXProperty || setter.Property == ScaleTransform.ScaleYProperty)
+                    visualTarget.GetTransform<ScaleTransform>().SetValue(setter.Property, setter.Value);
+                else
+                    Target.SetValue(setter.Property!, setter.Value);
             }
 
             return RunAsync(Target, null);

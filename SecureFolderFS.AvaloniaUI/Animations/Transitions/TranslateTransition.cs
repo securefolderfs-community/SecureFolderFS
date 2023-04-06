@@ -2,17 +2,25 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
-using Avalonia.VisualTree;
+using SecureFolderFS.AvaloniaUI.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
 {
-    internal sealed class TranslateTransition : TransitionBase
+    internal sealed class TranslateTransition : Transition
     {
-        public Point From { get; set; } = new(0, 0);
-        public Point To { get; set; } = new(0, 0);
+        public Point From { get; set; }
+        public Point To { get; set; }
 
-        protected override Task RunAnimationAsync(IVisual target)
+        public TranslateTransition()
         {
+            From = new(0, 0);
+            To = new(0, 0);
+        }
+
+        protected override Task RunAnimationAsync(Visual target)
+        {
+            target.GetTransform<TranslateTransform>();
+
             var animation = GetBaseAnimation();
             animation.From = new()
             {

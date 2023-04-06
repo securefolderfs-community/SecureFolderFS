@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.FUSE
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class FuseMountable : IMountableFileSystem, IAvailabilityChecker
     {
-        private static readonly string DefaultMountDirectory =
+        private static readonly string MountDirectory =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), nameof(SecureFolderFS), "mount");
 
         private readonly FuseWrapper _fuseWrapper;
@@ -40,6 +40,9 @@ namespace SecureFolderFS.Core.FUSE
         /// <inheritdoc/>
         public Task<IVirtualFileSystem> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
+            if (!Directory.Exists(MountDirectory))
+                Directory.CreateDirectory(MountDirectory);
+
             if (mountOptions is not FuseMountOptions fuseMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(FuseMountOptions)}.");
 
@@ -105,11 +108,11 @@ namespace SecureFolderFS.Core.FUSE
 
         private static string GetFreeMountPoint(string vaultName)
         {
-            var mountPoint = Path.Combine(DefaultMountDirectory, vaultName);
+            var mountPoint = Path.Combine(MountDirectory, vaultName);
 
             var i = 1;
             while (IsMountPoint(mountPoint))
-                mountPoint = Path.Combine(DefaultMountDirectory, $"{vaultName} ({i++})");
+                mountPoint = Path.Combine(MountDirectory, $"{vaultName} ({i++})");
 
             return mountPoint;
         }
@@ -119,7 +122,7 @@ namespace SecureFolderFS.Core.FUSE
         /// </summary>
         private static void Cleanup()
         {
-            foreach (var directory in Directory.GetDirectories(DefaultMountDirectory))
+            foreach (var directory in Directory.GetDirectories(MountDirectory))
                 Cleanup(directory);
         }
 

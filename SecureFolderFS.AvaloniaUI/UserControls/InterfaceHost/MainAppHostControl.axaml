@@ -34,13 +34,27 @@
         <uc2:VaultNavigationControl x:Name="Navigation" />
 
         <ui:NavigationView.AutoCompleteBox>
-            <!-- TODO Search icon -->
-            <AutoCompleteBox
-                Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                Watermark="Search"
-                SelectionChanged="AutoCompleteBox_OnSelectionChanged"
-                TextChanged="AutoCompleteBox_OnTextChanged"
-                Width="230"/>
+            <AutoCompleteBox>
+                <AutoCompleteBox.Template>
+                    <ControlTemplate>
+                        <Panel>
+                            <AutoCompleteBox
+                                Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                Watermark="Search"
+                                SelectionChanged="AutoCompleteBox_OnSelectionChanged"
+                                TextChanged="AutoCompleteBox_OnTextChanged"
+                                Width="230" />
+
+                            <ic:FluentIcon
+                                Margin="0,0,15,0"
+                                Icon="Search48Regular"
+                                HorizontalAlignment="Right"
+                                IsEnabled="False"
+                                Width="12" />
+                        </Panel>
+                    </ControlTemplate>
+                </AutoCompleteBox.Template>
+            </AutoCompleteBox>
         </ui:NavigationView.AutoCompleteBox>
 
         <ui:NavigationView.PaneFooter>
@@ -62,7 +76,7 @@
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
 
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <ic:FluentIcon Icon="AddCircle16Regular" Width="16"/>
+                            <ic:FluentIcon Icon="AddCircle16Regular" Width="15"/>
                             <TextBlock Text="New vault" />
                         </StackPanel>
                     </Button>
@@ -81,7 +95,7 @@
                         Classes="accent"
                         IsVisible="{Binding Path=!IsPaneOpen, ElementName=Sidebar}">
 
-                        <ic:FluentIcon Icon="AddCircle16Regular" Width="16"/>
+                        <ic:FluentIcon Icon="AddCircle16Regular" Width="14"/>
                     </Button>
 
                     <Button
@@ -99,29 +113,30 @@
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar}">
 
-                        <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings16Regular" Width="16">
+                        <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings48Regular" Width="18">
                             <ic:FluentIcon.RenderTransform>
                                 <RotateTransform />
                             </ic:FluentIcon.RenderTransform>
 
                             <anim:Storyboard.Storyboards>
-                                <anim:Storyboard x:Name="SpinSettingsIconStoryboard">
+                                <anim:Storyboard x:Name="SpinSettingsIconPointerPressedStoryboard">
+                                    <trans:RotateTransition
+                                        Duration="0:0:0.1"
+                                        To="-20"
+                                        Target="SettingsButtonIcon" />
+                                </anim:Storyboard>
+                                <anim:Storyboard x:Name="SpinSettingsIconPointerReleasedStoryboard">
                                     <trans:RotateTransition
                                         Duration="0:0:1"
+                                        From="-20"
                                         To="360"
                                         Target="SettingsButtonIcon">
                                         <trans:RotateTransition.Easing>
-                                            <BackEaseInOut />
+                                            <QuarticEaseOut />
                                         </trans:RotateTransition.Easing>
                                     </trans:RotateTransition>
                                 </anim:Storyboard>
                             </anim:Storyboard.Storyboards>
-
-                            <Interaction.Behaviors>
-                                <EventTriggerBehavior SourceObject="SettingsButton" EventName="Click">
-                                    <CallMethodAction TargetObject="SpinSettingsIconStoryboard" MethodName="RunAnimations" />
-                                </EventTriggerBehavior>
-                            </Interaction.Behaviors>
                         </ic:FluentIcon>
                     </Button>
                 </Grid>
@@ -155,7 +170,7 @@
                     </ui:NavigationViewItem.Content>
 
                     <ui:NavigationViewItem.ContextFlyout>
-                        <MenuFlyout>
+                        <ui:FAMenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
                             <ui:MenuFlyoutItem Command="{Binding ShowInFileExplorerCommand}" Text="Show encrypted vault in File Explorer">
                                 <ui:MenuFlyoutItem.Icon>
@@ -171,7 +186,7 @@
                                     <ui:SymbolIcon Symbol="Remove" />
                                 </ui:MenuFlyoutItem.Icon>
                             </ui:MenuFlyoutItem>
-                        </MenuFlyout>
+                        </ui:FAMenuFlyout>
                     </ui:NavigationViewItem.ContextFlyout>
                 </ui:NavigationViewItem>
             </DataTemplate>
