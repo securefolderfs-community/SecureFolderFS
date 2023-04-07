@@ -43,17 +43,17 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IEnumerable<CipherInfoModel> GetContentCiphers()
+        public IEnumerable<string> GetContentCiphers()
         {
-            yield return new CipherInfoModel("XChaCha20-Poly1305", Core.Constants.CipherId.XCHACHA20_POLY1305);
-            yield return new CipherInfoModel("AES-GCM", Core.Constants.CipherId.AES_GCM);
+            yield return Core.Constants.CipherId.XCHACHA20_POLY1305;
+            yield return Core.Constants.CipherId.AES_GCM;
         }
 
         /// <inheritdoc/>
-        public IEnumerable<CipherInfoModel> GetFileNameCiphers()
+        public IEnumerable<string> GetFileNameCiphers()
         {
-            yield return new CipherInfoModel("AES-SIV", Core.Constants.CipherId.AES_SIV);
-            yield return new CipherInfoModel("None", Core.Constants.CipherId.NONE);
+            yield return Core.Constants.CipherId.AES_SIV;
+            yield return Core.Constants.CipherId.NONE;
         }
     }
 }

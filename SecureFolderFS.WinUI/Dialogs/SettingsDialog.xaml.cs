@@ -6,7 +6,6 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using System;
 using System.ComponentModel;

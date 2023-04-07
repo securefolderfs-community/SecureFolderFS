@@ -14,11 +14,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
     {
         private readonly IVaultCreationModel _vaultCreationModel;
 
-        [ObservableProperty]
-        private CipherItemViewModel? _ContentCipherItemViewModel;
-
-        [ObservableProperty]
-        private CipherItemViewModel? _FileNameCipherItemViewModel;
+        [ObservableProperty] private CipherInfoViewModel? _ContentCipherItemViewModel;
+        [ObservableProperty] private CipherInfoViewModel? _FileNameCipherItemViewModel;
 
         public VaultWizardEncryptionViewModel(IVaultCreationModel vaultCreationModel, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
@@ -37,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
             ArgumentNullException.ThrowIfNull(ContentCipherItemViewModel);
             ArgumentNullException.ThrowIfNull(FileNameCipherItemViewModel);
 
-            if (!await _vaultCreationModel.SetCipherSchemeAsync(ContentCipherItemViewModel.CipherInfoModel, FileNameCipherItemViewModel.CipherInfoModel, cancellationToken))
+            if (!await _vaultCreationModel.SetCipherSchemeAsync(ContentCipherItemViewModel.Id, FileNameCipherItemViewModel.Id, cancellationToken))
                 return; // TODO: Report issue
 
             var deployResult = await _vaultCreationModel.DeployAsync(cancellationToken);

@@ -17,8 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
 
         protected TStorage? SelectedLocation { get; set; }
 
-        [ObservableProperty]
-        private string? _VaultName = "No folder selected";
+        [ObservableProperty] private string? _VaultName = "No folder selected";
 
         protected VaultWizardPathSelectionBaseViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)

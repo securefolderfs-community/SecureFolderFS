@@ -66,6 +66,10 @@ namespace SecureFolderFS.Sdk.AppModels
             if (fileSystem is null)
                 return new CommonResult<IUnlockedVaultModel?>(new ArgumentException($"File System descriptor '{SettingsService.UserSettings.PreferredFileSystemId}' was not found."));
 
+            var supportedResult = await fileSystem.IsSupportedAsync(cancellationToken);
+            if (!supportedResult.Successful)
+                return new CommonResult<IUnlockedVaultModel?>(supportedResult.Exception);
+
             var fileSystemResult = await VaultUnlockingService.SetFileSystemAsync(fileSystem, cancellationToken);
             if (!fileSystemResult.Successful)
                 return new CommonResult<IUnlockedVaultModel?>(fileSystemResult.Exception);

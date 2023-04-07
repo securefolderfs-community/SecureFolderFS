@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 {
     public abstract class BaseDashboardPageViewModel : ObservableObject, INavigationTarget, IAsyncInitialize, IDisposable
     {

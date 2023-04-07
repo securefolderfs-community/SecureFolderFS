@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.Generic;
@@ -37,13 +36,13 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets all content ciphers that are supported by SecureFolderFS.
         /// </summary>
-        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of content ciphers.</returns>
-        IEnumerable<CipherInfoModel> GetContentCiphers();
+        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of content ciphers.</returns>
+        IEnumerable<string> GetContentCiphers();
 
         /// <summary>
         /// Gets all filename ciphers that are supported by SecureFolderFS.
         /// </summary>
-        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of filename ciphers.</returns>
-        IEnumerable<CipherInfoModel> GetFileNameCiphers();
+        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs  of filename ciphers.</returns>
+        IEnumerable<string> GetFileNameCiphers();
     }
 }

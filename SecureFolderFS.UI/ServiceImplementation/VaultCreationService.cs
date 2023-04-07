@@ -95,23 +95,23 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IResult> SetCipherSchemeAsync(CipherInfoModel contentCipher, CipherInfoModel nameCipher, CancellationToken cancellationToken = default)
+        public Task<IResult> SetCipherSchemeAsync(string contentCipherId, string nameCipherId, CancellationToken cancellationToken = default)
         {
             if (_creationRoutine is null || _configStream is null)
                 return Task.FromResult<IResult>(new CommonResult(false));
 
-            _contentCipherScheme = contentCipher.Id switch
+            _contentCipherScheme = contentCipherId switch
             {
                 Core.Constants.CipherId.AES_CTR_HMAC => ContentCipherScheme.AES_CTR_HMAC,
                 Core.Constants.CipherId.AES_GCM => ContentCipherScheme.AES_GCM,
                 Core.Constants.CipherId.XCHACHA20_POLY1305 => ContentCipherScheme.XChaCha20_Poly1305,
-                _ => throw new ArgumentOutOfRangeException(nameof(contentCipher.Id))
+                _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
-            _fileNameCipherScheme = nameCipher.Id switch
+            _fileNameCipherScheme = nameCipherId switch
             {
                 Core.Constants.CipherId.NONE => FileNameCipherScheme.None,
                 Core.Constants.CipherId.AES_SIV => FileNameCipherScheme.AES_SIV,
-                _ => throw new ArgumentOutOfRangeException(nameof(nameCipher.Id))
+                _ => throw new ArgumentOutOfRangeException(nameof(nameCipherId))
             };
 
             return Task.FromResult<IResult>(CommonResult.Success);

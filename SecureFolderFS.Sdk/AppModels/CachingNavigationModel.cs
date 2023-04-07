@@ -47,6 +47,14 @@ namespace SecureFolderFS.Sdk.AppModels
             CurrentTarget = target;
         }
 
+        
+        /// <inheritdoc/>
+        public virtual void Dispose()
+        {
+            Targets.Clear();
+            CurrentTarget = null;
+        }
+
         /// <summary>
         /// Starts the navigation routine.
         /// </summary>

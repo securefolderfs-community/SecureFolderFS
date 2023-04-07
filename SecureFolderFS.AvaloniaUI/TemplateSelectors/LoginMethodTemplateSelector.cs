@@ -2,6 +2,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml.Templates;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 
 namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
 {
@@ -17,9 +18,9 @@ namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
         {
             return item switch
             {
-                LoginKeystoreSelectionViewModel => AuthenticateTemplate,
+                LoginKeystoreViewModel => AuthenticateTemplate,
                 LoginCredentialsViewModel => LoginTemplate,
-                LoginInvalidVaultViewModel => InvalidTemplate,
+                LoginErrorViewModel => InvalidTemplate,
                 _ => null
             };
         }

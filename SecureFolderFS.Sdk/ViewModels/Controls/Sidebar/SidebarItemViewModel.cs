@@ -19,11 +19,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 
         public VaultViewModel VaultViewModel { get; }
 
-        [ObservableProperty]
-        private bool _CanRemoveVault = true;
-
-        [ObservableProperty]
-        private DateTime? _LastAccessDate;
+        [ObservableProperty] private bool _CanRemoveVault = true;
+        [ObservableProperty] private DateTime? _LastAccessDate;
 
         public SidebarItemViewModel(IVaultModel vaultModel, IWidgetsCollectionModel widgetsContextModel)
         {

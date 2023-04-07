@@ -7,9 +7,9 @@ using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             await _unlockedVaultViewModel.UnlockedVaultModel.LockAsync();
 
-            var loginPageViewModel = new VaultLoginPageViewModel(_unlockedVaultViewModel.VaultViewModel);
+            var loginPageViewModel = new VaultLoginPageViewModel(_unlockedVaultViewModel.VaultViewModel, null); // TODO(r)
             _ = loginPageViewModel.InitAsync(cancellationToken);
 
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultViewModel.VaultModel));

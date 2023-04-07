@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.Settings
+namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     public sealed partial class AboutSettingsViewModel : ObservableObject
     {

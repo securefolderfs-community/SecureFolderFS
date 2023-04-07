@@ -1,18 +1,20 @@
 <UserControl
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.MainAppHostControl"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="using:FluentAvalonia.UI.Controls"
-    xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
-    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Sidebar"
-    xmlns:ic="using:FluentAvalonia.FluentIcons"
     xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
+    xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Sidebar"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
     Loaded="MainAppHostControl_OnLoaded"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.MainAppHostControl">
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
@@ -34,40 +36,36 @@
         <uc2:VaultNavigationControl x:Name="Navigation" />
 
         <ui:NavigationView.AutoCompleteBox>
-            <!-- TODO Search icon -->
+            <!--  TODO Search icon  -->
             <AutoCompleteBox
+                Width="230"
                 Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                Watermark="Search"
                 SelectionChanged="AutoCompleteBox_OnSelectionChanged"
                 TextChanged="AutoCompleteBox_OnTextChanged"
-                Width="230"/>
+                Watermark="Search" />
         </ui:NavigationView.AutoCompleteBox>
 
         <ui:NavigationView.PaneFooter>
-            <Border
-                HorizontalAlignment="Stretch"
-                Width="230">
+            <Border Width="230" HorizontalAlignment="Stretch">
 
-                <Grid
-                    ColumnDefinitions="Auto,*"
-                    HorizontalAlignment="Stretch">
+                <Grid HorizontalAlignment="Stretch" ColumnDefinitions="Auto,*">
 
                     <Button
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
-                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         Classes="accent"
+                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
 
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <ic:FluentIcon Icon="AddCircle16Regular" Width="16"/>
+                            <ic:FluentIcon Width="16" Icon="AddCircle16Regular" />
                             <TextBlock Text="New vault" />
                         </StackPanel>
                     </Button>
 
-                    <!-- TODO Add x:Load (doesn't exist in Avalonia) -->
+                    <!--  TODO Add x:Load (doesn't exist in Avalonia)  -->
                     <Button
                         x:Name="CompactAddVaultButton"
                         Grid.Column="1"
@@ -77,11 +75,11 @@
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
-                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         Classes="accent"
+                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=!IsPaneOpen, ElementName=Sidebar}">
 
-                        <ic:FluentIcon Icon="AddCircle16Regular" Width="16"/>
+                        <ic:FluentIcon Width="16" Icon="AddCircle16Regular" />
                     </Button>
 
                     <Button
@@ -99,7 +97,10 @@
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar}">
 
-                        <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings16Regular" Width="16">
+                        <ic:FluentIcon
+                            x:Name="SettingsButtonIcon"
+                            Width="16"
+                            Icon="Settings16Regular">
                             <ic:FluentIcon.RenderTransform>
                                 <RotateTransform />
                             </ic:FluentIcon.RenderTransform>
@@ -107,9 +108,9 @@
                             <anim:Storyboard.Storyboards>
                                 <anim:Storyboard x:Name="SpinSettingsIconStoryboard">
                                     <trans:RotateTransition
-                                        Duration="0:0:1"
+                                        Target="SettingsButtonIcon"
                                         To="360"
-                                        Target="SettingsButtonIcon">
+                                        Duration="0:0:1">
                                         <trans:RotateTransition.Easing>
                                             <BackEaseInOut />
                                         </trans:RotateTransition.Easing>
@@ -118,8 +119,8 @@
                             </anim:Storyboard.Storyboards>
 
                             <Interaction.Behaviors>
-                                <EventTriggerBehavior SourceObject="SettingsButton" EventName="Click">
-                                    <CallMethodAction TargetObject="SpinSettingsIconStoryboard" MethodName="RunAnimations" />
+                                <EventTriggerBehavior EventName="Click" SourceObject="SettingsButton">
+                                    <CallMethodAction MethodName="RunAnimations" TargetObject="SpinSettingsIconStoryboard" />
                                 </EventTriggerBehavior>
                             </Interaction.Behaviors>
                         </ic:FluentIcon>
@@ -133,8 +134,8 @@
                 <ui:NavigationViewItem
                     Height="64"
                     AutomationProperties.Name="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
-                    ToolTip.Tip="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
-                    Icon="{ic:FluentIcon Vault16Regular}">
+                    Icon="{ic:FluentIcon Vault16Regular}"
+                    ToolTip.Tip="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
 
                     <ui:NavigationViewItem.Content>
                         <StackPanel>
@@ -145,7 +146,7 @@
                                 TextTrimming="CharacterEllipsis" />
 
                             <!--  Last opened  -->
-                            <!-- TODO Use x:Load -->
+                            <!--  TODO Use x:Load  -->
                             <TextBlock
                                 x:Name="LastOpenedText"
                                 FontSize="12"

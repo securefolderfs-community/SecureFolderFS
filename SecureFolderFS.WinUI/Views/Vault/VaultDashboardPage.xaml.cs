@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
 using System.Collections.ObjectModel;
 
@@ -45,7 +45,8 @@ namespace SecureFolderFS.WinUI.Views.Vault
 
         private void Navigation_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Messenger.Register<NavigationMessage>(Navigation);
+            // TODO(r)
+            //ViewModel.Messenger.Register<NavigationMessage>(Navigation);
         }
     }
 }

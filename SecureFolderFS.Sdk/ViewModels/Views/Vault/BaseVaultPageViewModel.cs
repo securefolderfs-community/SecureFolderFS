@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     public abstract class BaseVaultPageViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {

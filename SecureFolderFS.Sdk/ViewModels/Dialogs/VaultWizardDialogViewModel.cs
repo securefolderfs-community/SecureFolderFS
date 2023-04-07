@@ -13,8 +13,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
     {
         public IMessenger Messenger { get; }
 
-        [ObservableProperty]
-        private BaseVaultWizardPageViewModel? _CurrentPageViewModel;
+        [ObservableProperty] private BaseVaultWizardPageViewModel? _CurrentPageViewModel;
 
         public VaultWizardDialogViewModel()
         {

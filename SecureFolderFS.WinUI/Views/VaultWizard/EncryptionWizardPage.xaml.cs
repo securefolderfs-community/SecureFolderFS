@@ -19,9 +19,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     {
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        public ObservableCollection<CipherItemViewModel> ContentCiphers { get; }
+        public ObservableCollection<CipherInfoViewModel> ContentCiphers { get; }
 
-        public ObservableCollection<CipherItemViewModel> FileNameCiphers { get; }
+        public ObservableCollection<CipherInfoViewModel> FileNameCiphers { get; }
 
         public VaultWizardEncryptionViewModel ViewModel
         {

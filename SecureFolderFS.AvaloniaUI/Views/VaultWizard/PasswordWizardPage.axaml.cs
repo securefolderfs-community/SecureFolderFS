@@ -5,7 +5,6 @@ using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.UI.AppModels;
 using System.Linq;
-using System.Text;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
@@ -28,7 +27,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
             if (e.Parameter is VaultWizardPasswordViewModel viewModel)
             {
                 ViewModel = viewModel;
-                ViewModel.InitializeWithPassword = () => new SecurePassword(Encoding.UTF8.GetBytes(FirstPassword.Text ?? string.Empty));
+                ViewModel.InitializeWithPassword = () => new VaultPassword(FirstPassword.Text ?? string.Empty);
             }
 
             base.OnNavigatedTo(e);

@@ -23,7 +23,7 @@
                 SelectedIndex="0"
                 SelectedItem="{x:Bind ViewModel.ContentCipherItemViewModel, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="vm:CipherItemViewModel">
+                    <DataTemplate x:DataType="vm:CipherInfoViewModel">
                         <TextBlock Text="{x:Bind Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -37,7 +37,7 @@
                 SelectedIndex="0"
                 SelectedItem="{x:Bind ViewModel.FileNameCipherItemViewModel, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="vm:CipherItemViewModel">
+                    <DataTemplate x:DataType="vm:CipherInfoViewModel">
                         <TextBlock Text="{x:Bind Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>

@@ -3,7 +3,7 @@ using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {

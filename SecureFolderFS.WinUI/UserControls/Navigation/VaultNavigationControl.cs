@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.WinUI.Views.Vault;
 using System;
 using System.Collections.Generic;

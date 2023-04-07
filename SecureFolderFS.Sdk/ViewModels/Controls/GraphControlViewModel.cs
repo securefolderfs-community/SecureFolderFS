@@ -11,11 +11,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     {
         public ObservableCollection<Tuple<long, DateTime>> Data { get; }
 
-        [ObservableProperty]
-        private bool _IsExtended;
-
-        [ObservableProperty]
-        private string? _GraphSubheader = "0mb/s";
+        [ObservableProperty] private bool _IsExtended;
+        [ObservableProperty] private string? _GraphSubheader = "0mb/s";
 
         public GraphControlViewModel()
         {
@@ -38,7 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             for (var i = 0; i < Constants.Graphs.MAX_GRAPH_POINTS; i++)
             {
-                Data.Add(new());
+                Data.Add(new(0, DateTime.Now));
             }
 
             return Task.CompletedTask;

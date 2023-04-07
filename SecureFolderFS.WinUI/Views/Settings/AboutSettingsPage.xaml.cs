@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using System;
 using System.Threading.Tasks;
 

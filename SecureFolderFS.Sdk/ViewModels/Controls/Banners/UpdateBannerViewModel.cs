@@ -18,11 +18,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 
         public InfoBarViewModel UpdateInfoBar { get; }
 
-        [ObservableProperty]
-        private string? _UpdateText;
-
-        [ObservableProperty]
-        private bool _AreUpdatesSupported;
+        [ObservableProperty] private string? _UpdateText;
+        [ObservableProperty] private bool _AreUpdatesSupported;
 
         public DateTime LastChecked
         {

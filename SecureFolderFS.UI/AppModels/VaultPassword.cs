@@ -1,15 +1,18 @@
 ﻿using SecureFolderFS.Shared.Utils;
+using System.Text;
 
 namespace SecureFolderFS.UI.AppModels
 {
     /// <inheritdoc cref="IPassword"/>
-    public sealed class SecurePassword : IPassword
+    public sealed class VaultPassword : IPassword
     {
         private readonly byte[] _password;
 
-        public SecurePassword(byte[] password)
+        public Encoding Encoding { get; } = Encoding.UTF8;
+
+        public VaultPassword(string password)
         {
-            _password = password;
+            _password = Encoding.GetBytes(password);
         }
 
         /// <inheritdoc/>

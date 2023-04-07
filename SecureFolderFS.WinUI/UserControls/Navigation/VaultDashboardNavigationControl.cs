@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.WinUI.Views.Vault;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation

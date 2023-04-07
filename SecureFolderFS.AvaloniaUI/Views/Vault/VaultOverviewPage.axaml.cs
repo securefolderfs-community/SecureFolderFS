@@ -1,7 +1,7 @@
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {

@@ -7,10 +7,10 @@ using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
-using SecureFolderFS.Sdk.ViewModels.Sidebar;
+using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 using System.Linq;
 
@@ -41,7 +41,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             // Get the item from cache or create new instance
             if (!Navigation.NavigationCache.TryGetValue(vaultViewModel, out var destination))
             {
-                destination = new VaultLoginPageViewModel(vaultViewModel);
+                destination = new VaultLoginPageViewModel(vaultViewModel, null); // TODO(r)
                 _ = destination.InitAsync();
             }
 

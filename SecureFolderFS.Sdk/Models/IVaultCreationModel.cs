@@ -1,9 +1,8 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Models
 {
@@ -39,11 +38,11 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Sets the cipher scheme to be used for encryption.
         /// </summary>
-        /// <param name="contentCipher">The content cipher scheme to use.</param>
-        /// <param name="nameCipher">The filename cipher scheme to use.</param>
+        /// <param name="contentCipherId">The content cipher scheme to use.</param>
+        /// <param name="nameCipherId">The filename cipher scheme to use.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the cipher scheme is supported and was properly set, returns true, otherwise false.</returns>
-        Task<bool> SetCipherSchemeAsync(CipherInfoModel contentCipher, CipherInfoModel nameCipher, CancellationToken cancellationToken = default);
+        Task<bool> SetCipherSchemeAsync(string contentCipherId, string nameCipherId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Finalizes the creation routine.

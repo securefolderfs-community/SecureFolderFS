@@ -1,8 +1,7 @@
-using System;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Views.Settings;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using System;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {

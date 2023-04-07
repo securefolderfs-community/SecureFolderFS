@@ -19,19 +19,19 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
         public static readonly StyledProperty<VaultWizardEncryptionViewModel> ViewModelProperty
             = AvaloniaProperty.Register<EncryptionWizardPage, VaultWizardEncryptionViewModel>(nameof(ViewModel));
 
-        public static readonly StyledProperty<ObservableCollection<CipherItemViewModel>> ContentCiphersProperty
-            = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherItemViewModel>>(nameof(ContentCiphers));
+        public static readonly StyledProperty<ObservableCollection<CipherInfoViewModel>> ContentCiphersProperty
+            = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherInfoViewModel>>(nameof(ContentCiphers));
 
-        public static readonly StyledProperty<ObservableCollection<CipherItemViewModel>> FileNameCiphersProperty
-            = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherItemViewModel>>(nameof(FileNameCiphers));
+        public static readonly StyledProperty<ObservableCollection<CipherInfoViewModel>> FileNameCiphersProperty
+            = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherInfoViewModel>>(nameof(FileNameCiphers));
 
-        public ObservableCollection<CipherItemViewModel> ContentCiphers
+        public ObservableCollection<CipherInfoViewModel> ContentCiphers
         {
             get => GetValue(ContentCiphersProperty);
             set => SetValue(ContentCiphersProperty, value);
         }
 
-        public ObservableCollection<CipherItemViewModel> FileNameCiphers
+        public ObservableCollection<CipherInfoViewModel> FileNameCiphers
         {
             get => GetValue(FileNameCiphersProperty);
             set => SetValue(FileNameCiphersProperty, value);

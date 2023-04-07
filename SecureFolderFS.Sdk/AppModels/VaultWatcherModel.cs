@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LockableStorage;
 using SecureFolderFS.Sdk.Storage.MutableStorage;
 using SecureFolderFS.Shared.Helpers;
@@ -21,42 +22,40 @@ namespace SecureFolderFS.Sdk.AppModels
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         /// <inheritdoc/>
-        public IVaultModel VaultModel { get; }
+        public IFolder VaultFolder { get; }
 
         /// <inheritdoc/>
         public event EventHandler<IResult>? VaultChangedEvent;
 
-        public VaultWatcherModel(IVaultModel vaultModel)
+        public VaultWatcherModel(IFolder vaultFolder)
         {
-            VaultModel = vaultModel;
+            VaultFolder = vaultFolder;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> WatchForChangesAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (VaultModel.Folder is not IMutableFolder mutableVaultFolder)
-                return false;
+            if (VaultFolder is not IMutableFolder mutableVaultFolder)
+                return;
 
             if (_folderWatcher is not null)
-                return true;
+                return;
 
             try
             {
                 _folderWatcher = await mutableVaultFolder.GetFolderWatcherAsync(cancellationToken);
                 _folderWatcher.CollectionChanged += FolderWatcher_CollectionChanged;
-
-                return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                _ = ex;
             }
         }
 
         /// <inheritdoc/>
         public Task<IAsyncDisposable?> LockFolderAsync(CancellationToken cancellationToken = default)
         {
-            if (VaultModel.Folder is ILockableFolder lockableFolder)
+            if (VaultFolder is ILockableFolder lockableFolder)
                 return lockableFolder.ObtainLockAsync(cancellationToken);
 
             return Task.FromResult<IAsyncDisposable?>(null);

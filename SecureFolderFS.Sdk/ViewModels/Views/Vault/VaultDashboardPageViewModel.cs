@@ -2,12 +2,12 @@
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IRecipient<VaultLockedMessage>
     {
@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.Vault
             : base(unlockedVaultViewModel.VaultViewModel)
         {
             DashboardNavigationModel = new DashboardNavigationModel(new WeakReferenceMessenger());
-            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, DashboardNavigationModel, );
+            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, DashboardNavigationModel, null); // TODO(r)
 
             WeakReferenceMessenger.Default.Register(this);
         }

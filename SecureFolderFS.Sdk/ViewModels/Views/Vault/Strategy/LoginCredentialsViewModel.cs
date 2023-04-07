@@ -1,19 +1,21 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 
-namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 {
-    public sealed partial class LoginCredentialsViewModel : BaseLoginStrategyViewModel
+    public sealed partial class LoginCredentialsViewModel : ObservableObject
     {
         private readonly VaultViewModel _vaultViewModel;
         private readonly IVaultUnlockingModel _vaultUnlockingModel;
@@ -28,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             _vaultUnlockingModel = vaultUnlockingModel;
             _vaultWatcherModel = vaultWatcherModel;
             _keystoreModel = keystoreModel;
-            _messenger = messenger;
+            //_messenger = messenger; // TODO(r)
         }
 
         [RelayCommand]
@@ -68,7 +70,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy
             await ThreadingService.ChangeThreadAsync();
 
             var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);
-            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, );
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel); // TODO(r)
             _ = dashboardPage.InitAsync(cancellationToken);
 
 

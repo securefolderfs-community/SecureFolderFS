@@ -2,11 +2,10 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
 using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.AppModels;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.System;
 
@@ -63,7 +62,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
                 _continueButton.IsEnabled = false;
                 await Task.Delay(25); // Wait for UI to update.
 
-                var securePassword = _vaultPasswordBox.Password.IsEmpty() ? null : new SecurePassword(Encoding.UTF8.GetBytes(_vaultPasswordBox.Password));
+                var securePassword = _vaultPasswordBox.Password.IsEmpty() ? null : new VaultPassword(_vaultPasswordBox.Password);
                 await viewModel.UnlockVaultCommand.ExecuteAsync(securePassword);
 
                 await Task.Delay(25);
@@ -79,6 +78,12 @@ namespace SecureFolderFS.WinUI.Views.Vault
         private void VaultPasswordBox_Loaded(object sender, RoutedEventArgs e)
         {
             _vaultPasswordBox = sender as PasswordBox;
+        }
+
+        private void InvalidPasswordTip_Loaded(object sender, RoutedEventArgs e)
+        {
+            var tip = sender as TeachingTip;
+            tip!.IsOpen = true;
         }
     }
 }

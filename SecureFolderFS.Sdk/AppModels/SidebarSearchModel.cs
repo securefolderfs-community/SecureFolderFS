@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Sidebar;
+using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;

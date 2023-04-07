@@ -17,7 +17,7 @@
         public static class CipherId
         {
             public const string NONE = "None";
-            public const string AES_CTR_HMAC = "AES-CTR_HMAC";
+            public const string AES_CTR_HMAC = "AES-CTR HMAC";
             public const string AES_GCM = "AES-GCM";
             public const string XCHACHA20_POLY1305 = "XChaCha20-Poly1305";
             public const string AES_SIV = "AES-SIV";
