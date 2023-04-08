@@ -9,6 +9,13 @@ namespace SecureFolderFS.Sdk.Models
         
         IVaultWatcherModel VaultWatcher { get; }
 
-        event EventHandler<IVaultStrategyModel>? StrategyChanged;
+        event EventHandler<IResult<VaultLoginStateType>>? StateChanged;
+    }
+
+    public enum VaultLoginStateType
+    {
+        AwaitingCredentials = 0,
+        AwaitingTwoFactorAuth = 1,
+        VaultError = 2,
     }
 }

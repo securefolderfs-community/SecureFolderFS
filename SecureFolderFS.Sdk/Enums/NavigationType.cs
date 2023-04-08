@@ -6,7 +6,7 @@
     public enum NavigationType
     {
         /// <summary>
-        /// Navigation is not correlated with the navigation timeline.
+        /// Navigation is not aligned with the navigation timeline.
         /// </summary>
         Detached = 0,
 

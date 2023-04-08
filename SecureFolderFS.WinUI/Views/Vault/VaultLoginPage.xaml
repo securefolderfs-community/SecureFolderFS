@@ -6,12 +6,12 @@
     xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreSelectionViewModel">
+        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreViewModel">
             <StackPanel Spacing="24">
                 <TextBlock
                     HorizontalAlignment="Center"
@@ -62,7 +62,7 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginInvalidVaultViewModel">
+        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginErrorViewModel">
             <StackPanel Spacing="4">
                 <TextBlock
                     HorizontalAlignment="Center"
@@ -74,7 +74,7 @@
                     HorizontalTextAlignment="Center"
                     IsTextSelectionEnabled="True"
                     Opacity="0.8"
-                    Text="{x:Bind ErrorMessage, Mode=OneWay}" />
+                    Text="{x:Bind Message, Mode=OneWay}" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>

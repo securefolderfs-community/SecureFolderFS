@@ -31,6 +31,6 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a lock handle represented by <see cref="IAsyncDisposable"/>, otherwise null.</returns>
-        Task<IAsyncDisposable?> LockFolderAsync(CancellationToken cancellationToken = default);
+        Task<IDisposable?> LockFolderAsync(CancellationToken cancellationToken = default);
     }
 }

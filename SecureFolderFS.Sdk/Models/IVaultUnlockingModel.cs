@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Models
 {

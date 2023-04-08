@@ -2,17 +2,15 @@
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
+    /// <inheritdoc cref="IVaultLoginModel"/>
     public sealed class VaultLoginModel : IVaultLoginModel
     {
         private readonly IVaultService _vaultService;
@@ -25,7 +23,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public IVaultWatcherModel VaultWatcher { get; }
 
         /// <inheritdoc/>
-        public event EventHandler<IVaultStrategyModel>? StrategyChanged;
+        public event EventHandler<IResult<VaultLoginStateType>>? StateChanged;
 
         public VaultLoginModel(IVaultModel vaultModel, IVaultWatcherModel vaultWatcher)
         {
@@ -52,26 +50,27 @@ namespace SecureFolderFS.Sdk.AppModels
 
         private async Task DetermineStrategyAsync(CancellationToken cancellationToken)
         {
-            var validationResult = await _vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
             // TODO: Use validationResult for 2fa detection as well
+            var validationResult = await _vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
 
-            var is2faEnabled = false; // TODO: Just for testing, implement the real code later
-            if (is2faEnabled || await VaultModel.Folder.TryGetFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
+            // TODO: 2FA is currently unimplemented
+            var is2faEnabled = false;
+
+            if (is2faEnabled)
             {
-                // TODO: Recognize the option in that view model
-                StrategyModel = new LoginKeystoreViewModel();
-                return;
+                // Two-factor authentication
+                StateChanged?.Invoke(this, new CommonResult<VaultLoginStateType>(VaultLoginStateType.AwaitingTwoFactorAuth));
             }
-
-            if (validationResult.Successful)
+            else if (validationResult.Successful)
             {
-                var keystoreModel = new FileKeystoreModel(keystoreFile, StreamSerializer.Instance);
-                var vaultUnlockingModel = new VaultUnlockingModel();
-
-                StrategyModel = new LoginCredentialsViewModel(VaultViewModel, vaultUnlockingModel, _vaultWatcherModel, keystoreModel, null); // TODO(r)
+                // Credentials
+                StateChanged?.Invoke(this, new CommonResult<VaultLoginStateType>(VaultLoginStateType.AwaitingCredentials));
             }
             else
-                StrategyModel = new LoginErrorViewModel(validationResult.GetMessage("Vault is inaccessible."));
+            {
+                // Vault error
+                StateChanged?.Invoke(this, new CommonResult<VaultLoginStateType>(VaultLoginStateType.VaultError, false));
+            }
         }
 
         /// <inheritdoc/>

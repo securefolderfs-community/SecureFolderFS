@@ -1,36 +1,30 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 {
-    public sealed partial class LoginCredentialsViewModel : ObservableObject
+    public sealed partial class LoginCredentialsViewModel : ObservableObject, IDisposable
     {
         private readonly VaultViewModel _vaultViewModel;
-        private readonly IVaultUnlockingModel _vaultUnlockingModel;
-        private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IKeystoreModel _keystoreModel;
+        private readonly IVaultWatcherModel _vaultWatcherModel;
+        private readonly IVaultUnlockingModel _vaultUnlockingModel;
 
-        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
-
-        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel, IMessenger messenger)
+        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel)
         {
             _vaultViewModel = vaultViewModel;
             _vaultUnlockingModel = vaultUnlockingModel;
             _vaultWatcherModel = vaultWatcherModel;
             _keystoreModel = keystoreModel;
-            //_messenger = messenger; // TODO(r)
         }
 
         [RelayCommand]
@@ -40,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
                 return;
 
             IUnlockedVaultModel? unlockedVaultModel;
-            using (_vaultWatcherModel.LockFolderAsync(cancellationToken))
+            using (await _vaultWatcherModel.LockFolderAsync(cancellationToken))
             using (_vaultUnlockingModel)
             using (password)
             {
@@ -67,19 +61,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 
             // Update last access date
             await _vaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now, cancellationToken);
-            await ThreadingService.ChangeThreadAsync();
 
             var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);
-            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel); // TODO(r)
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel);
             _ = dashboardPage.InitAsync(cancellationToken);
 
-
-            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultWatcherModel.VaultModel));
+            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultViewModel.VaultModel));
             WeakReferenceMessenger.Default.Send(new NavigationMessage(dashboardPage));
         }
 
         /// <inheritdoc/>
-        public override void Dispose()
+        public void Dispose()
         {
             _keystoreModel.Dispose();
             _vaultUnlockingModel.Dispose();

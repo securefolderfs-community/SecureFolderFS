@@ -1,7 +1,6 @@
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml.Templates;
 using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 
 namespace SecureFolderFS.AvaloniaUI.TemplateSelectors

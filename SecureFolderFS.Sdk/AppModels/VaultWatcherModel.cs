@@ -53,12 +53,12 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public Task<IAsyncDisposable?> LockFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<IDisposable?> LockFolderAsync(CancellationToken cancellationToken = default)
         {
-            if (VaultFolder is ILockableFolder lockableFolder)
-                return lockableFolder.ObtainLockAsync(cancellationToken);
+            if (VaultFolder is ILockableStorable lockableStorable)
+                return await lockableStorable.ObtainLockAsync(cancellationToken);
 
-            return Task.FromResult<IAsyncDisposable?>(null);
+            return null;
         }
 
         private void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

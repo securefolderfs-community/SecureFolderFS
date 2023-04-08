@@ -2,13 +2,13 @@
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 {
-    public sealed partial class LoginErrorViewModel : BaseLoginStrategyViewModel
+    public sealed partial class LoginErrorViewModel : ObservableObject
     {
-        [ObservableProperty] private string _ErrorMessage;
+        [ObservableProperty] private string? _Message;
 
-        public LoginErrorViewModel(string errorMessage)
+        public LoginErrorViewModel(string message)
         {
-            _ErrorMessage = errorMessage;
+            _Message = message;
         }
     }
 }

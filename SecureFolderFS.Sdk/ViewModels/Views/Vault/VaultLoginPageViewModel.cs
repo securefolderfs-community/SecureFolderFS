@@ -4,6 +4,9 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -23,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             VaultName = vaultViewModel.VaultModel.VaultName;
             _vaultLoginModel = new VaultLoginModel(vaultViewModel.VaultModel, new VaultWatcherModel(vaultViewModel.VaultModel.Folder));
-            _vaultLoginModel.StrategyChanged += VaultLoginModel_StrategyChanged;
+            _vaultLoginModel.StateChanged += VaultLoginModel_StateChanged;
 
             WeakReferenceMessenger.Default.Register(this);
         }
@@ -42,17 +45,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 Dispose();
         }
 
-        private void VaultLoginModel_StrategyChanged(object? sender, IVaultStrategyModel e)
+        private void VaultLoginModel_StateChanged(object? sender, IResult<VaultLoginStateType> e)
         {
             (StrategyViewModel as IDisposable)?.Dispose();
-            StrategyViewModel = new 
+
+            switch (e.Value)
+            {
+                case VaultLoginStateType.AwaitingCredentials:
+                    //StrategyViewModel = new LoginCredentialsViewModel(VaultViewModel);
+                    break;
+
+                case VaultLoginStateType.AwaitingTwoFactorAuth:
+                    StrategyViewModel = new LoginKeystoreViewModel();
+                    break;
+
+                default:
+                case VaultLoginStateType.VaultError:
+                    StrategyViewModel = new LoginErrorViewModel(e.GetMessage());
+                    break;
+            }
         }
 
         /// <inheritdoc/>
         public override void Dispose()
         {
             _vaultLoginModel.Dispose();
-            _vaultLoginModel.StrategyChanged -= VaultLoginModel_StrategyChanged;
+            _vaultLoginModel.StateChanged -= VaultLoginModel_StateChanged;
             (StrategyViewModel as IDisposable)?.Dispose();
         }
     }
