@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using System;
@@ -13,8 +15,9 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <inheritdoc cref="IVaultLoginModel"/>
     public sealed class VaultLoginModel : IVaultLoginModel
     {
-        private readonly IVaultService _vaultService;
         private readonly IAsyncValidator<IFolder> _vaultValidator;
+
+        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         /// <inheritdoc/>
         public IVaultModel VaultModel { get; }
@@ -29,8 +32,7 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             VaultModel = vaultModel;
             VaultWatcher = vaultWatcher;
-            _vaultService = Ioc.Default.GetRequiredService<IVaultService>();
-            _vaultValidator = _vaultService.GetVaultValidator();
+            _vaultValidator = VaultService.GetVaultValidator();
 
             VaultWatcher.VaultChangedEvent += VaultWatcher_VaultChangedEvent;
         }
@@ -61,10 +63,16 @@ namespace SecureFolderFS.Sdk.AppModels
                 // Two-factor authentication
                 StateChanged?.Invoke(this, new CommonResult<VaultLoginStateType>(VaultLoginStateType.AwaitingTwoFactorAuth));
             }
-            else if (validationResult.Successful)
+            else if (validationResult.Successful) // Credentials
             {
-                // Credentials
-                StateChanged?.Invoke(this, new CommonResult<VaultLoginStateType>(VaultLoginStateType.AwaitingCredentials));
+                var keystoreResult = await VaultModel.Folder.GetFileWithResultAsync(VaultService.KeystoreFileName, cancellationToken);
+                if (!keystoreResult.Successful)
+                    StateChanged?.Invoke(this, new CommonResult<VaultLoginStateType>(VaultLoginStateType.VaultError, false));
+                else
+                {
+                    var keystoreModel = new FileKeystoreModel(keystoreResult.Value!, StreamSerializer.Instance);
+                    StateChanged?.Invoke(this, new ResultWithKeystore(keystoreModel, VaultLoginStateType.AwaitingCredentials));
+                }
             }
             else
             {

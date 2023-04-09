@@ -1,8 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -16,6 +17,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
     {
         private readonly IVaultCreationModel _vaultCreationModel;
         private VaultWizardPasswordViewModel? _nextViewModel;
+
+        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         public VaultWizardCreationPathViewModel(IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
             : base(messenger, dialogViewModel)
@@ -35,7 +38,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
                 return;
             }
 
-            var keystoreFile = await SelectedLocation!.TryCreateFileAsync(Core.Constants.VAULT_KEYSTORE_FILENAME, false, cancellationToken);
+            var keystoreFile = await SelectedLocation!.TryCreateFileAsync(VaultService.KeystoreFileName, false, cancellationToken);
             if (keystoreFile is null)
                 return; // TODO: Report issue
 

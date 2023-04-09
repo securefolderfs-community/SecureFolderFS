@@ -19,6 +19,12 @@ namespace SecureFolderFS.UI.ServiceImplementation
         };
 
         /// <inheritdoc/>
+        public string KeystoreFileName { get; } = Core.Constants.VAULT_KEYSTORE_FILENAME;
+
+        /// <inheritdoc/>
+        public string ConfigurationFileName { get; } = Core.Constants.VAULT_CONFIGURATION_FILENAME;
+
+        /// <inheritdoc/>
         public bool IsNameReserved(string? name)
         {
             return name is not null && (

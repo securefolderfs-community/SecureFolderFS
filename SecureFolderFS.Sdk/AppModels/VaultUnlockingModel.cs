@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (!vaultFolderResult.Successful)
                 return vaultFolderResult;
 
-            var configFileResult = await folder.GetFileWithResultAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            var configFileResult = await folder.GetFileWithResultAsync(VaultService.ConfigurationFileName, cancellationToken);
             if (!configFileResult.Successful)
                 return configFileResult;
 

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 using SecureFolderFS.Shared.Extensions;
@@ -52,7 +53,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             switch (e.Value)
             {
                 case VaultLoginStateType.AwaitingCredentials:
-                    //StrategyViewModel = new LoginCredentialsViewModel(VaultViewModel);
+                    if (e is ResultWithKeystore resultWithKeystore)
+                        StrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, new VaultUnlockingModel(), _vaultLoginModel.VaultWatcher, resultWithKeystore.Keystore);
+                    
                     break;
 
                 case VaultLoginStateType.AwaitingTwoFactorAuth:
