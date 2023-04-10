@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using System.Threading;
@@ -11,15 +11,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IRecipient<VaultLockedMessage>
     {
-        public IStateNavigationModel DashboardNavigationModel { get; }
+        public INavigationService DashboardNavigationService { get; }
 
         public BaseDashboardPageViewModel CurrentPage { get; }
 
         public VaultDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
             : base(unlockedVaultViewModel.VaultViewModel)
         {
-            DashboardNavigationModel = new DashboardNavigationModel(new WeakReferenceMessenger());
-            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, DashboardNavigationModel, null); // TODO(r)
+            DashboardNavigationService = new DashboardNavigationService(new WeakReferenceMessenger());
+            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, DashboardNavigationService, null); // TODO(r)
 
             WeakReferenceMessenger.Default.Register(this);
         }

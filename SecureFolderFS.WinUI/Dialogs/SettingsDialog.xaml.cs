@@ -1,14 +1,11 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.WinUI.ServiceImplementation.Navigation;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -33,7 +30,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        private INotifyPropertyChanged GetViewModelForTag(int tag)
+        private INavigationTarget GetTargetForTag(int tag)
         {
             return tag switch
             {
@@ -45,20 +42,36 @@ namespace SecureFolderFS.WinUI.Dialogs
             };
         }
 
-        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (!ViewModel.Messenger.IsRegistered<NavigationMessage>(Navigation))
-                ViewModel.Messenger.Register<NavigationMessage>(Navigation);
+            if (ViewModel.NavigationService is null)
+                return;
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
-            var viewModel = GetViewModelForTag(tag);
+            var target = GetTargetForTag(tag);
 
-            Navigation.Navigate(viewModel, new EntranceNavigationTransitionInfo());
+            await ViewModel.NavigationService.NavigateAsync(target);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Hide();
+        }
+
+        private void ContentFrame_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService ??= new SettingsNavigationService();
+            if (ViewModel.NavigationService is SettingsNavigationService settingsNavigationService)
+                settingsNavigationService.Frame = ContentFrame;
+        }
+
+        private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            if (ViewModel.NavigationService is SettingsNavigationService settingsNavigationService)
+            {
+                // Remove the reference to frame so the dialog can get properly garbage collected
+                settingsNavigationService.Frame = null;
+            }
         }
     }
 }

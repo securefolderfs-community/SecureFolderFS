@@ -1,8 +1,10 @@
 ﻿using SecureFolderFS.Shared.Utils;
 using System;
+using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.Models
 {
+    // TODO: Needs docs
     public interface IVaultLoginModel : IAsyncInitialize, IDisposable
     {
         IVaultModel VaultModel { get; }
@@ -10,12 +12,5 @@ namespace SecureFolderFS.Sdk.Models
         IVaultWatcherModel VaultWatcher { get; }
 
         event EventHandler<IResult<VaultLoginStateType>>? StateChanged;
-    }
-
-    public enum VaultLoginStateType
-    {
-        AwaitingCredentials = 0,
-        AwaitingTwoFactorAuth = 1,
-        VaultError = 2,
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
@@ -6,11 +7,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
     {
         public static SettingsDialogViewModel Instance { get; } = new();
 
-        public IMessenger Messenger { get; }
+        public INavigationService? NavigationService { get; set; }
 
         private SettingsDialogViewModel()
         {
-            Messenger = new WeakReferenceMessenger();
         }
     }
 }

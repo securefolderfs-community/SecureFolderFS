@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 
-namespace SecureFolderFS.Sdk.Services.Settings
+namespace SecureFolderFS.Sdk.Services.SettingsPersistence
 {
     /// <summary>
     /// An interface for storing application configuration and settings.

@@ -2,16 +2,17 @@
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="IStateNavigationModel"/>
-    public sealed class DashboardNavigationModel : CachingNavigationModel
+    /// <inheritdoc cref="IStateNavigationService"/>
+    public sealed class DashboardNavigationService : CachingNavigationService
     {
         private readonly IMessenger _messenger;
 
-        public DashboardNavigationModel(IMessenger messenger)
+        public DashboardNavigationService(IMessenger messenger)
         {
             _messenger = messenger;
         }
@@ -19,7 +20,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         protected override Task BeginNavigationAsync(INavigationTarget target, NavigationType navigationType)
         {
-            _messenger.Send(new NavigationMessage(target));
+            _messenger.Send(new NavigationMessage(target as INotifyPropertyChanged));
             return Task.CompletedTask;
         }
     }

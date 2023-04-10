@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 using SecureFolderFS.Shared.Extensions;
@@ -22,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private string? _VaultName;
         [ObservableProperty] private INotifyPropertyChanged? _StrategyViewModel;
 
-        public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationModel navigationModel)
+        public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
             : base(vaultViewModel)
         {
             VaultName = vaultViewModel.VaultModel.VaultName;

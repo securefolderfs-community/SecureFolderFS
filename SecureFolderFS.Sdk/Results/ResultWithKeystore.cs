@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.Results

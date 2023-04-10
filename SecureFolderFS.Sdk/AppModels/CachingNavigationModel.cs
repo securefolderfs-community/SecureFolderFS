@@ -1,12 +1,13 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="IStateNavigationModel"/>
-    public abstract class CachingNavigationModel : IStateNavigationModel
+    /// <inheritdoc cref="INavigationService"/>
+    public abstract class CachingNavigationService : INavigationService
     {
         /// <inheritdoc/>
         public ICollection<INavigationTarget> Targets { get; }
@@ -14,7 +15,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public INavigationTarget? CurrentTarget { get; protected set; }
 
-        protected CachingNavigationModel()
+        protected CachingNavigationService()
         {
             Targets = new List<INavigationTarget>();
         }

@@ -14,12 +14,12 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets the default name for vault keystore file.
         /// </summary>
-        string KeystoreFileName { get; } // TODO: Remove, Sdk shouldn't know about vault structure - that's handled by Core
+        string KeystoreFileName { get; } // TODO: Remove, Sdk shouldn't know about vault structure - that's handled by the Core
 
         /// <summary>
         /// Gets the default name for vault configuration file.
         /// </summary>
-        string ConfigurationFileName { get; } // TODO: Remove, Sdk shouldn't know about vault structure - that's handled by Core
+        string ConfigurationFileName { get; } // TODO: Remove, Sdk shouldn't know about vault structure - that's handled by the Core
 
         /// <summary>
         /// Determines whether provided <paramref name="name"/> is part of vault core configuration files.

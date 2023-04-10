@@ -1,12 +1,11 @@
 ﻿using SecureFolderFS.Sdk.Enums;
-using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
     /// Represents a target which can be navigated to.
     /// </summary>
-    public interface INavigationTarget : INotifyPropertyChanged
+    public interface INavigationTarget
     {
         /// <summary>
         /// Notifies the implementation that the target is being navigated to.

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Utils;
 using System;
@@ -13,12 +14,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
     {
         protected UnlockedVaultViewModel UnlockedVaultViewModel { get; }
 
-        protected IStateNavigationModel DashboardNavigationModel { get; }
+        protected INavigationService DashboardNavigationService { get; }
 
-        protected BaseDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IStateNavigationModel dashboardNavigationModel)
+        protected BaseDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService)
         {
             UnlockedVaultViewModel = unlockedVaultViewModel;
-            DashboardNavigationModel = dashboardNavigationModel;
+            DashboardNavigationService = dashboardNavigationService;
         }
 
         /// <inheritdoc/>

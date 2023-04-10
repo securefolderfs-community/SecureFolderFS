@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI.ServiceImplementation.SettingsPersistence;
 

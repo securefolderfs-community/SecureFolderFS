@@ -8,6 +8,7 @@ namespace SecureFolderFS.UI.AppModels
     {
         private readonly byte[] _password;
 
+        /// <inheritdoc/>
         public Encoding Encoding { get; } = Encoding.UTF8;
 
         public VaultPassword(string password)

@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         {
             await _vaultCollectionModel.AddVaultAsync(message.VaultModel);
 
-            WeakReferenceMessenger.Default.Send(new RootNavigationMessage(new MainHostViewModel(_vaultCollectionModel)));
+            WeakReferenceMessenger.Default.Send(new RootNavigationMessage(new MainHostViewModel(null, _vaultCollectionModel))); // TODO(r)
             WeakReferenceMessenger.Default.Unregister<AddVaultMessage>(this);
         }
 
