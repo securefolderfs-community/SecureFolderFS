@@ -1,46 +1,32 @@
 ﻿using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.WinUI.Views.Vault;
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="NavigationControl"/>
-    internal sealed class VaultNavigationControl : NavigationControl
+    /// <inheritdoc cref="FrameNavigationControl"/>
+    internal sealed class VaultNavigationControl : FrameNavigationControl
     {
-        public Dictionary<VaultViewModel, BaseVaultPageViewModel> NavigationCache { get; }
-
-        public VaultNavigationControl()
-        {
-            NavigationCache = new();
-        }
-
         /// <inheritdoc/>
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        public override Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
         {
-            if (viewModel is not BaseVaultPageViewModel pageViewModel)
-                throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");
-
-            // Dashboard closing animation
-            if (pageViewModel is VaultLoginPageViewModel && (NavigationCache.TryGetValue(pageViewModel.VaultViewModel, out var existing)) && existing is VaultDashboardPageViewModel)
-                transitionInfo ??= new ContinuumNavigationTransitionInfo();
-
-            // Standard animation
-            transitionInfo ??= new EntranceNavigationTransitionInfo();
-
-            // Set or update the view model for individual page
-            NavigationCache[pageViewModel.VaultViewModel] = pageViewModel;
-
-            var pageType = viewModel switch
+            var pageType = target switch
             {
                 VaultLoginPageViewModel => typeof(VaultLoginPage),
                 VaultDashboardPageViewModel => typeof(VaultDashboardPage),
-                _ => throw new ArgumentNullException(nameof(viewModel))
+                _ => throw new ArgumentNullException(nameof(target))
             };
 
-            ContentFrame.Navigate(pageType, viewModel, transitionInfo);
+            var transitionInfo = transition as NavigationTransitionInfo ?? ContentFrame.Content switch
+            {
+                VaultDashboardPage => new ContinuumNavigationTransitionInfo(), // Dashboard closing animation
+                _ => new EntranceNavigationTransitionInfo() // Standard animation
+            };
+
+            var result = ContentFrame.Navigate(pageType, target, transitionInfo);
+            return Task.FromResult(result);
         }
 
         public void ClearContent()

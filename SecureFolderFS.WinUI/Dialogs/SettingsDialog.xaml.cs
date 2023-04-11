@@ -4,7 +4,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
-using SecureFolderFS.WinUI.ServiceImplementation.Navigation;
+using SecureFolderFS.WinUI.ServiceImplementation;
 using System;
 using System.Threading.Tasks;
 
@@ -60,17 +60,17 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private void ContentFrame_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService ??= new SettingsNavigationService();
-            if (ViewModel.NavigationService is SettingsNavigationService settingsNavigationService)
-                settingsNavigationService.Frame = ContentFrame;
+            ViewModel.NavigationService ??= new WindowsNavigationService();
+            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
+                navigationServiceImpl.NavigationControl = Navigation;
         }
 
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-            if (ViewModel.NavigationService is SettingsNavigationService settingsNavigationService)
+            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
             {
-                // Remove the reference to frame so the dialog can get properly garbage collected
-                settingsNavigationService.Frame = null;
+                // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
+                navigationServiceImpl.NavigationControl = null;
             }
         }
     }

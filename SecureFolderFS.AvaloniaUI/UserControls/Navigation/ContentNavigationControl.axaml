@@ -1,10 +1,10 @@
 <UserControl
-    x:Class="SecureFolderFS.AvaloniaUI.UserControls.Navigation.NavigationControl"
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.Navigation.ContentNavigationControl"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
     xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -21,10 +21,10 @@
         <anim:Storyboard.Storyboards>
             <anim:Storyboard x:Name="FadeOutContentStoryboard">
                 <trans:FadeTransition
-                    Target="ContentPresenter"
-                    Duration="0:0:0:0.1"
                     FillMode="None"
-                    Mode="Out" />
+                    Mode="Out"
+                    Target="ContentPresenter"
+                    Duration="0:0:0:0.1" />
             </anim:Storyboard>
         </anim:Storyboard.Storyboards>
     </ContentPresenter>

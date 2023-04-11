@@ -2,25 +2,29 @@
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.WinUI.Views.Settings;
 using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="NavigationControl"/>
-    internal sealed class SettingsNavigationControl : NavigationControl
+    /// <inheritdoc cref="FrameNavigationControl"/>
+    internal sealed class SettingsNavigationControl : FrameNavigationControl
     {
         /// <inheritdoc/>
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        public override Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
         {
-            var pageType = viewModel switch
+            var pageType = target switch
             {
                 GeneralSettingsViewModel => typeof(GeneralSettingsPage),
                 PreferencesSettingsViewModel => typeof(PreferencesSettingsPage),
                 PrivacySettingsViewModel => typeof(PrivacySettingsPage),
                 AboutSettingsViewModel => typeof(AboutSettingsPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
+                _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 
-            ContentFrame.Navigate(pageType, viewModel, transitionInfo);
+            var transitionInfo = transition as NavigationTransitionInfo ?? new SlideNavigationTransitionInfo();
+            var result = ContentFrame.Navigate(pageType, target, transitionInfo);
+
+            return Task.FromResult(result);
         }
     }
 }

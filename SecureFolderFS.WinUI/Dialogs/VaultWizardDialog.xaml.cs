@@ -117,8 +117,6 @@ namespace SecureFolderFS.WinUI.Dialogs
         private async void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
         {
             // Register order is important!
-            ViewModel.Messenger.Register<NavigationMessage>(Navigation);
-            ViewModel.Messenger.Register<BackNavigationMessage>(Navigation);
             ViewModel.Messenger.Register<NavigationMessage>(this);
             ViewModel.Messenger.Register<BackNavigationMessage>(this);
 

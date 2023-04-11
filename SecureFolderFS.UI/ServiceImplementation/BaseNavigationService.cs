@@ -2,12 +2,19 @@
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Controls;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    public abstract class BaseNavigationService : INavigationService
+    public abstract class BaseNavigationService<TNavigation> : INavigationService
+        where TNavigation : class, INavigationControl
     {
+        /// <summary>
+        /// Gets or sets the control used for navigation.
+        /// </summary>
+        public TNavigation? NavigationControl { get; set; }
+
         /// <inheritdoc/>
         public INavigationTarget? CurrentTarget { get; protected set; }
 
@@ -78,10 +85,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual void Dispose()
         {
+            CurrentTarget = null;
+            NavigationControl?.Dispose();
+
             Targets.DisposeCollection();
             Targets.Clear();
-
-            CurrentTarget = null;
         }
     }
 }

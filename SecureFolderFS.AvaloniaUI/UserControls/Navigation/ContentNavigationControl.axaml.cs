@@ -1,32 +1,29 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Navigation;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Controls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using NavigationEventArgs = SecureFolderFS.AvaloniaUI.Events.NavigationEventArgs;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
     /// <summary>
-    /// The base class to manage navigation of pages using messages.
+    /// The base class that manages UI navigation.
     /// </summary>
-    internal partial class NavigationControl : UserControl, IDisposable, IRecipient<NavigationMessage>, IRecipient<BackNavigationMessage>
+    internal abstract partial class ContentNavigationControl : UserControl, INavigationControl
     {
+        private (Type, object)? _currentPage;
         private readonly Stack<(Type, object)> _backStack;
 
         public bool CanGoBack => !_backStack.IsEmpty();
 
-        private (Type, object)? _currentPage;
-
-        public NavigationControl()
+        public ContentNavigationControl()
         {
             _backStack = new();
             AvaloniaXamlLoader.Load(this);
@@ -38,38 +35,25 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             SetContent(x.Item1, x.Item2, new SlideNavigationTransition(SlideNavigationTransition.Side.Left, SlideNavigationTransition.BigOffset));
         }
 
-        /// <inheritoc/>
-        public virtual void Receive(NavigationMessage message)
-        {
-            Navigate(message.ViewModel, null);
-        }
-
-        /// <inheritoc/>
-        public virtual void Receive(BackNavigationMessage message)
-        {
-            _ = message;
-        }
-
-        public virtual void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
-            where TViewModel : class, INotifyPropertyChanged
-        {
-        }
+        /// <inheritdoc/>
+        public abstract Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class;
 
         public async Task Navigate(Type pageType, object parameter, TransitionBase? transition)
         {
             if (_currentPage is not null)
                 _backStack.Push(_currentPage.Value);
 
-            SetContent(pageType, parameter, transition);
+            await SetContent(pageType, parameter, transition);
         }
 
         public async Task SetContent(Type pageType, object parameter, TransitionBase? transition)
         {
             if (CurrentContent is Page currentPage)
                 currentPage.OnNavigatingFrom();
+
             await Task.Delay(50);
 
-            // TODO Caching
+            // TODO: Implement Caching
             var instance = Activator.CreateInstance(pageType);
             if (transition is not SuppressNavigationTransition)
                 await FadeOutContentStoryboard.RunAnimationsAsync();
@@ -93,13 +77,12 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             (CurrentContent as IDisposable)?.Dispose();
         }
 
-        public static readonly StyledProperty<object?> CurrentContentProperty
-            = AvaloniaProperty.Register<NavigationControl, object?>(nameof(CurrentContent));
-
         public object? CurrentContent
         {
             get => GetValue(CurrentContentProperty);
             set => SetValue(CurrentContentProperty, value);
         }
+        public static readonly StyledProperty<object?> CurrentContentProperty
+            = AvaloniaProperty.Register<ContentNavigationControl, object?>(nameof(CurrentContent));
     }
 }

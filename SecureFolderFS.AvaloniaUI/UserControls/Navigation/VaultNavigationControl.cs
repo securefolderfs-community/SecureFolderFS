@@ -1,48 +1,35 @@
-using System;
-using System.Collections.Generic;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="NavigationControl"/>
-    internal sealed class VaultNavigationControl : NavigationControl
+    /// <inheritdoc cref="ContentNavigationControl"/>
+    internal sealed class VaultNavigationControl : ContentNavigationControl
     {
-        public Dictionary<VaultViewModel, BaseVaultPageViewModel> NavigationCache { get; }
-
-        public VaultNavigationControl()
+        /// <inheritdoc/>
+        public override async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
         {
-            NavigationCache = new();
-        }
-
-        public override void Navigate<TViewModel>(TViewModel viewModel, TransitionBase? transition)
-        {
-            if (viewModel is not BaseVaultPageViewModel pageViewModel)
-                throw new ArgumentException($"{nameof(viewModel)} does not inherit from {nameof(BaseVaultPageViewModel)}.");
-
-            // TODO Dashboard closing animation
-            // if (pageViewModel is VaultLoginPageViewModel && (NavigationCache.TryGetValue(pageViewModel.VaultViewModel, out var existing)) && existing is VaultDashboardPageViewModel)
-            //    transitionInfo ??= new ContinuumNavigationTransitionInfo();
-
-            // Standard animation
-            transition ??= new EntranceNavigationTransition();
-
-            // Set or update the view model for individual page
-            NavigationCache[pageViewModel.VaultViewModel] = pageViewModel;
-
-            var pageType = viewModel switch
+            var pageType = target switch
             {
                 VaultLoginPageViewModel => typeof(VaultLoginPage),
                 VaultDashboardPageViewModel => typeof(VaultDashboardPage),
-                _ => throw new ArgumentNullException(nameof(viewModel))
+                _ => throw new ArgumentNullException(nameof(target))
             };
 
-             Navigate(pageType, viewModel, transition);
+            var transitionInfo = transition as TransitionBase ?? CurrentContent switch
+            {
+                // (TODO: Add dashboard closing animation here - infer from the current content) // Dashboard closing animation
+                _ => new EntranceNavigationTransition() // Standard animation
+            };
+            
+            await Navigate(pageType, target, transitionInfo);
+            return true;
         }
-
+        
         public void ClearContent()
         {
             CurrentContent = null;

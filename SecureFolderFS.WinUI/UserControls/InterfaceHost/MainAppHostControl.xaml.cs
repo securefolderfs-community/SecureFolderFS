@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
@@ -52,7 +51,6 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
             WeakReferenceMessenger.Default.Register(this);
-            WeakReferenceMessenger.Default.Register<NavigationMessage>(Navigation);
 
             await ViewModel.InitAsync();
             Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;

@@ -1,9 +1,7 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
 using System.Collections.ObjectModel;

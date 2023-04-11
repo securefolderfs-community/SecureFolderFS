@@ -85,7 +85,7 @@
         <Page Update="UserControls\InterfaceHost\MainWindowRootControl.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-        <Page Update="UserControls\Navigation\NavigationControl.xaml">
+        <Page Update="UserControls\Navigation\FrameNavigationControl.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
         <Page Update="UserControls\Widgets\GraphsWidget.xaml">
