@@ -30,12 +30,12 @@ namespace SecureFolderFS.WinUI.Views.Vault
             BreadcrumbItems = new();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultDashboardPageViewModel viewModel)
                 ViewModel = viewModel;
 
-            Navigation.Navigate(ViewModel.CurrentPage, new EntranceNavigationTransitionInfo());
+            await Navigation.NavigateAsync(ViewModel.CurrentPage, new EntranceNavigationTransitionInfo());
             BreadcrumbItems.Add(new(ViewModel.VaultViewModel.VaultModel.VaultName, true));
 
             base.OnNavigatedTo(e);

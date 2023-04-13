@@ -21,7 +21,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
                 _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 
-            var transitionInfo = transition as NavigationTransitionInfo ?? new SlideNavigationTransitionInfo();
+            var transitionInfo = transition as NavigationTransitionInfo ?? new EntranceNavigationTransitionInfo();
             var result = ContentFrame.Navigate(pageType, target, transitionInfo);
 
             return Task.FromResult(result);

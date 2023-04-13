@@ -1,10 +1,10 @@
 using Avalonia.Markup.Xaml;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
 using System.Collections.ObjectModel;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {
@@ -24,13 +24,13 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
             BreadcrumbItems = new();
         }
 
-        public override void OnNavigatedTo(NavigationEventArgs e)
+        public override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is not VaultDashboardPageViewModel viewModel)
                 return;
 
             ViewModel = viewModel;
-            Navigation.Navigate(viewModel.CurrentPage, new EntranceNavigationTransition());
+            await Navigation.NavigateAsync(viewModel.CurrentPage, new EntranceNavigationTransition());
             BreadcrumbItems.Add(new(viewModel.VaultViewModel.VaultModel.VaultName, true));
 
             base.OnNavigatedTo(e);

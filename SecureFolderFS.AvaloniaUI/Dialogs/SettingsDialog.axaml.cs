@@ -3,7 +3,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
@@ -12,6 +11,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -46,12 +46,12 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             };
         }
 
-        private void NavigationView_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
+        private async void NavigationView_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
         {
             var tag = Convert.ToInt32((e.SelectedItem as NavigationViewItem)?.Tag);
             var viewModel = GetViewModelForTag(tag);
 
-            Navigation.Navigate(viewModel, new EntranceNavigationTransition());
+            await Navigation.NavigateAsync(viewModel, new EntranceNavigationTransition());
         }
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)

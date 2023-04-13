@@ -113,16 +113,11 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
         }
 
-        private void VaultWizardDialog_OnLoaded(object? sender, RoutedEventArgs e)
+        private async void VaultWizardDialog_OnLoaded(object? sender, RoutedEventArgs e)
         {
-            // Register order is important!
-            ViewModel.Messenger.Register<NavigationMessage>(Navigation);
-            ViewModel.Messenger.Register<BackNavigationMessage>(Navigation);
-            ViewModel.Messenger.Register<NavigationMessage>(this);
-            ViewModel.Messenger.Register<BackNavigationMessage>(this);
-
             var viewModel = new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel);
-            Navigation.Navigate(viewModel, new SuppressNavigationTransition());
+
+            await Navigation.NavigateAsync(viewModel, new SuppressNavigationTransition());
             _ = FinalizeNavigationAnimationAsync(viewModel);
         }
 

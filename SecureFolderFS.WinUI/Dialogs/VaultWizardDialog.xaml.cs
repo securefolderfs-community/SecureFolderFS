@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -13,6 +11,8 @@ using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
 using SecureFolderFS.WinUI.Helpers;
+using System;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -96,14 +96,14 @@ namespace SecureFolderFS.WinUI.Dialogs
                 _hasNavigationAnimatedOnLoaded = true;
                 GoBack.Visibility = Visibility.Collapsed;
             }
-            else if (!_isBackAnimationState && (canGoBack && Navigation.CanGoBack))
+            else if (!_isBackAnimationState && (canGoBack && Navigation.ContentFrame.CanGoBack))
             {
                 _isBackAnimationState = true;
                 GoBack.Visibility = Visibility.Visible;
                 await ShowBackButtonStoryboard.BeginAsync();
                 ShowBackButtonStoryboard.Stop();
             }
-            else if (_isBackAnimationState && !(canGoBack && Navigation.CanGoBack))
+            else if (_isBackAnimationState && !(canGoBack && Navigation.ContentFrame.CanGoBack))
             {
                 _isBackAnimationState = false;
                 await HideBackButtonStoryboard.BeginAsync();
@@ -111,7 +111,7 @@ namespace SecureFolderFS.WinUI.Dialogs
                 GoBack.Visibility = Visibility.Collapsed;
             }
 
-            GoBack.Visibility = canGoBack && Navigation.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            GoBack.Visibility = canGoBack && Navigation.ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
@@ -121,7 +121,7 @@ namespace SecureFolderFS.WinUI.Dialogs
             ViewModel.Messenger.Register<BackNavigationMessage>(this);
 
             var viewModel = new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel);
-            Navigation.Navigate(viewModel, new SuppressNavigationTransitionInfo());
+            await Navigation.NavigateAsync(viewModel, new SuppressNavigationTransitionInfo());
             await FinalizeNavigationAnimationAsync(viewModel);
         }
 

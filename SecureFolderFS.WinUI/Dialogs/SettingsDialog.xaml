@@ -72,7 +72,10 @@
 
             <!--  Display frame  -->
             <ScrollViewer Width="644">
-                <uc:SettingsNavigationControl x:Name="Navigation" Margin="16,16,16,8" />
+                <uc:SettingsNavigationControl
+                    x:Name="Navigation"
+                    Margin="16,16,16,8"
+                    Loaded="Navigation_Loaded" />
             </ScrollViewer>
         </NavigationView>
 

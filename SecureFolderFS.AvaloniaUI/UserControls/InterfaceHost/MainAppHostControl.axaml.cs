@@ -6,13 +6,13 @@ using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 {
@@ -28,31 +28,24 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
         {
             if (ViewModel.SidebarViewModel.SidebarItems.IsEmpty())
                 Navigation.ClearContent();
-
-            var viewModelToRemove = Navigation.NavigationCache.Keys.FirstOrDefault(x => x.VaultModel.Equals(message.VaultModel));
-            if (viewModelToRemove is null)
-                return;
-
-            Navigation.NavigationCache.Remove(viewModelToRemove);
         }
 
-        private void NavigateToItem(VaultViewModel vaultViewModel)
+        private async Task NavigateToItem(VaultViewModel vaultViewModel)
         {
             // Get the item from cache or create new instance
-            if (!Navigation.NavigationCache.TryGetValue(vaultViewModel, out var destination))
-            {
-                destination = new VaultLoginPageViewModel(vaultViewModel, null); // TODO(r)
-                _ = destination.InitAsync();
-            }
+            //if (!Navigation.NavigationCache.TryGetValue(vaultViewModel, out var destination))
+            //{
+                var destination = new VaultLoginPageViewModel(vaultViewModel, null); // TODO(r)
+            //    _ = destination.InitAsync();
+            //} // TODO(n)
 
             // Navigate
-            Navigation.Navigate(destination, new EntranceNavigationTransition());
+            await Navigation.NavigateAsync(destination, new EntranceNavigationTransition());
         }
 
         private async void MainAppHostControl_OnLoaded(object? sender, RoutedEventArgs e)
         {
             WeakReferenceMessenger.Default.Register(this);
-            WeakReferenceMessenger.Default.Register<NavigationMessage>(Navigation);
 
             await ViewModel.InitAsync();
             Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
@@ -63,14 +56,13 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             get => GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
-
         public static readonly StyledProperty<MainHostViewModel> ViewModelProperty =
             AvaloniaProperty.Register<MainAppHostControl, MainHostViewModel>(nameof(ViewModel));
 
-        private void Sidebar_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
+        private async void Sidebar_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
         {
             if (e.SelectedItem is SidebarItemViewModel itemViewModel)
-                NavigateToItem(itemViewModel.VaultViewModel);
+                await NavigateToItem(itemViewModel.VaultViewModel);
         }
 
         private async void AutoCompleteBox_OnTextChanged(object? sender, TextChangedEventArgs e)
@@ -78,7 +70,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery((sender as AutoCompleteBox)?.Text ?? string.Empty);
         }
 
-        private void AutoCompleteBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private async void AutoCompleteBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (sender is null)
                 return;
@@ -88,7 +80,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
                 return;
 
             Sidebar.SelectedItem = chosenItem;
-            NavigateToItem(chosenItem.VaultViewModel);
+            await NavigateToItem(chosenItem.VaultViewModel);
         }
     }
 }

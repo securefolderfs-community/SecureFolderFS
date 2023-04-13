@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.WinUI.ServiceImplementation;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -32,13 +33,16 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private INavigationTarget GetTargetForTag(int tag)
         {
+            _ = ViewModel.NavigationService ?? throw new InvalidOperationException("NavigationService shouldn't be null");
+
             return tag switch
             {
-                0 => new GeneralSettingsViewModel(),
-                1 => new PreferencesSettingsViewModel(),
-                2 => new PrivacySettingsViewModel(),
-                3 => new AboutSettingsViewModel(),
-                _ => new GeneralSettingsViewModel()
+                0 => ViewModel.NavigationService.Targets.FirstOrDefault(x => x is GeneralSettingsViewModel) ?? new GeneralSettingsViewModel(),
+                1 => ViewModel.NavigationService.Targets.FirstOrDefault(x => x is PreferencesSettingsViewModel) ?? new PreferencesSettingsViewModel(),
+                2 => ViewModel.NavigationService.Targets.FirstOrDefault(x => x is PrivacySettingsViewModel) ?? new PrivacySettingsViewModel(),
+                3 => ViewModel.NavigationService.Targets.FirstOrDefault(x => x is AboutSettingsViewModel) ?? new AboutSettingsViewModel(),
+                _ => new GeneralSettingsViewModel(),
+
             };
         }
 
@@ -58,7 +62,7 @@ namespace SecureFolderFS.WinUI.Dialogs
             Hide();
         }
 
-        private void ContentFrame_Loaded(object sender, RoutedEventArgs e)
+        private void Navigation_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigationService ??= new WindowsNavigationService();
             if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
