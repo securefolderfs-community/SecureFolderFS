@@ -1,4 +1,5 @@
 using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+using System;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;

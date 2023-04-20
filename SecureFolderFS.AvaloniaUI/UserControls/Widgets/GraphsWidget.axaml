@@ -8,7 +8,6 @@
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.UserControls.Widgets.GraphsWidget">
-    <!-- TODO Animations -->
 
     <Grid
         Loaded="GraphsGrid_Loaded"

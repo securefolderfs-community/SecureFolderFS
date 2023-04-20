@@ -18,6 +18,10 @@ namespace SecureFolderFS.AvaloniaUI
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .UseFAWindowing()
-                .LogToTrace();
+                .LogToTrace()
+                .With(new Win32PlatformOptions
+                {
+                    UseWindowsUIComposition = true
+                });
     }
 }

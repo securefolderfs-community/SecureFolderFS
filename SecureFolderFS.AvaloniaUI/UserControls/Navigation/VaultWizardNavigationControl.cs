@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+using System;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
@@ -26,7 +27,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             };
 
             var transitionInfo = transition as TransitionBase
-                                 ?? new SlideNavigationTransition(SlideNavigationTransition.Side.Right, SlideNavigationTransition.SmallOffset);
+                                 ?? new SlideNavigationTransition(SlideNavigationTransition.Side.Right, ContentPresenter.Bounds.Width, true);
 
             await Navigate(pageType, target, transitionInfo);
             return true;

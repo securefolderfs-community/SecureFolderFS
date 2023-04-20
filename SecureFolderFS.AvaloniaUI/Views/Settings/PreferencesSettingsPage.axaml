@@ -33,8 +33,9 @@
                     <ui:HyperlinkButton
                         Margin="0,-16,0,0"
                         HorizontalAlignment="Right"
-                        Content="Open website"
-                        NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000" />
+                        NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000">
+                        <TextBlock Text="Open website" />
+                    </ui:HyperlinkButton>
                 </Border>
             </ui:InfoBar>
         </DataTemplate>
@@ -87,7 +88,8 @@
                     VerticalContentAlignment="Stretch"
                     Content="{Binding FileSystemInfoBar, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     IsVisible="{Binding IsInfoBarOpen, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}"
-                    Opacity="0">
+                    Opacity="0"
+                    LayoutUpdated="FileSystemInfoBarContainer_OnLayoutUpdated">
                     <ContentControl.RenderTransform>
                         <TranslateTransform />
                     </ContentControl.RenderTransform>
@@ -104,19 +106,19 @@
                             <trans:InfoBarTransition
                                 AnimationMode="Show"
                                 ContentBelow="OtherSettings"
-                                Target="FileSystemInfoBarContainer" />
+                                Mode="Show" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="HideFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
                                 AnimationMode="Hide"
                                 ContentBelow="OtherSettings"
-                                Target="FileSystemInfoBarContainer" />
+                                Mode="Hide" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="QuickHideFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
                                 AnimationMode="QuickHide"
                                 ContentBelow="OtherSettings"
-                                Target="FileSystemInfoBarContainer" />
+                                Mode="QuickHide" />
                         </anim:Storyboard>
                     </anim:Storyboard.Storyboards>
                 </ContentControl>

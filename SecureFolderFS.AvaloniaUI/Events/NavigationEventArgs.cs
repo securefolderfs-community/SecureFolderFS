@@ -1,16 +1,16 @@
 using System;
 using FluentAvalonia.UI.Navigation;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 
 namespace SecureFolderFS.AvaloniaUI.Events
 {
     internal sealed class NavigationEventArgs
     {
-        public NavigationEventArgs(object content, NavigationMode mode, TransitionBase navInfo, object param, Type srcPgType)
+        public NavigationEventArgs(object content, NavigationMode mode, NavigationTransition? transition, object param, Type srcPgType)
         {
             Content = content;
             NavigationMode = mode;
-            NavigationTransitionInfo = navInfo;
+            NavigationTransition = transition;
             Parameter = param;
             SourcePageType = srcPgType;
         }
@@ -38,6 +38,6 @@ namespace SecureFolderFS.AvaloniaUI.Events
         /// <summary>
         /// Gets a value that indicates the animated transition associated with the navigation.
         /// </summary>
-        public TransitionBase NavigationTransitionInfo { get; }
+        public NavigationTransition? NavigationTransition { get; }
     }
 }

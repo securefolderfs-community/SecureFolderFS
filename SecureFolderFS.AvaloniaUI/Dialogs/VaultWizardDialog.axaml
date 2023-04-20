@@ -35,11 +35,10 @@
                     <trans:TranslateTransition
                         FillMode="None"
                         Target="TitleText"
-                        From="0,0"
                         To="-48,0"
                         Duration="0:0:0.2">
                         <trans:TranslateTransition.Easing>
-                            <CircularEaseInOut />
+							<ExponentialEaseInOut />
                         </trans:TranslateTransition.Easing>
                     </trans:TranslateTransition>
                 </anim:Storyboard>
@@ -53,10 +52,9 @@
                         FillMode="None"
                         Target="TitleText"
                         From="-48,0"
-                        To="0,0"
                         Duration="0:0:0.2">
                         <trans:TranslateTransition.Easing>
-                            <CircularEaseInOut />
+							<ExponentialEaseInOut />
                         </trans:TranslateTransition.Easing>
                     </trans:TranslateTransition>
                 </anim:Storyboard>

@@ -5,16 +5,16 @@
     <!-- Fix pane title being cut off at the bottom -->
     <Style Selector="ui|NavigationView /template/ TextBlock#PaneTitleTextBlock">
         <Setter Property="Height" Value="19" />
-        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontSize" Value="14" />
     </Style>
 
     <!-- Remove white shadow making disabled SettingsExpander look bigger  -->
     <Style Selector="ui|SettingsExpander:disabled ui|FABorder">
-        <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
     </Style>
 
     <!-- Fix icons being offset to the left -->
     <Style Selector="ui|SettingsExpanderItem Viewbox#IconHost">
-        <Setter Property="Margin" Value="6,0,0,0"></Setter>
+        <Setter Property="Margin" Value="6,0,0,0" />
     </Style>
 </Styles>

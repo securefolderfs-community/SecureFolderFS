@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.AvaloniaUI.UserControls;
@@ -19,7 +18,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         /// <summary>
         /// Whether to play the InfoBar show animation after its layout is updated.
         /// </summary>
-        private bool _playShowBarEmergeAnimation;
+        private bool _playShowVersionInfoBarAnimation;
 
         public GeneralSettingsViewModel? ViewModel
         {
@@ -80,13 +79,17 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             await AvaloniaThemeHelper.Instance.SetThemeAsync((ThemeType)AppThemeComboBox.SelectedIndex);
         }
 
+        public void ShowVersionInfoBar(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            _playShowVersionInfoBarAnimation = true;
+        }
+
         private void VersionInfoBar_OnLayoutUpdated(object? sender, EventArgs e)
         {
-            if (_playShowBarEmergeAnimation)
+            if (_playShowVersionInfoBarAnimation)
             {
-                ((TranslateTransform)OtherSettings.RenderTransform!).Y = -VersionInfoBar.Bounds.Height;
                 ShowVersionInfoBarStoryboard.RunAnimationsAsync();
-                _playShowBarEmergeAnimation = !_playShowBarEmergeAnimation;
+                _playShowVersionInfoBarAnimation = false;
             }
         }
     }
