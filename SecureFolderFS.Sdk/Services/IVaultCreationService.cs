@@ -1,5 +1,4 @@
 ﻿using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.IO;

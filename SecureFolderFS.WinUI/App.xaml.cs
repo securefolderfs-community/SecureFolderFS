@@ -26,9 +26,7 @@ namespace SecureFolderFS.WinUI
     /// </summary>
     public sealed partial class App : Application
     {
-        private Window? _window;
-
-        private IServiceProvider? ServiceProvider { get; set; }
+        private IServiceProvider? _serviceProvider;
 
         /// <summary>
         /// Initializes the singleton application object. This is the first line of authored code
@@ -37,7 +35,6 @@ namespace SecureFolderFS.WinUI
         public App()
         {
             InitializeComponent();
-
             EnsureEarlyApp();
         }
 
@@ -54,11 +51,12 @@ namespace SecureFolderFS.WinUI
             var settingsFolder = new NativeFolder(settingsFolderPath);
 
             // Configure IoC
-            ServiceProvider = ConfigureServices(settingsFolder);
-            Ioc.Default.ConfigureServices(ServiceProvider!);
+            _serviceProvider = ConfigureServices(settingsFolder);
+            Ioc.Default.ConfigureServices(_serviceProvider);
 
-            _window = new MainWindow();
-            _window.Activate();
+            // Activate MainWindow
+            var window = MainWindow.Instance;
+            window.Activate();
         }
 
         private void EnsureEarlyApp()
@@ -77,10 +75,8 @@ namespace SecureFolderFS.WinUI
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
-                .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
-                .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new VaultPersistenceService(settingsFolder))
-                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
-                .AddTransient<IVaultCreationService, VaultCreationService>()
+                .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
+                .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
                 .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
@@ -89,25 +85,23 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
-                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>();
+                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
+
+                // Transient services
+                .AddTransient<INavigationService, WindowsNavigationService>()
+                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
+                .AddTransient<IVaultCreationService, VaultCreationService>();
 
             return serviceCollection.BuildServiceProvider();
         }
 
-        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
-        {
-            LogException(e.Exception);
-        }
+        #region Exception Handlers
 
-        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            LogException(e.Exception);
-        }
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) =>LogException(e.Exception);
 
-        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
-        {
-            LogException(e.ExceptionObject as Exception);
-        }
+        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e) => LogException(e.Exception);
+
+        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e) => LogException(e.ExceptionObject as Exception);
 
         private static void LogException(Exception? ex)
         {
@@ -120,5 +114,7 @@ namespace SecureFolderFS.WinUI
             ExceptionHelpers.LogExceptionToFile(ApplicationData.Current.LocalFolder.Path, formattedException);
 #endif
         }
+
+        #endregion
     }
 }

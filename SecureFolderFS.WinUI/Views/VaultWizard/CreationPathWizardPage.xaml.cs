@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -12,9 +12,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class CreationPathWizardPage : Page
     {
-        public VaultWizardCreationPathViewModel ViewModel
+        public NewLocationWizardViewModel ViewModel
         {
-            get => (VaultWizardCreationPathViewModel)DataContext;
+            get => (NewLocationWizardViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -25,7 +25,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardCreationPathViewModel viewModel)
+            if (e.Parameter is NewLocationWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

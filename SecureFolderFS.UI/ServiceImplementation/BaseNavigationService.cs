@@ -1,7 +1,8 @@
 ﻿using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Controls;
 
 namespace SecureFolderFS.UI.ServiceImplementation
@@ -14,6 +15,12 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// Gets or sets the control used for navigation.
         /// </summary>
         public TNavigation? NavigationControl { get; set; }
+
+        /// <inheritdoc/>
+        public event EventHandler<INavigationTarget?>? NavigationChanged;
+
+        /// <inheritdoc/>
+        public virtual bool IsInitialized => NavigationControl is not null;
 
         /// <inheritdoc/>
         public INavigationTarget? CurrentTarget { get; protected set; }
@@ -29,6 +36,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual async Task<bool> NavigateAsync(INavigationTarget target)
         {
+            if (!IsInitialized)
+                return false;
+
             // Notify the current target that it's being navigated from
             CurrentTarget?.OnNavigatingFrom();
 
@@ -45,27 +55,56 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             // Add new target
             if (!Targets.Contains(target))
+            {
                 Targets.Add(target);
+
+                // Initialize if the target supports IAsyncInitialize
+                if (target is IAsyncInitialize asyncInitialize)
+                    _ = asyncInitialize.InitAsync();
+            }
+
+            // Notify that navigation has occurred
+            NavigationChanged?.Invoke(this, target);
 
             return true;
         }
 
         /// <inheritdoc/>
-        public virtual Task<bool> GoBackAsync()
+        public virtual async Task<bool> GoBackAsync()
         {
+            if (!IsInitialized)
+                return false;
+
             // Notify the current target that it's being navigated from
             CurrentTarget?.OnNavigatingFrom();
 
-            return BeginNavigationAsync(null, NavigationType.Backward);
+            var navigationResult = await BeginNavigationAsync(null, NavigationType.Backward);
+            if (navigationResult)
+            {
+                // Notify that navigation has occurred
+                NavigationChanged?.Invoke(this, CurrentTarget);
+            }
+
+            return navigationResult;
         }
 
         /// <inheritdoc/>
-        public virtual Task<bool> GoForwardAsync()
+        public virtual async Task<bool> GoForwardAsync()
         {
+            if (!IsInitialized)
+                return false;
+
             // Notify the current target that it's being navigated from
             CurrentTarget?.OnNavigatingFrom();
 
-            return BeginNavigationAsync(null, NavigationType.Forward);
+            var navigationResult = await BeginNavigationAsync(null, NavigationType.Forward);
+            if (navigationResult)
+            {
+                // Notify that navigation has occurred
+                NavigationChanged?.Invoke(this, CurrentTarget);
+            }
+
+            return navigationResult;
         }
 
         /// <summary>

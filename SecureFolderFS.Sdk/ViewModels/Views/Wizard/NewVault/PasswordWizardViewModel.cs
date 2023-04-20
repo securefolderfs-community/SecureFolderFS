@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Messages.Navigation;
+﻿using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.Utils;
@@ -7,9 +6,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
+namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
-    public sealed class VaultWizardPasswordViewModel : BaseVaultWizardPageViewModel
+    public sealed class PasswordWizardViewModel : BaseWizardPageViewModel
     {
         private readonly IVaultCreationModel _vaultCreationModel;
 
@@ -22,8 +21,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
             set => DialogViewModel.PrimaryButtonEnabled = value;
         }
 
-        public VaultWizardPasswordViewModel(IVaultCreationModel vaultCreationModel, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
-            : base(messenger, dialogViewModel)
+        public PasswordWizardViewModel(IVaultCreationModel vaultCreationModel, VaultWizardDialogViewModel dialogViewModel)
+            : base(dialogViewModel)
         {
             _vaultCreationModel = vaultCreationModel;
 
@@ -32,14 +31,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
         }
 
         /// <inheritdoc/>
-        public override async Task PrimaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
+        public override async Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
-            flag?.NoForwarding();
+            eventDispatch?.NoForwarding();
 
             if (!await _vaultCreationModel.SetPasswordAsync(InitializeWithPassword!(), cancellationToken))
                 return; // TODO: Report issue
 
-            Messenger.Send(new NavigationMessage(new VaultWizardEncryptionViewModel(_vaultCreationModel, Messenger, DialogViewModel)));
+            await NavigationService.TryNavigateAsync(() => new EncryptionWizardViewModel(_vaultCreationModel, DialogViewModel));
         }
     }
 }

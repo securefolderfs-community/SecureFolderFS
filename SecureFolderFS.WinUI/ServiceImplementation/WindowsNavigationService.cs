@@ -1,25 +1,18 @@
-﻿using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
+﻿using System.Linq;
+using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.WinUI.UserControls.Navigation;
 using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
     internal sealed class WindowsNavigationService : BaseNavigationService<FrameNavigationControl>
     {
-        /// <inheritdoc/>
-        public override Task<bool> NavigateAsync(INavigationTarget target)
-        {
-            if (NavigationControl is null)
-                return Task.FromResult(false);
-
-            return base.NavigateAsync(target);
-        }
-
         /// <inheritdoc/>
         protected override async Task<bool> BeginNavigationAsync(INavigationTarget? target, NavigationType navigationType)
         {
@@ -33,7 +26,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                     if (NavigationControl.ContentFrame.CanGoBack)
                     {
                         NavigationControl.ContentFrame.GoBack();
-                        // TODO: Set current target
+
+                        var targetType = NavigationControl.TypeBinding.GetByKeyOrValue(NavigationControl.ContentFrame.Content.GetType());
+                        var backTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
+                        if (backTarget is not null)
+                            CurrentTarget = backTarget;
 
                         return true;
                     }
@@ -46,7 +43,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                     if (NavigationControl.ContentFrame.CanGoForward)
                     {
                         NavigationControl.ContentFrame.GoForward();
-                        // TODO: Set current target
+
+                        var targetType = NavigationControl.TypeBinding.GetByKeyOrValue(NavigationControl.ContentFrame.Content.GetType());
+                        var forwardTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
+                        if (forwardTarget is not null)
+                            CurrentTarget = forwardTarget;
 
                         return true;
                     }

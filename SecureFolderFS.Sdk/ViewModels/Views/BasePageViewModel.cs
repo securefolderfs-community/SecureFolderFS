@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Utils;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,12 +12,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views
     public abstract class BasePageViewModel : ObservableObject, INavigationTarget, IAsyncInitialize
     {
         /// <inheritdoc/>
-        public void OnNavigatingTo(NavigationType navigationType)
+        public virtual void OnNavigatingTo(NavigationType navigationType)
         {
         }
 
         /// <inheritdoc/>
-        public void OnNavigatingFrom()
+        public virtual void OnNavigatingFrom()
         {
         }
 

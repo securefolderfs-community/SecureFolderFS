@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.Utils;
@@ -8,17 +9,17 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
+namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
-    public sealed partial class VaultWizardEncryptionViewModel : BaseVaultWizardPageViewModel
+    public sealed partial class EncryptionWizardViewModel : BaseWizardPageViewModel
     {
         private readonly IVaultCreationModel _vaultCreationModel;
 
         [ObservableProperty] private CipherInfoViewModel? _ContentCipherItemViewModel;
         [ObservableProperty] private CipherInfoViewModel? _FileNameCipherItemViewModel;
 
-        public VaultWizardEncryptionViewModel(IVaultCreationModel vaultCreationModel, IMessenger messenger, VaultWizardDialogViewModel dialogViewModel)
-            : base(messenger, dialogViewModel)
+        public EncryptionWizardViewModel(IVaultCreationModel vaultCreationModel, VaultWizardDialogViewModel dialogViewModel)
+            : base(dialogViewModel)
         {
             _vaultCreationModel = vaultCreationModel;
 
@@ -27,9 +28,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
         }
 
         /// <inheritdoc/>
-        public override async Task PrimaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
+        public override async Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
-            flag?.NoForwarding();
+            eventDispatch?.NoForwarding();
 
             ArgumentNullException.ThrowIfNull(ContentCipherItemViewModel);
             ArgumentNullException.ThrowIfNull(FileNameCipherItemViewModel);
@@ -43,7 +44,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault
 
             // TODO: Handle adding vault to VaultCollectionModel here...
 
-            Messenger.Send(new NavigationMessage(new VaultWizardSummaryViewModel(deployResult.Value!, Messenger, DialogViewModel)));
+            WeakReferenceMessenger.Default.Send(new AddVaultMessage(deployResult.Value!));
+            await NavigationService.TryNavigateAsync(() => new SummaryWizardViewModel(deployResult.Value!.VaultName, DialogViewModel));
         }
     }
 }

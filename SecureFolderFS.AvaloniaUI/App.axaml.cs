@@ -21,9 +21,9 @@ namespace SecureFolderFS.AvaloniaUI
 {
     public sealed partial class App : Application
     {
-        public static string AppDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SecureFolderFS");
+        private IServiceProvider? _serviceProvider;
 
-        private IServiceProvider? ServiceProvider { get; set; }
+        public static string AppDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SecureFolderFS");
 
         public App()
         {
@@ -49,9 +49,10 @@ namespace SecureFolderFS.AvaloniaUI
                 var settingsFolder = new NativeFolder(settingsFolderPath);
 
                 // Configure IoC
-                ServiceProvider = ConfigureServices(settingsFolder);
-                Ioc.Default.ConfigureServices(ServiceProvider);
+                _serviceProvider = ConfigureServices(settingsFolder);
+                Ioc.Default.ConfigureServices(_serviceProvider);
 
+                // Activate MainWindow
                 desktop.MainWindow = new MainWindow();
             }
 
@@ -72,8 +73,6 @@ namespace SecureFolderFS.AvaloniaUI
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new VaultPersistenceService(settingsFolder))
-                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
-                .AddTransient<IVaultCreationService, VaultCreationService>()
                 .AddSingleton<IVaultService, VaultService>()
                 .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
@@ -82,20 +81,21 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
-                .AddSingleton<IUpdateService, UpdateService>();
+                .AddSingleton<IUpdateService, UpdateService>()
+
+                // Transient services
+                .AddTransient<INavigationService, AvaloniaNavigationService>()
+                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
+                .AddTransient<IVaultCreationService, VaultCreationService>();
 
             return serviceCollection.BuildServiceProvider();
         }
 
-        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
-        {
-            LogException(e.Exception);
-        }
+        #region Exception Handlers
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            LogException(e.ExceptionObject as Exception);
-        }
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) => LogException(e.Exception);
+        
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) => LogException(e.ExceptionObject as Exception);
 
         private static void LogException(Exception? ex)
         {
@@ -108,5 +108,7 @@ namespace SecureFolderFS.AvaloniaUI
             ExceptionHelpers.LogExceptionToFile(AppDirectory, formattedException);
 #endif
         }
+
+        #endregion
     }
 }

@@ -27,7 +27,7 @@
             <TextBlock
                 HorizontalAlignment="Center"
                 Opacity="0.8"
-                Text="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
+                Text="{x:Bind ViewModel.SelectedLocationText, Mode=OneWay}" />
 
             <Button
                 HorizontalAlignment="Center"

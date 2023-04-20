@@ -2,7 +2,7 @@
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.WinUI.Views.Vault;
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
@@ -10,19 +10,17 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
     internal sealed class VaultDashboardNavigationControl : FrameNavigationControl
     {
         /// <inheritdoc/>
-        public override Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
+        public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            var pageType = target switch
-            {
-                VaultOverviewPageViewModel => typeof(VaultOverviewPage),
-                VaultPropertiesPageViewModel => typeof(VaultPropertiesPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(target))
-            };
+            { typeof(VaultOverviewPageViewModel), typeof(VaultOverviewPage) },
+            { typeof(VaultPropertiesPageViewModel), typeof(VaultPropertiesPage) }
+        };
 
-            var transitionInfo = transition as NavigationTransitionInfo ?? new SlideNavigationTransitionInfo();
-            var result = ContentFrame.Navigate(pageType, target, transitionInfo);
-
-            return Task.FromResult(result);
+        /// <inheritdoc/>
+        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
+        {
+            transitionInfo ??= new SlideNavigationTransitionInfo();
+            return ContentFrame.Navigate(pageType, pageType, transitionInfo);
         }
     }
 }

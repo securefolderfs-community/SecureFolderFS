@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.VaultWizard"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels"
     Width="464"
     Loaded="EncryptionWizardPage_Loaded"
     mc:Ignorable="d">

@@ -3,22 +3,22 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Messages;
+using SecureFolderFS.AvaloniaUI.ServiceImplementation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
-using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.Sdk.ViewModels.Views;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
+using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
-    public partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationMessage>, IRecipient<BackNavigationMessage>, IStyleable
+    public partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IStyleable
     {
         private bool _hasNavigationAnimatedOnLoaded;
         private bool _isBackAnimationState;
@@ -40,48 +40,48 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             return (DialogResult)await base.ShowAsync();
         }
 
-        /// <inheritdoc/>
-        public async void Receive(NavigationMessage message)
+        private void SetupNavigation()
         {
-            await FinalizeNavigationAnimationAsync((message.ViewModel as BaseVaultWizardPageViewModel)!);
+            if (ViewModel.NavigationService.IsInitialized)
+                return;
+
+            if (ViewModel.NavigationService is AvaloniaNavigationService navigationServiceImpl)
+            {
+                navigationServiceImpl.NavigationControl = Navigation;
+                if (navigationServiceImpl.NavigationControl is not null)
+                    ViewModel.NavigationService.NavigationChanged += NavigationService_NavigationChanged;
+            }
         }
 
-        /// <inheritdoc/>
-        public async void Receive(BackNavigationMessage message)
-        {
-            if (ViewModel?.CurrentPageViewModel is not null)
-                await FinalizeNavigationAnimationAsync(ViewModel.CurrentPageViewModel);
-        }
-
-        private async Task FinalizeNavigationAnimationAsync(BaseVaultWizardPageViewModel viewModel)
+        private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)
         {
             var canGoBack = false;
 
             switch (viewModel)
             {
-                case MainVaultWizardPageViewModel:
+                case MainWizardPageViewModel:
                     TitleText.Text = "Add new vault";
                     break;
 
-                case VaultWizardSelectLocationViewModel:
+                case ExistingLocationWizardViewModel:
                     TitleText.Text = "Add existing vault";
                     canGoBack = true;
                     break;
 
-                case VaultWizardCreationPathViewModel:
+                case NewLocationWizardViewModel:
                     TitleText.Text = "Create new vault";
                     canGoBack = true;
                     break;
 
-                case VaultWizardPasswordViewModel:
+                case PasswordWizardViewModel:
                     TitleText.Text = "Set password";
                     break;
 
-                case VaultWizardEncryptionViewModel:
+                case EncryptionWizardViewModel:
                     TitleText.Text = "Choose encryption";
                     break;
 
-                case VaultWizardSummaryViewModel:
+                case SummaryWizardViewModel:
                     TitleText.Text = "Summary";
                     PrimaryButtonText = "Close";
                     SecondaryButtonText = string.Empty;
@@ -105,32 +105,39 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             }
         }
 
-        private void VaultWizardDialog_OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private async void NavigationService_NavigationChanged(object? sender, INavigationTarget? e)
+        {
+            await CompleteAnimationAsync(e as BaseWizardPageViewModel);
+        }
+
+        private void VaultWizardDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             if (!args.Cancel)
+            {
+                ViewModel.NavigationService.NavigationChanged -= NavigationService_NavigationChanged;
+                ViewModel.Dispose();
                 Navigation.Dispose();
-
-            WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
+                WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
+            }
         }
 
-        private async void VaultWizardDialog_OnLoaded(object? sender, RoutedEventArgs e)
+        private async void VaultWizardDialog_Loaded(object? sender, RoutedEventArgs e)
         {
-            var viewModel = new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel);
+            SetupNavigation();
 
-            await Navigation.NavigateAsync(viewModel, new SuppressNavigationTransition());
-            _ = FinalizeNavigationAnimationAsync(viewModel);
+            var viewModel = new MainWizardPageViewModel(ViewModel);
+            await ViewModel.NavigationService.NavigateAsync(viewModel);
+            _ = CompleteAnimationAsync(viewModel);
         }
 
-        private void VaultWizardDialog_OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void VaultWizardDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var eventDispatchFlag = new EventDispatchFlagHelper(() => args.Cancel = true);
-            ViewModel.PrimaryButtonClickCommand?.Execute(eventDispatchFlag);
+            ViewModel.PrimaryButtonClickCommand.Execute(new EventDispatchHelper(() => args.Cancel = true));
         }
 
-        private void VaultWizardDialog_OnSecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void VaultWizardDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var eventDispatchFlag = new EventDispatchFlagHelper(() => args.Cancel = true);
-            ViewModel.SecondaryButtonClickCommand?.Execute(eventDispatchFlag);
+            ViewModel.SecondaryButtonClickCommand.Execute(new EventDispatchHelper(() => args.Cancel = true));
         }
     }
 }

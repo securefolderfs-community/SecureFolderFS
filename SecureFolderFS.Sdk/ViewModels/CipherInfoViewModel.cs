@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard
+namespace SecureFolderFS.Sdk.ViewModels
 {
     /// <summary>
     /// Represents a cryptographic cipher descriptor.

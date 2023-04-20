@@ -23,12 +23,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             foreach (var item in LocalizationService.AppLanguages)
                 Languages.Add(new(item));
 
-            return Task.CompletedTask;
+            await BannerViewModel.InitAsync(cancellationToken);
         }
     }
 }

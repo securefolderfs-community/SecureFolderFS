@@ -3,15 +3,17 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Messages;
+using SecureFolderFS.AvaloniaUI.ServiceImplementation;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -34,24 +36,41 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         /// <inheritdoc/>
         public async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        private INotifyPropertyChanged GetViewModelForTag(int tag)
+        private INotifyPropertyChanged GetTargetForTag(int tag)
         {
             return tag switch
             {
-                0 => new GeneralSettingsViewModel(),
-                1 => new PreferencesSettingsViewModel(),
-                2 => new PrivacySettingsViewModel(),
-                3 => new AboutSettingsViewModel(),
+                0 => ViewModel.NavigationService.TryGetTarget<GeneralSettingsViewModel>() ?? new(),
+                1 => ViewModel.NavigationService.TryGetTarget<PreferencesSettingsViewModel>() ?? new(),
+                2 => ViewModel.NavigationService.TryGetTarget<PrivacySettingsViewModel>() ?? new(),
+                3 => ViewModel.NavigationService.TryGetTarget<AboutSettingsViewModel>() ?? new(),
                 _ => new GeneralSettingsViewModel()
             };
         }
 
+        private bool SetupNavigation()
+        {
+            if (ViewModel.NavigationService.IsInitialized)
+                return true;
+
+            if (ViewModel.NavigationService is AvaloniaNavigationService navigationServiceImpl)
+            {
+                navigationServiceImpl.NavigationControl = Navigation;
+                return navigationServiceImpl.NavigationControl is not null;
+            }
+
+            return false;
+        }
+
         private async void NavigationView_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
         {
-            var tag = Convert.ToInt32((e.SelectedItem as NavigationViewItem)?.Tag);
-            var viewModel = GetViewModelForTag(tag);
+            if (!SetupNavigation())
+                return;
 
-            await Navigation.NavigateAsync(viewModel, new EntranceNavigationTransition());
+            var tag = Convert.ToInt32((e.SelectedItem as NavigationViewItem)?.Tag);
+            var target = GetTargetForTag(tag);
+
+            await Navigation.NavigateAsync(target, new EntranceNavigationTransition());
         }
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)

@@ -1,12 +1,13 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.WinUI.ServiceImplementation;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -33,22 +34,33 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private INavigationTarget GetTargetForTag(int tag)
         {
-            _ = ViewModel.NavigationService ?? throw new InvalidOperationException("NavigationService shouldn't be null");
-
             return tag switch
             {
-                0 => ViewModel.NavigationService.Targets.FirstOrDefault(x => x is GeneralSettingsViewModel) ?? new GeneralSettingsViewModel(),
-                1 => ViewModel.NavigationService.Targets.FirstOrDefault(x => x is PreferencesSettingsViewModel) ?? new PreferencesSettingsViewModel(),
-                2 => ViewModel.NavigationService.Targets.FirstOrDefault(x => x is PrivacySettingsViewModel) ?? new PrivacySettingsViewModel(),
-                3 => ViewModel.NavigationService.Targets.FirstOrDefault(x => x is AboutSettingsViewModel) ?? new AboutSettingsViewModel(),
-                _ => new GeneralSettingsViewModel(),
-
+                0 => ViewModel.NavigationService.TryGetTarget<GeneralSettingsViewModel>() ?? new(),
+                1 => ViewModel.NavigationService.TryGetTarget<PreferencesSettingsViewModel>() ?? new(),
+                2 => ViewModel.NavigationService.TryGetTarget<PrivacySettingsViewModel>() ?? new(),
+                3 => ViewModel.NavigationService.TryGetTarget<AboutSettingsViewModel>() ?? new(),
+                _ => new GeneralSettingsViewModel()
             };
+        }
+
+        private bool SetupNavigation()
+        {
+            if (ViewModel.NavigationService.IsInitialized)
+                return true;
+
+            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
+            {
+                navigationServiceImpl.NavigationControl = Navigation;
+                return navigationServiceImpl.NavigationControl is not null;
+            }
+
+            return false;
         }
 
         private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (ViewModel.NavigationService is null)
+            if (!SetupNavigation())
                 return;
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
@@ -62,20 +74,11 @@ namespace SecureFolderFS.WinUI.Dialogs
             Hide();
         }
 
-        private void Navigation_Loaded(object sender, RoutedEventArgs e)
-        {
-            ViewModel.NavigationService ??= new WindowsNavigationService();
-            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
-                navigationServiceImpl.NavigationControl = Navigation;
-        }
-
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+            // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
             if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
-            {
-                // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
                 navigationServiceImpl.NavigationControl = null;
-            }
         }
     }
 }

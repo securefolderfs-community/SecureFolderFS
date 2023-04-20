@@ -7,6 +7,7 @@
     xmlns:local="using:SecureFolderFS.WinUI.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
+    Closing="SettingsDialog_Closing"
     RequestedTheme="{x:Bind h:WinUIThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
@@ -72,10 +73,7 @@
 
             <!--  Display frame  -->
             <ScrollViewer Width="644">
-                <uc:SettingsNavigationControl
-                    x:Name="Navigation"
-                    Margin="16,16,16,8"
-                    Loaded="Navigation_Loaded" />
+                <uc:SettingsNavigationControl x:Name="Navigation" Margin="16,16,16,8" />
             </ScrollViewer>
         </NavigationView>
 

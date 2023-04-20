@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 
-namespace SecureFolderFS.Sdk.Models
+namespace SecureFolderFS.Sdk.ViewModels.Views
 {
     /// <summary>
     /// Represents a target which can be navigated to.

@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.ViewModels.Views;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +10,16 @@ namespace SecureFolderFS.Sdk.Services
     /// </summary>
     public interface INavigationService : IDisposable
     {
+        /// <summary>
+        /// An event that is fired when navigation occurs.
+        /// </summary>
+        event EventHandler<INavigationTarget?>? NavigationChanged;
+
+        /// <summary>
+        /// Gets the value that determines whether this service is initialized and can handle navigation.
+        /// </summary>
+        bool IsInitialized { get; }
+
         /// <summary>
         /// Gets the currently navigated-to target.
         /// </summary>

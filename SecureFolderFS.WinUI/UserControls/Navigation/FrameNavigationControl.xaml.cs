@@ -1,6 +1,9 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Controls;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -13,13 +16,32 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
     /// </summary>
     public abstract partial class FrameNavigationControl : UserControl, INavigationControl
     {
+        public abstract Dictionary<Type, Type> TypeBinding { get; }
+
         protected FrameNavigationControl()
         {
             InitializeComponent();
         }
 
         /// <inheritdoc/>
-        public abstract Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class;
+        public virtual Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default)
+            where TTransition : class
+        {
+            if (target is null)
+            {
+                ContentFrame.Content = null;
+                return Task.FromResult(true);
+            }
+
+            var pageType = TypeBinding.GetByKeyOrValue(target.GetType());
+            if (pageType is null)
+                return Task.FromResult(false);
+
+            var result = NavigateFrame(pageType, target, transition as NavigationTransitionInfo);
+            return Task.FromResult(result);
+        }
+
+        protected abstract bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo);
 
         /// <inheritdoc/>
         public virtual void Dispose()

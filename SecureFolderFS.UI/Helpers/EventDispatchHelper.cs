@@ -1,13 +1,13 @@
 ﻿using SecureFolderFS.Shared.Utils;
 
-namespace SecureFolderFS.WinUI.Helpers
+namespace SecureFolderFS.UI.Helpers
 {
-    /// <inheritdoc cref="IEventDispatchFlag"/>
-    public sealed class EventDispatchFlagHelper : IEventDispatchFlag
+    /// <inheritdoc cref="IEventDispatch"/>
+    public sealed class EventDispatchHelper : IEventDispatch
     {
         private readonly Action _flagCallback;
 
-        public EventDispatchFlagHelper(Action flagCallback)
+        public EventDispatchHelper(Action flagCallback)
         {
             _flagCallback = flagCallback;
         }

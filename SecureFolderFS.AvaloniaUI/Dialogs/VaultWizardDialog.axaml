@@ -1,41 +1,43 @@
 <ui:ContentDialog
+    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.VaultWizardDialog"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
     xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
-    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
-    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
     HorizontalAlignment="Stretch"
     HorizontalContentAlignment="Stretch"
-    Closing="VaultWizardDialog_OnClosing"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Closing="VaultWizardDialog_Closing"
     DefaultButton="Primary"
-    PrimaryButtonText="Continue"
     IsPrimaryButtonEnabled="{Binding ViewModel.PrimaryButtonEnabled, RelativeSource={RelativeSource Self}}"
-    Loaded="VaultWizardDialog_OnLoaded"
-    PrimaryButtonClick="VaultWizardDialog_OnPrimaryButtonClick"
-    SecondaryButtonClick="VaultWizardDialog_OnSecondaryButtonClick"
+    Loaded="VaultWizardDialog_Loaded"
+    PrimaryButtonClick="VaultWizardDialog_PrimaryButtonClick"
+    PrimaryButtonText="Continue"
+    SecondaryButtonClick="VaultWizardDialog_SecondaryButtonClick"
     SecondaryButtonText="Cancel"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.VaultWizardDialog">
+    mc:Ignorable="d">
 
     <ui:ContentDialog.Title>
         <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
             <anim:Storyboard.Storyboards>
                 <anim:Storyboard x:Name="HideBackButtonStoryboard">
                     <trans:FadeTransition
-                        Target="GoBack"
-                        Duration="0:0:0.2"
                         Mode="Out"
-                        UpdateVisibility="True" />
+                        Target="GoBack"
+                        UpdateVisibility="True"
+                        Duration="0:0:0.2" />
                     <trans:TranslateTransition
+                        FillMode="None"
                         Target="TitleText"
                         From="0,0"
                         To="-48,0"
-                        Duration="0:0:0.2"
-                        FillMode="None">
+                        Duration="0:0:0.2">
                         <trans:TranslateTransition.Easing>
                             <CircularEaseInOut />
                         </trans:TranslateTransition.Easing>
@@ -43,16 +45,16 @@
                 </anim:Storyboard>
                 <anim:Storyboard x:Name="ShowBackButtonStoryboard">
                     <trans:FadeTransition
-                        Target="GoBack"
-                        Duration="0:0:0.2"
                         Mode="In"
-                        UpdateVisibility="True" />
+                        Target="GoBack"
+                        UpdateVisibility="True"
+                        Duration="0:0:0.2" />
                     <trans:TranslateTransition
+                        FillMode="None"
                         Target="TitleText"
                         From="-48,0"
                         To="0,0"
-                        Duration="0:0:0.2"
-                        FillMode="None">
+                        Duration="0:0:0.2">
                         <trans:TranslateTransition.Easing>
                             <CircularEaseInOut />
                         </trans:TranslateTransition.Easing>
@@ -70,7 +72,7 @@
                 BorderThickness="0"
                 Command="{Binding ViewModel.GoBackCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}">
 
-                <!-- TODO animated icon -->
+                <!--  TODO animated icon  -->
                 <ic:FluentIcon Icon="ArrowLeft48Regular" />
             </Button>
 

@@ -17,6 +17,7 @@ namespace SecureFolderFS.Sdk.AppModels
     public sealed class VaultCreationModel : IVaultCreationModel
     {
         private IFolder? _vaultFolder;
+        private IKeystoreModel? _keystoreModel;
 
         private IVaultCreationService VaultCreationService { get; } = Ioc.Default.GetRequiredService<IVaultCreationService>();
 
@@ -41,11 +42,13 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task<IResult> SetKeystoreAsync(IKeystoreModel keystoreModel, CancellationToken cancellationToken = default)
         {
-            var keystoreStreamResult = await keystoreModel.GetKeystoreStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            _keystoreModel = keystoreModel;
+
+            var keystoreStreamResult = await _keystoreModel.GetKeystoreStreamAsync(FileAccess.ReadWrite, cancellationToken);
             if (keystoreStreamResult.Value is null || !keystoreStreamResult.Successful)
                 return keystoreStreamResult;
 
-            return await VaultCreationService.PrepareKeystoreAsync(keystoreStreamResult.Value, keystoreModel.KeystoreSerializer, cancellationToken);
+            return await VaultCreationService.PrepareKeystoreAsync(keystoreStreamResult.Value, _keystoreModel.KeystoreSerializer, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -80,6 +83,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public void Dispose()
         {
+            _keystoreModel?.Dispose();
             VaultCreationService.Dispose();
         }
     }

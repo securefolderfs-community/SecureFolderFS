@@ -6,8 +6,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using System.Collections.ObjectModel;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
@@ -16,8 +16,8 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
     {
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        public static readonly StyledProperty<VaultWizardEncryptionViewModel> ViewModelProperty
-            = AvaloniaProperty.Register<EncryptionWizardPage, VaultWizardEncryptionViewModel>(nameof(ViewModel));
+        public static readonly StyledProperty<EncryptionWizardViewModel> ViewModelProperty
+            = AvaloniaProperty.Register<EncryptionWizardPage, EncryptionWizardViewModel>(nameof(ViewModel));
 
         public static readonly StyledProperty<ObservableCollection<CipherInfoViewModel>> ContentCiphersProperty
             = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherInfoViewModel>>(nameof(ContentCiphers));
@@ -37,7 +37,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
             set => SetValue(FileNameCiphersProperty, value);
         }
 
-        public VaultWizardEncryptionViewModel ViewModel
+        public EncryptionWizardViewModel ViewModel
         {
             get => GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
@@ -52,7 +52,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardEncryptionViewModel viewModel)
+            if (e.Parameter is EncryptionWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

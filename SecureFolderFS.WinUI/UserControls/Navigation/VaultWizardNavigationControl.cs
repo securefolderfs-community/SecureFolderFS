@@ -1,10 +1,10 @@
 ﻿using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.WinUI.Views.VaultWizard;
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
@@ -12,23 +12,21 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
     internal sealed class VaultWizardNavigationControl : FrameNavigationControl
     {
         /// <inheritdoc/>
-        public override Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
+        public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            var pageType = target switch
-            {
-                MainVaultWizardPageViewModel => typeof(MainWizardPage),
-                VaultWizardSelectLocationViewModel => typeof(AddExistingWizardPage),
-                VaultWizardCreationPathViewModel => typeof(CreationPathWizardPage),
-                VaultWizardPasswordViewModel => typeof(PasswordWizardPage),
-                VaultWizardEncryptionViewModel => typeof(EncryptionWizardPage),
-                VaultWizardSummaryViewModel => typeof(SummaryWizardPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(target))
-            };
+            { typeof(MainWizardPageViewModel), typeof(MainWizardPage) },
+            { typeof(ExistingLocationWizardViewModel), typeof(AddExistingWizardPage) },
+            { typeof(NewLocationWizardViewModel), typeof(CreationPathWizardPage) },
+            { typeof(PasswordWizardViewModel), typeof(PasswordWizardPage) },
+            { typeof(EncryptionWizardViewModel), typeof(EncryptionWizardPage) },
+            { typeof(SummaryWizardViewModel), typeof(SummaryWizardPage) },
+        };
 
-            var transitionInfo = transition as NavigationTransitionInfo ?? new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
-            var result = ContentFrame.Navigate(pageType, target, transitionInfo);
-
-            return Task.FromResult(result);
+        /// <inheritdoc/>
+        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
+        {
+            transitionInfo ??= new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
+            return ContentFrame.Navigate(pageType, parameter, transitionInfo);
         }
     }
 }

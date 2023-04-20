@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -12,9 +12,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class MainWizardPage : Page
     {
-        public MainVaultWizardPageViewModel ViewModel
+        public MainWizardPageViewModel ViewModel
         {
-            get => (MainVaultWizardPageViewModel)DataContext;
+            get => (MainWizardPageViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -25,7 +25,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is MainVaultWizardPageViewModel viewModel)
+            if (e.Parameter is MainWizardPageViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

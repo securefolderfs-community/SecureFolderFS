@@ -1,25 +1,16 @@
-﻿using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
+﻿using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.UI.ServiceImplementation;
 using System.Threading.Tasks;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
     internal sealed class AvaloniaNavigationService : BaseNavigationService<ContentNavigationControl>
     {
-        /// <inheritdoc/>
-        public override Task<bool> NavigateAsync(INavigationTarget target)
-        {
-            if (NavigationControl is null)
-                return Task.FromResult(false);
-
-            return base.NavigateAsync(target);
-        }
-
         /// <inheritdoc/>
         protected override async Task<bool> BeginNavigationAsync(INavigationTarget? target, NavigationType navigationType)
         {
