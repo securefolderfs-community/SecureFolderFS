@@ -4,8 +4,8 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,60 +15,80 @@ namespace SecureFolderFS.Sdk.AppModels
     public sealed class WidgetsCollectionModel : IWidgetsCollectionModel
     {
         private readonly IFolder _vaultFolder;
+        private readonly List<IWidgetModel> _widgets;
 
         private IVaultWidgets VaultWidgets { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultWidgets;
 
         public WidgetsCollectionModel(IFolder vaultFolder)
         {
             _vaultFolder = vaultFolder;
+            _widgets = new();
         }
 
         /// <inheritdoc/>
-        public async Task<bool> AddWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
+        public bool AddWidget(string widgetId)
         {
             var widgets = VaultWidgets.GetForVault(_vaultFolder.Id) ?? new List<WidgetDataModel>();
+            var widgetData = new WidgetDataModel(widgetId);
 
-            widgets.Add(new(widgetId));
+            // Add the widget to widget list
+            widgets.Add(widgetData);
+
+            // Update widgets
             VaultWidgets.SetForVault(_vaultFolder.Id, widgets);
 
-            return await VaultWidgets.SaveAsync(cancellationToken);
+            // Add to cache
+            _widgets.Add(new WidgetModel(widgetId, VaultWidgets, widgetData));
+
+            return true;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> RemoveWidgetAsync(string widgetId, CancellationToken cancellationToken = default)
+        public bool RemoveWidget(string widgetId)
         {
             var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
+            
+            var itemToRemove = widgets?.FirstOrDefault(x => x.WidgetId == widgetId);
+            if (itemToRemove is null)
+                return false;
 
-            if (widgets is null)
-                return true;
+            // Remove from cache
+            var widgetToRemove = _widgets.FirstOrDefault(x => x.WidgetId == widgetId);
+            if (widgetToRemove is not null)
+                _widgets.Remove(widgetToRemove);
 
-            if (!widgets.TryFirstOrDefault(x => x.WidgetId == widgetId, out var itemToRemove))
-                return true;
-
-            widgets.Remove(itemToRemove);
+            // Remove persisted
+            widgets!.Remove(itemToRemove);
             VaultWidgets.SetForVault(_vaultFolder.Id, widgets);
 
-            return await VaultWidgets.SaveAsync(cancellationToken);
+            return true;
         }
 
         /// <inheritdoc/>
         public IEnumerable<IWidgetModel> GetWidgets()
         {
-            var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
-
-            if (widgets is null)
-                yield break;
-
-            foreach (var item in widgets)
-            {
-                yield return new WidgetModel(item.WidgetId, VaultWidgets, item);
-            }
+            return _widgets;
         }
 
         /// <inheritdoc/>
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public Task<bool> LoadAsync(CancellationToken cancellationToken = default)
         {
-            await VaultWidgets.LoadAsync(cancellationToken);
+            // VaultWidgets already loaded by VaultCollectionModel // TODO: Load here as well because we shouldn't rely on the implementation
+
+            var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
+            if (widgets is null)
+                return Task.FromResult(true);
+
+            foreach (var item in widgets)
+                _widgets.Add(new WidgetModel(item.WidgetId, VaultWidgets, item));
+
+            return Task.FromResult(true);
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> SaveAsync(CancellationToken cancellationToken = default)
+        {
+            return VaultWidgets.SaveAsync(cancellationToken);
         }
     }
 }

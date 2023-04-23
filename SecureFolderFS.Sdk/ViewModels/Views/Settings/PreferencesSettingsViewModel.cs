@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 
@@ -31,6 +33,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         public PreferencesSettingsViewModel()
         {
             BannerViewModel = new();
+        }
+
+        /// <inheritdoc/>
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            await BannerViewModel.InitAsync(cancellationToken);
         }
     }
 }

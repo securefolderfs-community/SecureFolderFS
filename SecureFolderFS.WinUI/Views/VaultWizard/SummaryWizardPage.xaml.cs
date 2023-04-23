@@ -28,7 +28,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         public SummaryWizardPage()
         {
             InitializeComponent();
-            WinUIThemeHelper.Instance.PropertyChanged += ThemeHelper_PropertyChanged;
+            WindowsThemeHelper.Instance.PropertyChanged += ThemeHelper_PropertyChanged;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -62,7 +62,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         /// <inheritdoc/>
         public void Dispose()
         {
-            WinUIThemeHelper.Instance.PropertyChanged -= ThemeHelper_PropertyChanged;
+            WindowsThemeHelper.Instance.PropertyChanged -= ThemeHelper_PropertyChanged;
         }
     }
 }

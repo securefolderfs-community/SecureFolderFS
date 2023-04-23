@@ -79,11 +79,5 @@ namespace SecureFolderFS.WinUI.Views.Vault
         {
             _vaultPasswordBox = sender as PasswordBox;
         }
-
-        private void InvalidPasswordTip_Loaded(object sender, RoutedEventArgs e)
-        {
-            var tip = sender as TeachingTip;
-            tip!.IsOpen = true;
-        }
     }
 }

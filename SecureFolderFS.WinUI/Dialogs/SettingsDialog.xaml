@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
     Closing="SettingsDialog_Closing"
-    RequestedTheme="{x:Bind h:WinUIThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
+    RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 

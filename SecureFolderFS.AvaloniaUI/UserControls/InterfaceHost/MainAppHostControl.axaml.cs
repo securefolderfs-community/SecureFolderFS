@@ -21,7 +21,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
     {
         public MainAppHostControl()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
 
             SettingsButton.AddHandler(PointerPressedEvent, SettingsButton_OnPointerPressed, handledEventsToo: true);
             SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_OnPointerReleased, handledEventsToo: true);

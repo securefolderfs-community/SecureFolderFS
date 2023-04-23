@@ -39,16 +39,6 @@
                         KeyUp="VaultPasswordBox_KeyUp"
                         Loaded="VaultPasswordBox_Loaded"
                         PlaceholderText="Password" />
-                    <TeachingTip
-                        x:Name="InvalidPasswordTip"
-                        Title="Error"
-                        Loaded="InvalidPasswordTip_Loaded"
-                        Subtitle="Password is invalid"
-                        Target="{Binding ElementName=VaultPasswordBox}">
-                        <TeachingTip.IconSource>
-                            <FontIconSource Glyph="&#xe711;" />
-                        </TeachingTip.IconSource>
-                    </TeachingTip>
                 </StackPanel>
 
                 <!--  Login  -->
@@ -80,7 +70,7 @@
     </Page.Resources>
 
     <ScrollViewer>
-        <Grid Padding="32" HorizontalAlignment="Center">
+        <Grid Padding="32" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <!--  Main Input  -->
                 <RowDefinition />
@@ -136,8 +126,9 @@
             <InfoBar
                 Title="Invalid password"
                 Grid.Row="1"
+                MaxWidth="480"
                 IsClosable="False"
-                IsOpen="False"
+                IsOpen="True"
                 Severity="Error" />
         </Grid>
     </ScrollViewer>

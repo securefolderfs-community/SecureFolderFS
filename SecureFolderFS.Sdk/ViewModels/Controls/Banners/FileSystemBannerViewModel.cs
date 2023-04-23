@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.ObjectModel;
@@ -28,12 +29,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             FileSystemAdapters = new();
         }
 
-        public Task InitAsync(CancellationToken cancellationToken = default)
+        /// <inheritdoc/>
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             foreach (var item in VaultService.GetFileSystems())
-                FileSystemAdapters.Add(new(item));
-
-            return Task.CompletedTask;
+            {
+                var fileSystemResult = await item.GetStatusAsync(cancellationToken);
+                if (fileSystemResult is FileSystemResult { CanSupport: true }
+                    || (fileSystemResult.Successful && fileSystemResult is not FileSystemResult))
+                    FileSystemAdapters.Add(new(item));
+            }
         }
     }
 

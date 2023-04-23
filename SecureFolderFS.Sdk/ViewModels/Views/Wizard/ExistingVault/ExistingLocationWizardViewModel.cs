@@ -36,6 +36,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
                 return;
 
             var vaultModel = new VaultModel(_vaultFolder);
+            DialogViewModel.VaultCollectionModel.AddVault(vaultModel);
+            await DialogViewModel.VaultCollectionModel.SaveAsync(cancellationToken);
 
             WeakReferenceMessenger.Default.Send(new AddVaultMessage(vaultModel));
             await NavigationService.TryNavigateAsync(() => new SummaryWizardViewModel(vaultModel.VaultName, DialogViewModel));

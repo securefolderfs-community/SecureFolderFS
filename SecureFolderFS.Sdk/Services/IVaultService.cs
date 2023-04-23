@@ -2,7 +2,6 @@
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -38,7 +37,7 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <remarks>
         /// Returned file systems that are available, may not be supported on this device. 
-        /// Use <see cref="IFileSystemInfoModel.IsSupportedAsync(CancellationToken)"/> to check if a given file system is supported.
+        /// Use <see cref="IFileSystemInfoModel.GetStatusAsync"/> to check if a given file system is supported.
         /// </remarks>
         /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of available file systems.</returns>
         IEnumerable<IFileSystemInfoModel> GetFileSystems();

@@ -36,7 +36,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
             //if (!Navigation.NavigationCache.TryGetValue(vaultViewModel, out var destination))
             //{
                 var destination = new VaultLoginPageViewModel(vaultViewModel, null); // TODO(r)
-            //    _ = destination.InitAsync();
+            _ = destination.InitAsync();
             //}  // TODO(n)
 
             // Navigate

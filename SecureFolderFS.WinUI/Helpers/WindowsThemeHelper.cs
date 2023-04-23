@@ -11,7 +11,7 @@ using Windows.UI.ViewManagement;
 namespace SecureFolderFS.WinUI.Helpers
 {
     /// <inheritdoc cref="IThemeHelper"/>
-    internal sealed class WinUIThemeHelper : ThemeHelper<WinUIThemeHelper>, IThemeHelper<WinUIThemeHelper>
+    internal sealed class WindowsThemeHelper : ThemeHelper<WindowsThemeHelper>, IThemeHelper<WindowsThemeHelper>
     {
         private AppWindow? _appWindow;
         private FrameworkElement? _rootContent;
@@ -19,7 +19,7 @@ namespace SecureFolderFS.WinUI.Helpers
         private readonly DispatcherQueue _dispatcherQueue;
 
         /// <inheritdoc/>
-        public static WinUIThemeHelper Instance { get; } = new();
+        public static WindowsThemeHelper Instance { get; } = new();
 
         /// <summary>
         /// Gets the current theme represented by <see cref="ElementTheme"/>.
@@ -37,7 +37,7 @@ namespace SecureFolderFS.WinUI.Helpers
             }
         }
 
-        private WinUIThemeHelper()
+        private WindowsThemeHelper()
         {
             _uiSettings = new();
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();

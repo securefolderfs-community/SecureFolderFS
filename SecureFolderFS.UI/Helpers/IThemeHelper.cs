@@ -5,7 +5,7 @@ using System.ComponentModel;
 namespace SecureFolderFS.UI.Helpers
 {
     /// <summary>
-    /// Represents a helper interface used 
+    /// Represents a helper interface used for manipulating application themes.
     /// </summary>
     public interface IThemeHelper : IAsyncInitialize, INotifyPropertyChanged
     {

@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.UI.AppModels
@@ -17,7 +17,7 @@ namespace SecureFolderFS.UI.AppModels
         public string Id { get; } = Core.Constants.FileSystemId.DOKAN_ID;
 
         /// <inheritdoc/>
-        public Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
+        public Task<IResult> GetStatusAsync(CancellationToken cancellationToken = default)
         {
             var result = VaultHelpers.DetermineAvailability(FileSystemAdapterType.DokanAdapter);
             if (result != FileSystemAvailabilityType.Available)
@@ -32,10 +32,10 @@ namespace SecureFolderFS.UI.AppModels
                     _ => "SecureFolderFS cannot work with installed Dokany version. Please install requested version of Dokany."
                 };
 
-                return Task.FromResult<IResult>(new CommonResult(new NotSupportedException(message)));
+                return Task.FromResult<IResult>(new FileSystemResult(OperatingSystem.IsWindows(), new NotSupportedException(message)));
             }
 
-            return Task.FromResult<IResult>(CommonResult.Success);
+            return Task.FromResult<IResult>(new FileSystemResult(OperatingSystem.IsWindows(), true));
         }
     }
 }

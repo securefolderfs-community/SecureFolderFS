@@ -69,7 +69,7 @@
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
                     Title="View vault"
-                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.ShowInFileExplorerCommand}"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand}"
                     Description="Show this vault in File Explorer"
                     IsClickable="True">
                     <ucab:ActionBlockControl.Icon>

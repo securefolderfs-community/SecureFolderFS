@@ -24,7 +24,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
             set => DataContext = value;
         }
 
-        public int SelectedThemeIndex => (int)WinUIThemeHelper.Instance.CurrentTheme;
+        public int SelectedThemeIndex => (int)WindowsThemeHelper.Instance.CurrentTheme;
 
         public GeneralSettingsPage()
         {
@@ -57,7 +57,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private async void AppThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await WinUIThemeHelper.Instance.SetThemeAsync((ThemeType)AppThemeComboBox.SelectedIndex);
+            await WindowsThemeHelper.Instance.SetThemeAsync((ThemeType)AppThemeComboBox.SelectedIndex);
         }
 
         private void RootGrid_Loaded(object sender, RoutedEventArgs e)

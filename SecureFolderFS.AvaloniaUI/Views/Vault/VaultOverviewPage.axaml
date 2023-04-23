@@ -1,16 +1,18 @@
 <uc:Page
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultOverviewPage"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
-    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
-    xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:ucw="using:SecureFolderFS.AvaloniaUI.UserControls.Widgets"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultOverviewPage">
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
     <uc:Page.Resources>
         <!--  Vault Health  -->
@@ -25,12 +27,12 @@
         <!--  Resource Graphs  -->
         <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
             <ucw:GraphsWidget
+                ReadGraphData="{Binding ReadGraphViewModel.Data}"
                 ReadGraphIsExtended="{Binding ReadGraphViewModel.IsExtended, Mode=TwoWay}"
                 ReadGraphSubheader="{Binding ReadGraphViewModel.GraphSubheader}"
-                ReadGraphData="{Binding ReadGraphViewModel.Data}"
+                WriteGraphData="{Binding WriteGraphViewModel.Data}"
                 WriteGraphIsExtended="{Binding WriteGraphViewModel.IsExtended, Mode=TwoWay}"
-                WriteGraphSubheader="{Binding WriteGraphViewModel.GraphSubheader}"
-                WriteGraphData="{Binding WriteGraphViewModel.Data}"/>
+                WriteGraphSubheader="{Binding WriteGraphViewModel.GraphSubheader}" />
         </DataTemplate>
     </uc:Page.Resources>
 
@@ -54,30 +56,30 @@
             <StackPanel Spacing="4">
                 <!--  Open in File Explorer  -->
                 <ui:SettingsExpander
-                    Header="View vault"
-                    Command="{Binding ViewModel.VaultControlsViewModel.ShowInFileExplorerCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    ActionIconSource="{ic:FluentIconSource Open48Regular}"
+                    Command="{Binding ViewModel.VaultControlsViewModel.RevealFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Description="Show this vault in File Explorer"
-                    IsClickEnabled="True"
+                    Header="View vault"
                     IconSource="{ic:FluentIconSource FolderOpen24Regular}"
-                    ActionIconSource="{ic:FluentIconSource Open48Regular}" />
+                    IsClickEnabled="True" />
 
                 <!--  Vault properties  -->
                 <ui:SettingsExpander
-                    Header="Vault properties"
+                    ActionIconSource="{ic:FluentIconSource ChevronRight48Regular}"
                     Command="{Binding ViewModel.VaultControlsViewModel.OpenPropertiesCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Description="View information about this vault"
-                    IsClickEnabled="True"
+                    Header="Vault properties"
                     IconSource="{ic:FluentIconSource Info28Regular}"
-                    ActionIconSource="{ic:FluentIconSource ChevronRight48Regular}" />
+                    IsClickEnabled="True" />
 
                 <!--  Lock vault  -->
                 <ui:SettingsExpander
-                    Header="Lock vault"
+                    ActionIconSource="{ic:FluentIconSource Power28Regular}"
                     Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Description="Securely lock this vault and close the dashboard"
-                    IsClickEnabled="True"
+                    Header="Lock vault"
                     IconSource="{ic:FluentIconSource LockClosed32Regular}"
-                    ActionIconSource="{ic:FluentIconSource Power28Regular}"/>
+                    IsClickEnabled="True" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

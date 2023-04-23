@@ -25,10 +25,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         }
 
         /// <inheritdoc/>
-        public async void Receive(AddVaultMessage message)
+        public void Receive(AddVaultMessage message)
         {
-            await _vaultCollectionModel.AddVaultAsync(message.VaultModel);
-
             WeakReferenceMessenger.Default.Send(new RootNavigationMessage(new MainHostViewModel(null, _vaultCollectionModel))); // TODO(r)
             WeakReferenceMessenger.Default.Unregister<AddVaultMessage>(this);
         }
@@ -36,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         [RelayCommand]
         private async Task AddNewVaultAsync()
         {
-            await DialogService.ShowDialogAsync(new VaultWizardDialogViewModel());
+            await DialogService.ShowDialogAsync(new VaultWizardDialogViewModel(_vaultCollectionModel));
         }
 
         [RelayCommand]

@@ -15,8 +15,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
     {
         private readonly IVaultCreationModel _vaultCreationModel;
 
-        [ObservableProperty] private CipherInfoViewModel? _ContentCipherItemViewModel;
-        [ObservableProperty] private CipherInfoViewModel? _FileNameCipherItemViewModel;
+        [ObservableProperty] private CipherInfoViewModel? _ContentCipherViewModel;
+        [ObservableProperty] private CipherInfoViewModel? _FileNameCipherViewModel;
 
         public EncryptionWizardViewModel(IVaultCreationModel vaultCreationModel, VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
@@ -32,19 +32,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         {
             eventDispatch?.NoForwarding();
 
-            ArgumentNullException.ThrowIfNull(ContentCipherItemViewModel);
-            ArgumentNullException.ThrowIfNull(FileNameCipherItemViewModel);
+            ArgumentNullException.ThrowIfNull(ContentCipherViewModel);
+            ArgumentNullException.ThrowIfNull(FileNameCipherViewModel);
 
-            if (!await _vaultCreationModel.SetCipherSchemeAsync(ContentCipherItemViewModel.Id, FileNameCipherItemViewModel.Id, cancellationToken))
+            if (!await _vaultCreationModel.SetCipherSchemeAsync(ContentCipherViewModel.Id, FileNameCipherViewModel.Id, cancellationToken))
                 return; // TODO: Report issue
 
             var deployResult = await _vaultCreationModel.DeployAsync(cancellationToken);
             if (!deployResult.Successful)
                 return; // TODO: Report issue
 
-            // TODO: Handle adding vault to VaultCollectionModel here...
-
+            // Add vault
+            DialogViewModel.VaultCollectionModel.AddVault(deployResult.Value!);
+            await DialogViewModel.VaultCollectionModel.SaveAsync(cancellationToken);
             WeakReferenceMessenger.Default.Send(new AddVaultMessage(deployResult.Value!));
+
+            // Navigate
             await NavigationService.TryNavigateAsync(() => new SummaryWizardViewModel(deployResult.Value!.VaultName, DialogViewModel));
         }
     }

@@ -12,6 +12,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -31,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private async Task ShowInFileExplorerAsync(CancellationToken cancellationToken)
+        private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
             if (_unlockedVaultViewModel.UnlockedVaultModel.RootFolder is not ILocatableFolder rootFolder)
                 return;
@@ -54,10 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private async Task OpenPropertiesAsync()
         {
-            var target = _dashboardNavigationService.Targets.FirstOrDefault(x => x is VaultPropertiesPageViewModel)
-                         ?? new VaultPropertiesPageViewModel(_unlockedVaultViewModel, _dashboardNavigationService);
-
-            await _navigationService.NavigateAsync(target);
+            await _dashboardNavigationService.TryNavigateAsync(() => new VaultPropertiesPageViewModel(_unlockedVaultViewModel, _dashboardNavigationService));
         }
     }
 }

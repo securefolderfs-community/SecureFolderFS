@@ -20,10 +20,10 @@ namespace SecureFolderFS.Sdk.Models
         string Id { get; }
 
         /// <summary>
-        /// Determines whether this file system is supported by the device.
+        /// Determines whether this file system is available on the device.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that determines whether the file system is supported.</returns>
-        Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that represents the status of the file system provider.</returns>
+        Task<IResult> GetStatusAsync(CancellationToken cancellationToken = default);
     }
 }

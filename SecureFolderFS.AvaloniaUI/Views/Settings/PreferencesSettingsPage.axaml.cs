@@ -82,7 +82,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 return;
 
             var newFileSystemInfoBar = FileSystemInfoBar;
-            var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
+            var fileSystemAdapterResult = await fileSystemAdapter.GetStatusAsync(cancellationToken);
 
             if (!fileSystemAdapterResult.Successful)
             {
@@ -133,7 +133,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         {
             foreach (var item in ViewModel.BannerViewModel.FileSystemAdapters)
             {
-                var isSupportedResult = await item.FileSystemInfoModel.IsSupportedAsync(cancellationToken);
+                var isSupportedResult = await item.FileSystemInfoModel.GetStatusAsync(cancellationToken);
                 if (isSupportedResult.Successful)
                     return item;
             }

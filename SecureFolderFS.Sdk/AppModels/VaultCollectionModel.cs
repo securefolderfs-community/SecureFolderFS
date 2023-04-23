@@ -5,11 +5,8 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Shared.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +15,7 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <inheritdoc cref="IVaultCollectionModel"/>
     public sealed class VaultCollectionModel : IVaultCollectionModel
     {
-        private List<IVaultModel>? _vaults;
+        private readonly List<IVaultModel> _vaults;
 
         private IVaultWidgets VaultWidgets { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultWidgets;
 
@@ -26,61 +23,65 @@ namespace SecureFolderFS.Sdk.AppModels
 
         private IStorageService StorageService { get; } = Ioc.Default.GetRequiredService<IStorageService>();
 
-        /// <inheritdoc/>
-        public bool IsEmpty => VaultConfigurations.SavedVaults.IsEmpty();
-
-        /// <inheritdoc/>
-        public async Task<bool> AddVaultAsync(IVaultModel vaultModel, CancellationToken cancellationToken = default)
+        public VaultCollectionModel()
         {
-            _vaults?.Add(vaultModel);
+            _vaults = new();
+        }
 
+        /// <inheritdoc/>
+        public bool AddVault(IVaultModel vaultModel)
+        {
+            // Add to cache
+            _vaults.Add(vaultModel);
+
+            // Update saved vaults
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
             VaultConfigurations.SavedVaults.Add(new(vaultModel.Folder.Id, vaultModel.VaultName, vaultModel.LastAccessDate));
+
+            // Update widgets
             VaultWidgets.SetForVault(vaultModel.Folder.Id, new List<WidgetDataModel>()
             {
                 new(Constants.Widgets.HEALTH_WIDGET_ID),
                 new(Constants.Widgets.GRAPHS_WIDGET_ID)
             });
 
-            var results = await Task.WhenAll(VaultWidgets.SaveAsync(cancellationToken), VaultConfigurations.SaveAsync(cancellationToken));
-            return results[0] && results[1];
+            return true;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> RemoveVaultAsync(IVaultModel vaultModel, CancellationToken cancellationToken = default)
+        public bool RemoveVault(IVaultModel vaultModel)
         {
-            if (VaultConfigurations.SavedVaults is null)
-                return false;
-
-            if (vaultModel.Folder is not ILocatableFolder vaultFolder)
-                return false;
-
-            var itemToRemove = VaultConfigurations.SavedVaults.FirstOrDefault(x => vaultFolder.Id == x.Id);
+            var itemToRemove = VaultConfigurations.SavedVaults?.FirstOrDefault(x => vaultModel.Folder.Id == x.Id);
             if (itemToRemove is null)
                 return false;
 
-            _vaults?.Remove(vaultModel);
-            VaultConfigurations.SavedVaults.Remove(itemToRemove);
+            // Remove from cache
+            _vaults.Remove(vaultModel);
 
-            return await VaultConfigurations.SaveAsync(cancellationToken);
+            // Remove persisted
+            VaultConfigurations.SavedVaults!.Remove(itemToRemove);
+            VaultWidgets.SetForVault(vaultModel.Folder.Id, null);
+
+            return true;
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IVaultModel> GetVaultsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public IEnumerable<IVaultModel> GetVaults()
         {
-            if (IsEmpty || VaultConfigurations.SavedVaults is null)
-                yield break;
+            return _vaults;
+        }
 
-            if (_vaults is not null && !_vaults.IsEmpty())
-            {
-                foreach (var item in _vaults)
-                    yield return item;
-            }
+        /// <inheritdoc/>
+        public async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
+        {
+            var result = true;
+            result &= await VaultConfigurations.LoadAsync(cancellationToken);
+            result &= await VaultWidgets.LoadAsync(cancellationToken);
 
-            _vaults ??= new();
+            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
             foreach (var item in VaultConfigurations.SavedVaults)
             {
-                if (string.IsNullOrEmpty(item.Id))
+                if (item.Id is null)
                     continue;
 
                 var folder = await StorageService.TryGetFolderFromPathAsync(item.Id, cancellationToken);
@@ -89,15 +90,19 @@ namespace SecureFolderFS.Sdk.AppModels
 
                 var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
                 _vaults.Add(vaultModel);
-
-                yield return vaultModel;
             }
+
+            return result;
         }
 
         /// <inheritdoc/>
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
         {
-            await VaultConfigurations.LoadAsync(cancellationToken);
+            var result = true;
+            result &= await VaultWidgets.SaveAsync(cancellationToken);
+            result &= await VaultConfigurations.SaveAsync(cancellationToken);
+
+            return result;
         }
     }
 }

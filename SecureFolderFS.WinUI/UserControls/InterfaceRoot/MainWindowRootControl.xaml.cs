@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.WindowViews;
 using System.ComponentModel;
@@ -54,13 +55,13 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             await Task.Delay(1);
 
             // Initialize
-            await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.InitAsync());
+            await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.LoadAsync());
 
             // First register the ThemeHelper
-            WinUIThemeHelper.Instance.RegisterWindowInstance(MainWindow.Instance.AppWindow, MainWindow.Instance.HostControl);
+            WindowsThemeHelper.Instance.RegisterWindowInstance(MainWindow.Instance.AppWindow, MainWindow.Instance.HostControl);
 
             // Then, initialize it to refresh the theme and UI
-            await WinUIThemeHelper.Instance.InitAsync();
+            await WindowsThemeHelper.Instance.InitAsync();
              
             // Continue root initialization
             if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
@@ -70,7 +71,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             }
             else
             {
-                if (!vaultCollectionModel.IsEmpty) // Has vaults
+                if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
                 {
                     // Show main app screen
                     _ = NavigateHostControlAsync(new MainHostViewModel(null, vaultCollectionModel)); // TODO(r)

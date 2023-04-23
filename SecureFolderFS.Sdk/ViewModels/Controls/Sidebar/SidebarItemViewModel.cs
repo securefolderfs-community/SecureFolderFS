@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using System;
 using System.Threading;
@@ -15,6 +14,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 {
     public sealed partial class SidebarItemViewModel : ObservableObject, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
+        private readonly IVaultCollectionModel _vaultCollectionModel;
+
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         public VaultViewModel VaultViewModel { get; }
@@ -22,9 +23,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         [ObservableProperty] private bool _CanRemoveVault = true;
         [ObservableProperty] private DateTime? _LastAccessDate;
 
-        public SidebarItemViewModel(IVaultModel vaultModel, IWidgetsCollectionModel widgetsContextModel)
+        public SidebarItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
-            VaultViewModel = new(vaultModel, widgetsContextModel);
+            VaultViewModel = vaultViewModel;
+            _vaultCollectionModel = vaultCollectionModel;
 
             WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
@@ -51,18 +53,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         }
 
         [RelayCommand]
-        private void RemoveVault()
+        private async Task RemoveVaultAsync(CancellationToken cancellationToken)
         {
+            _vaultCollectionModel.RemoveVault(VaultViewModel.VaultModel);
+            await _vaultCollectionModel.SaveAsync(cancellationToken);
+
             WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(VaultViewModel.VaultModel));
         }
 
         [RelayCommand]
-        private Task ShowInFileExplorerAsync(CancellationToken cancellationToken)
+        private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            if (VaultViewModel.VaultModel.Folder is not ILocatableFolder locatableVaultFolder)
-                return Task.CompletedTask;
-
-            return FileExplorerService.OpenInFileExplorerAsync(locatableVaultFolder, cancellationToken);
+            await FileExplorerService.OpenInFileExplorerAsync(VaultViewModel.VaultModel.Folder, cancellationToken);
         }
     }
 }

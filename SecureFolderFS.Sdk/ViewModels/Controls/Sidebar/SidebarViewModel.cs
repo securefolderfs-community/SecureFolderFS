@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.ObjectModel;
@@ -30,24 +31,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
             _vaultCollectionModel = vaultCollectionModel;
             _SidebarItems = new();
             _SearchViewModel = new(SidebarItems);
-            _FooterViewModel = new();
+            _FooterViewModel = new(_vaultCollectionModel);
 
             WeakReferenceMessenger.Default.Register<AddVaultMessage>(this);
             WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
         }
 
         /// <inheritdoc/>
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in _vaultCollectionModel.GetVaultsAsync(cancellationToken))
-            {
+            foreach (var item in _vaultCollectionModel.GetVaults())
                 AddVaultToSidebar(item);
-            }
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
                 SelectedItem = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
 
             SelectedItem ??= SidebarItems.FirstOrDefault();
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
@@ -57,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         }
 
         /// <inheritdoc/>
-        public async void Receive(RemoveVaultMessage message)
+        public void Receive(RemoveVaultMessage message)
         {
             var itemToRemove = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.Equals(message.VaultModel));
             if (itemToRemove is null)
@@ -73,13 +74,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
             }
 
             SelectedItem = SidebarItems.FirstOrDefault();
-            await _vaultCollectionModel.RemoveVaultAsync(message.VaultModel);
         }
 
         private void AddVaultToSidebar(IVaultModel vaultModel)
         {
             var widgetsCollection = new WidgetsCollectionModel(vaultModel.Folder);
-            var sidebarItem = new SidebarItemViewModel(vaultModel, widgetsCollection);
+            var vaultViewModel = new VaultViewModel(vaultModel, widgetsCollection);
+
+            var sidebarItem = new SidebarItemViewModel(vaultViewModel, _vaultCollectionModel);
 
             sidebarItem.LastAccessDate = vaultModel.LastAccessDate;
             SidebarItems.Add(sidebarItem);

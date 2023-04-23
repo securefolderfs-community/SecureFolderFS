@@ -137,7 +137,7 @@
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
-                            <MenuFlyoutItem Command="{x:Bind ShowInFileExplorerCommand}" Text="Show encrypted vault in File Explorer">
+                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand}" Text="Show encrypted vault in File Explorer">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>

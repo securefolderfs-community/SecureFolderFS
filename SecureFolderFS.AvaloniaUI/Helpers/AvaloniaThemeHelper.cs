@@ -2,8 +2,6 @@ using Avalonia;
 using FluentAvalonia.Styling;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Helpers;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Helpers
 {

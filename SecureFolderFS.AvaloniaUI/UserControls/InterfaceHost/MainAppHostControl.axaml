@@ -41,18 +41,18 @@
                     <ControlTemplate>
                         <Panel>
                             <AutoCompleteBox
+                                Width="230"
                                 Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                Watermark="Search"
                                 SelectionChanged="AutoCompleteBox_OnSelectionChanged"
                                 TextChanged="AutoCompleteBox_OnTextChanged"
-                                Width="230" />
+                                Watermark="Search" />
 
                             <ic:FluentIcon
+                                Width="12"
                                 Margin="0,0,15,0"
-                                Icon="Search48Regular"
                                 HorizontalAlignment="Right"
-                                IsEnabled="False"
-                                Width="12" />
+                                Icon="Search48Regular"
+                                IsEnabled="False" />
                         </Panel>
                     </ControlTemplate>
                 </AutoCompleteBox.Template>
@@ -74,7 +74,7 @@
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
 
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <ic:FluentIcon Icon="AddCircle16Regular" Width="15"/>
+                            <ic:FluentIcon Width="15" Icon="AddCircle16Regular" />
                             <TextBlock Text="New vault" />
                         </StackPanel>
                     </Button>
@@ -93,7 +93,7 @@
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=!IsPaneOpen, ElementName=Sidebar}">
 
-                        <ic:FluentIcon Icon="AddCircle16Regular" Width="14"/>
+                        <ic:FluentIcon Width="14" Icon="AddCircle16Regular" />
                     </Button>
 
                     <Button
@@ -111,7 +111,10 @@
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar}">
 
-                        <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings48Regular" Width="18">
+                        <ic:FluentIcon
+                            x:Name="SettingsButtonIcon"
+                            Width="18"
+                            Icon="Settings48Regular">
                             <ic:FluentIcon.RenderTransform>
                                 <RotateTransform />
                             </ic:FluentIcon.RenderTransform>
@@ -119,13 +122,12 @@
                             <anim:Storyboard.Storyboards>
                                 <anim:Storyboard x:Name="SpinSettingsIconPointerPressedStoryboard">
                                     <trans:RotateTransition
-                                        Duration="0:0:0.1"
+                                        Target="SettingsButtonIcon"
                                         To="-20"
-                                        Target="SettingsButtonIcon" />
+                                        Duration="0:0:0.1" />
                                 </anim:Storyboard>
                                 <anim:Storyboard x:Name="SpinSettingsIconPointerReleasedStoryboard">
                                     <trans:RotateTransition
-                                        Duration="0:0:1"
                                         From="-20"
                                         To="360"
                                         Duration="0:0:1">
@@ -170,7 +172,7 @@
                     <ui:NavigationViewItem.ContextFlyout>
                         <ui:FAMenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
-                            <ui:MenuFlyoutItem Command="{Binding ShowInFileExplorerCommand}" Text="Show encrypted vault in File Explorer">
+                            <ui:MenuFlyoutItem Command="{Binding RevealFolderCommand}" Text="Show encrypted vault in File Explorer">
                                 <ui:MenuFlyoutItem.Icon>
                                     <ui:SymbolIcon Symbol="OpenFolder" />
                                 </ui:MenuFlyoutItem.Icon>
