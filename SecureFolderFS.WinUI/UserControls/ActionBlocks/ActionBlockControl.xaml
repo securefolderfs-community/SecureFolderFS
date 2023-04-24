@@ -9,13 +9,13 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
         <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
     </UserControl.Resources>
 
     <Grid VerticalAlignment="Center">
         <!--  Default  -->
-        <Grid x:Name="DefaultBlock" x:Load="{x:Bind ExpanderContent, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}, ConverterParameter='invert'}">
+        <Grid x:Name="DefaultBlock" x:Load="{x:Bind ExpanderContent, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}">
             <Grid
                 x:Name="DefaultBlock2"
                 Height="72"
@@ -36,7 +36,7 @@
             </Grid>
         </Grid>
         <!--  Button  -->
-        <Grid x:Name="ClickableBlock" x:Load="{x:Bind ExpanderContent, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}, ConverterParameter='invert'}">
+        <Grid x:Name="ClickableBlock" x:Load="{x:Bind ExpanderContent, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}">
             <Grid x:Name="ClickableBlock2" x:Load="{x:Bind IsClickable, Mode=OneWay}">
                 <Button
                     Height="72"
@@ -60,7 +60,7 @@
             </Grid>
         </Grid>
         <!--  Expander block  -->
-        <Grid x:Name="ExpanderBlock" x:Load="{x:Bind ExpanderContent, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}">
+        <Grid x:Name="ExpanderBlock" x:Load="{x:Bind ExpanderContent, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
             <Grid x:Name="ExpanderBlock2" x:Load="{x:Bind IsClickable, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}">
                 <Expander
                     MinHeight="{StaticResource ExpanderMinHeight}"

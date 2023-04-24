@@ -1,15 +1,15 @@
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
     internal sealed partial class MainWizardPage : Page
     {
-        public MainVaultWizardPageViewModel? ViewModel
+        public MainWizardPageViewModel? ViewModel
         {
-            get => (MainVaultWizardPageViewModel?)DataContext;
+            get => (MainWizardPageViewModel?)DataContext;
             set => DataContext = value;
         }
 
@@ -20,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is MainVaultWizardPageViewModel viewModel)
+            if (e.Parameter is MainWizardPageViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

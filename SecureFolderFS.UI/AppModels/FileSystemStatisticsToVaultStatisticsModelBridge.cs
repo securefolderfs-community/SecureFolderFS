@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Sdk.Models;
+using System;
 
 namespace SecureFolderFS.UI.AppModels
 {

@@ -2,6 +2,8 @@
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI.ServiceImplementation.VaultPersistence;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {

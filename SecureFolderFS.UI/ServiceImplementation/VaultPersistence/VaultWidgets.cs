@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 {

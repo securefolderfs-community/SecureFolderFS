@@ -1,6 +1,9 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.UI.Storage.NativeStorage;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {

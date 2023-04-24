@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.UI.Xaml.Data;
 using SecureFolderFS.Sdk.Services;
 using System;
 
-namespace SecureFolderFS.WinUI.ValueConverters
+namespace SecureFolderFS.UI.ValueConverters
 {
-    internal sealed class BooleanToStringConverter : IValueConverter
+    public abstract class BaseBoolToStringConverter : BaseConverter
     {
         private static ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
 
-        public object? Convert(object value, Type targetType, object parameter, string language)
+        /// <inheritdoc/>
+        protected override object? TryConvert(object? value, Type targetType, object? parameter)
         {
             if (value is not bool bValue)
                 return string.Empty;
@@ -27,7 +27,8 @@ namespace SecureFolderFS.WinUI.ValueConverters
             return splitOption[0] == "LOCALIZE" ? LocalizationService.GetString(splitOption[1]) : splitOption[1];
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        /// <inheritdoc/>
+        protected override object? TryConvertBack(object? value, Type targetType, object? parameter)
         {
             throw new NotImplementedException();
         }

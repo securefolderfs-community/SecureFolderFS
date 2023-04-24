@@ -1,15 +1,15 @@
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
     internal sealed partial class AddExistingWizardPage : Page
     {
-        public VaultWizardSelectLocationViewModel? ViewModel
+        public ExistingLocationWizardViewModel? ViewModel
         {
-            get => (VaultWizardSelectLocationViewModel?)DataContext;
+            get => (ExistingLocationWizardViewModel?)DataContext;
             set => DataContext = value;
         }
 
@@ -20,7 +20,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardSelectLocationViewModel viewModel)
+            if (e.Parameter is ExistingLocationWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

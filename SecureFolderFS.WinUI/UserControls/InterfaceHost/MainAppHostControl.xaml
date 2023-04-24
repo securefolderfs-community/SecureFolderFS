@@ -13,10 +13,10 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-        <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </UserControl.Resources>
 
     <NavigationView
@@ -27,7 +27,7 @@
         IsSettingsVisible="False"
         MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
         OpenPaneLength="260"
-        PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
+        PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
 
@@ -128,7 +128,7 @@
                             <!--  Last opened  -->
                             <TextBlock
                                 x:Name="LastOpenedText"
-                                x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+                                x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                                 FontSize="12"
                                 Opacity="0.6"
                                 Text="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />

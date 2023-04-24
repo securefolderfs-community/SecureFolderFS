@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.UI.Xaml.Data;
 
-namespace SecureFolderFS.WinUI.ValueConverters
+namespace SecureFolderFS.UI.ValueConverters
 {
-    internal sealed class NullToBooleanConverter : IValueConverter
+    public abstract class BaseNullToBoolConverter : BaseConverter
     {
-        public object Convert(object? value, Type targetType, object parameter, string language)
+        /// <inheritdoc/>
+        protected override object? TryConvert(object? value, Type targetType, object? parameter)
         {
             if (parameter is string strParam && strParam.ToLower() == "invert")
             {
@@ -21,7 +21,8 @@ namespace SecureFolderFS.WinUI.ValueConverters
             return value is not null;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        /// <inheritdoc/>
+        protected override object? TryConvertBack(object? value, Type targetType, object? parameter)
         {
             throw new NotImplementedException();
         }

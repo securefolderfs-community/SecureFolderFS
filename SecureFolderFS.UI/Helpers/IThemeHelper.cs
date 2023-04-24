@@ -1,6 +1,8 @@
 ﻿using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Enums;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.Helpers
 {

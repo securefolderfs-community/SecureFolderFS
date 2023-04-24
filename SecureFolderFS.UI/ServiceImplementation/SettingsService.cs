@@ -2,6 +2,8 @@
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI.ServiceImplementation.SettingsPersistence;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {

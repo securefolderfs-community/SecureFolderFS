@@ -2,6 +2,7 @@
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.AppModels
 {

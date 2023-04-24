@@ -13,6 +13,10 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.AppModels;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {

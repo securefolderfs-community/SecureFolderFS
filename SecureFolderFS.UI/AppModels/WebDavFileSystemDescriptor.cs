@@ -4,6 +4,9 @@ using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.AppModels
 {

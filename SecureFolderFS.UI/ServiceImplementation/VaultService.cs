@@ -5,6 +5,8 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.AppModels;
+using System;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {

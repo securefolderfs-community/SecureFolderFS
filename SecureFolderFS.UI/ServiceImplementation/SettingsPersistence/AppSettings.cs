@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using System;
 
 namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
 {

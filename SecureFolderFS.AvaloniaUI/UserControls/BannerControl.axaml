@@ -7,7 +7,7 @@
              x:Class="SecureFolderFS.AvaloniaUI.UserControls.BannerControl">
 
     <UserControl.Resources>
-        <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </UserControl.Resources>
 
     <StackPanel>
@@ -40,7 +40,7 @@
         <ContentPresenter
             x:Name="BottomContent"
             VerticalContentAlignment="Center"
-            IsVisible="{Binding AdditionalBottomContent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+            IsVisible="{Binding AdditionalBottomContent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
             Content="{Binding AdditionalBottomContent, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Mode=OneWay}" />
     </StackPanel>
 </UserControl>

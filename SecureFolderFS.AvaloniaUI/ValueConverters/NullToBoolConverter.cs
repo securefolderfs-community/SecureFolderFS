@@ -5,8 +5,8 @@ using System.Globalization;
 
 namespace SecureFolderFS.AvaloniaUI.ValueConverters
 {
-    /// <inheritdoc cref="BaseGenericEnumConverter"/>
-    internal sealed class GenericEnumConverter : BaseGenericEnumConverter, IValueConverter
+    /// <inheritdoc cref="BaseNullToBoolConverter"/>
+    internal sealed class NullToBoolConverter : BaseNullToBoolConverter, IValueConverter
     {
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -17,7 +17,7 @@ namespace SecureFolderFS.AvaloniaUI.ValueConverters
         /// <inheritdoc/>
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return TryConvertBack(value, targetType, parameter);
+            return TryConvert(value, targetType, parameter);
         }
     }
 }

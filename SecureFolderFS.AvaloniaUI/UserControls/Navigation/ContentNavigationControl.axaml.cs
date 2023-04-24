@@ -7,6 +7,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using NavigationEventArgs = SecureFolderFS.AvaloniaUI.Events.NavigationEventArgs;
 
@@ -38,6 +39,12 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         public virtual void Navigate<TViewModel>(TViewModel viewModel, NavigationTransition? transition)
             where TViewModel : class, INotifyPropertyChanged
         {
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = null) where TTransition : class
+        {
+            throw new NotImplementedException();
         }
 
         public void Navigate(Type pageType, object parameter, NavigationTransition? transition)

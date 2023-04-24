@@ -27,7 +27,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             SpinSettingsIconPointerReleasedStoryboard.RunAnimationsAsync();
         }
 
-        public NoVaultsAppHostViewModel ViewModel
+        public EmptyHostViewModel? ViewModel
         {
             get => GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);

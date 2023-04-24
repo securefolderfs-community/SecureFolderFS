@@ -17,7 +17,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
     </UserControl.Resources>
 
@@ -29,7 +29,7 @@
         IsSettingsVisible="False"
         MenuItems="{Binding ViewModel.SidebarViewModel.SidebarItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
         OpenPaneLength="260"
-        PaneTitle="{Binding IsPaneOpen, Mode=OneWay, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
+        PaneTitle="{Binding IsPaneOpen, Mode=OneWay, RelativeSource={RelativeSource Self}, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
         SelectedItem="{Binding ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
         SelectionChanged="Sidebar_OnSelectionChanged">
 

@@ -3,6 +3,7 @@ using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 {
@@ -20,7 +21,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
         /// <inheritdoc/>
         public ICollection<VaultDataModel>? SavedVaults
         {
-            get => GetSetting<List<VaultDataModel>>();
+            get => GetSetting<List<VaultDataModel>?>();
             set => SetSetting(value);
         }
     }

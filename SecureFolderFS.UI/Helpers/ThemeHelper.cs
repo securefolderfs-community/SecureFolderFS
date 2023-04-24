@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.UI.Enums;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.Helpers
 {

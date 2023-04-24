@@ -1,8 +1,7 @@
-﻿using SecureFolderFS.AvaloniaUI.Animations.Transitions;
-using System;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
+﻿using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using System;
 using System.Threading.Tasks;
@@ -18,8 +17,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             var pageType = target switch
             {
                 MainWizardPageViewModel => typeof(MainWizardPage),
-                VaultWizardSelectLocationViewModel => typeof(AddExistingWizardPage),
-                VaultWizardCreationPathViewModel => typeof(CreationPathWizardPage),
+                ExistingLocationWizardViewModel => typeof(AddExistingWizardPage),
+                NewLocationWizardViewModel => typeof(CreationPathWizardPage),
                 PasswordWizardViewModel => typeof(PasswordWizardPage),
                 EncryptionWizardViewModel => typeof(EncryptionWizardPage),
                 SummaryWizardViewModel => typeof(SummaryWizardPage),

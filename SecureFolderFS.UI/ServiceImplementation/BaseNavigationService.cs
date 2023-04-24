@@ -4,6 +4,9 @@ using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Controls;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {

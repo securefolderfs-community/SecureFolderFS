@@ -1,16 +1,11 @@
-using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.UI.Windowing;
-using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.AvaloniaUI.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Services;
+using System;
 using System.ComponentModel;
 
 namespace SecureFolderFS.AvaloniaUI.WindowViews

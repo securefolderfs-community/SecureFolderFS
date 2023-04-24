@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Shared.Utils;
+using System;
 using System.Text;
 
 namespace SecureFolderFS.UI.AppModels
