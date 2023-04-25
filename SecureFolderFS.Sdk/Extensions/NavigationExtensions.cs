@@ -23,5 +23,13 @@ namespace SecureFolderFS.Sdk.Extensions
 
             return await navigationService.NavigateAsync(target);
         }
+
+        public static async Task<bool> TryNavigateAndForgetAsync(this INavigationService navigationService, INavigationTarget target)
+        {
+            if (navigationService.CurrentTarget is not null)
+                navigationService.Targets.Remove(navigationService.CurrentTarget);
+
+            return await navigationService.NavigateAsync(target);
+        }
     }
 }

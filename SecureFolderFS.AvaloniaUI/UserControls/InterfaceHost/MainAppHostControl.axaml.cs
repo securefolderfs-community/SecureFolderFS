@@ -39,8 +39,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             // Get the item from cache or create new instance
             //if (!Navigation.NavigationCache.TryGetValue(vaultViewModel, out var destination))
             //{
-                var destination = new VaultLoginPageViewModel(vaultViewModel, null); // TODO(r)
-            //    _ = destination.InitAsync();
+                var destination = new VaultLoginPageViewModel(vaultViewModel, ViewModel.NavigationService);
+                _ = destination.InitAsync(); // TODO(r)
             //} // TODO(n)
 
             // Navigate

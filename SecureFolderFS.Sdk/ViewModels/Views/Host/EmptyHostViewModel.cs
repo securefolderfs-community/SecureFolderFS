@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         /// <inheritdoc/>
         public void Receive(AddVaultMessage message)
         {
-            WeakReferenceMessenger.Default.Send(new RootNavigationMessage(new MainHostViewModel(null, _vaultCollectionModel))); // TODO(r)
+            WeakReferenceMessenger.Default.Send(new RootNavigationMessage(new MainHostViewModel(_vaultCollectionModel))); // TODO(r)
             WeakReferenceMessenger.Default.Unregister<AddVaultMessage>(this);
         }
 

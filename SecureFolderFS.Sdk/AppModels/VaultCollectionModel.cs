@@ -78,6 +78,9 @@ namespace SecureFolderFS.Sdk.AppModels
             result &= await VaultConfigurations.LoadAsync(cancellationToken);
             result &= await VaultWidgets.LoadAsync(cancellationToken);
 
+            // Clear previous vaults
+            _vaults.Clear();
+
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
             foreach (var item in VaultConfigurations.SavedVaults)
             {

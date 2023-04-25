@@ -2,17 +2,15 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -43,13 +41,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private async Task LockVaultAsync(CancellationToken cancellationToken)
         {
+            // Lock vault
             await _unlockedVaultViewModel.UnlockedVaultModel.LockAsync();
 
-            var loginPageViewModel = new VaultLoginPageViewModel(_unlockedVaultViewModel.VaultViewModel, null); // TODO(r)
-            _ = loginPageViewModel.InitAsync(cancellationToken);
+            // Navigate away
+            var loginPageViewModel = new VaultLoginPageViewModel(_unlockedVaultViewModel.VaultViewModel, _navigationService);
+            await _navigationService.TryNavigateAndForgetAsync(loginPageViewModel);
 
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultViewModel.VaultModel));
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(loginPageViewModel));
         }
 
         [RelayCommand]

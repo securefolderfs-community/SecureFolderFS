@@ -73,7 +73,11 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public Task<bool> LoadAsync(CancellationToken cancellationToken = default)
         {
+            // await VaultWidgets.LoadAsync(cancellationToken);
             // VaultWidgets already loaded by VaultCollectionModel // TODO: Load here as well because we shouldn't rely on the implementation
+
+            // Clear previous widgets
+            _widgets.Clear();
 
             var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
             if (widgets is null)

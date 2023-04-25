@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private INotifyPropertyChanged? _StrategyViewModel;
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
-            : base(vaultViewModel)
+            : base(vaultViewModel, navigationService)
         {
             VaultName = vaultViewModel.VaultModel.VaultName;
             _vaultLoginModel = new VaultLoginModel(vaultViewModel.VaultModel, new VaultWatcherModel(vaultViewModel.VaultModel.Folder));
@@ -50,14 +50,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private void VaultLoginModel_StateChanged(object? sender, IResult<VaultLoginStateType> e)
         {
+            // Dispose existing strategy
             (StrategyViewModel as IDisposable)?.Dispose();
 
+            // Choose new strategy
             switch (e.Value)
             {
                 case VaultLoginStateType.AwaitingCredentials:
                     if (e is ResultWithKeystore resultWithKeystore)
-                        StrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, new VaultUnlockingModel(), _vaultLoginModel.VaultWatcher, resultWithKeystore.Keystore);
-                    
+                        StrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, resultWithKeystore.Keystore, _vaultLoginModel.VaultWatcher, new VaultUnlockingModel(), NavigationService);
                     break;
 
                 case VaultLoginStateType.AwaitingTwoFactorAuth:

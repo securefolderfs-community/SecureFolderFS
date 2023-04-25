@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Shared.Extensions;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -45,7 +46,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
 
             // Initialize
-            await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.InitAsync());
+            await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.LoadAsync());
 
             // Update UI to reflect the current theme
             await AvaloniaThemeHelper.Instance.InitAsync();
@@ -58,10 +59,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             }
             else
             {
-                if (!vaultCollectionModel.IsEmpty) // Has vaults
+                if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
                 {
                     // Show main app screen
-                    _ = NavigateHostControlAsync(new MainHostViewModel(null, vaultCollectionModel)); // TODO(r)
+                    _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel)); // TODO(r)
                 }
                 else // Doesn't have vaults
                 {

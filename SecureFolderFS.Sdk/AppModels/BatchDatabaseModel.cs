@@ -180,7 +180,7 @@ namespace SecureFolderFS.Sdk.AppModels
                             continue;
 
                         // Reset the stream
-                        typeStream.Seek(0, SeekOrigin.Begin);
+                        typeStream.Position = 0L;
                         typeStream.SetLength(0L);
 
                         // Write contents

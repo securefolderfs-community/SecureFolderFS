@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.WinUI.ServiceImplementation;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,19 +32,31 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
 
         private async Task NavigateToItem(VaultViewModel vaultViewModel)
         {
-            // Get the item from cache or create new instance
-            //if (!Navigation.NavigationCache.TryGetValue(vaultViewModel, out var destination))
-            //{
-                var destination = new VaultLoginPageViewModel(vaultViewModel, null); // TODO(r)
-            _ = destination.InitAsync();
-            //}  // TODO(n)
+            // Find existing target or create new
+            var target = ViewModel.NavigationService.Targets.FirstOrDefault(x => (x as BaseVaultPageViewModel)?.VaultViewModel == vaultViewModel);
+            target ??= new VaultLoginPageViewModel(vaultViewModel, ViewModel.NavigationService);
 
             // Navigate
-            await Navigation.NavigateAsync(destination, new EntranceNavigationTransitionInfo());
+            await ViewModel.NavigationService.NavigateAsync(target);
+        }
+
+        private bool SetupNavigation()
+        {
+            if (ViewModel.NavigationService.IsInitialized)
+                return true;
+
+            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
+            {
+                navigationServiceImpl.NavigationControl = Navigation;
+                return navigationServiceImpl.NavigationControl is not null;
+            }
+
+            return false;
         }
 
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
+            SetupNavigation();
             WeakReferenceMessenger.Default.Register(this);
 
             await ViewModel.InitAsync();

@@ -74,7 +74,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
                 if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
                 {
                     // Show main app screen
-                    _ = NavigateHostControlAsync(new MainHostViewModel(null, vaultCollectionModel)); // TODO(r)
+                    _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel)); // TODO(r)
                 }
                 else // Doesn't have vaults
                 {

@@ -20,7 +20,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
         {
             transitionInfo ??= new SlideNavigationTransitionInfo();
-            return ContentFrame.Navigate(pageType, pageType, transitionInfo);
+            return ContentFrame.Navigate(pageType, parameter, transitionInfo);
         }
     }
 }

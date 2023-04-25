@@ -23,8 +23,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         }
 
         /// <inheritdoc/>
-        public Task InitAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            // Load widgets for vault
+            await _widgetsContextModel.LoadAsync(cancellationToken);
+
+            // Add widgets
             foreach (var item in _widgetsContextModel.GetWidgets())
             {
                 var widgetViewModel = GetWidgetForModel(item);
@@ -32,8 +36,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
                 Widgets.Add(widgetViewModel);
             }
-
-            return Task.CompletedTask;
         }
 
         private BaseWidgetViewModel GetWidgetForModel(IWidgetModel widgetModel)

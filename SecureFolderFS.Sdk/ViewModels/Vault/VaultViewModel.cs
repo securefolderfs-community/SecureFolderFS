@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
-using System;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault
 {
     /// <summary>
     /// Represents the view model of a vault.
     /// </summary>
-    public sealed class VaultViewModel : ObservableObject, IEquatable<VaultViewModel>
+    public sealed class VaultViewModel : ObservableObject
     {
         /// <summary>
         /// Gets the vault model associated with the vault.
@@ -23,15 +22,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault
         {
             VaultModel = vaultModel;
             WidgetsContextModel = widgetsContextModel;
-        }
-
-        /// <inheritdoc/>
-        public bool Equals(VaultViewModel? other)
-        {
-            if (other is null)
-                return false;
-
-            return VaultModel.Equals(other.VaultModel);
         }
     }
 }

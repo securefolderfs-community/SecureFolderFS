@@ -2,13 +2,14 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 {
@@ -18,13 +19,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
         private readonly IKeystoreModel _keystoreModel;
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IVaultUnlockingModel _vaultUnlockingModel;
+        private readonly INavigationService _navigationService;
 
-        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IVaultUnlockingModel vaultUnlockingModel, IVaultWatcherModel vaultWatcherModel, IKeystoreModel keystoreModel)
+        [ObservableProperty] private bool _IsInvalidPasswordShown;
+
+        // TODO: Reduce number of parameters
+        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IKeystoreModel keystoreModel, IVaultWatcherModel vaultWatcherModel, IVaultUnlockingModel vaultUnlockingModel, INavigationService navigationService)
         {
             _vaultViewModel = vaultViewModel;
-            _vaultUnlockingModel = vaultUnlockingModel;
-            _vaultWatcherModel = vaultWatcherModel;
             _keystoreModel = keystoreModel;
+            _vaultWatcherModel = vaultWatcherModel;
+            _vaultUnlockingModel = vaultUnlockingModel;
+            _navigationService = navigationService;
         }
 
         [RelayCommand]
@@ -48,7 +54,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 
                 var unlockResult = await _vaultUnlockingModel.UnlockAsync(password, cancellationToken);
                 if (!unlockResult.Successful)
-                    return; // TODO: Report the issue
+                {
+                    IsInvalidPasswordShown = true;
+                    return; // TODO: Report the issue (The issue might be different than invalid password)
+                }
 
                 unlockedVaultModel = unlockResult.Value;
 
@@ -63,11 +72,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
             await _vaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now, cancellationToken);
 
             var unlockedVaultViewModel = new UnlockedVaultViewModel(_vaultViewModel, unlockedVaultModel);
-            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel);
-            _ = dashboardPage.InitAsync(cancellationToken);
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, _navigationService);
 
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultViewModel.VaultModel));
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(dashboardPage));
+            await _navigationService.TryNavigateAndForgetAsync(dashboardPage);
         }
 
         /// <inheritdoc/>

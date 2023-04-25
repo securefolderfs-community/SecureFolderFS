@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
@@ -10,13 +11,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
     public sealed class MainHostViewModel : ObservableObject, IAsyncInitialize
     {
-        public INavigationService NavigationService { get; }
+        public INavigationService NavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
 
         public SidebarViewModel SidebarViewModel { get; }
 
-        public MainHostViewModel(INavigationService navigationService, IVaultCollectionModel vaultCollectionModel)
+        public MainHostViewModel(IVaultCollectionModel vaultCollectionModel)
         {
-            NavigationService = navigationService;
             SidebarViewModel = new(vaultCollectionModel);
         }
 

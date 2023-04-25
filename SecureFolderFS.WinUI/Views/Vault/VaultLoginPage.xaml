@@ -39,6 +39,18 @@
                         KeyUp="VaultPasswordBox_KeyUp"
                         Loaded="VaultPasswordBox_Loaded"
                         PlaceholderText="Password" />
+                    <TeachingTip
+                        x:Name="PasswordTeachingTip"
+                        Title="Invalid password"
+                        IsLightDismissEnabled="True"
+                        IsOpen="{x:Bind IsInvalidPasswordShown, Mode=TwoWay}"
+                        PreferredPlacement="Bottom"
+                        Subtitle="The provided password is incorrect."
+                        Target="{Binding ElementName=VaultPasswordBox}">
+                        <TeachingTip.IconSource>
+                            <FontIconSource Glyph="&#xE783;" />
+                        </TeachingTip.IconSource>
+                    </TeachingTip>
                 </StackPanel>
 
                 <!--  Login  -->
@@ -124,11 +136,12 @@
 
             <!--  Notification  -->
             <InfoBar
-                Title="Invalid password"
+                Title="Unsupported settings"
                 Grid.Row="1"
-                MaxWidth="480"
+                MaxWidth="580"
                 IsClosable="False"
-                IsOpen="True"
+                IsOpen="False"
+                Message="Selected file system is not supported"
                 Severity="Error" />
         </Grid>
     </ScrollViewer>

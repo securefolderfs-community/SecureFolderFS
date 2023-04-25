@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -11,15 +10,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IRecipient<VaultLockedMessage>
     {
-        public INavigationService? NavigationService { get; }
-
         public BaseDashboardPageViewModel CurrentPage { get; }
 
-        public VaultDashboardPageViewModel( UnlockedVaultViewModel unlockedVaultViewModel)
-            : base(unlockedVaultViewModel.VaultViewModel)
+        public VaultDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService navigationService)
+            : base(unlockedVaultViewModel.VaultViewModel, navigationService)
         {
             //NavigationService = new DashboardNavigationService(new WeakReferenceMessenger()); // TODO(n)
-            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, NavigationService, null); // TODO(r)
+            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, NavigationService, NavigationService);
 
             WeakReferenceMessenger.Default.Register(this);
         }
