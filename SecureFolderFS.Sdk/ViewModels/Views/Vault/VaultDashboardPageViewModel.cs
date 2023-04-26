@@ -1,30 +1,22 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     public sealed class VaultDashboardPageViewModel : BaseVaultPageViewModel, IRecipient<VaultLockedMessage>
     {
-        public BaseDashboardPageViewModel CurrentPage { get; }
+        public INavigationService DashboardNavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
+
+        public UnlockedVaultViewModel UnlockedVaultViewModel { get; }
 
         public VaultDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService navigationService)
             : base(unlockedVaultViewModel.VaultViewModel, navigationService)
         {
-            //NavigationService = new DashboardNavigationService(new WeakReferenceMessenger()); // TODO(n)
-            CurrentPage = new VaultOverviewPageViewModel(unlockedVaultViewModel, NavigationService, NavigationService);
-
+            UnlockedVaultViewModel = unlockedVaultViewModel;
             WeakReferenceMessenger.Default.Register(this);
-        }
-
-        /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
-        {
-            await CurrentPage.InitAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -38,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public override void Dispose()
         {
-            CurrentPage.Dispose();
+            DashboardNavigationService.Dispose();
         }
     }
 }

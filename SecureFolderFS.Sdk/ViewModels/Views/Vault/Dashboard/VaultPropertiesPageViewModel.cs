@@ -1,14 +1,19 @@
-﻿using SecureFolderFS.Sdk.Services;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 {
-    public sealed class VaultPropertiesPageViewModel : BaseDashboardPageViewModel
+    public sealed partial class VaultPropertiesPageViewModel : BaseDashboardPageViewModel
     {
-        public VaultPropertiesPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService navigationService)
-            : base(unlockedVaultViewModel, navigationService)
+        private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
+
+        public VaultPropertiesPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService)
+            : base(unlockedVaultViewModel, dashboardNavigationService)
         {
         }
 
@@ -16,6 +21,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        private async Task ChangePasswordAsync(CancellationToken cancellationToken)
+        {
+            await DialogService.ShowDialogAsync(new PasswordChangeDialogViewModel());
         }
     }
 }

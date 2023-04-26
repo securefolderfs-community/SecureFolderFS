@@ -10,6 +10,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Extensions;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 {
@@ -22,6 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
         private readonly INavigationService _navigationService;
 
         [ObservableProperty] private bool _IsInvalidPasswordShown;
+
+        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
         // TODO: Reduce number of parameters
         public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IKeystoreModel keystoreModel, IVaultWatcherModel vaultWatcherModel, IVaultUnlockingModel vaultUnlockingModel, INavigationService navigationService)
@@ -67,6 +70,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 
             if (unlockedVaultModel is null)
                 throw new InvalidOperationException($"Invalid state. {nameof(unlockedVaultModel)} shouldn't be null.");
+
+            await ThreadingService.ChangeThreadAsync();
 
             // Update last access date
             await _vaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now, cancellationToken);

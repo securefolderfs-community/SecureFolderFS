@@ -11,25 +11,33 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    public abstract class BaseNavigationService<TNavigation> : INavigationService
+    public interface INavigationContract<in TNavigation> : INavigationService
         where TNavigation : class, INavigationControl
     {
         /// <summary>
-        /// Gets or sets the control used for navigation.
+        /// Sets the control used for navigation.
         /// </summary>
+        public TNavigation? NavigationControl { set; }
+    }
+
+    /// <inheritdoc cref="INavigationService"/>
+    public abstract class BaseNavigationService<TNavigation> : INavigationService, INavigationContract<TNavigation>
+        where TNavigation : class, INavigationControl
+    {
+        /// <inheritdoc/>
         public TNavigation? NavigationControl { get; set; }
-
-        /// <inheritdoc/>
-        public event EventHandler<INavigationTarget?>? NavigationChanged;
-
-        /// <inheritdoc/>
-        public virtual bool IsInitialized => NavigationControl is not null;
 
         /// <inheritdoc/>
         public INavigationTarget? CurrentTarget { get; protected set; }
 
         /// <inheritdoc/>
         public ICollection<INavigationTarget> Targets { get; protected set; }
+
+        /// <inheritdoc/>
+        public virtual bool IsInitialized => NavigationControl is not null;
+
+        /// <inheritdoc/>
+        public event EventHandler<INavigationTarget?>? NavigationChanged;
 
         protected BaseNavigationService()
         {

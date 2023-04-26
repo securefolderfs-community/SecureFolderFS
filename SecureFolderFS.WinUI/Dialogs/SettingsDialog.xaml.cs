@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.WinUI.ServiceImplementation;
 using System;
 using System.Threading.Tasks;
@@ -44,23 +45,9 @@ namespace SecureFolderFS.WinUI.Dialogs
             };
         }
 
-        private bool SetupNavigation()
-        {
-            if (ViewModel.NavigationService.IsInitialized)
-                return true;
-
-            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
-            {
-                navigationServiceImpl.NavigationControl = Navigation;
-                return navigationServiceImpl.NavigationControl is not null;
-            }
-
-            return false;
-        }
-
         private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (!SetupNavigation())
+            if (!ViewModel.NavigationService.SetupNavigation(Navigation))
                 return;
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);

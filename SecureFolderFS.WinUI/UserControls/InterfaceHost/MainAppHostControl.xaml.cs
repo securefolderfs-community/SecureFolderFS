@@ -6,10 +6,10 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.WinUI.ServiceImplementation;
+using SecureFolderFS.UI.Helpers;
 using System.Linq;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,23 +40,9 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
             await ViewModel.NavigationService.NavigateAsync(target);
         }
 
-        private bool SetupNavigation()
-        {
-            if (ViewModel.NavigationService.IsInitialized)
-                return true;
-
-            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
-            {
-                navigationServiceImpl.NavigationControl = Navigation;
-                return navigationServiceImpl.NavigationControl is not null;
-            }
-
-            return false;
-        }
-
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
-            SetupNavigation();
+            ViewModel.NavigationService.SetupNavigation(Navigation);
             WeakReferenceMessenger.Default.Register(this);
 
             await ViewModel.InitAsync();

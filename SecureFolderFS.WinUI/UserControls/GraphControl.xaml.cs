@@ -1,4 +1,5 @@
 using LiveChartsCore;
+using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI;
-using LiveChartsCore.Drawing;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,7 +45,7 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             Chart.Series = new ISeries[]
             {
-                new LineSeries<Tuple<long, DateTime>>()
+                new LineSeries<GraphPoint>()
                 {
                     Values = Data,
                     Fill = new LinearGradientPaint(new SKColor[] {
@@ -54,7 +54,7 @@ namespace SecureFolderFS.WinUI.UserControls
                         new(0.5f, 0f), new(0.5f, 1.0f), new[] { 0.2f, 1.3f }),
                     GeometrySize = 0d,
                     Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2),
-                    Mapping = (model, point) => { point.PrimaryValue = Convert.ToDouble(model.Item1); point.SecondaryValue = model.Item2.Ticks; },
+                    Mapping = (model, point) => { point.PrimaryValue = Convert.ToDouble(model.Value); point.SecondaryValue = model.Date.Ticks; },
                     LineSmoothness = 0d,
                     DataPadding = new(0.3f, 0),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(150),
@@ -89,13 +89,13 @@ namespace SecureFolderFS.WinUI.UserControls
             Click?.Invoke(sender, e);
         }
 
-        public IList<Tuple<long, DateTime>>? Data
+        public IList<GraphPoint>? Data
         {
-            get => (IList<Tuple<long, DateTime>>?)GetValue(DataProperty);
+            get => (IList<GraphPoint>?)GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register(nameof(Data), typeof(IList<Tuple<long, DateTime>>), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Data), typeof(IList<GraphPoint>), typeof(GraphControl), new PropertyMetadata(null));
 
         public string? GraphHeader
         {

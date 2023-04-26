@@ -33,7 +33,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         {
             Chart.Series = new ISeries[]
             {
-                new LineSeries<Tuple<long, DateTime>>()
+                new LineSeries<GraphPoint>()
                 {
                     Values = Data,
                     Fill = new LinearGradientPaint(new SKColor[] {
@@ -42,7 +42,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
                         new(0.5f, 0f), new(0.5f, 1.0f), new[] { 0.2f, 1.3f }),
                     GeometrySize = 0d,
                     Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2),
-                    Mapping = (model, point) => { point.PrimaryValue = Convert.ToDouble(model.Item1); point.SecondaryValue = model.Item2.Ticks; },
+                    Mapping = (model, point) => { point.PrimaryValue = Convert.ToDouble(model.Value); point.SecondaryValue = model.Date.Ticks; },
                     LineSmoothness = 0d,
                     DataPadding = new(0.3f, 0),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(150),
@@ -92,13 +92,13 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
             Chart.IsVisible = true;
         }
 
-        public IList<Tuple<long, DateTime>>? Data
+        public IList<GraphPoint>? Data
         {
             get => GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
-        public static readonly StyledProperty<IList<Tuple<long, DateTime>>?> DataProperty =
-            AvaloniaProperty.Register<GraphControl, IList<Tuple<long, DateTime>>?>(nameof(Data));
+        public static readonly StyledProperty<IList<GraphPoint>?> DataProperty =
+            AvaloniaProperty.Register<GraphControl, IList<GraphPoint>?>(nameof(Data));
 
         public string? GraphHeader
         {

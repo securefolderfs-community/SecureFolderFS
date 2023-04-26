@@ -12,6 +12,7 @@
     <StackPanel>
         <ucab:ActionBlockControl
             Title="Change password"
+            ClickCommand="{x:Bind ViewModel.ChangePasswordCommand}"
             Description="Change the password used to unlock this vault"
             IsClickable="True">
             <ucab:ActionBlockControl.Icon>

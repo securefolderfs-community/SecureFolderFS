@@ -5,12 +5,12 @@ using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Messages;
-using SecureFolderFS.AvaloniaUI.ServiceImplementation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.UI.Helpers;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -48,23 +48,9 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             };
         }
 
-        private bool SetupNavigation()
-        {
-            if (ViewModel.NavigationService.IsInitialized)
-                return true;
-
-            if (ViewModel.NavigationService is AvaloniaNavigationService navigationServiceImpl)
-            {
-                navigationServiceImpl.NavigationControl = Navigation;
-                return navigationServiceImpl.NavigationControl is not null;
-            }
-
-            return false;
-        }
-
         private async void NavigationView_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
         {
-            if (!SetupNavigation())
+            if (!ViewModel.NavigationService.SetupNavigation(Navigation))
                 return;
 
             var tag = Convert.ToInt32((e.SelectedItem as NavigationViewItem)?.Tag);

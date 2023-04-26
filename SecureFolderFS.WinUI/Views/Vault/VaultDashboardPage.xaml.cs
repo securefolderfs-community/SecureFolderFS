@@ -1,8 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
 using System.Collections.ObjectModel;
 
@@ -30,21 +33,27 @@ namespace SecureFolderFS.WinUI.Views.Vault
             BreadcrumbItems = new();
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultDashboardPageViewModel viewModel)
                 ViewModel = viewModel;
 
-            await Navigation.NavigateAsync(ViewModel.CurrentPage, new EntranceNavigationTransitionInfo());
             BreadcrumbItems.Add(new(ViewModel.VaultViewModel.VaultModel.VaultName, true));
-
-            base.OnNavigatedTo(e);
         }
 
-        private void Navigation_Loaded(object sender, RoutedEventArgs e)
+        private async void Navigation_Loaded(object sender, RoutedEventArgs e)
         {
-            // TODO(r)
-            //ViewModel.Messenger.Register<NavigationMessage>(Navigation);
+            if (ViewModel.DashboardNavigationService.SetupNavigation(Navigation, true))
+            {
+                var target = ViewModel.DashboardNavigationService.CurrentTarget ?? GetDefaultDashboardViewModel(); // Get current target or initialize default
+                INavigationTarget GetDefaultDashboardViewModel()
+                {
+                    var controlsViewModel = new VaultControlsViewModel(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigationService, ViewModel.NavigationService);
+                    return new VaultOverviewPageViewModel(ViewModel.UnlockedVaultViewModel, controlsViewModel, ViewModel.DashboardNavigationService);
+                }
+
+                await ViewModel.DashboardNavigationService.NavigateAsync(target);
+            }
         }
     }
 }

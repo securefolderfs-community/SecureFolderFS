@@ -25,7 +25,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             {
                 { typeof(LicensesDialogViewModel), () => new LicensesDialog() },
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
-                { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() }
+                { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() },
+                { typeof(PasswordChangeDialogViewModel), () => new ContentDialog() } // TODO
             };
         }
 

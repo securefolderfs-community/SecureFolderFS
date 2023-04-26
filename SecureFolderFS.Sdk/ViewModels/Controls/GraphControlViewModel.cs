@@ -9,14 +9,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     public sealed partial class GraphControlViewModel : ObservableObject, IProgress<double>, IAsyncInitialize
     {
-        public ObservableCollection<Tuple<long, DateTime>> Data { get; }
-
+        [ObservableProperty] private ObservableCollection<GraphPoint> _Data;
         [ObservableProperty] private bool _IsExtended;
         [ObservableProperty] private string? _GraphSubheader = "0mb/s";
 
         public GraphControlViewModel()
         {
-            Data = new();
+            _Data = new();
         }
 
         public void UpdateLastPoint()
@@ -39,6 +38,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
 
             return Task.CompletedTask;
+        }
+    }
+
+    public sealed class GraphPoint
+    {
+        public long Value { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public GraphPoint(long value, DateTime date)
+        {
+            Value = value;
+            Date = date;
         }
     }
 }
