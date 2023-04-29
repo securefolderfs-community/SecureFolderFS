@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -37,7 +38,7 @@ namespace SecureFolderFS.Sdk.Services
         /// Retrieves all licenses of packages and libraries that are used by the app.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="LicenseModel"/> for licenses.</returns>
-        IAsyncEnumerable<LicenseModel> GetLicensesAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="LicenseViewModel"/> for licenses.</returns>
+        IAsyncEnumerable<LicenseViewModel> GetLicensesAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.UI.AppModels;
 using System.Linq;
-using System.Text;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -15,9 +14,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class PasswordWizardPage : Page
     {
-        public VaultWizardPasswordViewModel ViewModel
+        public PasswordWizardViewModel ViewModel
         {
-            get => (VaultWizardPasswordViewModel)DataContext;
+            get => (PasswordWizardViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -29,10 +28,10 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardPasswordViewModel viewModel)
+            if (e.Parameter is PasswordWizardViewModel viewModel)
             {
                 ViewModel = viewModel;
-                ViewModel.InitializeWithPassword = () => new SecurePassword(Encoding.UTF8.GetBytes(FirstPassword.Password));
+                ViewModel.InitializeWithPassword = () => new VaultPassword(FirstPassword.Password);
             }
 
             base.OnNavigatedTo(e);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SecureFolderFS.Shared.Extensions
 {
@@ -7,13 +8,18 @@ namespace SecureFolderFS.Shared.Extensions
         public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
             if (!dictionary.ContainsKey(key))
-            {
                 dictionary.Add(key, value);       
-            }
             else
-            {
                 dictionary[key] = value;
-            }
+        }
+
+        public static TKV? GetByKeyOrValue<TKV>(this IDictionary<TKV, TKV> dictionary, TKV tkv)
+            where TKV : class
+        {
+            if (dictionary.TryGetValue(tkv, out var value))
+                return value;
+
+            return dictionary.FirstOrDefault(x => x.Value == tkv).Key;
         }
     }
 }

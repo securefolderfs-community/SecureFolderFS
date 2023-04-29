@@ -1,15 +1,16 @@
+using Avalonia.Platform.Storage;
+using SecureFolderFS.AvaloniaUI.Helpers;
+using SecureFolderFS.AvaloniaUI.WindowViews;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Storage.NativeStorage;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Avalonia.Platform.Storage;
-using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.AvaloniaUI.WindowViews;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.UI.Storage.NativeStorage;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
@@ -19,14 +20,17 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         /// <inheritdoc/>
         public Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
         {
-            LauncherHelper.Launch(App.AppDirectory);
+            LauncherHelpers.Launch(App.AppDirectory);
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task OpenInFileExplorerAsync(ILocatableFolder folder, CancellationToken cancellationToken = default)
+        public Task OpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            LauncherHelper.Launch(folder.Path);
+            if (folder is not ILocatableFolder locatableFolder)
+                return Task.CompletedTask;
+
+            LauncherHelpers.Launch(locatableFolder.Path);
             return Task.CompletedTask;
         }
 

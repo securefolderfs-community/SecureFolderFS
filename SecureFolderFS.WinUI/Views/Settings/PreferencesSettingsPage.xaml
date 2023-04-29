@@ -11,7 +11,7 @@
     xmlns:uc2="using:SecureFolderFS.UI.UserControls.InfoBars"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Settings.Banners"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Banners"
     Loaded="PreferencesSettingsPage_Loaded"
     mc:Ignorable="d">
 

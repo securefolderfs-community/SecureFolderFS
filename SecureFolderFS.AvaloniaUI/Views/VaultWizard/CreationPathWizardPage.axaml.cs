@@ -1,31 +1,26 @@
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
     internal sealed partial class CreationPathWizardPage : Page
     {
-        public VaultWizardCreationPathViewModel ViewModel
+        public NewLocationWizardViewModel? ViewModel
         {
-            get => (VaultWizardCreationPathViewModel)DataContext;
+            get => (NewLocationWizardViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public CreationPathWizardPage()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardCreationPathViewModel viewModel)
+            if (e.Parameter is NewLocationWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

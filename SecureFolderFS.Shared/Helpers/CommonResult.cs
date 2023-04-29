@@ -14,21 +14,15 @@ namespace SecureFolderFS.Shared.Helpers
         /// <inheritdoc/>
         public Exception? Exception { get; }
 
+        public CommonResult(Exception? exception)
+            : this(false)
+        {
+            Exception = exception;
+        }
+
         public CommonResult(bool isSuccess = true)
         {
             Successful = isSuccess;
-        }
-
-        public CommonResult(Exception? exception)
-        {
-            Exception = exception;
-            Successful = false;
-        }
-
-        public CommonResult(IResult result, Exception? exception = null)
-        {
-            Exception = result.Exception ?? exception;
-            Successful = Exception is null;
         }
     }
 
@@ -47,12 +41,6 @@ namespace SecureFolderFS.Shared.Helpers
         public CommonResult(Exception? exception)
             : base(exception)
         {
-        }
-
-        public CommonResult(IResult<T> result, T? value = default, Exception? exception = null)
-            : base(result, exception)
-        {
-            Value = result.Value ?? value;
         }
     }
 }

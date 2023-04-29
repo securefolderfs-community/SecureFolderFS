@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.VaultWizard"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels"
     Width="464"
     Loaded="EncryptionWizardPage_Loaded"
     mc:Ignorable="d">
@@ -21,9 +21,9 @@
             <ComboBox
                 ItemsSource="{x:Bind ContentCiphers}"
                 SelectedIndex="0"
-                SelectedItem="{x:Bind ViewModel.ContentCipherItemViewModel, Mode=TwoWay}">
+                SelectedItem="{x:Bind ViewModel.ContentCipherViewModel, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="vm:CipherItemViewModel">
+                    <DataTemplate x:DataType="vm:CipherInfoViewModel">
                         <TextBlock Text="{x:Bind Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -35,9 +35,9 @@
             <ComboBox
                 ItemsSource="{x:Bind FileNameCiphers}"
                 SelectedIndex="0"
-                SelectedItem="{x:Bind ViewModel.FileNameCipherItemViewModel, Mode=TwoWay}">
+                SelectedItem="{x:Bind ViewModel.FileNameCipherViewModel, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="vm:CipherItemViewModel">
+                    <DataTemplate x:DataType="vm:CipherInfoViewModel">
                         <TextBlock Text="{x:Bind Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>

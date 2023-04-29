@@ -14,20 +14,18 @@ namespace SecureFolderFS.Sdk.Models
         string WidgetId { get; }
 
         /// <summary>
-        /// Gets the data associated with <paramref name="key"/>.
+        /// Gets the data saved in this widget.
         /// </summary>
-        /// <param name="key">The key to associate the data with.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns value that can be null, otherwise null.</returns>
-        Task<string?> GetDataAsync(string key, CancellationToken cancellationToken = default);
+        Task<string?> GetWidgetDataAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets the data associated with <paramref name="key"/>.
+        /// Sets the data for this widget.
         /// </summary>
-        /// <param name="key">The key to associate the data with.</param>
-        /// <param name="value">The value to set.</param>
+        /// <param name="value">The data to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true, otherwise false.</returns>
-        Task<bool> SetDataAsync(string key, string? value, CancellationToken cancellationToken = default);
+        Task<bool> SetWidgetDataAsync(string? value, CancellationToken cancellationToken = default);
     }
 }

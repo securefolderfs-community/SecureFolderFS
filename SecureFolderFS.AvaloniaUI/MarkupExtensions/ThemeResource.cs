@@ -1,13 +1,13 @@
-using System;
 using Avalonia;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentAvalonia.Styling;
-using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.UI.Enums;
+using SecureFolderFS.UI.Helpers;
+using System;
+using System.ComponentModel;
 
 namespace SecureFolderFS.AvaloniaUI.MarkupExtensions
 {
@@ -38,8 +38,8 @@ namespace SecureFolderFS.AvaloniaUI.MarkupExtensions
 
         public ThemeResource()
         {
-            WeakEventHandlerManager.Subscribe<ThemeHelper, GenericEventArgs<ApplicationTheme>, ThemeResource>(ThemeHelper.Instance, nameof(ThemeHelper.Instance.OnThemeChangedEvent), OnThemeChanged);
-            ThemeHelper.Instance.OnThemeChangedEvent += OnThemeChanged;
+            WeakEventHandlerManager.Subscribe<AvaloniaThemeHelper, PropertyChangedEventArgs, ThemeResource>(AvaloniaThemeHelper.Instance, nameof(AvaloniaThemeHelper.Instance.PropertyChanged), OnThemeChanged);
+            AvaloniaThemeHelper.Instance.PropertyChanged += OnThemeChanged;
         }
 
         public override object ProvideValue(IServiceProvider serviceProvider)
@@ -51,8 +51,11 @@ namespace SecureFolderFS.AvaloniaUI.MarkupExtensions
             };
         }
 
-        private void OnThemeChanged(object? sender, GenericEventArgs<ApplicationTheme> e)
+        private void OnThemeChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName != nameof(IThemeHelper.CurrentTheme))
+                return;
+
             OnPropertyChanged(nameof(Value));
         }
     }

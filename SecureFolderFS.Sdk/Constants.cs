@@ -18,12 +18,7 @@
             public const string GRAPHS_WIDGET_ID = "graphs_widget";
         }
 
-        public static class FileSystems
-        {
-            public const string DOKANY_EXTERNAL_LINK = "https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000";
-        }
-
-        public static class VaultInformation
+        public static class VaultContent
         {
             public const string VAULT_README_FILENAME = "_readme_before_continuing.txt";
 

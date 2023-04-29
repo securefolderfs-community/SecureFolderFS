@@ -1,14 +1,16 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
     public sealed class SettingsDialogViewModel : DialogViewModel
     {
-        public IMessenger Messenger { get; }
+        public static SettingsDialogViewModel Instance { get; } = new();
 
-        public SettingsDialogViewModel()
+        public INavigationService NavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
+
+        private SettingsDialogViewModel()
         {
-            Messenger = new WeakReferenceMessenger();
         }
     }
 }

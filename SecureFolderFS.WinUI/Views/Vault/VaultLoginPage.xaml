@@ -6,20 +6,18 @@
     xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
-    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
-
-        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreSelectionViewModel">
+        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreViewModel">
             <StackPanel Spacing="24">
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
                     Text="Provide keystore to continue" />
+
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
@@ -41,7 +39,20 @@
                         KeyUp="VaultPasswordBox_KeyUp"
                         Loaded="VaultPasswordBox_Loaded"
                         PlaceholderText="Password" />
+                    <TeachingTip
+                        x:Name="PasswordTeachingTip"
+                        Title="Invalid password"
+                        IsLightDismissEnabled="True"
+                        IsOpen="{x:Bind IsInvalidPasswordShown, Mode=TwoWay}"
+                        PreferredPlacement="Bottom"
+                        Subtitle="The provided password is incorrect."
+                        Target="{Binding ElementName=VaultPasswordBox}">
+                        <TeachingTip.IconSource>
+                            <FontIconSource Glyph="&#xE783;" />
+                        </TeachingTip.IconSource>
+                    </TeachingTip>
                 </StackPanel>
+
                 <!--  Login  -->
                 <Button
                     x:Name="ContinueButton"
@@ -53,7 +64,7 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginInvalidVaultViewModel">
+        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginErrorViewModel">
             <StackPanel Spacing="4">
                 <TextBlock
                     HorizontalAlignment="Center"
@@ -65,26 +76,29 @@
                     HorizontalTextAlignment="Center"
                     IsTextSelectionEnabled="True"
                     Opacity="0.8"
-                    Text="{x:Bind ErrorMessage, Mode=OneWay}" />
+                    Text="{x:Bind Message, Mode=OneWay}" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
 
     <ScrollViewer>
-        <Grid>
-            <Grid
+        <Grid Padding="32" HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <!--  Main Input  -->
+                <RowDefinition />
+                <!--  Notification  -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  Main Input  -->
+            <StackPanel
                 Grid.Row="0"
-                HorizontalAlignment="Center"
+                Grid.RowSpan="2"
                 VerticalAlignment="Center"
-                RowSpacing="32">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+                Spacing="64">
 
                 <!--  Header  -->
-                <StackPanel Grid.Row="0" Spacing="6">
+                <StackPanel VerticalAlignment="Center" Spacing="6">
                     <TextBlock
                         HorizontalAlignment="Center"
                         FontSize="26"
@@ -99,15 +113,13 @@
                         Text="Vault is locked" />
                 </StackPanel>
 
-                <!--  Image  -->
-                <Image Grid.Row="1" />
-
                 <!--  Input  -->
                 <ContentControl
-                    Grid.Row="2"
                     HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
-                    Content="{x:Bind ViewModel.LoginStrategyViewModel, Mode=OneWay}">
+                    Content="{x:Bind ViewModel.StrategyViewModel, Mode=OneWay}"
+                    IsTabStop="False">
                     <ContentControl.ContentTemplateSelector>
                         <ts:LoginMethodTemplateSelector
                             AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
@@ -120,7 +132,17 @@
                         </TransitionCollection>
                     </ContentControl.ContentTransitions>
                 </ContentControl>
-            </Grid>
+            </StackPanel>
+
+            <!--  Notification  -->
+            <InfoBar
+                Title="Unsupported settings"
+                Grid.Row="1"
+                MaxWidth="580"
+                IsClosable="False"
+                IsOpen="False"
+                Message="Selected file system is not supported"
+                Severity="Error" />
         </Grid>
     </ScrollViewer>
 </Page>

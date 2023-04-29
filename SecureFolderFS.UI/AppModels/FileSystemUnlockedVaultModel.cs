@@ -2,6 +2,8 @@
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
+using System.Threading.Tasks;
+using SecureFolderFS.Sdk.AppModels;
 
 namespace SecureFolderFS.UI.AppModels
 {
@@ -16,11 +18,15 @@ namespace SecureFolderFS.UI.AppModels
         /// <inheritdoc/>
         public IVaultStatisticsModel VaultStatisticsModel { get; }
 
-        public FileSystemUnlockedVaultModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel)
+        /// <inheritdoc/>
+        public VaultInfoModel VaultInfoModel { get; }
+
+        public FileSystemUnlockedVaultModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel, VaultInfoModel vaultInfoModel)
         {
             _virtualFileSystem = virtualFileSystem;
             RootFolder = virtualFileSystem.RootFolder;
             VaultStatisticsModel = vaultStatisticsModel;
+            VaultInfoModel = vaultInfoModel;
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,5 @@
 using LiveChartsCore;
+using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI;
-using LiveChartsCore.Drawing;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -45,7 +45,7 @@ namespace SecureFolderFS.WinUI.UserControls
         {
             Chart.Series = new ISeries[]
             {
-                new LineSeries<GraphPointViewModel>()
+                new LineSeries<GraphPoint>()
                 {
                     Values = Data,
                     Fill = new LinearGradientPaint(new SKColor[] {
@@ -89,13 +89,13 @@ namespace SecureFolderFS.WinUI.UserControls
             Click?.Invoke(sender, e);
         }
 
-        public IList<GraphPointViewModel>? Data
+        public IList<GraphPoint>? Data
         {
-            get => (IList<GraphPointViewModel>?)GetValue(DataProperty);
+            get => (IList<GraphPoint>?)GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register(nameof(Data), typeof(IList<GraphPointViewModel>), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Data), typeof(IList<GraphPoint>), typeof(GraphControl), new PropertyMetadata(null));
 
         public string? GraphHeader
         {

@@ -5,8 +5,8 @@ using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
-using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
+using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.UserControls.InfoBars;
 using System.Linq;
@@ -23,9 +23,9 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// </summary>
     public sealed partial class PreferencesSettingsPage : Page
     {
-        public PreferencesSettingsPageViewModel ViewModel
+        public PreferencesSettingsViewModel ViewModel
         {
-            get => (PreferencesSettingsPageViewModel)DataContext;
+            get => (PreferencesSettingsViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -40,7 +40,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is PreferencesSettingsPageViewModel viewModel)
+            if (e.Parameter is PreferencesSettingsViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
@@ -48,8 +48,6 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private async void PreferencesSettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.BannerViewModel.InitAsync();
-
             FileSystemAdapterChoice.SelectedItem = ViewModel.BannerViewModel.FileSystemAdapters
                 .FirstOrDefault(x =>
                     x.FileSystemInfoModel.Id.Equals(ViewModel.BannerViewModel.PreferredFileSystemId));
@@ -68,7 +66,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
             if (fileSystemAdapter is null)
                 return;
 
-            var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
+            var fileSystemAdapterResult = await fileSystemAdapter.GetStatusAsync(cancellationToken);
             if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
             {
                 FileSystemInfoBar = new WebDavInfoBar();
@@ -104,7 +102,7 @@ namespace SecureFolderFS.WinUI.Views.Settings
         {
             foreach (var item in ViewModel.BannerViewModel.FileSystemAdapters)
             {
-                var isSupportedResult = await item.FileSystemInfoModel.IsSupportedAsync(cancellationToken);
+                var isSupportedResult = await item.FileSystemInfoModel.GetStatusAsync(cancellationToken);
                 if (isSupportedResult.Successful)
                     return item;
             }

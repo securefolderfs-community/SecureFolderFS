@@ -12,12 +12,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class WindowsStorageService : IStorageService
     {
         /// <inheritdoc/>
-        public Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(true);
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default)
         {
             try

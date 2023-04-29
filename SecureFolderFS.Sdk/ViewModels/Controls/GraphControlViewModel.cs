@@ -1,22 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     public sealed partial class GraphControlViewModel : ObservableObject, IProgress<double>, IAsyncInitialize
     {
-        public ObservableCollection<GraphPointViewModel> Data { get; }
-
-        [ObservableProperty]
-        private string? _GraphSubheader = "0mb/s";
+        [ObservableProperty] private ObservableCollection<GraphPoint> _Data;
+        [ObservableProperty] private bool _IsExtended;
+        [ObservableProperty] private string? _GraphSubheader = "0mb/s";
 
         public GraphControlViewModel()
         {
-            Data = new();
+            _Data = new();
         }
 
         public void UpdateLastPoint()
@@ -35,10 +34,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             for (var i = 0; i < Constants.Graphs.MAX_GRAPH_POINTS; i++)
             {
-                Data.Add(new());
+                Data.Add(new(0, DateTime.Now));
             }
 
             return Task.CompletedTask;
+        }
+    }
+
+    public sealed class GraphPoint
+    {
+        public long Value { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public GraphPoint(long value, DateTime date)
+        {
+            Value = value;
+            Date = date;
         }
     }
 }

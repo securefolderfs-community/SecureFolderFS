@@ -1,18 +1,15 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.UI.Storage.NativeStorage;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="IStorageService"/>
     public sealed class NativeStorageService : IStorageService
     {
-        /// <inheritdoc/>
-        public Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(true);
-        }
-
         /// <inheritdoc/>
         public Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default)
         {

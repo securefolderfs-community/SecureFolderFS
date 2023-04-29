@@ -21,6 +21,7 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.Enums;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {
@@ -40,6 +41,12 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         {
             _cipherProvider = CipherProvider.CreateNew();
         }
+
+        /// <inheritdoc/>
+        public string? ContentCipherId { get; private set; }
+
+        /// <inheritdoc/>
+        public string? FileNameCipherId { get; private set; }
 
         /// <inheritdoc/>
         public async Task SetVaultStoreAsync(IFolder vaultFolder, IStorageService storageService, CancellationToken cancellationToken = default)
@@ -64,6 +71,20 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             _configDataModel = await serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(configStream, cancellationToken);
             if (_configDataModel is null)
                 throw new SerializationException($"Data could not be deserialized into {nameof(VaultConfigurationDataModel)}.");
+
+            ContentCipherId = _configDataModel.ContentCipherScheme switch
+            {
+                ContentCipherScheme.AES_CTR_HMAC => Constants.CipherId.AES_CTR_HMAC,
+                ContentCipherScheme.AES_GCM => Constants.CipherId.AES_GCM,
+                ContentCipherScheme.XChaCha20_Poly1305 => Constants.CipherId.XCHACHA20_POLY1305,
+                _ => null
+            };
+            FileNameCipherId = _configDataModel.FileNameCipherScheme switch
+            {
+                FileNameCipherScheme.None => Constants.CipherId.NONE,
+                FileNameCipherScheme.AES_SIV => Constants.CipherId.AES_SIV,
+                _ => null
+            };
         }
 
         /// <inheritdoc/>

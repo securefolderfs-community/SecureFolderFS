@@ -1,43 +1,32 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+﻿using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.WinUI.Views.VaultWizard;
 using System;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="NavigationControl"/>
-    internal sealed class VaultWizardNavigationControl : NavigationControl
+    /// <inheritdoc cref="FrameNavigationControl"/>
+    internal sealed class VaultWizardNavigationControl : FrameNavigationControl
     {
-        /// <inheritdoc cref="Frame.CanGoBack"/>
-        public bool CanGoBack => ContentFrame.CanGoBack;
-
         /// <inheritdoc/>
-        public override void Receive(BackNavigationRequestedMessage message)
+        public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            if (ContentFrame.CanGoBack)
-                ContentFrame.GoBack();
-        }
+            { typeof(MainWizardPageViewModel), typeof(MainWizardPage) },
+            { typeof(ExistingLocationWizardViewModel), typeof(AddExistingWizardPage) },
+            { typeof(NewLocationWizardViewModel), typeof(CreationPathWizardPage) },
+            { typeof(PasswordWizardViewModel), typeof(PasswordWizardPage) },
+            { typeof(EncryptionWizardViewModel), typeof(EncryptionWizardPage) },
+            { typeof(SummaryWizardViewModel), typeof(SummaryWizardPage) },
+        };
 
         /// <inheritdoc/>
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
         {
             transitionInfo ??= new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
-            var pageType = viewModel switch
-            {
-                MainVaultWizardPageViewModel => typeof(MainWizardPage),
-                VaultWizardSelectLocationViewModel => typeof(AddExistingWizardPage),
-                VaultWizardCreationPathViewModel => typeof(CreationPathWizardPage),
-                VaultWizardPasswordViewModel => typeof(PasswordWizardPage),
-                VaultWizardEncryptionViewModel => typeof(EncryptionWizardPage),
-                VaultWizardSummaryViewModel => typeof(SummaryWizardPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
-            };
-
-            ContentFrame.Navigate(pageType, viewModel, transitionInfo);
+            return ContentFrame.Navigate(pageType, parameter, transitionInfo);
         }
     }
 }

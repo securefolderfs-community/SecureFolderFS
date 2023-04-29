@@ -1,29 +1,32 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
-             xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.AppHost"
-             xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot.MainWindowRootControl"
-             Loaded="MainWindowRootControl_OnLoaded">
+<UserControl
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot.MainWindowRootControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
+    xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Host"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Loaded="MainWindowRootControl_OnLoaded"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainAppHostViewModel">
-            <uc2:MainAppHostControl ViewModel="{Binding .}"/>
+        <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainHostViewModel">
+            <uc2:MainAppHostControl ViewModel="{Binding .}" />
         </DataTemplate>
-        <DataTemplate x:Key="NoVaultsAppHostDataTemplate" x:DataType="vm:NoVaultsAppHostViewModel">
-            <uc2:NoVaultsAppHostControl ViewModel="{Binding .}"/>
+        <DataTemplate x:Key="NoVaultsAppHostDataTemplate" x:DataType="vm:EmptyHostViewModel">
+            <uc2:NoVaultsAppHostControl ViewModel="{Binding .}" />
         </DataTemplate>
     </UserControl.Resources>
 
-    <!-- Root -->
+    <!--  Root  -->
     <Grid RowDefinitions="Auto *">
 
-        <!-- TODO Titlebar  -->
+        <!--  TODO Titlebar  -->
 
-        <!-- Main Content -->
+        <!--  Main Content  -->
         <ContentControl
             x:Name="AppContent"
             Grid.Row="1"
@@ -31,9 +34,7 @@
             VerticalContentAlignment="Stretch"
             Content="{Binding ViewModel.AppContentViewModel, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
             <ContentControl.DataTemplates>
-                <ts:InterfaceHostTemplateSelector
-                    MainAppHostDataTemplate="{StaticResource MainAppHostDataTemplate}"
-                    NoVaultsAppHostDataTemplate="{StaticResource NoVaultsAppHostDataTemplate}" />
+                <ts:InterfaceHostTemplateSelector MainAppHostDataTemplate="{StaticResource MainAppHostDataTemplate}" NoVaultsAppHostDataTemplate="{StaticResource NoVaultsAppHostDataTemplate}" />
             </ContentControl.DataTemplates>
         </ContentControl>
     </Grid>

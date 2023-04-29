@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </UserControl.Resources>
 
     <StackPanel>
@@ -45,7 +45,7 @@
         <ContentPresenter
             x:Name="BottomContent"
             VerticalContentAlignment="Center"
-            x:Load="{x:Bind AdditionalBottomContent, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+            x:Load="{x:Bind AdditionalBottomContent, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
             Content="{x:Bind AdditionalBottomContent, Mode=OneWay}" />
     </StackPanel>
 </UserControl>

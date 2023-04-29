@@ -1,7 +1,13 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using SecureFolderFS.Shared.Helpers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -11,7 +17,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual string GetSystemVersion()
         {
-            if (CompatibilityHelpers.IsPlatformWindows)
+            if (OperatingSystem.IsWindows())
             {
                 var windows = Environment.OSVersion;
                 return $"Windows {windows.Version}";
@@ -21,7 +27,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public virtual async IAsyncEnumerable<LicenseModel> GetLicensesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public virtual async IAsyncEnumerable<LicenseViewModel> GetLicensesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "SecureFolderFS.UI")!;
             foreach (var item in assembly.GetManifestResourceNames().Where(resource => resource.StartsWith("SecureFolderFS.UI.Assets.Licenses")))
@@ -37,14 +43,21 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var licenseName = await streamReader.ReadLineAsync(cancellationToken) ?? string.Empty;
                 var projectWebsite = await streamReader.ReadLineAsync(cancellationToken);
                 var projectWebsiteUri = projectWebsite is null ? null : new Uri(projectWebsite);
-                var licenses = licenseLink.Split(',').Select(x => new Uri(x));
+                var licenseUris = licenseLink.Split(',').Select(x => new Uri(x)).ToArray();
 
                 // Reset position and make sure cached data isn't combined when reading full text again
                 stream.Position = 0L;
                 streamReader.DiscardBufferedData();
                 var fullText = await streamReader.ReadToEndAsync(cancellationToken);
 
-                yield return new LicenseModel(packageName, licenses, licenseName, projectWebsiteUri, fullText);
+                yield return new()
+                {
+                    PackageName = packageName,
+                    LicenseName = licenseName,
+                    LicenseContent = fullText,
+                    ProjectWebsiteUri = projectWebsiteUri,
+                    LicenseUris = licenseUris
+                };
             }
         }
 

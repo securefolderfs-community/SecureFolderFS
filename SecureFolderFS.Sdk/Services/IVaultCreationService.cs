@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+﻿using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.IO;
@@ -48,11 +47,11 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Sets the content and filename cipher scheme that will be used for vault encryption.
         /// </summary>
-        /// <param name="nameCipher">The filename cipher scheme to set.</param>
-        /// <param name="contentCipher">The content cipher scheme to set.</param>
+        /// <param name="nameCipherId">The filename cipher scheme to set.</param>
+        /// <param name="contentCipherId">The content cipher scheme to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> depending on whether cipher scheme was set successfully..</returns>
-        Task<IResult> SetCipherSchemeAsync(CipherInfoModel contentCipher, CipherInfoModel nameCipher, CancellationToken cancellationToken = default);
+        Task<IResult> SetCipherSchemeAsync(string contentCipherId, string nameCipherId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Finalizes and deploys the routine that will finish the vault creation task.

@@ -14,6 +14,6 @@ namespace SecureFolderFS.Sdk.Storage.LockableStorage
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a lock handle to the storage object represented by <see cref="IAsyncDisposable"/>, otherwise null.</returns>
-        Task<IAsyncDisposable?> ObtainLockAsync(CancellationToken cancellationToken = default);
+        Task<IDisposable?> ObtainLockAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using SecureFolderFS.Sdk.Services;
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
@@ -32,9 +32,15 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public void ReportTelemetry(string name, IDictionary<string, string>? properties = null)
+        public void TrackEvent(string eventName)
         {
-            Analytics.TrackEvent(name, properties);
+            Analytics.TrackEvent(eventName);
+        }
+
+        /// <inheritdoc/>
+        public void TrackException(Exception exception)
+        {
+            Analytics.TrackEvent($"Exception: {exception}");
         }
     }
 }

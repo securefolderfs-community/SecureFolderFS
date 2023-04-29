@@ -5,10 +5,41 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
-    <Grid>
-        <TextBlock HorizontalAlignment="Center" Text="Coming soon" />
-    </Grid>
+    <StackPanel Spacing="4">
+        <ucab:ActionBlockControl Title="Vault information" IsExpanded="True">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE946;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ExpanderContent>
+                <Grid Padding="32,0,32,0" ColumnSpacing="32">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="Content encryption" />
+                        <TextBlock Text="Filename encryption" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.ContentCipherName}" />
+                        <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.FileNameCipherName}" />
+                    </StackPanel>
+                </Grid>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+        <ucab:ActionBlockControl
+            Title="Change password"
+            ClickCommand="{x:Bind ViewModel.ChangePasswordCommand}"
+            Description="Change the password used to unlock this vault"
+            IsClickable="True">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE8D7;" />
+            </ucab:ActionBlockControl.Icon>
+        </ucab:ActionBlockControl>
+    </StackPanel>
 </Page>

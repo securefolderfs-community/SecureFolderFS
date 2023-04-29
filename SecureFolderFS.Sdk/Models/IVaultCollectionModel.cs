@@ -1,42 +1,31 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using SecureFolderFS.Shared.Utils;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
     /// Manages a collection of saved vaults.
     /// </summary>
-    public interface IVaultCollectionModel
+    public interface IVaultCollectionModel : IPersistable
     {
         /// <summary>
-        /// Checks whether there are any vaults saved.
+        /// Adds provided <paramref name="vaultModel"/> to the saved vaults list.
         /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is true if the store contains vaults, otherwise false.</returns>
-        Task<bool> HasVaultsAsync(CancellationToken cancellationToken = default);
+        /// <param name="vaultModel">The vault to add.</param>
+        /// <returns>If successful, returns true, otherwise false.</returns>
+        bool AddVault(IVaultModel vaultModel);
 
         /// <summary>
-        /// Adds provided <see cref="vault"/> to the saved vaults list.
+        /// Removes provided <paramref name="vaultModel"/> from the saved vaults list.
         /// </summary>
-        /// <param name="vault">The vault to add.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
-        Task<bool> AddVaultAsync(IVaultModel vault, CancellationToken cancellationToken = default);
-        
-        /// <summary>
-        /// Removes provided <see cref="vault"/> from the saved vaults list.
-        /// </summary>
-        /// <param name="vault">The vault to remove.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful returns true, otherwise false.</returns>
-        Task<bool> RemoveVaultAsync(IVaultModel vault, CancellationToken cancellationToken = default);
+        /// <param name="vaultModel">The vault to remove.</param>
+        /// <returns>If successful, returns true, otherwise false.</returns>
+        bool RemoveVault(IVaultModel vaultModel);
 
         /// <summary>
-        /// Initializes and gets all saved vaults.
+        /// Gets all persisted vault models.
         /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IVaultModel"/> of saved vaults.</returns>
-        IAsyncEnumerable<IVaultModel> GetVaultsAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns an <see cref="IEnumerable{T}"/> of type <see cref="IVaultModel"/> of all saved vaults.</returns>
+        IEnumerable<IVaultModel> GetVaults();
     }
 }

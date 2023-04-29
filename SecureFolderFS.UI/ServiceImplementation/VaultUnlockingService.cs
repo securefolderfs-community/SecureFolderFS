@@ -13,6 +13,10 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.AppModels;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -77,7 +81,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public async Task<IResult> SetFileSystemAsync(IFileSystemInfoModel fileSystemInfoModel, CancellationToken cancellationToken = default)
         {
             // Check if the file system is supported
-            var isSupportedResult = await fileSystemInfoModel.IsSupportedAsync(cancellationToken);
+            var isSupportedResult = await fileSystemInfoModel.GetStatusAsync(cancellationToken);
             if (!isSupportedResult.Successful)
                 return isSupportedResult;
 
@@ -122,8 +126,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
                 // Mount the file system
                 var virtualFileSystem = await mountableFileSystem.MountAsync(mountOptions, cancellationToken);
+                var vaultInfoModel = new VaultInfoModel()
+                {
+                    ContentCipherId = _unlockRoutine.ContentCipherId,
+                    FileNameCipherId = _unlockRoutine.FileNameCipherId
+                };
 
-                return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge));
+                return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge, vaultInfoModel));
             }
             catch (Exception ex)
             {

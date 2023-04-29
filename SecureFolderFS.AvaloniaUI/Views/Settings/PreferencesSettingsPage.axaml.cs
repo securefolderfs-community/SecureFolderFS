@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -12,10 +8,14 @@ using SecureFolderFS.Core;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
-using SecureFolderFS.Sdk.ViewModels.Settings.Banners;
+using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.UserControls.InfoBars;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Settings
 {
@@ -31,25 +31,20 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         /// </summary>
         private bool _adapterStatusUpdated;
 
-        public PreferencesSettingsPageViewModel ViewModel
+        public PreferencesSettingsViewModel? ViewModel
         {
-            get => (PreferencesSettingsPageViewModel)DataContext;
+            get => (PreferencesSettingsViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public PreferencesSettingsPage()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is PreferencesSettingsPageViewModel viewModel)
+            if (e.Parameter is PreferencesSettingsViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
@@ -87,7 +82,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 return;
 
             var newFileSystemInfoBar = FileSystemInfoBar;
-            var fileSystemAdapterResult = await fileSystemAdapter.IsSupportedAsync(cancellationToken);
+            var fileSystemAdapterResult = await fileSystemAdapter.GetStatusAsync(cancellationToken);
 
             if (!fileSystemAdapterResult.Successful)
             {
@@ -138,7 +133,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
         {
             foreach (var item in ViewModel.BannerViewModel.FileSystemAdapters)
             {
-                var isSupportedResult = await item.FileSystemInfoModel.IsSupportedAsync(cancellationToken);
+                var isSupportedResult = await item.FileSystemInfoModel.GetStatusAsync(cancellationToken);
                 if (isSupportedResult.Successful)
                     return item;
             }

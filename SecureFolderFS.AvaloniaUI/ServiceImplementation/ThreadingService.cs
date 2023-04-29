@@ -1,8 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using Avalonia.Threading;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utils;
+using System;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
@@ -17,26 +16,19 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IAwaitable ExecuteOnUiThreadAsync()
+        public IAwaitable ChangeThreadAsync()
         {
-            return new UiThreadAwaitable(_dispatcher);
+            return new ContextSwitchAwaitable(_dispatcher);
         }
 
-        /// <inheritdoc/>
-        public Task ExecuteOnUiThreadAsync(Action action)
-        {
-            return _dispatcher.InvokeAsync(action);
-        }
-
-        // TODO ensure this is implemented properly
-        private sealed class UiThreadAwaitable : IAwaitable
+        private sealed class ContextSwitchAwaitable : IAwaitable
         {
             private readonly Dispatcher _dispatcher;
 
             /// <inheritdoc/>
             public bool IsCompleted => _dispatcher.CheckAccess();
 
-            public UiThreadAwaitable(Dispatcher dispatcher)
+            public ContextSwitchAwaitable(Dispatcher dispatcher)
             {
                 _dispatcher = dispatcher;
             }
@@ -48,14 +40,14 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             }
 
             /// <inheritdoc/>
-            public void GetResult()
-            {
-            }
-
-            /// <inheritdoc/>
             public void OnCompleted(Action continuation)
             {
                 _ = _dispatcher.InvokeAsync(continuation);
+            }
+
+            /// <inheritdoc/>
+            public void GetResult()
+            {
             }
         }
     }

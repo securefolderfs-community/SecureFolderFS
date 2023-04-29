@@ -1,35 +1,29 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using SecureFolderFS.AvaloniaUI.ServiceImplementation;
-using SecureFolderFS.AvaloniaUI.ServiceImplementation.UserPreferences;
-using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.AvaloniaUI.WindowViews;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ServiceImplementation.UserPreferences;
 using SecureFolderFS.UI.Storage.NativeStorage;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI
 {
     public sealed partial class App : Application
     {
-        public static string AppDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SecureFolderFS");
+        private IServiceProvider? _serviceProvider;
 
-        private IServiceProvider? ServiceProvider { get; set; }
+        public static string AppDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SecureFolderFS");
 
         public App()
         {
@@ -55,9 +49,10 @@ namespace SecureFolderFS.AvaloniaUI
                 var settingsFolder = new NativeFolder(settingsFolderPath);
 
                 // Configure IoC
-                ServiceProvider = ConfigureServices(settingsFolder);
-                Ioc.Default.ConfigureServices(ServiceProvider);
+                _serviceProvider = ConfigureServices(settingsFolder);
+                Ioc.Default.ConfigureServices(_serviceProvider);
 
+                // Activate MainWindow
                 desktop.MainWindow = new MainWindow();
             }
 
@@ -77,17 +72,7 @@ namespace SecureFolderFS.AvaloniaUI
 
             serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
-                .AddSingleton<ISavedVaultsService, SavedVaultsService>(_ => new SavedVaultsService(settingsFolder))
-                .AddSingleton<IVaultsSettingsService, VaultsSettingsService>(_ => new VaultsSettingsService(settingsFolder))
-                .AddSingleton<IVaultsWidgetsService, VaultsWidgetsService>(_ => new VaultsWidgetsService(settingsFolder))
-                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>(_ => new ApplicationSettingsService(settingsFolder))
-                .AddSingleton<IPlatformSettingsService, PlatformSettingsService>(_ => new PlatformSettingsService(settingsFolder))
-                .AddSingleton<IGeneralSettingsService, GeneralSettingsService>(sp => GetSettingsService(sp, (database, model) => new GeneralSettingsService(database, model)))
-                .AddSingleton<IPreferencesSettingsService, PreferencesSettingsService>(sp => GetSettingsService(sp, (database, model) => new PreferencesSettingsService(database, model)))
-                .AddSingleton<IPrivacySettingsService, PrivacySettingsService>(sp => GetSettingsService(sp, (database, model) => new PrivacySettingsService(database, model)))
-
-                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
-                .AddTransient<IVaultCreationService, VaultCreationService>()
+                .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new VaultPersistenceService(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
                 .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
@@ -96,20 +81,21 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
-                .AddSingleton<IUpdateService, UpdateService>();
+                .AddSingleton<IUpdateService, UpdateService>()
+
+                // Transient services
+                .AddTransient<INavigationService, AvaloniaNavigationService>()
+                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
+                .AddTransient<IVaultCreationService, VaultCreationService>();
 
             return serviceCollection.BuildServiceProvider();
         }
 
-        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
-        {
-            LogException(e.Exception);
-        }
+        #region Exception Handlers
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            LogException(e.ExceptionObject as Exception);
-        }
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) => LogException(e.Exception);
+        
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) => LogException(e.ExceptionObject as Exception);
 
         private static void LogException(Exception? ex)
         {
@@ -123,12 +109,6 @@ namespace SecureFolderFS.AvaloniaUI
 #endif
         }
 
-        // Terrible.
-        private static TSettingsService GetSettingsService<TSettingsService>(IServiceProvider serviceProvider,
-            Func<IDatabaseModel<string>, ISettingsModel, TSettingsService> initializer) where TSettingsService : SharedSettingsModel
-        {
-            var settingsServiceImpl = serviceProvider.GetRequiredService<ISettingsService>() as SettingsService;
-            return initializer(settingsServiceImpl!.GetDatabaseModel(), settingsServiceImpl);
-        }
+        #endregion
     }
 }

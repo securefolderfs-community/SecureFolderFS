@@ -20,7 +20,7 @@ namespace SecureFolderFS.Shared.Utils
     }
 
     /// <summary>
-    /// Represents a result of an action with return value.
+    /// Represents a result of an action with a return value.
     /// </summary>
     /// <typeparam name="T">The type of value associated with the result.</typeparam>
     public interface IResult<out T> : IResult
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Shared.Utils
         /// <summary>
         /// Gets the message describing result of the action.
         /// <remarks>
-        /// The message should not be used for displaying in the view, but rather for logs in debug dumps.</remarks>
+        /// The message should not be used for displaying in the view, but rather for logs and debug dumps.</remarks>
         /// </summary>
         string? Message { get; }
     }

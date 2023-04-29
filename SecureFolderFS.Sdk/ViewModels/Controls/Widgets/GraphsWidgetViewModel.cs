@@ -73,8 +73,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
             // Update graph for read
             var readPoint = ReadGraphViewModel.Data[0];
+            readPoint.Value = read; // TODO(r)
             readPoint.Date = now;
-            readPoint.Value = read;
             ReadGraphViewModel.UpdateLastPoint();
 
             // Update graph for write
@@ -92,8 +92,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             {
                 _updateTimeCount = 0;
 
-                var readRate = ByteSize.FromBytes(_readRates.Where(x => x != 0).IfEmptyThenAppend(0).Sum()).MegaBytes;
-                var writeRate = ByteSize.FromBytes(_writeRates.Where(x => x != 0).IfEmptyThenAppend(0).Sum()).MegaBytes;
+                var readRate = ByteSize.FromBytes(_readRates.Where(x => x != 0).Sum()).MegaBytes;
+                var writeRate = ByteSize.FromBytes(_writeRates.Where(x => x != 0).Sum()).MegaBytes;
 
                 ReadGraphViewModel.Report(readRate);
                 WriteGraphViewModel.Report(writeRate);
@@ -103,6 +103,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         /// <inheritdoc/>
         public override void Dispose()
         {
+            _vaultStatisticsModel.Dispose();
             _periodicTimer.Dispose();
         }
     }

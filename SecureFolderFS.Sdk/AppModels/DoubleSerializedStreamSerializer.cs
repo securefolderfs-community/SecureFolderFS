@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 var actualDictionary = new Dictionary<object, object?>();
                 foreach (DictionaryEntry item in serializedDictionary)
                 {
-                    if (item.Value is ISerializedData serializedData)
+                    if (item.Value is ISerializedModel serializedData)
                     {
                         actualDictionary[item.Key] = serializedData.GetValue<object?>();
                     }
@@ -46,7 +46,7 @@ namespace SecureFolderFS.Sdk.AppModels
             var deserialized = await base.DeserializeAsync(serialized, dataType, cancellationToken);
             if (deserialized is IDictionary deserializedDictionary)
             {
-                var actualDictionary = new Dictionary<object, ISerializedData?>();
+                var actualDictionary = new Dictionary<object, ISerializedModel?>();
                 foreach (DictionaryEntry item in deserializedDictionary)
                 {
                     if (item.Value is JsonElement jsonElement)
@@ -63,8 +63,8 @@ namespace SecureFolderFS.Sdk.AppModels
                 return deserialized;
         }
 
-        /// <inheritdoc cref="ISerializedData"/>
-        private sealed class JsonSerializedData : ISerializedData
+        /// <inheritdoc cref="ISerializedModel"/>
+        private sealed class JsonSerializedData : ISerializedModel
         {
             private readonly JsonElement _jsonElement;
             private object? _deserialized;
@@ -82,8 +82,8 @@ namespace SecureFolderFS.Sdk.AppModels
             }
         }
 
-        /// <inheritdoc cref="ISerializedData"/>
-        private sealed class NonSerializedData : ISerializedData
+        /// <inheritdoc cref="ISerializedModel"/>
+        private sealed class NonSerializedData : ISerializedModel
         {
             private readonly object? _value;
 

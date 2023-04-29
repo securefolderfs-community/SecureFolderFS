@@ -1,14 +1,13 @@
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
-using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 using SecureFolderFS.UI.AppModels;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {
@@ -25,7 +24,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
 
         public VaultLoginPage()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
@@ -34,11 +33,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private async void VaultPasswordBox_OnKeyUp(object? sender, KeyEventArgs e)
@@ -72,7 +66,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
                 _continueButton.IsEnabled = false;
                 await Task.Delay(25); // Wait for UI to update.
 
-                var securePassword = string.IsNullOrEmpty(_vaultPasswordBox.Text) ? null : new SecurePassword(Encoding.UTF8.GetBytes(_vaultPasswordBox.Text));
+                var securePassword = string.IsNullOrEmpty(_vaultPasswordBox.Text) ? null : new VaultPassword(_vaultPasswordBox.Text);
                 await Task.Run(() => viewModel.UnlockVaultCommand.ExecuteAsync(securePassword));
 
                 await Task.Delay(25);

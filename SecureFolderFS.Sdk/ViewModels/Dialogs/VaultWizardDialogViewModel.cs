@@ -1,49 +1,54 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.Utils;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    public sealed partial class VaultWizardDialogViewModel : DialogViewModel, IRecipient<NavigationRequestedMessage>
+    public sealed partial class VaultWizardDialogViewModel : DialogViewModel, IDisposable
     {
-        public IMessenger Messenger { get; }
+        public INavigationService NavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
 
-        [ObservableProperty]
-        private BaseVaultWizardPageViewModel? _CurrentPageViewModel;
+        public IVaultCollectionModel VaultCollectionModel { get; }
 
-        public VaultWizardDialogViewModel()
+        public VaultWizardDialogViewModel(IVaultCollectionModel vaultCollectionModel)
         {
-            Messenger = new WeakReferenceMessenger();
-            Messenger.Register(this);
+            VaultCollectionModel = vaultCollectionModel;
+        }
+
+        [RelayCommand]
+        private Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
+        {
+            if (NavigationService.CurrentTarget is BaseWizardPageViewModel wizardPageViewModel)
+                return wizardPageViewModel.PrimaryButtonClickAsync(eventDispatch, cancellationToken);
+
+            return Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        private Task SecondaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
+        {
+            if (NavigationService.CurrentTarget is BaseWizardPageViewModel wizardPageViewModel)
+                return wizardPageViewModel.SecondaryButtonClickAsync(eventDispatch, cancellationToken);
+
+            return Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        private Task GoBackAsync()
+        {
+            return NavigationService.GoBackAsync();
         }
 
         /// <inheritdoc/>
-        public void Receive(NavigationRequestedMessage message)
+        public void Dispose()
         {
-            CurrentPageViewModel = message.ViewModel as BaseVaultWizardPageViewModel;
-        }
-
-        [RelayCommand]
-        private Task PrimaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
-        {
-            return CurrentPageViewModel?.PrimaryButtonClickAsync(flag, cancellationToken) ?? Task.CompletedTask;
-        }
-
-        [RelayCommand]
-        private Task SecondaryButtonClickAsync(IEventDispatchFlag? flag, CancellationToken cancellationToken)
-        {
-            return CurrentPageViewModel?.SecondaryButtonClickAsync(flag, cancellationToken) ?? Task.CompletedTask;
-        }
-
-        [RelayCommand]
-        private void GoBack()
-        {
-            Messenger.Send(new BackNavigationRequestedMessage());
+            NavigationService.Dispose();
         }
     }
 }

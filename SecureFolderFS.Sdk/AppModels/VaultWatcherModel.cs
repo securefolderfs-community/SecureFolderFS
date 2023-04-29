@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LockableStorage;
 using SecureFolderFS.Sdk.Storage.MutableStorage;
 using SecureFolderFS.Shared.Helpers;
@@ -21,45 +22,43 @@ namespace SecureFolderFS.Sdk.AppModels
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         /// <inheritdoc/>
-        public IVaultModel VaultModel { get; }
+        public IFolder VaultFolder { get; }
 
         /// <inheritdoc/>
         public event EventHandler<IResult>? VaultChangedEvent;
 
-        public VaultWatcherModel(IVaultModel vaultModel)
+        public VaultWatcherModel(IFolder vaultFolder)
         {
-            VaultModel = vaultModel;
+            VaultFolder = vaultFolder;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> WatchForChangesAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (VaultModel.Folder is not IMutableFolder mutableVaultFolder)
-                return false;
+            if (VaultFolder is not IMutableFolder mutableVaultFolder)
+                return;
 
             if (_folderWatcher is not null)
-                return true;
+                return;
 
             try
             {
                 _folderWatcher = await mutableVaultFolder.GetFolderWatcherAsync(cancellationToken);
                 _folderWatcher.CollectionChanged += FolderWatcher_CollectionChanged;
-
-                return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                _ = ex;
             }
         }
 
         /// <inheritdoc/>
-        public Task<IAsyncDisposable?> LockFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<IDisposable?> LockFolderAsync(CancellationToken cancellationToken = default)
         {
-            if (VaultModel.Folder is ILockableFolder lockableFolder)
-                return lockableFolder.ObtainLockAsync(cancellationToken);
+            if (VaultFolder is ILockableStorable lockableStorable)
+                return await lockableStorable.ObtainLockAsync(cancellationToken);
 
-            return Task.FromResult<IAsyncDisposable?>(null);
+            return null;
         }
 
         private void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -74,7 +73,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 var newItem = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
                 // Determine whether any of the changed files were integral parts of the vault
-                if (VaultService.IsFileNameReserved(oldItem) || VaultService.IsFileNameReserved(newItem))
+                if (VaultService.IsNameReserved(oldItem) || VaultService.IsNameReserved(newItem))
                     result = new CommonResult(false);
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -82,7 +81,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 var item = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
                 // Determine if the deleted file was an integral part of the vault
-                if (VaultService.IsFileNameReserved(item))
+                if (VaultService.IsNameReserved(item))
                     result = new CommonResult(false);
             }
 

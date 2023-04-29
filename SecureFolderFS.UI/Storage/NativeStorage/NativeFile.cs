@@ -2,6 +2,9 @@
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.Storage.NativeStorage
 {

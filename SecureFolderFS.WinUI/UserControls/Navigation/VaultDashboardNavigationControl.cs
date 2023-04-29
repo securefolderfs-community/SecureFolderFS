@@ -1,31 +1,26 @@
-﻿using System;
-using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault.Dashboard;
+﻿using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.WinUI.Views.Vault;
+using System;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
-    internal sealed class VaultDashboardNavigationControl : NavigationControl
+    /// <inheritdoc cref="FrameNavigationControl"/>
+    internal sealed class VaultDashboardNavigationControl : FrameNavigationControl
     {
-        public override void Receive(BackNavigationRequestedMessage message)
+        /// <inheritdoc/>
+        public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            if (ContentFrame.CanGoBack)
-                ContentFrame.GoBack();
-        }
+            { typeof(VaultOverviewPageViewModel), typeof(VaultOverviewPage) },
+            { typeof(VaultPropertiesPageViewModel), typeof(VaultPropertiesPage) }
+        };
 
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        /// <inheritdoc/>
+        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
         {
-            // TODO: Cache navigation
-
-            var pageType = viewModel switch
-            {
-                VaultOverviewPageViewModel => typeof(VaultOverviewPage),
-                VaultPropertiesPageViewModel => typeof(VaultPropertiesPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
-            };
-
-            ContentFrame.Navigate(pageType, viewModel, new SlideNavigationTransitionInfo());
+            transitionInfo ??= new SlideNavigationTransitionInfo();
+            return ContentFrame.Navigate(pageType, parameter, transitionInfo);
         }
     }
 }

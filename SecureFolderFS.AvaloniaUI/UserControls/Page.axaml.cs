@@ -1,9 +1,9 @@
-using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using SecureFolderFS.AvaloniaUI.Events;
+using System.Linq;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls
 {
@@ -12,11 +12,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         protected ContentPresenter ContentPresenter => (ContentPresenter)this.GetVisualChildren().First();
 
         public Page()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }

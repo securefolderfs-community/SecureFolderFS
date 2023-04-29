@@ -1,28 +1,22 @@
-using System.Linq;
-using System.Text;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.UI.AppModels;
+using System.Linq;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
     internal sealed partial class PasswordWizardPage : Page
     {
-        public VaultWizardPasswordViewModel ViewModel
+        public PasswordWizardViewModel? ViewModel
         {
-            get => (VaultWizardPasswordViewModel)DataContext;
+            get => (PasswordWizardViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public PasswordWizardPage()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }
@@ -30,10 +24,10 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
         /// <inheritdoc/>
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardPasswordViewModel viewModel)
+            if (e.Parameter is PasswordWizardViewModel viewModel)
             {
                 ViewModel = viewModel;
-                ViewModel.InitializeWithPassword = () => new SecurePassword(Encoding.UTF8.GetBytes(FirstPassword.Text ?? string.Empty));
+                ViewModel.InitializeWithPassword = () => new VaultPassword(FirstPassword.Text ?? string.Empty);
             }
 
             base.OnNavigatedTo(e);
@@ -46,12 +40,14 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 
         private void FirstPassword_PasswordChanged(object sender, TextChangedEventArgs e)
         {
-            ViewModel.PrimaryButtonEnabled = CanContinue();
+            if (ViewModel is not null)
+                ViewModel.PrimaryButtonEnabled = CanContinue();
         }
 
         private void SecondPassword_PasswordChanged(object sender, TextChangedEventArgs e)
         {
-            ViewModel.PrimaryButtonEnabled = CanContinue();
+            if (ViewModel is not null)
+                ViewModel.PrimaryButtonEnabled = CanContinue();
         }
     }
 }

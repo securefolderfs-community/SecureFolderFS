@@ -1,4 +1,3 @@
-using System.Text;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Directories;
@@ -10,6 +9,7 @@ using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using System.Text;
 using Tmds.Fuse;
 using Tmds.Linux;
 using MountOptions = SecureFolderFS.Core.FileSystem.AppModels.MountOptions;
@@ -34,7 +34,14 @@ namespace SecureFolderFS.Core.FUSE
         /// <inheritdoc/>
         public static FileSystemAvailabilityType IsSupported()
         {
-            return Fuse.CheckDependencies() ? FileSystemAvailabilityType.Available : FileSystemAvailabilityType.ModuleNotAvailable;
+            try
+            {
+                return Fuse.CheckDependencies() ? FileSystemAvailabilityType.Available : FileSystemAvailabilityType.ModuleNotAvailable;
+            }
+            catch (TypeInitializationException) // Fuse might sometimes throw (tested on Windows)
+            {
+                return FileSystemAvailabilityType.ModuleNotAvailable;
+            }
         }
 
         /// <inheritdoc/>

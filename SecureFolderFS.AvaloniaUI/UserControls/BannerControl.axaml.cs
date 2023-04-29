@@ -8,11 +8,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
     {
         public BannerControl()
         {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
             AvaloniaXamlLoader.Load(this);
         }
 
@@ -31,7 +26,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         }
         public static readonly StyledProperty<IControl> RightSideProperty =
             AvaloniaProperty.Register<BannerControl, IControl>(nameof(RightSide));
-
 
         public IControl AdditionalBottomContent
         {

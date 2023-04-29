@@ -5,31 +5,34 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.AppModels;
+using System;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultService"/>
     public sealed class VaultService : IVaultService
     {
-        private readonly Dictionary<string, IFileSystemInfoModel> _fileSystems;
-
-        public VaultService()
+        private static Dictionary<string, IFileSystemInfoModel> FileSystems { get; } = new()
         {
-            _fileSystems = new()
-            {
-                { Core.Constants.FileSystemId.DOKAN_ID, new DokanyFileSystemDescriptor() },
-                { Core.Constants.FileSystemId.FUSE_ID, new FuseFileSystemDescriptor() },
-                { Core.Constants.FileSystemId.WEBDAV_ID, new WebDavFileSystemDescriptor() }
-            };
-        }
+            { Core.Constants.FileSystemId.DOKAN_ID, new DokanyFileSystemDescriptor() },
+            { Core.Constants.FileSystemId.FUSE_ID, new FuseFileSystemDescriptor() },
+            { Core.Constants.FileSystemId.WEBDAV_ID, new WebDavFileSystemDescriptor() }
+        };
 
         /// <inheritdoc/>
-        public bool IsFileNameReserved(string? fileName)
+        public string KeystoreFileName { get; } = Core.Constants.VAULT_KEYSTORE_FILENAME;
+
+        /// <inheritdoc/>
+        public string ConfigurationFileName { get; } = Core.Constants.VAULT_CONFIGURATION_FILENAME;
+
+        /// <inheritdoc/>
+        public bool IsNameReserved(string? name)
         {
-            return fileName is not null &&
-                   (fileName.Equals(Core.Constants.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
-                    fileName.Equals(Core.Constants.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal) ||
-                    fileName.Equals(Core.Constants.CONTENT_FOLDERNAME, StringComparison.Ordinal));
+            return name is not null && (
+                   name.Equals(Core.Constants.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
+                   name.Equals(Core.Constants.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal) ||
+                   name.Equals(Core.Constants.CONTENT_FOLDERNAME, StringComparison.Ordinal));
         }
 
         /// <inheritdoc/>
@@ -39,37 +42,26 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IFileSystemInfoModel? GetFileSystemById(string id)
-        {
-            return _fileSystems.Values.FirstOrDefault(x => x.Id.Equals(id));
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<IFileSystemInfoModel> GetFileSystems()
         {
-            foreach (var item in _fileSystems.Values)
+            foreach (var item in FileSystems.Values)
             {
-                // Don't include filesystems not supported on the current OS
-                if ((item.Id == Core.Constants.FileSystemId.DOKAN_ID && !OperatingSystem.IsWindows())
-                    || (item.Id == Core.Constants.FileSystemId.FUSE_ID && !OperatingSystem.IsLinux()))
-                    continue;
-
                 yield return item;
             }
         }
 
         /// <inheritdoc/>
-        public IEnumerable<CipherInfoModel> GetContentCiphers()
+        public IEnumerable<string> GetContentCiphers()
         {
-            yield return new CipherInfoModel("XChaCha20-Poly1305", Core.Constants.CipherId.XCHACHA20_POLY1305);
-            yield return new CipherInfoModel("AES-GCM", Core.Constants.CipherId.AES_GCM);
+            yield return Core.Constants.CipherId.XCHACHA20_POLY1305;
+            yield return Core.Constants.CipherId.AES_GCM;
         }
 
         /// <inheritdoc/>
-        public IEnumerable<CipherInfoModel> GetFileNameCiphers()
+        public IEnumerable<string> GetFileNameCiphers()
         {
-            yield return new CipherInfoModel("AES-SIV", Core.Constants.CipherId.AES_SIV);
-            yield return new CipherInfoModel("None", Core.Constants.CipherId.NONE);
+            yield return Core.Constants.CipherId.AES_SIV;
+            yield return Core.Constants.CipherId.NONE;
         }
     }
 }

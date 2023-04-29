@@ -1,10 +1,10 @@
-using System.Collections.ObjectModel;
 using Avalonia.Markup.Xaml;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
+using System.Collections.ObjectModel;
+using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {
@@ -12,30 +12,26 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
     {
         public ObservableCollection<OrderedBreadcrumbBarItem> BreadcrumbItems { get; }
 
-        public VaultDashboardPageViewModel ViewModel
+        public VaultDashboardPageViewModel? ViewModel
         {
-            get => (VaultDashboardPageViewModel)DataContext;
+            get => (VaultDashboardPageViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public VaultDashboardPage()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
             BreadcrumbItems = new();
         }
 
-        private void InitializeComponent()
+        public override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            AvaloniaXamlLoader.Load(this);
-        }
+            if (e.Parameter is not VaultDashboardPageViewModel viewModel)
+                return;
 
-        public override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            if (e.Parameter is VaultDashboardPageViewModel viewModel)
-                ViewModel = viewModel;
-
-            Navigation.Navigate(ViewModel.CurrentPage, new EntranceNavigationTransition());
-            BreadcrumbItems.Add(new(ViewModel.VaultViewModel.VaultModel.VaultName, true));
+            ViewModel = viewModel;
+            await Navigation.NavigateAsync(viewModel.CurrentPage, new EntranceNavigationTransition());
+            BreadcrumbItems.Add(new(viewModel.VaultViewModel.VaultModel.VaultName, true));
 
             base.OnNavigatedTo(e);
         }

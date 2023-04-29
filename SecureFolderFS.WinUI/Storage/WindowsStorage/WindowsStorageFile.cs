@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using System;
@@ -10,7 +11,7 @@ using Windows.Storage;
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
     /// <inheritdoc cref="IFile"/>
-    internal sealed class WindowsStorageFile : WindowsStorable<StorageFile>, ILocatableFile, IModifiableFile
+    internal sealed class WindowsStorageFile : WindowsStorable<StorageFile>, ILocatableFile, IModifiableFile, IFileExtended
     {
         public WindowsStorageFile(StorageFile storage)
             : base(storage)
@@ -28,19 +29,15 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         {
             var fileAccessMode = GetFileAccessMode(access);
             var storageOpenOptions = GetStorageOpenOptions(share);
-
-            var winrtStreamTask = storage.OpenAsync(fileAccessMode, storageOpenOptions).AsTask(cancellationToken);
-            var winrtStream = await winrtStreamTask;
+            var winrtStream = await storage.OpenAsync(fileAccessMode, storageOpenOptions).AsTask(cancellationToken);
 
             return winrtStream.AsStream();
         }
 
         /// <inheritdoc/>
-        public override async Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        public override async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            var parentFolderTask = storage.GetParentAsync().AsTask(cancellationToken);
-            var parentFolder = await parentFolderTask;
-
+            var parentFolder = await storage.GetParentAsync().AsTask(cancellationToken);
             return new WindowsStorageFolder(parentFolder);
         }
 

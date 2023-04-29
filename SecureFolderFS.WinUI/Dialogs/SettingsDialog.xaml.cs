@@ -1,14 +1,14 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Messages.Navigation;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.WinUI.UserControls.Navigation;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -33,32 +33,38 @@ namespace SecureFolderFS.WinUI.Dialogs
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        private INotifyPropertyChanged GetViewModelForTag(int tag)
+        private INavigationTarget GetTargetForTag(int tag)
         {
             return tag switch
             {
-                0 => new GeneralSettingsPageViewModel(),
-                1 => new PreferencesSettingsPageViewModel(),
-                2 => new PrivacySettingsPageViewModel(),
-                3 => new AboutSettingsPageViewModel(),
-                _ => new GeneralSettingsPageViewModel()
+                0 => ViewModel.NavigationService.TryGetTarget<GeneralSettingsViewModel>() ?? new(),
+                1 => ViewModel.NavigationService.TryGetTarget<PreferencesSettingsViewModel>() ?? new(),
+                2 => ViewModel.NavigationService.TryGetTarget<PrivacySettingsViewModel>() ?? new(),
+                3 => ViewModel.NavigationService.TryGetTarget<AboutSettingsViewModel>() ?? new(),
+                _ => new GeneralSettingsViewModel()
             };
         }
 
-        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (!ViewModel.Messenger.IsRegistered<NavigationRequestedMessage>(Navigation))
-                ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
+            if (!ViewModel.NavigationService.SetupNavigation(Navigation))
+                return;
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
-            var viewModel = GetViewModelForTag(tag);
+            var target = GetTargetForTag(tag);
 
-            Navigation.Navigate(viewModel, new EntranceNavigationTransitionInfo());
+            await ViewModel.NavigationService.NavigateAsync(target);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Hide();
+        }
+
+        private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
+            ViewModel.NavigationService.ResetNavigation<FrameNavigationControl>();
         }
     }
 }

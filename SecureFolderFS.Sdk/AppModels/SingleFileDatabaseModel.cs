@@ -1,30 +1,33 @@
 ﻿using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="BaseDictionaryDatabaseModel{TDictionaryValue}"/>
-    public sealed class SingleFileDatabaseModel : BaseDictionaryDatabaseModel<ISerializedData>
+    /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
+    public sealed class SingleFileDatabaseModel : BaseDatabaseModel<ISerializedModel>
     {
-        private readonly IFile _databaseFile;
+        private readonly string _fileName;
+        private readonly IModifiableFolder _settingsFolder;
+        private IFile? _databaseFile;
 
-        public SingleFileDatabaseModel(IFile databaseFile, IAsyncSerializer<Stream> serializer)
+        public SingleFileDatabaseModel(string fileName, IModifiableFolder settingsFolder, IAsyncSerializer<Stream> serializer)
             : base(serializer)
         {
-            _databaseFile = databaseFile;
+            _fileName = fileName;
+            _settingsFolder = settingsFolder;
         }
 
         /// <inheritdoc/>
-        public override TValue? GetValue<TValue>(string key, Func<TValue?>? defaultValue = null)
+        public override TValue? GetValue<TValue>(string key, Func<TValue>? defaultValue = null)
             where TValue : default
         {
             if (settingsCache.TryGetValue(key, out var value))
@@ -50,11 +53,16 @@ namespace SecureFolderFS.Sdk.AppModels
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
-                await using var stream = await _databaseFile.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+                if (!await EnsureSettingsFileAsync(cancellationToken))
+                    return false;
+
+                _ = _databaseFile!;
+
+                await using var stream = await _databaseFile!.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
                 if (stream is null)
                     return false;
 
-                var settings = await serializer.DeserializeAsync<Stream, IDictionary?>(stream, cancellationToken);
+                var settings = await serializer.DeserializeAsync<Stream, IDictionary>(stream, cancellationToken);
                 settingsCache.Clear();
 
                 if (settings is null) // No settings saved, set cache to empty and return true.
@@ -65,10 +73,8 @@ namespace SecureFolderFS.Sdk.AppModels
                     if (item.Key is not string key)
                         continue;
 
-                    if (item.Value is ISerializedData serializedData)
-                    {
+                    if (item.Value is ISerializedModel serializedData)
                         settingsCache[key] = serializedData;
-                    }
                     else
                         settingsCache[key] = new NonSerializedData(item.Value);
                 }
@@ -91,11 +97,16 @@ namespace SecureFolderFS.Sdk.AppModels
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
-                await using var dataStream = await _databaseFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
-                if (dataStream is null)
+                if (!await EnsureSettingsFileAsync(cancellationToken))
                     return false;
 
-                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary<string, ISerializedData>>(settingsCache, cancellationToken);
+                _ = _databaseFile!;
+
+                await using var dataStream = await _databaseFile!.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
+                if (dataStream is null)
+                    return false;
+                
+                await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
                 dataStream.Position = 0L;
@@ -113,8 +124,17 @@ namespace SecureFolderFS.Sdk.AppModels
             }
         }
 
-        /// <inheritdoc cref="ISerializedData"/>
-        private sealed class NonSerializedData : ISerializedData
+        private async Task<bool> EnsureSettingsFileAsync(CancellationToken cancellationToken)
+        {
+            if (_databaseFile is not null)
+                return true;
+
+            _databaseFile = await _settingsFolder.TryCreateFileAsync(_fileName, false, cancellationToken);
+            return _databaseFile is not null;
+        }
+
+        /// <inheritdoc cref="ISerializedModel"/>
+        private sealed class NonSerializedData : ISerializedModel
         {
             private readonly object? _value;
 

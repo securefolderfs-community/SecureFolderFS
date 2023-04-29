@@ -1,15 +1,12 @@
-using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.UI.Windowing;
-using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.AvaloniaUI.Services;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services;
+using System;
+using System.ComponentModel;
 
 namespace SecureFolderFS.AvaloniaUI.WindowViews
 {
@@ -24,7 +21,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
         public MainWindow()
         {
             Instance = this;
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
 
             EnsureEarlyWindow();
         }
@@ -37,10 +34,6 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             base.OnPropertyChanged(change);
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
 
         private void EnsureEarlyWindow()
         {
@@ -93,14 +86,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
         private async void Window_OnClosing(object? sender, CancelEventArgs e)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
-            var platformSettingsService = Ioc.Default.GetRequiredService<IPlatformSettingsService>();
-
-            await Task.WhenAll(
-                settingsService.SaveSettingsAsync(),
-                applicationSettingsService.SaveSettingsAsync(),
-                platformSettingsService.SaveSettingsAsync()
-            );
+            await settingsService.SaveAsync();
         }
 
         public static readonly StyledProperty<bool> IsCustomTitleBarVisibleProperty =

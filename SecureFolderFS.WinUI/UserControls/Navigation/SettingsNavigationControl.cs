@@ -1,26 +1,28 @@
-﻿using System;
-using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Pages.Settings;
+﻿using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.WinUI.Views.Settings;
+using System;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="NavigationControl"/>
-    internal sealed class SettingsNavigationControl : NavigationControl
+    /// <inheritdoc cref="FrameNavigationControl"/>
+    internal sealed class SettingsNavigationControl : FrameNavigationControl
     {
         /// <inheritdoc/>
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransitionInfo? transitionInfo)
+        public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            var pageType = viewModel switch
-            {
-                GeneralSettingsPageViewModel => typeof(GeneralSettingsPage),
-                PreferencesSettingsPageViewModel => typeof(PreferencesSettingsPage),
-                PrivacySettingsPageViewModel => typeof(PrivacySettingsPage),
-                AboutSettingsPageViewModel => typeof(AboutSettingsPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
-            };
+            { typeof(GeneralSettingsViewModel), typeof(GeneralSettingsPage) },
+            { typeof(PreferencesSettingsViewModel), typeof(PreferencesSettingsPage) },
+            { typeof(PrivacySettingsViewModel), typeof(PrivacySettingsPage) },
+            { typeof(AboutSettingsViewModel), typeof(AboutSettingsPage) }
+        };
 
-            ContentFrame.Navigate(pageType, viewModel, transitionInfo);
+        /// <inheritdoc/>
+        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
+        {
+            transitionInfo ??= new EntranceNavigationTransitionInfo();
+            return ContentFrame.Navigate(pageType, parameter, transitionInfo);
         }
     }
 }

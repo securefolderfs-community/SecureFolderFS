@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.ViewModels.Vault.LoginStrategy;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {
@@ -16,9 +16,9 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
         {
             return item switch
             {
-                LoginKeystoreSelectionViewModel => AuthenticateTemplate,
+                LoginKeystoreViewModel => AuthenticateTemplate,
                 LoginCredentialsViewModel => LoginTemplate,
-                LoginInvalidVaultViewModel => InvalidTemplate,
+                LoginErrorViewModel => InvalidTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

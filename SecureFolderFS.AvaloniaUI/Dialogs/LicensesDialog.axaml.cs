@@ -23,18 +23,13 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
 
         public LicensesDialog()
         {
-            InitializeComponent();
+            AvaloniaXamlLoader.Load(this);
         }
 
         public Type StyleKey => typeof(ContentDialog);
 
         /// <inheritdoc/>
         public async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
 
         private void Button_OnClick(object? sender, RoutedEventArgs e)
         {

@@ -1,34 +1,36 @@
-using System;
-using System.Collections.Generic;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
-    // TODO implement
+    // TODO: Implement localization
     /// <inheritdoc cref="ILocalizationService"/>
     internal sealed class LocalizationService : ILocalizationService
     {
         /// <inheritdoc/>
-        public ILanguageModel CurrentLanguage { get; } = new AppLanguageModel("en-US");
+        public CultureInfo CurrentCulture { get; }
 
         /// <inheritdoc/>
-        public string? LocalizeString(string resourceKey)
+        public IReadOnlyList<CultureInfo> AppLanguages { get; }
+
+        public LocalizationService()
+        {
+            CurrentCulture = new("en-US");
+            AppLanguages = new List<CultureInfo>() { CurrentCulture };
+        }
+
+        /// <inheritdoc/>
+        public string? GetString(string resourceKey)
         {
             return resourceKey;
         }
 
         /// <inheritdoc/>
-        public void SetCurrentLanguage(ILanguageModel language)
+        public Task SetCultureAsync(CultureInfo cultureInfo)
         {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<ILanguageModel> GetLanguages()
-        {
-            return new[] { CurrentLanguage };
+            return Task.CompletedTask;
         }
     }
 }

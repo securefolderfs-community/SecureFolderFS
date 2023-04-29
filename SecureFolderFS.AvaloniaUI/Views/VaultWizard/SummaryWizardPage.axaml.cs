@@ -1,32 +1,27 @@
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
     internal sealed partial class SummaryWizardPage : Page
     {
-        public VaultWizardSummaryViewModel ViewModel
+        public SummaryWizardViewModel? ViewModel
         {
-            get => (VaultWizardSummaryViewModel)DataContext;
+            get => (SummaryWizardViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public SummaryWizardPage()
         {
-            InitializeComponent();
-            // TODO OnThemeChangedEvent
-        }
-
-        private void InitializeComponent()
-        {
             AvaloniaXamlLoader.Load(this);
+            // TODO OnThemeChangedEvent
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardSummaryViewModel viewModel)
+            if (e.Parameter is SummaryWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

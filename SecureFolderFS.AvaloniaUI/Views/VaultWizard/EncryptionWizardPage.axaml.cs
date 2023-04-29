@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -7,8 +6,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
+using System.Collections.ObjectModel;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
@@ -16,28 +16,28 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
     {
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        public static readonly StyledProperty<VaultWizardEncryptionViewModel> ViewModelProperty
-            = AvaloniaProperty.Register<EncryptionWizardPage, VaultWizardEncryptionViewModel>(nameof(ViewModel));
+        public static readonly StyledProperty<EncryptionWizardViewModel> ViewModelProperty
+            = AvaloniaProperty.Register<EncryptionWizardPage, EncryptionWizardViewModel>(nameof(ViewModel));
 
-        public static readonly StyledProperty<ObservableCollection<CipherItemViewModel>> ContentCiphersProperty
-            = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherItemViewModel>>(nameof(ContentCiphers));
+        public static readonly StyledProperty<ObservableCollection<CipherInfoViewModel>> ContentCiphersProperty
+            = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherInfoViewModel>>(nameof(ContentCiphers));
 
-        public static readonly StyledProperty<ObservableCollection<CipherItemViewModel>> FileNameCiphersProperty
-            = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherItemViewModel>>(nameof(FileNameCiphers));
+        public static readonly StyledProperty<ObservableCollection<CipherInfoViewModel>> FileNameCiphersProperty
+            = AvaloniaProperty.Register<EncryptionWizardPage, ObservableCollection<CipherInfoViewModel>>(nameof(FileNameCiphers));
 
-        public ObservableCollection<CipherItemViewModel> ContentCiphers
+        public ObservableCollection<CipherInfoViewModel> ContentCiphers
         {
             get => GetValue(ContentCiphersProperty);
             set => SetValue(ContentCiphersProperty, value);
         }
 
-        public ObservableCollection<CipherItemViewModel> FileNameCiphers
+        public ObservableCollection<CipherInfoViewModel> FileNameCiphers
         {
             get => GetValue(FileNameCiphersProperty);
             set => SetValue(FileNameCiphersProperty, value);
         }
 
-        public VaultWizardEncryptionViewModel ViewModel
+        public EncryptionWizardViewModel ViewModel
         {
             get => GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
@@ -45,20 +45,14 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 
         public EncryptionWizardPage()
         {
-            InitializeComponent();
-
+            AvaloniaXamlLoader.Load(this);
             ContentCiphers = new();
             FileNameCiphers = new();
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultWizardEncryptionViewModel viewModel)
+            if (e.Parameter is EncryptionWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

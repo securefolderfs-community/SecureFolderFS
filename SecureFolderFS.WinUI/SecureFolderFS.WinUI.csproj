@@ -85,7 +85,7 @@
         <Page Update="UserControls\InterfaceHost\MainWindowRootControl.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-        <Page Update="UserControls\Navigation\NavigationControl.xaml">
+        <Page Update="UserControls\Navigation\FrameNavigationControl.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
         <Page Update="UserControls\Widgets\GraphsWidget.xaml">
@@ -101,8 +101,8 @@
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
         <PackageReference Include="WinUIEx" Version="2.1.0" />
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>

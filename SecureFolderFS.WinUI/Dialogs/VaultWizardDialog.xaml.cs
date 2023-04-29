@@ -1,25 +1,24 @@
-﻿using System;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI.UI.Animations;
+﻿using CommunityToolkit.WinUI.UI.Animations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Messages.Navigation;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
-using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
+using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.WinUI.ServiceImplementation;
+using System;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.WinUI.Dialogs
 {
-    public sealed partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>, IRecipient<NavigationRequestedMessage>, IRecipient<BackNavigationRequestedMessage>
+    public sealed partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>
     {
         private bool _hasNavigationAnimatedOnLoaded;
         private bool _isBackAnimationState;
@@ -39,52 +38,53 @@ namespace SecureFolderFS.WinUI.Dialogs
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        /// <inheritdoc/>
-        public async void Receive(NavigationRequestedMessage message)
+        private void SetupNavigation()
         {
-            await FinalizeNavigationAnimationAsync((message.ViewModel as BaseVaultWizardPageViewModel)!);
+            if (ViewModel.NavigationService.IsInitialized)
+                return;
+
+            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
+            {
+                navigationServiceImpl.NavigationControl = Navigation;
+                if (navigationServiceImpl.NavigationControl is not null)
+                    ViewModel.NavigationService.NavigationChanged += NavigationService_NavigationChanged;
+            }
         }
 
-        /// <inheritdoc/>
-        public async void Receive(BackNavigationRequestedMessage message)
-        {
-            await FinalizeNavigationAnimationAsync(ViewModel.CurrentPageViewModel!);
-        }
-
-        private async Task FinalizeNavigationAnimationAsync(BaseVaultWizardPageViewModel viewModel)
+        private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)
         {
             var canGoBack = false;
 
             switch (viewModel)
             {
-                case MainVaultWizardPageViewModel:
+                case MainWizardPageViewModel:
                     TitleText.Text = "Add new vault";
                     PrimaryButtonText = string.Empty;
                     break;
 
-                case VaultWizardSelectLocationViewModel:
+                case ExistingLocationWizardViewModel:
                     TitleText.Text = "Add existing vault";
                     PrimaryButtonText = "Continue";
                     canGoBack = true;
                     break;
 
-                case VaultWizardCreationPathViewModel:
+                case NewLocationWizardViewModel:
                     TitleText.Text = "Create new vault";
                     PrimaryButtonText = "Continue";
                     canGoBack = true;
                     break;
 
-                case VaultWizardPasswordViewModel:
+                case PasswordWizardViewModel:
                     TitleText.Text = "Set password";
                     PrimaryButtonText = "Continue";
                     break;
 
-                case VaultWizardEncryptionViewModel:
+                case EncryptionWizardViewModel:
                     TitleText.Text = "Choose encryption";
                     PrimaryButtonText = "Continue";
                     break;
 
-                case VaultWizardSummaryViewModel:
+                case SummaryWizardViewModel:
                     TitleText.Text = "Summary";
                     PrimaryButtonText = "Close";
                     SecondaryButtonText = string.Empty;
@@ -96,14 +96,14 @@ namespace SecureFolderFS.WinUI.Dialogs
                 _hasNavigationAnimatedOnLoaded = true;
                 GoBack.Visibility = Visibility.Collapsed;
             }
-            else if (!_isBackAnimationState && (canGoBack && Navigation.CanGoBack))
+            else if (!_isBackAnimationState && (canGoBack && Navigation.ContentFrame.CanGoBack))
             {
                 _isBackAnimationState = true;
                 GoBack.Visibility = Visibility.Visible;
                 await ShowBackButtonStoryboard.BeginAsync();
                 ShowBackButtonStoryboard.Stop();
             }
-            else if (_isBackAnimationState && !(canGoBack && Navigation.CanGoBack))
+            else if (_isBackAnimationState && !(canGoBack && Navigation.ContentFrame.CanGoBack))
             {
                 _isBackAnimationState = false;
                 await HideBackButtonStoryboard.BeginAsync();
@@ -111,38 +111,41 @@ namespace SecureFolderFS.WinUI.Dialogs
                 GoBack.Visibility = Visibility.Collapsed;
             }
 
-            GoBack.Visibility = canGoBack && Navigation.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            GoBack.Visibility = canGoBack && Navigation.ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
+        private async void NavigationService_NavigationChanged(object? sender, INavigationTarget? e)
         {
-            // Register order is important!
-            ViewModel.Messenger.Register<NavigationRequestedMessage>(Navigation);
-            ViewModel.Messenger.Register<BackNavigationRequestedMessage>(Navigation);
-            ViewModel.Messenger.Register<NavigationRequestedMessage>(this);
-            ViewModel.Messenger.Register<BackNavigationRequestedMessage>(this);
-
-            var viewModel = new MainVaultWizardPageViewModel(ViewModel.Messenger, ViewModel);
-            Navigation.Navigate(viewModel, new SuppressNavigationTransitionInfo());
-            await FinalizeNavigationAnimationAsync(viewModel);
+            await CompleteAnimationAsync(e as BaseWizardPageViewModel);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var eventDispatchFlag = new EventDispatchFlagHelper(() => args.Cancel = true);
-            ViewModel.PrimaryButtonClickCommand?.Execute(eventDispatchFlag);
+            ViewModel.PrimaryButtonClickCommand.Execute(new EventDispatchHelper(() => args.Cancel = true));
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var eventDispatchFlag = new EventDispatchFlagHelper(() => args.Cancel = true);
-            ViewModel.SecondaryButtonClickCommand?.Execute(eventDispatchFlag);
+            ViewModel.SecondaryButtonClickCommand.Execute(new EventDispatchHelper(() => args.Cancel = true));
+        }
+
+        private async void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetupNavigation();
+
+            var viewModel = new MainWizardPageViewModel(ViewModel);
+            await ViewModel.NavigationService.NavigateAsync(viewModel);
+            await CompleteAnimationAsync(viewModel);
         }
 
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             if (!args.Cancel)
+            {
+                ViewModel.NavigationService.NavigationChanged -= NavigationService_NavigationChanged;
+                ViewModel.Dispose();
                 Navigation.Dispose();
+            }
         }
     }
 }

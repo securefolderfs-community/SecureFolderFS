@@ -1,17 +1,33 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
+using System;
+using System.Globalization;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
+    /// <summary>
+    /// Represents a language view model.
+    /// </summary>
     public sealed class LanguageViewModel : ObservableObject
     {
-        private readonly ILanguageModel _languageModel;
+        /// <summary>
+        /// Gets the <see cref="CultureInfo"/> of the language.
+        /// </summary>
+        public CultureInfo CultureInfo { get; }
 
-        public string FriendlyName => _languageModel.Name;
+        /// <summary>
+        /// Gets the user-friendly name representation of the language.
+        /// </summary>
+        public string FriendlyName { get; }
 
-        public LanguageViewModel(ILanguageModel languageModel)
+        public LanguageViewModel(CultureInfo cultureInfo)
         {
-            _languageModel = languageModel;
+            CultureInfo = cultureInfo;
+            FriendlyName = FormatFriendlyName(CultureInfo.NativeName);
+        }
+
+        private static string FormatFriendlyName(string unformatted)
+        {
+            return string.Concat(unformatted[0].ToString().ToUpperInvariant(), unformatted.AsSpan(1));
         }
     }
 }

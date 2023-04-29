@@ -2,8 +2,11 @@
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.AppModels
 {
@@ -17,13 +20,13 @@ namespace SecureFolderFS.UI.AppModels
         public string Id { get; } = Core.Constants.FileSystemId.WEBDAV_ID;
 
         /// <inheritdoc/>
-        public Task<IResult> IsSupportedAsync(CancellationToken cancellationToken = default)
+        public Task<IResult> GetStatusAsync(CancellationToken cancellationToken = default)
         {
             var result = VaultHelpers.DetermineAvailability(FileSystemAdapterType.WebDavAdapter);
             if (result == FileSystemAvailabilityType.Available)
-                return Task.FromResult<IResult>(CommonResult.Success);
+                return Task.FromResult<IResult>(new FileSystemResult(true, true)); // Always available
 
-            return Task.FromResult<IResult>(new CommonResult(new NotSupportedException($"WebDav file system is not supported: {result}.")));
+            return Task.FromResult<IResult>(new FileSystemResult(true, new NotSupportedException($"WebDav file system is not supported: {result}.")));
         }
     }
 }

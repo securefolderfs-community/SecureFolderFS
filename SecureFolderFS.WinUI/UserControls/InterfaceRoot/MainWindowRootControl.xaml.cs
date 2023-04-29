@@ -5,10 +5,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
-using SecureFolderFS.Sdk.ViewModels.AppHost;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.WinUI.Helpers;
+using SecureFolderFS.WinUI.WindowViews;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -17,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
 {
-    public sealed partial class MainWindowRootControl : UserControl, IRecipient<RootNavigationRequestedMessage>
+    public sealed partial class MainWindowRootControl : UserControl, IRecipient<RootNavigationMessage>
     {
         public MainViewModel ViewModel
         {
@@ -33,7 +35,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         }
 
         /// <inheritdoc/>
-        public void Receive(RootNavigationRequestedMessage message)
+        public void Receive(RootNavigationMessage message)
         {
             _ = NavigateHostControlAsync(message.ViewModel);
         }
@@ -46,33 +48,38 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
 
         private async Task EnsureRootAsync()
         {
-            var vaultCollectionModel = new LocalVaultCollectionModel();
+            var vaultCollectionModel = new VaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
 
             // Small delay for Mica material to load
             await Task.Delay(1);
 
             // Initialize
-            var result = await Task.WhenAll(applicationSettingsService.LoadSettingsAsync(), settingsService.LoadSettingsAsync(), vaultCollectionModel.HasVaultsAsync());
+            await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.LoadAsync());
 
+            // First register the ThemeHelper
+            WindowsThemeHelper.Instance.RegisterWindowInstance(MainWindow.Instance.AppWindow, MainWindow.Instance.HostControl);
+
+            // Then, initialize it to refresh the theme and UI
+            await WindowsThemeHelper.Instance.InitAsync();
+             
             // Continue root initialization
-            if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped
+            if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
             {
                 //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
                 // TODO: Implement OOBE
             }
             else
             {
-                if (result[2]) // Has vaults
+                if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
                 {
                     // Show main app screen
-                    _ = NavigateHostControlAsync(new MainAppHostViewModel(vaultCollectionModel));
+                    _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel)); // TODO(r)
                 }
                 else // Doesn't have vaults
                 {
                     // Show no vaults screen
-                    _ = NavigateHostControlAsync(new NoVaultsAppHostViewModel(vaultCollectionModel));
+                    _ = NavigateHostControlAsync(new EmptyHostViewModel(vaultCollectionModel));
                 }
             }
         }
@@ -80,9 +87,13 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         private async Task NavigateHostControlAsync(INotifyPropertyChanged viewModel)
         {
             // Use transitions only when the initial page view model is not MainAppHostViewModel 
-            if ((ViewModel.AppContentViewModel is null && viewModel is not MainAppHostViewModel)
-                || (ViewModel.AppContentViewModel is not MainAppHostViewModel && ViewModel.AppContentViewModel is not null && viewModel is MainAppHostViewModel))
-                AppContent?.ContentTransitions?.ClearAndAdd(new ContentThemeTransition());
+            if ((ViewModel.AppContentViewModel is null && viewModel is not MainHostViewModel)
+                || (ViewModel.AppContentViewModel is not MainHostViewModel &&
+                    ViewModel.AppContentViewModel is not null && viewModel is MainHostViewModel))
+            {
+                AppContent?.ContentTransitions?.Clear();
+                AppContent?.ContentTransitions?.Add(new ContentThemeTransition());
+            }
 
             ViewModel.AppContentViewModel = viewModel;
 

@@ -7,23 +7,20 @@ namespace SecureFolderFS.Shared.Utils
     /// </summary>
     public interface IAwaitable : INotifyCompletion
     {
+        /// <summary>
+        /// Gets whether this <see cref="IAwaitable"/> has completed.
+        /// </summary>
         bool IsCompleted { get; }
 
+        /// <summary>
+        /// Gets an awaiter used to await this <see cref="IAwaitable"/>.
+        /// </summary>
+        /// <returns>An awaiter instance.</returns>
         IAwaitable GetAwaiter();
 
+        /// <summary>
+        /// Ends the await on the completed <see cref="IAwaitable"/>.
+        /// </summary>
         void GetResult();
-    }
-
-    /// <summary>
-    /// Represents an awaitable action with result.
-    /// </summary>
-    /// <typeparam name="TResult">The result type.</typeparam>
-    public interface IAwaitable<out TResult> : INotifyCompletion
-    {
-        bool IsCompleted { get; }
-
-        IAwaitable<TResult> GetAwaiter();
-
-        TResult GetResult();
     }
 }

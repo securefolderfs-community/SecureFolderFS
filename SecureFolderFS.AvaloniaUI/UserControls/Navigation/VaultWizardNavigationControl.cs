@@ -1,39 +1,35 @@
-﻿using System;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
+﻿using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.VaultWizard;
-using SecureFolderFS.Sdk.Messages.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.ExistingVault;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
+using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="NavigationControl"/>
-    internal sealed class VaultWizardNavigationControl : NavigationControl
+    /// <inheritdoc cref="ContentNavigationControl"/>
+    internal sealed class VaultWizardNavigationControl : ContentNavigationControl
     {
         /// <inheritdoc/>
-        public override void Receive(BackNavigationRequestedMessage message)
+        public override async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
         {
-            if (CanGoBack)
-                GoBack();
-        }
-
-        /// <inheritdoc/>
-        public override void Navigate<TViewModel>(TViewModel viewModel, NavigationTransition? transition)
-        {
-            transition ??= new SlideNavigationTransition(SlideNavigationTransition.Side.Right, ContentPresenter.Bounds.Width, true);
-            var pageType = viewModel switch
+            var pageType = target switch
             {
-                MainVaultWizardPageViewModel => typeof(MainWizardPage),
-                VaultWizardSelectLocationViewModel => typeof(AddExistingWizardPage),
-                VaultWizardCreationPathViewModel => typeof(CreationPathWizardPage),
-                VaultWizardPasswordViewModel => typeof(PasswordWizardPage),
-                VaultWizardEncryptionViewModel => typeof(EncryptionWizardPage),
-                VaultWizardSummaryViewModel => typeof(SummaryWizardPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
+                MainWizardPageViewModel => typeof(MainWizardPage),
+                ExistingLocationWizardViewModel => typeof(AddExistingWizardPage),
+                NewLocationWizardViewModel => typeof(CreationPathWizardPage),
+                PasswordWizardViewModel => typeof(PasswordWizardPage),
+                EncryptionWizardViewModel => typeof(EncryptionWizardPage),
+                SummaryWizardViewModel => typeof(SummaryWizardPage),
+                _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 
-            Navigate(pageType, viewModel, transition);
+            var transitionInfo = transition as TransitionBase
+                                 ?? new SlideNavigationTransition(SlideNavigationTransition.Side.Right, ContentPresenter.Bounds.Width, true);
+
+            await Navigate(pageType, target, transitionInfo);
+            return true;
         }
     }
 }

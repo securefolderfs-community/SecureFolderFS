@@ -8,15 +8,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc2="using:SecureFolderFS.WinUI.UserControls.Navigation"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Sidebar"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Sidebar"
     Loaded="MainAppHostControl_Loaded"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-        <vc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </UserControl.Resources>
 
     <NavigationView
@@ -27,7 +27,7 @@
         IsSettingsVisible="False"
         MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
         OpenPaneLength="260"
-        PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
+        PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
 
@@ -128,7 +128,7 @@
                             <!--  Last opened  -->
                             <TextBlock
                                 x:Name="LastOpenedText"
-                                x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBooleanConverter}}"
+                                x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                                 FontSize="12"
                                 Opacity="0.6"
                                 Text="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
@@ -137,7 +137,7 @@
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
-                            <MenuFlyoutItem Command="{x:Bind ShowInFileExplorerCommand}" Text="Show encrypted vault in File Explorer">
+                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand}" Text="Show encrypted vault in File Explorer">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>

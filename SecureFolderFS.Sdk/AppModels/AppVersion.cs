@@ -2,18 +2,14 @@ using System;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    public sealed class AppVersion
+    /// <summary>
+    /// Represents an app version with platform information.
+    /// </summary>
+    /// <param name="Version">Gets the version of the app.</param>
+    /// <param name="Platform">Gets the platform name that the app has been built to work on.</param>
+    public sealed record class AppVersion(Version Version, string Platform)
     {
-        public Version Version { get; }
-
-        public string Platform { get; }
-
-        public AppVersion(Version version, string platform)
-        {
-            Version = version;
-            Platform = platform;
-        }
-
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"{Version} ({Platform})";

@@ -55,6 +55,7 @@
     <Grid
         x:Name="GraphsGrid"
         Margin="0,8,0,0"
+        Loaded="GraphsGrid_Loaded"
         ColumnSpacing="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ReadColumn" Width="*" />

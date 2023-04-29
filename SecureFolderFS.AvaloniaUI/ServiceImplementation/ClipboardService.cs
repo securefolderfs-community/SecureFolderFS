@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using SecureFolderFS.AvaloniaUI.AppModels;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
@@ -24,33 +19,9 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SetClipboardDataAsync(IClipboardItemModel data)
+        public Task SetTextAsync(string text)
         {
-            switch (data.DataType)
-            {
-                case ClipboardDataType.Text:
-                    await TextCopy.ClipboardService.SetTextAsync((await data.GetDataAsync() as string)!);
-                    break;
-
-                default:
-                    return false;
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc/>
-        public async Task<IClipboardItemModel?> RequestClipboardDataAsync()
-        {
-            var data = await TextCopy.ClipboardService.GetTextAsync();
-            return data is not null ? new ClipboardItemModel(data) : null;
-        }
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<IClipboardItemModel>> RequestFullClipboardDataAsync()
-        {
-            var data = await RequestClipboardDataAsync();
-            return data is null ? Enumerable.Empty<IClipboardItemModel>() : new[] { data };
+            return TextCopy.ClipboardService.SetTextAsync(text);
         }
     }
 }

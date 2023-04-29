@@ -1,5 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.ViewModels.AppHost;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using System.ComponentModel;
 
 namespace SecureFolderFS.WinUI.TemplateSelectors
@@ -14,8 +14,8 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
         {
             return item switch
             {
-                MainAppHostViewModel => MainAppHostDataTemplate,
-                NoVaultsAppHostViewModel => NoVaultsAppHostDataTemplate,
+                MainHostViewModel => MainAppHostDataTemplate,
+                EmptyHostViewModel => NoVaultsAppHostDataTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

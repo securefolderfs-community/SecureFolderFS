@@ -1,20 +1,15 @@
-using System.Collections;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using System.Collections;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
 {
     internal sealed partial class GraphsWidget : UserControl
     {
         public GraphsWidget()
-        {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }
@@ -91,6 +86,27 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
             RestoreGraphStoryboard.Animations[1].Target = graph;
 
             return RestoreGraphStoryboard.RunAnimationsAsync();
+        }
+
+        private void RestoreGraphsState()
+        {
+            if (ReadGraphIsExtended)
+            {
+                //WriteGraph.IsVisible = false;
+                HideColumn(GraphsGrid.ColumnDefinitions[2]);
+                GraphsGrid.ColumnDefinitions[1].Width = new(0, GridUnitType.Pixel);
+            }
+            else if (WriteGraphIsExtended)
+            {
+                //ReadGraph.IsVisible = false;
+                HideColumn(GraphsGrid.ColumnDefinitions[0]);
+                GraphsGrid.ColumnDefinitions[1].Width = new(0, GridUnitType.Pixel);
+            }
+        }
+
+        private void GraphsGrid_Loaded(object? sender, RoutedEventArgs e)
+        {
+            RestoreGraphsState();
         }
 
         public bool ReadGraphIsExtended

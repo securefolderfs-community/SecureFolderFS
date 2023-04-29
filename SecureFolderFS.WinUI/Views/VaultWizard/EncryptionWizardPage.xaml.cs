@@ -3,8 +3,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard;
-using SecureFolderFS.Sdk.ViewModels.Pages.VaultWizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -19,13 +19,13 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     {
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        public ObservableCollection<CipherItemViewModel> ContentCiphers { get; }
+        public ObservableCollection<CipherInfoViewModel> ContentCiphers { get; }
 
-        public ObservableCollection<CipherItemViewModel> FileNameCiphers { get; }
+        public ObservableCollection<CipherInfoViewModel> FileNameCiphers { get; }
 
-        public VaultWizardEncryptionViewModel ViewModel
+        public EncryptionWizardViewModel ViewModel
         {
-            get => (VaultWizardEncryptionViewModel)DataContext;
+            get => (EncryptionWizardViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -38,7 +38,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             InitializeComponent();
-            if (e.Parameter is VaultWizardEncryptionViewModel viewModel)
+            if (e.Parameter is EncryptionWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

@@ -1,11 +1,10 @@
+using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Shared.Utils;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
@@ -13,7 +12,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
-        public ObservableCollection<LicenseModel> Licenses { get; }
+        public ObservableCollection<LicenseViewModel> Licenses { get; }
 
         public LicensesDialogViewModel()
         {

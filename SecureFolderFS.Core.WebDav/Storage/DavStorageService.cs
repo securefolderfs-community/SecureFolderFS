@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Sdk.Storage;
-using NWebDav.Server.Storage;
+﻿using NWebDav.Server.Storage;
 using SecureFolderFS.Core.WebDav.EncryptingStorage;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.IO;
@@ -20,12 +20,6 @@ namespace SecureFolderFS.Core.WebDav.Storage
         {
             this.baseDirectory = baseDirectory;
             this.storageService = storageService;
-        }
-
-        /// <inheritdoc/>
-        public virtual Task<bool> IsAccessibleAsync(CancellationToken cancellationToken = default)
-        {
-            return storageService.IsAccessibleAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

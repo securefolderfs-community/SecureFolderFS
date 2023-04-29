@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.Services.UserPreferences;
-using SecureFolderFS.WinUI.Helpers;
-using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI;
 using WinUIEx;
 
@@ -18,15 +15,12 @@ namespace SecureFolderFS.WinUI.WindowViews
     /// </summary>
     public sealed partial class MainWindow : WindowEx
     {
-#nullable disable
-        public static MainWindow Instance { get; private set; }
-#nullable restore
+        private static MainWindow? _Instance;
+        public static MainWindow Instance => _Instance ??= new();
 
-        public MainWindow()
+        private MainWindow()
         {
-            Instance = this;
             InitializeComponent();
-
             EnsureEarlyWindow();
         }
 
@@ -53,9 +47,6 @@ namespace SecureFolderFS.WinUI.WindowViews
                 SetTitleBar(HostControl.CustomTitleBar);
             }
 
-            // Register ThemeHelper
-            ThemeHelper.Instance.RegisterWindowInstance(AppWindow, HostControl);
-
             // Set min size
             base.MinHeight = 572;
             base.MinWidth = 662;
@@ -67,15 +58,7 @@ namespace SecureFolderFS.WinUI.WindowViews
         private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
-
-            await Task.WhenAll(settingsService.SaveSettingsAsync(), applicationSettingsService.SaveSettingsAsync());
-        }
-
-        private void HostControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Update current theme to refresh window buttons' colors
-            ThemeHelper.Instance.UpdateTheme();
+            await settingsService.SaveAsync();
         }
     }
 }

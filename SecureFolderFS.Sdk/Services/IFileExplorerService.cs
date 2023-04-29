@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -23,7 +24,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="folder">The folder to open file explorer in.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task OpenInFileExplorerAsync(ILocatableFolder folder, CancellationToken cancellationToken = default);
+        Task OpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Awaits the user input and picks single file from the file explorer dialog.

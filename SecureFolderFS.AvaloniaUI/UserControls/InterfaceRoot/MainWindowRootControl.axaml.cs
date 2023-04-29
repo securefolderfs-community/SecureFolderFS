@@ -1,45 +1,37 @@
-using System.ComponentModel;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.AvaloniaUI.Services;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Services.UserPreferences;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
-using SecureFolderFS.Sdk.ViewModels.AppHost;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Shared.Extensions;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
 {
-    public sealed partial class MainWindowRootControl : UserControl, IRecipient<RootNavigationRequestedMessage>
+    public sealed partial class MainWindowRootControl : UserControl, IRecipient<RootNavigationMessage>
     {
-        public MainViewModel ViewModel
+        public MainViewModel? ViewModel
         {
-            get => (MainViewModel)DataContext;
+            get => (MainViewModel?)DataContext;
             set => DataContext = value;
         }
 
         public MainWindowRootControl()
         {
-            InitializeComponent();
-
+            AvaloniaXamlLoader.Load(this);
             ViewModel = new();
         }
 
-        public void Receive(RootNavigationRequestedMessage message)
+        public void Receive(RootNavigationMessage message)
         {
             _ = NavigateHostControlAsync(message.ViewModel);
-        }
-
-
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private void MainWindowRootControl_OnLoaded(object? sender, RoutedEventArgs e)
@@ -50,37 +42,32 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
 
         private async Task EnsureRootAsync()
         {
-            var vaultCollectionModel = new LocalVaultCollectionModel();
+            var vaultCollectionModel = new VaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            var applicationSettingsService = Ioc.Default.GetRequiredService<IApplicationSettingsService>();
-            var platformSettingsService = Ioc.Default.GetRequiredService<IPlatformSettingsService>();
 
             // Initialize
-            var result = await Task.WhenAll(
-                applicationSettingsService.LoadSettingsAsync(),
-                settingsService.LoadSettingsAsync(),
-                platformSettingsService.LoadSettingsAsync(),
-                vaultCollectionModel.HasVaultsAsync());
+            await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.LoadAsync());
 
-            ThemeHelper.Instance.UpdateTheme();
+            // Update UI to reflect the current theme
+            await AvaloniaThemeHelper.Instance.InitAsync();
 
             // Continue root initialization
-            if (false && applicationSettingsService.IsIntroduced) // TODO: Always skipped
+            if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
             {
                 //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
                 // TODO: Implement OOBE
             }
             else
             {
-                if (result[3]) // Has vaults
+                if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
                 {
                     // Show main app screen
-                    _ = NavigateHostControlAsync(new MainAppHostViewModel(vaultCollectionModel));
+                    _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel)); // TODO(r)
                 }
                 else // Doesn't have vaults
                 {
                     // Show no vaults screen
-                    _ = NavigateHostControlAsync(new NoVaultsAppHostViewModel(vaultCollectionModel));
+                    _ = NavigateHostControlAsync(new EmptyHostViewModel(vaultCollectionModel));
                 }
             }
         }

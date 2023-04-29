@@ -16,6 +16,6 @@ namespace SecureFolderFS.Sdk.Storage.LocatableStorage
         /// <summary>
         /// Gets the containing folder for this item, if any.
         /// </summary>
-        Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default); 
+        Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default); 
     }
 }

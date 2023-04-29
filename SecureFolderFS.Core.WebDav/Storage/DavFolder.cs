@@ -77,7 +77,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<ILocatableFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
             if (Inner is not ILocatableStorable locatableStorable)
                 return null;
@@ -85,6 +85,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
             var parentFolder = await locatableStorable.GetParentAsync(cancellationToken);
             if (parentFolder is null)
                 return null;
+
             return NewFolder(parentFolder);
         }
 

@@ -12,7 +12,6 @@
     xmlns:ic="using:FluentAvalonia.FluentIcons"
     xmlns:i="using:Avalonia.Xaml.Interactivity"
     xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
-    Loaded="Control_OnLoaded"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.GeneralSettingsPage">
 
@@ -125,10 +124,10 @@
                 IconSource="{ic:FluentIconSource LocalLanguage28Regular}">
                 <ui:SettingsExpander.Footer>
                     <ComboBox
-                        Items="{Binding ViewModel.LanguageSettingViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        Items="{Binding ViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                         SelectedIndex="0"
-                        SelectionChanged="ComboBox_OnSelectionChanged"
-                        Loaded="ComboBox_OnLoaded">
+                        Name="AppLanguageComboBox"
+                        SelectionChanged="AppLanguageComboBox_SelectionChanged">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:LanguageViewModel">
                                 <TextBlock Text="{Binding FriendlyName}" />
@@ -142,7 +141,7 @@
                 Description="Choose application theme"
                 IconSource="{ic:FluentIconSource Color24Regular}">
                 <ui:SettingsExpander.Footer>
-                    <ComboBox SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                    <ComboBox Name="AppThemeComboBox" SelectionChanged="AppThemeComboBox_SelectionChanged" SelectedIndex="{Binding SelectedThemeIndex, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                         <ComboBox.Items>
                             <ComboBoxItem Content="System default" />
                             <ComboBoxItem Content="Light" />
