@@ -1,10 +1,15 @@
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
+using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
 using System.Collections.ObjectModel;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 
 namespace SecureFolderFS.AvaloniaUI.Views.Vault
 {
@@ -24,16 +29,72 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
             BreadcrumbItems = new();
         }
 
-        public override async void OnNavigatedTo(NavigationEventArgs e)
+        public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is not VaultDashboardPageViewModel viewModel)
-                return;
-
-            ViewModel = viewModel;
-            await Navigation.NavigateAsync(viewModel.CurrentPage, new EntranceNavigationTransition());
-            BreadcrumbItems.Add(new(viewModel.VaultViewModel.VaultModel.VaultName, true));
+            if (e.Parameter is VaultDashboardPageViewModel viewModel)
+            {
+                ViewModel = viewModel;
+                BreadcrumbItems.Add(new(viewModel.VaultViewModel.VaultModel.VaultName, true));
+            }
 
             base.OnNavigatedTo(e);
+        }
+
+        public override void OnNavigatingFrom()
+        {
+            if (ViewModel is not null)
+            {
+                // Remove the reference to the NavigationControl so the page can get properly garbage collected
+                ViewModel.DashboardNavigationService.ResetNavigation<ContentNavigationControl>();
+                ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
+            }
+
+            Navigation.Dispose();
+        }
+
+        private async void Navigation_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            // Hook up navigation event
+            ViewModel.DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
+
+            // Initialize navigation
+            if (ViewModel.DashboardNavigationService.SetupNavigation(Navigation, true))
+            {
+                var target = ViewModel.DashboardNavigationService.CurrentTarget ?? GetDefaultDashboardViewModel(); // Get current target or initialize default
+                INavigationTarget GetDefaultDashboardViewModel()
+                {
+                    var controlsViewModel = new VaultControlsViewModel(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigationService, ViewModel.NavigationService);
+                    return new VaultOverviewPageViewModel(ViewModel.UnlockedVaultViewModel, controlsViewModel, ViewModel.DashboardNavigationService);
+                }
+
+                await ViewModel.DashboardNavigationService.NavigateAsync(target);
+            }
+        }
+
+        private async void DashboardNavigationService_NavigationChanged(object? sender, INavigationTarget? e)
+        {
+            var canGoBack = e switch
+            {
+                VaultOverviewPageViewModel => false,
+                _ => true
+            };
+
+            // TODO(n2)
+            //if (canGoBack)
+            //{
+            //    GoBack.Visibility = Visibility.Visible;
+            //    await ShowBackButtonStoryboard.BeginAsync();
+            //    ShowBackButtonStoryboard.Stop();
+            //}
+            //else
+            //{
+            //    await HideBackButtonStoryboard.BeginAsync();
+            //    HideBackButtonStoryboard.Stop();
+            //    GoBack.Visibility = Visibility.Collapsed;
+            //}
         }
     }
 }

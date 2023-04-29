@@ -97,7 +97,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
 
         protected sealed class HandlesGenerator
         {
-            private ulong _handleCounter = 0UL;
+            private ulong _handleCounter;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public ulong ThreadSafeIncrement()

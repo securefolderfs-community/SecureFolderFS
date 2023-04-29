@@ -7,11 +7,11 @@ using System.Windows.Input;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace SecureFolderFS.WinUI.UserControls
+namespace SecureFolderFS.WinUI.UserControls.Widgets
 {
-    public sealed partial class VaultHealthControl : UserControl
+    public sealed partial class HealthWidget : UserControl
     {
-        public VaultHealthControl()
+        public HealthWidget()
         {
             InitializeComponent();
         }
@@ -22,7 +22,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(VaultHealthStateProperty, value);
         }
         public static readonly DependencyProperty VaultHealthStateProperty =
-            DependencyProperty.Register(nameof(VaultHealthState), typeof(VaultHealthState), typeof(VaultHealthControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(VaultHealthState), typeof(VaultHealthState), typeof(HealthWidget), new PropertyMetadata(null));
 
         public DateTime VaultHealthLastCheckedDate
         {
@@ -30,7 +30,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(VaultHealthLastCheckedDateProperty, value);
         }
         public static readonly DependencyProperty VaultHealthLastCheckedDateProperty =
-            DependencyProperty.Register(nameof(VaultHealthLastCheckedDate), typeof(DateTime), typeof(VaultHealthControl), new PropertyMetadata(0));
+            DependencyProperty.Register(nameof(VaultHealthLastCheckedDate), typeof(DateTime), typeof(HealthWidget), new PropertyMetadata(0));
 
         public ICommand? StartScanningCommand
         {
@@ -38,7 +38,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(StartScanningCommandProperty, value);
         }
         public static readonly DependencyProperty StartScanningCommandProperty =
-            DependencyProperty.Register(nameof(StartScanningCommand), typeof(ICommand), typeof(VaultHealthControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(StartScanningCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(null));
 
         public ICommand? OpenVaultHealthCommand
         {
@@ -46,6 +46,6 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(OpenVaultHealthCommandProperty, value);
         }
         public static readonly DependencyProperty OpenVaultHealthCommandProperty =
-            DependencyProperty.Register(nameof(OpenVaultHealthCommand), typeof(ICommand), typeof(VaultHealthControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(OpenVaultHealthCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(null));
     }
 }

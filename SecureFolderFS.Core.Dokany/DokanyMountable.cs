@@ -3,7 +3,6 @@ using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.OpenHandles;
-using SecureFolderFS.Core.Dokany.Storage;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Analytics;

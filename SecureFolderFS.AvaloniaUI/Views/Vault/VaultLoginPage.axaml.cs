@@ -16,9 +16,9 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
         private Button? _continueButton;
         private TextBox? _vaultPasswordBox;
 
-        public VaultLoginPageViewModel ViewModel
+        public VaultLoginPageViewModel? ViewModel
         {
-            get => (VaultLoginPageViewModel)DataContext;
+            get => (VaultLoginPageViewModel?)DataContext;
             set => DataContext = value;
         }
 
@@ -67,7 +67,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
                 await Task.Delay(25); // Wait for UI to update.
 
                 var securePassword = string.IsNullOrEmpty(_vaultPasswordBox.Text) ? null : new VaultPassword(_vaultPasswordBox.Text);
-                await Task.Run(() => viewModel.UnlockVaultCommand.ExecuteAsync(securePassword));
+                await viewModel.UnlockVaultCommand.ExecuteAsync(securePassword); // TODO(n2)
 
                 await Task.Delay(25);
                 _continueButton.IsEnabled = true;

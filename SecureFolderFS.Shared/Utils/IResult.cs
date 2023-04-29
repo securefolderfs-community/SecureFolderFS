@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SecureFolderFS.Shared.Utils
 {
@@ -28,7 +27,6 @@ namespace SecureFolderFS.Shared.Utils
         /// <summary>
         /// Gets the value of the result.
         /// </summary>
-        [MemberNotNullWhen(true, nameof(Successful))]
         T? Value { get; }
     }
 

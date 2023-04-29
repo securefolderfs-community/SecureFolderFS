@@ -107,10 +107,10 @@ namespace SecureFolderFS.Sdk.AppModels
                         // Set settings cache
                         settingsCache[dataFile.Name] = new(originalType, deserialized, false); // Data doesn't need to be saved
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         // TODO: Re-throw exceptions in some cases?
-                        continue;
+                        _ = ex;
                     }
                 }
 
@@ -136,8 +136,6 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (!await EnsureSettingsFolderAsync(cancellationToken))
                     return false;
 
-                _ = _databaseFolder!;
-
                 foreach (var item in settingsCache)
                 {
                     try
@@ -145,6 +143,9 @@ namespace SecureFolderFS.Sdk.AppModels
                         // Don't save settings whose value didn't change
                         if (FlushOnlyChangedValues && !item.Value.IsDirty)
                             continue;
+
+                        if (_databaseFolder is null)
+                            return false;
 
                         var dataFile = await _databaseFolder.TryCreateFileAsync(item.Key, false, cancellationToken);
                         var typeFile = await _databaseFolder.TryCreateFileAsync($"{item.Key}{TYPE_FILE_SUFFIX}", false, cancellationToken);
@@ -189,10 +190,10 @@ namespace SecureFolderFS.Sdk.AppModels
                         // Setting saved, setting is no longer dirty
                         item.Value.IsDirty = false;
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         // TODO: Re-throw exceptions in some cases?
-                        continue;
+                        _ = ex;
                     }
                 }
 

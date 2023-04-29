@@ -42,7 +42,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
 
         private void SetupNavigation()
         {
-            if (ViewModel.NavigationService.IsInitialized)
+            if (ViewModel?.NavigationService.IsInitialized ?? true)
                 return;
 
             if (ViewModel.NavigationService is AvaloniaNavigationService navigationServiceImpl)

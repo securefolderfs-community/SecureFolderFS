@@ -47,8 +47,9 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
                     Side.Left => new(Offset, 0),
                     Side.Right => new(-Offset, 0),
                     Side.Top => new(0, Offset),
-                    Side.Bottom => new(0, -Offset)
-                },
+                    Side.Bottom => new(0, -Offset),
+                    _ => new Point(0, 0)
+                }
             }.RunAnimationAsync();
         }
 
@@ -64,7 +65,8 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions
                     Side.Left => new(-Offset, 0),
                     Side.Right => new(Offset, 0),
                     Side.Top => new(0, -Offset),
-                    Side.Bottom => new(0, Offset)
+                    Side.Bottom => new(0, Offset),
+                    _ => new Point(0, 0)
                 },
                 To = new(0, 0)
             }.RunAnimationAsync();

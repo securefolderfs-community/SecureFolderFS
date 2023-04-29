@@ -46,8 +46,6 @@ namespace SecureFolderFS.Shared.Helpers
             if (!CanLog()) return;
 
             Debug.WriteLine(message);
-
-            return;
         }
 
         private static bool CanLog()

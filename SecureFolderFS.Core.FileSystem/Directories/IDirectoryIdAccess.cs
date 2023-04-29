@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.FileSystem.Directories
         /// Sets the directory ID of provided <paramref name="ciphertextPath"/> directory ID file path.
         /// </summary>
         /// <param name="ciphertextPath">The path to the ciphertext directory ID file.</param>
-        /// <param name="directoryId">The <see cref="DirectoryId"/> to set for the directory.</param>
+        /// <param name="directoryId">The ID to set for the directory.</param>
         /// <returns>Value is true if directory ID was successfully set, otherwise false.</returns>
         bool SetDirectoryId(string ciphertextPath, ReadOnlySpan<byte> directoryId);
 

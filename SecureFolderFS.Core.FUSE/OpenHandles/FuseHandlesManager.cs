@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
 

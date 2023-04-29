@@ -61,7 +61,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             // Use Mica
             TransparencyLevelHint = WindowTransparencyLevel.Mica;
             PrepareBackgroundForMica();
-            ThemeHelper.Instance.OnThemeChangedEvent += OnApplicationThemeChanged;
+            //ThemeHelper.Instance.OnThemeChangedEvent += OnApplicationThemeChanged; // TODO(n2)
         }
 
         private void OnApplicationThemeChanged(object? sender, EventArgs e)
@@ -71,16 +71,18 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
 
         private void PrepareBackgroundForMica()
         {
-            if (_hasBackgroundChangedAfterThemeChange)
-            {
-                _hasBackgroundChangedAfterThemeChange = false;
+            if (!_hasBackgroundChangedAfterThemeChange)
+                return;
 
-                var background = (SolidColorBrush)Background;
-                background.Opacity = 0.8d;
+            _hasBackgroundChangedAfterThemeChange = false;
+            if (Background is not SolidColorBrush solidBackground)
+                return;
 
-                // Darken background to make up for the lesser opacity
-                background.Color = Color.FromArgb(background.Color.A, (byte)(background.Color.R - 4), (byte)(background.Color.G - 4), (byte)(background.Color.B - 4));
-            }
+            solidBackground.Opacity = 0.8d;
+
+            // Darken background to make up for the lesser opacity
+            solidBackground.Color = Color.FromArgb(solidBackground.Color.A, (byte)(solidBackground.Color.R - 4),
+                (byte)(solidBackground.Color.G - 4), (byte)(solidBackground.Color.B - 4));
         }
 
         private async void Window_OnClosing(object? sender, CancelEventArgs e)

@@ -1,9 +1,10 @@
-﻿using SecureFolderFS.AvaloniaUI.Animations.Transitions;
+﻿using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
@@ -24,7 +25,15 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
                     if (NavigationControl.CanGoBack)
                     {
                         NavigationControl.GoBack();
-                        // TODO: Set current target
+
+                        var contentType = NavigationControl.Content?.GetType();
+                        if (contentType is null)
+                            return false;
+
+                        var targetType = NavigationControl.TypeBinding.GetByKeyOrValue(contentType);
+                        var backTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
+                        if (backTarget is not null)
+                            CurrentTarget = backTarget;
 
                         return true;
                     }
@@ -41,7 +50,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
                     if (target is null)
                         return false;
 
-                    return await NavigationControl.NavigateAsync(target, (TransitionBase?)null);
+                    return await NavigationControl.NavigateAsync(target, (NavigationTransition?)null);
                 }
             }
         }

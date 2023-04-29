@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
-using SecureFolderFS.Sdk.Messages.Navigation;
 
-namespace SecureFolderFS.Sdk.Messages
+namespace SecureFolderFS.Sdk.Messages.Navigation
 {
     /// <inheritdoc cref="NavigationMessage"/>
     public sealed class RootNavigationMessage : NavigationMessage

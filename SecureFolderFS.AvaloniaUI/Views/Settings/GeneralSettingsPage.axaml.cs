@@ -55,12 +55,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             // RootGrid?.Transitions?.Add(new ReorderThemeTransition());
         }
 
-        public Task PlayShowInfoBarAnimation(object? sender, AvaloniaPropertyChangedEventArgs e)
-        {
-            _playShowBarEmergeAnimation = true;
-            return Task.CompletedTask;
-        }
-
         private void RootGrid_OnLoaded(object? sender, RoutedEventArgs e)
         {
             _ = AddItemsTransitionAsync();

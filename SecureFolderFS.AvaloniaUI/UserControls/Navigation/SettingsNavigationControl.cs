@@ -1,9 +1,8 @@
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
-using System;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Settings;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
@@ -12,19 +11,19 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     internal sealed class SettingsNavigationControl : ContentNavigationControl
     {
         /// <inheritdoc/>
-        public override async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
+        public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            var pageType = target switch
-            {
-                GeneralSettingsViewModel => typeof(GeneralSettingsPage),
-                PreferencesSettingsViewModel => typeof(PreferencesSettingsPage),
-                PrivacySettingsViewModel => typeof(PrivacySettingsPage),
-                AboutSettingsViewModel => typeof(AboutSettingsPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(target))
-            };
+            { typeof(GeneralSettingsViewModel), typeof(GeneralSettingsPage) },
+            { typeof(PreferencesSettingsViewModel), typeof(PreferencesSettingsPage) },
+            { typeof(PrivacySettingsViewModel), typeof(PrivacySettingsPage) },
+            { typeof(AboutSettingsViewModel), typeof(AboutSettingsPage) }
+        };
 
-            await Navigate(pageType, target, transition as TransitionBase);
-            return true;
+        /// <inheritdoc/>
+        protected override Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition)
+        {
+            transition ??= new EntranceNavigationTransition();
+            return SetContentAsync(pageType, parameter, transition);
         }
     }
 }

@@ -72,6 +72,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         /// <inheritdoc/>
         public override Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
+            _ = itemToCopy;
             // TODO: When copying, directory ID should be updated as well
             return base.CreateCopyOfAsync(itemToCopy, overwrite, cancellationToken);
         }
@@ -92,7 +93,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         protected override string FormatName(string name)
         {
             var cleartextPath = System.IO.Path.Combine(Path, name);
-            return _pathConverter.GetCiphertextFileName(cleartextPath) ?? throw new CryptographicException("Couldn't convert to ciphertext path.");;
+            return _pathConverter.GetCiphertextFileName(cleartextPath) ?? throw new CryptographicException("Couldn't convert to ciphertext path.");
         }
     }
 }

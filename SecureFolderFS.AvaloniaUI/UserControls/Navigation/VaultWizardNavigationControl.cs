@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
@@ -12,24 +13,25 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     internal sealed class VaultWizardNavigationControl : ContentNavigationControl
     {
         /// <inheritdoc/>
-        public override async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
+        public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            var pageType = target switch
-            {
-                MainWizardPageViewModel => typeof(MainWizardPage),
-                ExistingLocationWizardViewModel => typeof(AddExistingWizardPage),
-                NewLocationWizardViewModel => typeof(CreationPathWizardPage),
-                PasswordWizardViewModel => typeof(PasswordWizardPage),
-                EncryptionWizardViewModel => typeof(EncryptionWizardPage),
-                SummaryWizardViewModel => typeof(SummaryWizardPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(target))
-            };
+            { typeof(MainWizardPageViewModel), typeof(MainWizardPage) },
+            { typeof(ExistingLocationWizardViewModel), typeof(AddExistingWizardPage) },
+            { typeof(NewLocationWizardViewModel), typeof(CreationPathWizardPage) },
+            { typeof(PasswordWizardViewModel), typeof(PasswordWizardPage) },
+            { typeof(EncryptionWizardViewModel), typeof(EncryptionWizardPage) },
+            { typeof(SummaryWizardViewModel), typeof(SummaryWizardPage) },
+        };
 
-            var transitionInfo = transition as TransitionBase
-                                 ?? new SlideNavigationTransition(SlideNavigationTransition.Side.Right, ContentPresenter.Bounds.Width, true);
+        /// <inheritdoc/>
+        protected override Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition)
+        {
+            // Cache vault wizard page
+            if (currentPage is not null)
+                backStack.Push(currentPage.Value);
 
-            await Navigate(pageType, target, transitionInfo);
-            return true;
+            transition ??= new SlideNavigationTransition(SlideNavigationTransition.Side.Right, Presenter.Bounds.Width, true);
+            return SetContentAsync(pageType, parameter, transition);
         }
     }
 }

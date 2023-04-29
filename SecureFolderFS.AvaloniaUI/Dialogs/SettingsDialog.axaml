@@ -1,13 +1,15 @@
 <ui:ContentDialog
+    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.SettingsDialog"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.SettingsDialog">
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
     <ui:ContentDialog.Resources>
         <ResourceDictionary>
@@ -16,7 +18,7 @@
     </ui:ContentDialog.Resources>
 
     <ui:ContentDialog.Styles>
-        <!-- Hide empty button container -->
+        <!--  Hide empty button container  -->
         <Style Selector="#DialogSpace > Border">
             <Setter Property="IsVisible" Value="False" />
         </Style>
@@ -36,27 +38,27 @@
                 <ui:NavigationViewItem
                     AutomationProperties.Name="General"
                     Content="General"
+                    Icon="{ic:FluentIcon AppGeneric24Regular}"
                     IsSelected="True"
-                    Tag="0"
-                    Icon="{ic:FluentIcon AppGeneric24Regular}"/>
+                    Tag="0" />
                 <!--  Preferences  -->
                 <ui:NavigationViewItem
                     AutomationProperties.Name="Preferences"
                     Content="Preferences"
-                    Tag="1"
-                    Icon="{ic:FluentIcon Wrench24Regular}" />
+                    Icon="{ic:FluentIcon Wrench24Regular}"
+                    Tag="1" />
                 <!--  Privacy  -->
                 <ui:NavigationViewItem
                     AutomationProperties.Name="Privacy"
                     Content="Privacy"
-                    Tag="2"
-                    Icon="{ic:FluentIcon Shield24Regular}" />
+                    Icon="{ic:FluentIcon Shield24Regular}"
+                    Tag="2" />
                 <!--  About  -->
                 <ui:NavigationViewItem
                     Margin="0,0,45,0"
                     Content="About"
-                    Tag="3"
-                    Icon="{ic:FluentIcon Info24Regular}" />
+                    Icon="{ic:FluentIcon Info24Regular}"
+                    Tag="3" />
             </ui:NavigationView.MenuItems>
 
             <!--  Display frame  -->
@@ -76,7 +78,7 @@
             BorderThickness="0"
             Click="Button_OnClick"
             CornerRadius="20">
-            <ic:FluentIcon Icon="Dismiss48Regular" Width="10"/>
+            <ic:FluentIcon Width="10" Icon="Dismiss48Regular" />
         </Button>
     </Grid>
 </ui:ContentDialog>

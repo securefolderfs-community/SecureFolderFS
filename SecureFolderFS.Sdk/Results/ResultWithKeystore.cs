@@ -9,7 +9,7 @@ namespace SecureFolderFS.Sdk.Results
         public IKeystoreModel Keystore { get; }
 
         public ResultWithKeystore(IKeystoreModel keystore, VaultLoginStateType value)
-            : base(value, true)
+            : base(value)
         {
             Keystore = keystore;
         }

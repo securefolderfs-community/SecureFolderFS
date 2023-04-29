@@ -88,8 +88,8 @@
                     VerticalContentAlignment="Stretch"
                     Content="{Binding FileSystemInfoBar, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     IsVisible="{Binding IsInfoBarOpen, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}"
-                    Opacity="0"
-                    LayoutUpdated="FileSystemInfoBarContainer_OnLayoutUpdated">
+                    LayoutUpdated="FileSystemInfoBarContainer_OnLayoutUpdated"
+                    Opacity="0">
                     <ContentControl.RenderTransform>
                         <TranslateTransform />
                     </ContentControl.RenderTransform>
@@ -103,22 +103,13 @@
 
                     <anim:Storyboard.Storyboards>
                         <anim:Storyboard x:Name="ShowFileSystemInfoBarStoryboard">
-                            <trans:InfoBarTransition
-                                AnimationMode="Show"
-                                ContentBelow="OtherSettings"
-                                Mode="Show" />
+                            <trans:InfoBarTransition ContentBelow="OtherSettings" Mode="Show" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="HideFileSystemInfoBarStoryboard">
-                            <trans:InfoBarTransition
-                                AnimationMode="Hide"
-                                ContentBelow="OtherSettings"
-                                Mode="Hide" />
+                            <trans:InfoBarTransition ContentBelow="OtherSettings" Mode="Hide" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="QuickHideFileSystemInfoBarStoryboard">
-                            <trans:InfoBarTransition
-                                AnimationMode="QuickHide"
-                                ContentBelow="OtherSettings"
-                                Mode="QuickHide" />
+                            <trans:InfoBarTransition ContentBelow="OtherSettings" Mode="QuickHide" />
                         </anim:Storyboard>
                     </anim:Storyboard.Storyboards>
                 </ContentControl>

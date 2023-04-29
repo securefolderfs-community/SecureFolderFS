@@ -1,9 +1,8 @@
-using SecureFolderFS.AvaloniaUI.Animations.Transitions;
-using System;
 using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
@@ -12,19 +11,17 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     internal sealed class VaultDashboardNavigationControl : ContentNavigationControl
     {
         /// <inheritdoc/>
-        public override async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default) where TTransition : class
+        public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            var pageType = target switch
-            {
-                VaultOverviewPageViewModel => typeof(VaultOverviewPage),
-                VaultPropertiesPageViewModel => typeof(VaultPropertiesPage),
-                _ => throw new ArgumentOutOfRangeException(nameof(target))
-            };
+            { typeof(VaultOverviewPageViewModel), typeof(VaultOverviewPage) },
+            { typeof(VaultPropertiesPageViewModel), typeof(VaultPropertiesPage) }
+        };
 
-            var transitionInfo = transition as TransitionBase ?? new EntranceNavigationTransition();
-            await Navigate(pageType, target, transitionInfo);
-
-            return true;
+        /// <inheritdoc/>
+        protected override Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition)
+        {
+            transition ??= new EntranceNavigationTransition();
+            return SetContentAsync(pageType, pageType, transition);
         }
     }
 }

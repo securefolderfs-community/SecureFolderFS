@@ -1,12 +1,11 @@
-﻿using System.Linq;
-using Microsoft.UI.Xaml.Media.Animation;
+﻿using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.WinUI.UserControls.Navigation;
+using System.Linq;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -27,7 +26,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                     {
                         NavigationControl.ContentFrame.GoBack();
 
-                        var targetType = NavigationControl.TypeBinding.GetByKeyOrValue(NavigationControl.ContentFrame.Content.GetType());
+                        var contentType = NavigationControl.Content?.GetType();
+                        if (contentType is null)
+                            return false;
+
+                        var targetType = NavigationControl.TypeBinding.GetByKeyOrValue(contentType);
                         var backTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
                         if (backTarget is not null)
                             CurrentTarget = backTarget;

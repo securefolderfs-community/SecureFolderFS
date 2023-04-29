@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         private readonly IStreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
 
-        public EncryptingDiskStore(string directory, IStreamsAccess streamsAccess, IPathConverter pathConverter, bool isWritable = true, ILockingManager lockingManager = null)
+        public EncryptingDiskStore(string directory, IStreamsAccess streamsAccess, IPathConverter pathConverter, bool isWritable = true, ILockingManager? lockingManager = null)
             : base(directory, isWritable, lockingManager)
         {
             _streamsAccess = streamsAccess;

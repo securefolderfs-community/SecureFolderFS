@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace SecureFolderFS.Sdk.DataModels
 {
     [Serializable]
-    public sealed record class VaultDataModel(string? Id, string? VaultName, DateTime? LastAccessDate)
+    public sealed record VaultDataModel(string? Id, string? VaultName, DateTime? LastAccessDate)
     {
         [JsonPropertyName("Name")]
         public string? VaultName { get; set; } = VaultName;

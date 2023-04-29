@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.AppModels
     /// </summary>
     /// <param name="Version">Gets the version of the app.</param>
     /// <param name="Platform">Gets the platform name that the app has been built to work on.</param>
-    public sealed record class AppVersion(Version Version, string Platform)
+    public sealed record AppVersion(Version Version, string Platform)
     {
         /// <inheritdoc/>
         public override string ToString()

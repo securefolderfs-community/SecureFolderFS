@@ -15,9 +15,9 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
     internal sealed partial class LicensesDialog : ContentDialog, IDialog<LicensesDialogViewModel>, IStyleable
     {
         /// <inheritdoc/>
-        public LicensesDialogViewModel ViewModel
+        public LicensesDialogViewModel? ViewModel
         {
-            get => (LicensesDialogViewModel)DataContext;
+            get => (LicensesDialogViewModel?)DataContext;
             set => DataContext = value;
         }
 

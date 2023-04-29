@@ -3,10 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:SecureFolderFS.WinUI.Views.Vault"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
-    xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:ucw="using:SecureFolderFS.WinUI.UserControls.Widgets"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
@@ -16,7 +14,7 @@
     <Page.Resources>
         <!--  Vault Health  -->
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:VaultHealthWidgetViewModel">
-            <uc:VaultHealthControl
+            <ucw:HealthWidget
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
                 StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
                 VaultHealthLastCheckedDate="{x:Bind VaultHealthLastCheckedDate, Mode=OneWay}"

@@ -29,13 +29,13 @@
         <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
         <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
         <None Remove="UserControls\GraphControl.xaml" />
+        <None Remove="UserControls\HealthWidget.xaml" />
         <None Remove="UserControls\InstallationControl.xaml" />
         <None Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
         <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
         <None Remove="UserControls\MainWindowHostControl.xaml" />
         <None Remove="UserControls\NavigationControl.xaml" />
         <None Remove="UserControls\TitleBarControl.xaml" />
-        <None Remove="UserControls\VaultHealthControl.xaml" />
         <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
         <None Remove="Views\Settings\AboutSettingsPage.xaml" />
         <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
@@ -182,7 +182,7 @@
         <Page Update="UserControls\GraphControl.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-        <Page Update="UserControls\VaultHealthControl.xaml">
+        <Page Update="UserControls\HealthWidget.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
     </ItemGroup>
@@ -254,11 +254,4 @@
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
     </ItemGroup>
-
-    <!-- TODO: Remove when WindowsAppSDK 1.2 is released https://docs.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps -->
-    <Target Name="_RemoveFrameworkReferences" BeforeTargets="_ConvertItems;_CalculateInputsForGenerateCurrentProjectAppxManifest">
-        <ItemGroup>
-            <FrameworkSdkReference Remove="@(FrameworkSdkReference)" Condition="$([System.String]::Copy('%(FrameworkSdkReference.SDKName)').StartsWith('Microsoft.WindowsAppRuntime.'))" />
-        </ItemGroup>
-    </Target>
 </Project>

@@ -1,7 +1,6 @@
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Core.FUSE.Callbacks;
 
 namespace SecureFolderFS.Core.FUSE
 {
