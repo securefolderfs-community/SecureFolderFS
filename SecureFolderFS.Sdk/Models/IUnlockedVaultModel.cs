@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Sdk.Models
@@ -17,6 +18,11 @@ namespace SecureFolderFS.Sdk.Models
         /// Gets the <see cref="IVaultStatisticsModel"/> which reports file system operations of the unlocked vault.
         /// </summary>
         IVaultStatisticsModel VaultStatisticsModel { get; }
+
+        /// <summary>
+        /// Gets the model that contains additional information about the vault.
+        /// </summary>
+        VaultInfoModel VaultInfoModel { get; }
 
         /// <summary>
         /// Locks the vault, invalidates associated resources and restricts vault file system access.

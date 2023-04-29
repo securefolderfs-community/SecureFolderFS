@@ -16,7 +16,8 @@ namespace SecureFolderFS.Shared.Extensions
         {
             foreach (var item in enumerable)
             {
-                (item as IDisposable)?.Dispose();
+                if (item is IDisposable disposable)
+                    disposable.Dispose();
             }
         }
 

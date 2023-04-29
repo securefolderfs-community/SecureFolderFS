@@ -1,6 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Controls;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    public interface INavigationContract<in TNavigation> : INavigationService
+    public interface INavigationControlContract<in TNavigation>
         where TNavigation : class, INavigationControl
     {
         /// <summary>
@@ -21,7 +20,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
     }
 
     /// <inheritdoc cref="INavigationService"/>
-    public abstract class BaseNavigationService<TNavigation> : INavigationService, INavigationContract<TNavigation>
+    public abstract class BaseNavigationService<TNavigation> : INavigationControlContract<TNavigation>, INavigationService
         where TNavigation : class, INavigationControl
     {
         /// <inheritdoc/>

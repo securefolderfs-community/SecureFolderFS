@@ -103,6 +103,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         /// <inheritdoc/>
         public override void Dispose()
         {
+            _vaultStatisticsModel.Dispose();
             _periodicTimer.Dispose();
         }
     }

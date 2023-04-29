@@ -72,7 +72,8 @@
                     BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
                     BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
                     CornerRadius="{ThemeResource ControlCornerRadius}"
-                    Expanding="Expander_Expanding">
+                    Expanding="Expander_Expanding"
+                    IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}">
                     <Expander.Header>
                         <local:ActionBlockContentControl
                             Title="{x:Bind Title, Mode=OneWay, FallbackValue={x:Null}}"

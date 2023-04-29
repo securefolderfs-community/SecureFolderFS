@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand]
-        private async Task LockVaultAsync(CancellationToken cancellationToken)
+        private async Task LockVaultAsync()
         {
             // Lock vault
             await _unlockedVaultViewModel.UnlockedVaultModel.LockAsync();

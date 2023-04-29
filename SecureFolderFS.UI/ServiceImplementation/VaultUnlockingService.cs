@@ -126,8 +126,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
                 // Mount the file system
                 var virtualFileSystem = await mountableFileSystem.MountAsync(mountOptions, cancellationToken);
+                var vaultInfoModel = new VaultInfoModel()
+                {
+                    ContentCipherId = _unlockRoutine.ContentCipherId,
+                    FileNameCipherId = _unlockRoutine.FileNameCipherId
+                };
 
-                return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge));
+                return new CommonResult<IUnlockedVaultModel?>(new FileSystemUnlockedVaultModel(virtualFileSystem, vaultStatisticsBridge, vaultInfoModel));
             }
             catch (Exception ex)
             {

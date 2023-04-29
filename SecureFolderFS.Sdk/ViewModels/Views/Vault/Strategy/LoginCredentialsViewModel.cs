@@ -71,8 +71,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
             if (unlockedVaultModel is null)
                 throw new InvalidOperationException($"Invalid state. {nameof(unlockedVaultModel)} shouldn't be null.");
 
-            await ThreadingService.ChangeThreadAsync();
-
             // Update last access date
             await _vaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now, cancellationToken);
 

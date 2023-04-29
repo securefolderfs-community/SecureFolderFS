@@ -12,6 +12,10 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
     // TODO: Needs docs
     public interface IUnlockRoutine : IDisposable
     {
+        string? ContentCipherId { get; }
+
+        string? FileNameCipherId { get; }
+
         Task SetVaultStoreAsync(IFolder vaultFolder, IStorageService storageService, CancellationToken cancellationToken = default);
 
         Task ReadConfigurationAsync(Stream configStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);

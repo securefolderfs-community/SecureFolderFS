@@ -1,13 +1,15 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
+using SecureFolderFS.WinUI.UserControls.Navigation;
 using System.Collections.ObjectModel;
+using CommunityToolkit.WinUI.UI.Animations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,8 +43,20 @@ namespace SecureFolderFS.WinUI.Views.Vault
             BreadcrumbItems.Add(new(ViewModel.VaultViewModel.VaultModel.VaultName, true));
         }
 
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            // Remove the reference to the NavigationControl so the page can get properly garbage collected
+            ViewModel.DashboardNavigationService.ResetNavigation<FrameNavigationControl>();
+            ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
+            Navigation.Dispose();
+        }
+
         private async void Navigation_Loaded(object sender, RoutedEventArgs e)
         {
+            // Hook up navigation event
+            ViewModel.DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
+
+            // Initialize navigation
             if (ViewModel.DashboardNavigationService.SetupNavigation(Navigation, true))
             {
                 var target = ViewModel.DashboardNavigationService.CurrentTarget ?? GetDefaultDashboardViewModel(); // Get current target or initialize default
@@ -53,6 +67,28 @@ namespace SecureFolderFS.WinUI.Views.Vault
                 }
 
                 await ViewModel.DashboardNavigationService.NavigateAsync(target);
+            }
+        }
+
+        private async void DashboardNavigationService_NavigationChanged(object? sender, INavigationTarget? e)
+        {
+            var canGoBack = e switch
+            {
+                VaultPropertiesPageViewModel => true,
+                VaultOverviewPageViewModel or _ => false
+            };
+
+            if (canGoBack)
+            {
+                GoBack.Visibility = Visibility.Visible;
+                await ShowBackButtonStoryboard.BeginAsync();
+                ShowBackButtonStoryboard.Stop();
+            }
+            else
+            {
+                await HideBackButtonStoryboard.BeginAsync();
+                HideBackButtonStoryboard.Stop();
+                GoBack.Visibility = Visibility.Collapsed;
             }
         }
     }

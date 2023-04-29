@@ -43,6 +43,14 @@ namespace SecureFolderFS.WinUI.UserControls.ActionBlocks
         public static readonly DependencyProperty ExpanderContentProperty =
             DependencyProperty.Register(nameof(ExpanderContent), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
 
+        public bool IsExpanded
+        {
+            get => (bool)GetValue(IsExpandedProperty);
+            set => SetValue(IsExpandedProperty, value);
+        }
+        public static readonly DependencyProperty IsExpandedProperty =
+            DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(ActionBlockControl), new PropertyMetadata(false));
+
         public bool IsClickable
         {
             get => (bool)GetValue(IsClickableProperty);

@@ -3,11 +3,11 @@ using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.WinUI.ServiceImplementation;
+using SecureFolderFS.WinUI.UserControls.Navigation;
 using System;
 using System.Threading.Tasks;
 
@@ -64,8 +64,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
-            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
-                navigationServiceImpl.NavigationControl = null;
+            ViewModel.NavigationService.ResetNavigation<FrameNavigationControl>();
         }
     }
 }

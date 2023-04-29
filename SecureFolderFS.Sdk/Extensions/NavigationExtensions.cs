@@ -1,5 +1,4 @@
 ﻿using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,10 +25,25 @@ namespace SecureFolderFS.Sdk.Extensions
 
         public static async Task<bool> TryNavigateAndForgetAsync(this INavigationService navigationService, INavigationTarget target)
         {
-            if (navigationService.CurrentTarget is not null)
-                navigationService.Targets.Remove(navigationService.CurrentTarget);
+            var navigated = false;
+            INavigationTarget? currentTarget = null;
 
-            return await navigationService.NavigateAsync(target);
+            try
+            {
+                if (navigationService.CurrentTarget is not null)
+                {
+                    navigationService.Targets.Remove(navigationService.CurrentTarget);
+                    currentTarget = navigationService.CurrentTarget;
+                }
+
+                navigated = await navigationService.NavigateAsync(target);
+                return navigated;
+            }
+            finally
+            {
+                if (navigated)
+                    (currentTarget as IDisposable)?.Dispose();
+            }
         }
     }
 }

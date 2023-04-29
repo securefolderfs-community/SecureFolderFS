@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.ViewModels.Views;
+﻿using SecureFolderFS.Sdk.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -48,5 +48,22 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the navigation target was present, returns true, otherwise false.</returns>
         Task<bool> GoForwardAsync();
+    }
+
+    /// <summary>
+    /// Represents a target which can be navigated to.
+    /// </summary>
+    public interface INavigationTarget
+    {
+        /// <summary>
+        /// Notifies the implementation that the target is being navigated to.
+        /// </summary>
+        /// <param name="navigationType">Informs how the navigation was triggered.</param>
+        void OnNavigatingTo(NavigationType navigationType);
+
+        /// <summary>
+        /// Notifies the implementation that the target is being navigated from.
+        /// </summary>
+        void OnNavigatingFrom();
     }
 }
