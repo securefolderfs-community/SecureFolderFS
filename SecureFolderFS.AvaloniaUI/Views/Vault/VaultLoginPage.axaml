@@ -104,7 +104,7 @@
                     Grid.Row="4"
                     HorizontalAlignment="Center"
                     HorizontalContentAlignment="Center"
-                    Content="{Binding ViewModel.LoginStrategyViewModel, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                    Content="{Binding ViewModel.StrategyViewModel, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                     <ContentControl.DataTemplates>
                         <ts:LoginMethodTemplateSelector
                             AuthenticateTemplate="{StaticResource AuthenticateTemplate}"

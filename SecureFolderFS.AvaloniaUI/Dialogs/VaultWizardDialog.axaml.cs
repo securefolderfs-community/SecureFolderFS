@@ -14,6 +14,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -35,7 +36,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         public async Task<DialogResult> ShowAsync()
         {
             // Can't be in the constructor because ViewModel is set later
-            AvaloniaXamlLoader.Load(this);
+            await Dispatcher.UIThread.InvokeAsync(() => AvaloniaXamlLoader.Load(this));
             return (DialogResult)await base.ShowAsync();
         }
 
