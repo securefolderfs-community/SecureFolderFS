@@ -46,6 +46,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             if (keystoreFile is null)
                 return; // TODO: Report issue
 
+            var setFolderResult = await _vaultCreationModel.SetFolderAsync(_vaultFolder, cancellationToken);
+            if (!setFolderResult.Successful)
+                return; // TODO: Report issue
+
             var setKeystoreResult = await _vaultCreationModel.SetKeystoreAsync(new FileKeystoreModel(keystoreFile, StreamSerializer.Instance), cancellationToken);
             if (!setKeystoreResult.Successful)
                 return; // TODO: Report issue
