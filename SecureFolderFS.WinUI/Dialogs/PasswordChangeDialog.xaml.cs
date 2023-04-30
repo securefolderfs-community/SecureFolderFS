@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.WinUI.Dialogs
 {
-    public sealed partial class LicensesDialog : ContentDialog, IDialog<LicensesDialogViewModel>
+    public sealed partial class PasswordChangeDialog : ContentDialog, IDialog<PasswordChangeDialogViewModel>
     {
         /// <inheritdoc/>
-        public LicensesDialogViewModel ViewModel
+        public PasswordChangeDialogViewModel ViewModel
         {
-            get => (LicensesDialogViewModel)DataContext;
+            get => (PasswordChangeDialogViewModel)DataContext;
             set => DataContext = value;
         }
 
-        public LicensesDialog()
+        public PasswordChangeDialog()
         {
             InitializeComponent();
         }
@@ -31,11 +31,6 @@ namespace SecureFolderFS.WinUI.Dialogs
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Hide();
-        }
-
-        private void Licenses_Loaded(object sender, RoutedEventArgs e)
-        {
-            _ = ViewModel.InitAsync();
         }
     }
 }

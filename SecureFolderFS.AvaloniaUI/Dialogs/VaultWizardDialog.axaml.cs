@@ -4,7 +4,6 @@ using Avalonia.Styling;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Messages;
-using SecureFolderFS.AvaloniaUI.ServiceImplementation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -38,19 +37,6 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             // Can't be in the constructor because ViewModel is set later
             AvaloniaXamlLoader.Load(this);
             return (DialogResult)await base.ShowAsync();
-        }
-
-        private void SetupNavigation()
-        {
-            if (ViewModel?.NavigationService.IsInitialized ?? true)
-                return;
-
-            if (ViewModel.NavigationService is AvaloniaNavigationService navigationServiceImpl)
-            {
-                navigationServiceImpl.NavigationControl = Navigation;
-                if (navigationServiceImpl.NavigationControl is not null)
-                    ViewModel.NavigationService.NavigationChanged += NavigationService_NavigationChanged;
-            }
         }
 
         private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)
@@ -123,7 +109,14 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
 
         private async void VaultWizardDialog_Loaded(object? sender, RoutedEventArgs e)
         {
-            SetupNavigation();
+            if (ViewModel is null)
+                return;
+
+            if (ViewModel.NavigationService.SetupNavigation(Navigation))
+            {
+                ViewModel.NavigationService.NavigationChanged -= NavigationService_NavigationChanged;
+                ViewModel.NavigationService.NavigationChanged += NavigationService_NavigationChanged;
+            }
 
             var viewModel = new MainWizardPageViewModel(ViewModel);
             await ViewModel.NavigationService.NavigateAsync(viewModel);

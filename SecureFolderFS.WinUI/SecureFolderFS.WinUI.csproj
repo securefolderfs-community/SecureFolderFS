@@ -23,6 +23,7 @@
         <None Remove="Assets\AppAssets\Vault_dark.svg" />
         <None Remove="Assets\AppAssets\Vault_light.svg" />
         <None Remove="Dialogs\LicensesDialog.xaml" />
+        <None Remove="Dialogs\PasswordChangeDialog.xaml" />
         <None Remove="Dialogs\SettingsDialog.xaml" />
         <None Remove="Dialogs\VaultWizardDialog.xaml" />
         <None Remove="ResourceDictionaries\ImageResources.xaml" />
@@ -66,6 +67,10 @@
         <None Update="Assets\AppAssets\Vault_light.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <Page Update="Dialogs\PasswordChangeDialog.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+        </Page>
         <Page Update="Dialogs\LicensesDialog.xaml">
           <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
           <SubType>Designer</SubType>

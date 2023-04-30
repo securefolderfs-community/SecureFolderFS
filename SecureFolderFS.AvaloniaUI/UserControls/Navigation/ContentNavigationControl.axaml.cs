@@ -15,7 +15,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     /// <summary>
     /// The base class that manages UI navigation.
     /// </summary>
-    internal abstract partial class ContentNavigationControl : UserControl, INavigationControl
+    internal partial class ContentNavigationControl : UserControl, INavigationControl
     {
         protected (Type, object)? currentPage;
         protected readonly Stack<(Type, object)> backStack;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         /// <summary>
         /// Gets a dictionary of types that bind view models and pages together.
         /// </summary>
-        public abstract Dictionary<Type, Type> TypeBinding { get; }
+        public virtual Dictionary<Type, Type> TypeBinding => throw new NotImplementedException($"{nameof(ContentNavigationControl)} is not implemented.");
 
         /// <summary>
         /// Gets the value that determines whether back navigation is available.
@@ -81,7 +81,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         /// <param name="parameter">The parameter to pass to the page.</param>
         /// <param name="transition">The transition to use when navigating.</param>
         /// <returns>If successful, returns true, otherwise false.</returns>
-        protected abstract Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition);
+        protected virtual Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition)
+        {
+            throw new NotImplementedException($"{nameof(ContentNavigationControl)} is not implemented.");
+        }
 
         protected async Task<bool> SetContentAsync(Type pageType, object parameter, NavigationTransition? transition)
         {

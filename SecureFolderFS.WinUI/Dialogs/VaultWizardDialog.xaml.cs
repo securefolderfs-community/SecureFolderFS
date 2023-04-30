@@ -9,7 +9,6 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.WinUI.ServiceImplementation;
 using System;
 using System.Threading.Tasks;
 
@@ -37,19 +36,6 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
-
-        private void SetupNavigation()
-        {
-            if (ViewModel.NavigationService.IsInitialized)
-                return;
-
-            if (ViewModel.NavigationService is WindowsNavigationService navigationServiceImpl)
-            {
-                navigationServiceImpl.NavigationControl = Navigation;
-                if (navigationServiceImpl.NavigationControl is not null)
-                    ViewModel.NavigationService.NavigationChanged += NavigationService_NavigationChanged;
-            }
-        }
 
         private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)
         {
@@ -131,7 +117,11 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         private async void VaultWizardDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            SetupNavigation();
+            if (ViewModel.NavigationService.SetupNavigation(Navigation))
+            {
+                ViewModel.NavigationService.NavigationChanged -= NavigationService_NavigationChanged;
+                ViewModel.NavigationService.NavigationChanged += NavigationService_NavigationChanged;
+            }
 
             var viewModel = new MainWizardPageViewModel(ViewModel);
             await ViewModel.NavigationService.NavigateAsync(viewModel);

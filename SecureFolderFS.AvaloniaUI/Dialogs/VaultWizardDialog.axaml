@@ -38,7 +38,7 @@
                         To="-48,0"
                         Duration="0:0:0.2">
                         <trans:TranslateTransition.Easing>
-							<ExponentialEaseInOut />
+                            <ExponentialEaseInOut />
                         </trans:TranslateTransition.Easing>
                     </trans:TranslateTransition>
                 </anim:Storyboard>
@@ -54,7 +54,7 @@
                         From="-48,0"
                         Duration="0:0:0.2">
                         <trans:TranslateTransition.Easing>
-							<ExponentialEaseInOut />
+                            <ExponentialEaseInOut />
                         </trans:TranslateTransition.Easing>
                     </trans:TranslateTransition>
                 </anim:Storyboard>

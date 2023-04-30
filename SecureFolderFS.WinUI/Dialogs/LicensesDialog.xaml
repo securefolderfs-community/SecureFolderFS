@@ -55,7 +55,7 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{x:Bind ViewModel.Licenses}" Loaded="Licenses_OnLoaded">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Licenses}" Loaded="Licenses_Loaded">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:LicenseViewModel">
                         <ucab:ActionBlockControl Title="{x:Bind PackageName}" Description="{x:Bind LicenseName}">
