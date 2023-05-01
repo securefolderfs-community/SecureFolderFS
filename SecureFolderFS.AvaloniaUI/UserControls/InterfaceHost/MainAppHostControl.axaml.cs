@@ -5,13 +5,13 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Helpers;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -36,19 +36,17 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 
         private async Task NavigateToItem(VaultViewModel vaultViewModel)
         {
-            // Get the item from cache or create new instance
-            //if (!Navigation.NavigationCache.TryGetValue(vaultViewModel, out var destination))
-            //{
-                var destination = new VaultLoginPageViewModel(vaultViewModel, ViewModel.NavigationService);
-                _ = destination.InitAsync(); // TODO(r)
-            //} // TODO(n)
+            // Find existing target or create new
+            var target = ViewModel.NavigationService.Targets.FirstOrDefault(x => (x as BaseVaultPageViewModel)?.VaultViewModel == vaultViewModel);
+            target ??= new VaultLoginPageViewModel(vaultViewModel, ViewModel.NavigationService);
 
             // Navigate
-            await Navigation.NavigateAsync(destination, new EntranceNavigationTransition());
+            await ViewModel.NavigationService.NavigateAsync(target);
         }
 
         private async void MainAppHostControl_OnLoaded(object? sender, RoutedEventArgs e)
         {
+            ViewModel.NavigationService.SetupNavigation(Navigation);
             WeakReferenceMessenger.Default.Register(this);
 
             await ViewModel.InitAsync();

@@ -16,7 +16,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_OnPointerReleased, handledEventsToo: true);
         }
 
-
         private void SettingsButton_OnPointerPressed(object? sender, PointerPressedEventArgs e)
         {
             SpinSettingsIconPointerPressedStoryboard.RunAnimationsAsync();

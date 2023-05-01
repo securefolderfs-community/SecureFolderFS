@@ -92,8 +92,11 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         /// <inheritdoc/>
         protected override string FormatName(string name)
         {
-            var cleartextPath = System.IO.Path.Combine(Path, name);
-            return _pathConverter.GetCiphertextFileName(cleartextPath) ?? throw new CryptographicException("Couldn't convert to ciphertext path.");
+            var ciphertextPath = _pathConverter.ToCiphertext(System.IO.Path.Combine(Path, name));
+            if (ciphertextPath is null)
+                throw new CryptographicException("Couldn't convert to ciphertext path.");
+
+            return System.IO.Path.GetFileName(ciphertextPath);
         }
     }
 }

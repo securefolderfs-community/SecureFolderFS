@@ -6,6 +6,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
@@ -50,7 +51,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
                     if (target is null)
                         return false;
 
-                    return await NavigationControl.NavigateAsync(target, (NavigationTransition?)null);
+                    return await Dispatcher.UIThread.InvokeAsync(() => NavigationControl.NavigateAsync(target, (NavigationTransition?)null));
                 }
             }
         }

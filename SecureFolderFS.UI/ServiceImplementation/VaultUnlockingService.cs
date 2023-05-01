@@ -121,7 +121,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 {
                     FileSystemAdapterType.DokanAdapter => new DokanyMountOptions(),
                     FileSystemAdapterType.FuseAdapter => new FuseMountOptions(),
-                    FileSystemAdapterType.WebDavAdapter => new WebDavMountOptions() { Domain = "localhost", Port = "4949" }
+                    FileSystemAdapterType.WebDavAdapter => new WebDavMountOptions() { Domain = "localhost", Port = 4949 }
                 };
 
                 // Mount the file system

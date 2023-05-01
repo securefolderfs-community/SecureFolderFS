@@ -21,7 +21,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         protected override Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition)
         {
             transition ??= new EntranceNavigationTransition();
-            return SetContentAsync(pageType, pageType, transition);
+            return SetContentAsync(pageType, parameter, transition);
         }
     }
 }

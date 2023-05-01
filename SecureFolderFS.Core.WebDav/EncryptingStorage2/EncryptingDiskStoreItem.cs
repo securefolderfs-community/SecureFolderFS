@@ -9,6 +9,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Paths;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
@@ -18,13 +19,15 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         private readonly IStreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
         private readonly FileInfo _fileInfo;
+        private readonly Security _security;
 
-        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, IStreamsAccess streamsAccess, IPathConverter pathConverter)
+        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, IStreamsAccess streamsAccess, IPathConverter pathConverter, Security security)
         {
             LockingManager = lockingManager;
             _fileInfo = fileInfo;
             _streamsAccess = streamsAccess;
             _pathConverter = pathConverter;
+            _security = security;
             IsWritable = isWritable;
         }
 
@@ -46,7 +49,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavGetContentLength<EncryptingDiskStoreItem>
             {
-                Getter = (context, item) => item._fileInfo.Length
+                Getter = (context, item) => Math.Max(0, item._security.ContentCrypt.CalculateCleartextSize(item._fileInfo.Length - item._security.HeaderCrypt.HeaderCiphertextSize))
             },
             new DavGetContentType<EncryptingDiskStoreItem>
             {
@@ -54,10 +57,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavGetEtag<EncryptingDiskStoreItem>
             {
-                // Calculating the Etag is an expensive operation,
-                // because we need to scan the entire file.
-                IsExpensive = true,
-                Getter = (context, item) => item.CalculateEtag()
+                Getter = (context, item) => $"{item._fileInfo.Length}-{item._fileInfo.LastWriteTimeUtc.ToFileTime()}"
             },
             new DavGetLastModified<EncryptingDiskStoreItem>
             {
@@ -222,15 +222,6 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         private string DetermineContentType()
         {
             return MimeTypeHelper.GetMimeType(_fileInfo.Name);
-        }
-
-        private string CalculateEtag()
-        {
-            using (var stream = _streamsAccess.OpenCleartextStream(_fileInfo.FullName, _fileInfo.OpenRead()))
-            {
-                var hash = SHA256.Create().ComputeHash(stream);
-                return BitConverter.ToString(hash).Replace("-", string.Empty);
-            }
         }
     }
 }

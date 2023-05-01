@@ -67,7 +67,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
                 await Task.Delay(25); // Wait for UI to update.
 
                 var securePassword = string.IsNullOrEmpty(_vaultPasswordBox.Text) ? null : new VaultPassword(_vaultPasswordBox.Text);
-                await viewModel.UnlockVaultCommand.ExecuteAsync(securePassword); // TODO(n2)
+                await Task.Run(() => viewModel.UnlockVaultCommand.ExecuteAsync(securePassword));
 
                 await Task.Delay(25);
                 _continueButton.IsEnabled = true;

@@ -14,10 +14,12 @@ using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.WebDav.Helpers;
 
 namespace SecureFolderFS.Core.WebDav
 {
@@ -43,11 +45,15 @@ namespace SecureFolderFS.Core.WebDav
             if (mountOptions is not WebDavMountOptions webDavMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
-            if (!int.TryParse(webDavMountOptions.Port, out var portNumber) || portNumber > 9999 || portNumber <= 0)
+            var port = webDavMountOptions.Port;
+            if (webDavMountOptions.Port > 65536 || webDavMountOptions.Port <= 0)
                 throw new ArgumentException($"Parameter {nameof(WebDavMountOptions.Port)} is invalid.");
 
+            if (!PortHelpers.IsPortAvailable(port))
+                port = PortHelpers.GetAvailablePort();
+
             var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
-            var prefix = $"{protocol}://{webDavMountOptions.Domain}:{webDavMountOptions.Port}/";
+            var prefix = $"{protocol}://{webDavMountOptions.Domain}:{port}/";
             var httpListener = new HttpListener();
 
             httpListener.Prefixes.Add(prefix);
@@ -57,7 +63,10 @@ namespace SecureFolderFS.Core.WebDav
             var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher);
             webDavWrapper.StartFileSystem();
 
-            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{webDavMountOptions.Port}\\DavWWWRoot\\"), webDavWrapper));
+            // TODO Remove once the port is displayed in the UI.
+            Debug.WriteLine($"WebDav server started on port {port}.");
+
+            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{port}\\DavWWWRoot\\"), webDavWrapper));
         }
 
         public static IMountableFileSystem CreateMountable(IStorageService storageService, string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)
@@ -66,9 +75,11 @@ namespace SecureFolderFS.Core.WebDav
                 throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
 
             var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter, directoryIdAccess);
-            var dispatcher = new WebDavDispatcher(new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter), davStorageService, new RequestHandlerProvider(), null);
+            var dispatcher = new WebDavDispatcher(new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter, directoryIdAccess, security), davStorageService, new RequestHandlerProvider(), null);
 
             return new WebDavMountable(dispatcher);
         }
+
+
     }
 }
