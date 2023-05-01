@@ -48,7 +48,6 @@
                 Margin="-12,8,-16,-12"
                 Padding="2"
                 IsHitTestVisible="False"
-
                 Loaded="Chart_Loaded" />
         </Grid>
     </Button>
