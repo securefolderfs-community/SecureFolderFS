@@ -16,7 +16,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations2
 
         public Task BeginAsync()
         {
-            return BeginInternalAsync(GetValue(Storyboard.TargetNameProperty), GetValue(Storyboard.TargetPropertyProperty));
+            return BeginInternalAsync(GetValue(Storyboard.TargetProperty), GetValue(Storyboard.TargetPropertyProperty));
         }
 
         protected abstract Task BeginInternalAsync(Visual target, AvaloniaProperty property);

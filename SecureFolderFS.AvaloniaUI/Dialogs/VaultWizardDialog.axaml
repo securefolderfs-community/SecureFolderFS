@@ -25,14 +25,14 @@
     <anim:Storyboard.Storyboards>
         <anim:Storyboard x:Name="HideBackButtonStoryboard">
             <anim:DoubleAnimation
-                anim:Storyboard.TargetName="{Binding ElementName=GoBack}"
+                anim:Storyboard.Target="{Binding ElementName=GoBack}"
                 anim:Storyboard.TargetProperty="{x:Static Visual.OpacityProperty}"
                 To="0"
                 Duration="0:0:0.2"
                 FillMode="None" />
             <anim:DoubleAnimation
                 BeginTime="0:0:0.05"
-                anim:Storyboard.TargetName="{Binding ElementName=TitleText}"
+                anim:Storyboard.Target="{Binding ElementName=TitleText}"
                 anim:Storyboard.TargetProperty="{x:Static TranslateTransform.XProperty}"
                 From="0"
                 To="-48"
@@ -44,13 +44,13 @@
         </anim:Storyboard>
         <anim:Storyboard x:Name="ShowBackButtonStoryboard">
             <anim:DoubleAnimation
-                anim:Storyboard.TargetName="{Binding ElementName=GoBack, Path=.}"
+                anim:Storyboard.Target="{Binding ElementName=GoBack, Path=.}"
                 anim:Storyboard.TargetProperty="{x:Static Visual.OpacityProperty}"
                 From="0"
                 To="1"
                 Duration="0:0:0.2" />
             <anim:DoubleAnimation
-                anim:Storyboard.TargetName="{Binding ElementName=TitleText, Path=.}"
+                anim:Storyboard.Target="{Binding ElementName=TitleText, Path=.}"
                 anim:Storyboard.TargetProperty="{x:Static TranslateTransform.XProperty}"
                 From="-48"
                 To="0"

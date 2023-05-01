@@ -54,17 +54,17 @@ namespace SecureFolderFS.AvaloniaUI.Animations2
             return value;
         }
 
-        public static readonly AttachedProperty<Visual> TargetNameProperty =
-            AvaloniaProperty.RegisterAttached<Storyboard, AnimationBase, Visual>("TargetName");
+        public static readonly AttachedProperty<Visual> TargetProperty =
+            AvaloniaProperty.RegisterAttached<Storyboard, AnimationBase, Visual>("Target");
 
-        public static void SetTargetName(AnimationBase obj, Visual value)
+        public static void SetTarget(AnimationBase obj, Visual value)
         {
-            obj.SetValue(TargetNameProperty, value);
+            obj.SetValue(TargetProperty, value);
         }
 
-        public static Visual GetTargetName(AnimationBase obj)
+        public static Visual GetTarget(AnimationBase obj)
         {
-            return obj.GetValue(TargetNameProperty);
+            return obj.GetValue(TargetProperty);
         }
 
         public static readonly AttachedProperty<AvaloniaProperty> TargetPropertyProperty =
