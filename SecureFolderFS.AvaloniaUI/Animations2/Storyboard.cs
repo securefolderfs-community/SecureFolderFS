@@ -34,10 +34,29 @@ namespace SecureFolderFS.AvaloniaUI.Animations2
             set => SetValue(AnimationsProperty, value);
         }
 
+        public static readonly AttachedProperty<AvaloniaList<Storyboard>> StoryboardsProperty =
+            AvaloniaProperty.RegisterAttached<Storyboard, IAvaloniaObject, AvaloniaList<Storyboard>>("Storyboards");
+
+        public static void SetStoryboards(IAvaloniaObject obj, AvaloniaList<Storyboard> value)
+        {
+            obj.SetValue(StoryboardsProperty, value);
+        }
+
+        public static AvaloniaList<Storyboard> GetStoryboards(IAvaloniaObject obj)
+        {
+            var value = (AvaloniaList<Storyboard>?)obj.GetValue(StoryboardsProperty);
+            if (value is null)
+            {
+                value = new();
+                obj.SetValue(StoryboardsProperty, value);
+            }
+
+            return value;
+        }
+
         public static readonly AttachedProperty<Visual> TargetNameProperty =
             AvaloniaProperty.RegisterAttached<Storyboard, AnimationBase, Visual>("TargetName");
 
-        [ResolveByName]
         public static void SetTargetName(AnimationBase obj, Visual value)
         {
             obj.SetValue(TargetNameProperty, value);

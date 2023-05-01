@@ -28,10 +28,7 @@
         </Style>
     </ui:ContentDialog.Styles>
 
-    <Grid
-        Height="500"
-        Margin="-8"
-        RowDefinitions="Auto,*">
+    <Grid Height="500" Margin="-8" RowDefinitions="Auto,*">
         <Grid
             Grid.Row="0"
             Margin="-16,-56,-16,8"
@@ -53,7 +50,7 @@
                 VerticalAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
-                Click="CloseButton_OnClick"
+                Click="CloseButton_Click"
                 CornerRadius="20">
                 <ic:FluentIcon Width="10" Icon="Dismiss48Regular" />
             </Button>
@@ -61,7 +58,7 @@
 
 
         <ScrollViewer Grid.Row="1">
-            <ItemsControl Items="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}" Loaded="Control_OnLoaded">
+            <ItemsControl Items="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}" Loaded="Licenses_Loaded">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:LicenseViewModel}">
                         <ui:SettingsExpander
@@ -70,6 +67,7 @@
                             Header="{Binding PackageName}">
                             <ui:SettingsExpander.Footer>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <!-- Text must be in TextBlocks in order to remove underline -->
                                     <ui:HyperlinkButton
                                         IsVisible="{Binding ProjectWebsiteUri, Converter={StaticResource NullToBoolConverter}}"
                                         NavigateUri="{Binding ProjectWebsiteUri}">
@@ -83,7 +81,9 @@
                                 </StackPanel>
                             </ui:SettingsExpander.Footer>
 
-                            <SelectableTextBlock Text="{Binding DataContext.LicenseContent, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}" TextWrapping="Wrap" />
+                            <SelectableTextBlock
+                                Text="{Binding DataContext.LicenseContent, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}"
+                                TextWrapping="Wrap" />
                         </ui:SettingsExpander>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

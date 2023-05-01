@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using SecureFolderFS.AvaloniaUI.Animations;
 
@@ -11,6 +12,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations2
         public TimeSpan BeginTime { get; init; } = TimeSpan.Zero;
         public required TimeSpan Duration { get; init; }
         public Easing EasingFunction { get; init; } = new LinearEasing();
+        public FillMode FillMode { get; init; } = FillMode.Forward;
 
         public Task BeginAsync()
         {
@@ -31,7 +33,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations2
                 Target = target,
                 Duration = Duration,
                 Easing = EasingFunction,
-                //FillMode = FillMode,
+                FillMode = FillMode,
                 Delay = BeginTime
             };
         }

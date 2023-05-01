@@ -3,16 +3,14 @@ using System.Threading.Tasks;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
-    internal sealed partial class LicensesDialog : ContentDialog, IDialog<LicensesDialogViewModel>, IStyleable
+    public sealed partial class LicensesDialog : ContentDialog, IDialog<LicensesDialogViewModel>, IStyleable
     {
         /// <inheritdoc/>
         public LicensesDialogViewModel? ViewModel
@@ -31,20 +29,14 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         /// <inheritdoc/>
         public async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        private void Button_OnClick(object? sender, RoutedEventArgs e)
+        private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {
             Hide();
-            WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
         }
 
-        private void Control_OnLoaded(object? sender, RoutedEventArgs e)
+        private void Licenses_Loaded(object? sender, RoutedEventArgs e)
         {
             _ = ViewModel.InitAsync();
-        }
-
-        private void CloseButton_OnClick(object? sender, RoutedEventArgs e)
-        {
-            Hide();
         }
     }
 }
