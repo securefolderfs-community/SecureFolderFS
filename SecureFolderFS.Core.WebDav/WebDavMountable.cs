@@ -14,10 +14,12 @@ using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.WebDav.Helpers;
 
 namespace SecureFolderFS.Core.WebDav
 {
@@ -43,11 +45,15 @@ namespace SecureFolderFS.Core.WebDav
             if (mountOptions is not WebDavMountOptions webDavMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
-            if (!int.TryParse(webDavMountOptions.Port, out var portNumber) || portNumber > 9999 || portNumber <= 0)
+            var port = webDavMountOptions.Port;
+            if (webDavMountOptions.Port <= 0)
                 throw new ArgumentException($"Parameter {nameof(WebDavMountOptions.Port)} is invalid.");
 
+            if (!PortHelpers.IsPortAvailable(port))
+                port = PortHelpers.GetAvailablePort();
+
             var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
-            var prefix = $"{protocol}://{webDavMountOptions.Domain}:{webDavMountOptions.Port}/";
+            var prefix = $"{protocol}://{webDavMountOptions.Domain}:{port}/";
             var httpListener = new HttpListener();
 
             httpListener.Prefixes.Add(prefix);
@@ -56,6 +62,9 @@ namespace SecureFolderFS.Core.WebDav
             IPrincipal? serverPrincipal = null;
             var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher);
             webDavWrapper.StartFileSystem();
+
+            // TODO Remove once the port is displayed in the UI.
+            Debug.WriteLine($"WebDav server started on port {port}.");
 
             return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{webDavMountOptions.Port}\\DavWWWRoot\\"), webDavWrapper));
         }
@@ -70,5 +79,7 @@ namespace SecureFolderFS.Core.WebDav
 
             return new WebDavMountable(dispatcher);
         }
+
+
     }
 }
