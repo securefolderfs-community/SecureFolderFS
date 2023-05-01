@@ -78,14 +78,14 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
                 _hasNavigationAnimatedOnLoaded = true;
                 GoBack.IsVisible = false;
             }
-            else if (!_isBackAnimationState && (canGoBack && Navigation.CanGoBack))
+            else if (!_isBackAnimationState && (canGoBack && Navigation.ContentFrame.CanGoBack))
             {
                 _isBackAnimationState = true;
                 GoBack.IsVisible = true;
                 await ShowBackButtonStoryboard.BeginAsync();
                 ShowBackButtonStoryboard.Stop();
             }
-            else if (_isBackAnimationState && !(canGoBack && Navigation.CanGoBack))
+            else if (_isBackAnimationState && !(canGoBack && Navigation.ContentFrame.CanGoBack))
             {
                 _isBackAnimationState = false;
                 await HideBackButtonStoryboard.BeginAsync();

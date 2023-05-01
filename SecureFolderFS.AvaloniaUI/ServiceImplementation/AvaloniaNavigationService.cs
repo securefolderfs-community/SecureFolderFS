@@ -11,7 +11,7 @@ using Avalonia.Threading;
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    internal sealed class AvaloniaNavigationService : BaseNavigationService<ContentNavigationControl>
+    internal sealed class AvaloniaNavigationService : BaseNavigationService<FrameNavigationControl>
     {
         /// <inheritdoc/>
         protected override async Task<bool> BeginNavigationAsync(INavigationTarget? target, NavigationType navigationType)
@@ -23,11 +23,11 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             {
                 case NavigationType.Backward:
                 {
-                    if (NavigationControl.CanGoBack)
+                    if (NavigationControl.ContentFrame.CanGoBack)
                     {
-                        NavigationControl.GoBack();
+                        NavigationControl.ContentFrame.GoBack();
 
-                        var contentType = NavigationControl.Content?.GetType();
+                        var contentType = NavigationControl.ContentFrame.Content?.GetType();
                         if (contentType is null)
                             return false;
 

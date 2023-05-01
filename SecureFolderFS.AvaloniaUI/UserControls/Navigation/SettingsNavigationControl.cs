@@ -1,14 +1,13 @@
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Settings;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using FluentAvalonia.UI.Media.Animation;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="ContentNavigationControl"/>
-    internal sealed class SettingsNavigationControl : ContentNavigationControl
+    /// <inheritdoc cref="FrameNavigationControl"/>
+    internal sealed class SettingsNavigationControl : FrameNavigationControl
     {
         /// <inheritdoc/>
         public override Dictionary<Type, Type> TypeBinding { get; } = new()
@@ -20,10 +19,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         };
 
         /// <inheritdoc/>
-        protected override Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition)
+        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
         {
-            transition ??= new EntranceNavigationTransition();
-            return SetContentAsync(pageType, parameter, transition);
+            transitionInfo ??= new EntranceNavigationTransitionInfo();
+            return ContentFrame.Navigate(pageType, parameter, transitionInfo);
         }
     }
 }

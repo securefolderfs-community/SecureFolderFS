@@ -17,14 +17,14 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 {
-    internal sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>
+    public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>
     {
         public MainAppHostControl()
         {
             AvaloniaXamlLoader.Load(this);
 
-            SettingsButton.AddHandler(PointerPressedEvent, SettingsButton_OnPointerPressed, handledEventsToo: true);
-            SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_OnPointerReleased, handledEventsToo: true);
+            SettingsButton.AddHandler(PointerPressedEvent, SettingsButton_PointerPressed, handledEventsToo: true);
+            SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_PointerReleased, handledEventsToo: true);
         }
 
         /// <inheritdoc/>
@@ -44,13 +44,44 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             await ViewModel.NavigationService.NavigateAsync(target);
         }
 
-        private async void MainAppHostControl_OnLoaded(object? sender, RoutedEventArgs e)
+        private async void MainAppHostControl_Loaded(object? sender, RoutedEventArgs e)
         {
             ViewModel.NavigationService.SetupNavigation(Navigation);
             WeakReferenceMessenger.Default.Register(this);
 
             await ViewModel.InitAsync();
             Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
+        }
+
+        private async void Sidebar_SelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
+        {
+            if (e.SelectedItem is SidebarItemViewModel itemViewModel)
+                await NavigateToItem(itemViewModel.VaultViewModel);
+        }
+
+        private async void SidebarSearchBox_TextChanged(object? sender, TextChangedEventArgs e)
+        {
+            await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery((sender as AutoCompleteBox)?.Text ?? string.Empty);
+        }
+
+        private async void SidebarSearchBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(((AutoCompleteBox)sender).SelectedItem?.ToString()));
+            if (chosenItem is null)
+                return;
+
+            Sidebar.SelectedItem = chosenItem;
+            await NavigateToItem(chosenItem.VaultViewModel);
+        }
+
+        private void SettingsButton_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            SpinSettingsIconPointerPressedStoryboard.BeginAsync();
+        }
+
+        private void SettingsButton_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        {
+            SpinSettingsIconPointerReleasedStoryboard.BeginAsync();
         }
 
         public MainHostViewModel ViewModel
@@ -60,39 +91,5 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
         }
         public static readonly StyledProperty<MainHostViewModel> ViewModelProperty =
             AvaloniaProperty.Register<MainAppHostControl, MainHostViewModel>(nameof(ViewModel));
-
-        private async void Sidebar_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
-        {
-            if (e.SelectedItem is SidebarItemViewModel itemViewModel)
-                await NavigateToItem(itemViewModel.VaultViewModel);
-        }
-
-        private async void AutoCompleteBox_OnTextChanged(object? sender, TextChangedEventArgs e)
-        {
-            await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery((sender as AutoCompleteBox)?.Text ?? string.Empty);
-        }
-
-        private async void AutoCompleteBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            if (sender is null)
-                return;
-
-            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(((AutoCompleteBox)sender).SelectedItem?.ToString()));
-            if (chosenItem is null)
-                return;
-
-            Sidebar.SelectedItem = chosenItem;
-            await NavigateToItem(chosenItem.VaultViewModel);
-        }
-
-        private void SettingsButton_OnPointerPressed(object? sender, PointerPressedEventArgs e)
-        {
-            SpinSettingsIconPointerPressedStoryboard.RunAnimationsAsync();
-        }
-
-        private void SettingsButton_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
-        {
-            SpinSettingsIconPointerReleasedStoryboard.RunAnimationsAsync();
-        }
     }
 }

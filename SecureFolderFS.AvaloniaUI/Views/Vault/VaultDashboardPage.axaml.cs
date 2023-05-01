@@ -45,7 +45,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
             if (ViewModel is not null)
             {
                 // Remove the reference to the NavigationControl so the page can get properly garbage collected
-                ViewModel.DashboardNavigationService.ResetNavigation<ContentNavigationControl>();
+                ViewModel.DashboardNavigationService.ResetNavigation<FrameNavigationControl>();
                 ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
             }
 

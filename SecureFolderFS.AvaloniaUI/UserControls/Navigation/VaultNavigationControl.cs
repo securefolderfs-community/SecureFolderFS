@@ -1,14 +1,13 @@
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
 using SecureFolderFS.AvaloniaUI.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using FluentAvalonia.UI.Media.Animation;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="ContentNavigationControl"/>
-    internal sealed class VaultNavigationControl : ContentNavigationControl
+    /// <inheritdoc cref="FrameNavigationControl"/>
+    internal sealed class VaultNavigationControl : FrameNavigationControl
     {
         /// <inheritdoc/>
         public override Dictionary<Type, Type> TypeBinding { get; } = new()
@@ -18,20 +17,20 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         };
 
         /// <inheritdoc/>
-        protected override Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition)
+        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
         {
-            transition ??= CurrentContent switch
+            transitionInfo ??= ContentFrame.Content switch
             {
                 // (TODO: Add dashboard closing animation here - infer from the current content) // Dashboard closing animation
-                _ => new EntranceNavigationTransition() // Standard animation
+                _ => new EntranceNavigationTransitionInfo() // Standard animation
             };
 
-            return SetContentAsync(pageType, parameter, transition);
+            return ContentFrame.Navigate(pageType, parameter, transitionInfo);
         }
 
         public void ClearContent()
         {
-            CurrentContent = null;
+            ContentFrame.Content = null;
         }
     }
 }

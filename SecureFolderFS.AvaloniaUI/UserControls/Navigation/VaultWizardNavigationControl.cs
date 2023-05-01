@@ -1,16 +1,15 @@
-﻿using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
-using SecureFolderFS.AvaloniaUI.Views.VaultWizard;
+﻿using SecureFolderFS.AvaloniaUI.Views.VaultWizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using FluentAvalonia.UI.Media.Animation;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
-    /// <inheritdoc cref="ContentNavigationControl"/>
-    internal sealed class VaultWizardNavigationControl : ContentNavigationControl
+    /// <inheritdoc cref="FrameNavigationControl"/>
+    internal sealed class VaultWizardNavigationControl : FrameNavigationControl
     {
         /// <inheritdoc/>
         public override Dictionary<Type, Type> TypeBinding { get; } = new()
@@ -24,14 +23,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         };
 
         /// <inheritdoc/>
-        protected override Task<bool> NavigateContentAsync(Type pageType, object parameter, NavigationTransition? transition)
+        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
         {
-            // Cache vault wizard page
-            if (currentPage is not null)
-                backStack.Push(currentPage.Value);
-
-            transition ??= new SlideNavigationTransition(SlideNavigationTransition.Side.Right, Presenter.Bounds.Width, true);
-            return SetContentAsync(pageType, parameter, transition);
+            transitionInfo ??= new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight };
+            return ContentFrame.Navigate(pageType, parameter, transitionInfo);
         }
     }
 }

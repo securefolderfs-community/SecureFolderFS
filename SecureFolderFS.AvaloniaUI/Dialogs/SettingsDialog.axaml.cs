@@ -65,7 +65,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs e)
         {
             // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
-            ViewModel.NavigationService.ResetNavigation<ContentNavigationControl>();
+            ViewModel.NavigationService.ResetNavigation<FrameNavigationControl>();
         }
     }
 }

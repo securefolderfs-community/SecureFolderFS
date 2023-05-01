@@ -2,7 +2,7 @@
     x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.MainAppHostControl"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations2"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,9 +11,9 @@
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Sidebar"
+    Loaded="MainAppHostControl_Loaded"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Loaded="MainAppHostControl_OnLoaded"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -31,7 +31,7 @@
         OpenPaneLength="260"
         PaneTitle="{Binding IsPaneOpen, Mode=OneWay, RelativeSource={RelativeSource Self}, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
         SelectedItem="{Binding ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-        SelectionChanged="Sidebar_OnSelectionChanged">
+        SelectionChanged="Sidebar_SelectionChanged">
 
         <uc2:VaultNavigationControl x:Name="Navigation" />
 
@@ -43,8 +43,8 @@
                             <AutoCompleteBox
                                 Width="230"
                                 Items="{Binding ViewModel.SidebarViewModel.SearchViewModel.SearchItems, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                SelectionChanged="AutoCompleteBox_OnSelectionChanged"
-                                TextChanged="AutoCompleteBox_OnTextChanged"
+                                SelectionChanged="SidebarSearchBox_SelectionChanged"
+                                TextChanged="SidebarSearchBox_TextChanged"
                                 Watermark="Search" />
 
                             <ic:FluentIcon
@@ -61,9 +61,7 @@
 
         <ui:NavigationView.PaneFooter>
             <Border Width="230" HorizontalAlignment="Stretch">
-
                 <Grid HorizontalAlignment="Stretch" ColumnDefinitions="Auto,*">
-
                     <Button
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
@@ -72,7 +70,6 @@
                         Classes="accent"
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
-
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <ic:FluentIcon Width="15" Icon="AddCircle16Regular" />
                             <TextBlock Text="New vault" />
@@ -92,7 +89,6 @@
                         Classes="accent"
                         Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                         IsVisible="{Binding Path=!IsPaneOpen, ElementName=Sidebar}">
-
                         <ic:FluentIcon Width="14" Icon="AddCircle16Regular" />
                     </Button>
 
@@ -121,21 +117,23 @@
 
                             <anim:Storyboard.Storyboards>
                                 <anim:Storyboard x:Name="SpinSettingsIconPointerPressedStoryboard">
-                                    <trans:RotateTransition
-                                        Target="SettingsButtonIcon"
+                                    <anim:DoubleAnimation
+                                        anim:Storyboard.Target="{Binding ElementName=SettingsButtonIcon}"
+                                        anim:Storyboard.TargetProperty="{x:Static RotateTransform.AngleProperty}"
                                         To="-20"
-                                        Duration="0:0:0.1" />
+                                        Duration="0:0:0.1"/>
                                 </anim:Storyboard>
                                 <anim:Storyboard x:Name="SpinSettingsIconPointerReleasedStoryboard">
-                                    <trans:RotateTransition
-                                        Target="SettingsButtonIcon"
+                                    <anim:DoubleAnimation
+                                        anim:Storyboard.Target="{Binding ElementName=SettingsButtonIcon}"
+                                        anim:Storyboard.TargetProperty="{x:Static RotateTransform.AngleProperty}"
                                         From="-20"
                                         To="360"
                                         Duration="0:0:1">
-                                        <trans:RotateTransition.Easing>
+                                        <anim:DoubleAnimation.EasingFunction>
                                             <QuarticEaseOut />
-                                        </trans:RotateTransition.Easing>
-                                    </trans:RotateTransition>
+                                        </anim:DoubleAnimation.EasingFunction>
+                                    </anim:DoubleAnimation>
                                 </anim:Storyboard>
                             </anim:Storyboard.Storyboards>
                         </ic:FluentIcon>
@@ -143,7 +141,6 @@
                 </Grid>
             </Border>
         </ui:NavigationView.PaneFooter>
-
         <ui:NavigationView.MenuItemTemplate>
             <DataTemplate x:DataType="vm:SidebarItemViewModel">
                 <ui:NavigationViewItem
@@ -169,7 +166,6 @@
                                 Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                         </StackPanel>
                     </ui:NavigationViewItem.Content>
-
                     <ui:NavigationViewItem.ContextFlyout>
                         <ui:FAMenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
@@ -178,7 +174,6 @@
                                     <ui:SymbolIcon Symbol="OpenFolder" />
                                 </ui:MenuFlyoutItem.Icon>
                             </ui:MenuFlyoutItem>
-
                             <ui:MenuFlyoutItem
                                 Command="{Binding RemoveVaultCommand}"
                                 IsEnabled="{Binding CanRemoveVault, Mode=OneWay}"

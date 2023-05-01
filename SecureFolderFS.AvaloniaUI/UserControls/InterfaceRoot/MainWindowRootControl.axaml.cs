@@ -26,6 +26,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
         public MainWindowRootControl()
         {
             AvaloniaXamlLoader.Load(this);
+
             ViewModel = new();
         }
 
@@ -34,7 +35,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             _ = NavigateHostControlAsync(message.ViewModel);
         }
 
-        private void MainWindowRootControl_OnLoaded(object? sender, RoutedEventArgs e)
+        private void MainWindowRootControl_Loaded(object? sender, RoutedEventArgs e)
         {
             _ = EnsureRootAsync();
             WeakReferenceMessenger.Default.Register(this);
