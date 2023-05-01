@@ -57,10 +57,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavGetEtag<EncryptingDiskStoreItem>
             {
-                // Calculating the Etag is an expensive operation,
-                // because we need to scan the entire file.
-                IsExpensive = true,
-                Getter = (context, item) => item.CalculateEtag()
+                Getter = (context, item) => $"{item._fileInfo.Length}-{item._fileInfo.LastWriteTimeUtc.ToFileTime()}"
             },
             new DavGetLastModified<EncryptingDiskStoreItem>
             {
@@ -225,15 +222,6 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         private string DetermineContentType()
         {
             return MimeTypeHelper.GetMimeType(_fileInfo.Name);
-        }
-
-        private string CalculateEtag()
-        {
-            using (var stream = _streamsAccess.OpenCleartextStream(_fileInfo.FullName, _fileInfo.OpenRead()))
-            {
-                var hash = SHA256.Create().ComputeHash(stream);
-                return BitConverter.ToString(hash).Replace("-", string.Empty);
-            }
         }
     }
 }
