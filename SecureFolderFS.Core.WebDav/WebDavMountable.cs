@@ -46,7 +46,7 @@ namespace SecureFolderFS.Core.WebDav
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
             var port = webDavMountOptions.Port;
-            if (webDavMountOptions.Port <= 0)
+            if (webDavMountOptions.Port > 65536 && webDavMountOptions.Port <= 0)
                 throw new ArgumentException($"Parameter {nameof(WebDavMountOptions.Port)} is invalid.");
 
             if (!PortHelpers.IsPortAvailable(port))
