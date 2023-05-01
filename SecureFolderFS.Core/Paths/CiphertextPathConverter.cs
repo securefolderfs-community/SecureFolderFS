@@ -79,14 +79,16 @@ namespace SecureFolderFS.Core.Paths
         {
             var onlyPathAfterContent = rawPath.Substring(_vaultRootPath.Length, rawPath.Length - _vaultRootPath.Length);
             var correctPath = PathHelpers.EnsureTrailingPathSeparator(_vaultRootPath);
+            var path = correctPath;
 
             foreach (var item in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
-                var name = convertToCiphertext ? GetCiphertextFileName(Path.Combine(correctPath, item)) : GetCleartextFileName(Path.Combine(correctPath, item));
+                var name = convertToCiphertext ? GetCiphertextFileName(Path.Combine(correctPath, item)) : GetCleartextFileName(Path.Combine(path, item));
                 if (name is null)
                     return null;
 
                 correctPath += $"{name}{Path.DirectorySeparatorChar}";
+                path += $"{item}{Path.DirectorySeparatorChar}";
             }
 
             return !rawPath.EndsWith(Path.DirectorySeparatorChar) ? PathHelpers.EnsureNoTrailingPathSeparator(correctPath) : correctPath;

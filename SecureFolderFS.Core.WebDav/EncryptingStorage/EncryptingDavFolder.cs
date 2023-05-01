@@ -9,12 +9,10 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage.Extensions;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage
 {
@@ -26,8 +24,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         private readonly IDirectoryIdAccess _directoryIdAccess;
 
         /// <inheritdoc/>
-        // base.Path returns string.Empty for some reason if the folder is inside another folder
-        public override string Path => _pathConverter.ToCleartext(Inner.TryGetPath() ?? string.Empty) ?? string.Empty;
+        public override string Path => _pathConverter.ToCleartext(base.Path) ?? string.Empty;
 
         public EncryptingDavFolder(TCapability inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess)
             : base(inner)
