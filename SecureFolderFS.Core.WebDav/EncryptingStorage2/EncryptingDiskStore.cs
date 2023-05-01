@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
@@ -14,12 +15,14 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
     {
         private readonly IStreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
+        private readonly IDirectoryIdAccess _directoryIdAccess;
 
-        public EncryptingDiskStore(string directory, IStreamsAccess streamsAccess, IPathConverter pathConverter, bool isWritable = true, ILockingManager? lockingManager = null)
+        public EncryptingDiskStore(string directory, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess, bool isWritable = true, ILockingManager? lockingManager = null)
             : base(directory, isWritable, lockingManager)
         {
             _streamsAccess = streamsAccess;
             _pathConverter = pathConverter;
+            _directoryIdAccess = directoryIdAccess;
         }
 
         public override Task<IStoreItem> GetItemAsync(Uri uri, IHttpContext context)
@@ -29,7 +32,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
             // Check if it's a directory
             if (Directory.Exists(path))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(path), IsWritable, _streamsAccess, _pathConverter));
+                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(path), IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess));
 
             // Check if it's a file
             if (File.Exists(path))
@@ -47,7 +50,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 return Task.FromResult<IStoreCollection>(null);
 
             // Return the item
-            return Task.FromResult<IStoreCollection>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(path), IsWritable, _streamsAccess, _pathConverter));
+            return Task.FromResult<IStoreCollection>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(path), IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess));
         }
 
         protected override string GetPathFromUri(Uri uri)

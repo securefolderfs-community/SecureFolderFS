@@ -9,10 +9,12 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Storage.Extensions;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage
 {
@@ -24,7 +26,8 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         private readonly IDirectoryIdAccess _directoryIdAccess;
 
         /// <inheritdoc/>
-        public override string Path => _pathConverter.ToCleartext(base.Path) ?? string.Empty;
+        // base.Path returns string.Empty for some reason if the folder is inside another folder
+        public override string Path => _pathConverter.ToCleartext(Inner.TryGetPath() ?? string.Empty) ?? string.Empty;
 
         public EncryptingDavFolder(TCapability inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess)
             : base(inner)
@@ -92,8 +95,11 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         /// <inheritdoc/>
         protected override string FormatName(string name)
         {
-            var cleartextPath = System.IO.Path.Combine(Path, name);
-            return _pathConverter.GetCiphertextFileName(cleartextPath) ?? throw new CryptographicException("Couldn't convert to ciphertext path.");
+            var ciphertextPath = _pathConverter.ToCiphertext(System.IO.Path.Combine(Path, name));
+            if (ciphertextPath is null)
+                throw new CryptographicException("Couldn't convert to ciphertext path.");
+
+            return System.IO.Path.GetFileName(ciphertextPath);
         }
     }
 }

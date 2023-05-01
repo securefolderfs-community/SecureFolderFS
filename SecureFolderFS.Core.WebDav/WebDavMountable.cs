@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.WebDav
                 throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
 
             var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter, directoryIdAccess);
-            var dispatcher = new WebDavDispatcher(new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter), davStorageService, new RequestHandlerProvider(), null);
+            var dispatcher = new WebDavDispatcher(new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter, directoryIdAccess), davStorageService, new RequestHandlerProvider(), null);
 
             return new WebDavMountable(dispatcher);
         }
