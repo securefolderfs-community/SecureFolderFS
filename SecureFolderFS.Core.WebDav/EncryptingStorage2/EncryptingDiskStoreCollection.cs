@@ -13,6 +13,7 @@ using NWebDav.Server.Props;
 using System.Xml.Linq;
 using NWebDav.Server;
 using NWebDav.Server.Stores;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -27,8 +28,9 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         private readonly IStreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
         private readonly IDirectoryIdAccess _directoryIdAccess;
+        private readonly Security _security;
 
-        public EncryptingDiskStoreCollection(ILockingManager lockingManager, DirectoryInfo directoryInfo, bool isWritable, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess)
+        public EncryptingDiskStoreCollection(ILockingManager lockingManager, DirectoryInfo directoryInfo, bool isWritable, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess, Security security)
         {
             LockingManager = lockingManager;
             _directoryInfo = directoryInfo;
@@ -36,6 +38,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             _streamsAccess = streamsAccess;
             _pathConverter = pathConverter;
             _directoryIdAccess = directoryIdAccess;
+            _security = security;
         }
 
         public static PropertyManager<EncryptingDiskStoreCollection> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreCollection>[]
@@ -170,11 +173,11 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
             // Check if the item is a file
             if (File.Exists(fullPath))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreItem(LockingManager, new FileInfo(fullPath), IsWritable, _streamsAccess, _pathConverter));
+                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreItem(LockingManager, new FileInfo(fullPath), IsWritable, _streamsAccess, _pathConverter, _security));
 
             // Check if the item is a directory
             if (Directory.Exists(fullPath))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(fullPath), IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess));
+                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(fullPath), IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess, _security));
 
             // Item not found
             return Task.FromResult<IStoreItem>(null);
@@ -190,7 +193,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     if (PathHelpers.IsCoreFile(subDirectory.Name))
                         continue;
 
-                    yield return new EncryptingDiskStoreCollection(LockingManager, subDirectory, IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess);
+                    yield return new EncryptingDiskStoreCollection(LockingManager, subDirectory, IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess, _security);
                 }
 
                 // Add all files
@@ -199,7 +202,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     if (PathHelpers.IsCoreFile(file.Name))
                         continue;
 
-                    yield return new EncryptingDiskStoreItem(LockingManager, file, IsWritable, _streamsAccess, _pathConverter);
+                    yield return new EncryptingDiskStoreItem(LockingManager, file, IsWritable, _streamsAccess, _pathConverter, _security);
                 }
             }
 
@@ -245,7 +248,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             }
 
             // Return result
-            return Task.FromResult(new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _streamsAccess, _pathConverter)));
+            return Task.FromResult(new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _streamsAccess, _pathConverter, _security)));
         }
 
         public Task<StoreCollectionResult> CreateCollectionAsync(string name, bool overwrite, IHttpContext context)
@@ -292,7 +295,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             }
 
             // Return the collection
-            return Task.FromResult(new StoreCollectionResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess)));
+            return Task.FromResult(new StoreCollectionResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess, _security)));
         }
 
         public async Task<StoreItemResult> CopyAsync(IStoreCollection destinationCollection, string name, bool overwrite, IHttpContext context)
@@ -365,12 +368,12 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                         case EncryptingDiskStoreItem _:
                             // Move the file
                             File.Move(sourcePath, destinationPath);
-                            return new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _streamsAccess, _pathConverter));
+                            return new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _streamsAccess, _pathConverter, _security));
 
                         case EncryptingDiskStoreCollection _:
                             // Move the directory
                             Directory.Move(sourcePath, destinationPath);
-                            return new StoreItemResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess));
+                            return new StoreItemResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _streamsAccess, _pathConverter, _directoryIdAccess, _security));
 
                         default:
                             // Invalid item
