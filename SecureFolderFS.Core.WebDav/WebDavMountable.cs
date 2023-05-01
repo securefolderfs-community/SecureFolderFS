@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.WebDav
             // TODO Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDav server started on port {port}.");
 
-            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{webDavMountOptions.Port}\\DavWWWRoot\\"), webDavWrapper));
+            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{port}\\DavWWWRoot\\"), webDavWrapper));
         }
 
         public static IMountableFileSystem CreateMountable(IStorageService storageService, string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)
