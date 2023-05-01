@@ -15,8 +15,6 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
 
         void Update(ReadOnlySpan<byte> bytes);
 
-        void DoFinal(ReadOnlySpan<byte> bytes);
-
         void GetHash(Span<byte> destination);
     }
 }

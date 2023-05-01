@@ -86,7 +86,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 
             hmacSha256.InitializeHmac(macKey);
             hmacSha256.Update(headerNonce);
-            hmacSha256.DoFinal(ciphertextPayload);
+            hmacSha256.Update(ciphertextPayload);
             hmacSha256.GetHash(headerMac);
         }
     }

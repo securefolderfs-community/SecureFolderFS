@@ -85,8 +85,10 @@ namespace SecureFolderFS.AvaloniaUI
 
                 // Transient services
                 .AddTransient<INavigationService, AvaloniaNavigationService>()
+                .AddTransient<IPasswordChangeService, PasswordChangeService>()
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>();
+
 
             return serviceCollection.BuildServiceProvider();
         }

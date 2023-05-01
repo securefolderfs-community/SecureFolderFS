@@ -36,6 +36,7 @@
         <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
         <None Remove="UserControls\MainWindowHostControl.xaml" />
         <None Remove="UserControls\NavigationControl.xaml" />
+        <None Remove="UserControls\PasswordControl.xaml" />
         <None Remove="UserControls\TitleBarControl.xaml" />
         <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
         <None Remove="Views\Settings\AboutSettingsPage.xaml" />
@@ -67,6 +68,9 @@
         <None Update="Assets\AppAssets\Vault_light.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <Page Update="UserControls\PasswordControl.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
         <Page Update="Dialogs\PasswordChangeDialog.xaml">
           <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
           <SubType>Designer</SubType>

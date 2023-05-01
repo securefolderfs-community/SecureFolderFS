@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Enums;
@@ -24,6 +25,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private string? _VaultName;
         [ObservableProperty] private INotifyPropertyChanged? _StrategyViewModel;
 
+        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
+
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
             : base(vaultViewModel, navigationService)
         {
@@ -48,10 +51,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 Dispose();
         }
 
-        private void VaultLoginModel_StateChanged(object? sender, IResult<VaultLoginStateType> e)
+        private async void VaultLoginModel_StateChanged(object? sender, IResult<VaultLoginStateType> e)
         {
             // Dispose existing strategy
             (StrategyViewModel as IDisposable)?.Dispose();
+
+            // Switch thread
+            await ThreadingService.ChangeThreadAsync();
 
             // Choose new strategy
             switch (e.Value)

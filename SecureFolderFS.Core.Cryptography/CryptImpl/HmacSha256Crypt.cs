@@ -33,13 +33,6 @@ namespace SecureFolderFS.Core.Cryptography.CryptImpl
             }
 
             /// <inheritdoc/>
-            public void DoFinal(ReadOnlySpan<byte> bytes)
-            {
-                ArgumentNullException.ThrowIfNull(_incrementalHash);
-                _incrementalHash.AppendData(bytes);
-            }
-
-            /// <inheritdoc/>
             public void GetHash(Span<byte> destination)
             {
                 ArgumentNullException.ThrowIfNull(_incrementalHash);

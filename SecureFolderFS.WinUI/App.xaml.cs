@@ -89,6 +89,7 @@ namespace SecureFolderFS.WinUI
 
                 // Transient services
                 .AddTransient<INavigationService, WindowsNavigationService>()
+                .AddTransient<IPasswordChangeService, PasswordChangeService>()
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>();
 

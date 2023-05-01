@@ -32,7 +32,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         [RelayCommand]
         private async Task ChangePasswordAsync()
         {
-            await DialogService.ShowDialogAsync(new PasswordChangeDialogViewModel());
+            using var viewModel = new PasswordChangeDialogViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
+            await DialogService.ShowDialogAsync(viewModel);
         }
     }
 }

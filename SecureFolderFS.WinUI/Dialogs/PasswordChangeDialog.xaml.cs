@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -28,9 +29,23 @@ namespace SecureFolderFS.WinUI.Dialogs
         /// <inheritdoc/>
         public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private async void PasswordChangeDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            Hide();
+            args.Cancel = true;
+
+            var existingPassword = ExistingPassword.GetPassword();
+            var newPassword = FirstPassword.GetPassword();
+
+            if (existingPassword is null || newPassword is null)
+                return;
+
+            if (await ViewModel.ChangePasswordAsync(new(existingPassword, newPassword), CancellationToken.None))
+                Hide();
+        }
+
+        private void Password_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            ViewModel.PrimaryButtonEnabled = !string.IsNullOrWhiteSpace(FirstPassword.PasswordInput.Password) && FirstPassword.Equals(SecondPassword);
         }
     }
 }

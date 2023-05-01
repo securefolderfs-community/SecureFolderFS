@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Validators
 {
+    /// <inheritdoc cref="IAsyncValidator{T}"/>
     internal sealed class VersionValidator : IAsyncValidator<Stream>
     {
         private readonly IAsyncSerializer<Stream> _serializer;
@@ -26,13 +27,16 @@ namespace SecureFolderFS.Core.Validators
             {
                 var configDataModel = await _serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(value, cancellationToken);
                 if (configDataModel is null)
-                    return new CommonResult(new SerializationException("Couldn't deserialize configuration buffer to configuration data model"));
+                    return new CommonResult<VaultConfigurationDataModel>(new SerializationException("Couldn't deserialize configuration buffer to configuration data model"));
 
-                return new CommonResult(configDataModel.Version == Constants.VaultVersion.LATEST_VERSION);
+                if (configDataModel.Version != Constants.VaultVersion.LATEST_VERSION)
+                    return new CommonResult<VaultConfigurationDataModel>(new NotSupportedException($"Vault version {configDataModel.Version} is not supported."));
+
+                return new CommonResult<VaultConfigurationDataModel>(configDataModel);
             }
             catch (Exception ex)
             {
-                return new CommonResult(ex);
+                return new CommonResult<VaultConfigurationDataModel>(ex);
             }
         }
     }

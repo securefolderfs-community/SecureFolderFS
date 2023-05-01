@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -29,30 +30,13 @@
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginCredentialsViewModel">
             <StackPanel Spacing="24">
                 <!--  Password Control  -->
-                <StackPanel Width="364" Spacing="8">
-                    <TextBlock Opacity="0.8" Text="Enter password" />
-                    <PasswordBox
-                        x:Name="VaultPasswordBox"
-                        MinWidth="300"
-                        IsPasswordRevealButtonEnabled="True"
-                        KeyUp="VaultPasswordBox_KeyUp"
-                        Loaded="VaultPasswordBox_Loaded"
-                        PlaceholderText="Password" />
-                    <TeachingTip
-                        x:Name="PasswordTeachingTip"
-                        Title="Invalid password"
-                        IsLightDismissEnabled="True"
-                        IsOpen="{x:Bind IsInvalidPasswordShown, Mode=TwoWay}"
-                        PreferredPlacement="Bottom"
-                        Subtitle="The provided password is incorrect."
-                        Target="{Binding ElementName=VaultPasswordBox}">
-                        <TeachingTip.IconSource>
-                            <FontIconSource Glyph="&#xE783;" />
-                        </TeachingTip.IconSource>
-                    </TeachingTip>
-                </StackPanel>
+                <uc:PasswordControl
+                    Width="364"
+                    Loaded="PasswordControl_Loaded"
+                    PasswordSubmittedCommand="{x:Bind UnlockVaultCommand}"
+                    ShowInvalidPasswordMessage="{x:Bind IsInvalidPasswordShown, Mode=TwoWay}" />
 
-                <!--  Login  -->
+                <!--  Continue  -->
                 <Button
                     x:Name="ContinueButton"
                     Padding="32,6"

@@ -12,7 +12,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
     {
         private readonly IVaultCreationModel _vaultCreationModel;
 
-        public Func<IPassword>? InitializeWithPassword { get; set; }
+        public Func<IPassword?>? InitializeWithPassword { get; set; }
 
         /// <inheritdoc cref="DialogViewModel.PrimaryButtonEnabled"/>
         public bool PrimaryButtonEnabled
@@ -35,7 +35,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         {
             eventDispatch?.NoForwarding();
 
-            if (!await _vaultCreationModel.SetPasswordAsync(InitializeWithPassword!(), cancellationToken))
+            var password = InitializeWithPassword?.Invoke();
+            if (password is null)
+                return;
+
+            if (!await _vaultCreationModel.SetPasswordAsync(password, cancellationToken))
                 return; // TODO: Report issue
 
             await NavigationService.TryNavigateAsync(() => new EncryptionWizardViewModel(_vaultCreationModel, DialogViewModel));

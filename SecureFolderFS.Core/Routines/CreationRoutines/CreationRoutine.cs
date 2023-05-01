@@ -75,7 +75,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         {
             await using var serializedKeystoreStream = await serializer.SerializeAsync(_keystoreDataModel, cancellationToken);
             await serializedKeystoreStream.CopyToAsync(keystoreStream, cancellationToken);
-            keystoreStream.Position = 0;
+            keystoreStream.Position = 0L;
         }
 
         /// <inheritdoc/>
@@ -94,7 +94,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
                 var payloadMac = new byte[_cipherProvider.HmacSha256Crypt.MacSize];
                 hmacSha256Crypt.GetHash(payloadMac);
 
-                var configurationDataModel = new VaultConfigurationDataModel()
+                var configDataModel = new VaultConfigurationDataModel()
                 {
                     ContentCipherScheme = vaultOptions.ContentCipherScheme,
                     FileNameCipherScheme = vaultOptions.FileNameCipherScheme,
@@ -102,7 +102,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
                 };
                 
                 // Serialize data
-                await using var serializedConfigStream = await serializer.SerializeAsync(configurationDataModel, cancellationToken);
+                await using var serializedConfigStream = await serializer.SerializeAsync(configDataModel, cancellationToken);
 
                 // Write configuration
                 await serializedConfigStream.CopyToAsync(configStream, cancellationToken);
@@ -113,6 +113,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         public void Dispose()
         {
             _macKey?.Dispose();
+            _cipherProvider.Dispose();
         }
     }
 }

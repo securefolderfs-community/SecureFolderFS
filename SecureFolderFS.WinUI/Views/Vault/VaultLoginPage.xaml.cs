@@ -1,13 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.UI.AppModels;
+using SecureFolderFS.WinUI.UserControls;
 using System.Threading.Tasks;
-using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,7 +17,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
     public sealed partial class VaultLoginPage : Page
     {
         private Button? _continueButton;
-        private PasswordBox? _vaultPasswordBox;
+        private PasswordControl? _passwordControl;
 
         public VaultLoginPageViewModel ViewModel
         {
@@ -41,12 +38,6 @@ namespace SecureFolderFS.WinUI.Views.Vault
             base.OnNavigatedTo(e);
         }
 
-        private async void VaultPasswordBox_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Enter)
-                await TryUnlock();
-        }
-
         private async void ContinueButton_Click(object sender, RoutedEventArgs e)
         {
             await TryUnlock();
@@ -56,13 +47,13 @@ namespace SecureFolderFS.WinUI.Views.Vault
         {
             if (_continueButton?.IsEnabled ?? false)
             {
-                if (_vaultPasswordBox is null || _continueButton?.DataContext is not LoginCredentialsViewModel viewModel)
+                if (_passwordControl is null || _continueButton?.DataContext is not LoginCredentialsViewModel viewModel)
                     return;
 
                 _continueButton.IsEnabled = false;
                 await Task.Delay(25); // Wait for UI to update.
 
-                var securePassword = _vaultPasswordBox.Password.IsEmpty() ? null : new VaultPassword(_vaultPasswordBox.Password);
+                var securePassword = _passwordControl.GetPassword();
                 await viewModel.UnlockVaultCommand.ExecuteAsync(securePassword);
 
                 await Task.Delay(25);
@@ -75,9 +66,9 @@ namespace SecureFolderFS.WinUI.Views.Vault
             _continueButton = sender as Button;
         }
 
-        private void VaultPasswordBox_Loaded(object sender, RoutedEventArgs e)
+        private void PasswordControl_Loaded(object sender, RoutedEventArgs e)
         {
-            _vaultPasswordBox = sender as PasswordBox;
+            _passwordControl = sender as PasswordControl;
         }
     }
 }
