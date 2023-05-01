@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
+using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
 using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
@@ -63,9 +64,8 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
 
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs e)
         {
-            // TODO
             // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
-            // ViewModel.NavigationService.ResetNavigation<FrameNavigationControl>();
+            ViewModel.NavigationService.ResetNavigation<ContentNavigationControl>();
         }
     }
 }
