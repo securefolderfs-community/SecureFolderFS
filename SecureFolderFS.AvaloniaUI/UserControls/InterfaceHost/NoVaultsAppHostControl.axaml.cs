@@ -12,18 +12,18 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
         {
             AvaloniaXamlLoader.Load(this);
 
-            SettingsButton.AddHandler(PointerPressedEvent, SettingsButton_OnPointerPressed, handledEventsToo: true);
-            SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_OnPointerReleased, handledEventsToo: true);
+            SettingsButton.AddHandler(PointerPressedEvent, SettingsButton_PointerPressed, handledEventsToo: true);
+            SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_PointerReleased, handledEventsToo: true);
         }
 
-        private void SettingsButton_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        private void SettingsButton_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            SpinSettingsIconPointerPressedStoryboard.RunAnimationsAsync();
+            SpinSettingsIconPointerPressedStoryboard.BeginAsync();
         }
 
-        private void SettingsButton_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+        private void SettingsButton_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
-            SpinSettingsIconPointerReleasedStoryboard.RunAnimationsAsync();
+            SpinSettingsIconPointerReleasedStoryboard.BeginAsync();
         }
 
         public EmptyHostViewModel? ViewModel

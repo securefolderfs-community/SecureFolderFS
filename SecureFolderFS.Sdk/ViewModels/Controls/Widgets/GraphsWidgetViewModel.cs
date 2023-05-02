@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             _readRates = new() { 0 };
             _writeRates = new() { 0 };
         }
-        
+
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
@@ -82,7 +82,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             writePoint.Date = now;
             writePoint.Value = write;
             WriteGraphViewModel.UpdateLastPoint();
-            
+
             // Reset amounts
             _currentReadAmount = 0;
             _currentWriteAmount = 0;

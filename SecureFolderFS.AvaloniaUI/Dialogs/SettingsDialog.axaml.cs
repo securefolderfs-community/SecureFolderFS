@@ -1,10 +1,7 @@
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using SecureFolderFS.AvaloniaUI.Animations.Transitions.NavigationTransitions;
-using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -12,12 +9,13 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.UI.Helpers;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
+using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
+using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
-    internal sealed partial class SettingsDialog : ContentDialog, IDialog<SettingsDialogViewModel>, IStyleable
+    public sealed partial class SettingsDialog : ContentDialog, IDialog<SettingsDialogViewModel>, IStyleable
     {
         /// <inheritdoc/>
         public SettingsDialogViewModel ViewModel
@@ -36,7 +34,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         /// <inheritdoc/>
         public async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
 
-        private INotifyPropertyChanged GetTargetForTag(int tag)
+        private INavigationTarget GetTargetForTag(int tag)
         {
             return tag switch
             {
@@ -48,7 +46,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             };
         }
 
-        private async void NavigationView_OnSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
+        private async void NavigationView_SelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
         {
             if (!ViewModel.NavigationService.SetupNavigation(Navigation))
                 return;
@@ -56,13 +54,18 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             var tag = Convert.ToInt32((e.SelectedItem as NavigationViewItem)?.Tag);
             var target = GetTargetForTag(tag);
 
-            await Navigation.NavigateAsync(target, new EntranceNavigationTransition());
+            await ViewModel.NavigationService.NavigateAsync(target);
         }
 
-        private void Button_OnClick(object? sender, RoutedEventArgs e)
+        private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {
             Hide();
-            WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
+        }
+
+        private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs e)
+        {
+            // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
+            ViewModel.NavigationService.ResetNavigation<FrameNavigationControl>();
         }
     }
 }

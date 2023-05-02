@@ -31,6 +31,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
 
         private async void Chart_Loaded(object sender, RoutedEventArgs e)
         {
+            // Workaround for the application freezing after unlocking at least 2 vaults
+            // TODO Find the cause of the issue and fix it
+            await Task.Delay(500);
+
             Chart.Series = new ISeries[]
             {
                 new LineSeries<GraphPoint>()
@@ -47,7 +51,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
                     DataPadding = new(0.3f, 0),
                     AnimationsSpeed = TimeSpan.FromMilliseconds(150),
                     GeometryStroke = new SolidColorPaint(SKColors.Transparent),
-                    IsHoverable = false
+                    IsHoverable = false,
                 }
             };
             Chart.XAxes = new ICartesianAxis[]

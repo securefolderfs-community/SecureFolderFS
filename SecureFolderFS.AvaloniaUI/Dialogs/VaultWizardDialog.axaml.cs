@@ -1,9 +1,7 @@
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -80,16 +78,22 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
                 _hasNavigationAnimatedOnLoaded = true;
                 GoBack.IsVisible = false;
             }
-            else if (!_isBackAnimationState && (canGoBack && Navigation.CanGoBack))
+            else if (!_isBackAnimationState && (canGoBack && Navigation.ContentFrame.CanGoBack))
             {
                 _isBackAnimationState = true;
-                await ShowBackButtonStoryboard.RunAnimationsAsync();
+                GoBack.IsVisible = true;
+                await ShowBackButtonStoryboard.BeginAsync();
+                ShowBackButtonStoryboard.Stop();
             }
-            else if (_isBackAnimationState && !(canGoBack && Navigation.CanGoBack))
+            else if (_isBackAnimationState && !(canGoBack && Navigation.ContentFrame.CanGoBack))
             {
                 _isBackAnimationState = false;
-                await HideBackButtonStoryboard.RunAnimationsAsync();
+                await HideBackButtonStoryboard.BeginAsync();
+                HideBackButtonStoryboard.Stop();
+                //GoBack.IsVisible = false;
             }
+
+            //GoBack.IsVisible = canGoBack && Navigation.CanGoBack;
         }
 
         private async void NavigationService_NavigationChanged(object? sender, INavigationTarget? e)
@@ -97,15 +101,14 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             await CompleteAnimationAsync(e as BaseWizardPageViewModel);
         }
 
-        private void VaultWizardDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void VaultWizardDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (!args.Cancel)
-            {
-                ViewModel.NavigationService.NavigationChanged -= NavigationService_NavigationChanged;
-                ViewModel.Dispose();
-                Navigation.Dispose();
-                WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
-            }
+            ViewModel.PrimaryButtonClickCommand.Execute(new EventDispatchHelper(() => args.Cancel = true));
+        }
+
+        private void VaultWizardDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            ViewModel.SecondaryButtonClickCommand.Execute(new EventDispatchHelper(() => args.Cancel = true));
         }
 
         private async void VaultWizardDialog_Loaded(object? sender, RoutedEventArgs e)
@@ -121,17 +124,17 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
 
             var viewModel = new MainWizardPageViewModel(ViewModel);
             await ViewModel.NavigationService.NavigateAsync(viewModel);
-            _ = CompleteAnimationAsync(viewModel);
+            await CompleteAnimationAsync(viewModel);
         }
 
-        private void VaultWizardDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void VaultWizardDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-            ViewModel.PrimaryButtonClickCommand.Execute(new EventDispatchHelper(() => args.Cancel = true));
-        }
-
-        private void VaultWizardDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            ViewModel.SecondaryButtonClickCommand.Execute(new EventDispatchHelper(() => args.Cancel = true));
+            if (!args.Cancel)
+            {
+                ViewModel.NavigationService.NavigationChanged -= NavigationService_NavigationChanged;
+                ViewModel.Dispose();
+                Navigation.Dispose();
+            }
         }
     }
 }

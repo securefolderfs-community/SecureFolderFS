@@ -6,7 +6,7 @@
     xmlns:ic="using:FluentAvalonia.FluentIcons"
     xmlns:ex="using:SecureFolderFS.AvaloniaUI.MarkupExtensions"
     xmlns:svg="using:Avalonia.Svg.Skia"
-    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
+    xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations2"
     xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost.NoVaultsAppHostControl">
@@ -67,33 +67,33 @@
             Background="Transparent"
             BorderThickness="0"
             Command="{Binding ViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
-            <Button.Content>
-                <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings48Regular" Width="18">
-                    <ic:FluentIcon.RenderTransform>
-                        <RotateTransform />
-                    </ic:FluentIcon.RenderTransform>
+            <ic:FluentIcon x:Name="SettingsButtonIcon" Icon="Settings48Regular" Width="18">
+                <ic:FluentIcon.RenderTransform>
+                    <RotateTransform />
+                </ic:FluentIcon.RenderTransform>
 
-					<anim:Storyboard.Storyboards>
-                        <anim:Storyboard x:Name="SpinSettingsIconPointerPressedStoryboard">
-                            <trans:RotateTransition
-                                Duration="0:0:0.1"
-                                To="-20"
-                                Target="SettingsButtonIcon" />
-                        </anim:Storyboard>
-                        <anim:Storyboard x:Name="SpinSettingsIconPointerReleasedStoryboard">
-                            <trans:RotateTransition
-                                Duration="0:0:1"
-                                From="-20"
-                                To="360"
-                                Target="SettingsButtonIcon">
-                                <trans:RotateTransition.Easing>
-                                    <QuarticEaseOut />
-                                </trans:RotateTransition.Easing>
-                            </trans:RotateTransition>
-                        </anim:Storyboard>
-                    </anim:Storyboard.Storyboards>
-                </ic:FluentIcon>
-            </Button.Content>
+                <anim:Storyboard.Storyboards>
+                    <anim:Storyboard x:Name="SpinSettingsIconPointerPressedStoryboard">
+                        <anim:DoubleAnimation
+                            anim:Storyboard.Target="{Binding ElementName=SettingsButtonIcon}"
+                            anim:Storyboard.TargetProperty="{x:Static RotateTransform.AngleProperty}"
+                            To="-20"
+                            Duration="0:0:0.1"/>
+                    </anim:Storyboard>
+                    <anim:Storyboard x:Name="SpinSettingsIconPointerReleasedStoryboard">
+                        <anim:DoubleAnimation
+                            anim:Storyboard.Target="{Binding ElementName=SettingsButtonIcon}"
+                            anim:Storyboard.TargetProperty="{x:Static RotateTransform.AngleProperty}"
+                            From="-20"
+                            To="360"
+                            Duration="0:0:1">
+                            <anim:DoubleAnimation.EasingFunction>
+                                <QuarticEaseOut />
+                            </anim:DoubleAnimation.EasingFunction>
+                        </anim:DoubleAnimation>
+                    </anim:Storyboard>
+                </anim:Storyboard.Storyboards>
+            </ic:FluentIcon>
         </Button>
     </Grid>
 </UserControl>

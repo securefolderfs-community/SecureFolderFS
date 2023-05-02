@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
+    Closing="SettingsDialog_Closing"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -32,8 +33,9 @@
             IsBackButtonVisible="False"
             IsSettingsVisible="False"
             PaneDisplayMode="Top"
-            SelectionChanged="NavigationView_OnSelectionChanged">
+            SelectionChanged="NavigationView_SelectionChanged">
             <ui:NavigationView.MenuItems>
+
                 <!--  General  -->
                 <ui:NavigationViewItem
                     AutomationProperties.Name="General"
@@ -41,18 +43,21 @@
                     Icon="{ic:FluentIcon AppGeneric24Regular}"
                     IsSelected="True"
                     Tag="0" />
+
                 <!--  Preferences  -->
                 <ui:NavigationViewItem
                     AutomationProperties.Name="Preferences"
                     Content="Preferences"
                     Icon="{ic:FluentIcon Wrench24Regular}"
                     Tag="1" />
+
                 <!--  Privacy  -->
                 <ui:NavigationViewItem
                     AutomationProperties.Name="Privacy"
                     Content="Privacy"
                     Icon="{ic:FluentIcon Shield24Regular}"
                     Tag="2" />
+
                 <!--  About  -->
                 <ui:NavigationViewItem
                     Margin="0,0,45,0"
@@ -76,7 +81,7 @@
             VerticalAlignment="Top"
             Background="Transparent"
             BorderThickness="0"
-            Click="Button_OnClick"
+            Click="CloseButton_Click"
             CornerRadius="20">
             <ic:FluentIcon Width="10" Icon="Dismiss48Regular" />
         </Button>
