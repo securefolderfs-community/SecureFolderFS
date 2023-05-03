@@ -1,10 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI;
+using SecureFolderFS.UI.Api;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Storage.NativeStorage;
@@ -66,8 +70,12 @@ namespace SecureFolderFS.WinUI
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
+#if !DEBUG
             // Start AppCenter
-            // TODO: Start AppCenter
+            var appCenterKey = ApiKeys.GetAppCenterKey();
+            if (!string.IsNullOrEmpty(appCenterKey))
+                AppCenter.Start(appCenterKey, typeof(Analytics), typeof(Crashes));
+#endif
         }
 
         private IServiceProvider ConfigureServices(IModifiableFolder settingsFolder)

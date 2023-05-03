@@ -19,8 +19,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         public VaultPropertiesPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService)
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {
-            ContentCipherName = unlockedVaultViewModel.UnlockedVaultModel.VaultInfoModel.ContentCipherId ?? "Unknown";
-            FileNameCipherName = unlockedVaultViewModel.UnlockedVaultModel.VaultInfoModel.FileNameCipherId ?? "Unknown";
+            var contentCipherId = unlockedVaultViewModel.UnlockedVaultModel.VaultInfoModel.ContentCipherId;
+            var fileNameCipherId = unlockedVaultViewModel.UnlockedVaultModel.VaultInfoModel.FileNameCipherId;
+
+            ContentCipherName = contentCipherId == string.Empty ? "None" : (contentCipherId ?? "Unknown");
+            FileNameCipherName = fileNameCipherId == string.Empty ? "None" : (fileNameCipherId ?? "Unknown");
         }
 
         /// <inheritdoc/>

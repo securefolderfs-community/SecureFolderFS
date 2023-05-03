@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Extensions;
@@ -23,8 +22,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
         private readonly INavigationService _navigationService;
 
         [ObservableProperty] private bool _IsInvalidPasswordShown;
-
-        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
         // TODO: Reduce number of parameters
         public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IKeystoreModel keystoreModel, IVaultWatcherModel vaultWatcherModel, IVaultUnlockingModel vaultUnlockingModel, INavigationService navigationService)

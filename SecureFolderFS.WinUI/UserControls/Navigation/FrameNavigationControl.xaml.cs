@@ -27,7 +27,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         }
 
         /// <inheritdoc/>
-        public virtual Task<bool> NavigateAsync<TTarget, TTransition>(TTarget target, TTransition? transition = default)
+        public virtual Task<bool> NavigateAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default)
             where TTransition : class
         {
             if (target is null)

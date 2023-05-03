@@ -3,6 +3,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.WinUI.Views.Vault;
 using System;
 using System.Collections.Generic;
+using SecureFolderFS.Sdk.Models;
 
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
@@ -19,9 +20,9 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         /// <inheritdoc/>
         protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
         {
-            transitionInfo ??= ContentFrame.Content switch
+            transitionInfo ??= parameter switch
             {
-                VaultDashboardPage => new ContinuumNavigationTransitionInfo(), // Dashboard closing animation
+                VaultLoginPageViewModel => new ContinuumNavigationTransitionInfo(), // Dashboard closing animation
                 _ => new EntranceNavigationTransitionInfo() // Standard animation
             };
 
