@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
         /// <inheritdoc/>
         public bool IsTelemetryEnabled
         {
-            get => GetSetting(() => false); // TODO: Enable as default
+            get => GetSetting(() => true);
             set => SetSetting(value);
         }
 

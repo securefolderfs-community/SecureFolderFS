@@ -45,12 +45,17 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
         {
             var vaultCollectionModel = new VaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
+            var telemetryService = Ioc.Default.GetRequiredService<ITelemetryService>();
 
             // Initialize
             await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.LoadAsync());
 
             // Update UI to reflect the current theme
             await AvaloniaThemeHelper.Instance.InitAsync();
+
+            // Disable telemetry, if the user opted-out
+            if (!settingsService.UserSettings.IsTelemetryEnabled)
+                await telemetryService.DisableTelemetryAsync();
 
             // Continue root initialization
             if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped

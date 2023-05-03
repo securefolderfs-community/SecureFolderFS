@@ -82,6 +82,7 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IUpdateService, UpdateService>()
+                .AddSingleton<ITelemetryService, TelemetryService>()
 
                 // Transient services
                 .AddTransient<INavigationService, AvaloniaNavigationService>()

@@ -50,6 +50,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
         {
             var vaultCollectionModel = new VaultCollectionModel();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
+            var telemetryService = Ioc.Default.GetRequiredService<ITelemetryService>();
 
             // Small delay for Mica material to load
             await Task.Delay(1);
@@ -62,6 +63,10 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
 
             // Then, initialize it to refresh the theme and UI
             await WindowsThemeHelper.Instance.InitAsync();
+
+            // Disable telemetry, if the user opted-out
+            if (!settingsService.UserSettings.IsTelemetryEnabled)
+                await telemetryService.DisableTelemetryAsync();
              
             // Continue root initialization
             if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
@@ -74,7 +79,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
                 if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
                 {
                     // Show main app screen
-                    _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel)); // TODO(r)
+                    _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel));
                 }
                 else // Doesn't have vaults
                 {

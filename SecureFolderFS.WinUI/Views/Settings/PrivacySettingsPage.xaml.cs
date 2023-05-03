@@ -1,5 +1,8 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -12,6 +15,8 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// </summary>
     public sealed partial class PrivacySettingsPage : Page
     {
+        private ITelemetryService TelemetryService { get; } = Ioc.Default.GetRequiredService<ITelemetryService>();
+
         public PrivacySettingsViewModel ViewModel
         {
             get => (PrivacySettingsViewModel)DataContext;
@@ -29,6 +34,20 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
+        }
+
+        private async void EnableTelemetry_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (EnableTelemetry.IsOn)
+            {
+                await TelemetryService.EnableTelemetryAsync();
+                TelemetryService.TrackEvent("Telemetry manually enabled");
+            }
+            else
+            {
+                TelemetryService.TrackEvent("Telemetry manually disabled");
+                await TelemetryService.DisableTelemetryAsync();
+            }
         }
     }
 }

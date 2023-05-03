@@ -1,14 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI;
-using SecureFolderFS.UI.Api;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Storage.NativeStorage;
@@ -19,6 +15,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
+
+#if !DEBUG
+#endif
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using SecureFolderFS.UI.Api;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -94,6 +97,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
+                .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
 
                 // Transient services
                 .AddTransient<INavigationService, WindowsNavigationService>()

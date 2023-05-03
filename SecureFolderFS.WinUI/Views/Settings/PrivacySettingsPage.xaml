@@ -46,15 +46,16 @@
                         IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="Enable telemetry" Description="Send anonymous crash reports and usage data">
+            <ucab:ActionBlockControl Title="Enable telemetry" Description="Collect anonymous crash reports and usage data">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE9D2;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
+                        x:Name="EnableTelemetry"
                         MinWidth="0"
-                        IsEnabled="False"
-                        IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}"
+                        Toggled="EnableTelemetry_Toggled" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>
