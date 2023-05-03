@@ -46,11 +46,11 @@ namespace SecureFolderFS.Core.WebDav
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
             var port = webDavMountOptions.Port;
-            if (webDavMountOptions.Port > 65536 || webDavMountOptions.Port <= 0)
+            if (port > 65536 || port <= 0)
                 throw new ArgumentException($"Parameter {nameof(WebDavMountOptions.Port)} is invalid.");
 
             if (!PortHelpers.IsPortAvailable(port))
-                port = PortHelpers.GetAvailablePort();
+                port = PortHelpers.GetNextAvailablePort(port);
 
             var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
             var prefix = $"{protocol}://{webDavMountOptions.Domain}:{port}/";
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Core.WebDav
             webDavWrapper.StartFileSystem();
 
             // TODO Remove once the port is displayed in the UI.
-            Debug.WriteLine($"WebDav server started on port {port}.");
+            Debug.WriteLine($"WebDAV server started on port {port}.");
 
             return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{port}\\DavWWWRoot\\"), webDavWrapper));
         }

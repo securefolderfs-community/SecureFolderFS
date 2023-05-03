@@ -1,6 +1,7 @@
 using System;
-using System.Net;
-using System.Net.Sockets;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace SecureFolderFS.Core.WebDav.Helpers
 {
@@ -8,28 +9,25 @@ namespace SecureFolderFS.Core.WebDav.Helpers
     {
         public static bool IsPortAvailable(int port)
         {
-            try
-            {
-                using var client = new TcpClient();
-                client.Connect("localhost", port);
-                client.Close();
-            }
-            catch (Exception)
-            {
-                return true;
-            }
-
-            return false;
+            return !GetUnavailablePorts().Contains(port);
         }
 
-        public static int GetAvailablePort()
+        public static int GetNextAvailablePort(int startingPort)
         {
-            var listener = new TcpListener(IPAddress.Loopback, 0);
-            listener.Start();
+            var unavailablePorts = GetUnavailablePorts().ToList();
+            for (var i = startingPort; i <= ushort.MaxValue; i++)
+                if (!unavailablePorts.Contains(i))
+                    return i;
 
-            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
-            listener.Stop();
-            return port;
+            throw new InvalidOperationException("No available ports.");
+        }
+
+        private static IEnumerable<int> GetUnavailablePorts()
+        {
+            var properties = IPGlobalProperties.GetIPGlobalProperties();
+            return properties.GetActiveTcpConnections().Select(x => x.LocalEndPoint.Port)
+                .Concat(properties.GetActiveTcpListeners().Select(x => x.Port))
+                .Concat(properties.GetActiveUdpListeners().Select(x => x.Port));
         }
     }
 }
