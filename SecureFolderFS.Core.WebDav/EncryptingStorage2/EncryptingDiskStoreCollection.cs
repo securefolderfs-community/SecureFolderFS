@@ -169,7 +169,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public Task<IStoreItem> GetItemAsync(string name, IHttpContext context)
         {
             // Determine the full path
-            var fullPath = Path.Combine(_directoryInfo.FullName, name);
+            var fullPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
 
             // Check if the item is a file
             if (File.Exists(fullPath))
@@ -332,8 +332,8 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                         return new StoreItemResult(HttpStatusCode.PreconditionFailed);
 
                     // Determine source and destination paths
-                    var sourcePath = Path.Combine(_directoryInfo.FullName, sourceName);
-                    var destinationPath = Path.Combine(destinationDiskStoreCollection._directoryInfo.FullName, destinationName);
+                    var sourcePath = _pathConverter.ToCiphertext(Path.Combine(_directoryInfo.FullName, sourceName));
+                    var destinationPath = _pathConverter.ToCiphertext(Path.Combine(destinationDiskStoreCollection._directoryInfo.FullName, destinationName));
 
                     // Check if the file already exists
                     HttpStatusCode result;
@@ -405,7 +405,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 return Task.FromResult(HttpStatusCode.PreconditionFailed);
 
             // Determine the full path
-            var fullPath = Path.Combine(_directoryInfo.FullName, name);
+            var fullPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
             try
             {
                 // Check if the file exists
@@ -420,7 +420,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 if (Directory.Exists(fullPath))
                 {
                     // Delete the directory
-                    Directory.Delete(fullPath);
+                    Directory.Delete(fullPath, true);
                     return Task.FromResult(HttpStatusCode.OK);
                 }
 

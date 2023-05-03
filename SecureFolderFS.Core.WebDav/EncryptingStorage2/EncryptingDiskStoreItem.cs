@@ -128,6 +128,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public string UniqueKey => _fileInfo.FullName;
         public string FullPath => _pathConverter.ToCleartext(_fileInfo.FullName) ?? string.Empty;
         public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_streamsAccess.OpenCleartextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
+        public Task<Stream> GetWritableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_streamsAccess.OpenCleartextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
 
         public async Task<HttpStatusCode> UploadFromStreamAsync(IHttpContext context, Stream inputStream)
         {
@@ -139,7 +140,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             try
             {
                 // Copy the information to the destination stream
-                using (var outputStream = _streamsAccess.OpenCleartextStream(_fileInfo.FullName, _fileInfo.OpenWrite()))
+                using (var outputStream = await GetWritableStreamAsync(context).ConfigureAwait(false))
                 {
                     await inputStream.CopyToAsync(outputStream).ConfigureAwait(false);
                 }
@@ -166,7 +167,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     if (!diskCollection.IsWritable)
                         return new StoreItemResult(HttpStatusCode.PreconditionFailed);
 
-                    var destinationPath = Path.Combine(diskCollection.FullPath, name);
+                    var destinationPath = _pathConverter.ToCiphertext(Path.Combine(diskCollection.FullPath, name));
 
                     // Check if the file already exists
                     var fileExists = File.Exists(destinationPath);
@@ -187,7 +188,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     // Check if the item could be created
                     if (result.Item != null)
                     {
-                        using (var sourceStream = await GetReadableStreamAsync(context).ConfigureAwait(false))
+                        using (var sourceStream = await GetWritableStreamAsync(context).ConfigureAwait(false))
                         {
                             var copyResult = await result.Item.UploadFromStreamAsync(context, sourceStream).ConfigureAwait(false);
                             if (copyResult != HttpStatusCode.OK)
