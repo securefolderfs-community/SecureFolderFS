@@ -134,7 +134,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         {
             // Check if the item is writable
             if (!IsWritable)
-                return HttpStatusCode.Conflict;
+                return HttpStatusCode.Forbidden;
 
             // Copy the stream
             try
@@ -165,7 +165,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 {
                     // Check if the collection is writable
                     if (!diskCollection.IsWritable)
-                        return new StoreItemResult(HttpStatusCode.PreconditionFailed);
+                        return new StoreItemResult(HttpStatusCode.Forbidden);
 
                     var destinationPath = _pathConverter.ToCiphertext(Path.Combine(diskCollection.FullPath, name));
 
