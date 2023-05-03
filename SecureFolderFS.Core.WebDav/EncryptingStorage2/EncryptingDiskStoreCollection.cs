@@ -213,7 +213,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         {
             // Return error
             if (!IsWritable)
-                return Task.FromResult(new StoreItemResult(HttpStatusCode.PreconditionFailed));
+                return Task.FromResult(new StoreItemResult(HttpStatusCode.Forbidden));
 
             // Determine the destination path
             var destinationPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
@@ -255,7 +255,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         {
             // Return error
             if (!IsWritable)
-                return Task.FromResult(new StoreCollectionResult(HttpStatusCode.PreconditionFailed));
+                return Task.FromResult(new StoreCollectionResult(HttpStatusCode.Forbidden));
 
             // Determine the destination path
             var destinationPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
@@ -266,7 +266,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             {
                 // Check if overwrite is allowed
                 if (!overwrite)
-                    return Task.FromResult(new StoreCollectionResult(HttpStatusCode.PreconditionFailed));
+                    return Task.FromResult(new StoreCollectionResult(HttpStatusCode.MethodNotAllowed));
 
                 // Overwrite existing
                 result = HttpStatusCode.NoContent;
@@ -315,7 +315,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         {
             // Return error
             if (!IsWritable)
-                return new StoreItemResult(HttpStatusCode.PreconditionFailed);
+                return new StoreItemResult(HttpStatusCode.Forbidden);
 
             // Determine the object that is being moved
             var item = await GetItemAsync(sourceName, context).ConfigureAwait(false);
@@ -329,7 +329,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 {
                     // Return error
                     if (!destinationDiskStoreCollection.IsWritable)
-                        return new StoreItemResult(HttpStatusCode.PreconditionFailed);
+                        return new StoreItemResult(HttpStatusCode.Forbidden);
 
                     // Determine source and destination paths
                     var sourcePath = _pathConverter.ToCiphertext(Path.Combine(FullPath, sourceName));
@@ -341,7 +341,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     {
                         // Remove the file if it already exists (if allowed)
                         if (!overwrite)
-                            return new StoreItemResult(HttpStatusCode.Forbidden);
+                            return new StoreItemResult(HttpStatusCode.PreconditionFailed);
 
                         // The file will be overwritten
                         File.Delete(destinationPath);
@@ -351,7 +351,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     {
                         // Remove the directory if it already exists (if allowed)
                         if (!overwrite)
-                            return new StoreItemResult(HttpStatusCode.Forbidden);
+                            return new StoreItemResult(HttpStatusCode.PreconditionFailed);
 
                         // The file will be overwritten
                         Directory.Delete(destinationPath, true);
@@ -402,7 +402,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         {
             // Return error
             if (!IsWritable)
-                return Task.FromResult(HttpStatusCode.PreconditionFailed);
+                return Task.FromResult(HttpStatusCode.Forbidden);
 
             // Determine the full path
             var fullPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
@@ -413,7 +413,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 {
                     // Delete the file
                     File.Delete(fullPath);
-                    return Task.FromResult(HttpStatusCode.OK);
+                    return Task.FromResult(HttpStatusCode.NoContent);
                 }
 
                 // Check if the directory exists
@@ -421,7 +421,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 {
                     // Delete the directory
                     Directory.Delete(fullPath, true);
-                    return Task.FromResult(HttpStatusCode.OK);
+                    return Task.FromResult(HttpStatusCode.NoContent);
                 }
 
                 // Item not found
