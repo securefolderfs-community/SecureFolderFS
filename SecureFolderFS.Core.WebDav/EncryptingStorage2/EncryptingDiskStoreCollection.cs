@@ -332,8 +332,8 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                         return new StoreItemResult(HttpStatusCode.PreconditionFailed);
 
                     // Determine source and destination paths
-                    var sourcePath = _pathConverter.ToCiphertext(Path.Combine(_directoryInfo.FullName, sourceName));
-                    var destinationPath = _pathConverter.ToCiphertext(Path.Combine(destinationDiskStoreCollection._directoryInfo.FullName, destinationName));
+                    var sourcePath = _pathConverter.ToCiphertext(Path.Combine(FullPath, sourceName));
+                    var destinationPath = _pathConverter.ToCiphertext(Path.Combine(destinationDiskStoreCollection.FullPath, destinationName));
 
                     // Check if the file already exists
                     HttpStatusCode result;
