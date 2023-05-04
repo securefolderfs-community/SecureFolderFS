@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
@@ -14,11 +13,11 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
     internal sealed partial class VaultLoginPage : Page
     {
         private Button? _continueButton;
-        private TextBox? _vaultPasswordBox;
+        private PasswordControl? _passwordControl;
 
-        public VaultLoginPageViewModel? ViewModel
+        public VaultLoginPageViewModel ViewModel
         {
-            get => (VaultLoginPageViewModel?)DataContext;
+            get => (VaultLoginPageViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -35,43 +34,37 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
             base.OnNavigatedTo(e);
         }
 
-        private async void VaultPasswordBox_OnKeyUp(object? sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-                await TryUnlock();
-        }
-
-        private void VaultPasswordBox_OnLoaded(object? sender, RoutedEventArgs e)
-        {
-            _vaultPasswordBox = sender as TextBox;
-        }
-
-        private async void ContinueButton_OnClick(object? sender, RoutedEventArgs e)
+        private async void ContinueButton_Click(object? sender, RoutedEventArgs e)
         {
             await TryUnlock();
-        }
-
-        private void ContinueButton_OnLoaded(object? sender, RoutedEventArgs e)
-        {
-            _continueButton = sender as Button;
         }
 
         private async Task TryUnlock()
         {
             if (_continueButton?.IsEnabled ?? false)
             {
-                if (_vaultPasswordBox is null || _continueButton?.DataContext is not LoginCredentialsViewModel viewModel)
+                if (_passwordControl is null || _continueButton?.DataContext is not LoginCredentialsViewModel viewModel)
                     return;
 
                 _continueButton.IsEnabled = false;
                 await Task.Delay(25); // Wait for UI to update.
 
-                var securePassword = string.IsNullOrEmpty(_vaultPasswordBox.Text) ? null : new VaultPassword(_vaultPasswordBox.Text);
+                var securePassword = _passwordControl.GetPassword();
                 await Task.Run(() => viewModel.UnlockVaultCommand.ExecuteAsync(securePassword));
 
                 await Task.Delay(25);
                 _continueButton.IsEnabled = true;
             }
+        }
+
+        private void ContinueButton_Loaded(object? sender, RoutedEventArgs e)
+        {
+            _continueButton = sender as Button;
+        }
+
+        private void PasswordControl_Loaded(object? sender, RoutedEventArgs e)
+        {
+            _passwordControl = sender as PasswordControl;
         }
     }
 }

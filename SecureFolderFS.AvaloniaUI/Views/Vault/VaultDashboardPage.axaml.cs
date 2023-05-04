@@ -17,9 +17,9 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
     {
         public ObservableCollection<OrderedBreadcrumbBarItem> BreadcrumbItems { get; }
 
-        public VaultDashboardPageViewModel? ViewModel
+        public VaultDashboardPageViewModel ViewModel
         {
-            get => (VaultDashboardPageViewModel?)DataContext;
+            get => (VaultDashboardPageViewModel)DataContext;
             set => DataContext = value;
         }
 
@@ -42,21 +42,16 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
 
         public override void OnNavigatingFrom()
         {
-            if (ViewModel is not null)
-            {
-                // Remove the reference to the NavigationControl so the page can get properly garbage collected
-                ViewModel.DashboardNavigationService.ResetNavigation<FrameNavigationControl>();
-                ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
-            }
-
+            // Remove the reference to the NavigationControl so the page can get properly garbage collected
+            ViewModel.DashboardNavigationService.ResetNavigation<FrameNavigationControl>();
+            ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
             Navigation.Dispose();
+
+            base.OnNavigatingFrom();
         }
 
         private async void Navigation_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ViewModel is null)
-                return;
-
             // Hook up navigation event
             ViewModel.DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
 
@@ -82,19 +77,18 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
                 _ => true
             };
 
-            // TODO(n2)
-            //if (canGoBack)
-            //{
-            //    GoBack.Visibility = Visibility.Visible;
-            //    await ShowBackButtonStoryboard.BeginAsync();
-            //    ShowBackButtonStoryboard.Stop();
-            //}
-            //else
-            //{
-            //    await HideBackButtonStoryboard.BeginAsync();
-            //    HideBackButtonStoryboard.Stop();
-            //    GoBack.Visibility = Visibility.Collapsed;
-            //}
+            if (canGoBack)
+            {
+                //GoBack.IsVisible = true;
+                await ShowBackButtonStoryboard.BeginAsync();
+                ShowBackButtonStoryboard.Stop();
+            }
+            else
+            {
+                await HideBackButtonStoryboard.BeginAsync();
+                HideBackButtonStoryboard.Stop();
+                //GoBack.IsVisible = false;
+            }
         }
     }
 }
