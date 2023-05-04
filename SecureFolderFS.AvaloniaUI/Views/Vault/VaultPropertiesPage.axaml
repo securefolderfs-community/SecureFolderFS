@@ -1,9 +1,39 @@
-<uc:Page xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultPropertiesPage">
+<uc:Page 
+	x:Class="SecureFolderFS.AvaloniaUI.Views.Vault.VaultPropertiesPage"
+	xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+	xmlns:ui="using:FluentAvalonia.UI.Controls"
+	xmlns:ic="using:FluentAvalonia.FluentIcons"
+	d:DesignWidth="800" 
+	d:DesignHeight="450"
+    mc:Ignorable="d">
 
+	<StackPanel Spacing="4">
+		<ui:SettingsExpander
+			Header="Vault information"
+			IsExpanded="True"
+			IconSource="{ic:FluentIconSource Info28Regular}">
+
+			<!-- Padding is not requied, because SettingsExpander already has it. -->
+			<Grid ColumnDefinitions="Auto,32,*">
+				<StackPanel Grid.Column="0" Spacing="4">
+					<TextBlock Text="Content encryption" />
+					<TextBlock Text="Filename encryption" />
+				</StackPanel>
+				<StackPanel Grid.Column="2" Spacing="4">
+					<TextBlock Opacity="0.8" Text="{Binding ViewModel.ContentCipherName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+					<TextBlock Opacity="0.8" Text="{Binding ViewModel.FileNameCipherName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+				</StackPanel>
+			</Grid>
+		</ui:SettingsExpander>
+		<ui:SettingsExpander
+			Header="Change password"
+			Command="{Binding ViewModel.ChangePasswordCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+			Description="Change the password used to unlock this vault"
+			IconSource="{ic:FluentIconSource Key16Regular}"
+			IsClickEnabled="True" />
+	</StackPanel>
 </uc:Page>
