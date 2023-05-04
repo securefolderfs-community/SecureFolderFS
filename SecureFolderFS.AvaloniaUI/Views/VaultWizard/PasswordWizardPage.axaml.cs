@@ -1,10 +1,8 @@
-using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
-using SecureFolderFS.UI.AppModels;
-using System.Linq;
 
 namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
 {
@@ -27,27 +25,15 @@ namespace SecureFolderFS.AvaloniaUI.Views.VaultWizard
             if (e.Parameter is PasswordWizardViewModel viewModel)
             {
                 ViewModel = viewModel;
-                ViewModel.InitializeWithPassword = () => new VaultPassword(FirstPassword.Text ?? string.Empty);
+                ViewModel.InitializeWithPassword = FirstPassword.GetPassword;
             }
 
             base.OnNavigatedTo(e);
         }
 
-        private bool CanContinue()
+        private void Password_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            return !string.IsNullOrEmpty(FirstPassword.Text) && FirstPassword.Text.SequenceEqual(SecondPassword.Text ?? string.Empty);
-        }
-
-        private void FirstPassword_PasswordChanged(object sender, TextChangedEventArgs e)
-        {
-            if (ViewModel is not null)
-                ViewModel.PrimaryButtonEnabled = CanContinue();
-        }
-
-        private void SecondPassword_PasswordChanged(object sender, TextChangedEventArgs e)
-        {
-            if (ViewModel is not null)
-                ViewModel.PrimaryButtonEnabled = CanContinue();
+            ViewModel.PrimaryButtonEnabled = !string.IsNullOrWhiteSpace(FirstPassword.PasswordInput.Text) && FirstPassword.Equals(SecondPassword);
         }
     }
 }

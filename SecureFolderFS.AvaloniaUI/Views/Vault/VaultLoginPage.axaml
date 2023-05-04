@@ -21,6 +21,7 @@
                     HorizontalAlignment="Center"
                     Opacity="0.8"
                     Text="Provide keystore to continue" />
+				
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
@@ -33,26 +34,21 @@
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginCredentialsViewModel">
             <StackPanel Spacing="24">
                 <!--  Password Control  -->
-                <StackPanel Width="364" Spacing="8">
-                    <TextBlock Opacity="0.8" Text="Enter password" />
-                    <TextBox
-                        x:Name="VaultPasswordBox"
-                        MinWidth="300"
-                        KeyUp="VaultPasswordBox_OnKeyUp"
-                        Loaded="VaultPasswordBox_OnLoaded"
-                        PasswordChar="●"
-                        RevealPassword="False"
-                        Watermark="Password" />
-                </StackPanel>
-                <!--  Login  -->
+				<uc:PasswordControl 
+					Width="364"
+					Loaded="PasswordControl_Loaded"
+					PasswordSubmittedCommand="{Binding UnlockVaultCommand}"
+					ShowInvalidPasswordMessage="{Binding IsInvalidPasswordShown, Mode=TwoWay}"/>
+
+                <!--  Continue  -->
                 <Button
                     x:Name="ContinueButton"
                     Padding="32,6"
                     HorizontalAlignment="Center"
                     Classes="accent"
-                    Click="ContinueButton_OnClick"
+                    Click="ContinueButton_Click"
                     Content="Unlock"
-                    Loaded="ContinueButton_OnLoaded" />
+                    Loaded="ContinueButton_Loaded" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginErrorViewModel">

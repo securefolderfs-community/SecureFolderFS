@@ -63,4 +63,7 @@
     <ItemGroup>
       <Folder Include="Extensions\" />
     </ItemGroup>
+    <ItemGroup>
+      <UpToDateCheckInput Remove="UserControls\PasswordControl.axaml" />
+    </ItemGroup>
 </Project>
