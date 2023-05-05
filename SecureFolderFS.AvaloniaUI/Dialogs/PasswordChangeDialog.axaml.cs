@@ -8,6 +8,8 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.AvaloniaUI.Messages;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -41,7 +43,10 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
                 return;
 
             if (await ViewModel.ChangePasswordAsync(new(existingPassword, newPassword), CancellationToken.None))
+            {
                 Hide();
+                WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
+            }
         }
 
         private void Password_PasswordChanged(object sender, RoutedEventArgs e)

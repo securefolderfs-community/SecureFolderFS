@@ -32,7 +32,7 @@
         <Grid
             Grid.Row="0"
             Margin="-16,-56,-16,8"
-            Background="{StaticResource ContentDialogBackground}">
+            Background="{DynamicResource ContentDialogBackground}">
             <TextBlock
                 Margin="16,0,0,0"
                 HorizontalAlignment="Left"
