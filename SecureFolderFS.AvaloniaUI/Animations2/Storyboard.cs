@@ -35,14 +35,14 @@ namespace SecureFolderFS.AvaloniaUI.Animations2
         }
 
         public static readonly AttachedProperty<AvaloniaList<Storyboard>> StoryboardsProperty =
-            AvaloniaProperty.RegisterAttached<Storyboard, IAvaloniaObject, AvaloniaList<Storyboard>>("Storyboards");
+            AvaloniaProperty.RegisterAttached<Storyboard, AvaloniaObject, AvaloniaList<Storyboard>>("Storyboards");
 
-        public static void SetStoryboards(IAvaloniaObject obj, AvaloniaList<Storyboard> value)
+        public static void SetStoryboards(AvaloniaObject obj, AvaloniaList<Storyboard> value)
         {
             obj.SetValue(StoryboardsProperty, value);
         }
 
-        public static AvaloniaList<Storyboard> GetStoryboards(IAvaloniaObject obj)
+        public static AvaloniaList<Storyboard> GetStoryboards(AvaloniaObject obj)
         {
             var value = (AvaloniaList<Storyboard>?)obj.GetValue(StoryboardsProperty);
             if (value is null)
@@ -75,7 +75,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations2
             obj.SetValue(TargetPropertyProperty, value);
         }
 
-        public static AvaloniaProperty GetTargetProperty(IAvaloniaObject obj)
+        public static AvaloniaProperty GetTargetProperty(AvaloniaObject obj)
         {
             return (AvaloniaProperty)obj.GetValue(TargetPropertyProperty)!;
         }

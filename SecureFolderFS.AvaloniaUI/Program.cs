@@ -17,7 +17,6 @@ namespace SecureFolderFS.AvaloniaUI
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .UseFAWindowing()
                 .LogToTrace()
                 .With(new Win32PlatformOptions
                 {

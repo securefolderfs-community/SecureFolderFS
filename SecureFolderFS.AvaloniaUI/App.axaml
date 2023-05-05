@@ -3,8 +3,7 @@
              x:Class="SecureFolderFS.AvaloniaUI.App"
              xmlns:sty="using:FluentAvalonia.Styling">
     <Application.Styles>
-        <sty:FluentAvaloniaTheme />
-        <StyleInclude Source="avares://FluentAvalonia.UI.Windowing/Styles/FAWindowingStyles.axaml" />
+        <sty:FluentAvaloniaTheme PreferUserAccentColor="True" />
         <StyleInclude Source="/Styles/ControlFixStyles.axaml" />
     </Application.Styles>
 

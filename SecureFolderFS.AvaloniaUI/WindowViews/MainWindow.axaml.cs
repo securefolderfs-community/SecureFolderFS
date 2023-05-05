@@ -85,7 +85,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
                 (byte)(solidBackground.Color.G - 4), (byte)(solidBackground.Color.B - 4));
         }
 
-        private async void Window_OnClosing(object? sender, CancelEventArgs e)
+        private async void Window_OnClosing(object? sender, WindowClosingEventArgs e)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
             await settingsService.SaveAsync();

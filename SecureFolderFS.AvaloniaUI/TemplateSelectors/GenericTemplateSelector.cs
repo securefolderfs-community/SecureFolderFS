@@ -11,7 +11,7 @@ namespace SecureFolderFS.AvaloniaUI.TemplateSelectors
     /// <typeparam name="TItem">The type of item.</typeparam>
     internal abstract class GenericTemplateSelector<TItem> : IDataTemplate
     {
-        public IControl? Build(object? param)
+        public Control? Build(object? param)
         {
             if (param is not TItem item)
                 throw new ArgumentException(nameof(param));
