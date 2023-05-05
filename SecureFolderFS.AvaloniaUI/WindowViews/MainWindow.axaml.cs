@@ -7,6 +7,7 @@ using FluentAvalonia.UI.Windowing;
 using SecureFolderFS.Sdk.Services;
 using System;
 using System.ComponentModel;
+using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.AvaloniaUI.WindowViews
 {
@@ -34,7 +35,6 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             base.OnPropertyChanged(change);
         }
 
-
         private void EnsureEarlyWindow()
         {
             if (!OperatingSystem.IsWindowsVersionAtLeast(10, build: 22000))
@@ -61,7 +61,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             // Use Mica
             TransparencyLevelHint = WindowTransparencyLevel.Mica;
             PrepareBackgroundForMica();
-            //ThemeHelper.Instance.OnThemeChangedEvent += OnApplicationThemeChanged; // TODO(n2)
+            Application.Current!.ActualThemeVariantChanged += OnApplicationThemeChanged;
         }
 
         private void OnApplicationThemeChanged(object? sender, EventArgs e)
