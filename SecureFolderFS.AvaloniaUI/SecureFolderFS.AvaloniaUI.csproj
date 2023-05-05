@@ -8,6 +8,9 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <AvaloniaNameGeneratorBehavior>OnlyProperties</AvaloniaNameGeneratorBehavior>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        
+        <!-- Prevents a short application freeze for the first time a view is loaded. -->
+        <PublishReadyToRun>true</PublishReadyToRun>
     </PropertyGroup>
     <ItemGroup>
         <None Remove=".gitignore" />
