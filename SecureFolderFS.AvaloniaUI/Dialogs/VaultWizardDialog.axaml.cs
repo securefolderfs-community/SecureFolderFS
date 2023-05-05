@@ -13,6 +13,8 @@ using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.AvaloniaUI.Messages;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -134,6 +136,8 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
                 ViewModel.NavigationService.NavigationChanged -= NavigationService_NavigationChanged;
                 ViewModel.Dispose();
                 Navigation.Dispose();
+
+                WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
             }
         }
     }

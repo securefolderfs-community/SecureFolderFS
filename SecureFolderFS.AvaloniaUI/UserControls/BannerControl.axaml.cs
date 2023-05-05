@@ -11,28 +11,28 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
             AvaloniaXamlLoader.Load(this);
         }
 
-        public IControl LeftSide
+        public Control LeftSide
         {
             get => GetValue(LeftSideProperty);
             set => SetValue(LeftSideProperty, value);
         }
-        public static readonly StyledProperty<IControl> LeftSideProperty =
-            AvaloniaProperty.Register<BannerControl, IControl>(nameof(LeftSide));
+        public static readonly StyledProperty<Control> LeftSideProperty =
+            AvaloniaProperty.Register<BannerControl, Control>(nameof(LeftSide));
 
-        public IControl RightSide
+        public Control RightSide
         {
             get => GetValue(RightSideProperty);
             set => SetValue(RightSideProperty, value);
         }
-        public static readonly StyledProperty<IControl> RightSideProperty =
-            AvaloniaProperty.Register<BannerControl, IControl>(nameof(RightSide));
+        public static readonly StyledProperty<Control> RightSideProperty =
+            AvaloniaProperty.Register<BannerControl, Control>(nameof(RightSide));
 
-        public IControl AdditionalBottomContent
+        public Control AdditionalBottomContent
         {
             get => GetValue(AdditionalBottomContentProperty);
             set => SetValue(AdditionalBottomContentProperty, value);
         }
-        public static readonly StyledProperty<IControl> AdditionalBottomContentProperty =
-            AvaloniaProperty.Register<BannerControl, IControl>(nameof(AdditionalBottomContent));
+        public static readonly StyledProperty<Control> AdditionalBottomContentProperty =
+            AvaloniaProperty.Register<BannerControl, Control>(nameof(AdditionalBottomContent));
     }
 }

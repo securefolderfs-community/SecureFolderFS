@@ -124,7 +124,7 @@
                 IconSource="{ic:FluentIconSource LocalLanguage28Regular}">
                 <ui:SettingsExpander.Footer>
                     <ComboBox
-                        Items="{Binding ViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        ItemsSource="{Binding ViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                         SelectedIndex="0"
                         Name="AppLanguageComboBox"
                         SelectionChanged="AppLanguageComboBox_SelectionChanged">

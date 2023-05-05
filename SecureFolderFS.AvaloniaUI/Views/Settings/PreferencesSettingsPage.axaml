@@ -71,7 +71,7 @@
                 <ComboBox
                     x:Name="FileSystemAdapterChoice"
                     VerticalAlignment="Center"
-                    Items="{Binding ViewModel.BannerViewModel.FileSystemAdapters, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                    ItemsSource="{Binding ViewModel.BannerViewModel.FileSystemAdapters, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     SelectionChanged="FileSystemComboBox_SelectionChanged">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:FileSystemAdapterItemViewModel">

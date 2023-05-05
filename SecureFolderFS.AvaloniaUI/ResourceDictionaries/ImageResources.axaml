@@ -1,0 +1,20 @@
+<ResourceDictionary
+	xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:sty="using:FluentAvalonia.Styling"
+	xmlns:svg="using:Avalonia.Svg.Skia">
+
+	<ResourceDictionary.ThemeDictionaries>
+		<!-- Default is light theme -->
+		<ResourceDictionary x:Key="Default">
+			<svg:SvgImage
+				x:Key="AddNewVaultBanner"
+				Source="resm:SecureFolderFS.UI.Assets.AppAssets.Vault_light.svg?assembly=SecureFolderFS.UI" />
+		</ResourceDictionary>
+		<ResourceDictionary x:Key="Dark">
+			<svg:SvgImage
+				x:Key="AddNewVaultBanner"
+				Source="resm:SecureFolderFS.UI.Assets.AppAssets.Vault_dark.svg?assembly=SecureFolderFS.UI" />
+		</ResourceDictionary>
+	</ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

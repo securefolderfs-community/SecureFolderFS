@@ -22,7 +22,7 @@
     </UserControl.Resources>
 
     <!--  Root  -->
-    <Grid RowDefinitions="Auto *">
+    <Grid RowDefinitions="Auto,*">
         <!--  Titlebar is in MainWindow  -->
 
         <!--  Main Content  -->

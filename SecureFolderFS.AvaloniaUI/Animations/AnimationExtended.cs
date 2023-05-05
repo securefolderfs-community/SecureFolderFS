@@ -55,14 +55,13 @@ namespace SecureFolderFS.AvaloniaUI.Animations
             }
 
             // Apply setters of the first frame immediately
-            var visualTarget = (IVisual)Target;
             foreach (var keyFrame in Children.Where(keyFrame => keyFrame.Cue.CueValue == 0))
             foreach (var setter in keyFrame.Setters.Where(setter => setter.Property is not null))
             {
                 if (setter.Property == TranslateTransform.XProperty || setter.Property == TranslateTransform.YProperty)
-                    visualTarget.GetTransform<TranslateTransform>().SetValue(setter.Property, setter.Value);
+                    Target.GetTransform<TranslateTransform>().SetValue(setter.Property, setter.Value);
                 else if (setter.Property == ScaleTransform.ScaleXProperty || setter.Property == ScaleTransform.ScaleYProperty)
-                    visualTarget.GetTransform<ScaleTransform>().SetValue(setter.Property, setter.Value);
+                    Target.GetTransform<ScaleTransform>().SetValue(setter.Property, setter.Value);
                 else
                     Target.SetValue(setter.Property!, setter.Value);
             }

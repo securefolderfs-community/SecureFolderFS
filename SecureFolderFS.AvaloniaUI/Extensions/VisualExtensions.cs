@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
+using Avalonia;
 using Avalonia.Media;
-using Avalonia.VisualTree;
 
 namespace SecureFolderFS.AvaloniaUI.Extensions
 {
     internal static class VisualExtensions
     {
         /// <exception cref="ArgumentException">The specified control doesn't have the requested transform.</exception>
-        public static TTransform GetTransform<TTransform>(this IVisual control)
+        public static TTransform GetTransform<TTransform>(this Visual control)
             where TTransform : Transform
         {
             if (control.RenderTransform is TTransform targetTransform)

@@ -46,7 +46,7 @@
     <ScrollViewer Margin="-12,0,-12,0">
         <StackPanel Margin="12,0,12,0" Spacing="8">
             <!--  Widgets  -->
-            <ItemsControl Items="{Binding ViewModel.WidgetsViewModel.Widgets, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+            <ItemsControl ItemsSource="{Binding ViewModel.WidgetsViewModel.Widgets, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                 <ItemsControl.DataTemplates>
                     <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
                 </ItemsControl.DataTemplates>
