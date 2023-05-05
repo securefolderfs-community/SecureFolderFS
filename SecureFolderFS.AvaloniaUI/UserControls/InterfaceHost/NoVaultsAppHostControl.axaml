@@ -21,8 +21,7 @@
             <Image
                 Width="296"
                 Stretch="UniformToFill"
-                Source="{ex:ThemeResource LightValue={svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.Vault_light.svg?assembly=SecureFolderFS.UI'},
-                                          DarkValue={svg:SvgImage 'resm:SecureFolderFS.UI.Assets.AppAssets.Vault_dark.svg?assembly=SecureFolderFS.UI'}}">
+                Source="{DynamicResource AddNewVaultBanner}">
             </Image>
 
             <!-- Title -->
