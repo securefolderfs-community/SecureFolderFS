@@ -32,7 +32,7 @@
         <Grid
             Grid.Row="0"
             Margin="-16,-56,-16,8"
-            Background="{StaticResource ContentDialogBackground}">
+            Background="{DynamicResource ContentDialogBackground}">
             <TextBlock
                 Margin="16,0,0,0"
                 HorizontalAlignment="Left"
@@ -58,7 +58,9 @@
 
 
         <ScrollViewer Grid.Row="1">
-            <ItemsControl Items="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}" Loaded="Licenses_Loaded">
+            <ItemsControl
+                ItemsSource="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}"
+                Loaded="Licenses_Loaded">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:LicenseViewModel}">
                         <ui:SettingsExpander

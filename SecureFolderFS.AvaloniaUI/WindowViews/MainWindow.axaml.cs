@@ -7,6 +7,7 @@ using FluentAvalonia.UI.Windowing;
 using SecureFolderFS.Sdk.Services;
 using System;
 using System.ComponentModel;
+using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.AvaloniaUI.WindowViews
 {
@@ -60,7 +61,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             // Use Mica
             TransparencyLevelHint = WindowTransparencyLevel.Mica;
             PrepareBackgroundForMica();
-            //ThemeHelper.Instance.OnThemeChangedEvent += OnApplicationThemeChanged; // TODO(n2)
+            Application.Current!.ActualThemeVariantChanged += OnApplicationThemeChanged;
         }
 
         private void OnApplicationThemeChanged(object? sender, EventArgs e)
@@ -84,7 +85,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
                 (byte)(solidBackground.Color.G - 4), (byte)(solidBackground.Color.B - 4));
         }
 
-        private async void Window_OnClosing(object? sender, CancelEventArgs e)
+        private async void Window_OnClosing(object? sender, WindowClosingEventArgs e)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
             await settingsService.SaveAsync();

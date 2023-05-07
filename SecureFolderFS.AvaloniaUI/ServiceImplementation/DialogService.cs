@@ -43,13 +43,17 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
+        public async Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {
             _currentDialog?.Hide();
             _currentDialog = GetDialog(viewModel);
             WeakReferenceMessenger.Default.Send(new DialogShownMessage());
 
-            return _currentDialog.ShowAsync();
+            var result = await _currentDialog.ShowAsync();
+
+            // Not setting _currentDialog to null would cause DialogHidden message to be sent after DialogShownMessage
+            _currentDialog = null;
+            return result;
         }
     }
 }

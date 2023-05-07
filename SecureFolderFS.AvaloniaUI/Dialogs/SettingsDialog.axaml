@@ -40,7 +40,7 @@
                 <ui:NavigationViewItem
                     AutomationProperties.Name="General"
                     Content="General"
-                    Icon="{ic:FluentIcon AppGeneric24Regular}"
+                    IconSource="{ic:FluentIconSource AppGeneric24Regular}"
                     IsSelected="True"
                     Tag="0" />
 
@@ -48,21 +48,21 @@
                 <ui:NavigationViewItem
                     AutomationProperties.Name="Preferences"
                     Content="Preferences"
-                    Icon="{ic:FluentIcon Wrench24Regular}"
+                    IconSource="{ic:FluentIconSource Wrench24Regular}"
                     Tag="1" />
 
                 <!--  Privacy  -->
                 <ui:NavigationViewItem
                     AutomationProperties.Name="Privacy"
                     Content="Privacy"
-                    Icon="{ic:FluentIcon Shield24Regular}"
+                    IconSource="{ic:FluentIconSource Shield24Regular}"
                     Tag="2" />
 
                 <!--  About  -->
                 <ui:NavigationViewItem
                     Margin="0,0,45,0"
                     Content="About"
-                    Icon="{ic:FluentIcon Info24Regular}"
+                    IconSource="{ic:FluentIconSource Info24Regular}"
                     Tag="3" />
             </ui:NavigationView.MenuItems>
 

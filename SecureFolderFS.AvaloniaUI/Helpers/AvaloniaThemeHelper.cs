@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Styling;
 using FluentAvalonia.Styling;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.UI.Helpers;
@@ -22,18 +23,14 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
         /// <inheritdoc/>
         public override void UpdateTheme()
         {
-            if (CurrentTheme == ThemeType.Default)
-            {
-                _fluentAvaloniaTheme.PreferSystemTheme = true;
-                _fluentAvaloniaTheme.InvalidateThemingFromSystemThemeChanged();
+            _fluentAvaloniaTheme.PreferSystemTheme = CurrentTheme == ThemeType.Default;
+            if (_fluentAvaloniaTheme.PreferSystemTheme)
                 return;
-            }
 
-            _fluentAvaloniaTheme.PreferSystemTheme = false;
-            _fluentAvaloniaTheme.RequestedTheme = CurrentTheme switch
+            Application.Current!.RequestedThemeVariant = CurrentTheme switch
             {
-                ThemeType.Light => FluentAvaloniaTheme.LightModeString,
-                _ => FluentAvaloniaTheme.DarkModeString,
+                ThemeType.Light => ThemeVariant.Light,
+                _ => ThemeVariant.Dark,
             };
         }
     }

@@ -3,8 +3,7 @@
              x:Class="SecureFolderFS.AvaloniaUI.App"
              xmlns:sty="using:FluentAvalonia.Styling">
     <Application.Styles>
-        <sty:FluentAvaloniaTheme />
-        <StyleInclude Source="avares://FluentAvalonia.UI.Windowing/Styles/FAWindowingStyles.axaml" />
+        <sty:FluentAvaloniaTheme PreferUserAccentColor="True" />
         <StyleInclude Source="/Styles/ControlFixStyles.axaml" />
     </Application.Styles>
 
@@ -12,6 +11,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/ResourceDictionaries/ControlConsistencyResources.axaml" />
+				<ResourceInclude Source="/ResourceDictionaries/ImageResources.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

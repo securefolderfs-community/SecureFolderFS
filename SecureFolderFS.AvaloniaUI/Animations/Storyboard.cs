@@ -41,14 +41,14 @@ namespace SecureFolderFS.AvaloniaUI.Animations
         }
 
         public static readonly AttachedProperty<AvaloniaList<Storyboard>> StoryboardsProperty =
-            AvaloniaProperty.RegisterAttached<AnimationExtended, IAvaloniaObject, AvaloniaList<Storyboard>>("Storyboards");
+            AvaloniaProperty.RegisterAttached<AnimationExtended, AvaloniaObject, AvaloniaList<Storyboard>>("Storyboards");
 
-        public static void SetStoryboards(IAvaloniaObject obj, AvaloniaList<Storyboard> value)
+        public static void SetStoryboards(AvaloniaObject obj, AvaloniaList<Storyboard> value)
         {
             obj.SetValue(StoryboardsProperty, value);
         }
 
-        public static AvaloniaList<Storyboard> GetStoryboards(IAvaloniaObject obj)
+        public static AvaloniaList<Storyboard> GetStoryboards(AvaloniaObject obj)
         {
             var value = (AvaloniaList<Storyboard>?)obj.GetValue(StoryboardsProperty);
             if (value is null)

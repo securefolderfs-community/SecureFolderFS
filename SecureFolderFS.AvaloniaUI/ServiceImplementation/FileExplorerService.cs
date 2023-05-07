@@ -37,18 +37,18 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         /// <inheritdoc/>
         public async Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
-            var file = await MainWindow.Instance.StorageProvider.OpenFilePickerAsync(new()
+            var file = (await MainWindow.Instance.StorageProvider.OpenFilePickerAsync(new()
             {
                 AllowMultiple = false,
                 FileTypeFilter = filter is null
                     ? new List<FilePickerFileType>(new[] { new FilePickerFileType("*") }).AsReadOnly()
                     : filter.Select(x => new FilePickerFileType(x)).ToList().AsReadOnly()
-            });
+            })).FirstOrDefault();
 
-            if (!file.First().TryGetUri(out var uri))
+            if (file is null)
                 return null;
 
-            return new NativeFile(HttpUtility.UrlDecode(uri.AbsolutePath));
+            return new NativeFile(HttpUtility.UrlDecode(file.Path.AbsolutePath));
         }
 
         /// <inheritdoc/>
@@ -62,10 +62,11 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             if (folder.IsEmpty())
                 return null;
 
-            if (!folder.First().TryGetUri(out var uri))
+            var firstFolder = folder.FirstOrDefault();
+            if (firstFolder is null)
                 return null;
 
-            return new NativeFolder(HttpUtility.UrlDecode(uri.AbsolutePath));
+            return new NativeFolder(HttpUtility.UrlDecode(firstFolder.Path.AbsolutePath));
         }
     }
 }
