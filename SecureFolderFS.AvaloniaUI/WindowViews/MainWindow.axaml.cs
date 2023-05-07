@@ -34,7 +34,6 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             base.OnPropertyChanged(change);
         }
 
-
         private void EnsureEarlyWindow()
         {
             if (!OperatingSystem.IsWindowsVersionAtLeast(10, build: 22000))

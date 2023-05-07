@@ -2,7 +2,7 @@
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
-using SecureFolderFS.UI.Controls;
+using SecureFolderFS.UI.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

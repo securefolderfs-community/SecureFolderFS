@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.Messaging;
-using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Dialogs;
 using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
@@ -16,12 +15,12 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
     /// <inheritdoc cref="IDialogService"/>
     internal sealed class DialogService : IDialogService
     {
-        private readonly IReadOnlyDictionary<Type, Func<ContentDialog>> _dialogs;
+        private readonly Dictionary<Type, Func<IDialog>> _dialogs;
         private IDialog? _currentDialog;
 
         public DialogService()
         {
-            _dialogs = new Dictionary<Type, Func<ContentDialog>>
+            _dialogs = new()
             {
                 { typeof(LicensesDialogViewModel), () => new LicensesDialog() },
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
@@ -31,16 +30,15 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
+        public IDialog GetDialog<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {
             if (!_dialogs.TryGetValue(typeof(TViewModel), out var initializer))
                 throw new ArgumentException($"{typeof(TViewModel)} does not have an appropriate dialog associated with it.");
 
-            var contentDialog = initializer();
-            if (contentDialog is not IDialog<TViewModel> dialog)
-                throw new NotSupportedException($"The dialog does not implement {typeof(IDialog<TViewModel>)}.");
+            var dialog = initializer();
+            if (dialog is IDialog<TViewModel> dialog2)
+                dialog2.ViewModel = viewModel;
 
-            dialog.ViewModel = viewModel;
             return dialog;
         }
 

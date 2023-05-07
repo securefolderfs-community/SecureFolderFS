@@ -3,7 +3,9 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.UI.Utils;
 using SecureFolderFS.WinUI.Dialogs;
+using SecureFolderFS.WinUI.UserControls.Introduction;
 using SecureFolderFS.WinUI.WindowViews;
 using System;
 using System.Collections.Generic;
@@ -16,35 +18,38 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     /// <inheritdoc cref="IDialogService"/>
     internal sealed class DialogService : IDialogService
     {
-        private readonly IReadOnlyDictionary<Type, Func<ContentDialog>> _dialogs;
+        private readonly Dictionary<Type, Func<IDialog>> _dialogs;
         private IDialog? _currentDialog;
 
         public DialogService()
         {
-            _dialogs = new Dictionary<Type, Func<ContentDialog>>()
+            _dialogs = new()
             {
                 { typeof(LicensesDialogViewModel), () => new LicensesDialog() },
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() },
-                { typeof(PasswordChangeDialogViewModel), () => new PasswordChangeDialog() }
+                { typeof(PasswordChangeDialogViewModel), () => new PasswordChangeDialog() },
+                { typeof(IntroductionDialogViewModel), () => new IntroductionControl() },
+                { typeof(AgreementDialogViewModel), () => new AgreementDialog() }
             };
         }
 
         /// <inheritdoc/>
-        public IDialog<TViewModel> GetDialog<TViewModel>(TViewModel viewModel)
+        public IDialog GetDialog<TViewModel>(TViewModel viewModel)
             where TViewModel : class, INotifyPropertyChanged
         {
             if (!_dialogs.TryGetValue(typeof(TViewModel), out var initializer))
                 throw new ArgumentException($"{typeof(TViewModel)} does not have an appropriate dialog associated with it.");
 
-            var contentDialog = initializer();
-            if (contentDialog is not IDialog<TViewModel> dialog)
-                throw new NotSupportedException($"The dialog does not implement {typeof(IDialog<TViewModel>)}.");
+            var dialog = initializer();
+            if (dialog is IDialog<TViewModel> dialog2)
+                dialog2.ViewModel = viewModel;
 
-            dialog.ViewModel = viewModel;
+            if (dialog is ContentDialog contentDialog && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8))
+                contentDialog.XamlRoot = MainWindow.Instance.Content.XamlRoot;
 
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8))
-                contentDialog.XamlRoot = MainWindow.Instance!.Content.XamlRoot;
+            if (dialog is IOverlayable overlayable)
+                MainWindow.Instance.RootControl.Overlay.OverlayContent = overlayable;
 
             return dialog;
         }

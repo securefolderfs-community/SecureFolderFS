@@ -1,12 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using FluentAvalonia.UI.Media.Animation;
+using FluentAvalonia.UI.Navigation;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.UI.Controls;
+using SecureFolderFS.UI.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAvalonia.UI.Media.Animation;
-using FluentAvalonia.UI.Navigation;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {

@@ -39,6 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             var updatesSupported = await UpdateService.IsSupportedAsync();
             var isInitialized = updatesSupported && await UpdateService.InitializeAsync();
 
+            return; // TODO: Implement updates
             if (!updatesSupported || !isInitialized)
             {
                 await Task.Delay(800);

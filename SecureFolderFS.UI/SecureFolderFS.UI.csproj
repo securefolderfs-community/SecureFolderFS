@@ -8,7 +8,9 @@
 
     <ItemGroup>
         <EmbeddedResource Include="Assets\*" />
+        <None Remove="Assets\AppAssets\AppIcon.png" />
         <None Remove="Assets\AppAssets\AppTitle.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\AppIcon.png" />
         <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg" />
         <None Remove="Assets\AppAssets\Vault_dark.svg" />
         <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg" />

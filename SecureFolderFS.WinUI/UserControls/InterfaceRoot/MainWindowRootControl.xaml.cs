@@ -13,6 +13,8 @@ using SecureFolderFS.WinUI.Helpers;
 using SecureFolderFS.WinUI.WindowViews;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -59,7 +61,8 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             await Task.WhenAll(settingsService.LoadAsync(), vaultCollectionModel.LoadAsync());
 
             // First register the ThemeHelper
-            WindowsThemeHelper.Instance.RegisterWindowInstance(MainWindow.Instance.AppWindow, MainWindow.Instance.HostControl);
+            WindowsThemeHelper.Instance.RegisterWindowInstance(MainWindow.Instance.AppWindow,
+                MainWindow.Instance.RootControl);
 
             // Then, initialize it to refresh the theme and UI
             await WindowsThemeHelper.Instance.InitAsync();
@@ -67,25 +70,28 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceRoot
             // Disable telemetry, if the user opted-out
             if (!settingsService.UserSettings.IsTelemetryEnabled)
                 await telemetryService.DisableTelemetryAsync();
-             
-            // Continue root initialization
-            if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
+
+            // Check if the user was introduced (OOBE)
+            if (false && !settingsService.AppSettings.IsIntroduced)
             {
-                //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
-                // TODO: Implement OOBE
+                var dialogService = Ioc.Default.GetRequiredService<IDialogService>();
+                if (await dialogService.ShowDialogAsync(new AgreementDialogViewModel()) == DialogResult.Primary)
+                {
+                    settingsService.AppSettings.IsIntroduced = true;
+                    await settingsService.SaveAsync();
+                }
             }
-            else
+
+            // Load main screen
+            if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
             {
-                if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
-                {
-                    // Show main app screen
-                    _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel));
-                }
-                else // Doesn't have vaults
-                {
-                    // Show no vaults screen
-                    _ = NavigateHostControlAsync(new EmptyHostViewModel(vaultCollectionModel));
-                }
+                // Show main app screen
+                _ = NavigateHostControlAsync(new MainHostViewModel(vaultCollectionModel));
+            }
+            else // Doesn't have vaults
+            {
+                // Show no vaults screen
+                _ = NavigateHostControlAsync(new EmptyHostViewModel(vaultCollectionModel));
             }
         }
 

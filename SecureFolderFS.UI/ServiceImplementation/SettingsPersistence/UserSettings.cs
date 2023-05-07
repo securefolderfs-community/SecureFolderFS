@@ -1,19 +1,25 @@
-﻿using SecureFolderFS.Sdk.AppModels;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using System.ComponentModel;
 
 namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
 {
     /// <inheritdoc cref="IUserSettings"/>
     public sealed class UserSettings : SettingsModel, IUserSettings
     {
+        private ITelemetryService TelemetryService { get; } = Ioc.Default.GetRequiredService<ITelemetryService>();
+
         /// <inheritdoc/>
         protected override IDatabaseModel<string> SettingsDatabase { get; }
 
         public UserSettings(IModifiableFolder settingsFolder)
         {
             SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.USER_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
+            PropertyChanged += UserSettings_PropertyChanged;
         }
 
         #region Privacy
@@ -65,5 +71,22 @@ namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
         }
 
         #endregion
+
+        private void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            var eventName = e.PropertyName switch
+            {
+                nameof(AutoLockVaults) => $"{nameof(AutoLockVaults)}: {AutoLockVaults}",
+                // nameof(IsTelemetryEnabled) => $"{nameof(IsTelemetryEnabled)}: {IsTelemetryEnabled}", // Case handled elsewhere
+                nameof(PreferredFileSystemId) => $"{nameof(PreferredFileSystemId)}: {PreferredFileSystemId}",
+                nameof(StartOnSystemStartup) => $"{nameof(StartOnSystemStartup)}: {StartOnSystemStartup}",
+                nameof(ContinueOnLastVault) => $"{nameof(ContinueOnLastVault)}: {ContinueOnLastVault}",
+                nameof(OpenFolderOnUnlock) => $"{nameof(OpenFolderOnUnlock)}: {OpenFolderOnUnlock}",
+                _ => null
+            };
+
+            if (eventName is not null)
+                TelemetryService.TrackEvent(eventName);
+        }
     }
 }

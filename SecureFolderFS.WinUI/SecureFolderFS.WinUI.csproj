@@ -18,24 +18,35 @@
     <!-- Added manually, prevent from removing framework package references -->
     <Target Name="_RemoveFrameworkReferences" />
     <ItemGroup>
+      <Content Remove="Assets\AppAssets\AppIcon.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="Assets\AppAssets\AppIcon.png" />
         <None Remove="Assets\AppAssets\AppTitle.svg" />
         <None Remove="Assets\AppAssets\GreenShield.svg" />
         <None Remove="Assets\AppAssets\Vault_dark.svg" />
         <None Remove="Assets\AppAssets\Vault_light.svg" />
+        <None Remove="Dialogs\AgreementDialog.xaml" />
         <None Remove="Dialogs\LicensesDialog.xaml" />
         <None Remove="Dialogs\PasswordChangeDialog.xaml" />
         <None Remove="Dialogs\SettingsDialog.xaml" />
         <None Remove="Dialogs\VaultWizardDialog.xaml" />
+        <None Remove="ResourceDictionaries\ColorResources.xaml" />
         <None Remove="ResourceDictionaries\ImageResources.xaml" />
         <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
         <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
         <None Remove="UserControls\GraphControl.xaml" />
         <None Remove="UserControls\HealthWidget.xaml" />
         <None Remove="UserControls\InstallationControl.xaml" />
-        <None Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
-        <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
-        <None Remove="UserControls\MainWindowHostControl.xaml" />
+        <None Remove="UserControls\InterfaceHost\MainAppRootControl.xaml" />
+        <None Remove="UserControls\InterfaceHost\NoVaultsAppRootControl.xaml" />
+        <None Remove="UserControls\IntroductionControl.xaml" />
+        <None Remove="UserControls\Introduction\AgreementScreen.xaml" />
+        <None Remove="UserControls\Introduction\EndScreen.xaml" />
+        <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
+        <None Remove="UserControls\MainWindowRootControl.xaml" />
         <None Remove="UserControls\NavigationControl.xaml" />
+        <None Remove="UserControls\OverlayControl.xaml" />
         <None Remove="UserControls\PasswordControl.xaml" />
         <None Remove="UserControls\TitleBarControl.xaml" />
         <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
@@ -68,10 +79,32 @@
         <None Update="Assets\AppAssets\Vault_light.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <Page Update="Dialogs\PasswordChangeDialog.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+        </Page>
+        <Page Update="UserControls\Introduction\AgreementScreen.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\Introduction\EndScreen.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\Introduction\WelcomeScreen.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\OverlayControl.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="ResourceDictionaries\ColorResources.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="UserControls\IntroductionControl.xaml">
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
         <Page Update="UserControls\PasswordControl.xaml">
           <Generator>MSBuild:Compile</Generator>
         </Page>
-        <Page Update="Dialogs\PasswordChangeDialog.xaml">
+        <Page Update="Dialogs\AgreementDialog.xaml">
           <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
           <SubType>Designer</SubType>
         </Page>
@@ -85,10 +118,10 @@
         <Page Update="UserControls\InstallationControl.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-        <Page Update="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml">
+        <Page Update="UserControls\InterfaceHost\NoVaultsAppRootControl.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-        <Page Update="UserControls\InterfaceHost\MainAppHostControl.xaml">
+        <Page Update="UserControls\InterfaceHost\MainAppRootControl.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
         <Page Update="UserControls\InterfaceHost\MainWindowRootControl.xaml">
@@ -206,6 +239,9 @@
         </Page>
     </ItemGroup>
     <ItemGroup>
+      <EmbeddedResource Include="Assets\AppAssets\AppIcon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
       <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg" />
       <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg" />
       <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg" />

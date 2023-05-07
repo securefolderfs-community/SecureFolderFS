@@ -58,7 +58,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
                 await telemetryService.DisableTelemetryAsync();
 
             // Continue root initialization
-            if (false && settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
+            if (false && !settingsService.AppSettings.IsIntroduced) // TODO: Always skipped
             {
                 //ViewModel.AppContentViewModel = new MainAppHostViewModel(vaultCollectionModel);
                 // TODO: Implement OOBE

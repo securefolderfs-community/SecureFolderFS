@@ -44,12 +44,12 @@ namespace SecureFolderFS.WinUI.WindowViews
             else
             {
                 ExtendsContentIntoTitleBar = true;
-                SetTitleBar(HostControl.CustomTitleBar);
+                SetTitleBar(RootControl.CustomTitleBar);
             }
 
             // Set min size
-            base.MinHeight = 572;
-            base.MinWidth = 662;
+            MinHeight = 572;
+            MinWidth = 662;
 
             // Hook up event for window closing
             AppWindow.Closing += AppWindow_Closing;

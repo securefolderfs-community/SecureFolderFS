@@ -1,4 +1,5 @@
-<wnd:AppWindow 
+<wnd:AppWindow
+    x:Class="SecureFolderFS.AvaloniaUI.WindowViews.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,17 +7,18 @@
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot"
     xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:wnd="using:FluentAvalonia.UI.Windowing"
-    Closing="Window_OnClosing"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.WindowViews.MainWindow"
-    MinHeight="572"
+    Title="SecureFolderFS"
     MinWidth="662"
-    Title="SecureFolderFS">
+    MinHeight="572"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Closing="Window_OnClosing"
+    mc:Ignorable="d">
 
-    <!-- TODO Loaded event -->
+    <!--  TODO Loaded event  -->
     <DockPanel LastChildFill="True">
         <uc2:TitleBarControl DockPanel.Dock="Top" IsVisible="{Binding IsCustomTitleBarVisible, RelativeSource={RelativeSource AncestorType={x:Type wnd:AppWindow}}}" />
-        <uc:MainWindowRootControl x:Name="HostControl" />
-	</DockPanel>
+        <uc:MainWindowRootControl x:Name="RootControl" />
+    </DockPanel>
 
 </wnd:AppWindow>

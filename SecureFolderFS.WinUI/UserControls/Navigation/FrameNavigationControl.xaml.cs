@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.UI.Controls;
+using SecureFolderFS.UI.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

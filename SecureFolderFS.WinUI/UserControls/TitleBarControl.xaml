@@ -9,6 +9,7 @@
     <Border
         Height="32"
         Padding="16,6"
+        Canvas.ZIndex="10"
         IsHitTestVisible="True">
 
         <!--  Title  -->

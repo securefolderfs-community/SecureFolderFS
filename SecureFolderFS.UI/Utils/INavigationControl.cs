@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.UI.Controls
+namespace SecureFolderFS.UI.Utils
 {
     public interface INavigationControl : IDisposable
     {

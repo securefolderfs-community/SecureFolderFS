@@ -2,16 +2,16 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using FluentAvalonia.UI.Controls;
+using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
-using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
-using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
