@@ -74,13 +74,15 @@
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 Command="{x:Bind StartScanningCommand, Mode=OneWay}"
-                Content="Start scanning" />
+                Content="Start scanning"
+                IsEnabled="False" />
             <Button
                 Width="36"
                 Height="35"
                 Padding="0"
                 HorizontalAlignment="Center"
                 Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
+                IsEnabled="False"
                 ToolTipService.ToolTip="Go to Vault Health">
                 <FontIcon FontSize="15" Glyph="&#xE76C;" />
             </Button>
