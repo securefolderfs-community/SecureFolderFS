@@ -6,8 +6,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.UI.Windowing;
 using SecureFolderFS.Sdk.Services;
 using System;
-using System.ComponentModel;
-using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.AvaloniaUI.WindowViews
 {
