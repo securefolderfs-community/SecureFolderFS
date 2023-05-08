@@ -1,11 +1,7 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
-using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,12 +13,6 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// </summary>
     public sealed partial class EncryptionWizardPage : Page
     {
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
-        public ObservableCollection<CipherInfoViewModel> ContentCiphers { get; }
-
-        public ObservableCollection<CipherInfoViewModel> FileNameCiphers { get; }
-
         public EncryptionWizardViewModel ViewModel
         {
             get => (EncryptionWizardViewModel)DataContext;
@@ -31,8 +21,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         public EncryptionWizardPage()
         {
-            ContentCiphers = new();
-            FileNameCiphers = new();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -44,13 +33,10 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             base.OnNavigatedTo(e);
         }
 
-        private void EncryptionWizardPage_Loaded(object sender, RoutedEventArgs e)
+        private void ComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            foreach (var item in VaultService.GetContentCiphers())
-                ContentCiphers.Add(new(item));
-
-            foreach (var item in VaultService.GetFileNameCiphers())
-                FileNameCiphers.Add(new(item));
+            if (sender is ComboBox comboBox)
+                comboBox.SelectedIndex = 0;
         }
     }
 }

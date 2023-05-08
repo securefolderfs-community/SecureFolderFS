@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels"
     Width="464"
-    Loaded="EncryptionWizardPage_Loaded"
     mc:Ignorable="d">
 
     <Grid RowSpacing="16">
@@ -18,9 +17,10 @@
         <StackPanel Grid.Row="0" Spacing="4">
             <TextBlock Text="Data encryption" />
             <ComboBox
-                ItemsSource="{x:Bind ContentCiphers}"
+                ItemsSource="{x:Bind ViewModel.ContentCiphers}"
+                Loaded="ComboBox_Loaded"
                 SelectedIndex="0"
-                SelectedItem="{x:Bind ViewModel.ContentCipherViewModel, Mode=TwoWay}">
+                SelectedItem="{x:Bind ViewModel.ContentCipher, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="vm:CipherInfoViewModel">
                         <TextBlock Text="{x:Bind Name}" />
@@ -32,9 +32,10 @@
         <StackPanel Grid.Row="1" Spacing="4">
             <TextBlock Text="File name encryption" />
             <ComboBox
-                ItemsSource="{x:Bind FileNameCiphers}"
+                ItemsSource="{x:Bind ViewModel.FileNameCiphers}"
+                Loaded="ComboBox_Loaded"
                 SelectedIndex="0"
-                SelectedItem="{x:Bind ViewModel.FileNameCipherViewModel, Mode=TwoWay}">
+                SelectedItem="{x:Bind ViewModel.FileNameCipher, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="vm:CipherInfoViewModel">
                         <TextBlock Text="{x:Bind Name}" />

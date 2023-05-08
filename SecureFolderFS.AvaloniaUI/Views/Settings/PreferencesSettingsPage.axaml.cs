@@ -56,7 +56,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 QuickHideFileSystemInfoBarStoryboard.RunAnimationsAsync();
         }
 
-        private async void PreferencesSettingsPage_OnLoaded(object sender, RoutedEventArgs e)
+        private async void PreferencesSettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.BannerViewModel.InitAsync();
 
@@ -141,7 +141,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             return ViewModel.BannerViewModel.FileSystemAdapters.FirstOrDefault();
         }
 
-        private void FileSystemInfoBarContainer_OnLayoutUpdated(object? sender, EventArgs e)
+        private void FileSystemInfoBarContainer_LayoutUpdated(object? sender, EventArgs e)
         {
             if (_playShowFileSystemInfoBarAnimation)
             {
@@ -163,7 +163,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             // RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
         }
 
-        private void FileSystemAdapterChoice_OnLoaded(object? sender, RoutedEventArgs e)
+        private void FileSystemAdapterChoice_Loaded(object? sender, RoutedEventArgs e)
         {
             throw new NotImplementedException();
         }

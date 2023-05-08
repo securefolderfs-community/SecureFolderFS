@@ -55,7 +55,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             // RootGrid?.Transitions?.Add(new ReorderThemeTransition());
         }
 
-        private void RootGrid_OnLoaded(object? sender, RoutedEventArgs e)
+        private void RootGrid_Loaded(object? sender, RoutedEventArgs e)
         {
             _ = AddItemsTransitionAsync();
         }
@@ -78,7 +78,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             _playShowVersionInfoBarAnimation = true;
         }
 
-        private void VersionInfoBar_OnLayoutUpdated(object? sender, EventArgs e)
+        private void VersionInfoBar_LayoutUpdated(object? sender, EventArgs e)
         {
             if (_playShowVersionInfoBarAnimation)
             {

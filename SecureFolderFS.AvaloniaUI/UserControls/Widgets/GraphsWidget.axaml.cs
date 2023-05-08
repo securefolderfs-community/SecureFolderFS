@@ -26,7 +26,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
             column.Width = new(1, GridUnitType.Star);
         }
 
-        private void ReadGraph_OnClick(object? sender, RoutedEventArgs e)
+        private void ReadGraph_Click(object? sender, RoutedEventArgs e)
         {
             ReadGraphIsExtended = !ReadGraphIsExtended;
             if (ReadGraphIsExtended)
@@ -35,7 +35,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Widgets
                 _ = RetractGraphAsync(ReadGraph, WriteGraph, GraphsGrid.ColumnDefinitions[2]);
         }
 
-        private void WriteGraph_OnClick(object? sender, RoutedEventArgs e)
+        private void WriteGraph_Click(object? sender, RoutedEventArgs e)
         {
             WriteGraphIsExtended = !WriteGraphIsExtended;
             if (WriteGraphIsExtended)

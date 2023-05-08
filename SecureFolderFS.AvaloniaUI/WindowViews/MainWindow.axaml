@@ -12,7 +12,7 @@
     MinHeight="572"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Closing="Window_OnClosing"
+    Closing="Window_Closing"
     mc:Ignorable="d">
 
     <!--  TODO Loaded event  -->

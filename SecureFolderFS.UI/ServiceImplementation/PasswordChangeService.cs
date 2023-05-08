@@ -73,15 +73,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 if (!configFile.Successful)
                     return configFile;
 
-                var configStream = await configFile.Value!.OpenStreamWithResultAsync(FileAccess.ReadWrite, cancellationToken);
-                if (!configStream.Successful)
-                    return configStream;
+                var configStreamResult = await configFile.Value!.OpenStreamWithResultAsync(FileAccess.ReadWrite, cancellationToken);
+                if (!configStreamResult.Successful)
+                    return configStreamResult;
 
-                _passwordChangeRoutine.SetPassword(existingPassword, newPassword);
-                await _passwordChangeRoutine.WriteKeystoreAsync(_keystoreStream, StreamSerializer.Instance, cancellationToken);
-                await _passwordChangeRoutine.WriteConfigurationAsync(configStream.Value!, StreamSerializer.Instance, cancellationToken);
+                await using (var configStream = configStreamResult.Value!)
+                {
+                    _passwordChangeRoutine.SetPassword(existingPassword, newPassword);
+                    await _passwordChangeRoutine.WriteKeystoreAsync(_keystoreStream, StreamSerializer.Instance, cancellationToken);
+                    await _passwordChangeRoutine.WriteConfigurationAsync(configStream, StreamSerializer.Instance, cancellationToken);
 
-                return CommonResult.Success;
+                    return CommonResult.Success;
+                }
             }
             catch (Exception ex)
             {
