@@ -24,6 +24,7 @@
         <AppxBundle>Always</AppxBundle>
         <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
         <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+        <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
     </PropertyGroup>
     <!-- Added manually, prevent from removing framework package references -->
     <Target Name="_RemoveFrameworkReferences" />
