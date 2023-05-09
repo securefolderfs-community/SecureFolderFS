@@ -1,19 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+        <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
         <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-        <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
+        <AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
+        <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22621.0</TargetPlatformVersion>
         <RootNamespace>SecureFolderFS.WinUI</RootNamespace>
         <ApplicationManifest>app.manifest</ApplicationManifest>
+        <DefaultLanguage>en-US</DefaultLanguage>
         <Platforms>x86;x64;arm64</Platforms>
         <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
         <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
         <UseWinUI>true</UseWinUI>
-        <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+        <SelfContained>True</SelfContained>
+        <EnableMsixTooling>true</EnableMsixTooling>
         <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <Nullable>enable</Nullable>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+        <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+        <GenerateTestArtifacts>False</GenerateTestArtifacts>
+        <AppxBundle>Always</AppxBundle>
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+        <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     </PropertyGroup>
     <!-- Added manually, prevent from removing framework package references -->
     <Target Name="_RemoveFrameworkReferences" />

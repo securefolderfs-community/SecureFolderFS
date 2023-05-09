@@ -4,6 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
