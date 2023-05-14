@@ -15,6 +15,8 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// </summary>
     public sealed partial class PrivacySettingsPage : Page
     {
+        private bool _isFirstTime = true;
+
         private ITelemetryService TelemetryService { get; } = Ioc.Default.GetRequiredService<ITelemetryService>();
 
         public PrivacySettingsViewModel ViewModel
@@ -38,6 +40,12 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private async void EnableTelemetry_Toggled(object sender, RoutedEventArgs e)
         {
+            if (_isFirstTime)
+            {
+                _isFirstTime = false;
+                return;
+            }
+
             if (EnableTelemetry.IsOn)
             {
                 await TelemetryService.EnableTelemetryAsync();

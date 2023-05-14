@@ -111,6 +111,7 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ComboBox
                         x:Name="AppLanguageComboBox"
+                        IsEnabled="False"
                         ItemsSource="{x:Bind ViewModel.Languages}"
                         SelectedIndex="0"
                         SelectionChanged="AppLanguageComboBox_SelectionChanged">
