@@ -71,6 +71,8 @@ namespace SecureFolderFS.AvaloniaUI
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
+
+                // Singleton services
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new VaultPersistenceService(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
@@ -82,14 +84,22 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IUpdateService, UpdateService>()
+
+                // Conditional (singleton) services
+#if DEBUG
+                .AddSingleton<ITelemetryService, DebugTelemetryService>()
+
+#else
                 .AddSingleton<ITelemetryService, TelemetryService>()
+#endif
 
                 // Transient services
                 .AddTransient<INavigationService, AvaloniaNavigationService>()
                 .AddTransient<IPasswordChangeService, PasswordChangeService>()
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
-                .AddTransient<IVaultCreationService, VaultCreationService>();
+                .AddTransient<IVaultCreationService, VaultCreationService>()
 
+                ; // Finish service initialization
 
             return serviceCollection.BuildServiceProvider();
         }

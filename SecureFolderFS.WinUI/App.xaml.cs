@@ -17,11 +17,11 @@ using System.Threading.Tasks;
 using Windows.Storage;
 
 #if !DEBUG
-#endif
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using SecureFolderFS.UI.Api;
+#endif
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -86,6 +86,8 @@ namespace SecureFolderFS.WinUI
             var serviceCollection = new ServiceCollection();
 
             serviceCollection
+
+                // Singleton services
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
@@ -97,13 +99,23 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
+
+                // Conditional (singleton) services
+#if DEBUG
+                .AddSingleton<ITelemetryService, DebugTelemetryService>()
+                .AddSingleton<IIapService, MicrosoftStoreIapService>()
+#else
                 .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
+                .AddSingleton<IIapService, MicrosoftStoreIapService>()
+#endif
 
                 // Transient services
                 .AddTransient<INavigationService, WindowsNavigationService>()
                 .AddTransient<IPasswordChangeService, PasswordChangeService>()
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
-                .AddTransient<IVaultCreationService, VaultCreationService>();
+                .AddTransient<IVaultCreationService, VaultCreationService>()
+                
+                ; // Finish service initialization
 
             return serviceCollection.BuildServiceProvider();
         }

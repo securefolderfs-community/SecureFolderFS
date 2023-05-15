@@ -30,7 +30,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() },
                 { typeof(PasswordChangeDialogViewModel), () => new PasswordChangeDialog() },
                 { typeof(IntroductionDialogViewModel), () => new IntroductionControl() },
-                { typeof(AgreementDialogViewModel), () => new AgreementDialog() }
+                { typeof(AgreementDialogViewModel), () => new AgreementDialog() },
+                { typeof(PaymentDialogViewModel), () => new PaymentDialog() }
             };
         }
 
@@ -49,7 +50,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 contentDialog.XamlRoot = MainWindow.Instance.Content.XamlRoot;
 
             if (dialog is IOverlayable overlayable)
-                MainWindow.Instance.RootControl.Overlay.OverlayContent = overlayable;
+                MainWindow.Instance.RootControl.Overlay.OverlayContent = overlayable.OverlayContent;
 
             return dialog;
         }

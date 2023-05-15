@@ -9,9 +9,7 @@ namespace SecureFolderFS.UI.Helpers
         public static string? FormatException(Exception? ex)
         {
             if (ex is null)
-            {
                 return null;
-            }
 
             var exceptionString = string.Empty;
 

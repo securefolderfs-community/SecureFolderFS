@@ -40,6 +40,7 @@
         <None Remove="Dialogs\AgreementDialog.xaml" />
         <None Remove="Dialogs\LicensesDialog.xaml" />
         <None Remove="Dialogs\PasswordChangeDialog.xaml" />
+        <None Remove="Dialogs\PaymentDialog.xaml" />
         <None Remove="Dialogs\SettingsDialog.xaml" />
         <None Remove="Dialogs\VaultWizardDialog.xaml" />
         <None Remove="ResourceDictionaries\ColorResources.xaml" />
@@ -90,11 +91,7 @@
         <None Update="Assets\AppAssets\Vault_light.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <Page Update="Dialogs\PasswordChangeDialog.xaml">
-          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-          <SubType>Designer</SubType>
-        </Page>
-        <Page Update="UserControls\Introduction\AgreementScreen.xaml">
+	    <Page Update="UserControls\Introduction\AgreementScreen.xaml">
           <Generator>MSBuild:Compile</Generator>
         </Page>
         <Page Update="UserControls\Introduction\EndScreen.xaml">

@@ -19,6 +19,9 @@ namespace SecureFolderFS.WinUI.UserControls.Introduction
             set => DataContext = value;
         }
 
+        /// <inheritdoc/>
+        public object OverlayContent => this;
+
         public IntroductionControl()
         {
             InitializeComponent();
