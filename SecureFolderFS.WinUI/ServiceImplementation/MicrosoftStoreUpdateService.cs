@@ -1,11 +1,11 @@
-﻿using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
-using SecureFolderFS.Sdk.Enums;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Services.Store;
-using System.Threading;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
@@ -22,20 +22,14 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<bool> InitializeAsync()
+        public async Task<bool> IsUpdateAvailableAsync(CancellationToken cancellationToken = default)
         {
-            _storeContext ??= await Task.Run(StoreContext.GetDefault);
-            return true;
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> IsUpdateAvailableAsync()
-        {
-            AssertInitialized();
+            if (!TrySetStoreContext() || _storeContext is null)
+                return false;
 
             try
             {
-                _updates = await _storeContext!.GetAppAndOptionalStorePackageUpdatesAsync();
+                _updates = await _storeContext.GetAppAndOptionalStorePackageUpdatesAsync().AsTask(cancellationToken);
                 return !_updates.IsEmpty();
             }
             catch (Exception)
@@ -47,10 +41,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public async Task<AppUpdateResultType> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
         {
-            AssertInitialized();
+            if (!TrySetStoreContext() || _storeContext is null)
+                return AppUpdateResultType.FailedUnknownError;
 
-            var operation = _storeContext!.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
-            operation.Progress = (asyncInfo, update) => progress?.Report(update.PackageDownloadProgress);
+            var operation = _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
+            operation.Progress = (_, update) => progress?.Report(update.PackageDownloadProgress);
             var result = await operation.AsTask(cancellationToken);
 
             return result.OverallState switch
@@ -68,9 +63,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             };
         }
 
-        private void AssertInitialized()
+        private bool TrySetStoreContext()
         {
-            _ = _storeContext ?? throw new InvalidOperationException($"{nameof(_storeContext)} was not initialized.");
+            _storeContext ??= StoreContext.GetDefault();
+            return _storeContext is not null;
         }
     }
 }

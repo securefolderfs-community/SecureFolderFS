@@ -17,16 +17,11 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> IsSupportedAsync();
 
         /// <summary>
-        /// Initializes resources used for updating the app.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true otherwise false.</returns>
-        Task<bool> InitializeAsync();
-
-        /// <summary>
         /// Checks whether there are available updates.
         /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If available updates were found, returns true otherwise false.</returns>
-        Task<bool> IsUpdateAvailableAsync();
+        Task<bool> IsUpdateAvailableAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Starts all app updates in the update queue.

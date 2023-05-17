@@ -83,7 +83,7 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
-                .AddSingleton<IUpdateService, UpdateService>()
+                .AddSingleton<IUpdateService, AvaloniaUpdateService>()
 
                 // Conditional (singleton) services
 #if DEBUG

@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Storage.NativeStorage;
@@ -53,7 +52,7 @@ namespace SecureFolderFS.WinUI
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             // Get settings folder
-            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, Constants.LocalSettings.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.LocalSettings.SETTINGS_FOLDER_NAME);
             _ = Directory.CreateDirectory(settingsFolderPath);
             var settingsFolder = new NativeFolder(settingsFolderPath);
 
@@ -103,7 +102,7 @@ namespace SecureFolderFS.WinUI
                 // Conditional (singleton) services
 #if DEBUG
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
-                .AddSingleton<IIapService, MicrosoftStoreIapService>()
+                .AddSingleton<IIapService, DebugIapService>()
 #else
                 .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
                 .AddSingleton<IIapService, MicrosoftStoreIapService>()

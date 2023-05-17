@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             foreach (var item in VaultService.GetFileNameCiphers())
             {
                 var name = string.IsNullOrEmpty(item) ? "None" : item;
-                FileNameCiphers.Add(new(name));
+                FileNameCiphers.Add(new(item, name));
             }
 
             return Task.CompletedTask;

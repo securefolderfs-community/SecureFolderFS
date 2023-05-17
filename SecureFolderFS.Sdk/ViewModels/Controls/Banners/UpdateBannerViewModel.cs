@@ -37,10 +37,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var updatesSupported = await UpdateService.IsSupportedAsync();
-            var isInitialized = updatesSupported && await UpdateService.InitializeAsync();
 
             return; // TODO: Implement updates
-            if (!updatesSupported || !isInitialized)
+            if (!updatesSupported)
             {
                 await Task.Delay(800);
 

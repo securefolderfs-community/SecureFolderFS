@@ -34,7 +34,7 @@
                 Text="SecureFolderFS+" />
         </StackPanel>
 
-        <TextBlock FontSize="18" Text="Thank you for your interest in SecureFolderFS!" />
+        <TextBlock FontSize="18" Text="This feature requires SecureFolderFS+" />
         <TextBlock Text="Thanks to your support, we can maintain and keep SecureFolderFS free for everyone!" TextWrapping="WrapWholeWords" />
     </StackPanel>
 </ContentDialog>

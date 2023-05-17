@@ -43,6 +43,10 @@ namespace SecureFolderFS.WinUI.UserControls
 
         private async void Chart_Loaded(object sender, RoutedEventArgs e)
         {
+            // Workaround for the application freezing after unlocking at least 2 vaults
+            // TODO: Find the cause of the issue and fix it
+            await Task.Delay(500);
+
             Chart.Series = new ISeries[]
             {
                 new LineSeries<GraphPoint>()
