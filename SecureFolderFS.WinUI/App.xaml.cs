@@ -90,22 +90,22 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
-                .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
-                .AddSingleton<IApplicationService, ApplicationService>()
+                .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
+                .AddSingleton<IStorageService, NativeStorageService>()
+                .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
-                .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
 
                 // Conditional (singleton) services
 #if DEBUG
-                .AddSingleton<ITelemetryService, DebugTelemetryService>()
                 .AddSingleton<IIapService, DebugIapService>()
+                .AddSingleton<ITelemetryService, DebugTelemetryService>()
 #else
+                .AddSingleton<IIapService, DebugIapService>() // .AddSingleton<IIapService, MicrosoftStoreIapService>() // TODO: Change in the future
                 .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
-                .AddSingleton<IIapService, MicrosoftStoreIapService>()
 #endif
 
                 // Transient services

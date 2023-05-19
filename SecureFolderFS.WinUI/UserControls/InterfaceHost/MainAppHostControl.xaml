@@ -45,13 +45,15 @@
             <Grid
                 Width="{Binding Path=OpenPaneLength, ElementName=Sidebar}"
                 Padding="20,0,20,12"
-                HorizontalAlignment="Stretch">
+                HorizontalAlignment="Stretch"
+                RowSpacing="16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
                 <Button
+                    x:Name="StandardAddVaultButton"
                     Grid.Column="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
@@ -84,6 +86,7 @@
                 </Button>
 
                 <Button
+                    Grid.Row="1"
                     Grid.Column="1"
                     Width="36"
                     Height="36"
@@ -105,6 +108,18 @@
                         </AnimatedIcon.FallbackIconSource>
                     </AnimatedIcon>
                 </Button>
+
+                <TeachingTip
+                    x:Name="BetaTeachingTip"
+                    MaxWidth="100"
+                    CloseButtonClick="TeachingTip_CloseButtonClick"
+                    PreferredPlacement="Top"
+                    Subtitle="Adding more than two vaults is free during the beta period"
+                    Target="{Binding ElementName=StandardAddVaultButton}">
+                    <TeachingTip.IconSource>
+                        <FontIconSource Glyph="&#xE946;" />
+                    </TeachingTip.IconSource>
+                </TeachingTip>
             </Grid>
         </NavigationView.PaneFooter>
         <NavigationView.MenuItemTemplate>

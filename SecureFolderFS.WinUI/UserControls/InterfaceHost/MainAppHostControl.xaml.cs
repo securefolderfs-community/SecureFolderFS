@@ -1,23 +1,27 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using System.Linq;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
 {
-    public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>
+    public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>, IRecipient<AddVaultMessage>
     {
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
+
         public MainAppHostControl()
         {
             InitializeComponent();
@@ -28,6 +32,16 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
         {
             if (ViewModel.SidebarViewModel.SidebarItems.IsEmpty())
                 Navigation.ClearContent();
+        }
+
+        /// <inheritdoc/>
+        public void Receive(AddVaultMessage message)
+        {
+            if (ViewModel.SidebarViewModel.SidebarItems.Count >= Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
+                && !SettingsService.AppSettings.WasBetaNotificationShown1)
+            {
+                BetaTeachingTip.IsOpen = true;
+            }
         }
 
         private async Task NavigateToItem(VaultViewModel vaultViewModel)
@@ -43,7 +57,8 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigationService.SetupNavigation(Navigation);
-            WeakReferenceMessenger.Default.Register(this);
+            WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
+            WeakReferenceMessenger.Default.Register<AddVaultMessage>(this);
 
             await ViewModel.InitAsync();
             Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
@@ -69,6 +84,12 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
                 await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery(sender.Text);
+        }
+
+        private async void TeachingTip_CloseButtonClick(TeachingTip sender, object args)
+        {
+            SettingsService.AppSettings.WasBetaNotificationShown1 = true;
+            await SettingsService.AppSettings.SaveAsync();
         }
 
         public MainHostViewModel ViewModel

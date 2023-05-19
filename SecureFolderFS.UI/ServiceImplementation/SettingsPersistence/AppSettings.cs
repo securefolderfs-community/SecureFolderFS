@@ -18,6 +18,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
         }
 
         /// <inheritdoc/>
+        public bool WasBetaNotificationShown1
+        {
+            get => GetSetting(() => false);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
         public bool IsIntroduced
         {
             get => GetSetting(() => false);

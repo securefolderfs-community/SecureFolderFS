@@ -10,6 +10,11 @@ namespace SecureFolderFS.Sdk.Services.SettingsPersistence
     public interface IAppSettings : IPersistable, INotifyPropertyChanged
     {
         /// <summary>
+        /// Gets or sets the value that determines whether the (first) notification about the beta program was shown.
+        /// </summary>
+        bool WasBetaNotificationShown1 { get; set; }
+
+        /// <summary>
         /// Gets or sets the value that determines whether Out of Box Experience was shown.
         /// </summary>
         bool IsIntroduced { get; set; }
