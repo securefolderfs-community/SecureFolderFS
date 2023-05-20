@@ -18,8 +18,8 @@ You can download and install SecureFolderFS through either of those:
 
 ## Translating SecureFolderFS
 
-The option to translate SecureFolderFS is currently in the works. You'll soon be able to create localizations for SecureFolderFS. We're targetting Beta3 to enable translations. Make sure to check back often for updates!
+The option to translate SecureFolderFS is currently in the works. Soon, you will be able to create localizations for SecureFolderFS. We aim to enable translations in Beta3. Please check back regularly for updates!
 
 ## Contributing
 
-We welcome all contributors! Whether you want to suggest a new feature, or report a bug you can open a new *[Issue or Feature Request](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose)*. Take a look at our *[Contributing Guidelines](CONTRIBUTING.md)* to learn about best practices when creating a new Pull Request.
+We welcome all contributors! Whether you want to suggest a new feature, or report a bug, you can open a new *[Issue or Feature Request](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose)*. Take a look at our *[Contributing Guidelines](CONTRIBUTING.md)* to learn about best practices when creating a new Pull Request.
