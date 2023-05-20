@@ -6,31 +6,20 @@
 
 SecureFolderFS helps you keep your files private. Protect your data with state-of-the-art encryption algorithms that seamlessly secure your data thanks to SecureFolderFS' advanced on-fly encryption/decryption.
 
-![42-19-22-164216](https://user-images.githubusercontent.com/53011783/164031142-0881cddb-683f-4f39-89b0-3788f6c01ac2.png)
+![14 05 2023 18_51_03](https://github.com/securefolderfs-community/SecureFolderFS/assets/53011783/5320dfca-6388-46d8-99ab-90a5b3026d0a)
 
-## Get SecureFolderFS
+## Try out SecureFolderFS
 
-- [Releases](https://github.com/securefolderfs-community/SecureFolderFS/releases)
+You can download and install SecureFolderFS through either of those:
+- *[Microsoft Store](https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8)*
+- *[Releases](https://github.com/securefolderfs-community/SecureFolderFS/releases)*
 
-## FAQ
+*Installing SecureFolderFS on other platforms is coming in the foreseeable future.*
 
-Check out our [wiki](https://github.com/securefolderfs-community/SecureFolderFS/wiki) for more information.
+## Translating SecureFolderFS
 
-## Building
-
-### Prerequisites
-
-- Visual Studio 2022 with the following components:
-    - .NET desktop development 
-    - Universal Windows Platform development with Windows 11 SDK (10.0.22000.0) and C++ (v143)
-    - [Single-project MSIX Packaging Tools (VS2022)](https://marketplace.visualstudio.com/items?itemName=ProjectReunion.MicrosoftSingleProjectMSIXPackagingToolsDev17)
-
-### Building the project
-
-- Make sure to set your startup project configuration to SecureFolderFS.WinUI
-- Set architecture to match your processor configuration
-- Launch the app
+The option to translate SecureFolderFS is currently in the works. You'll soon be able to create localizations for SecureFolderFS. We're targetting Beta3 to enable translations. Make sure to check back often for updates!
 
 ## Contributing
 
-SecureFolderFS is open to contributions! You can open an [issue](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose) or a [pull request](https://github.com/securefolderfs-community/SecureFolderFS/compare) with your changes. Take a look at [Contributing Guidelines](CONTRIBUTING.md) to make sure your PR matches SecureFolderFS quality standards.
+We welcome all contributors! Whether you want to suggest a new feature, or report a bug you can open a new *[Issue or Feature Request](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose)*. Take a look at our *[Contributing Guidelines](CONTRIBUTING.md)* to learn about best practices when creating a new Pull Request.
