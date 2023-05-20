@@ -1,6 +1,6 @@
 ### Cloning
 
-Open a terminal window and paste the following command:
+Open a new terminal window and paste the following command:
 ```ps
 git clone --recursive https://github.com/securefolderfs-community/SecureFolderFS.git
 ```
@@ -10,7 +10,7 @@ Running this command will clone the repository with all submodules into the curr
 ### 1. Prerequisites
 - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) with the following components installed:
   - .NET 7 SDK
-  - Windows 11 SDK (10.0.22000.0)
+  - Windows 11 SDK (10.0.22621.0)
   - MSVC v143 - VS 2022 C++ x64/x86 or ARM64 build tools (latest)
 - [Windows App SDK](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads#current-releases)
 
@@ -51,7 +51,7 @@ Open a terminal window and paste the following command:
 dotnet build SecureFolderFS.AvaloniaUI
 ```
 
-To build Release version of the app, modify the command:
+To build Release version of the app, modify the command as follows:
 ```ps
 dotnet build SecureFolderFS.AvaloniaUI -c Release
 ```
