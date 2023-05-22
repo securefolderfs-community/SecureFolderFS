@@ -8,7 +8,7 @@ Decide on the feature request or bug report you would like to work on by heading
 
 ## Opening a pull request
 
-We require pull requests to be well orgainzed and match the exact goal of solved problem. Here are some general rules for pull requests:
+We require pull requests to be well organized and match the exact goal of solved problem. Here are some general rules for pull requests:
 
 - Write a good summary of changes you have made
 - Test your changes to find unwanted bugs or performance regressions
