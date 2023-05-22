@@ -4,7 +4,7 @@
 
 [![Discord](https://discordapp.com/api/guilds/926425949078159420/widget.png)](https://discord.gg/NrTxXpJ2Zj)
 
-SecureFolderFS helps you keep your files private. Protect your data with state-of-the-art encryption algorithms that seamlessly secure your data thanks to SecureFolderFS' advanced on-fly encryption/decryption.
+SecureFolderFS helps you keep your files private. Safeguard your data with cutting-edge cryptographic algorithms that seamlessly secure your data thanks to our advanced on-fly encryption.
 
 ![14 05 2023 18_51_03](https://github.com/securefolderfs-community/SecureFolderFS/assets/53011783/5320dfca-6388-46d8-99ab-90a5b3026d0a)
 
