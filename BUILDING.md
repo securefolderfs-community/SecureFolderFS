@@ -40,10 +40,10 @@ Running this command will clone the repository with all submodules into the curr
   - In the welcome screen, click "Open" and select SecureFolderFS.sln
   - Ensure that the following build settings match your configuration (toolbar):
     - Selected "Any CPU"<br/>
-    ![image](https://user-images.githubusercontent.com/79316397/216769931-d93fd118-4b9f-4524-b127-1427f9076840.png)
+    ![image](https://github.com/securefolderfs-community/SecureFolderFS/assets/79316397/52f671bc-5c37-4d82-b1fa-f4fb53ada8ef)
 
     - Startup project set to SecureFolderFS.AvaloniaUI<br/>
-    ![image](https://user-images.githubusercontent.com/79316397/216769910-22452492-e60e-4ee9-8ced-8a7313b94cf8.png)
+    ![image](https://github.com/securefolderfs-community/SecureFolderFS/assets/79316397/3a26ba05-db0a-4d1d-ae08-0d5f16072092)
 #### Building with Terminal
 
 Open a terminal window and paste the following command:
