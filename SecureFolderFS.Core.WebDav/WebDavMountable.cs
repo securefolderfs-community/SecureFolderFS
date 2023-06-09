@@ -21,7 +21,7 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using NWebDav.Server.Stores;
-using System.Linq;
+using SecureFolderFS.Core.FileSystem.Helpers;
 
 namespace SecureFolderFS.Core.WebDav
 {
@@ -65,16 +65,16 @@ namespace SecureFolderFS.Core.WebDav
 
             var remotePath = $"\\\\localhost@{port}\\{_volumeName}\\";
 
-            char? driveLetter = null;
+            string? mountPath = null;
             if (OperatingSystem.IsWindows())
             {
-                driveLetter = DriveMappingHelper.GetAvailableDriveLetters().FirstOrDefault();
-                if (driveLetter != default(char))
-                    _ = DriveMappingHelper.MapNetworkDriveAsync(driveLetter.Value, remotePath, cancellationToken);
+                mountPath = PathHelpers.GetFreeWindowsMountPath();
+                if (mountPath is not null)
+                    _ = DriveMappingHelper.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);
             }
 
             IPrincipal? serverPrincipal = null;
-            var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher, driveLetter);
+            var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();
 
             // TODO Remove once the port is displayed in the UI.

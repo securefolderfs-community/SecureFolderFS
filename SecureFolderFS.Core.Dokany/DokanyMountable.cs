@@ -16,9 +16,9 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Helpers;
 
 namespace SecureFolderFS.Core.Dokany
 {
@@ -74,7 +74,7 @@ namespace SecureFolderFS.Core.Dokany
             if (mountOptions is not DokanyMountOptions dokanyMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(DokanyMountOptions)}.");
 
-            var mountPath = dokanyMountOptions.MountPath ?? GetFreeMountPath();
+            var mountPath = dokanyMountOptions.MountPath ?? PathHelpers.GetFreeWindowsMountPath();
             if (mountPath is null)
                 throw new DirectoryNotFoundException("No available free mount points for vault file system");
 
@@ -109,14 +109,6 @@ namespace SecureFolderFS.Core.Dokany
             };
 
             return new DokanyMountable(dokanyCallbacks);
-        }
-
-        private static string? GetFreeMountPath()
-        {
-            var occupiedLetters = Directory.GetLogicalDrives().Select(item => item[0]);
-            var availableLetters = FileSystem.Constants.ALPHABET.ToCharArray().Skip(3).Except(occupiedLetters); // Skip floppy disk drives and system drive
-
-            return availableLetters.Select(item => $"{item}:\\").FirstOrDefault();
         }
     }
 }

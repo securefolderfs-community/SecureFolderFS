@@ -17,15 +17,15 @@ namespace SecureFolderFS.Core.WebDav
         private readonly IPrincipal? _serverPrincipal;
         private readonly IRequestDispatcher _requestDispatcher;
         private readonly CancellationTokenSource _fileSystemCts;
-        private readonly char? _mappedDriveLetter;
+        private readonly string? _mountPath;
 
-        public WebDavWrapper(HttpListener httpListener, IPrincipal? serverPrincipal, IRequestDispatcher requestDispatcher, char? mappedDriveLetter = null)
+        public WebDavWrapper(HttpListener httpListener, IPrincipal? serverPrincipal, IRequestDispatcher requestDispatcher, string? mountPath = null)
         {
             _httpListener = httpListener;
             _serverPrincipal = serverPrincipal;
             _requestDispatcher = requestDispatcher;
             _fileSystemCts = new();
-            _mappedDriveLetter = mappedDriveLetter;
+            _mountPath = mountPath;
         }
 
         public void StartFileSystem()
@@ -53,8 +53,8 @@ namespace SecureFolderFS.Core.WebDav
             _fileSystemCts.Cancel();
             _httpListener.Close();
 
-            if (_mappedDriveLetter is not null)
-                DriveMappingHelper.DisconnectNetworkDrive(_mappedDriveLetter.Value, true);
+            if (_mountPath is not null)
+                DriveMappingHelper.DisconnectNetworkDrive(_mountPath, true);
 
             return true;
         }
