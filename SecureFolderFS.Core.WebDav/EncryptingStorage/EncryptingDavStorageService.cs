@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         private readonly IPathConverter _pathConverter;
         private readonly IDirectoryIdAccess _directoryIdAccess;
 
-        public EncryptingDavStorageService(ILocatableFolder baseDirectory, IStorageService storageService, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess)
-            : base(baseDirectory, storageService)
+        public EncryptingDavStorageService(ILocatableFolder baseDirectory, IStorageService storageService, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess, string? remoteRootDirectory = null)
+            : base(baseDirectory, storageService, remoteRootDirectory)
         {
             _streamsAccess = streamsAccess;
             _pathConverter = pathConverter;

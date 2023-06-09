@@ -20,17 +20,20 @@ using System.Net;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using NWebDav.Server.Stores;
 
 namespace SecureFolderFS.Core.WebDav
 {
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class WebDavMountable : IMountableFileSystem, IAvailabilityChecker
-    {
+    {      
         private readonly IRequestDispatcher _requestDispatcher;
+        private readonly string _volumeName;
 
-        private WebDavMountable(IRequestDispatcher requestDispatcher)
+        private WebDavMountable(IRequestDispatcher requestDispatcher, string volumeName)
         {
             _requestDispatcher = requestDispatcher;
+            _volumeName = volumeName;
         }
 
         /// <inheritdoc/>
@@ -66,7 +69,7 @@ namespace SecureFolderFS.Core.WebDav
             // TODO Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
 
-            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{port}\\DavWWWRoot\\"), webDavWrapper));
+            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{port}\\{_volumeName}\\"), webDavWrapper));
         }
 
         public static IMountableFileSystem CreateMountable(IStorageService storageService, string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)
@@ -74,10 +77,10 @@ namespace SecureFolderFS.Core.WebDav
             if (contentFolder is not ILocatableFolder locatableContentFolder)
                 throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
 
-            var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter, directoryIdAccess);
-            var dispatcher = new WebDavDispatcher(new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter, directoryIdAccess, security), davStorageService, new RequestHandlerProvider(), null);
+            var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter, directoryIdAccess, volumeName);
+            var dispatcher = new WebDavDispatcher(new RootDiskStore(volumeName, new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter, directoryIdAccess, security)), davStorageService, new RequestHandlerProvider(), null);
 
-            return new WebDavMountable(dispatcher);
+            return new WebDavMountable(dispatcher, volumeName);
         }
 
 

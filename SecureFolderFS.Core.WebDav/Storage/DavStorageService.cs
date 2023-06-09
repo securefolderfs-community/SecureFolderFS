@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.IO;
 using System.Security;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,11 +16,13 @@ namespace SecureFolderFS.Core.WebDav.Storage
     {
         protected readonly ILocatableFolder baseDirectory;
         protected readonly IStorageService storageService;
+        protected readonly string? remoteRootDirectory;
 
-        public DavStorageService(ILocatableFolder baseDirectory, IStorageService storageService)
+        public DavStorageService(ILocatableFolder baseDirectory, IStorageService storageService, string? remoteRootDirectory = null)
         {
             this.baseDirectory = baseDirectory;
             this.storageService = storageService;
+            this.remoteRootDirectory = remoteRootDirectory;
         }
 
         /// <inheritdoc/>
@@ -92,7 +95,11 @@ namespace SecureFolderFS.Core.WebDav.Storage
         /// <exception cref="SecurityException">Thrown when provided <paramref name="uriPath"/> points to a resource outside the base directory.</exception>
         protected virtual string GetPathFromUri(string uriPath)
         {
-            var decodedPath = uriPath.Substring(1).Replace('/', Path.DirectorySeparatorChar);
+            var decodedPath = uriPath;
+            if (remoteRootDirectory is not null)
+                decodedPath = new Regex($"^\\/{remoteRootDirectory}").Replace(uriPath, string.Empty);
+
+            decodedPath = decodedPath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
             var fullPath = Path.Combine(baseDirectory.Path, decodedPath);
 
             if (fullPath != baseDirectory.Path && !fullPath.StartsWith(baseDirectory.Path + Path.DirectorySeparatorChar))
