@@ -1,6 +1,7 @@
 ﻿using NWebDav.Server.Dispatching;
 using NWebDav.Server.HttpListener;
 using SecureFolderFS.Core.FileSystem.Enums;
+using SecureFolderFS.Core.WebDav.Helpers;
 using System.Diagnostics;
 using System.Net;
 using System.Security.Principal;
@@ -16,13 +17,15 @@ namespace SecureFolderFS.Core.WebDav
         private readonly IPrincipal? _serverPrincipal;
         private readonly IRequestDispatcher _requestDispatcher;
         private readonly CancellationTokenSource _fileSystemCts;
+        private readonly char? _mappedDriveLetter;
 
-        public WebDavWrapper(HttpListener httpListener, IPrincipal? serverPrincipal, IRequestDispatcher requestDispatcher)
+        public WebDavWrapper(HttpListener httpListener, IPrincipal? serverPrincipal, IRequestDispatcher requestDispatcher, char? mappedDriveLetter = null)
         {
             _httpListener = httpListener;
             _serverPrincipal = serverPrincipal;
             _requestDispatcher = requestDispatcher;
             _fileSystemCts = new();
+            _mappedDriveLetter = mappedDriveLetter;
         }
 
         public void StartFileSystem()
@@ -49,6 +52,9 @@ namespace SecureFolderFS.Core.WebDav
             _ = _fileSystemTask;
             _fileSystemCts.Cancel();
             _httpListener.Close();
+
+            if (_mappedDriveLetter is not null)
+                DriveMappingHelper.DisconnectNetworkDrive(_mappedDriveLetter.Value, true);
 
             return true;
         }
