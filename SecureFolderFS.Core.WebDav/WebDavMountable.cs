@@ -69,16 +69,13 @@ namespace SecureFolderFS.Core.WebDav
             if (OperatingSystem.IsWindows())
             {
                 driveLetter = DriveMappingHelper.GetAvailableDriveLetters().FirstOrDefault();
-                if (driveLetter == default(char))
-                    driveLetter = null;
+                if (driveLetter != default(char))
+                    _ = DriveMappingHelper.MapNetworkDriveAsync(driveLetter.Value, remotePath, cancellationToken);
             }
 
             IPrincipal? serverPrincipal = null;
             var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher, driveLetter);
             webDavWrapper.StartFileSystem();
-
-            if (driveLetter is not null)
-                DriveMappingHelper.MapNetworkDrive(driveLetter.Value, remotePath);
 
             // TODO Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");

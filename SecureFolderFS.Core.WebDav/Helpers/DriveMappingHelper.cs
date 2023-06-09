@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.Helpers
 {
@@ -17,12 +19,9 @@ namespace SecureFolderFS.Core.WebDav.Helpers
         }
 
         /// <summary>
-        /// Maps a network drive.
+        /// Attempts to map a network drive. Doesn't throw on failure.
         /// </summary>
-        /// <param name="driveLetter"></param>
-        /// <param name="remotePath"></param>
-        /// <returns>Whether the drive was mapped successfully.</returns>
-        public static bool MapNetworkDrive(char driveLetter, string remotePath)
+        public static Task MapNetworkDriveAsync(char driveLetter, string remotePath, CancellationToken cancellationToken = default)
         {
             if (driveLetter < 'A' || driveLetter > 'Z')
                 throw new ArgumentOutOfRangeException(nameof(driveLetter));
@@ -36,9 +35,15 @@ namespace SecureFolderFS.Core.WebDav.Helpers
                 lpLocalName = $"{driveLetter}:",
                 lpRemoteName = remotePath,
             };
-            return UnsafeNativeApis.WNetAddConnection2(netResource, string.Empty, string.Empty, 0) == 0;
+
+            // WNetAddConnection2 doesn't return until it has either successfully established a connection or timed out,
+            // so it has to be run in another thread to prevent blocking the server from responding.
+            return Task.Run(() => UnsafeNativeApis.WNetAddConnection2(netResource, null!, null!, UnsafeNativeApis.CONNECT_TEMPORARY), cancellationToken);
         }
 
+        /// <summary>
+        /// Attempts to disconnect a mapped network drive. Doesn't throw on failure.
+        /// </summary>
         public static void DisconnectNetworkDrive(char driveLetter, bool force)
         {
             if (driveLetter < 'A' || driveLetter > 'Z')
