@@ -21,6 +21,7 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using NWebDav.Server.Stores;
+using SecureFolderFS.Core.FileSystem.Helpers;
 
 namespace SecureFolderFS.Core.WebDav
 {
@@ -62,14 +63,24 @@ namespace SecureFolderFS.Core.WebDav
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
+            var remotePath = $"\\\\localhost@{port}\\{_volumeName}\\";
+
+            string? mountPath = null;
+            if (OperatingSystem.IsWindows())
+            {
+                mountPath = PathHelpers.GetFreeWindowsMountPath();
+                if (mountPath is not null)
+                    _ = DriveMappingHelper.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);
+            }
+
             IPrincipal? serverPrincipal = null;
-            var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher);
+            var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();
 
             // TODO Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
 
-            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder($"\\\\localhost@{port}\\{_volumeName}\\"), webDavWrapper));
+            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder(remotePath), webDavWrapper));
         }
 
         public static IMountableFileSystem CreateMountable(IStorageService storageService, string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)
@@ -82,7 +93,5 @@ namespace SecureFolderFS.Core.WebDav
 
             return new WebDavMountable(dispatcher, volumeName);
         }
-
-
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers
@@ -49,6 +50,15 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
                 return EnsureTrailingPathSeparator(vaultRootPath);
 
             return Path.Combine(vaultRootPath, EnsureNoLeadingPathSeparator(fileName));
+        }
+
+        public static string? GetFreeWindowsMountPath()
+        {
+            return Enumerable.Range('C', 'Z' - 'C' + 1) // Skip floppy disk drives and system drive
+                .Select(item => (char)item)
+                .Except(DriveInfo.GetDrives().Select(item => item.Name[0]))
+                .Select(item => $"{item}:")
+                .FirstOrDefault();
         }
     }
 }
