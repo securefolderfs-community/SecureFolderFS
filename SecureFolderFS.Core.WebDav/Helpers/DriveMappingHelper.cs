@@ -37,13 +37,17 @@ namespace SecureFolderFS.Core.WebDav.Helpers
         public static string? GetMountPathForRemotePath(string remotePath)
         {
             remotePath = remotePath.TrimEnd('\\');
+
+            var bufferSize = remotePath.Length + 1; // Null-terminated
+            var driveRemotePathBuilder = new StringBuilder(bufferSize);
+
             foreach (var drive in DriveInfo.GetDrives().Select(item => $"{item.Name[0]}:"))
             {
-                var bufferLength = remotePath.Length + 1; // Null-terminated
-                var driveRemotePathBuilder = new StringBuilder(bufferLength);
-                if (UnsafeNativeApis.WNetGetConnection(drive, driveRemotePathBuilder, ref bufferLength) == 0
+                if (UnsafeNativeApis.WNetGetConnection(drive, driveRemotePathBuilder, ref bufferSize) == 0
                     && driveRemotePathBuilder.ToString() == remotePath)
                     return drive;
+
+                driveRemotePathBuilder.Clear();
             }
 
             return null;
