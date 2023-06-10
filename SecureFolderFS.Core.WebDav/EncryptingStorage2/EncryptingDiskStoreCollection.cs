@@ -55,7 +55,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavDisplayName<EncryptingDiskStoreCollection>
             {
-                Getter = (context, collection) => collection._directoryInfo.Name
+                Getter = (context, collection) => collection.Name
             },
             new DavGetLastModified<EncryptingDiskStoreCollection>
             {
