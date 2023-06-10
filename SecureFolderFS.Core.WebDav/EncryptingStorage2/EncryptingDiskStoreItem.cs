@@ -222,7 +222,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
         private string DetermineContentType()
         {
-            return MimeTypeHelper.GetMimeType(_fileInfo.Name);
+            return MimeTypeHelper.GetMimeType(Name);
         }
     }
 }
