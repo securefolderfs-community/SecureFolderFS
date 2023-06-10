@@ -68,9 +68,13 @@ namespace SecureFolderFS.Core.WebDav
             string? mountPath = null;
             if (OperatingSystem.IsWindows())
             {
-                mountPath = PathHelpers.GetFreeWindowsMountPath();
-                if (mountPath is not null)
-                    _ = DriveMappingHelper.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);
+                mountPath = DriveMappingHelper.GetMountPathForRemotePath(remotePath);
+                if (mountPath is null)
+                {
+                    mountPath = PathHelpers.GetFreeWindowsMountPath();
+                    if (mountPath is not null)
+                        _ = DriveMappingHelper.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);
+                }
             }
 
             IPrincipal? serverPrincipal = null;
