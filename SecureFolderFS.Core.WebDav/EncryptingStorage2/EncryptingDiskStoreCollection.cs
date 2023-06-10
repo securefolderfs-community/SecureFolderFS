@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using NWebDav.Server.Enums;
 using NWebDav.Server.Http;
@@ -55,7 +54,10 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavDisplayName<EncryptingDiskStoreCollection>
             {
-                Getter = (context, collection) => collection.Name
+                Getter = (context, collection) => context.Request.Url?.Segments.Length == 2 // Is the path the root directory?
+                    // Return the name of the root directory (Name will throw, as the content folder doesn't have a directory id)
+                    ? context.Request.Url.Segments[1] 
+                    : collection.Name
             },
             new DavGetLastModified<EncryptingDiskStoreCollection>
             {
