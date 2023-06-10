@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavDisplayName<EncryptingDiskStoreItem>
             {
-                Getter = (context, item) => item._fileInfo.Name
+                Getter = (context, item) => item.Name
             },
             new DavGetContentLength<EncryptingDiskStoreItem>
             {
@@ -222,7 +222,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
         private string DetermineContentType()
         {
-            return MimeTypeHelper.GetMimeType(_fileInfo.Name);
+            return MimeTypeHelper.GetMimeType(Name);
         }
     }
 }
