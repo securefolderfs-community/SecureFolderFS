@@ -54,10 +54,13 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavDisplayName<EncryptingDiskStoreCollection>
             {
-                Getter = (context, collection) => context.Request.Url?.Segments.Length == 2 // Is the path the root directory?
-                    // Return the name of the root directory (Name will throw, as the content folder doesn't have a directory id)
-                    ? context.Request.Url.Segments[1] 
-                    : collection.Name
+                Getter = (context, collection) =>
+                {
+                    return collection._directoryInfo.Name == "content"
+                        // Return the name of the root directory (Name will throw, as the content folder doesn't have a directory id)
+                        ? context.Request.Url.Segments[1]
+                        : collection.Name;
+                }
             },
             new DavGetLastModified<EncryptingDiskStoreCollection>
             {
