@@ -1,4 +1,7 @@
-﻿using SecureFolderFS.Core.WebDav.UnsafeNative;
+﻿using System.IO;
+using System.Linq;
+using System.Text;
+using SecureFolderFS.Core.WebDav.UnsafeNative;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,6 +32,21 @@ namespace SecureFolderFS.Core.WebDav.Helpers
         public static void DisconnectNetworkDrive(string mountPath, bool force)
         {
             _ = UnsafeNativeApis.WNetCancelConnection2(mountPath, 0, force);
+        }
+
+        public static string? GetMountPathForRemotePath(string remotePath)
+        {
+            remotePath = remotePath.TrimEnd('\\');
+            foreach (var drive in DriveInfo.GetDrives().Select(item => $"{item.Name[0]}:"))
+            {
+                var bufferLength = remotePath.Length + 1; // Null-terminated
+                var driveRemotePathBuilder = new StringBuilder(bufferLength);
+                if (UnsafeNativeApis.WNetGetConnection(drive, driveRemotePathBuilder, ref bufferLength) == 0
+                    && driveRemotePathBuilder.ToString() == remotePath)
+                    return drive;
+            }
+
+            return null;
         }
     }
 }
