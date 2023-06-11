@@ -15,7 +15,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public async Task<bool> IsOwnedAsync(IapProductType productType, CancellationToken cancellationToken = default)
         {
-            if (!TrySetStoreContext() || _storeContext is null)
+            if (!await SetStoreContextAsync() || _storeContext is null)
                 return false;
 
             var iapId = GetIapId(productType);
@@ -73,7 +73,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
         private async Task<StoreProduct?> GetProductAsync(string iapId, CancellationToken cancellationToken)
         {
-            if (!TrySetStoreContext() || _storeContext is null)
+            if (!await SetStoreContextAsync() || _storeContext is null)
                 return null;
 
             var result = await _storeContext.GetAssociatedStoreProductsAsync(new[] { "Durable" }).AsTask(cancellationToken);
@@ -98,9 +98,9 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             };
         }
 
-        private bool TrySetStoreContext()
+        private async Task<bool> SetStoreContextAsync()
         {
-            _storeContext ??= StoreContext.GetDefault();
+            _storeContext ??= await Task.Run(StoreContext.GetDefault);
             return _storeContext is not null;
         }
     }

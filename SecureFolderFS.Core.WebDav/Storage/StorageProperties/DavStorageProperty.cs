@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.WebDav.Storage.StorageProperties
         public object Value { get; }
 
         /// <inheritdoc/>
-        public event EventHandler<object>? OnValueUpdated;
+        public event EventHandler<object>? ValueUpdated;
 
         protected DavStorageProperty(string name, object value)
         {

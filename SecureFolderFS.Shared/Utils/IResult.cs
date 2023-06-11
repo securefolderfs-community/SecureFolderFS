@@ -35,8 +35,6 @@ namespace SecureFolderFS.Shared.Utils
     {
         /// <summary>
         /// Gets the message describing result of the action.
-        /// <remarks>
-        /// The message should not be used for displaying in the view, but rather for logs and debug dumps.</remarks>
         /// </summary>
         string? Message { get; }
     }

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
@@ -10,16 +11,15 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
-    public sealed partial class UpdateBannerViewModel : ObservableObject, IAsyncInitialize
+    public sealed partial class UpdateBannerViewModel : ObservableObject, IAsyncInitialize, IProgress<double>
     {
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
         private IUpdateService UpdateService { get; } = Ioc.Default.GetRequiredService<IUpdateService>();
 
-        public InfoBarViewModel UpdateInfoBar { get; }
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
-        [ObservableProperty] private string? _UpdateText;
+        [ObservableProperty] private InfoBarViewModel _InfoBarViewModel = new();
         [ObservableProperty] private bool _AreUpdatesSupported;
+        [ObservableProperty] private string? _UpdateText;
 
         public DateTime LastChecked
         {
@@ -29,37 +29,51 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 
         public UpdateBannerViewModel()
         {
-            UpdateInfoBar = new();
-            UpdateText = "Latest version installed";
+            _UpdateText = "Latest version installed";
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var updatesSupported = await UpdateService.IsSupportedAsync();
-
-            return; // TODO: Implement updates
-            if (!updatesSupported)
+            AreUpdatesSupported = await UpdateService.IsSupportedAsync();
+            if (!AreUpdatesSupported)
             {
                 await Task.Delay(800);
 
-                AreUpdatesSupported = false;
-                UpdateInfoBar.IsOpen = true;
-                UpdateInfoBar.Message = "Updates are not supported for the sideloaded version.";
-                UpdateInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
-                UpdateInfoBar.CanBeClosed = false;
+                InfoBarViewModel.IsOpen = true;
+                InfoBarViewModel.Message = "Updates are not supported for the sideloaded version.";
+                InfoBarViewModel.InfoBarSeverity = InfoBarSeverityType.Warning;
             }
+        }
+
+        /// <inheritdoc/>
+        public void Report(double value)
+        {
+            UpdateText = $"Updating {Math.Round(value)}%";
         }
 
         [RelayCommand]
         private async Task UpdateAppAsync(CancellationToken cancellationToken)
         {
+            // Update last checked date
             LastChecked = DateTime.Now;
             OnPropertyChanged(nameof(LastChecked));
+            await SettingsService.AppSettings.SaveAsync(cancellationToken);
 
-            var isUpdateAvailable = await UpdateService.IsUpdateAvailableAsync();
+            // Check for updates
+            var isUpdateAvailable = await UpdateService.IsUpdateAvailableAsync(cancellationToken);
             if (isUpdateAvailable)
-                _ = UpdateService.UpdateAsync(null, cancellationToken);
+                return;
+
+            var result = await UpdateService.UpdateAsync(this, cancellationToken);
+            if (!result.Successful)
+            {
+                InfoBarViewModel.IsOpen = true;
+                InfoBarViewModel.Title = "Error";
+                InfoBarViewModel.CanBeClosed = true;
+                InfoBarViewModel.Message = result.GetMessage();
+                InfoBarViewModel.InfoBarSeverity = InfoBarSeverityType.Error;
+            }
         }
     }
 }

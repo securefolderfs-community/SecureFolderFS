@@ -71,11 +71,12 @@
                 <uc:BannerControl.AdditionalBottomContent>
                     <!--  Version InfoBar  -->
                     <InfoBar
-                        IsClosable="{x:Bind ViewModel.BannerViewModel.UpdateInfoBar.CanBeClosed, Mode=OneWay}"
-                        IsOpen="True"
-                        Message="{x:Bind ViewModel.BannerViewModel.UpdateInfoBar.Message, Mode=OneWay}"
-                        Severity="{x:Bind ViewModel.BannerViewModel.UpdateInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
-                        Visibility="{x:Bind ViewModel.BannerViewModel.UpdateInfoBar.IsOpen, Mode=OneWay}">
+                        Title="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Title, Mode=OneWay}"
+                        IsClosable="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.CanBeClosed, Mode=OneWay}"
+                        IsOpen="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsOpen, Mode=TwoWay}"
+                        Message="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Message, Mode=OneWay}"
+                        Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
+                        Visibility="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsOpen, Mode=OneWay}">
 
                         <anim:Implicit.ShowAnimations>
                             <anim:TranslationAnimation
@@ -111,7 +112,6 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ComboBox
                         x:Name="AppLanguageComboBox"
-                        IsEnabled="False"
                         ItemsSource="{x:Bind ViewModel.Languages}"
                         SelectedIndex="0"
                         SelectionChanged="AppLanguageComboBox_SelectionChanged">

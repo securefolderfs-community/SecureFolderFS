@@ -10,6 +10,7 @@ using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.EventArguments;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -35,12 +36,12 @@ namespace SecureFolderFS.Sdk.AppModels
             VaultWatcher = vaultWatcher;
             _vaultValidator = VaultService.GetVaultValidator();
 
-            VaultWatcher.VaultChangedEvent += VaultWatcher_VaultChangedEvent;
+            VaultWatcher.StateChanged += VaultWatcher_StateChanged;
         }
 
-        private async void VaultWatcher_VaultChangedEvent(object? sender, IResult e)
+        private async void VaultWatcher_StateChanged(object? sender, EventArgs e)
         {
-            if (!e.Successful)
+            if (e is VaultChangedEventArgs { ContentsChanged: true })
                 await DetermineStrategyAsync(default);
         }
 
@@ -86,7 +87,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public void Dispose()
         {
             VaultWatcher.Dispose();
-            VaultWatcher.VaultChangedEvent -= VaultWatcher_VaultChangedEvent;
+            VaultWatcher.StateChanged -= VaultWatcher_StateChanged;
         }
     }
 }
