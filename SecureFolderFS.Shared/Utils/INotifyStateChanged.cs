@@ -8,8 +8,8 @@ namespace SecureFolderFS.Shared.Utils
     public interface INotifyStateChanged
     {
         /// <summary>
-        /// Occurs when the state changes.
+        /// Occurs when a state of an object changes.
         /// </summary>
-        event EventHandler<EventArgs> StateChanged;
+        event EventHandler<EventArgs>? StateChanged;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Services.Store;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
@@ -21,9 +23,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
 
         /// <inheritdoc/>
+        public event EventHandler<EventArgs>? StateChanged;
+
+        /// <inheritdoc/>
         public Task<bool> IsSupportedAsync()
         {
-            return Task.FromResult(false);
+            var supported = Package.Current.SignatureKind == PackageSignatureKind.Store;
+            return Task.FromResult(supported);
         }
 
         /// <inheritdoc/>
@@ -51,25 +57,32 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             try
             {
+                if (_updates is null && !await IsUpdateAvailableAsync(cancellationToken))
+                    return new CommonResult(new InvalidOperationException("No available updates found."));
+
+                // Switch to UI thread for installation of packages (as per docs)
                 await ThreadingService.ChangeThreadAsync();
 
+                // Add progress operation callback
                 var operation = _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
-                operation.Progress = (_, update) => progress?.Report(update.PackageDownloadProgress);
-                var result = await operation.AsTask(cancellationToken);
-
-                var resultType = result.OverallState switch
+                operation.Progress = (_, update) =>
                 {
-                    StorePackageUpdateState.Pending => AppUpdateResultType.InProgress,
-                    StorePackageUpdateState.Downloading => AppUpdateResultType.InProgress,
-                    StorePackageUpdateState.Deploying => AppUpdateResultType.InProgress,
-                    StorePackageUpdateState.Completed => AppUpdateResultType.Completed,
-                    StorePackageUpdateState.Canceled => AppUpdateResultType.Canceled,
-                    StorePackageUpdateState.OtherError => AppUpdateResultType.FailedUnknownError,
-                    StorePackageUpdateState.ErrorLowBattery => AppUpdateResultType.FailedDeviceError,
-                    StorePackageUpdateState.ErrorWiFiRecommended => AppUpdateResultType.FailedNetworkError,
-                    StorePackageUpdateState.ErrorWiFiRequired => AppUpdateResultType.FailedNetworkError,
-                    _ => AppUpdateResultType.FailedUnknownError
+                    StateChanged?.Invoke(this, new UpdateChangedEventArgs(GetAppUpdateResultType(update.PackageUpdateState)));
+
+                    // The PackageDownloadProgress ranges from 0.0 to 1.0
+                    var percentage = update.PackageDownloadProgress * 100;
+
+                    // The PackageDownloadProgress value ranges from 0.0 to 0.8 during the download process,
+                    // and 0.8 (exclusive) to 1.0 during the installation stage
+                    if ((int)percentage >= 80)
+                        percentage = 100d;
+
+                    progress?.Report(percentage);
                 };
+
+                // Install packages
+                var result = await operation.AsTask(cancellationToken);
+                var resultType = GetAppUpdateResultType(result.OverallState);
 
                 return new CommonResult<AppUpdateResultType>(resultType, resultType == AppUpdateResultType.Completed);
             }
@@ -83,6 +96,23 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         {
             _storeContext ??= await Task.Run(StoreContext.GetDefault);
             return _storeContext is not null;
+        }
+
+        private static AppUpdateResultType GetAppUpdateResultType(StorePackageUpdateState updateState)
+        {
+            return updateState switch
+            {
+                StorePackageUpdateState.Pending => AppUpdateResultType.InProgress,
+                StorePackageUpdateState.Downloading => AppUpdateResultType.InProgress,
+                StorePackageUpdateState.Deploying => AppUpdateResultType.InProgress,
+                StorePackageUpdateState.Completed => AppUpdateResultType.Completed,
+                StorePackageUpdateState.Canceled => AppUpdateResultType.Canceled,
+                StorePackageUpdateState.OtherError => AppUpdateResultType.FailedUnknownError,
+                StorePackageUpdateState.ErrorLowBattery => AppUpdateResultType.FailedDeviceError,
+                StorePackageUpdateState.ErrorWiFiRecommended => AppUpdateResultType.FailedNetworkError,
+                StorePackageUpdateState.ErrorWiFiRequired => AppUpdateResultType.FailedNetworkError,
+                _ => AppUpdateResultType.None
+            };
         }
     }
 }

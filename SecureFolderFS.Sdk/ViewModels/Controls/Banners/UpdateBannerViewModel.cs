@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
@@ -30,6 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
         public UpdateBannerViewModel()
         {
             _UpdateText = "Latest version installed";
+            UpdateService.StateChanged += UpdateService_StateChanged;
         }
 
         /// <inheritdoc/>
@@ -38,8 +40,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             AreUpdatesSupported = await UpdateService.IsSupportedAsync();
             if (!AreUpdatesSupported)
             {
-                await Task.Delay(800);
-
                 InfoBarViewModel.IsOpen = true;
                 InfoBarViewModel.Message = "Updates are not supported for the sideloaded version.";
                 InfoBarViewModel.InfoBarSeverity = InfoBarSeverityType.Warning;
@@ -49,7 +49,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
         /// <inheritdoc/>
         public void Report(double value)
         {
-            UpdateText = $"Updating {Math.Round(value)}%";
+            UpdateText = $"Downloading {Math.Round(value)}%";
+        }
+
+        private void UpdateService_StateChanged(object? sender, EventArgs e)
+        {
+            // Check for any errors
+            if (e is not UpdateChangedEventArgs args || (int)args.UpdateState >= 0)
+                return;
+
+            InfoBarViewModel.IsOpen = true;
+            InfoBarViewModel.Title = "Error";
+            InfoBarViewModel.CanBeClosed = true;
+            InfoBarViewModel.Message = GetMessageForUpdateState(args.UpdateState);
+            InfoBarViewModel.InfoBarSeverity = InfoBarSeverityType.Error;
         }
 
         [RelayCommand]
@@ -62,7 +75,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 
             // Check for updates
             var isUpdateAvailable = await UpdateService.IsUpdateAvailableAsync(cancellationToken);
-            if (isUpdateAvailable)
+            if (!isUpdateAvailable)
                 return;
 
             var result = await UpdateService.UpdateAsync(this, cancellationToken);
@@ -74,6 +87,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
                 InfoBarViewModel.Message = result.GetMessage();
                 InfoBarViewModel.InfoBarSeverity = InfoBarSeverityType.Error;
             }
+        }
+
+        private static string GetMessageForUpdateState(AppUpdateResultType updateState)
+        {
+            return updateState switch
+            {
+                AppUpdateResultType.Completed => "The update has completed successfully",
+                AppUpdateResultType.InProgress => "The update is in progress",
+                AppUpdateResultType.Canceled => "The update has been canceled",
+                AppUpdateResultType.FailedNetworkError => "A network error has occurred",
+                AppUpdateResultType.FailedDeviceError => "A device error has occurred",
+                AppUpdateResultType.FailedUnknownError => "An unknown error has occurred",
+                _ => string.Empty
+            };
         }
     }
 }

@@ -97,14 +97,15 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
-                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
 
                 // Conditional (singleton) services
 #if DEBUG
                 .AddSingleton<IIapService, DebugIapService>()
+                .AddSingleton<IUpdateService, DebugUpdateService>()
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
 #else
                 .AddSingleton<IIapService, DebugIapService>() // .AddSingleton<IIapService, MicrosoftStoreIapService>() // TODO: Change in the future
+                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
                 .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
 #endif
 

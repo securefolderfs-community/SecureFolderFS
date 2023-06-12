@@ -11,6 +11,9 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
     internal sealed class AvaloniaUpdateService : IUpdateService
     {
         /// <inheritdoc/>
+        public event EventHandler<EventArgs>? StateChanged;
+
+        /// <inheritdoc/>
         public Task<bool> IsSupportedAsync()
         {
             return Task.FromResult(false);
