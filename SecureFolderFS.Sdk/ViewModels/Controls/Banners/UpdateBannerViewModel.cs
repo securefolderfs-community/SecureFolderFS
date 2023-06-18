@@ -49,7 +49,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
         /// <inheritdoc/>
         public void Report(double value)
         {
-            UpdateText = $"Downloading {Math.Round(value)}%";
+            var rounded = (int)Math.Round(value);
+
+            if (rounded == 100)
+                UpdateText = "Installing..";
+            else
+                UpdateText = $"Downloading {rounded}%";
         }
 
         private void UpdateService_StateChanged(object? sender, EventArgs e)

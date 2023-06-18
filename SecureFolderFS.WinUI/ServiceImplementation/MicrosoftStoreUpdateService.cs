@@ -69,14 +69,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 {
                     StateChanged?.Invoke(this, new UpdateChangedEventArgs(GetAppUpdateResultType(update.PackageUpdateState)));
 
-                    // The PackageDownloadProgress ranges from 0.0 to 1.0
-                    var percentage = update.PackageDownloadProgress * 100;
+                    // According to docs, the PackageDownloadProgress ranges from 0.0 to 0.8 (inclusive)
+                    // which indicates the download progress where 0.8 is the end of the download stage.
+                    // Therefore, we need to readjust the value to fit the percentage range 0-100%
+                    var percentage = update.PackageDownloadProgress * 100 / 0.8d;
 
-                    // The PackageDownloadProgress value ranges from 0.0 to 0.8 during the download process,
-                    // and 0.8 (exclusive) to 1.0 during the installation stage
-                    if ((int)percentage >= 80)
-                        percentage = 100d;
-
+                    // Report the percentage without rounding
                     progress?.Report(percentage);
                 };
 
