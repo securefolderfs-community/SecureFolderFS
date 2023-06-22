@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Enums;
+﻿using SecureFolderFS.Shared.Utils;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -6,13 +6,13 @@ namespace SecureFolderFS.Sdk.Models
 {
     /// <typeparam name="TViewModel">The view model type related to dialog.</typeparam>
     /// <inheritdoc cref="IDialog"/>
-    public interface IDialog<TViewModel> : IDialog
+    public interface IDialog<in TViewModel> : IDialog
         where TViewModel : INotifyPropertyChanged
     {
         /// <summary>
         /// Gets or sets the view model associated with the dialog.
         /// </summary>
-        TViewModel ViewModel { get; set; }
+        TViewModel ViewModel { set; }
     }
 
     /// <summary>
@@ -23,8 +23,11 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Shows the dialog and awaits until an option is selected or the dialog is closed.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="DialogResult"/> based on the selected option.</returns>
-        Task<DialogResult> ShowAsync();
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation.</returns>
+        /// <remarks>
+        /// The return value may contain additional information about the chosen option.
+        /// </remarks>
+        Task<IResult> ShowAsync();
 
         /// <summary>
         /// Hides the dialog if possible.

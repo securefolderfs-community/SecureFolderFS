@@ -6,8 +6,9 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.WinUI.UserControls.Navigation;
 using System;
 using System.Threading.Tasks;
 
@@ -31,7 +32,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
+                public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
 
         private INavigationTarget GetTargetForTag(int tag)
         {
@@ -64,7 +65,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
-            ViewModel.NavigationService.ResetNavigation<FrameNavigationControl>();
+            ViewModel.NavigationService.ResetNavigation();
         }
     }
 }

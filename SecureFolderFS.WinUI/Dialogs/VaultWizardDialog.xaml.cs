@@ -2,12 +2,14 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
+using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
@@ -35,7 +37,7 @@ namespace SecureFolderFS.WinUI.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
+        public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
 
         private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)
         {

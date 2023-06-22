@@ -1,7 +1,9 @@
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Utils;
 using System.Threading.Tasks;
 
@@ -28,7 +30,7 @@ namespace SecureFolderFS.WinUI.UserControls.Introduction
         }
 
         /// <inheritdoc/>
-        public Task<DialogResult> ShowAsync()
+        public Task<IResult> ShowAsync()
         {
             return ViewModel.TaskCompletion.Task;
         }
@@ -36,7 +38,7 @@ namespace SecureFolderFS.WinUI.UserControls.Introduction
         /// <inheritdoc/>
         public void Hide()
         {
-            ViewModel.TaskCompletion.SetResult(DialogResult.Primary);
+            ViewModel.TaskCompletion.SetResult(DialogExtensions.ResultFromDialogOption(DialogOption.Cancel));
         }
     }
 }

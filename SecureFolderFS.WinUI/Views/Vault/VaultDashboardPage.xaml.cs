@@ -8,7 +8,6 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.UserControls.BreadcrumbBar;
-using SecureFolderFS.WinUI.UserControls.Navigation;
 using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -49,7 +48,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             // Remove the reference to the NavigationControl so the page can get properly garbage collected
-            ViewModel.DashboardNavigationService.ResetNavigation<FrameNavigationControl>();
+            ViewModel.DashboardNavigationService.ResetNavigation();
             ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
             Navigation.Dispose();
             base.OnNavigatingFrom(e);

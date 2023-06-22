@@ -22,7 +22,7 @@ namespace SecureFolderFS.WinUI.UserControls.Introduction
     {
         public EndScreen()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.UI.Helpers
 {
     /// <inheritdoc cref="IThemeHelper"/>
-    public abstract partial class ThemeHelper<TImplementation> : ObservableObject, IThemeHelper
+    public abstract class ThemeHelper<TImplementation> : ObservableObject, IThemeHelper
         where TImplementation : IThemeHelper<TImplementation>
     {
         protected IAppSettings AppSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().AppSettings;

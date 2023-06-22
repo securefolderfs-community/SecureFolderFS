@@ -1,20 +1,22 @@
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
+using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
+using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
-using Avalonia.Threading;
-using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.AvaloniaUI.Messages;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -33,11 +35,13 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         public Type StyleKey => typeof(ContentDialog);
 
         /// <inheritdoc/>
-        public async Task<DialogResult> ShowAsync()
+        public new async Task<IResult> ShowAsync()
         {
-            // Can't be in the constructor because ViewModel is set later
+            // Can't initialize in the constructor because the ViewModel is set later
             await Dispatcher.UIThread.InvokeAsync(() => AvaloniaXamlLoader.Load(this));
-            return (DialogResult)await base.ShowAsync();
+
+            // Show dialog
+            return DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
         }
 
         private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SecureFolderFS.Sdk.AppModels
+namespace SecureFolderFS.Sdk.ViewModels
 {
     /// <summary>
     /// Represents an app version with platform information.
@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <param name="Name">Gets the title of the release.</param>
     /// <param name="Description">Gets the description of changes.</param>
     /// <param name="Version">Gets the version of the app.</param>
-    public sealed record AppChangelog(string Name, string Description, Version Version)
+    public sealed record ChangelogViewModel(string Name, string Description, Version Version)
     {
         /// <inheritdoc/>
         public override string ToString()

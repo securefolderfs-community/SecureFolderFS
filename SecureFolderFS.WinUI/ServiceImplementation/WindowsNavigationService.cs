@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    internal sealed class WindowsNavigationService : BaseNavigationService<FrameNavigationControl>
+    internal sealed class WindowsNavigationService : BaseNavigationService
     {
         /// <inheritdoc/>
         protected override async Task<bool> BeginNavigationAsync(INavigationTarget? target, NavigationType navigationType)
@@ -22,40 +22,48 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             {
                 case NavigationType.Backward:
                 {
-                    if (NavigationControl.ContentFrame.CanGoBack)
-                    {
-                        NavigationControl.ContentFrame.GoBack();
+                    if (NavigationControl is not FrameNavigationControl frameNavigation)
+                        return false;
 
-                        var contentType = NavigationControl.Content?.GetType();
-                        if (contentType is null)
-                            return false;
+                    if (!frameNavigation.ContentFrame.CanGoBack) 
+                        return false;
 
-                        var targetType = NavigationControl.TypeBinding.GetByKeyOrValue(contentType);
-                        var backTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
-                        if (backTarget is not null)
-                            CurrentTarget = backTarget;
+                    // Navigate back
+                    frameNavigation.ContentFrame.GoBack();
 
-                        return true;
-                    }
+                    var contentType = frameNavigation.Content?.GetType();
+                    if (contentType is null)
+                        return false;
 
-                    return false;
+                    var targetType = frameNavigation.TypeBinding.GetByKeyOrValue(contentType);
+                    var backTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
+                    if (backTarget is not null)
+                        CurrentTarget = backTarget;
+
+                    return true;
                 }
 
                 case NavigationType.Forward:
                 {
-                    if (NavigationControl.ContentFrame.CanGoForward)
-                    {
-                        NavigationControl.ContentFrame.GoForward();
+                    if (NavigationControl is not FrameNavigationControl frameNavigation)
+                        return false;
 
-                        var targetType = NavigationControl.TypeBinding.GetByKeyOrValue(NavigationControl.ContentFrame.Content.GetType());
-                        var forwardTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
-                        if (forwardTarget is not null)
-                            CurrentTarget = forwardTarget;
+                    if (!frameNavigation.ContentFrame.CanGoForward)
+                        return false;
 
-                        return true;
-                    }
+                    // Navigate forward
+                    frameNavigation.ContentFrame.GoForward();
 
-                    return false;
+                    var contentType = frameNavigation.ContentFrame.Content?.GetType();
+                    if (contentType is null)
+                        return false;
+
+                    var targetType = frameNavigation.TypeBinding.GetByKeyOrValue(contentType);
+                    var forwardTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
+                    if (forwardTarget is not null)
+                        CurrentTarget = forwardTarget;
+
+                    return true;
                 }
 
                 default:

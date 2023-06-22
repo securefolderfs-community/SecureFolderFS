@@ -10,7 +10,7 @@ namespace SecureFolderFS.WinUI.UserControls
     {
         public OverlayControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public object? OverlayContent

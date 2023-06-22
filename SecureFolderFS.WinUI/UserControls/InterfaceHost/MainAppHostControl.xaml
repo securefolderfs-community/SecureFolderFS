@@ -30,6 +30,7 @@
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
 
+        <!--  Navigation Control  -->
         <uc2:VaultNavigationControl x:Name="Navigation" />
 
         <NavigationView.AutoSuggestBox>
@@ -40,7 +41,6 @@
                 QuerySubmitted="SidebarSearchBox_QuerySubmitted"
                 TextChanged="SidebarSearchBox_TextChanged" />
         </NavigationView.AutoSuggestBox>
-
         <NavigationView.PaneFooter>
             <Grid
                 Width="{Binding Path=OpenPaneLength, ElementName=Sidebar}"

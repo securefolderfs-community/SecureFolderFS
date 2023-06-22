@@ -1,8 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Utils;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
@@ -14,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         [ObservableProperty] private int _CurrentIndex;
         [ObservableProperty] private string? _CurrentStep;
 
-        public TaskCompletionSource<DialogResult> TaskCompletion { get; }
+        public TaskCompletionSource<IResult> TaskCompletion { get; }
 
         private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
 

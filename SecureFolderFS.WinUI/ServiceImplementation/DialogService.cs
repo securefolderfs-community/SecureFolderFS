@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -10,7 +9,6 @@ using SecureFolderFS.WinUI.WindowViews;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
@@ -19,8 +17,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class DialogService : IDialogService
     {
         private readonly Dictionary<Type, Func<IDialog>> _dialogs;
-        private IDialog? _currentDialog;
-
+        
         public DialogService()
         {
             _dialogs = new()
@@ -53,15 +50,6 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 MainWindow.Instance.RootControl.Overlay.OverlayContent = overlayable.OverlayContent;
 
             return dialog;
-        }
-
-        /// <inheritdoc/>
-        public Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel)
-            where TViewModel : class, INotifyPropertyChanged
-        {
-            _currentDialog?.Hide();
-            _currentDialog = GetDialog(viewModel);
-            return _currentDialog.ShowAsync();
         }
     }
 }
