@@ -77,7 +77,7 @@ namespace SecureFolderFS.Sdk.AppModels
             /// <inheritdoc/>
             public T? GetValue<T>()
             {
-                _deserialized = _jsonElement.Deserialize<T?>();
+                _deserialized ??= _jsonElement.Deserialize<T?>();
                 return _deserialized.TryCast<T?>();
             }
         }

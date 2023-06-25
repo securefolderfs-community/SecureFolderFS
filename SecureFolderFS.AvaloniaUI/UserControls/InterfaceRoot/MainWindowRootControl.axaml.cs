@@ -3,7 +3,6 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Helpers;
 using SecureFolderFS.Sdk.ViewModels;
-using SecureFolderFS.UI.Helpers;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
