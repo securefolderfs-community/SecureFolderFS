@@ -32,5 +32,11 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
             var encodedId = EncodingHelpers.EncodeStorableId(vaultId);
             return SetSetting(widgets, encodedId);
         }
+
+        /// <inheritdoc/>
+        public void Clear()
+        {
+            SettingsDatabase.ClearData();
+        }
     }
 }

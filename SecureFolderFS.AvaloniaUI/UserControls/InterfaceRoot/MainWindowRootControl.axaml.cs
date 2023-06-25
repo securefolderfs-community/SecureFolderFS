@@ -25,7 +25,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
 
         private void MainWindowRootControl_Loaded(object? sender, RoutedEventArgs e)
         {
-            ViewModel.HostNavigationService.SetupNavigation(Navigation);
+            //ViewModel.HostNavigationService.SetupNavigation(Navigation); // TODO(n3)
             _ = EnsureRootAsync();
         }
 

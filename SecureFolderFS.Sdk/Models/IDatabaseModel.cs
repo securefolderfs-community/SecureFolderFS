@@ -26,5 +26,11 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="value">The value to be stored.</param>
         /// <returns>If the value has been updated in the database, returns true otherwise false.</returns>
         bool SetValue<TValue>(TKey key, TValue? value);
+
+        /// <summary>
+        /// Clears all persisted settings from the database.
+        /// </summary>
+        /// <returns>If successful, returns true, otherwise false.</returns>
+        bool ClearData();
     }
 }

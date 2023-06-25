@@ -5,7 +5,7 @@ namespace SecureFolderFS.Sdk.Messages
     /// <summary>
     /// A message to remove a vault.
     /// </summary>
-    public sealed class RemoveVaultMessage : IMessage
+    public sealed class RemoveVaultMessage
     {
         /// <summary>
         /// The vault to remove.

@@ -11,6 +11,6 @@
         Canceled = -1,
         None = 0,
         Completed = 1,
-        InProgress = 2,
+        InProgress = 2
     }
 }

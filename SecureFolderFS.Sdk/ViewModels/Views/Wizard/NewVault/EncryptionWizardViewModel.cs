@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -70,9 +68,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
                 return; // TODO: Report issue
 
             // Add vault
-            DialogViewModel.VaultCollectionModel.AddVault(deployResult.Value!);
+            DialogViewModel.VaultCollectionModel.Add(deployResult.Value!);
             await DialogViewModel.VaultCollectionModel.SaveAsync(cancellationToken);
-            WeakReferenceMessenger.Default.Send(new AddVaultMessage(deployResult.Value!));
 
             // Navigate
             await NavigationService.TryNavigateAsync(() => new SummaryWizardViewModel(deployResult.Value!.VaultName, DialogViewModel));

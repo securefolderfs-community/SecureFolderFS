@@ -55,10 +55,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         [RelayCommand]
         private async Task RemoveVaultAsync(CancellationToken cancellationToken)
         {
-            _vaultCollectionModel.RemoveVault(VaultViewModel.VaultModel);
+            _vaultCollectionModel.Remove(VaultViewModel.VaultModel);
             await _vaultCollectionModel.SaveAsync(cancellationToken);
-
-            WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(VaultViewModel.VaultModel));
         }
 
         [RelayCommand]

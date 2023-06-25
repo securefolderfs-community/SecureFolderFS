@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -36,10 +34,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
                 return;
 
             var vaultModel = new VaultModel(_vaultFolder);
-            DialogViewModel.VaultCollectionModel.AddVault(vaultModel);
+            DialogViewModel.VaultCollectionModel.Add(vaultModel);
             await DialogViewModel.VaultCollectionModel.SaveAsync(cancellationToken);
 
-            WeakReferenceMessenger.Default.Send(new AddVaultMessage(vaultModel));
             await NavigationService.TryNavigateAsync(() => new SummaryWizardViewModel(vaultModel.VaultName, DialogViewModel));
         }
 

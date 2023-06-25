@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
-    public sealed partial class EmptyHostViewModel : BasePageViewModel, IRecipient<AddVaultMessage>
+    public sealed partial class EmptyHostViewModel : BasePageViewModel
     {
         private readonly INavigationService _hostNavigationService;
         private readonly IVaultCollectionModel _vaultCollectionModel;
@@ -23,15 +22,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         {
             _hostNavigationService = hostNavigationService;
             _vaultCollectionModel = vaultCollectionModel;
-            WeakReferenceMessenger.Default.Register(this);
         }
 
-        /// <inheritdoc/>
-        public async void Receive(AddVaultMessage message) // TODO: Remove when IVaultCollectionModel inherits from ICollection with the ability to listen for changes
+        private async void VaultCollectionModel_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            // Event handler will not be unhooked here since the view model is cached anyway
             await _hostNavigationService.TryNavigateAsync(() => new MainHostViewModel(_hostNavigationService, _vaultCollectionModel));
-            WeakReferenceMessenger.Default.Unregister<AddVaultMessage>(this);
         }
 
         [RelayCommand]
@@ -45,6 +40,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         {
             await DialogService.ShowDialogAsync(SettingsDialogViewModel.Instance);
             await SettingsService.SaveAsync();
+        }
+
+        /// <inheritdoc/>
+        public override void OnNavigatingTo(NavigationType navigationType)
+        {
+            _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
+        }
+
+        /// <inheritdoc/>
+        public override void OnNavigatingFrom()
+        {
+            _vaultCollectionModel.CollectionChanged -= VaultCollectionModel_CollectionChanged;
         }
     }
 }

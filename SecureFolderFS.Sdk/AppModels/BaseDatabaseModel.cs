@@ -25,6 +25,13 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
+        public virtual bool ClearData()
+        {
+            settingsCache.Clear();
+            return true;
+        }
+
+        /// <inheritdoc/>
         public abstract TValue? GetValue<TValue>(string key, Func<TValue>? defaultValue = null);
 
         /// <inheritdoc/>

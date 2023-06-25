@@ -1,74 +1,93 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultCollectionModel"/>
-    public sealed class VaultCollectionModel : IVaultCollectionModel
+    public sealed class VaultCollectionModel : Collection<IVaultModel>, IVaultCollectionModel
     {
-        private readonly List<IVaultModel> _vaults;
-
         private IVaultWidgets VaultWidgets { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultWidgets;
 
         private IVaultConfigurations VaultConfigurations { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultConfigurations;
 
         private IStorageService StorageService { get; } = Ioc.Default.GetRequiredService<IStorageService>();
 
-        public VaultCollectionModel()
+        /// <inheritdoc/>
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+
+        /// <inheritdoc/>
+        protected override void ClearItems()
         {
-            _vaults = new();
+            if (VaultConfigurations.SavedVaults is not null)
+                VaultConfigurations.SavedVaults.Clear();
+
+            VaultWidgets.Clear();
+
+            base.ClearItems();
+            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Reset));
         }
 
         /// <inheritdoc/>
-        public bool AddVault(IVaultModel vaultModel)
+        protected override void InsertItem(int index, IVaultModel item)
         {
-            // Add to cache
-            _vaults.Add(vaultModel);
-
             // Update saved vaults
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
-            VaultConfigurations.SavedVaults.Add(new(vaultModel.Folder.Id, vaultModel.VaultName, vaultModel.LastAccessDate));
+            VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.Id, item.VaultName, item.LastAccessDate));
 
             // Update widgets
-            VaultWidgets.SetForVault(vaultModel.Folder.Id, new List<WidgetDataModel>()
+            VaultWidgets.SetForVault(item.Folder.Id, new List<WidgetDataModel>()
             {
                 new(Constants.Widgets.HEALTH_WIDGET_ID),
                 new(Constants.Widgets.GRAPHS_WIDGET_ID)
             });
 
-            return true;
+            // Add to cache
+            base.InsertItem(index, item);
+            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item, index));
+            WeakReferenceMessenger.Default.Send(new AddVaultMessage(item));
         }
 
         /// <inheritdoc/>
-        public bool RemoveVault(IVaultModel vaultModel)
+        protected override void RemoveItem(int index)
         {
-            var itemToRemove = VaultConfigurations.SavedVaults?.FirstOrDefault(x => vaultModel.Folder.Id == x.Id);
-            if (itemToRemove is null)
-                return false;
-
-            // Remove from cache
-            _vaults.Remove(vaultModel);
+            var removedItem = this[index];
 
             // Remove persisted
-            VaultConfigurations.SavedVaults!.Remove(itemToRemove);
-            VaultWidgets.SetForVault(vaultModel.Folder.Id, null);
+            if (VaultConfigurations.SavedVaults is not null)
+                VaultConfigurations.SavedVaults.RemoveAt(index);
 
-            return true;
+            // Remove widgets data for that vault
+            VaultWidgets.SetForVault(removedItem.Folder.Id, null);
+
+            // Remove from cache
+            base.RemoveItem(index);
+            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Remove, removedItem, index));
+            WeakReferenceMessenger.Default.Send(new RemoveVaultMessage(removedItem));
         }
 
         /// <inheritdoc/>
-        public IEnumerable<IVaultModel> GetVaults()
+        protected override void SetItem(int index, IVaultModel item)
         {
-            return _vaults;
+            if (VaultConfigurations.SavedVaults is null)
+                return;
+
+            VaultConfigurations.SavedVaults[index] = new(item.Folder.Id, item.VaultName, item.LastAccessDate);
+
+            var oldItem = this[index];
+            base.SetItem(index, item);
+            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Replace, item, oldItem, index));
         }
 
         /// <inheritdoc/>
@@ -79,7 +98,7 @@ namespace SecureFolderFS.Sdk.AppModels
             result &= await VaultWidgets.LoadAsync(cancellationToken);
 
             // Clear previous vaults
-            _vaults.Clear();
+            Items.Clear();
 
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
             foreach (var item in VaultConfigurations.SavedVaults)
@@ -87,12 +106,12 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (item.Id is null)
                     continue;
 
-                var folder = await StorageService.TryGetFolderFromPathAsync(item.Id, cancellationToken);
+                var folder = await StorageService.TryGetFolderAsync(item.Id, cancellationToken);
                 if (folder is null)
                     continue;
 
                 var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
-                _vaults.Add(vaultModel);
+                Items.Add(vaultModel);
             }
 
             return result;

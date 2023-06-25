@@ -52,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             var rounded = (int)Math.Round(value);
 
             if (rounded == 100)
-                UpdateText = "Installing..";
+                UpdateText = "Installing...";
             else
                 UpdateText = $"Downloading {rounded}%";
         }

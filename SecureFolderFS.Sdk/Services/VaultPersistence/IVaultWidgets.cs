@@ -10,18 +10,23 @@ namespace SecureFolderFS.Sdk.Services.VaultPersistence
     public interface IVaultWidgets : IPersistable
     {
         /// <summary>
-        /// 
+        /// Gets the collection of widgets saved for an individual vault.
         /// </summary>
-        /// <param name="vaultId"></param>
-        /// <returns></returns>
-        ICollection<WidgetDataModel>? GetForVault(string vaultId);
+        /// <param name="id">The ID that is associated with a vault.</param>
+        /// <returns>An <see cref="ICollection{T}"/> of <see cref="WidgetDataModel"/> that represents the vault widgets.</returns>
+        ICollection<WidgetDataModel>? GetForVault(string id);
 
         /// <summary>
-        /// 
+        /// Sets the collection of widgets for an individual vault.
         /// </summary>
-        /// <param name="vaultId"></param>
-        /// <param name="widgets"></param>
-        /// <returns></returns>
-        bool SetForVault(string vaultId, ICollection<WidgetDataModel>? widgets);
+        /// <param name="id">The ID that is associated with a vault.</param>
+        /// <param name="widgets">The collection of widgets to set.</param>
+        /// <returns>If succeeded, returns true, otherwise false.</returns>
+        bool SetForVault(string id, ICollection<WidgetDataModel>? widgets);
+
+        /// <summary>
+        /// Clears all persisted widgets.
+        /// </summary>
+        void Clear();
     }
 }

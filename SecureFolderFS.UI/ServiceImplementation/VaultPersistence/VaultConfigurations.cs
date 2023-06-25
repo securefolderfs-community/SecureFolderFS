@@ -19,7 +19,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
         }
 
         /// <inheritdoc/>
-        public ICollection<VaultDataModel>? SavedVaults
+        public IList<VaultDataModel>? SavedVaults
         {
             get => GetSetting<List<VaultDataModel>?>();
             set => SetSetting(value);

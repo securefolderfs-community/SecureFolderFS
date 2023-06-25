@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             }
 
             // Load main screen
-            if (!vaultCollectionModel.GetVaults().IsEmpty()) // Has vaults
+            if (!vaultCollectionModel.IsEmpty()) // Has vaults
             {
                 // Show main app screen
                 await HostNavigationService.TryNavigateAsync(() => new MainHostViewModel(HostNavigationService, vaultCollectionModel));

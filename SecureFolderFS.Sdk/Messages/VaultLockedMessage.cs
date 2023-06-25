@@ -5,7 +5,7 @@ namespace SecureFolderFS.Sdk.Messages
     /// <summary>
     /// Represents a message that is emitted when a vault is locked.
     /// </summary>
-    public sealed class VaultLockedMessage : IMessage
+    public sealed class VaultLockedMessage
     {
         /// <summary>
         /// Gets the <see cref="IVaultModel"/> of the locked vault.
