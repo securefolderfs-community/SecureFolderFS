@@ -62,7 +62,7 @@
                             <ucab:ActionBlockControl.ActionElement>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <HyperlinkButton
-                                        Content="Project website"
+                                        Content="Website"
                                         NavigateUri="{x:Bind ProjectWebsiteUri}"
                                         Visibility="{x:Bind ProjectWebsiteUri, Converter={StaticResource NullToVisibilityConverter}}" />
                                     <HyperlinkButton

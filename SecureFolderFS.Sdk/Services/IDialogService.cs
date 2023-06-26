@@ -1,7 +1,5 @@
-﻿using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
+﻿using SecureFolderFS.Sdk.Models;
 using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -17,5 +15,13 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="viewModel">The view model of the dialog.</param>
         /// <returns>A new instance of <see cref="IDialog"/> that represents the dialog.</returns>
         IDialog GetDialog<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged;
+
+        /// <summary>
+        /// Closes the currently opened dialog, if any.
+        /// </summary>
+        /// <remarks>
+        /// This method will close only blocking dialogs that prevent other dialogs from opening.
+        /// </remarks>
+        void ReleaseDialog();
     }
 }

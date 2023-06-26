@@ -18,6 +18,7 @@ namespace SecureFolderFS.Sdk.Extensions
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="DialogOption"/> based on the selected option.</returns>
         public static Task<IResult> ShowDialogAsync<TViewModel>(this IDialogService dialogService, TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {
+            dialogService.ReleaseDialog();
             return dialogService.GetDialog(viewModel).ShowAsync();
         }
 

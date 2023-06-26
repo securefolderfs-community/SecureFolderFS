@@ -15,6 +15,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public abstract class BaseApplicationService : IApplicationService
     {
         /// <inheritdoc/>
+        public abstract string Platform { get; }
+
+        /// <inheritdoc/>
         public virtual string GetSystemVersion()
         {
             if (OperatingSystem.IsWindows())

@@ -56,15 +56,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenLogLocationAsync()
+        private async Task OpenChangelogAsync()
         {
-            return FileExplorerService.OpenAppFolderAsync();
+            var viewModel = new ChangelogDialogViewModel();
+            _ = viewModel.InitAsync();
+
+            await DialogService.ShowDialogAsync(viewModel);
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenLicensesDialogAsync()
+        private Task OpenLicensesAsync()
         {
             return DialogService.ShowDialogAsync(new LicensesDialogViewModel());
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private Task OpenLogLocationAsync()
+        {
+            return FileExplorerService.OpenAppFolderAsync();
         }
     }
 }

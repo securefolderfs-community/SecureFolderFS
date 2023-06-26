@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Octokit;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -17,7 +17,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
         /// <inheritdoc/>
-        public async Task<ChangelogViewModel?> GetChangelogAsync(AppVersion version, CancellationToken cancellationToken)
+        public async Task<ChangelogDataModel?> GetChangelogAsync(AppVersion version, CancellationToken cancellationToken)
         {
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var client = new GitHubClient(new ProductHeaderValue(repoOwner));
                 var release = await client.Repository.Release.Get(repoOwner, repoName, version.Version.ToString());
 
-                return new(release.Name, FormatBody(release.Body), version.Version);
+                return new(release.Name, release.Body, version.Version);
             }
             catch (Exception)
             {
@@ -36,7 +36,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ChangelogViewModel> GetChangelogSinceAsync(AppVersion version, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<ChangelogDataModel> GetChangelogSinceAsync(AppVersion version, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
@@ -64,13 +64,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
                 // 'itemVersion' must be same or newer than 'version' as well as same or older than 'currentVersion'
                 if (itemVersion >= version.Version && itemVersion <= currentVersion.Version)
-                    yield return new(item.Name, FormatBody(item.Body), itemVersion);
+                    yield return new(item.Name, item.Body, itemVersion);
             }
-        }
-
-        private static string FormatBody(string changelogBody)
-        {
-            return changelogBody.Replace("\r\n", "\r\n\n");
         }
     }
 }

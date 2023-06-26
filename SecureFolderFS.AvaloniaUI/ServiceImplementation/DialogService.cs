@@ -43,6 +43,11 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public void ReleaseDialog()
+        {
+            return; // TODO: Implement dialog releasing
+        }
+
         [Obsolete]
         public async Task<IResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {

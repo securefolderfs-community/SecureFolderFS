@@ -39,6 +39,7 @@
         <None Remove="Assets\AppAssets\Vault_dark.svg" />
         <None Remove="Assets\AppAssets\Vault_light.svg" />
         <None Remove="Dialogs\AgreementDialog.xaml" />
+        <None Remove="Dialogs\ChangelogDialog.xaml" />
         <None Remove="Dialogs\LicensesDialog.xaml" />
         <None Remove="Dialogs\PasswordChangeDialog.xaml" />
         <None Remove="Dialogs\PaymentDialog.xaml" />
@@ -93,6 +94,10 @@
         <None Update="Assets\AppAssets\Vault_light.svg">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <Page Update="Dialogs\ChangelogDialog.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+        </Page>
         <Page Update="UserControls\Navigation\ContentNavigationControl.xaml">
           <Generator>MSBuild:Compile</Generator>
         </Page>

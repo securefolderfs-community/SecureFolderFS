@@ -107,7 +107,7 @@
 
             <ui:SettingsExpander
                 ActionIconSource="{ic:FluentIconSource Open48Regular}"
-                Command="{Binding ViewModel.OpenLicensesDialogCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                Command="{Binding ViewModel.OpenLicensesCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                 Header="Third party licenses"
                 IconSource="{ic:FluentIconSource DocumentText24Regular}"
                 IsClickEnabled="True" />

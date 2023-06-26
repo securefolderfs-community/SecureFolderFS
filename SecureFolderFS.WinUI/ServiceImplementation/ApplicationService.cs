@@ -12,10 +12,15 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class ApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
+        public override string Platform { get; } = "WinUI";
+
+        /// <inheritdoc/>
         public override AppVersion GetAppVersion()
         {
             var packageVersion = Package.Current.Id.Version;
-            return new(new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision), "WinUI");
+            var version = new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+
+            return new(version, Platform);
         }
 
         /// <inheritdoc/>

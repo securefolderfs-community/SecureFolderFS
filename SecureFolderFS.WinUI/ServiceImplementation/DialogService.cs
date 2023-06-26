@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -22,6 +23,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         {
             _dialogs = new()
             {
+                { typeof(ChangelogDialogViewModel), () => new ChangelogDialog() },
                 { typeof(LicensesDialogViewModel), () => new LicensesDialog() },
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() },
@@ -50,6 +52,17 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 MainWindow.Instance.RootControl.Overlay.OverlayContent = overlayable.OverlayContent;
 
             return dialog;
+        }
+
+        /// <inheritdoc/>
+        public void ReleaseDialog()
+        {
+            var openedPopups = VisualTreeHelper.GetOpenPopupsForXamlRoot(MainWindow.Instance.Content.XamlRoot);
+            foreach (var item in openedPopups)
+            {
+                if (item.Child is ContentDialog contentDialog)
+                    contentDialog.Hide();
+            }
         }
     }
 }

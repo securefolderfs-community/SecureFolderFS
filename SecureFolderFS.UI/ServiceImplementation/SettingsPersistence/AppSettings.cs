@@ -46,6 +46,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
         }
 
         /// <inheritdoc/>
+        public string? LastVersion
+        {
+            get => GetSetting<string>();
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
         public DateTime UpdateLastChecked
         {
             get => GetSetting<DateTime>(() => new());

@@ -12,9 +12,13 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
     internal sealed class ApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
+        public override string Platform { get; } = "AvaloniaUI";
+
+        /// <inheritdoc/>
         public override AppVersion GetAppVersion()
         {
-            return new(Assembly.GetExecutingAssembly().GetName().Version!, "AvaloniaUI");
+            var version = Assembly.GetExecutingAssembly().GetName().Version!;
+            return new(version, Platform);
         }
 
         /// <inheritdoc/>

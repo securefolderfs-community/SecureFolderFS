@@ -13,6 +13,11 @@ namespace SecureFolderFS.Sdk.Services
     public interface IApplicationService
     {
         /// <summary>
+        /// Gets the name that uniquely identifies a platform.
+        /// </summary>
+        string Platform { get; }
+
+        /// <summary>
         /// Gets the version of the app.
         /// </summary>
         /// <returns><see cref="Version"/> of the app.</returns>
