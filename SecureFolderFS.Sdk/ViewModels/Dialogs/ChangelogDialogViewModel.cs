@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Shared.Utils;
+using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
     public sealed partial class ChangelogDialogViewModel : DialogViewModel, IAsyncInitialize
     {
-        private readonly bool _usePreviousVersion;
+        private readonly AppVersion _changelogSince;
 
         [ObservableProperty] private string? _UpdateText;
 
@@ -23,16 +24,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 
         private IAppSettings AppSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().AppSettings;
 
-        public ChangelogDialogViewModel(bool usePreviousVersion = false)
+        public ChangelogDialogViewModel(AppVersion changelogSince)
         {
-            _usePreviousVersion = usePreviousVersion;
+            _changelogSince = changelogSince;
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var changelogBuilder = new StringBuilder();
-            var loadLatest = !_usePreviousVersion || (_usePreviousVersion && string.IsNullOrEmpty(AppSettings.LastVersion));
+            var loadLatest = _changelogSince.Version == ApplicationService.GetAppVersion().Version;
 
             if (loadLatest)
             {
@@ -48,8 +49,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
             }
             else
             {
-                var previousVersion = new AppVersion(new(AppSettings.LastVersion!), ApplicationService.Platform);
-                await foreach (var item in ChangelogService.GetChangelogSinceAsync(previousVersion, cancellationToken))
+                await foreach (var item in ChangelogService.GetChangelogSinceAsync(_changelogSince, cancellationToken))
                 {
                     BuildChangelog(item, changelogBuilder);
                 }
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
             changelogBuilder.Append(changelog.Name);
             changelogBuilder.Append("\n---\n");
             changelogBuilder.Append(changelog.Description.Replace("\r\n", "\r\n\n"));
-            changelogBuilder.Append("\n\n");
+            changelogBuilder.Append("\n----\n");
         }
     }
 }

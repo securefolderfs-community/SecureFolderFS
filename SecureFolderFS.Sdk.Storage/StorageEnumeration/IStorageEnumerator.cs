@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecureFolderFS.Sdk.Storage.NestedStorage;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -20,21 +21,21 @@ namespace SecureFolderFS.Sdk.Storage.StorageEnumeration
         /// Enumerates the <see cref="SourceFolder"/> for files.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFile"/> of all files discovered by the enumerator.</returns>
-        IAsyncEnumerable<IFile> EnumerateFilesAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="INestedFile"/> of all files discovered by the enumerator.</returns>
+        IAsyncEnumerable<INestedFile> EnumerateFilesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Enumerates the <see cref="SourceFolder"/> for folders.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IFolder"/> of all folders discovered by the enumerator.</returns>
-        IAsyncEnumerable<IFolder> EnumerateFoldersAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="INestedFolder"/> of all folders discovered by the enumerator.</returns>
+        IAsyncEnumerable<INestedFolder> EnumerateFoldersAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Enumerates the <see cref="SourceFolder"/> for items.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="IStorable"/> of all items discovered by the enumerator.</returns>
-        IAsyncEnumerable<IStorable> EnumerateStorageAsync(CancellationToken cancellationToken = default);
+        /// <returns>Returns an async operation represented by <see cref="IAsyncEnumerable{T}"/> of type <see cref="INestedStorable"/> of all items discovered by the enumerator.</returns>
+        IAsyncEnumerable<INestedStorable> EnumerateStorageAsync(CancellationToken cancellationToken = default);
     }
 }

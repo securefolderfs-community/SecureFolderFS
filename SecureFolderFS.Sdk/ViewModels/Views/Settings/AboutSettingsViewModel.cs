@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenChangelogAsync()
         {
-            var viewModel = new ChangelogDialogViewModel();
+            var viewModel = new ChangelogDialogViewModel(ApplicationService.GetAppVersion());
             _ = viewModel.InitAsync();
 
             await DialogService.ShowDialogAsync(viewModel);

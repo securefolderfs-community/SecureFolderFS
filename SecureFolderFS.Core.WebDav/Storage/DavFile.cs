@@ -2,7 +2,6 @@
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
 using System.IO;
 using System.Threading;
@@ -44,19 +43,6 @@ namespace SecureFolderFS.Core.WebDav.Storage
                 return fileExtended.OpenStreamAsync(access, share, cancellationToken);
 
             return Inner.OpenStreamAsync(access, cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public virtual async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
-        {
-            if (Inner is not ILocatableStorable locatableStorable)
-                return null;
-
-            var parentFolder = await locatableStorable.GetParentAsync(cancellationToken);
-            if (parentFolder is null)
-                return null;
-
-            return NewFolder(parentFolder);
         }
     }
 }

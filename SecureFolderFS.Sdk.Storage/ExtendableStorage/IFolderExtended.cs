@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using SecureFolderFS.Sdk.Storage.NestedStorage;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Storage.ExtendableStorage
@@ -14,7 +15,7 @@ namespace SecureFolderFS.Sdk.Storage.ExtendableStorage
         /// <param name="fileName">The name of the file.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IFile"/>, otherwise an exception is thrown.</returns>
-        Task<IFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default);
+        Task<INestedFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets a folder in the current directory by name.
@@ -22,6 +23,6 @@ namespace SecureFolderFS.Sdk.Storage.ExtendableStorage
         /// <param name="folderName">The name of the folder.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If folder is found and access is granted, returns <see cref="IFolder"/> otherwise null.</returns>
-        Task<IFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default);
+        Task<INestedFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default);
     }
 }

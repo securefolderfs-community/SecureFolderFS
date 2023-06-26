@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -34,7 +35,7 @@ namespace SecureFolderFS.Core.Dokany.Storage
             throw new NotImplementedException();
         }
 
-        public IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, CancellationToken cancellationToken = default)
+        public IAsyncEnumerable<INestedStorable> GetItemsAsync(StorableKind kind = StorableKind.All, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

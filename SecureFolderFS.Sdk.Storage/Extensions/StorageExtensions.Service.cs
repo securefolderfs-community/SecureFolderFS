@@ -22,7 +22,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         /// Tries to retrieve a folder associated with <paramref name="id"/>.
         /// </summary>
         /// <param name="storageService">The service.</param>
-        /// <param name="id">The unique ID of the folder to retrieve</param>
+        /// <param name="id">The unique ID of the folder to retrieve.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, value is <see cref="IFolder"/> that represents the folder, otherwise null.</returns>
         public static async Task<IFolder?> TryGetFolderAsync(this IStorageService storageService, string id, CancellationToken cancellationToken = default)
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         /// Tries to retrieve a file associated with <paramref name="id"/>.
         /// </summary>
         /// <param name="storageService">The service.</param>
-        /// <param name="id">The unique ID of the file to retrieve</param>
+        /// <param name="id">The unique ID of the file to retrieve.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, value is <see cref="IFile"/> that represents the file, otherwise null.</returns>
         public static async Task<IFile?> TryGetFileAsync(this IStorageService storageService, string id, CancellationToken cancellationToken = default)

@@ -11,41 +11,46 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 
 namespace SecureFolderFS.UI.Storage.NativeStorage
 {
     /// <inheritdoc cref="IFolder"/>
-    public sealed class NativeFolder : NativeStorable, ILocatableFolder, IModifiableFolder, IMutableFolder, IFolderExtended
+    public class NativeFolder : NativeStorable<DirectoryInfo>, ILocatableFolder, IModifiableFolder, IMutableFolder, IFolderExtended, INestedFolder
     {
+        public NativeFolder(DirectoryInfo directoryInfo)
+            : base(directoryInfo)
+        {
+        }
+
         public NativeFolder(string path)
-            : base(path)
+            : this(new DirectoryInfo(path))
         {
         }
 
         /// <inheritdoc/>
-        public Task<IFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
+        public virtual Task<INestedFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
         {
             var path = System.IO.Path.Combine(Path, fileName);
 
             if (!File.Exists(path))
                 throw new FileNotFoundException();
 
-            return Task.FromResult<IFile>(new NativeFile(path));
+            return Task.FromResult<INestedFile>(new NativeFile(path));
         }
 
         /// <inheritdoc/>
-        public Task<IFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
+        public virtual Task<INestedFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
         {
             var path = System.IO.Path.Combine(Path, folderName);
-
             if (!Directory.Exists(path))
                 throw new FileNotFoundException();
 
-            return Task.FromResult<IFolder>(new NativeFolder(path));
+            return Task.FromResult<INestedFolder>(new NativeFolder(path));
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public virtual async IAsyncEnumerable<INestedStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             if (kind == StorableKind.Files)
             {
@@ -72,7 +77,7 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(IStorable item, bool permanently = default, CancellationToken cancellationToken = default)
+        public virtual Task DeleteAsync(INestedStorable item, bool permanently = default, CancellationToken cancellationToken = default)
         {
             _ = permanently;
 
@@ -91,7 +96,7 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (itemToCopy is IFile sourceFile)
             {
@@ -119,7 +124,7 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedStorable> MoveFromAsync(INestedStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (itemToMove is IFile sourceFile)
             {
@@ -148,7 +153,7 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             var path = System.IO.Path.Combine(Path, desiredName);
             if (overwrite || !File.Exists(path))
@@ -158,18 +163,18 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
         }
 
         /// <inheritdoc/>
-        public Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual Task<INestedFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             var path = System.IO.Path.Combine(Path, desiredName);
             if (overwrite)
                 Directory.Delete(path, true);
 
             _ = Directory.CreateDirectory(path);
-            return Task.FromResult<IFolder>(new NativeFolder(path));
+            return Task.FromResult<INestedFolder>(new NativeFolder(path));
         }
 
         /// <inheritdoc/>
-        public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
+        public virtual Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
         {
             return Task.FromResult<IFolderWatcher>(new NativeFolderWatcher(this));
         }

@@ -3,11 +3,12 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
     /// <inheritdoc cref="IStorable"/>
-    internal abstract class WindowsStorable<TStorage> : ILocatableStorable
+    internal abstract class WindowsStorable<TStorage> : ILocatableStorable, INestedStorable
         where TStorage : class, IStorageItem
     {
         internal readonly TStorage storage;

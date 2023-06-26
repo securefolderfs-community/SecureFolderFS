@@ -59,8 +59,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 if (item.Draft)
                     continue;
 
-                var itemVersion =
-                    new Version(item.TagName.Replace("v", string.Empty, StringComparison.OrdinalIgnoreCase));
+                var itemVersion = Version.Parse(item.TagName.Replace("v", string.Empty, StringComparison.OrdinalIgnoreCase));
 
                 // 'itemVersion' must be same or newer than 'version' as well as same or older than 'currentVersion'
                 if (itemVersion >= version.Version && itemVersion <= currentVersion.Version)
