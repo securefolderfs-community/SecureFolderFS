@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.AppModels
+namespace SecureFolderFS.Sdk.AppModels.Database
 {
     /// <summary>
     /// Represents a dictionary-based database model.
@@ -20,15 +20,8 @@ namespace SecureFolderFS.Sdk.AppModels
         protected BaseDatabaseModel(IAsyncSerializer<Stream> serializer)
         {
             this.serializer = serializer;
-            this.storageSemaphore = new(1, 1);
-            this.settingsCache = new();
-        }
-
-        /// <inheritdoc/>
-        public virtual bool ClearData()
-        {
-            settingsCache.Clear();
-            return true;
+            storageSemaphore = new(1, 1);
+            settingsCache = new();
         }
 
         /// <inheritdoc/>
@@ -42,5 +35,12 @@ namespace SecureFolderFS.Sdk.AppModels
 
         /// <inheritdoc/>
         public abstract Task<bool> SaveAsync(CancellationToken cancellationToken = default);
+
+        /// <inheritdoc/>
+        public virtual void Dispose()
+        {
+            storageSemaphore.Dispose();
+            settingsCache.Clear();
+        }
     }
 }

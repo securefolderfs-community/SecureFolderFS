@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.FileSystem.Paths;
+﻿using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
@@ -7,7 +8,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.Directories;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage
 {

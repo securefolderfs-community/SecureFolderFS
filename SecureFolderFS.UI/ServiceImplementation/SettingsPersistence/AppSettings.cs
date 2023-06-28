@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;

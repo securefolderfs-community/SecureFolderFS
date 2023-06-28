@@ -1,8 +1,7 @@
-﻿using System;
+﻿using SecureFolderFS.Shared.Utils;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -29,7 +28,7 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="progress">The progress of the operation. The reported values range from 0 to 100 inclusive.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The result of the operation is determined by <see cref="AppUpdateResultType"/>.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation. .</returns>
         Task<IResult> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default);
     }
 }

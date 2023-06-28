@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.AppModels
+namespace SecureFolderFS.Sdk.AppModels.Database
 {
     /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
     public sealed class BatchDatabaseModel : BaseDatabaseModel<BatchDatabaseModel.SettingValue>

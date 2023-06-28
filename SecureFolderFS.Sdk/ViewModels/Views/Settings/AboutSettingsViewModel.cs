@@ -29,17 +29,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task CopyAppVersionAsync(CancellationToken cancellationToken)
         {
-            if (await ClipboardService.IsClipboardAvailableAsync())
-                await ClipboardService.SetTextAsync(AppVersion);
+            if (await ClipboardService.IsSupportedAsync())
+                await ClipboardService.SetTextAsync(AppVersion, cancellationToken);
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task CopySystemVersionAsync(CancellationToken cancellationToken)
         {
-            if (await ClipboardService.IsClipboardAvailableAsync())
+            if (await ClipboardService.IsSupportedAsync())
             {
                 var systemVersion = ApplicationService.GetSystemVersion();
-                await ClipboardService.SetTextAsync(systemVersion);
+                await ClipboardService.SetTextAsync(systemVersion, cancellationToken);
             }
         }
 

@@ -66,7 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels
                 await HostNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(HostNavigationService, vaultCollectionModel));
             }
 
-            // Check if changelog is available
+            // Check if the changelog is available
             if (Version.TryParse(SettingsService.AppSettings.LastVersion, out var lastVersion))
             {
                 var currentVersion = ApplicationService.GetAppVersion().Version;

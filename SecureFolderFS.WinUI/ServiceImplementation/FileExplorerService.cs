@@ -33,7 +33,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
+        public async Task<ILocatableFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
             WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance.GetWindowHandle());
@@ -54,7 +54,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> PickSingleFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<ILocatableFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance.GetWindowHandle());

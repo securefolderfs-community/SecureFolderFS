@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
@@ -21,24 +22,6 @@ namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
             SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.USER_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
             PropertyChanged += UserSettings_PropertyChanged;
         }
-
-        #region Privacy
-
-        /// <inheritdoc/>
-        public bool AutoLockVaults
-        {
-            get => GetSetting(() => false);
-            set => SetSetting(value);
-        }
-
-        /// <inheritdoc/>
-        public bool IsTelemetryEnabled
-        {
-            get => GetSetting(() => true);
-            set => SetSetting(value);
-        }
-
-        #endregion
 
         #region Preferences
 
@@ -72,12 +55,30 @@ namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
 
         #endregion
 
+        #region Privacy
+
+        /// <inheritdoc/>
+        public bool AutoLockVaults
+        {
+            get => GetSetting(() => false);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public bool IsTelemetryEnabled
+        {
+            get => GetSetting(() => true);
+            set => SetSetting(value);
+        }
+
+        #endregion
+
         private void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             var eventName = e.PropertyName switch
             {
                 nameof(AutoLockVaults) => $"{nameof(AutoLockVaults)}: {AutoLockVaults}",
-                // nameof(IsTelemetryEnabled) => $"{nameof(IsTelemetryEnabled)}: {IsTelemetryEnabled}", // Case handled elsewhere
+                nameof(IsTelemetryEnabled) => $"{nameof(IsTelemetryEnabled)}: {IsTelemetryEnabled}",
                 nameof(PreferredFileSystemId) => $"{nameof(PreferredFileSystemId)}: {PreferredFileSystemId}",
                 nameof(StartOnSystemStartup) => $"{nameof(StartOnSystemStartup)}: {StartOnSystemStartup}",
                 nameof(ContinueOnLastVault) => $"{nameof(ContinueOnLastVault)}: {ContinueOnLastVault}",

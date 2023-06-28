@@ -60,7 +60,11 @@ namespace SecureFolderFS.Sdk.AppModels
             if (string.IsNullOrEmpty(settingName))
                 return false;
 
-            return SettingsDatabase.SetValue(settingName, value);
+            var result = SettingsDatabase.SetValue(settingName, value);
+            if (result)
+                OnPropertyChanged(settingName);
+
+            return result;
         }
 
         /// <summary>

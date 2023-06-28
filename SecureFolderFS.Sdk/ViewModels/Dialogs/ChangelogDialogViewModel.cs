@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Text;
@@ -17,12 +17,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         private readonly AppVersion _changelogSince;
 
         [ObservableProperty] private string? _UpdateText;
+        [ObservableProperty] private string? _ErrorText;
 
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
         private IChangelogService ChangelogService { get; } = Ioc.Default.GetRequiredService<IChangelogService>();
-
-        private IAppSettings AppSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().AppSettings;
 
         public ChangelogDialogViewModel(AppVersion changelogSince)
         {
@@ -35,27 +34,44 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
             var changelogBuilder = new StringBuilder();
             var loadLatest = _changelogSince.Version == ApplicationService.GetAppVersion().Version;
 
-            if (loadLatest)
+            try
             {
-                var appVersion = ApplicationService.GetAppVersion();
-                var changelog = await ChangelogService.GetChangelogAsync(appVersion, cancellationToken);
-                if (changelog is null)
+                if (loadLatest)
                 {
-                    UpdateText = "No update info available";
-                    return;
+                    var appVersion = ApplicationService.GetAppVersion();
+                    var changelog = await ChangelogService.GetChangelogAsync(appVersion, cancellationToken);
+                    if (changelog is null)
+                    {
+                        UpdateText = "No update info available";
+                        return;
+                    }
+
+                    BuildChangelog(changelog, changelogBuilder);
+                }
+                else
+                {
+                    await foreach (var item in ChangelogService.GetChangelogSinceAsync(_changelogSince, cancellationToken))
+                    {
+                        BuildChangelog(item, changelogBuilder);
+                    }
                 }
 
-                BuildChangelog(changelog, changelogBuilder);
+                UpdateText = changelogBuilder.ToString();
             }
-            else
+            catch (Exception ex)
             {
-                await foreach (var item in ChangelogService.GetChangelogSinceAsync(_changelogSince, cancellationToken))
-                {
-                    BuildChangelog(item, changelogBuilder);
-                }
+                ErrorText = $"{ex.GetType().Name}: {ex.Message}";
             }
+        }
 
-            UpdateText = changelogBuilder.ToString();
+        [RelayCommand]
+        private async Task RetryAsync(CancellationToken cancellationToken)
+        {
+            UpdateText = null;
+            ErrorText = null;
+
+            await Task.Yield();
+            await InitAsync(cancellationToken);
         }
 
         // TODO: Perhaps use an IFormatProvider somehow?

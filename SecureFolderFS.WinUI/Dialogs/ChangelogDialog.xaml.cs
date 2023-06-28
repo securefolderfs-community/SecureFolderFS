@@ -6,6 +6,9 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading.Tasks;
+using CommunityToolkit.WinUI.UI.Controls;
+using SecureFolderFS.Sdk.Services;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,D
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,6 +17,8 @@ namespace SecureFolderFS.WinUI.Dialogs
 {
     public sealed partial class ChangelogDialog : ContentDialog, IDialog<ChangelogDialogViewModel>
     {
+        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
+
         /// <inheritdoc/>
         public ChangelogDialogViewModel ViewModel
         {
@@ -28,5 +33,11 @@ namespace SecureFolderFS.WinUI.Dialogs
 
         /// <inheritdoc/>
         public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
+
+        private async void MarkdownTextBlock_LinkClicked(object? sender, LinkClickedEventArgs e)
+        {
+            var uri = new Uri(e.Link);
+            await ApplicationService.OpenUriAsync(uri);
+        }
     }
 }

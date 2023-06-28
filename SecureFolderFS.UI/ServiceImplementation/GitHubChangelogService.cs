@@ -22,17 +22,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
 
-            try
-            {
-                var client = new GitHubClient(new ProductHeaderValue(repoOwner));
-                var release = await client.Repository.Release.Get(repoOwner, repoName, version.Version.ToString());
+            var client = new GitHubClient(new ProductHeaderValue(repoOwner));
+            var release = await client.Repository.Release.Get(repoOwner, repoName, version.Version.ToString());
 
-                return new(release.Name, release.Body, version.Version);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return new(release.Name, release.Body, version.Version);
         }
 
         /// <inheritdoc/>
@@ -41,27 +34,19 @@ namespace SecureFolderFS.UI.ServiceImplementation
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
 
-            IReadOnlyList<Release>? releases;
+            var client = new GitHubClient(new ProductHeaderValue(repoOwner));
+            var releases = await client.Repository.Release.GetAll(repoOwner, repoName);
             var currentVersion = ApplicationService.GetAppVersion();
-
-            try
-            {
-                var client = new GitHubClient(new ProductHeaderValue(repoOwner));
-                releases = await client.Repository.Release.GetAll(repoOwner, repoName);
-            }
-            catch (Exception)
-            {
-                yield break;
-            }
 
             foreach (var item in releases)
             {
                 if (item.Draft)
                     continue;
 
-                var itemVersion = Version.Parse(item.TagName.Replace("v", string.Empty, StringComparison.OrdinalIgnoreCase));
+                var formattedVersion = item.TagName.Replace("v", string.Empty, StringComparison.OrdinalIgnoreCase);
+                var itemVersion = Version.Parse(formattedVersion);
 
-                // 'itemVersion' must be same or newer than 'version' as well as same or older than 'currentVersion'
+                // 'itemVersion' must be the same or newer than 'version' as well as the same or older than 'currentVersion'
                 if (itemVersion >= version.Version && itemVersion <= currentVersion.Version)
                     yield return new(item.Name, item.Body, itemVersion);
             }
