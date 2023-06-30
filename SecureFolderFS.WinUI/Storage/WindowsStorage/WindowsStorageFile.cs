@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 using System;
 using System.IO;
 using System.Threading;
@@ -11,7 +12,7 @@ using Windows.Storage;
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
     /// <inheritdoc cref="IFile"/>
-    internal sealed class WindowsStorageFile : WindowsStorable<StorageFile>, ILocatableFile, IModifiableFile, IFileExtended
+    internal sealed class WindowsStorageFile : WindowsStorable<StorageFile>, ILocatableFile, IModifiableFile, IFileExtended, INestedFile
     {
         public WindowsStorageFile(StorageFile storage)
             : base(storage)

@@ -30,6 +30,11 @@ namespace SecureFolderFS.Sdk.Services.SettingsPersistence
         string? ApplicationTheme { get; set; }
 
         /// <summary>
+        /// Gets or sets the last version number used before an update.
+        /// </summary>
+        string? LastVersion { get; set; }
+
+        /// <summary>
         /// Gets or sets the date when the app last checked for updates.
         /// </summary>
         DateTime UpdateLastChecked { get; set; }

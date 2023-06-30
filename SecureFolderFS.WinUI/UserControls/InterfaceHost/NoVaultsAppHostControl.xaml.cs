@@ -11,7 +11,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
     {
         public NoVaultsAppHostControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public EmptyHostViewModel ViewModel

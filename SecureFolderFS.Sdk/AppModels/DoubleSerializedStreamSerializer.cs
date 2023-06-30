@@ -26,18 +26,15 @@ namespace SecureFolderFS.Sdk.AppModels
                 var actualDictionary = new Dictionary<object, object?>();
                 foreach (DictionaryEntry item in serializedDictionary)
                 {
-                    if (item.Value is ISerializedModel serializedData)
-                    {
-                        actualDictionary[item.Key] = serializedData.GetValue<object?>();
-                    }
-                    else
-                        actualDictionary[item.Key] = item.Value;
+                    actualDictionary[item.Key] = item.Value is ISerializedModel serializedModel
+                        ? serializedModel.GetValue<object?>()
+                        : item.Value;
                 }
 
                 return base.SerializeAsync(actualDictionary, actualDictionary.GetType(), cancellationToken);
             }
-            else
-                return base.SerializeAsync(data, dataType, cancellationToken);
+
+            return base.SerializeAsync(data, dataType, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -49,18 +46,15 @@ namespace SecureFolderFS.Sdk.AppModels
                 var actualDictionary = new Dictionary<object, ISerializedModel?>();
                 foreach (DictionaryEntry item in deserializedDictionary)
                 {
-                    if (item.Value is JsonElement jsonElement)
-                    {
-                        actualDictionary[item.Key] = new JsonSerializedData(jsonElement);
-                    }
-                    else
-                        actualDictionary[item.Key] = new NonSerializedData(item.Value);
+                    actualDictionary[item.Key] = item.Value is JsonElement jsonElement
+                        ? new JsonSerializedData(jsonElement)
+                        : new NonSerializedData(item.Value);
                 }
 
                 return actualDictionary;
             }
-            else
-                return deserialized;
+
+            return deserialized;
         }
 
         /// <inheritdoc cref="ISerializedModel"/>

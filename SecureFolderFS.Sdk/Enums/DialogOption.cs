@@ -1,8 +1,8 @@
 ﻿namespace SecureFolderFS.Sdk.Enums
 {
-    public enum DialogResult
+    public enum DialogOption
     {
-        None = 0,
+        Cancel = 0,
         Primary = 1,
         Secondary = 2
     }

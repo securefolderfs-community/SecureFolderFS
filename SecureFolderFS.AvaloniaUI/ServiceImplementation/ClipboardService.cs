@@ -1,6 +1,7 @@
 using SecureFolderFS.Sdk.Services;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
@@ -9,7 +10,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
     internal sealed class ClipboardService : IClipboardService
     {
         /// <inheritdoc/>
-        public Task<bool> IsClipboardAvailableAsync()
+        public Task<bool> IsSupportedAsync()
         {
             // TODO handle macOS
             if (OperatingSystem.IsLinux())
@@ -19,9 +20,9 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task SetTextAsync(string text)
+        public Task SetTextAsync(string text, CancellationToken cancellationToken = default)
         {
-            return TextCopy.ClipboardService.SetTextAsync(text);
+            return TextCopy.ClipboardService.SetTextAsync(text, cancellationToken);
         }
     }
 }

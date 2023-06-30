@@ -5,7 +5,7 @@ namespace SecureFolderFS.Sdk.Messages
     /// <summary>
     /// A message to add a vault.
     /// </summary>
-    public sealed class AddVaultMessage : IMessage
+    public sealed class AddVaultMessage
     {
         /// <summary>
         /// The vault to add.

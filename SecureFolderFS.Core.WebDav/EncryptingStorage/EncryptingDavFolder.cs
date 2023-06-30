@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -35,7 +36,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         }
 
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async IAsyncEnumerable<INestedStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await foreach (var item in Inner.GetItemsAsync(kind, cancellationToken))
             {
@@ -51,7 +52,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         }
 
         /// <inheritdoc/>
-        public override async Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public override async Task<INestedFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
@@ -70,7 +71,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         }
 
         /// <inheritdoc/>
-        public override Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
+        public override Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             _ = itemToCopy;
             // TODO: When copying, directory ID should be updated as well

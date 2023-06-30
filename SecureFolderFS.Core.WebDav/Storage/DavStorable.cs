@@ -1,9 +1,13 @@
 ﻿using NWebDav.Server.Storage;
+using SecureFolderFS.Core.WebDav.EncryptingStorage;
 using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
-using SecureFolderFS.Core.WebDav.EncryptingStorage;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.Storage
 {
@@ -12,7 +16,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         where TCapability : IStorable
         where TImplementation : IDavStorable
     {
-        private IBasicProperties? _properties;
+        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public TCapability Inner { get; }
@@ -28,11 +32,11 @@ namespace SecureFolderFS.Core.WebDav.Storage
         {
             get
             {
-                _properties ??= new DavStorageProperties<TImplementation>();
-                if (_properties is DavStorageProperties<TImplementation> { Storable: null } davStorageProperties)
+                properties ??= new DavStorageProperties<TImplementation>();
+                if (properties is DavStorageProperties<TImplementation> { Storable: null } davStorageProperties)
                     davStorageProperties.Storable = Implementation;
 
-                return _properties;
+                return properties;
             }
         }
 
@@ -44,7 +48,20 @@ namespace SecureFolderFS.Core.WebDav.Storage
         protected DavStorable(TCapability inner, IBasicProperties? properties = null)
         {
             Inner = inner;
-            _properties = properties;
+            this.properties = properties;
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
+        {
+            if (Inner is not INestedStorable nestedStorable)
+                throw new NotSupportedException("Retrieving the parent folder is not supported.");
+
+            var parent = await nestedStorable.GetParentAsync(cancellationToken);
+            if (parent is null)
+                return null;
+
+            return NewFolder(parent);
         }
 
         /// <inheritdoc/>

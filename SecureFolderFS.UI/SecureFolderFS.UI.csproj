@@ -67,6 +67,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Octokit" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
       <ProjectReference Include="..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
     </ItemGroup>

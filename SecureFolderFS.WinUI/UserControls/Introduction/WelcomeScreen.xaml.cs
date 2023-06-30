@@ -9,7 +9,7 @@ namespace SecureFolderFS.WinUI.UserControls.Introduction
     {
         public WelcomeScreen()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LockableStorage;
 using SecureFolderFS.Sdk.Storage.MutableStorage;
-using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.Specialized;
 using System.IO;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
+    /// <inheritdoc cref="IVaultWatcherModel"/>
     internal sealed class VaultWatcherModel : IVaultWatcherModel
     {
         private IFolderWatcher? _folderWatcher;
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public IFolder VaultFolder { get; }
 
         /// <inheritdoc/>
-        public event EventHandler<IResult>? VaultChangedEvent;
+        public event EventHandler<EventArgs>? StateChanged;
 
         public VaultWatcherModel(IFolder vaultFolder)
         {
@@ -66,15 +66,15 @@ namespace SecureFolderFS.Sdk.AppModels
             if (e.NewItems is null)
                 return;
 
-            IResult? result = null;
-            if (e.Action == NotifyCollectionChangedAction.Replace && e.OldItems is not null)
+            var contentsChanged = false;
+            if (e.Action == NotifyCollectionChangedAction.Move && e.OldItems is not null)
             {
                 var oldItem = Path.GetFileName(e.OldItems.Cast<string>().FirstOrDefault());
                 var newItem = Path.GetFileName(e.NewItems.Cast<string>().FirstOrDefault());
 
                 // Determine whether any of the changed files were integral parts of the vault
                 if (VaultService.IsNameReserved(oldItem) || VaultService.IsNameReserved(newItem))
-                    result = new CommonResult(false);
+                    contentsChanged = true;
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
@@ -82,12 +82,11 @@ namespace SecureFolderFS.Sdk.AppModels
 
                 // Determine if the deleted file was an integral part of the vault
                 if (VaultService.IsNameReserved(item))
-                    result = new CommonResult(false);
+                    contentsChanged = true;
             }
 
             // If unassigned, an unrelated file/folder has changed - the result should be true
-            result ??= CommonResult.Success;
-            VaultChangedEvent?.Invoke(this, result);
+            StateChanged?.Invoke(this, new VaultChangedEventArgs(contentsChanged));
         }
 
         /// <inheritdoc/>

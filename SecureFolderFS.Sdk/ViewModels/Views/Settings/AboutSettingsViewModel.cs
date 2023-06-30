@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using System;
@@ -28,17 +29,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task CopyAppVersionAsync(CancellationToken cancellationToken)
         {
-            if (await ClipboardService.IsClipboardAvailableAsync())
-                await ClipboardService.SetTextAsync(AppVersion);
+            if (await ClipboardService.IsSupportedAsync())
+                await ClipboardService.SetTextAsync(AppVersion, cancellationToken);
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task CopySystemVersionAsync(CancellationToken cancellationToken)
         {
-            if (await ClipboardService.IsClipboardAvailableAsync())
+            if (await ClipboardService.IsSupportedAsync())
             {
                 var systemVersion = ApplicationService.GetSystemVersion();
-                await ClipboardService.SetTextAsync(systemVersion);
+                await ClipboardService.SetTextAsync(systemVersion, cancellationToken);
             }
         }
 
@@ -55,15 +56,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenLogLocationAsync()
+        private async Task OpenChangelogAsync()
         {
-            return FileExplorerService.OpenAppFolderAsync();
+            var viewModel = new ChangelogDialogViewModel(ApplicationService.GetAppVersion());
+            _ = viewModel.InitAsync();
+
+            await DialogService.ShowDialogAsync(viewModel);
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenLicensesDialogAsync()
+        private Task OpenLicensesAsync()
         {
             return DialogService.ShowDialogAsync(new LicensesDialogViewModel());
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private Task OpenLogLocationAsync()
+        {
+            return FileExplorerService.OpenAppFolderAsync();
         }
     }
 }

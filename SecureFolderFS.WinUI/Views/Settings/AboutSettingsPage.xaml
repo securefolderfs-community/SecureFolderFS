@@ -169,12 +169,12 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="Third party licenses"
-                ClickCommand="{x:Bind ViewModel.OpenLicensesDialogCommand}"
-                Description="View libraries used by SecureFolderFS"
+                Title="Release notes"
+                ClickCommand="{x:Bind ViewModel.OpenChangelogCommand}"
+                Description="View latest release notes for this version"
                 IsClickable="True">
                 <ucab:ActionBlockControl.Icon>
-                    <FontIcon Glyph="&#xF000;" />
+                    <FontIcon Glyph="&#xE8FD;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
@@ -187,6 +187,18 @@
                 IsClickable="True">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE838;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
+                Title="Third party licenses"
+                ClickCommand="{x:Bind ViewModel.OpenLicensesCommand}"
+                Description="View third-party libraries used by SecureFolderFS"
+                IsClickable="True">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xF000;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />

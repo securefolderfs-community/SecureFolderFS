@@ -60,7 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         [RelayCommand]
         private async Task BrowseLocationAsync(CancellationToken cancellationToken)
         {
-            var folder = await FileExplorerService.PickSingleFolderAsync(cancellationToken);
+            var folder = await FileExplorerService.PickFolderAsync(cancellationToken);
             if (folder is null)
                 return;
 

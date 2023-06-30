@@ -23,6 +23,8 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// </summary>
     public sealed partial class PreferencesSettingsPage : Page
     {
+        private bool _isFirstTime = true;
+
         public PreferencesSettingsViewModel ViewModel
         {
             get => (PreferencesSettingsViewModel)DataContext;
@@ -57,6 +59,12 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private async void FileSystemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_isFirstTime)
+            {
+                _isFirstTime = false;
+                return;
+            }
+
             ViewModel.BannerViewModel.PreferredFileSystemId = ViewModel.BannerViewModel.FileSystemAdapters[FileSystemAdapterChoice.SelectedIndex].FileSystemInfoModel.Id;
             await UpdateAdapterStatus((FileSystemAdapterChoice.SelectedItem as FileSystemAdapterItemViewModel)?.FileSystemInfoModel);
         }

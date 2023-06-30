@@ -1,7 +1,9 @@
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
+using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -9,13 +11,10 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.AvaloniaUI.Messages;
-using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
-using SecureFolderFS.Sdk.Services;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -36,7 +35,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         }
 
         /// <inheritdoc/>
-        public async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
+        public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
 
         private INavigationTarget GetTargetForTag(int tag)
         {
@@ -70,7 +69,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs e)
         {
             // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
-            ViewModel.NavigationService.ResetNavigation<FrameNavigationControl>();
+            ViewModel.NavigationService.ResetNavigation();
         }
     }
 }

@@ -3,6 +3,7 @@ using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -13,7 +14,7 @@ using Windows.Storage;
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
     /// <inheritdoc cref="IFolder"/>
-    internal sealed class WindowsStorageFolder : WindowsStorable<StorageFolder>, ILocatableFolder, IModifiableFolder, IFolderExtended
+    internal sealed class WindowsStorageFolder : WindowsStorable<StorageFolder>, ILocatableFolder, IModifiableFolder, IFolderExtended, INestedFolder
     {
         // TODO: Implement IMutableFolder
 
@@ -23,25 +24,21 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
+        public async Task<INestedFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
         {
-            var fileTask = storage.GetFileAsync(fileName).AsTask(cancellationToken);
-            var file = await fileTask;
-
+            var file = await storage.GetFileAsync(fileName).AsTask(cancellationToken);
             return new WindowsStorageFile(file);
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
+        public async Task<INestedFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
         {
-            var folderTask = storage.GetFolderAsync(folderName).AsTask(cancellationToken);
-            var folder = await folderTask;
-
+            var folder = await storage.GetFolderAsync(folderName).AsTask(cancellationToken);
             return new WindowsStorageFolder(folder);
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<INestedStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             switch (kind)
             {
@@ -88,30 +85,28 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task DeleteAsync(IStorable item, bool permanently = default, CancellationToken cancellationToken = default)
+        public Task DeleteAsync(INestedStorable item, bool permanently = default, CancellationToken cancellationToken = default)
         {
-            if (item is WindowsStorable<StorageFile> storageFile)
+            return item switch
             {
-                await storageFile.storage.DeleteAsync(GetWindowsStorageDeleteOption(permanently)).AsTask(cancellationToken);
-            }
-            else if (item is WindowsStorable<StorageFolder> storageFolder)
-            {
-                await storageFolder.storage.DeleteAsync(GetWindowsStorageDeleteOption(permanently)).AsTask(cancellationToken);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+                WindowsStorable<StorageFile> storageFile => storageFile.storage
+                    .DeleteAsync(GetWindowsStorageDeleteOption(permanently))
+                    .AsTask(cancellationToken),
+
+                WindowsStorable<StorageFolder> storageFolder => storageFolder.storage
+                    .DeleteAsync(GetWindowsStorageDeleteOption(permanently))
+                    .AsTask(cancellationToken),
+
+                _ => throw new NotImplementedException()
+            };
         }
 
         /// <inheritdoc/>
-        public async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
+        public async Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (itemToCopy is WindowsStorable<StorageFile> sourceFile)
             {
-                var copiedFileTask = sourceFile.storage.CopyAsync(storage, itemToCopy.Name, GetWindowsNameCollisionOption(overwrite)).AsTask(cancellationToken);
-                var copiedFile = await copiedFileTask;
-
+                var copiedFile = await sourceFile.storage.CopyAsync(storage, itemToCopy.Name, GetWindowsNameCollisionOption(overwrite)).AsTask(cancellationToken);
                 return new WindowsStorageFile(copiedFile);
             }
 
@@ -119,7 +114,7 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
+        public async Task<INestedStorable> MoveFromAsync(INestedStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (itemToMove is WindowsStorable<StorageFile> sourceFile)
             {
@@ -131,29 +126,23 @@ namespace SecureFolderFS.WinUI.Storage.WindowsStorage
         }
 
         /// <inheritdoc/>
-        public async Task<IFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public async Task<INestedFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            var fileTask = storage.CreateFileAsync(desiredName, GetWindowsCreationCollisionOption(overwrite)).AsTask(cancellationToken);
-            var file = await fileTask;
-
+            var file = await storage.CreateFileAsync(desiredName, GetWindowsCreationCollisionOption(overwrite)).AsTask(cancellationToken);
             return new WindowsStorageFile(file);
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public async Task<INestedFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            var folderTask = storage.CreateFolderAsync(desiredName, GetWindowsCreationCollisionOption(overwrite)).AsTask(cancellationToken);
-            var folder = await folderTask;
-
+            var folder = await storage.CreateFolderAsync(desiredName, GetWindowsCreationCollisionOption(overwrite)).AsTask(cancellationToken);
             return new WindowsStorageFolder(folder);
         }
 
         /// <inheritdoc/>
         public override async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            var parentFolderTask = storage.GetParentAsync().AsTask(cancellationToken);
-            var parentFolder = await parentFolderTask;
-
+            var parentFolder = await storage.GetParentAsync().AsTask(cancellationToken);
             return new WindowsStorageFolder(parentFolder);
         }
 

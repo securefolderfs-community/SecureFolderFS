@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
@@ -7,8 +5,12 @@ using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.Dialogs
 {
@@ -29,7 +31,7 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         public Type StyleKey => typeof(ContentDialog);
 
         /// <inheritdoc/>
-        public async Task<DialogResult> ShowAsync() => (DialogResult)await base.ShowAsync();
+        public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
 
         private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {

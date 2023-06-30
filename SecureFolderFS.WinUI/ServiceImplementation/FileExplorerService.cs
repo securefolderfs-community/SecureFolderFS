@@ -1,7 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.WinUI.Storage.WindowsStorage;
 using SecureFolderFS.WinUI.WindowViews;
 using System;
@@ -34,17 +33,15 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
+        public async Task<ILocatableFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
-            WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance!.GetWindowHandle());
+            WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance.GetWindowHandle());
 
             if (filter is not null)
             {
                 foreach (var item in filter)
-                {
                     filePicker.FileTypeFilter.Add(item);
-                }
             }
             else
                 filePicker.FileTypeFilter.Add("*");
@@ -57,10 +54,10 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> PickSingleFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<ILocatableFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
-            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance!.GetWindowHandle());
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Instance.GetWindowHandle());
 
             folderPicker.FileTypeFilter.Add("*");
 

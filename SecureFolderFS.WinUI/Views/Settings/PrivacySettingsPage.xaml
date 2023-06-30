@@ -54,8 +54,7 @@
                     <ToggleSwitch
                         x:Name="EnableTelemetry"
                         MinWidth="0"
-                        IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}"
-                        Toggled="EnableTelemetry_Toggled" />
+                        IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>

@@ -24,6 +24,12 @@ namespace SecureFolderFS.Shared.Helpers
         {
             Successful = isSuccess;
         }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return Exception?.ToString() ?? (Successful ? "Success" : "Unsuccessful");
+        }
     }
 
     /// <inheritdoc cref="IResult{T}"/>

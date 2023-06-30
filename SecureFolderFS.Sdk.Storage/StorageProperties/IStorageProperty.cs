@@ -15,6 +15,6 @@ namespace SecureFolderFS.Sdk.Storage.StorageProperties
         /// <summary>
         /// An event that's fired when value of the property is updated.
         /// </summary>
-        event EventHandler<T>? OnValueUpdated;
+        event EventHandler<T>? ValueUpdated;
     }
 }

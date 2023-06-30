@@ -76,20 +76,23 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new VaultPersistenceService(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
-                .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IDialogService, DialogService>()
-                .AddSingleton<IApplicationService, ApplicationService>()
+                .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
+                .AddSingleton<IStorageService, NativeStorageService>()
+                .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
-                .AddSingleton<IClipboardService, ClipboardService>()
-                .AddSingleton<IUpdateService, AvaloniaUpdateService>()
+                .AddSingleton<IChangelogService, GitHubChangelogService>()
 
                 // Conditional (singleton) services
 #if DEBUG
+                .AddSingleton<IIapService, DebugIapService>()
+                .AddSingleton<IUpdateService, DebugUpdateService>()
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
-
 #else
+                .AddSingleton<IIapService, DebugIapService>()
+                .AddSingleton<IUpdateService, AvaloniaUpdateService>()
                 .AddSingleton<ITelemetryService, TelemetryService>()
 #endif
 

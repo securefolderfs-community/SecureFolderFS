@@ -28,7 +28,10 @@
         </Style>
     </ui:ContentDialog.Styles>
 
-    <Grid Height="500" Margin="-8" RowDefinitions="Auto,*">
+    <Grid
+        Height="500"
+        Margin="-8"
+        RowDefinitions="Auto,*">
         <Grid
             Grid.Row="0"
             Margin="-16,-56,-16,8"
@@ -58,9 +61,7 @@
 
 
         <ScrollViewer Grid.Row="1">
-            <ItemsControl
-                ItemsSource="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}"
-                Loaded="Licenses_Loaded">
+            <ItemsControl ItemsSource="{Binding ViewModel.Licenses, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}" Loaded="Licenses_Loaded">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:LicenseViewModel}">
                         <ui:SettingsExpander
@@ -69,23 +70,17 @@
                             Header="{Binding PackageName}">
                             <ui:SettingsExpander.Footer>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <!-- Text must be in TextBlocks in order to remove underline -->
-                                    <ui:HyperlinkButton
-                                        IsVisible="{Binding ProjectWebsiteUri, Converter={StaticResource NullToBoolConverter}}"
-                                        NavigateUri="{Binding ProjectWebsiteUri}">
-                                        <TextBlock Text="Project website" />
+                                    <!--  Text must be in TextBlocks in order to remove underline  -->
+                                    <ui:HyperlinkButton IsVisible="{Binding ProjectWebsiteUri, Converter={StaticResource NullToBoolConverter}}" NavigateUri="{Binding ProjectWebsiteUri}">
+                                        <TextBlock Text="Website" />
                                     </ui:HyperlinkButton>
-                                    <ui:HyperlinkButton
-                                        IsVisible="{Binding NavigateUri, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToBoolConverter}}"
-                                        NavigateUri="{Binding LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}">
+                                    <ui:HyperlinkButton IsVisible="{Binding NavigateUri, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToBoolConverter}}" NavigateUri="{Binding LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}">
                                         <TextBlock Text="License" />
                                     </ui:HyperlinkButton>
                                 </StackPanel>
                             </ui:SettingsExpander.Footer>
 
-                            <SelectableTextBlock
-                                Text="{Binding DataContext.LicenseContent, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}"
-                                TextWrapping="Wrap" />
+                            <SelectableTextBlock Text="{Binding DataContext.LicenseContent, RelativeSource={RelativeSource AncestorType={x:Type ui:SettingsExpander}}}" TextWrapping="Wrap" />
                         </ui:SettingsExpander>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

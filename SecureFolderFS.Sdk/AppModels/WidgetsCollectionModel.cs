@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,9 @@ namespace SecureFolderFS.Sdk.AppModels
         private readonly List<IWidgetModel> _widgets;
 
         private IVaultWidgets VaultWidgets { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultWidgets;
+
+        /// <inheritdoc/>
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         public WidgetsCollectionModel(IFolder vaultFolder)
         {
@@ -38,7 +42,10 @@ namespace SecureFolderFS.Sdk.AppModels
             VaultWidgets.SetForVault(_vaultFolder.Id, widgets);
 
             // Add to cache
-            _widgets.Add(new WidgetModel(widgetId, VaultWidgets, widgetData));
+            var widgetModel = new WidgetModel(widgetId, VaultWidgets, widgetData);
+            _widgets.Add(widgetModel);
+
+            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, widgetModel));
 
             return true;
         }
@@ -60,6 +67,8 @@ namespace SecureFolderFS.Sdk.AppModels
             // Remove persisted
             widgets!.Remove(itemToRemove);
             VaultWidgets.SetForVault(_vaultFolder.Id, widgets);
+
+            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Remove, itemToRemove));
 
             return true;
         }

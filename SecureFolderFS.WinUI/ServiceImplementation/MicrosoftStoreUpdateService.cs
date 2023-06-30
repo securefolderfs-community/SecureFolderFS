@@ -1,10 +1,15 @@
-﻿using SecureFolderFS.Sdk.Enums;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Services.Store;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
@@ -15,16 +20,22 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         private StoreContext? _storeContext;
         private IEnumerable<StorePackageUpdate>? _updates;
 
+        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
+
+        /// <inheritdoc/>
+        public event EventHandler<EventArgs>? StateChanged;
+
         /// <inheritdoc/>
         public Task<bool> IsSupportedAsync()
         {
-            return Task.FromResult(false);
+            var supported = Package.Current.SignatureKind == PackageSignatureKind.Store;
+            return Task.FromResult(supported);
         }
 
         /// <inheritdoc/>
         public async Task<bool> IsUpdateAvailableAsync(CancellationToken cancellationToken = default)
         {
-            if (!TrySetStoreContext() || _storeContext is null)
+            if (!await SetStoreContextAsync() || _storeContext is null)
                 return false;
 
             try
@@ -39,16 +50,55 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<AppUpdateResultType> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
+        public async Task<IResult> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
         {
-            if (!TrySetStoreContext() || _storeContext is null)
-                return AppUpdateResultType.FailedUnknownError;
+            if (!await SetStoreContextAsync() || _storeContext is null)
+                return new CommonResult<AppUpdateResultType>(AppUpdateResultType.FailedUnknownError, false);
 
-            var operation = _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
-            operation.Progress = (_, update) => progress?.Report(update.PackageDownloadProgress);
-            var result = await operation.AsTask(cancellationToken);
+            try
+            {
+                if (_updates is null && !await IsUpdateAvailableAsync(cancellationToken))
+                    return new CommonResult(new InvalidOperationException("No available updates found."));
 
-            return result.OverallState switch
+                // Switch to UI thread for installation of packages (as per docs)
+                await ThreadingService.ChangeThreadAsync();
+
+                // Add progress operation callback
+                var operation = _storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(_updates);
+                operation.Progress = (_, update) =>
+                {
+                    StateChanged?.Invoke(this, new UpdateChangedEventArgs(GetAppUpdateResultType(update.PackageUpdateState)));
+
+                    // According to docs, the PackageDownloadProgress ranges from 0.0 to 0.8 (inclusive)
+                    // which indicates the download progress where 0.8 is the end of the download stage.
+                    // Therefore, we need to readjust the value to fit the percentage range 0-100%
+                    var percentage = update.PackageDownloadProgress * 100 / 0.8d;
+
+                    // Report the percentage without rounding
+                    progress?.Report(percentage);
+                };
+
+                // Install packages
+                var result = await operation.AsTask(cancellationToken);
+                var resultType = GetAppUpdateResultType(result.OverallState);
+
+                return new CommonResult<AppUpdateResultType>(resultType, resultType == AppUpdateResultType.Completed);
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult(ex);
+            }
+        }
+
+        private async Task<bool> SetStoreContextAsync()
+        {
+            _storeContext ??= await Task.Run(StoreContext.GetDefault);
+            return _storeContext is not null;
+        }
+
+        private static AppUpdateResultType GetAppUpdateResultType(StorePackageUpdateState updateState)
+        {
+            return updateState switch
             {
                 StorePackageUpdateState.Pending => AppUpdateResultType.InProgress,
                 StorePackageUpdateState.Downloading => AppUpdateResultType.InProgress,
@@ -59,14 +109,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 StorePackageUpdateState.ErrorLowBattery => AppUpdateResultType.FailedDeviceError,
                 StorePackageUpdateState.ErrorWiFiRecommended => AppUpdateResultType.FailedNetworkError,
                 StorePackageUpdateState.ErrorWiFiRequired => AppUpdateResultType.FailedNetworkError,
-                _ => AppUpdateResultType.FailedUnknownError
+                _ => AppUpdateResultType.None
             };
-        }
-
-        private bool TrySetStoreContext()
-        {
-            _storeContext ??= StoreContext.GetDefault();
-            return _storeContext is not null;
         }
     }
 }

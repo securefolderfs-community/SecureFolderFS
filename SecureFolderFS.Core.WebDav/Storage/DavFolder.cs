@@ -4,8 +4,8 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
     /// <inheritdoc cref="IDavFolder"/>
     /// <typeparam name="TCapability">An interface that represents capabilities of this folder.</typeparam>
     internal class DavFolder<TCapability> : DavStorable<IDavFolder, TCapability>, IDavFolder
-        where TCapability : IFolder
+        where TCapability : IFolder, IStorable
     {
         /// <inheritdoc/>
         public virtual string Path => Inner.TryGetPath() ?? string.Empty;
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
         {
             if (Inner is not IFolderExtended folderExtended)
                 throw new NotSupportedException("Retrieving individual files is not supported.");
@@ -52,7 +52,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
         {
             if (Inner is not IFolderExtended folderExtended)
                 throw new NotSupportedException("Retrieving individual folders is not supported.");
@@ -64,33 +64,20 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async IAsyncEnumerable<IStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public virtual async IAsyncEnumerable<INestedStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await foreach (var item in Inner.GetItemsAsync(kind, cancellationToken))
             {
-                if (item is IFile file)
+                if (item is INestedFile file)
                     yield return NewFile(file);
 
-                if (item is IFolder folder)
+                if (item is INestedFolder folder)
                     yield return NewFolder(folder);
             }
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
-        {
-            if (Inner is not ILocatableStorable locatableStorable)
-                return null;
-
-            var parentFolder = await locatableStorable.GetParentAsync(cancellationToken);
-            if (parentFolder is null)
-                return null;
-
-            return NewFolder(parentFolder);
-        }
-
-        /// <inheritdoc/>
-        public virtual Task DeleteAsync(IStorable item, bool permanently = default, CancellationToken cancellationToken = default)
+        public virtual Task DeleteAsync(INestedStorable item, bool permanently = default, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
@@ -99,7 +86,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IStorable> CreateCopyOfAsync(IStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
@@ -115,7 +102,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IStorable> MoveFromAsync(IStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedStorable> MoveFromAsync(INestedStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
@@ -131,7 +118,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
@@ -143,7 +130,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public virtual async Task<INestedFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");

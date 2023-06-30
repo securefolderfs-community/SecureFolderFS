@@ -1,12 +1,16 @@
 ﻿namespace SecureFolderFS.Sdk.Enums
 {
+    /// <summary>
+    /// Contains values for different update states.
+    /// </summary>
     public enum AppUpdateResultType
     {
-        Completed = 0,
-        InProgress = 1,
-        Canceled = 2,
-        FailedNetworkError = 4,
-        FailedDeviceError = 8,
-        FailedUnknownError = 16
+        FailedDeviceError = -8,
+        FailedUnknownError = -4,
+        FailedNetworkError = -2,
+        Canceled = -1,
+        None = 0,
+        Completed = 1,
+        InProgress = 2
     }
 }

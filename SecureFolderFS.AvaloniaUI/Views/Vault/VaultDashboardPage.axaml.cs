@@ -2,7 +2,6 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using SecureFolderFS.AvaloniaUI.Events;
 using SecureFolderFS.AvaloniaUI.UserControls;
-using SecureFolderFS.AvaloniaUI.UserControls.Navigation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -43,7 +42,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Vault
         public override void OnNavigatingFrom()
         {
             // Remove the reference to the NavigationControl so the page can get properly garbage collected
-            ViewModel.DashboardNavigationService.ResetNavigation<FrameNavigationControl>();
+            ViewModel.DashboardNavigationService.ResetNavigation();
             ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
             Navigation.Dispose();
 

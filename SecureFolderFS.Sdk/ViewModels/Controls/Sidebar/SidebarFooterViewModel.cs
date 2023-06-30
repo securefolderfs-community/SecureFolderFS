@@ -2,10 +2,10 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         private async Task AddNewVaultAsync(CancellationToken cancellationToken)
         {
             var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFSPlus, cancellationToken);
-            if (_vaultCollectionModel.GetVaults().Count() >= 2 && !isPremiumOwned)
+            if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
             {
                 _ = PaymentDialogViewModel.Instance.InitAsync(cancellationToken);
                 await DialogService.ShowDialogAsync(PaymentDialogViewModel.Instance);

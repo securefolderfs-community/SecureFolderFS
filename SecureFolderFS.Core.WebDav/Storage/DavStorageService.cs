@@ -26,51 +26,22 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> FileExistsAsync(string path, CancellationToken cancellationToken = default)
+        public virtual async Task<IFolder> GetFolderAsync(string id, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var realPath = GetPathFromUri(path);
-                return await storageService.FileExistsAsync(realPath, cancellationToken);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public virtual async Task<bool> DirectoryExistsAsync(string path, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                var realPath = GetPathFromUri(path);
-                return await storageService.DirectoryExistsAsync(realPath, cancellationToken);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public virtual async Task<ILocatableFolder> GetFolderFromPathAsync(string path, CancellationToken cancellationToken = default)
-        {
-            var realPath = GetPathFromUri(path);
-            var folder = await storageService.GetFolderFromPathAsync(realPath, cancellationToken);
+            var realPath = GetPathFromUri(id);
+            var folder = await storageService.GetFolderAsync(realPath, cancellationToken);
 
             return NewFolder(folder);
         }
 
         /// <inheritdoc/>
-        public virtual async Task<ILocatableFile> GetFileFromPathAsync(string path, CancellationToken cancellationToken = default)
+        public virtual async Task<IFile> GetFileAsync(string id, CancellationToken cancellationToken = default)
         {
-            var realPath = GetPathFromUri(path);
-            var file = await storageService.GetFileFromPathAsync(realPath, cancellationToken);
+            var realPath = GetPathFromUri(id);
+            var file = await storageService.GetFileAsync(realPath, cancellationToken);
 
             return NewFile(file);
         }
-
 
         /// <inheritdoc/>
         public virtual IDavFile NewFile<T>(T inner) where T : IFile

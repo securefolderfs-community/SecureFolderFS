@@ -35,7 +35,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile?> PickSingleFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
+        public async Task<ILocatableFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var file = (await MainWindow.Instance.StorageProvider.OpenFilePickerAsync(new()
             {
@@ -52,7 +52,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> PickSingleFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<ILocatableFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
         {
             var folder = await MainWindow.Instance.StorageProvider.OpenFolderPickerAsync(new()
             {

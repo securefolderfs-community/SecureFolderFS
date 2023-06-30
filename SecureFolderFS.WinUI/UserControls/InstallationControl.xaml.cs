@@ -11,7 +11,7 @@ namespace SecureFolderFS.WinUI.UserControls
     {
         public InstallationControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public string? StatusText

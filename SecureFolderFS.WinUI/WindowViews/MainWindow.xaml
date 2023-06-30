@@ -8,9 +8,9 @@
     xmlns:winuiex="using:WinUIEx"
     mc:Ignorable="d">
 
-    <winuiex:WindowEx.Backdrop>
-        <winuiex:MicaSystemBackdrop />
-    </winuiex:WindowEx.Backdrop>
+    <winuiex:WindowEx.SystemBackdrop>
+        <MicaBackdrop />
+    </winuiex:WindowEx.SystemBackdrop>
 
     <!--  UI Root  -->
     <uc:MainWindowRootControl x:Name="RootControl" x:FieldModifier="public" />

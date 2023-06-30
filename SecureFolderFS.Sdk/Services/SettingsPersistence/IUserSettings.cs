@@ -8,20 +8,6 @@ namespace SecureFolderFS.Sdk.Services.SettingsPersistence
     /// </summary>
     public interface IUserSettings : IPersistable, INotifyPropertyChanged
     {
-        #region Privacy
-
-        /// <summary>
-        /// Gets or sets the value that determines whether to lock all unlocked vaults when the system is locked.
-        /// </summary>
-        bool AutoLockVaults { get; set; }
-
-        /// <summary>
-        /// Gets or sets the value that determines whether to use telemetry.
-        /// </summary>
-        bool IsTelemetryEnabled { get; set; }
-
-        #endregion
-
         #region Preferences
 
         /// <summary>
@@ -43,6 +29,20 @@ namespace SecureFolderFS.Sdk.Services.SettingsPersistence
         /// Gets or sets the value that determines whether to open the vault root folder when it is unlocked.
         /// </summary>
         bool OpenFolderOnUnlock { get; set; }
+
+        #endregion
+
+        #region Privacy
+
+        /// <summary>
+        /// Gets or sets the value that determines whether to lock all unlocked vaults when the system is locked.
+        /// </summary>
+        bool AutoLockVaults { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value that determines whether to use telemetry.
+        /// </summary>
+        bool IsTelemetryEnabled { get; set; }
 
         #endregion
     }

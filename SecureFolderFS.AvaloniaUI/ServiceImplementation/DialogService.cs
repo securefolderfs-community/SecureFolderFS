@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.AvaloniaUI.Dialogs;
 using SecureFolderFS.AvaloniaUI.Messages;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,7 +43,13 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<DialogResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
+        public void ReleaseDialog()
+        {
+            return; // TODO: Implement dialog releasing
+        }
+
+        [Obsolete]
+        public async Task<IResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
         {
             _currentDialog?.Hide();
             _currentDialog = GetDialog(viewModel);

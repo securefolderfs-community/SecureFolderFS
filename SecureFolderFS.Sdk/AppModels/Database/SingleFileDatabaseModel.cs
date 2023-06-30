@@ -10,7 +10,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.AppModels
+namespace SecureFolderFS.Sdk.AppModels.Database
 {
     /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
     public sealed class SingleFileDatabaseModel : BaseDatabaseModel<ISerializedModel>
@@ -105,7 +105,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 await using var dataStream = await _databaseFile!.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
                 if (dataStream is null)
                     return false;
-                
+
                 await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary>(settingsCache, cancellationToken);
 
                 // Overwrite existing content

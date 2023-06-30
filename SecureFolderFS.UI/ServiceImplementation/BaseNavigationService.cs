@@ -10,21 +10,19 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    public interface INavigationControlContract<in TNavigation>
-        where TNavigation : class, INavigationControl
+    public interface INavigationControlContract
     {
         /// <summary>
         /// Sets the control used for navigation.
         /// </summary>
-        public TNavigation? NavigationControl { set; }
+        public INavigationControl? NavigationControl { set; }
     }
 
     /// <inheritdoc cref="INavigationService"/>
-    public abstract class BaseNavigationService<TNavigation> : INavigationControlContract<TNavigation>, INavigationService
-        where TNavigation : class, INavigationControl
+    public abstract class BaseNavigationService : INavigationControlContract, INavigationService
     {
         /// <inheritdoc/>
-        public TNavigation? NavigationControl { get; set; }
+        public INavigationControl? NavigationControl { get; set; }
 
         /// <inheritdoc/>
         public INavigationTarget? CurrentTarget { get; protected set; }

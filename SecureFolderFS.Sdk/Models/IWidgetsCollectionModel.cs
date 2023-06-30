@@ -1,12 +1,13 @@
 ﻿using SecureFolderFS.Shared.Utils;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
     /// Represents a context that holds widgets settings and layout of an individual vault.
     /// </summary>
-    public interface IWidgetsCollectionModel : IPersistable
+    public interface IWidgetsCollectionModel : INotifyCollectionChanged, IPersistable // TODO: Inherit from ICollection
     {
         /// <summary>
         /// Adds a new widget model identified by <paramref name="widgetId"/>.

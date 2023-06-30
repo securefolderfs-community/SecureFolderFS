@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.WinUI.UserControls.Navigation
 {
     /// <summary>
-    /// The base class that manages UI navigation.
+    /// The base class that manages UI navigation using <see cref="Frame"/>.
     /// </summary>
     public abstract partial class FrameNavigationControl : UserControl, INavigationControl
     {

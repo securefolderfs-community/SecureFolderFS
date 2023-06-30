@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,21 +10,26 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.UI.Storage.NativeStorage
 {
     /// <inheritdoc cref="IFile"/>
-    public sealed class NativeFile : NativeStorable, ILocatableFile, IModifiableFile, IFileExtended
+    public class NativeFile : NativeStorable<FileInfo>, ILocatableFile, IModifiableFile, IFileExtended, INestedFile
     {
+        public NativeFile(FileInfo fileInfo)
+            : base(fileInfo)
+        {
+        }
+
         public NativeFile(string path)
-            : base(path)
+            : this(new FileInfo(path))
         {
         }
 
         /// <inheritdoc/>
-        public Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
+        public virtual Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
         {
             return OpenStreamAsync(access, FileShare.None, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
+        public virtual Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
         {
             var stream = File.Open(Path, FileMode.Open, access, share);
             return Task.FromResult<Stream>(stream);

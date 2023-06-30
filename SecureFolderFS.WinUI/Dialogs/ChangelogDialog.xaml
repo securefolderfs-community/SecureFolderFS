@@ -1,0 +1,96 @@
+﻿<ContentDialog
+    x:Class="SecureFolderFS.WinUI.Dialogs.ChangelogDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:SecureFolderFS.WinUI.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tuc="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    Title="What's new"
+    DefaultButton="Primary"
+    PrimaryButtonText="Awesome!"
+    RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <ContentDialog.Resources>
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </ContentDialog.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid
+            x:Name="ChangelogPanel"
+            Grid.Row="0"
+            x:Load="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}"
+            RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ProgressRing
+                x:Name="ChangelogProgress"
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                x:Load="{x:Bind ViewModel.UpdateText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}" />
+            <ScrollViewer
+                x:Name="ChangelogScroll"
+                Grid.Row="0"
+                x:Load="{x:Bind ViewModel.UpdateText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
+                <tuc:MarkdownTextBlock
+                    Background="Transparent"
+                    LinkClicked="MarkdownTextBlock_LinkClicked"
+                    Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />
+            </ScrollViewer>
+
+            <HyperlinkButton Grid.Row="1" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="View on GitHub" />
+                    <FontIcon
+                        Margin="0,0,0,-2"
+                        FontSize="14"
+                        Glyph="&#xE2B4;" />
+                </StackPanel>
+            </HyperlinkButton>
+        </Grid>
+
+        <StackPanel
+            x:Name="ErrorPanel"
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            x:Load="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
+            <TextBlock HorizontalAlignment="Center" Text="An issue occurred while loading the changelog." />
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="12"
+                HorizontalTextAlignment="Center"
+                Opacity="0.8"
+                Text="{x:Bind ViewModel.ErrorText, Mode=OneWay}"
+                TextWrapping="Wrap" />
+
+            <StackPanel
+                Margin="0,16,0,0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="8">
+                <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand}" Content="Retry" />
+                <HyperlinkButton NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="View on GitHub" />
+                        <FontIcon
+                            Margin="0,0,0,-2"
+                            FontSize="14"
+                            Glyph="&#xE2B4;" />
+                    </StackPanel>
+                </HyperlinkButton>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ContentDialog>
