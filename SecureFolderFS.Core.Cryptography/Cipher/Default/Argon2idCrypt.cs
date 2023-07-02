@@ -1,8 +1,7 @@
 ﻿using Konscious.Security.Cryptography;
-using SecureFolderFS.Core.Cryptography.Cipher;
 using System;
 
-namespace SecureFolderFS.Core.Cryptography.CryptImpl
+namespace SecureFolderFS.Core.Cryptography.Cipher.Default
 {
     /// <inheritdoc cref="IArgon2idCrypt"/>
     public sealed class Argon2idCrypt : IArgon2idCrypt

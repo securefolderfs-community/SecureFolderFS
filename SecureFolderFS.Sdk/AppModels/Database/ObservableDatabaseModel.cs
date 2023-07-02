@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Shared.Utils;
+using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,18 +9,31 @@ namespace SecureFolderFS.Sdk.AppModels.Database
     /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
     public abstract class ObservableDatabaseModel<TDictionaryValue> : BaseDatabaseModel<TDictionaryValue>
     {
-        private readonly INotifyCollectionChanged _notifyCollectionChanged;
+        /// <summary>
+        /// Gets the <see cref="INotifyCollectionChanged"/> used to report database changes.
+        /// </summary>
+        protected abstract INotifyCollectionChanged? NotifyCollectionChanged { get; }
 
-        protected ObservableDatabaseModel(INotifyCollectionChanged notifyCollectionChanged, IAsyncSerializer<Stream> serializer)
+        protected ObservableDatabaseModel(IAsyncSerializer<Stream> serializer)
             : base(serializer)
         {
-            _notifyCollectionChanged = notifyCollectionChanged;
-            _notifyCollectionChanged.CollectionChanged += Settings_CollectionChanged;
         }
 
         private async void Settings_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             await OnCollectionChangedAsync(e);
+        }
+
+        /// <summary>
+        /// Starts capturing any changes that occur to the database storage using <see cref="NotifyCollectionChanged"/>.
+        /// </summary>
+        /// <remarks>
+        /// If the <see cref="NotifyCollectionChanged"/> is null, <see cref="NullReferenceException"/> is raised.
+        /// </remarks>
+        protected void StartCapturingChanges()
+        {
+            _ = NotifyCollectionChanged ?? throw new NullReferenceException($"{nameof(NotifyCollectionChanged)} was null.");
+            NotifyCollectionChanged.CollectionChanged += Settings_CollectionChanged;
         }
 
         /// <summary>
@@ -48,7 +62,10 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _notifyCollectionChanged.CollectionChanged -= Settings_CollectionChanged;
+            if (NotifyCollectionChanged is null)
+                return;
+
+            NotifyCollectionChanged.CollectionChanged -= Settings_CollectionChanged;
         }
     }
 }

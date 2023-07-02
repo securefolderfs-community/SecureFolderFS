@@ -1,7 +1,6 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using System;
+﻿using System;
 
-namespace SecureFolderFS.Core.Cryptography.CryptImpl
+namespace SecureFolderFS.Core.Cryptography.Cipher.Default
 {
     /// <inheritdoc cref="IRfc3394KeyWrap"/>
     public sealed class Rfc3394KeyWrap : IRfc3394KeyWrap

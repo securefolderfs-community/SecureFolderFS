@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.Paths
         }
 
         /// <inheritdoc/>
-        public string? ToCiphertext(string cleartextPath)
+        public string? ToCiphertext(string cleartextPath, ReadOnlySpan<byte> directoryId)
         {
             return ConstructPath(cleartextPath, true);
         }

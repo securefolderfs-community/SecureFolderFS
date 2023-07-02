@@ -2,10 +2,12 @@
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.Storage.MutableStorage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,11 +15,15 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels.Database
 {
     /// <inheritdoc cref="BaseDatabaseModel{TDictionaryValue}"/>
-    public sealed class SingleFileDatabaseModel : BaseDatabaseModel<ISerializedModel>
+    public sealed class SingleFileDatabaseModel : ObservableDatabaseModel<ISerializedModel>
     {
         private readonly string _fileName;
         private readonly IModifiableFolder _settingsFolder;
         private IFile? _databaseFile;
+        private IFolderWatcher? _folderWatcher;
+
+        /// <inheritdoc/>
+        protected override INotifyCollectionChanged? NotifyCollectionChanged => _folderWatcher;
 
         public SingleFileDatabaseModel(string fileName, IModifiableFolder settingsFolder, IAsyncSerializer<Stream> serializer)
             : base(serializer)
@@ -124,13 +130,32 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             }
         }
 
+        /// <inheritdoc/>
+        protected override async Task ProcessChangeAsync(string changedItem)
+        {
+            if (_databaseFile?.Id == changedItem)
+                await LoadAsync();
+        }
+
         private async Task<bool> EnsureSettingsFileAsync(CancellationToken cancellationToken)
         {
-            if (_databaseFile is not null)
-                return true;
+            if (_databaseFile is null)
+                _databaseFile = await _settingsFolder.TryCreateFileAsync(_fileName, false, cancellationToken);
 
-            _databaseFile = await _settingsFolder.TryCreateFileAsync(_fileName, false, cancellationToken);
+            if (_folderWatcher is null && _settingsFolder is IMutableFolder mutableFolder)
+            {
+                _folderWatcher = await mutableFolder.GetFolderWatcherAsync(cancellationToken);
+                StartCapturingChanges();
+            }
+
             return _databaseFile is not null;
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            _folderWatcher?.Dispose();
+            base.Dispose();
         }
 
         /// <inheritdoc cref="ISerializedModel"/>

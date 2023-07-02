@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {
     /// <inheritdoc cref="IHeaderCrypt"/>
-    public abstract class BaseHeaderCrypt : IHeaderCrypt
+    internal abstract class BaseHeaderCrypt : IHeaderCrypt
     {
         protected readonly SecretKey encKey;
         protected readonly SecretKey macKey;

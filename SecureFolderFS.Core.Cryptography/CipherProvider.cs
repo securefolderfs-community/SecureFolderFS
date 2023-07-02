@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.CryptImpl;
+using SecureFolderFS.Core.Cryptography.Cipher.Default;
 using System;
 
 namespace SecureFolderFS.Core.Cryptography

@@ -8,7 +8,7 @@ using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.A
 namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 {
     /// <inheritdoc cref="IContentCrypt"/>
-    public sealed class AesCtrHmacContentCrypt : BaseContentCrypt
+    internal sealed class AesCtrHmacContentCrypt : BaseContentCrypt
     {
         private readonly SecretKey _macKey;
 
