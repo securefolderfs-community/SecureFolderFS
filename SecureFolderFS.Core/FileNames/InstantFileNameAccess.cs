@@ -19,23 +19,23 @@ namespace SecureFolderFS.Core.FileNames
         }
 
         /// <inheritdoc/>
-        public virtual ReadOnlySpan<char> GetCleartextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
+        public virtual string GetCleartextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
             fileSystemStatistics?.NotifyFileNameAccess();
 
             var nameWithoutExt = Path.GetFileNameWithoutExtension(ciphertextName);
             if (nameWithoutExt.IsEmpty)
-                return ReadOnlySpan<char>.Empty;
+                return string.Empty;
 
             var cleartextName = security.NameCrypt!.DecryptName(nameWithoutExt, directoryId);
             if (cleartextName is null)
-                return ReadOnlySpan<char>.Empty;
+                return string.Empty;
 
             return cleartextName;
         }
 
         /// <inheritdoc/>
-        public virtual ReadOnlySpan<char> GetCiphertextName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
+        public virtual string GetCiphertextName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
         {
             fileSystemStatistics?.NotifyFileNameAccess();
 
