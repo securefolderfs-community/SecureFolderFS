@@ -33,13 +33,12 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
 
             SafeFileHandle? GetHandle()
             {
-                if (Stream is IWrapper<Stream> { Inner: FileStream fileStream })
-                    return fileStream.SafeFileHandle;
-
-                if (Stream is FileStream fileStream2)
-                    return fileStream2.SafeFileHandle;
-
-                return null;
+                return Stream switch
+                {
+                    IWrapper<Stream> { Inner: FileStream fileStream } => fileStream.SafeFileHandle,
+                    FileStream fileStream2 => fileStream2.SafeFileHandle,
+                    _ => null
+                };
             }
         }
 

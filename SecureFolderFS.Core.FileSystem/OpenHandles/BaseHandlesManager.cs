@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         protected readonly object handlesLock = new();
         protected readonly IStreamsAccess streamsAccess;
         protected readonly HandlesGenerator handlesGenerator;
-        protected readonly Dictionary<ulong, ObjectHandle> handles;
+        protected readonly Dictionary<ulong, IDisposable> handles;
 
         protected BaseHandlesManager(IStreamsAccess streamsAccess)
         {
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         /// <param name="handleId">The ID of the handle.</param>
         /// <returns>If successful, returns an instance of <typeparamref name="THandle"/>, otherwise false.</returns>
         public virtual THandle? GetHandle<THandle>(ulong handleId)
-            where THandle : ObjectHandle
+            where THandle : class, IDisposable
         {
             if (disposed || handleId == Constants.INVALID_HANDLE)
                 return null;

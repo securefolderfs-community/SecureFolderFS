@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.Paths
         }
 
         /// <inheritdoc/>
-        public string? ToCiphertext(string cleartextPath, ReadOnlySpan<byte> directoryId)
+        public string? ToCiphertext(string cleartextPath)
         {
             return ConstructPath(cleartextPath, true);
         }
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Core.Paths
             if (directoryIdPath is null)
                 return null;
 
-            // Allocate byte* for directory ID, or empty if path is root
+            // Allocate byte *for directory ID, or empty if path is root
             var directoryId = directoryIdPath.Length == 0 ? Span<byte>.Empty : stackalloc byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
 
             // Get the directory ID
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Core.Paths
             if (directoryIdPath is null)
                 return null;
 
-            // Allocate byte* for directory ID, or empty if path is root
+            // Allocate byte *for directory ID, or empty if path is root
             var directoryId = directoryIdPath.Length == 0 ? Span<byte>.Empty : stackalloc byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
 
             // Get the directory ID
