@@ -1,19 +1,19 @@
-﻿namespace SecureFolderFS.Core.FileSystem.Analytics
+﻿namespace SecureFolderFS.Core.FileSystem.Statistics
 {
     public interface IFileSystemHealthStatistics
     {
-        #region Directory ID
+        #region DirectoryID
 
         /// <summary>
-        /// Reports that the file containing directory ID was not found.
+        /// Reports that the file containing DirectoryID was not found.
         /// </summary>
-        /// <param name="directoryIdPath">The ciphertext path to directory ID file.</param>
+        /// <param name="directoryIdPath">The ciphertext path to DirectoryID file.</param>
         void ReportDirectoryIdNotFound(string directoryIdPath);
 
         /// <summary>
-        /// Reports that the file contents containing directory ID are invalid.
+        /// Reports that the file contents containing DirectoryID are invalid.
         /// </summary>
-        /// <param name="directoryIdPath">The ciphertext path to directory ID file.</param>
+        /// <param name="directoryIdPath">The ciphertext path to DirectoryID file.</param>
         void ReportDirectoryIdInvalid(string directoryIdPath);
 
         #endregion

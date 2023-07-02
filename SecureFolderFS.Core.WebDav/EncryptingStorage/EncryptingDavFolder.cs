@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
@@ -63,19 +64,26 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
                 throw new ArgumentException("The created folder is not modifiable.");
 
             var dirIdFile = await createdModifiableFolder.CreateFileAsync(FileSystem.Constants.DIRECTORY_ID_FILENAME, false, cancellationToken);
-            if (dirIdFile is not ILocatableFile locatableDirIdFile)
-                throw new ArgumentException("The created directory ID file is not locatable.");
 
-            _ = _directoryIdAccess.SetDirectoryId(locatableDirIdFile.Path, Guid.NewGuid().ToByteArray());
+            // Create new DirectoryID
+            var directoryId = Guid.NewGuid().ToByteArray();
+
+            // Initialize directory with DirectoryID
+            await using var directoryIdStream = await dirIdFile.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await directoryIdStream.WriteAsync(directoryId, cancellationToken);
+
+            // Set DirectoryID to known IDs
+            if (dirIdFile is ILocatableFile locatableDirIdFile)
+                _directoryIdAccess.SetDirectoryId(locatableDirIdFile.Path, Guid.NewGuid().ToByteArray());
+
             return NewFolder(folder);
         }
 
         /// <inheritdoc/>
         public override Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            _ = itemToCopy;
-            // TODO: When copying, directory ID should be updated as well
-            return base.CreateCopyOfAsync(itemToCopy, overwrite, cancellationToken);
+            // TODO: When copying, DirectoryID should be updated as well
+            throw new NotSupportedException();
         }
 
         /// <inheritdoc/>

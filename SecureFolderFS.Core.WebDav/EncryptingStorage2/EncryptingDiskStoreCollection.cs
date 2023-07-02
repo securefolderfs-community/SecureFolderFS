@@ -57,7 +57,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 Getter = (context, collection) =>
                 {
                     return collection._directoryInfo.Name == "content"
-                        // Return the name of the root directory (Name will throw, as the content folder doesn't have a directory id)
+                        // Return the name of the root directory (Name will throw, as the content folder doesn't have a DirectoryID)
                         ? context.Request.Url.Segments[1]
                         : collection.Name;
                 }
@@ -287,9 +287,16 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 // Attempt to create the directory
                 Directory.CreateDirectory(destinationPath);
 
-                // Initialize directory with directory ID
+                // Create new DirectoryID
+                var directoryId = Guid.NewGuid().ToByteArray();
                 var directoryIdPath = Path.Combine(destinationPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
-                _ = _directoryIdAccess.SetDirectoryId(directoryIdPath, Guid.NewGuid().ToByteArray()); // TODO: Maybe nodiscard?
+
+                // Initialize directory with DirectoryID
+                using var directoryIdStream = File.Open(directoryIdPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+                directoryIdStream.Write(directoryId);
+
+                // Set DirectoryID to known IDs
+                _directoryIdAccess.SetDirectoryId(directoryIdPath, directoryId);
             }
             catch (Exception exc)
             {

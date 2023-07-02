@@ -2,13 +2,14 @@
 using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.FileSystem.Analytics;
+using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.CryptFiles;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Shared.Helpers;
 using System;
+using System.Diagnostics;
 
 namespace SecureFolderFS.Core.CryptFiles
 {

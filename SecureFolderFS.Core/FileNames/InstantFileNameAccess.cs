@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Analytics;
+using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using System;
 using System.IO;

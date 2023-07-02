@@ -38,40 +38,62 @@ namespace SecureFolderFS.Core.Paths
         [SkipLocalsInit]
         public string? GetCleartextFileName(string ciphertextFilePath)
         {
-            // Construct directory ID path for the parent directory of ciphertextFilePath
+            // Construct DirectoryID path for the parent directory of ciphertextFilePath
             var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, _vaultRootPath);
             if (directoryIdPath is null)
                 return null;
 
-            // Allocate byte *for directory ID, or empty if path is root
+            // Allocate byte* for DirectoryID, or empty if path is root
             var directoryId = directoryIdPath.Length == 0 ? Span<byte>.Empty : stackalloc byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-
-            // Get the directory ID
             if (directoryId.Length != 0 && !_directoryIdAccess.GetDirectoryId(directoryIdPath, directoryId))
-                return null;
+            {
+                using var directoryIdStream = File.Open(directoryIdPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                var read = directoryIdStream.Read(directoryId);
+
+                // Check the ID size
+                if (read < FileSystem.Constants.DIRECTORY_ID_SIZE)
+                {
+                    // TODO: Report health status
+                    return null;
+                }
+
+                // Set the DirectoryID to known IDs
+                _directoryIdAccess.SetDirectoryId(directoryIdPath, directoryId);
+            }
 
             // Get cleartext name
-            return _fileNameAccess.GetCleartextName(Path.GetFileName(ciphertextFilePath), directoryId).ToString();
+            return _fileNameAccess.GetCleartextName(Path.GetFileName(ciphertextFilePath), directoryId);
         }
 
         /// <inheritdoc/>
         [SkipLocalsInit]
         public string? GetCiphertextFileName(string cleartextFilePath)
         {
-            // Construct directory ID path for the parent directory of cleartextFilePath
+            // Construct DirectoryID path for the parent directory of cleartextFilePath
             var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, _vaultRootPath);
             if (directoryIdPath is null)
                 return null;
 
-            // Allocate byte *for directory ID, or empty if path is root
+            // Allocate byte* for DirectoryID, or empty if path is root
             var directoryId = directoryIdPath.Length == 0 ? Span<byte>.Empty : stackalloc byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-
-            // Get the directory ID
             if (directoryId.Length != 0 && !_directoryIdAccess.GetDirectoryId(directoryIdPath, directoryId))
-                return null;
+            {
+                using var directoryIdStream = File.Open(directoryIdPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                var read = directoryIdStream.Read(directoryId);
+
+                // Check the ID size
+                if (read < FileSystem.Constants.DIRECTORY_ID_SIZE)
+                {
+                    // TODO: Report health status
+                    return null;
+                }
+
+                // Set the DirectoryID to known IDs
+                _directoryIdAccess.SetDirectoryId(directoryIdPath, directoryId);
+            }
 
             // Get ciphertext name
-            return _fileNameAccess.GetCiphertextName(Path.GetFileName(cleartextFilePath), directoryId).ToString();
+            return _fileNameAccess.GetCiphertextName(Path.GetFileName(cleartextFilePath), directoryId);
         }
 
         // TODO: Refactor

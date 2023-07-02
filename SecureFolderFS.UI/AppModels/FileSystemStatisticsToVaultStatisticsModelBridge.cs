@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.FileSystem.Analytics;
+﻿using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Sdk.Models;
 using System;
 

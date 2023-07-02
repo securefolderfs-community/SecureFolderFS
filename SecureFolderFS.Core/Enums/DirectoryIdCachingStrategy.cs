@@ -1,7 +1,7 @@
 ﻿namespace SecureFolderFS.Core.Enums
 {
     /// <summary>
-    /// Describes how directory id cache should be handled.
+    /// Describes how DirectoryID cache should be handled.
     /// </summary>
     public enum DirectoryIdCachingStrategy : uint
     {
@@ -11,7 +11,7 @@
         NoCache = 0,
 
         /// <summary>
-        /// Simple in-memory cache of directory IDs.
+        /// Simple in-memory cache of DirectoryIDs.
         /// </summary>
         RandomAccessMemoryCache = 1
     }
