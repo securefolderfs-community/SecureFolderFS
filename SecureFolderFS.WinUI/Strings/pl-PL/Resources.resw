@@ -118,34 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Anuluj</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Release notes</value>
+    <value>Lista zmian</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>View latest release notes for this version</value>
+    <value>Zobacz najnowszą listę zmian dla tej wersji</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>An issue occurred while loading the changelog.</value>
+    <value>Wystąpił problem podczas ładowania dziennika zmian.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Change password</value>
+    <value>Zmień hasło</value>
   </data>
   <data name="ChangePasswordDescription" xml:space="preserve">
-    <value>Change the password used to unlock this vault</value>
+    <value>Zmień hasło używane do odblokowywania tego sejfu</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
-  </data>
-  <data name="ConfigureSettings" xml:space="preserve">
-    <value>ConfigureSettings</value>
+    <value>Sprawdź dostępność aktualizacji</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
-  </data>
-  <data name="ContentEncryption" xml:space="preserve">
-    <value>Content encryption</value>
+    <value>Potwierdź</value>
   </data>
   <data name="Continue" xml:space="preserve">
     <value>Continue</value>
@@ -167,6 +161,9 @@
   </data>
   <data name="CurrentPassword" xml:space="preserve">
     <value>Current password</value>
+  </data>
+  <data name="DataEncryption" xml:space="preserve">
+    <value>Data encryption</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
     <value>Export settings</value>
@@ -197,6 +194,9 @@
   </data>
   <data name="Licenses" xml:space="preserve">
     <value>Licenses</value>
+  </data>
+  <data name="ManageSettings" xml:space="preserve">
+    <value>Manage settings</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
     <value>My vaults</value>
