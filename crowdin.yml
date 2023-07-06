@@ -1,0 +1,3 @@
+files:
+  - source: /SecureFolderFS.WinUI/Strings/en-US/*.resw
+    translation: /SecureFolderFS.WinUI/Strings/%locale%/%original_file_name%
