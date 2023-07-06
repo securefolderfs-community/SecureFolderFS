@@ -19,6 +19,7 @@
     <UserControl.Resources>
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </UserControl.Resources>
 
     <ui:NavigationView
@@ -33,6 +34,7 @@
         SelectedItem="{Binding ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
         SelectionChanged="Sidebar_SelectionChanged">
 
+        <!--  Navigation Control  -->
         <uc2:VaultNavigationControl x:Name="Navigation" />
 
         <ui:NavigationView.AutoCompleteBox>
@@ -58,97 +60,85 @@
                 </AutoCompleteBox.Template>
             </AutoCompleteBox>
         </ui:NavigationView.AutoCompleteBox>
-
         <ui:NavigationView.PaneFooter>
-            <Border Width="230" HorizontalAlignment="Stretch">
-                <Grid HorizontalAlignment="Stretch" ColumnDefinitions="Auto,*">
-                    <Button
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Classes="accent"
-                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                        IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <ic:FluentIcon Width="15" Icon="AddCircle16Regular" />
-                            <TextBlock Text="New vault" />
-                        </StackPanel>
-                    </Button>
-
-                    <!--  TODO Add x:Load (doesn't exist in Avalonia)  -->
-                    <Button
-                        x:Name="CompactAddVaultButton"
-                        Grid.Column="1"
-                        Height="36"
-                        Margin="0,0,-4,0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Classes="accent"
-                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                        IsVisible="{Binding Path=!IsPaneOpen, ElementName=Sidebar}">
-                        <ic:FluentIcon Width="14" Icon="AddCircle16Regular" />
-                    </Button>
-
-                    <Button
-                        x:Name="SettingsButton"
-                        Grid.Column="1"
-                        Width="36"
-                        Height="36"
-                        Padding="8"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                        IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar}">
-
+            <!-- 260 (Sidebar.OpenPaneLength) - 20*2 (margins) = 220 -->
+            <!-- Grid doesn't have a padding Property -->
+            <Grid
+                Width="220"
+                Margin="0,0,0,12"
+                HorizontalAlignment="Stretch"
+                ColumnDefinitions="Auto,*">
+                
+                <Button
+                    x:Name="StandardAddVaultButton"
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                    Classes="accent"
+                    IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <ic:FluentIcon
-                            x:Name="SettingsButtonIcon"
-                            Width="18"
-                            Icon="Settings48Regular">
-                            <ic:FluentIcon.RenderTransform>
-                                <RotateTransform />
-                            </ic:FluentIcon.RenderTransform>
-
-                            <anim:Storyboard.Storyboards>
-                                <anim:Storyboard x:Name="SpinSettingsIconPointerPressedStoryboard">
-                                    <anim:DoubleAnimation
-                                        anim:Storyboard.Target="{Binding ElementName=SettingsButtonIcon}"
-                                        anim:Storyboard.TargetProperty="{x:Static RotateTransform.AngleProperty}"
-                                        To="-20"
-                                        Duration="0:0:0.1"/>
-                                </anim:Storyboard>
-                                <anim:Storyboard x:Name="SpinSettingsIconPointerReleasedStoryboard">
-                                    <anim:DoubleAnimation
-                                        anim:Storyboard.Target="{Binding ElementName=SettingsButtonIcon}"
-                                        anim:Storyboard.TargetProperty="{x:Static RotateTransform.AngleProperty}"
-                                        From="-20"
-                                        To="360"
-                                        Duration="0:0:1">
-                                        <anim:DoubleAnimation.EasingFunction>
-                                            <QuarticEaseOut />
-                                        </anim:DoubleAnimation.EasingFunction>
-                                    </anim:DoubleAnimation>
-                                </anim:Storyboard>
-                            </anim:Storyboard.Storyboards>
-                        </ic:FluentIcon>
-                    </Button>
-                </Grid>
-            </Border>
+                            Margin="2,0,2,-4"
+                            Width="16"
+                            Icon="AddCircle16Regular" />
+                        <TextBlock Text="New vault" />
+                    </StackPanel>
+                </Button>
+                
+                <Button
+                    x:Name="CompactAddVaultButton"
+                    Grid.Column="1"
+                    Height="36"
+                    Margin="0,0,-4,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    IsVisible="{Binding Path=!IsPaneOpen, ElementName=Sidebar, Mode=OneWay}"
+                    Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                    Classes="accent">
+                    <ic:FluentIcon Width="16" Icon="AddCircle16Regular" />
+                </Button>
+                
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Width="36"
+                    Height="36"
+                    Padding="8"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                    IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
+                    <!-- TODO Animation -->
+                    <ic:FluentIcon Width="18" Icon="Settings48Regular" />
+                </Button>
+                
+                <ui:TeachingTip
+                    x:Name="BetaTeachingTip"
+                    MaxWidth="100"
+                    CloseButtonClick="TeachingTip_CloseButtonClick"
+                    PreferredPlacement="Top"
+                    Subtitle="Adding more than two vaults is free during the beta period"
+                    Target="{Binding ElementName=StandardAddVaultButton}">
+                    <ic:FluentIcon Icon="Info16Regular" />
+                </ui:TeachingTip>
+            </Grid>
         </ui:NavigationView.PaneFooter>
         <ui:NavigationView.MenuItemTemplate>
             <DataTemplate x:DataType="vm:SidebarItemViewModel">
                 <ui:NavigationViewItem
                     Height="64"
                     AutomationProperties.Name="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
-                    IconSource="{ic:FluentIconSource Vault16Regular}"
-                    ToolTip.Tip="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
-
+                    ToolTip.Tip="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                    IconSource="{ic:FluentIconSource Vault16Regular}">
                     <ui:NavigationViewItem.Content>
                         <StackPanel>
                             <!--  Vault name  -->
@@ -158,9 +148,9 @@
                                 TextTrimming="CharacterEllipsis" />
 
                             <!--  Last opened  -->
-                            <!--  TODO Use x:Load  -->
                             <TextBlock
                                 x:Name="LastOpenedText"
+                                IsVisible="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                                 FontSize="12"
                                 Opacity="0.6"
                                 Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />

@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -14,17 +15,22 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 {
-    public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>
+    public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>, IRecipient<AddVaultMessage>
     {
+        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
+        
         public MainAppHostControl()
         {
             AvaloniaXamlLoader.Load(this);
 
-            SettingsButton.AddHandler(PointerPressedEvent, SettingsButton_PointerPressed, handledEventsToo: true);
-            SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_PointerReleased, handledEventsToo: true);
+            // SettingsButton.AddHandler(PointerPressedEvent, SettingsButton_PointerPressed, handledEventsToo: true);
+            // SettingsButton.AddHandler(PointerReleasedEvent, SettingsButton_PointerReleased, handledEventsToo: true);
         }
 
         /// <inheritdoc/>
@@ -32,6 +38,16 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
         {
             if (ViewModel.SidebarViewModel.SidebarItems.IsEmpty())
                 Navigation.ClearContent();
+        }
+        
+        /// <inheritdoc/>
+        public void Receive(AddVaultMessage message)
+        {
+            if (ViewModel.SidebarViewModel.SidebarItems.Count >= Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
+                && !SettingsService.AppSettings.WasBetaNotificationShown1)
+            {
+                BetaTeachingTip.IsOpen = true;
+            }
         }
 
         private async Task NavigateToItem(VaultViewModel vaultViewModel)
@@ -47,7 +63,8 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
         private async void MainAppHostControl_Loaded(object? sender, RoutedEventArgs e)
         {
             ViewModel.NavigationService.SetupNavigation(Navigation);
-            WeakReferenceMessenger.Default.Register(this);
+            WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
+            WeakReferenceMessenger.Default.Register<AddVaultMessage>(this);
 
             await ViewModel.InitAsync();
             Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
@@ -59,13 +76,14 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
                 await NavigateToItem(itemViewModel.VaultViewModel);
         }
 
-        private async void SidebarSearchBox_TextChanged(object? sender, TextChangedEventArgs e)
+        private async void SidebarSearchBox_TextChanged(object? sender, TextChangedEventArgs args)
         {
             await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery((sender as AutoCompleteBox)?.Text ?? string.Empty);
         }
 
-        private async void SidebarSearchBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private async void SidebarSearchBox_SelectionChanged(object? sender, SelectionChangedEventArgs args)
         {
+            // TODO Fix crash
             var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(((AutoCompleteBox)sender).SelectedItem?.ToString()));
             if (chosenItem is null)
                 return;
@@ -74,14 +92,20 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
             await NavigateToItem(chosenItem.VaultViewModel);
         }
 
-        private void SettingsButton_PointerPressed(object? sender, PointerPressedEventArgs e)
+        // private void SettingsButton_PointerPressed(object? sender, PointerPressedEventArgs e)
+        // {
+        //     SpinSettingsIconPointerPressedStoryboard.BeginAsync();
+        // }
+        //
+        // private void SettingsButton_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        // {
+        //     SpinSettingsIconPointerReleasedStoryboard.BeginAsync();
+        // }
+        
+        private async void TeachingTip_CloseButtonClick(TeachingTip sender, EventArgs args)
         {
-            SpinSettingsIconPointerPressedStoryboard.BeginAsync();
-        }
-
-        private void SettingsButton_PointerReleased(object? sender, PointerReleasedEventArgs e)
-        {
-            SpinSettingsIconPointerReleasedStoryboard.BeginAsync();
+            SettingsService.AppSettings.WasBetaNotificationShown1 = true;
+            await SettingsService.AppSettings.SaveAsync();
         }
 
         public MainHostViewModel ViewModel
