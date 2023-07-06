@@ -142,147 +142,147 @@
     <value>Potwierdź</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Kontynuuj</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Skopiowano</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Kopiuj wersję aplikacji</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Kopiuj wersję systemu</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Copy version</value>
+    <value>Kopiuj wersję</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Select which version to copy to clipboard</value>
+    <value>Wybierz wersję do skopiowania do schowka</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Current password</value>
+    <value>Obecne hasło</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>Szyfrowanie danych</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
-    <value>Export settings</value>
+    <value>Eksportuj ustawienia</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>Szyfrowanie nazw plików</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>File system provider</value>
+    <value>Dostawca systemu plików</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>Wybierz preferowany typ wirtualnego systemu plików</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Importuj ustawienia</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Język</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Wybierz wyświetlany język</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
-    <value>Last checked: {0}</value>
+    <value>Ostatnio sprawdzono: {0}</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>License</value>
+    <value>Licencja</value>
   </data>
   <data name="Licenses" xml:space="preserve">
-    <value>Licenses</value>
+    <value>Licencje</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
-    <value>Manage settings</value>
+    <value>Zarządzaj ustawieniami</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
-    <value>My vaults</value>
+    <value>Moje sejfy</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>New password</value>
+    <value>Nowe hasło</value>
   </data>
   <data name="NewVault" xml:space="preserve">
-    <value>New vault</value>
+    <value>Nowy sejf</value>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
-    <value>No folder selected</value>
+    <value>Nie wybrano folderu</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>You haven't added any vaults yet. Create a new one or add existing to begin!</value>
+    <value>Nie dodałeś jeszcze żadnych sejfów. Utwórz nowy lub dodaj istniejący, aby rozpocząć!</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
-    <value>Open log location</value>
+    <value>Otwórz lokalizację dziennika</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+    <value>Uruchamia eksplorator plików, gdzie znajduje się plik dziennika</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>Polityka prywatności</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
-    <value>View the privacy policy statement</value>
+    <value>Zobacz oświadczenie dotyczące polityki prywatności</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
-    <value>Remove vault from the list</value>
+    <value>Usuń sejf z listy</value>
   </data>
   <data name="RepeatPassword" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>Powtórz hasło</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Szukaj</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
-    <value>Select vault path</value>
+    <value>Wybierz ścieżkę sejfu</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show encrypted vault in File Explorer</value>
+    <value>Pokaż zaszyfrowany sejf w Eksploratorze plików</value>
   </data>
   <data name="Social" xml:space="preserve">
-    <value>Social</value>
+    <value>Społeczność</value>
   </data>
   <data name="SocialDescription" xml:space="preserve">
-    <value>Ask, suggest, and discuss SecureFolderFS</value>
+    <value>Zapytaj, sugeruj i rozmawiaj o SecureFolderFS</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Motyw</value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>Ciemny</value>
   </data>
   <data name="ThemeDescription" xml:space="preserve">
-    <value>Choose application theme</value>
+    <value>Wybierz motyw aplikacji</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>Jasny</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>System default</value>
+    <value>Domyślny systemu</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Third party licenses</value>
+    <value>Licencje firm trzecich</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>Zobacz biblioteki firm trzecich używane przez SecureFolderFS</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Vault has been added</value>
+    <value>Sejf został dodany</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>Zobacz na GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>View repository</value>
+    <value>Zobacz repozytorium</value>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>Website</value>
+    <value>Strona internetowa</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Welcome to SecureFolderFS</value>
+    <value>Witamy w SecureFolderFS</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>What's new</value>
+    <value>Co nowego</value>
   </data>
 </root>
