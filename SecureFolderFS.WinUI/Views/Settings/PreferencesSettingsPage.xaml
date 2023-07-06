@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:anim="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
@@ -83,11 +84,11 @@
                     <TextBlock
                         FontSize="21"
                         FontWeight="SemiBold"
-                        Text="File system provider" />
+                        Text="{l:ResourceString Name=FileSystemProvider}" />
                     <TextBlock
                         FontSize="11"
                         Opacity="0.8"
-                        Text="Choose preferred virtual file system type" />
+                        Text="{l:ResourceString Name=FileSystemProviderDescription}" />
                 </StackPanel>
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>

@@ -31,10 +31,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public string? GetString(string resourceKey)
         {
-            // TODO: Localize strings
-            // return ResourceLoader.GetString(resourceKey);
-
-            return resourceKey;
+            return ResourceLoader.GetString(resourceKey);
         }
 
         /// <inheritdoc/>

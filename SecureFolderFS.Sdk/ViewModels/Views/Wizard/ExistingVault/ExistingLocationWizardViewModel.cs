@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
 
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
-        [ObservableProperty] private string? _SelectedLocationText = "No folder selected";
+        [ObservableProperty] private string? _SelectedLocationText = "NoFolderSelected".ToLocalized();
 
         public ExistingLocationWizardViewModel(VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:SecureFolderFS.WinUI.Helpers"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
@@ -37,7 +38,7 @@
                 VerticalAlignment="Center"
                 FontSize="16"
                 FontWeight="SemiBold"
-                Text="Licenses" />
+                Text="{l:ResourceString Name=Licenses}" />
 
             <Button
                 Width="34"
@@ -62,11 +63,11 @@
                             <ucab:ActionBlockControl.ActionElement>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <HyperlinkButton
-                                        Content="Website"
+                                        Content="{l:ResourceString Name=Website}"
                                         NavigateUri="{x:Bind ProjectWebsiteUri}"
                                         Visibility="{x:Bind ProjectWebsiteUri, Converter={StaticResource NullToVisibilityConverter}}" />
                                     <HyperlinkButton
-                                        Content="License"
+                                        Content="{l:ResourceString Name=License}"
                                         NavigateUri="{x:Bind LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}"
                                         Visibility="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource NullToVisibilityConverter}}" />
                                 </StackPanel>

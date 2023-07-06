@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="464"
     mc:Ignorable="d">
@@ -30,7 +31,7 @@
                     </AnimatedVisualPlayer.Source>
                 </AnimatedVisualPlayer>
             </Grid>
-            <TextBlock FontSize="20" Text="Vault has been added" />
+            <TextBlock FontSize="20" Text="{l:ResourceString Name=VaultAdded}" />
         </StackPanel>
 
         <TextBlock
