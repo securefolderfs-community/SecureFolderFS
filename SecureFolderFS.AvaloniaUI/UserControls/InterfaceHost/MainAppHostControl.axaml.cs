@@ -1,7 +1,6 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
@@ -17,7 +16,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 {
@@ -78,18 +76,26 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceHost
 
         private async void SidebarSearchBox_TextChanged(object? sender, TextChangedEventArgs args)
         {
-            await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery((sender as AutoCompleteBox)?.Text ?? string.Empty);
+            try
+            {
+                await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery((sender as AutoCompleteBox)?.Text ?? string.Empty);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                // Clearing the collection throws an exception for some reason, locking doesn't help
+                // This only affects Avalonia
+                // TODO Check if the issue still persists after updating to the latest version 
+            }
         }
 
-        private async void SidebarSearchBox_SelectionChanged(object? sender, SelectionChangedEventArgs args)
+        private void SidebarSearchBox_SelectionChanged(object? sender, SelectionChangedEventArgs args)
         {
-            // TODO Fix crash
             var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(((AutoCompleteBox)sender).SelectedItem?.ToString()));
             if (chosenItem is null)
                 return;
 
             Sidebar.SelectedItem = chosenItem;
-            await NavigateToItem(chosenItem.VaultViewModel);
+            // Navigation will be done by the event handler for SelectionChanged
         }
 
         // private void SettingsButton_PointerPressed(object? sender, PointerPressedEventArgs e)

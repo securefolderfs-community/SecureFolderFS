@@ -128,7 +128,7 @@
                     PreferredPlacement="Top"
                     Subtitle="Adding more than two vaults is free during the beta period"
                     Target="{Binding ElementName=StandardAddVaultButton}">
-                    <ic:FluentIcon Icon="Info16Regular" />
+                    <ic:FluentIcon Width="16" Icon="Info16Regular" />
                 </ui:TeachingTip>
             </Grid>
         </ui:NavigationView.PaneFooter>
