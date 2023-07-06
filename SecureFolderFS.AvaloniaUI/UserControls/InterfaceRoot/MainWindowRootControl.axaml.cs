@@ -34,8 +34,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot
             // Initialize the data in the background
             _ = ViewModel.InitAsync();
             
-            // TODO Register ThemeHelper
-
             // Update UI to reflect the current theme
             await AvaloniaThemeHelper.Instance.InitAsync();
         }

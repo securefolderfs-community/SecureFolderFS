@@ -121,15 +121,15 @@
                     <ic:FluentIcon Width="18" Icon="Settings48Regular" />
                 </Button>
                 
+                <!-- TODO Fix icon size -->
                 <ui:TeachingTip
                     x:Name="BetaTeachingTip"
                     MaxWidth="100"
                     CloseButtonClick="TeachingTip_CloseButtonClick"
                     PreferredPlacement="Top"
                     Subtitle="Adding more than two vaults is free during the beta period"
-                    Target="{Binding ElementName=StandardAddVaultButton}">
-                    <ic:FluentIcon Width="16" Icon="Info16Regular" />
-                </ui:TeachingTip>
+                    Target="{Binding ElementName=StandardAddVaultButton}"
+                    IconSource="{ic:FluentIconSource Info16Regular}" />
             </Grid>
         </ui:NavigationView.PaneFooter>
         <ui:NavigationView.MenuItemTemplate>
