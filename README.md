@@ -3,6 +3,7 @@
 </p>
 
 [![Discord](https://discordapp.com/api/guilds/926425949078159420/widget.png)](https://discord.gg/NrTxXpJ2Zj)
+[![Crowdin](https://badges.crowdin.net/securefolderfs/localized.svg)](https://crowdin.com/project/securefolderfs)
 
 SecureFolderFS helps you keep your files private. Safeguard your data with cutting-edge cryptographic algorithms that seamlessly secure your data thanks to our advanced on-fly encryption.
 
