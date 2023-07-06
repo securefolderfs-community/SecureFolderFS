@@ -141,7 +141,7 @@
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=ConfigureSettings}" IsEnabled="False">
+            <ucab:ActionBlockControl Title="{l:ResourceString Name=ManageSettings}" IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE713;" />
                 </ucab:ActionBlockControl.Icon>

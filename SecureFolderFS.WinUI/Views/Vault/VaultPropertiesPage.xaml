@@ -22,7 +22,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="4">
-                        <TextBlock Text="{l:ResourceString Name=ContentEncryption}" />
+                        <TextBlock Text="{l:ResourceString Name=DataEncryption}" />
                         <TextBlock Text="{l:ResourceString Name=FileNameEncryption}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Spacing="4">

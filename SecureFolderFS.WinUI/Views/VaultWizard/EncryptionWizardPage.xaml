@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Spacing="4">
-            <TextBlock Text="{l:ResourceString Name=ContentEncryption}" />
+            <TextBlock Text="{l:ResourceString Name=DataEncryption}" />
             <ComboBox
                 ItemsSource="{x:Bind ViewModel.ContentCiphers}"
                 Loaded="ComboBox_Loaded"
