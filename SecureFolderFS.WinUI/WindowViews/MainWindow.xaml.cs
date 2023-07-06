@@ -2,6 +2,7 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
 using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -57,7 +58,7 @@ namespace SecureFolderFS.WinUI.WindowViews
         private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            await settingsService.SaveAsync();
+            await settingsService.TrySaveAsync();
         }
     }
 }

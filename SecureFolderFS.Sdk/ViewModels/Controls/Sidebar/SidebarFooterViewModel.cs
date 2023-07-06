@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared.Extensions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         private async Task OpenSettingsAsync(CancellationToken cancellationToken)
         {
             await DialogService.ShowDialogAsync(SettingsDialogViewModel.Instance);
-            await SettingsService.SaveAsync(cancellationToken);
+            await SettingsService.TrySaveAsync(cancellationToken);
         }
     }
 }

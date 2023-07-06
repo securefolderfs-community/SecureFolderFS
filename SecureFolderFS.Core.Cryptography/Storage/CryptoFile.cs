@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.ExtendableStorage;
+using SecureFolderFS.Sdk.Storage.NestedStorage;
+using SecureFolderFS.Shared.Utils;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Cryptography.Storage
 {
-    public class CryptoFile : IFile, IWrapper<IFile>
+    public class CryptoFile : CryptoStorable<IFile>, IFileExtended, INestedFile, IWrapper<IFile>
     {
-        //private readonly IStreamsAccess _streamsAccess;
-        //private readonly IPathConverter _pathConverter;
-        //private readonly IDirectoryIdAccess _directoryIdAccess;
-
         /// <inheritdoc/>
         public IFile Inner { get; }
 
@@ -26,14 +20,41 @@ namespace SecureFolderFS.Core.Cryptography.Storage
         public string Name { get; }
 
         public CryptoFile(IFile inner)
+            : base(inner)
         {
             Inner = inner;
         }
 
         /// <inheritdoc/>
-        public Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
+        public virtual async Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var stream = await Inner.OpenStreamAsync(access, cancellationToken);
+            return CreateStream(stream);
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<Stream> OpenStreamAsync(FileAccess access, FileShare share, CancellationToken cancellationToken = default)
+        {
+            var stream = await GetStreamAsync();
+            return CreateStream(stream);
+
+            Task<Stream> GetStreamAsync()
+            {
+                if (Inner is IFileExtended fileExtended)
+                    return fileExtended.OpenStreamAsync(access, share, cancellationToken);
+
+                return Inner.OpenStreamAsync(access, cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Creates encrypting stream instance that wraps <paramref name="stream"/>.
+        /// </summary>
+        /// <param name="stream">The data stream to wrap.</param>
+        /// <returns>An encrypting stream instance.</returns>
+        protected virtual Stream CreateStream(Stream stream)
+        {
+            return streamsAccess.OpenCleartextStream(Inner.Id, stream);
         }
     }
 }

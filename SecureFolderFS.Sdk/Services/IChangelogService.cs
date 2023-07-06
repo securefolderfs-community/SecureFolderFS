@@ -1,5 +1,5 @@
-﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.DataModels;
+﻿using SecureFolderFS.Sdk.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,8 +9,8 @@ namespace SecureFolderFS.Sdk.Services
     // TODO: Needs docs
     public interface IChangelogService
     {
-        Task<ChangelogDataModel?> GetChangelogAsync(AppVersion version, CancellationToken cancellationToken);
+        Task<ChangelogDataModel?> GetChangelogAsync(Version version, string platform, CancellationToken cancellationToken);
 
-        IAsyncEnumerable<ChangelogDataModel> GetChangelogSinceAsync(AppVersion version, CancellationToken cancellationToken);
+        IAsyncEnumerable<ChangelogDataModel> GetChangelogSinceAsync(Version version, string platform, CancellationToken cancellationToken);
     }
 }

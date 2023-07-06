@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Octokit;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services;
 using System;
@@ -17,26 +16,26 @@ namespace SecureFolderFS.UI.ServiceImplementation
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
         /// <inheritdoc/>
-        public async Task<ChangelogDataModel?> GetChangelogAsync(AppVersion version, CancellationToken cancellationToken)
+        public async Task<ChangelogDataModel?> GetChangelogAsync(Version version, string platform, CancellationToken cancellationToken)
         {
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
 
             var client = new GitHubClient(new ProductHeaderValue(repoOwner));
-            var release = await client.Repository.Release.Get(repoOwner, repoName, version.Version.ToString());
+            var release = await client.Repository.Release.Get(repoOwner, repoName, version.ToString());
 
-            return new(release.Name, release.Body, version.Version);
+            return new(release.Name, release.Body, version);
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ChangelogDataModel> GetChangelogSinceAsync(AppVersion version, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<ChangelogDataModel> GetChangelogSinceAsync(Version version, string platform, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
 
             var client = new GitHubClient(new ProductHeaderValue(repoOwner));
             var releases = await client.Repository.Release.GetAll(repoOwner, repoName);
-            var currentVersion = ApplicationService.GetAppVersion();
+            var currentVersion = ApplicationService.AppVersion;
 
             foreach (var item in releases)
             {
@@ -47,7 +46,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var itemVersion = Version.Parse(formattedVersion);
 
                 // 'itemVersion' must be the same or newer than 'version' as well as the same or older than 'currentVersion'
-                if (itemVersion >= version.Version && itemVersion <= currentVersion.Version)
+                if (itemVersion >= version && itemVersion <= currentVersion)
                     yield return new(item.Name, item.Body, itemVersion);
             }
         }

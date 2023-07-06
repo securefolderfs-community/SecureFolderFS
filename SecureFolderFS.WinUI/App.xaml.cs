@@ -15,7 +15,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-#if !DEBUG
+#if DEBUG
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -72,19 +72,23 @@ namespace SecureFolderFS.WinUI
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-#if !DEBUG
-            // Start AppCenter
-            var appCenterKey = ApiKeys.GetAppCenterKey();
-            if (!string.IsNullOrEmpty(appCenterKey))
-                AppCenter.Start(appCenterKey, typeof(Analytics), typeof(Crashes));
+#if DEBUG
+            try
+            {
+                // Start AppCenter
+                var appCenterKey = ApiKeys.GetAppCenterKey();
+                if (!string.IsNullOrEmpty(appCenterKey) || !AppCenter.Configured)
+                    AppCenter.Start(appCenterKey, typeof(Analytics), typeof(Crashes));
+            }
+            catch (Exception)
+            {
+            }
 #endif
         }
 
         private IServiceProvider ConfigureServices(IModifiableFolder settingsFolder)
         {
-            var serviceCollection = new ServiceCollection();
-
-            serviceCollection
+            var serviceCollection = new ServiceCollection()
 
                 // Singleton services
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
@@ -123,11 +127,11 @@ namespace SecureFolderFS.WinUI
 
         #region Exception Handlers
 
-        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) => LogException(e.Exception);
-
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e) => LogException(e.Exception);
 
         private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e) => LogException(e.ExceptionObject as Exception);
+
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) => LogException(e.Exception);
 
         private static void LogException(Exception? ex)
         {

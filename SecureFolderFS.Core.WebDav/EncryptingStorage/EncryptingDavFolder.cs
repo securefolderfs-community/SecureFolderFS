@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -80,22 +81,15 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         }
 
         /// <inheritdoc/>
-        public override Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
+        public override IWrapper<IFile> Wrap(IFile file)
         {
-            // TODO: When copying, DirectoryID should be updated as well
-            throw new NotSupportedException();
+            return new EncryptingDavFile<IFile>(file, _streamsAccess, _pathConverter, _directoryIdAccess);
         }
 
         /// <inheritdoc/>
-        public override DavFile<T> NewFile<T>(T inner)
+        public override IWrapper<IFolder> Wrap(IFolder folder)
         {
-            return new EncryptingDavFile<T>(inner, _streamsAccess, _pathConverter, _directoryIdAccess);
-        }
-
-        /// <inheritdoc/>
-        public override DavFolder<T> NewFolder<T>(T inner)
-        {
-            return new EncryptingDavFolder<T>(inner, _streamsAccess, _pathConverter, _directoryIdAccess);
+            return new EncryptingDavFolder<IFolder>(folder, _streamsAccess, _pathConverter, _directoryIdAccess);
         }
 
         /// <inheritdoc/>

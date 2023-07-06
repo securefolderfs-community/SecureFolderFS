@@ -19,15 +19,15 @@ namespace SecureFolderFS.Core.Streams
         }
 
         /// <inheritdoc/>
-        public CleartextStream? OpenCleartextStream(string ciphertextPath, Stream ciphertextStream)
+        public CleartextStream OpenCleartextStream(string id, Stream ciphertextStream)
         {
             try
             {
                 // Get or create encrypted file from the file system
-                var openCryptFile = _cryptFileManager.TryGet(ciphertextPath) ?? _cryptFileManager.CreateNew(ciphertextPath, new HeaderBuffer(_security.HeaderCrypt.HeaderCleartextSize));
+                var openCryptFile = _cryptFileManager.TryGet(id) ?? _cryptFileManager.CreateNew(id, new HeaderBuffer(_security.HeaderCrypt.HeaderCleartextSize));
 
                 // Open a new stream for that file registering existing ciphertext stream
-                return openCryptFile?.OpenStream(ciphertextStream);
+                return openCryptFile.OpenStream(ciphertextStream);
             }
             catch (Exception)
             {

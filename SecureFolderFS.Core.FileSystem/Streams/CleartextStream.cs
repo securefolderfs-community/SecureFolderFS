@@ -14,6 +14,18 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// </summary>
         public Stream Inner { get; }
 
+        /// <inheritdoc/>
+        public override long Length => Inner.Length;
+
+        /// <inheritdoc/>
+        public override bool CanRead => Inner.CanRead;
+
+        /// <inheritdoc/>
+        public override bool CanSeek => Inner.CanSeek;
+
+        /// <inheritdoc/>
+        public override bool CanWrite => Inner.CanWrite;
+
         protected CleartextStream(Stream innerStream)
         {
             Inner = innerStream;

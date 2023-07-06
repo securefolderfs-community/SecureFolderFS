@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public Task<bool> SetWidgetDataAsync(string? value, CancellationToken cancellationToken = default)
         {
             _widgetDataModel.WidgetsData = value;
-            return _widgetsStore.SaveAsync(cancellationToken);
+            return _widgetsStore.TrySaveAsync(cancellationToken);
         }
     }
 }

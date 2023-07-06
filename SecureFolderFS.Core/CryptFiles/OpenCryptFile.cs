@@ -22,17 +22,17 @@ namespace SecureFolderFS.Core.CryptFiles
         private readonly Dictionary<Stream, long> _openedStreams;
 
         /// <inheritdoc/>
-        public string CiphertextPath { get; }
+        public string Id { get; }
 
         public OpenCryptFile(
-            string ciphertextPath,
+            string id,
             Security security,
             HeaderBuffer headerBuffer,
             IChunkAccess chunkAccess,
             IStreamsManager streamsManager,
             Action<string> notifyClosed)
         {
-            CiphertextPath = ciphertextPath;
+            Id = id;
             _security = security;
             _headerBuffer = headerBuffer;
             _chunkAccess = chunkAccess;
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Core.CryptFiles
             // Notify closed if no streams left
             if (_openedStreams.IsEmpty())
             {
-                _notifyClosed(CiphertextPath);
+                _notifyClosed(Id);
                 Dispose();
             }
         }

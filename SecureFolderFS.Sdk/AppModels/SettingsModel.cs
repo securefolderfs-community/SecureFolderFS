@@ -21,13 +21,13 @@ namespace SecureFolderFS.Sdk.AppModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <inheritdoc/>
-        public virtual Task<bool> LoadAsync(CancellationToken cancellationToken = default)
+        public virtual Task LoadAsync(CancellationToken cancellationToken = default)
         {
             return SettingsDatabase.LoadAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public virtual Task<bool> SaveAsync(CancellationToken cancellationToken = default)
+        public virtual Task SaveAsync(CancellationToken cancellationToken = default)
         {
             return SettingsDatabase.SaveAsync(cancellationToken);
         }

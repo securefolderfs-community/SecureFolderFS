@@ -23,23 +23,15 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
+        public Task LoadAsync(CancellationToken cancellationToken = default)
         {
-            var result = true;
-            result &= await AppSettings.LoadAsync(cancellationToken);
-            result &= await UserSettings.LoadAsync(cancellationToken);
-
-            return result;
+            return Task.WhenAll(AppSettings.LoadAsync(cancellationToken), UserSettings.LoadAsync(cancellationToken));
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
+        public Task SaveAsync(CancellationToken cancellationToken = default)
         {
-            var result = true;
-            result &= await AppSettings.SaveAsync(cancellationToken);
-            result &= await UserSettings.SaveAsync(cancellationToken);
-
-            return result;
+            return Task.WhenAll(AppSettings.SaveAsync(cancellationToken), UserSettings.SaveAsync(cancellationToken));
         }
     }
 }

@@ -76,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             // Update last checked date
             LastChecked = DateTime.Now;
             OnPropertyChanged(nameof(LastChecked));
-            await SettingsService.AppSettings.SaveAsync(cancellationToken);
+            await SettingsService.AppSettings.TrySaveAsync(cancellationToken);
 
             // Check for updates
             var isUpdateAvailable = await UpdateService.IsUpdateAvailableAsync(cancellationToken);

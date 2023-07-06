@@ -3,6 +3,7 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
+using SecureFolderFS.Shared.Utils;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,6 +44,18 @@ namespace SecureFolderFS.Core.WebDav.Storage
                 return fileExtended.OpenStreamAsync(access, share, cancellationToken);
 
             return Inner.OpenStreamAsync(access, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public override IWrapper<IFile> Wrap(IFile file)
+        {
+            return new DavFile<IFile>(file);
+        }
+
+        /// <inheritdoc/>
+        public override IWrapper<IFolder> Wrap(IFolder folder)
+        {
+            return new DavFolder<IFolder>(folder);
         }
     }
 }

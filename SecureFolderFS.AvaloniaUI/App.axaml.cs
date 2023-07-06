@@ -68,9 +68,7 @@ namespace SecureFolderFS.AvaloniaUI
 
         private IServiceProvider ConfigureServices(IModifiableFolder settingsFolder)
         {
-            var serviceCollection = new ServiceCollection();
-
-            serviceCollection
+            var serviceCollection = new ServiceCollection()
 
                 // Singleton services
                 .AddSingleton<ISettingsService, SettingsService>(_ => new SettingsService(settingsFolder))

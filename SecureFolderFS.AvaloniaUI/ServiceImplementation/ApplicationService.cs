@@ -1,5 +1,4 @@
 using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
 using System;
@@ -15,11 +14,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         public override string Platform { get; } = "AvaloniaUI";
 
         /// <inheritdoc/>
-        public override AppVersion GetAppVersion()
-        {
-            var version = Assembly.GetExecutingAssembly().GetName().Version!;
-            return new(version, Platform);
-        }
+        public override Version AppVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version!;
 
         /// <inheritdoc/>
         public override Task OpenUriAsync(Uri uri)

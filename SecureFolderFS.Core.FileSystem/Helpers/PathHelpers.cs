@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsCoreFile(ReadOnlySpan<char> fileName)
+        public static bool IsCoreFile(string fileName)
         {
             return fileName.Contains(Constants.DIRECTORY_ID_FILENAME, StringComparison.Ordinal);
         }

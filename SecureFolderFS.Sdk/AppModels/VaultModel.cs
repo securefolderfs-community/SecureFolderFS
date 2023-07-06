@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Linq;
 using System.Threading;
@@ -62,7 +63,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 return false;
 
             updateAction.Invoke(item);
-            return await VaultConfigurations.SaveAsync(cancellationToken);
+            return await VaultConfigurations.TrySaveAsync(cancellationToken);
         }
     }
 }

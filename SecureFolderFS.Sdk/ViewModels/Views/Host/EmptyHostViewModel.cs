@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared.Extensions;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
@@ -39,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         private async Task OpenSettingsAsync()
         {
             await DialogService.ShowDialogAsync(SettingsDialogViewModel.Instance);
-            await SettingsService.SaveAsync();
+            await SettingsService.TrySaveAsync();
         }
 
         /// <inheritdoc/>

@@ -4,6 +4,7 @@ using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.IO;
 using System.Threading;
@@ -40,14 +41,20 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         /// <inheritdoc/>
         public override async Task<Stream> OpenStreamAsync(FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
         {
-            var stream = await base.OpenStreamAsync(access, cancellationToken);
+            var stream = await base.OpenStreamAsync(access, share, cancellationToken);
             return OpenCleartextStream(stream);
         }
 
         /// <inheritdoc/>
-        public override DavFolder<T> NewFolder<T>(T inner)
+        public override IWrapper<IFile> Wrap(IFile file)
         {
-            return new EncryptingDavFolder<T>(inner, _streamsAccess, _pathConverter, _directoryIdAccess);
+            return new EncryptingDavFile<IFile>(file, _streamsAccess, _pathConverter, _directoryIdAccess);
+        }
+
+        /// <inheritdoc/>
+        public override IWrapper<IFolder> Wrap(IFolder folder)
+        {
+            return new EncryptingDavFolder<IFolder>(folder, _streamsAccess, _pathConverter, _directoryIdAccess);
         }
 
         private Stream OpenCleartextStream(Stream ciphertextStream)
@@ -56,8 +63,6 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
                 throw new NotSupportedException($"{nameof(Inner)} is not locatable.");
 
             var cleartextStream = _streamsAccess.OpenCleartextStream(locatableFile.Path, ciphertextStream);
-            _ = cleartextStream ?? throw new UnauthorizedAccessException("The cleartext stream couldn't be opened");
-
             return cleartextStream;
         }
     }

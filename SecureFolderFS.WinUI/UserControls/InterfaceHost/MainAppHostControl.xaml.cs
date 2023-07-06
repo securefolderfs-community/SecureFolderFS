@@ -89,7 +89,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
         private async void TeachingTip_CloseButtonClick(TeachingTip sender, object args)
         {
             SettingsService.AppSettings.WasBetaNotificationShown1 = true;
-            await SettingsService.AppSettings.SaveAsync();
+            await SettingsService.AppSettings.TrySaveAsync();
         }
 
         public MainHostViewModel ViewModel
