@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
-using Avalonia.Markup.Xaml.Templates;
 using SecureFolderFS.UI.Utils;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
@@ -11,11 +11,11 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     /// <summary>
     /// The base class that manages UI navigation using <see cref="ContentControl"/>.
     /// </summary>
-    public abstract partial class ContentNavigationControl : UserControl, INavigationControl
+    // A control cannot be abstract in Avalonia
+    public partial class ContentNavigationControl : UserControl, INavigationControl
     {
         protected ContentNavigationControl()
         {
-            
             AvaloniaXamlLoader.Load(this);
         }
 
@@ -43,7 +43,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         /// <param name="target"></param>
         /// <param name="transition"></param>
         /// <returns></returns>
-        protected abstract Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTransition : class;
+        protected virtual Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTransition : class
+        {
+            return Task.FromResult<IAsyncDisposable?>(null);
+        }
 
         /// <inheritdoc/>
         public virtual void Dispose()
@@ -51,12 +54,12 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
             (MainContent.Content as IDisposable)?.Dispose();
         }
 
-        public DataTemplate? TemplateSelector
+        public IDataTemplate? TemplateSelector
         {
-            get => (DataTemplate?)GetValue(TemplateSelectorProperty);
+            get => GetValue(TemplateSelectorProperty);
             set => SetValue(TemplateSelectorProperty, value);
         }
-        public static readonly StyledProperty<DataTemplate?> TemplateSelectorProperty =
-            AvaloniaProperty.Register<ContentNavigationControl, DataTemplate?>(nameof(TemplateSelector));
+        public static readonly StyledProperty<IDataTemplate?> TemplateSelectorProperty =
+            AvaloniaProperty.Register<ContentNavigationControl, IDataTemplate?>(nameof(TemplateSelector));
     }
 }

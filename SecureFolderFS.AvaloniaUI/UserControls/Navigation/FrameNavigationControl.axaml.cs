@@ -13,12 +13,13 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
     /// <summary>
     /// The base class that manages UI navigation using <see cref="Frame"/>.
     /// </summary>
-    public abstract partial class FrameNavigationControl : UserControl, INavigationControl
+    // A control cannot be abstract in Avalonia
+    public partial class FrameNavigationControl : UserControl, INavigationControl
     {
         /// <summary>
         /// Gets a dictionary of types that bind view models and pages together.
         /// </summary>
-        public abstract Dictionary<Type, Type> TypeBinding { get; }
+        public virtual Dictionary<Type, Type> TypeBinding { get; }
 
         protected FrameNavigationControl()
         {
@@ -54,7 +55,10 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         /// <param name="parameter">The parameter to pass to the page.</param>
         /// <param name="transitionInfo">The transition to use when navigating.</param>
         /// <returns>If successful, returns true, otherwise false.</returns>
-        protected abstract bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo);
+        protected virtual bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
+        {
+            return false;
+        }
 
         /// <inheritdoc/>
         public virtual void Dispose()
