@@ -18,11 +18,11 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                Process.Start("xdg-open", url);
+                Process.Start("xdg-open", new[] { url });
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                Process.Start("open", url);
+                Process.Start("open", new[] { url });
             }
         }
 
