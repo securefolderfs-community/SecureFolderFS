@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
 {
     /// <summary>
-    /// The base class that manages UI navigation.
+    /// The base class that manages UI navigation using <see cref="Frame"/>.
     /// </summary>
-    public partial class FrameNavigationControl : UserControl, INavigationControl
+    public abstract partial class FrameNavigationControl : UserControl, INavigationControl
     {
         /// <summary>
         /// Gets a dictionary of types that bind view models and pages together.
         /// </summary>
-        public virtual Dictionary<Type, Type> TypeBinding { get; }
+        public abstract Dictionary<Type, Type> TypeBinding { get; }
 
-        public FrameNavigationControl()
+        protected FrameNavigationControl()
         {
             AvaloniaXamlLoader.Load(this);
         }
@@ -52,12 +52,9 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         /// </summary>
         /// <param name="pageType">The type of page to navigate to.</param>
         /// <param name="parameter">The parameter to pass to the page.</param>
-        /// <param name="transition">The transition to use when navigating.</param>
+        /// <param name="transitionInfo">The transition to use when navigating.</param>
         /// <returns>If successful, returns true, otherwise false.</returns>
-        protected virtual bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
-        {
-            return false;
-        }
+        protected abstract bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo);
 
         /// <inheritdoc/>
         public virtual void Dispose()

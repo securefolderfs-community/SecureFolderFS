@@ -21,7 +21,7 @@ namespace SecureFolderFS.AvaloniaUI.UserControls.Navigation
         {
             transitionInfo ??= ContentFrame.Content switch
             {
-                // (TODO: Add dashboard closing animation here - infer from the current content) // Dashboard closing animation
+                // TODO VaultDashboardPage => new ContinuumNavigationTransitionInfo(); // Dashboard closing animation
                 _ => new EntranceNavigationTransitionInfo() // Standard animation
             };
 

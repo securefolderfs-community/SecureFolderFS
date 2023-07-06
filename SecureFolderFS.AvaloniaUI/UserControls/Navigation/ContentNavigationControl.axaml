@@ -1,0 +1,15 @@
+<UserControl 
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.Navigation.ContentNavigationControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
+    
+    <ContentControl
+        x:Name="MainContent"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        x:FieldModifier="protected"
+        ContentTemplate="{Binding TemplateSelector, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+</UserControl>
