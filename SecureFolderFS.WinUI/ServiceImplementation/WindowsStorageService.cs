@@ -11,17 +11,17 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     internal sealed class WindowsStorageService : IStorageService
     {
         /// <inheritdoc/>
-        public async Task<IFolder> GetFolderAsync(string id, CancellationToken cancellationToken = default)
-        {
-            var folder = await StorageFolder.GetFolderFromPathAsync(id).AsTask(cancellationToken);
-            return new WindowsStorageFolder(folder);
-        }
-
-        /// <inheritdoc/>
         public async Task<IFile> GetFileAsync(string id, CancellationToken cancellationToken = default)
         {
             var file = await StorageFile.GetFileFromPathAsync(id).AsTask(cancellationToken);
             return new WindowsStorageFile(file);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IFolder> GetFolderAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var folder = await StorageFolder.GetFolderFromPathAsync(id).AsTask(cancellationToken);
+            return new WindowsStorageFolder(folder);
         }
     }
 }

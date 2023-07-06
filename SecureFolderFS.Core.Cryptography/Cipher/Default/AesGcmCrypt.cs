@@ -1,8 +1,7 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using System;
+﻿using System;
 using System.Security.Cryptography;
 
-namespace SecureFolderFS.Core.Cryptography.CryptImpl
+namespace SecureFolderFS.Core.Cryptography.Cipher.Default
 {
     /// <inheritdoc cref="IAesGcmCrypt"/>
     public sealed class AesGcmCrypt : IAesGcmCrypt

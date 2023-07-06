@@ -30,15 +30,6 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public override long Length => _Length;
 
-        /// <inheritdoc/>
-        public override bool CanRead => Inner.CanRead;
-
-        /// <inheritdoc/>
-        public override bool CanSeek => Inner.CanSeek;
-
-        /// <inheritdoc/>
-        public override bool CanWrite => Inner.CanWrite;
-
         public CleartextFileStream(
             Stream ciphertextStream,
             Security security,
@@ -130,7 +121,7 @@ namespace SecureFolderFS.Core.Streams
         public override void SetLength(long value)
         {
             // Make sure header is ready before we can read/modify chunks
-            if (!TryWriteHeader(false))
+            if (!TryWriteHeader() && !TryReadHeader())
                 throw new CryptographicException();
 
             // Ignore resizing the same length
@@ -206,7 +197,8 @@ namespace SecureFolderFS.Core.Streams
         {
             try
             {
-                Flush();
+                if (CanWrite)
+                    Flush();
             }
             finally
             {
@@ -221,13 +213,13 @@ namespace SecureFolderFS.Core.Streams
             if (!CanWrite)
                 return;
 
-            TryWriteHeader(true);
+            TryWriteHeader();
             _chunkAccess.Flush();
         }
 
         private void WriteInternal(ReadOnlySpan<byte> buffer, long position)
         {
-            if (!TryWriteHeader(false))
+            if (!TryWriteHeader() && !TryReadHeader())
                 throw new CryptographicException();
 
             var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
@@ -289,7 +281,7 @@ namespace SecureFolderFS.Core.Streams
         }
 
         [SkipLocalsInit]
-        private bool TryWriteHeader(bool skipRead)
+        private bool TryWriteHeader()
         {
             if (!_headerBuffer.IsHeaderReady && CanWrite && Inner.Length == 0L)
             {
@@ -312,7 +304,7 @@ namespace SecureFolderFS.Core.Streams
                 return true;
             }
 
-            return skipRead || TryReadHeader();
+            return false;
         }
 
         private long AlignToChunkStartPosition(long cleartextPosition)

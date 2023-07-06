@@ -1,8 +1,7 @@
 ﻿using NSec.Cryptography;
-using SecureFolderFS.Core.Cryptography.Cipher;
 using System;
 
-namespace SecureFolderFS.Core.Cryptography.CryptImpl
+namespace SecureFolderFS.Core.Cryptography.Cipher.Default
 {
     /// <inheritdoc cref="IXChaCha20Poly1305Crypt"/>
     public sealed class XChaCha20Poly1305Crypt : IXChaCha20Poly1305Crypt

@@ -1,11 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.OpenHandles
 {
     /// <summary>
     /// Represents a file handle on the virtual file system.
     /// </summary>
-    public abstract class FileHandle : ObjectHandle
+    public abstract class FileHandle : IDisposable
     {
         /// <summary>
         /// Gets the stream of the file.
@@ -18,7 +19,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         }
 
         /// <inheritdoc/>
-        public override void Dispose()
+        public virtual void Dispose()
         {
             Stream.Dispose();
         }

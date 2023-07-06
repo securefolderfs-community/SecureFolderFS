@@ -36,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             var vaultCollectionModel = new VaultCollectionModel();
 
             // Initialize
-            await Task.WhenAll(SettingsService.LoadAsync(cancellationToken), vaultCollectionModel.LoadAsync(cancellationToken));
+            await Task.WhenAll(SettingsService.TryLoadAsync(cancellationToken), vaultCollectionModel.TryLoadAsync(cancellationToken));
 
             // Disable telemetry, if the user opted-out
             if (!SettingsService.UserSettings.IsTelemetryEnabled)
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             // Check if the changelog is available
             if (Version.TryParse(SettingsService.AppSettings.LastVersion, out var lastVersion))
             {
-                var currentVersion = ApplicationService.GetAppVersion().Version;
+                var currentVersion = ApplicationService.AppVersion;
                 if (lastVersion < currentVersion)
                 {
                     // Update the last version
@@ -77,7 +77,7 @@ namespace SecureFolderFS.Sdk.ViewModels
                     _ = SettingsService.AppSettings.SaveAsync(cancellationToken);
 
                     // Initialize the changelog dialog
-                    var changelogDialog = new ChangelogDialogViewModel(new(lastVersion, ApplicationService.Platform));
+                    var changelogDialog = new ChangelogDialogViewModel(lastVersion);
                     _ = changelogDialog.InitAsync(cancellationToken);
 
                     await DialogService.ShowDialogAsync(changelogDialog);

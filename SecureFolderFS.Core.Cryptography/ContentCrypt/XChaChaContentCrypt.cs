@@ -9,7 +9,7 @@ using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.X
 namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 {
     /// <inheritdoc cref="IContentCrypt"/>
-    public sealed class XChaChaContentCrypt : BaseContentCrypt
+    internal sealed class XChaChaContentCrypt : BaseContentCrypt
     {
         /// <inheritdoc/>
         public override int ChunkCleartextSize { get; } = CHUNK_CLEARTEXT_SIZE;

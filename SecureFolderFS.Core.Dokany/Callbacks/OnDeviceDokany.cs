@@ -4,7 +4,7 @@ using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
-using SecureFolderFS.Core.FileSystem.Analytics;
+using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
@@ -54,6 +54,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     switch (mode)
                     {
                         case FileMode.Open:
+                        {
                             if (!Directory.Exists(ciphertextPath))
                             {
                                 try
@@ -69,10 +70,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                                 return DokanResult.PathNotFound;
                             }
 
-                            _ = new DirectoryInfo(ciphertextPath).EnumerateFileSystemInfos().Any(); // .Any() iterator moves by one - corresponds to FindNextFile
+                            // .Any() iterator moves by one - corresponds to FindNextFile
+                            _ = new DirectoryInfo(ciphertextPath).EnumerateFileSystemInfos().Any();
+
                             break;
+                        }
 
                         case FileMode.CreateNew:
+                        {
                             if (Directory.Exists(ciphertextPath))
                                 return DokanResult.FileExists;
 
@@ -88,11 +93,18 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                             // Create directory
                             _ = Directory.CreateDirectory(ciphertextPath);
 
-                            // Initialize directory with directory ID
+                            // Create new DirectoryID
+                            var directoryId = Guid.NewGuid().ToByteArray();
                             var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
-                            _ = DirectoryIdAccess.SetDirectoryId(directoryIdPath, Guid.NewGuid().ToByteArray()); // TODO: Maybe nodiscard?
 
+                            // Initialize directory with DirectoryID
+                            using var directoryIdStream = File.Open(directoryIdPath, FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+                            directoryIdStream.Write(directoryId);
+
+                            // Set DirectoryID to known IDs
+                            DirectoryIdAccess.SetDirectoryId(directoryIdPath, directoryId);
                             break;
+                        }
                     }
                 }
                 catch (UnauthorizedAccessException)

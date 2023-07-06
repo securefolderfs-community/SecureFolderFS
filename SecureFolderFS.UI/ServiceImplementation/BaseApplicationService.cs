@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Services;
+﻿using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using System;
 using System.Collections.Generic;
@@ -16,6 +15,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
     {
         /// <inheritdoc/>
         public abstract string Platform { get; }
+
+        /// <inheritdoc/>
+        public abstract Version AppVersion { get; }
 
         /// <inheritdoc/>
         public virtual string GetSystemVersion()
@@ -63,9 +65,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 };
             }
         }
-
-        /// <inheritdoc/>
-        public abstract AppVersion GetAppVersion();
 
         /// <inheritdoc/>
         public abstract Task OpenUriAsync(Uri uri);

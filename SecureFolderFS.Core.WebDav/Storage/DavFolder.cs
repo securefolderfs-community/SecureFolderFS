@@ -1,12 +1,14 @@
 ﻿using NWebDav.Server.Enums;
 using NWebDav.Server.Storage;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.DirectStorage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -88,10 +90,10 @@ namespace SecureFolderFS.Core.WebDav.Storage
         /// <inheritdoc/>
         public virtual async Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            if (Inner is not IModifiableFolder modifiableFolder)
-                throw new NotSupportedException("Modifying folder contents is not supported.");
+            if (Inner is not IDirectCopy directCopy)
+                throw new NotSupportedException("Copying folder contents is not supported.");
 
-            var copiedItem = await modifiableFolder.CreateCopyOfAsync(itemToCopy, overwrite, cancellationToken);
+            var copiedItem = await directCopy.CreateCopyOfAsync(itemToCopy, overwrite, cancellationToken);
             if (copiedItem is IFile file)
                 return NewFile(file);
 
@@ -104,10 +106,10 @@ namespace SecureFolderFS.Core.WebDav.Storage
         /// <inheritdoc/>
         public virtual async Task<INestedStorable> MoveFromAsync(INestedStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default)
         {
-            if (Inner is not IModifiableFolder modifiableFolder)
-                throw new NotSupportedException("Modifying folder contents is not supported.");
+            if (Inner is not IDirectMove directMove)
+                throw new NotSupportedException("Moving folder contents is not supported.");
 
-            var movedItem = await modifiableFolder.MoveFromAsync(itemToMove, source, overwrite, cancellationToken);
+            var movedItem = await directMove.MoveFromAsync(itemToMove, source, overwrite, cancellationToken);
             if (movedItem is IFile file)
                 return NewFile(file);
 
@@ -149,6 +151,18 @@ namespace SecureFolderFS.Core.WebDav.Storage
         protected virtual string FormatName(string name)
         {
             return name;
+        }
+
+        /// <inheritdoc/>
+        public override IWrapper<IFile> Wrap(IFile file)
+        {
+            return new DavFile<IFile>(file);
+        }
+
+        /// <inheritdoc/>
+        public override IWrapper<IFolder> Wrap(IFolder folder)
+        {
+            return new DavFolder<IFolder>(folder);
         }
     }
 }

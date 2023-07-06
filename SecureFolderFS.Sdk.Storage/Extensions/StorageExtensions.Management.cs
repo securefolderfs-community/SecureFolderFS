@@ -52,8 +52,8 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         public static async Task<string> ReadAllTextAsync(this IFile file, Encoding? encoding = null, CancellationToken cancellationToken = default)
         {
             await using var fileStream = await file.OpenStreamAsync(FileAccess.Read, cancellationToken);
-
             using var streamReader = new StreamReader(fileStream, encoding ?? Encoding.UTF8);
+
             return await streamReader.ReadToEndAsync(cancellationToken);
         }
     }

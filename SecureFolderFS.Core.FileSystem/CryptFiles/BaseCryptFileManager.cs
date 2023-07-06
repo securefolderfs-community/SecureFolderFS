@@ -15,30 +15,27 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         }
 
         /// <inheritdoc/>
-        public virtual ICryptFile? TryGet(string ciphertextPath)
+        public virtual ICryptFile? TryGet(string id)
         {
             lock (openCryptFiles)
             {
-                openCryptFiles.TryGetValue(ciphertextPath, out var openCryptFile);
+                openCryptFiles.TryGetValue(id, out var openCryptFile);
                 return openCryptFile;
             }
         }
 
         /// <inheritdoc/>
-        public virtual ICryptFile? CreateNew(string ciphertextPath, BufferHolder headerBuffer)
+        public virtual ICryptFile CreateNew(string id, BufferHolder headerBuffer)
         {
-            var cryptFile = GetCryptFile(ciphertextPath, headerBuffer);
-            if (cryptFile is null)
-                return null;
+            var cryptFile = GetCryptFile(id, headerBuffer);
 
             lock (openCryptFiles)
-            {
-                openCryptFiles[ciphertextPath] = cryptFile;
-                return cryptFile;
-            }
+                openCryptFiles[id] = cryptFile;
+            
+            return cryptFile;
         }
 
-        protected abstract ICryptFile? GetCryptFile(string ciphertextPath, BufferHolder headerBuffer);
+        protected abstract ICryptFile GetCryptFile(string id, BufferHolder headerBuffer);
 
         /// <inheritdoc/>
         public virtual void Dispose()

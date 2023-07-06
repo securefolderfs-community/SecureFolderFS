@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
     public sealed partial class ChangelogDialogViewModel : DialogViewModel, IAsyncInitialize
     {
-        private readonly AppVersion _changelogSince;
+        private readonly Version _changelogSince;
 
         [ObservableProperty] private string? _UpdateText;
         [ObservableProperty] private string? _ErrorText;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 
         private IChangelogService ChangelogService { get; } = Ioc.Default.GetRequiredService<IChangelogService>();
 
-        public ChangelogDialogViewModel(AppVersion changelogSince)
+        public ChangelogDialogViewModel(Version changelogSince)
         {
             _changelogSince = changelogSince;
         }
@@ -32,14 +32,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var changelogBuilder = new StringBuilder();
-            var loadLatest = _changelogSince.Version == ApplicationService.GetAppVersion().Version;
+            var appVersion = ApplicationService.AppVersion;
+            var loadLatest = appVersion == _changelogSince;
 
             try
             {
                 if (loadLatest)
                 {
-                    var appVersion = ApplicationService.GetAppVersion();
-                    var changelog = await ChangelogService.GetChangelogAsync(appVersion, cancellationToken);
+                    var changelog = await ChangelogService.GetChangelogAsync(appVersion, ApplicationService.Platform, cancellationToken);
                     if (changelog is null)
                     {
                         UpdateText = "No update info available";
@@ -50,7 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
                 }
                 else
                 {
-                    await foreach (var item in ChangelogService.GetChangelogSinceAsync(_changelogSince, cancellationToken))
+                    await foreach (var item in ChangelogService.GetChangelogSinceAsync(_changelogSince, ApplicationService.Platform, cancellationToken))
                     {
                         BuildChangelog(item, changelogBuilder);
                     }

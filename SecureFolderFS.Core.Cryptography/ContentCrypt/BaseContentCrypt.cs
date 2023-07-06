@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 {
     /// <inheritdoc cref="IContentCrypt"/>
-    public abstract class BaseContentCrypt : IContentCrypt
+    internal abstract class BaseContentCrypt : IContentCrypt
     {
         protected readonly CipherProvider cipherProvider;
         protected readonly RandomNumberGenerator secureRandom;

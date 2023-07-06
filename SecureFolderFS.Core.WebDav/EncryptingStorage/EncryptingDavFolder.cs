@@ -8,8 +8,10 @@ using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
+using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
@@ -63,31 +65,31 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
                 throw new ArgumentException("The created folder is not modifiable.");
 
             var dirIdFile = await createdModifiableFolder.CreateFileAsync(FileSystem.Constants.DIRECTORY_ID_FILENAME, false, cancellationToken);
-            if (dirIdFile is not ILocatableFile locatableDirIdFile)
-                throw new ArgumentException("The created directory ID file is not locatable.");
 
-            _ = _directoryIdAccess.SetDirectoryId(locatableDirIdFile.Path, Guid.NewGuid().ToByteArray());
+            // Create new DirectoryID
+            var directoryId = Guid.NewGuid().ToByteArray();
+
+            // Initialize directory with DirectoryID
+            await using var directoryIdStream = await dirIdFile.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await directoryIdStream.WriteAsync(directoryId, cancellationToken);
+
+            // Set DirectoryID to known IDs
+            if (dirIdFile is ILocatableFile locatableDirIdFile)
+                _directoryIdAccess.SetDirectoryId(locatableDirIdFile.Path, Guid.NewGuid().ToByteArray());
+
             return NewFolder(folder);
         }
 
         /// <inheritdoc/>
-        public override Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default)
+        public override IWrapper<IFile> Wrap(IFile file)
         {
-            _ = itemToCopy;
-            // TODO: When copying, directory ID should be updated as well
-            return base.CreateCopyOfAsync(itemToCopy, overwrite, cancellationToken);
+            return new EncryptingDavFile<IFile>(file, _streamsAccess, _pathConverter, _directoryIdAccess);
         }
 
         /// <inheritdoc/>
-        public override DavFile<T> NewFile<T>(T inner)
+        public override IWrapper<IFolder> Wrap(IFolder folder)
         {
-            return new EncryptingDavFile<T>(inner, _streamsAccess, _pathConverter, _directoryIdAccess);
-        }
-
-        /// <inheritdoc/>
-        public override DavFolder<T> NewFolder<T>(T inner)
-        {
-            return new EncryptingDavFolder<T>(inner, _streamsAccess, _pathConverter, _directoryIdAccess);
+            return new EncryptingDavFolder<IFolder>(folder, _streamsAccess, _pathConverter, _directoryIdAccess);
         }
 
         /// <inheritdoc/>

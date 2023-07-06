@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         private async Task OpenSettingsAsync()
         {
             await DialogService.ShowDialogAsync(SettingsDialogViewModel.Instance);
-            await SettingsService.SaveAsync();
+            await SettingsService.TrySaveAsync();
         }
 
         partial void OnCurrentIndexChanged(int value)

@@ -2,9 +2,9 @@
 using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.CryptFiles;
+using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Shared.Helpers;
@@ -27,15 +27,15 @@ namespace SecureFolderFS.Core.CryptFiles
         }
 
         /// <inheritdoc/>
-        protected override ICryptFile? GetCryptFile(string ciphertextPath, BufferHolder headerBuffer)
+        protected override ICryptFile GetCryptFile(string id, BufferHolder headerBuffer)
         {
             if (headerBuffer is not HeaderBuffer headerBuffer2)
-                return null;
+                throw new ArgumentException($"{nameof(headerBuffer)} does not implement {nameof(HeaderBuffer)}.");
 
             var streamsManager = new StreamsManager();
             var chunkAccess = GetChunkAccess(streamsManager, headerBuffer2);
 
-            return new OpenCryptFile(ciphertextPath, _security, headerBuffer2, chunkAccess, streamsManager, NotifyClosed);
+            return new OpenCryptFile(id, _security, headerBuffer2, chunkAccess, streamsManager, NotifyClosed);
         }
 
         private IChunkAccess GetChunkAccess(IStreamsManager streamsManager, HeaderBuffer headerBuffer)

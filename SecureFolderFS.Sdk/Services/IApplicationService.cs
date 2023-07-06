@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
-    /// A service that interacts with common app related APIs.
+    /// A service that interacts with common app-related APIs.
     /// </summary>
     public interface IApplicationService
     {
@@ -20,8 +20,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets the version of the app.
         /// </summary>
-        /// <returns><see cref="Version"/> of the app.</returns>
-        AppVersion GetAppVersion();
+        Version AppVersion { get; }
 
         /// <summary>
         /// Gets the version information of the platform that the app is running on.

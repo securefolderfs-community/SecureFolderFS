@@ -46,7 +46,7 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
         private void SetupWatcher()
         {
             if (Folder is not ILocatableFolder locatableFolder)
-                throw new InvalidOperationException($"The watcher folder is not locatable.");
+                throw new InvalidOperationException("The watcher folder is not locatable.");
 
             _fileSystemWatcher = new(locatableFolder.Path);
             _fileSystemWatcher.Changed += FileSystemWatcher_Changed;

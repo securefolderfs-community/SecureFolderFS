@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.Core.FileSystem.Analytics
+﻿namespace SecureFolderFS.Core.FileSystem.Statistics
 {
     public interface IFileSystemStatistics
     {

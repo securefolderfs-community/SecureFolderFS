@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
         {
         }
 
-        public IEnumerable<ObjectHandle> OpenHandles
+        public IEnumerable<IDisposable> OpenHandles
         {
             get
             {

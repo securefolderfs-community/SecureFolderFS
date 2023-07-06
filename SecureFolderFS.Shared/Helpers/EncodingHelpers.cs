@@ -19,15 +19,15 @@ namespace SecureFolderFS.Shared.Helpers
             return BitConverter.ToString(hash).Replace("-", string.Empty);
         }
 
-        public static string EncodeBaseUrl64(string str)
+        public static string EncodeBaseUrl64(string base64str)
         {
-            var trimmedStr = str.TrimEnd('=');
+            var trimmedStr = base64str.TrimEnd('=');
             return trimmedStr.Replace('/', '_').Replace('+', '-');
         }
 
-        public static string DecodeBaseUrl64(string encoded)
+        public static string DecodeBaseUrl64(string base64UrlStr)
         {
-            var decoded = encoded.Replace('_', '/').Replace('-', '+');
+            var decoded = base64UrlStr.Replace('_', '/').Replace('-', '+');
             return (decoded.Length % 4) switch
             {
                 2 => decoded + "==",

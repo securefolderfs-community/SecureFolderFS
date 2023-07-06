@@ -1,8 +1,7 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using System;
+﻿using System;
 using System.Security.Cryptography;
 
-namespace SecureFolderFS.Core.Cryptography.CryptImpl
+namespace SecureFolderFS.Core.Cryptography.Cipher.Default
 {
     /// <inheritdoc cref="IHmacSha256Crypt"/>
     public sealed class HmacSha256Crypt : IHmacSha256Crypt
@@ -33,10 +32,10 @@ namespace SecureFolderFS.Core.Cryptography.CryptImpl
             }
 
             /// <inheritdoc/>
-            public void GetHash(Span<byte> destination)
+            public int GetHash(Span<byte> destination)
             {
                 ArgumentNullException.ThrowIfNull(_incrementalHash);
-                _incrementalHash.GetCurrentHash(destination);
+                return _incrementalHash.GetCurrentHash(destination);
             }
 
             /// <inheritdoc/>
