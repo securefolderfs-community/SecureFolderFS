@@ -4,6 +4,7 @@
         <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
         <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
         <AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
+        <AppxDefaultResourceQualifiers>Language=en-US</AppxDefaultResourceQualifiers>
         <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22621.0</TargetPlatformVersion>
         <RootNamespace>SecureFolderFS.WinUI</RootNamespace>
         <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -316,5 +317,8 @@
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-150.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Strings\en-US\" />
     </ItemGroup>
 </Project>

@@ -54,25 +54,23 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
-        public override async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
+        public override async Task LoadAsync(CancellationToken cancellationToken = default)
         {
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
-                if (!await EnsureSettingsFileAsync(cancellationToken))
-                    return false;
+                await EnsureSettingsFileAsync(cancellationToken);
 
-                _ = _databaseFile!;
+                _ = _databaseFile ?? throw new InvalidOperationException("The database file was not properly initialized.");
 
-                await using var stream = await _databaseFile!.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-                if (stream is null)
-                    return false;
-
+                await using var stream = await _databaseFile!.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
                 var settings = await serializer.DeserializeAsync<Stream, IDictionary>(stream, cancellationToken);
+
+                // Reset the cache
                 settingsCache.Clear();
 
-                if (settings is null) // No settings saved, set cache to empty and return true.
-                    return true;
+                if (settings is null) // No settings saved, set cache to empty and return
+                    return;
 
                 foreach (DictionaryEntry item in settings)
                 {
@@ -84,12 +82,6 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                     else
                         settingsCache[key] = new NonSerializedData(item.Value);
                 }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
             }
             finally
             {
@@ -103,15 +95,11 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
-                if (!await EnsureSettingsFileAsync(cancellationToken))
-                    return false;
+                await EnsureSettingsFileAsync(cancellationToken);
 
-                _ = _databaseFile!;
+                _ = _databaseFile ?? throw new InvalidOperationException("The database file was not properly initialized.");
 
-                await using var dataStream = await _databaseFile!.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
-                if (dataStream is null)
-                    return false;
-
+                await using var dataStream = await _databaseFile.OpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
                 await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary>(settingsCache, cancellationToken);
 
                 // Overwrite existing content
@@ -137,18 +125,14 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                 await LoadAsync();
         }
 
-        private async Task<bool> EnsureSettingsFileAsync(CancellationToken cancellationToken)
+        private async Task EnsureSettingsFileAsync(CancellationToken cancellationToken)
         {
-            if (_databaseFile is null)
-                _databaseFile = await _settingsFolder.TryCreateFileAsync(_fileName, false, cancellationToken);
-
+            _databaseFile ??= await _settingsFolder.CreateFileAsync(_fileName, false, cancellationToken);
             if (_folderWatcher is null && _settingsFolder is IMutableFolder mutableFolder)
             {
                 _folderWatcher = await mutableFolder.GetFolderWatcherAsync(cancellationToken);
                 StartCapturingChanges();
             }
-
-            return _databaseFile is not null;
         }
 
         /// <inheritdoc/>
