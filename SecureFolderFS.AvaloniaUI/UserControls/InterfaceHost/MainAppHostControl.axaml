@@ -115,7 +115,7 @@
                     VerticalContentAlignment="Center"
                     Background="Transparent"
                     BorderThickness="0"
-                    Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                    Command="{Binding ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                     IsVisible="{Binding Path=IsPaneOpen, ElementName=Sidebar, Mode=OneWay}">
                     <!-- TODO Animation -->
                     <ic:FluentIcon Width="18" Icon="Settings48Regular" />
