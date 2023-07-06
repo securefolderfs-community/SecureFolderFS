@@ -58,8 +58,6 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
 
         private async void PreferencesSettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await ViewModel.BannerViewModel.InitAsync();
-
             FileSystemAdapterChoice.SelectedItem = ViewModel.BannerViewModel.FileSystemAdapters
                 .FirstOrDefault(x =>
                     x.FileSystemInfoModel.Id.Equals(ViewModel.BannerViewModel.PreferredFileSystemId));
