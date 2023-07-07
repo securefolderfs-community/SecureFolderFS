@@ -7,6 +7,7 @@
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls.InterfaceRoot"
     xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:wnd="using:FluentAvalonia.UI.Windowing"
+    Icon="resm:SecureFolderFS.UI.Assets.AppAssets.AppIcon.png?assembly=SecureFolderFS.UI"
     Title="SecureFolderFS"
     MinWidth="662"
     MinHeight="572"
