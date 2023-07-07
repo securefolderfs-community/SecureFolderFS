@@ -15,7 +15,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-#if DEBUG
+#if !DEBUG
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -72,7 +72,7 @@ namespace SecureFolderFS.WinUI
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
-#if DEBUG
+#if !DEBUG
             try
             {
                 // Start AppCenter

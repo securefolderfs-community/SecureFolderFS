@@ -11,14 +11,24 @@
         <EmbeddedResource Include="Assets\*" />
         <None Remove="Assets\AppAssets\AppIcon.png" />
         <None Remove="Assets\AppAssets\AppTitle.svg" />
-        <EmbeddedResource Include="Assets\AppAssets\AppIcon.png" />
-        <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\AppIcon.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\AppAssets\Vault_dark.svg" />
-        <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\AppAssets\Vault_light.svg" />
-        <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\AppAssets\GreenShield.svg" />
-        <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\Tmds.Fuse LICENSE" />
         <EmbeddedResource Include="Assets\Licenses\Tmds.Fuse LICENSE" />
         <None Remove="Assets\Licenses\NWebDav LICENSE" />

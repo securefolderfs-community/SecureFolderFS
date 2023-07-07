@@ -46,35 +46,35 @@ namespace SecureFolderFS.WinUI.Dialogs
             switch (viewModel)
             {
                 case MainWizardPageViewModel:
-                    TitleText.Text = "Add new vault";
+                    TitleText.Text = "AddNewVault".ToLocalized();
                     PrimaryButtonText = string.Empty;
                     break;
 
                 case ExistingLocationWizardViewModel:
-                    TitleText.Text = "Add existing vault";
-                    PrimaryButtonText = "Continue";
+                    TitleText.Text = "AddExistingVault".ToLocalized();
+                    PrimaryButtonText = "Continue".ToLocalized();
                     canGoBack = true;
                     break;
 
                 case NewLocationWizardViewModel:
-                    TitleText.Text = "Create new vault";
-                    PrimaryButtonText = "Continue";
+                    TitleText.Text = "CreateNewVault".ToLocalized();
+                    PrimaryButtonText = "Continue".ToLocalized();
                     canGoBack = true;
                     break;
 
                 case PasswordWizardViewModel:
-                    TitleText.Text = "Set password";
-                    PrimaryButtonText = "Continue";
+                    TitleText.Text = "SetPassword".ToLocalized();
+                    PrimaryButtonText = "Continue".ToLocalized();
                     break;
 
                 case EncryptionWizardViewModel:
-                    TitleText.Text = "Choose encryption";
-                    PrimaryButtonText = "Continue";
+                    TitleText.Text = "ChooseEncryption".ToLocalized();
+                    PrimaryButtonText = "Continue".ToLocalized();
                     break;
 
                 case SummaryWizardViewModel:
-                    TitleText.Text = "Summary";
-                    PrimaryButtonText = "Close";
+                    TitleText.Text = "Summary".ToLocalized();
+                    PrimaryButtonText = "Close".ToLocalized();
                     SecondaryButtonText = string.Empty;
                     break;
             }

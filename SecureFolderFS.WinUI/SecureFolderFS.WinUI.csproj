@@ -31,14 +31,6 @@
 	<!-- Added manually, prevent from removing framework package references -->
     <Target Name="_RemoveFrameworkReferences" />
     <ItemGroup>
-      <Content Remove="Assets\AppAssets\AppIcon.png" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Remove="Assets\AppAssets\AppIcon.png" />
-        <None Remove="Assets\AppAssets\AppTitle.svg" />
-        <None Remove="Assets\AppAssets\GreenShield.svg" />
-        <None Remove="Assets\AppAssets\Vault_dark.svg" />
-        <None Remove="Assets\AppAssets\Vault_light.svg" />
         <None Remove="Dialogs\AgreementDialog.xaml" />
         <None Remove="Dialogs\ChangelogDialog.xaml" />
         <None Remove="Dialogs\LicensesDialog.xaml" />
@@ -83,18 +75,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Assets\AppAssets\AppTitle.svg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Assets\AppAssets\GreenShield.svg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Assets\AppAssets\Vault_dark.svg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Assets\AppAssets\Vault_light.svg">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <Page Update="Dialogs\ChangelogDialog.xaml">
           <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
           <SubType>Designer</SubType>
@@ -258,13 +238,6 @@
         </Page>
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="Assets\AppAssets\AppIcon.png">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
-      <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg" />
-      <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg" />
-      <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg" />
-      <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg" />
       <EmbeddedResource Include="Assets\LargeTile.scale-100.png" />
       <EmbeddedResource Include="Assets\LargeTile.scale-125.png" />
       <EmbeddedResource Include="Assets\LargeTile.scale-150.png" />
@@ -317,8 +290,59 @@
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-150.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
+      <EmbeddedResource Include="Strings\cs-CZ\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Strings\da-DK\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Strings\de-DE\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Strings\en-US\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Strings\fr-FR\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Strings\it-IT\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Strings\pl-PL\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Strings\ru-RU\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Strings\uk-UA\Resources.resw">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Strings\en-US\" />
+      <PRIResource Remove="Strings\cs-CZ\Resources.resw" />
+    </ItemGroup>
+    <ItemGroup>
+      <PRIResource Remove="Strings\da-DK\Resources.resw" />
+    </ItemGroup>
+    <ItemGroup>
+      <PRIResource Remove="Strings\de-DE\Resources.resw" />
+    </ItemGroup>
+    <ItemGroup>
+      <PRIResource Remove="Strings\en-US\Resources.resw" />
+    </ItemGroup>
+    <ItemGroup>
+      <PRIResource Remove="Strings\fr-FR\Resources.resw" />
+    </ItemGroup>
+    <ItemGroup>
+      <PRIResource Remove="Strings\it-IT\Resources.resw" />
+    </ItemGroup>
+    <ItemGroup>
+      <PRIResource Remove="Strings\pl-PL\Resources.resw" />
+    </ItemGroup>
+    <ItemGroup>
+      <PRIResource Remove="Strings\ru-RU\Resources.resw" />
+    </ItemGroup>
+    <ItemGroup>
+      <PRIResource Remove="Strings\uk-UA\Resources.resw" />
     </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@
             Height="56"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
-            Source="/Assets/AppAssets/AppIcon.png" />
+            Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppIcon.png" />
 
         <TextBlock
             Grid.Row="1"

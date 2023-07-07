@@ -26,7 +26,7 @@
             <Image
                 Height="42"
                 VerticalAlignment="Center"
-                Source="/Assets/AppAssets/AppIcon.png" />
+                Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppIcon.png" />
             <TextBlock
                 VerticalAlignment="Center"
                 FontSize="22"
