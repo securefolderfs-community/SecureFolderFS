@@ -157,7 +157,7 @@
     <value>Zmień hasło używane do odblokowywania tego sejfu</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Sprawdź dostępność aktualizacji</value>
+    <value>Sprawdź aktualizacje</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Zamknij</value>
