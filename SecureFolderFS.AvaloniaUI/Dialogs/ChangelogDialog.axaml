@@ -1,0 +1,99 @@
+<ui:ContentDialog
+    x:Class="SecureFolderFS.AvaloniaUI.Dialogs.ChangelogDialog"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:l="using:SecureFolderFS.AvaloniaUI.Localization"
+    xmlns:sg="using:AvaloniaSpacedGrid"
+    xmlns:m="using:Markdown.Avalonia"
+    Title="{l:ResourceString Name=WhatsNew}"
+    DefaultButton="Primary"
+    PrimaryButtonText="Awesome!"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ui:ContentDialog.Resources>
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </ui:ContentDialog.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <sg:SpacedGrid
+            x:Name="ChangelogPanel"
+            Grid.Row="0"
+            IsVisible="{Binding ViewModel.ErrorText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}"
+            RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <!-- TODO Replace with ProgressRing -->
+            <ProgressBar
+                x:Name="ChangelogProgress"
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                IsVisible="{Binding ViewModel.UpdateText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}" />
+            
+            <!-- TODO Improve styles -->
+            <m:MarkdownScrollViewer 
+                x:Name="ChangelogScroll"
+                Grid.Row="0"
+                IsVisible="{Binding ViewModel.UpdateText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}, Converter={StaticResource NullToBoolConverter}}"
+                Markdown="{Binding ViewModel.UpdateText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}"
+                MaxHeight="400" />
+            
+            <ui:HyperlinkButton Grid.Row="1" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />
+                    <ic:FluentIcon
+                        Margin="0,0,0,-2"
+                        Width="14"
+                        Icon="Open16Regular" />
+                </StackPanel>
+            </ui:HyperlinkButton>
+        </sg:SpacedGrid>
+        
+        <StackPanel
+            x:Name="ErrorPanel"
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            IsVisible="{Binding ViewModel.ErrorText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}, Converter={StaticResource NullToBoolConverter}}">
+            <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Name=ChangelogError}" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="12"
+                TextAlignment="Center"
+                Opacity="0.8"
+                Text="{Binding ViewModel.ErrorText, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}"
+                TextWrapping="Wrap" />
+
+            <StackPanel
+                Margin="0,16,0,0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="8">
+                <ui:HyperlinkButton Command="{Binding ViewModel.RetryCommand, RelativeSource={RelativeSource AncestorType={x:Type ui:ContentDialog}}}" Content="Retry" />
+                <ui:HyperlinkButton NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />
+                        <ic:FluentIcon
+                            Margin="0,0,0,-2"
+                            Width="14"
+                            Icon="Open16Regular" />
+                    </StackPanel>
+                </ui:HyperlinkButton>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:ContentDialog>

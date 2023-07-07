@@ -17,6 +17,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         {
             _dialogs = new()
             {
+                { typeof(ChangelogDialogViewModel), () => new ChangelogDialog() },
                 { typeof(LicensesDialogViewModel), () => new LicensesDialog() },
                 { typeof(SettingsDialogViewModel), () => new SettingsDialog() },
                 { typeof(VaultWizardDialogViewModel), () => new VaultWizardDialog() },
