@@ -21,8 +21,6 @@ You can download and install SecureFolderFS through either of those:
 
 You can update existing localization strings by heading to our *[Crowdin project page](https://crowdin.com/project/securefolderfs)*. To add a new language to the list, please request it to be added *[here](https://github.com/securefolderfs-community/SecureFolderFS/issues/50)*. New translations will be synced periodically to the main repository.
 
-The option to translate SecureFolderFS is currently in the works. Soon, you will be able to create localizations for SecureFolderFS. We aim to enable translations in Beta3. Please check back regularly for updates!
-
 ## Contributing
 
 We welcome all contributors! Whether you want to suggest a new feature or report a bug, you can open a new *[Issue or Feature Request](https://github.com/securefolderfs-community/SecureFolderFS/issues/new/choose)*. Take a look at our *[Contributing Guidelines](CONTRIBUTING.md)* to learn about best practices when creating a new Pull Request.
