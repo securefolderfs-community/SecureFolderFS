@@ -62,6 +62,8 @@
         <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
         <None Remove="Assets\Licenses\AvaloniaSpacedGrid LICENSE" />
         <EmbeddedResource Include="Assets\Licenses\AvaloniaSpacedGrid LICENSE" />
+        <None Remove="Assets\Licenses\MarkdownAvalonia LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\MarkdownAvalonia LICENSE" />
     </ItemGroup>
 
     <ItemGroup>
