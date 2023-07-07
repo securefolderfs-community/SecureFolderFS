@@ -80,7 +80,7 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<IStorageService, NativeStorageService>()
-                .AddSingleton<IApplicationService, ApplicationService>()
+                .AddSingleton<IApplicationService, AvaloniaApplicationService>()
                 .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
