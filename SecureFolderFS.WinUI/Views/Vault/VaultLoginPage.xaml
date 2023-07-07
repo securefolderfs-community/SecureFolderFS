@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
@@ -42,7 +43,7 @@
                     Padding="32,6"
                     HorizontalAlignment="Center"
                     Click="ContinueButton_Click"
-                    Content="Unlock"
+                    Content="{l:ResourceString Name=Unlock}"
                     Loaded="ContinueButton_Loaded"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
@@ -93,7 +94,7 @@
                         HorizontalAlignment="Center"
                         FontSize="14"
                         Opacity="0.6"
-                        Text="Vault is locked" />
+                        Text="{l:ResourceString Name=VaultLocked}" />
                 </StackPanel>
 
                 <!--  Input  -->

@@ -9,6 +9,7 @@ using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
@@ -30,7 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 
         public UpdateBannerViewModel()
         {
-            _UpdateText = "Latest version installed";
+            _UpdateText = "LatestVersionInstalled".ToLocalized();
             UpdateService.StateChanged += UpdateService_StateChanged;
         }
 
@@ -52,9 +53,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             var rounded = (int)Math.Round(value);
 
             if (rounded == 100)
-                UpdateText = "Installing...";
+                UpdateText = "Installing".ToLocalized();
             else
-                UpdateText = $"Downloading {rounded}%";
+                UpdateText = string.Format("Downloading".ToLocalized(), rounded);
         }
 
         private void UpdateService_StateChanged(object? sender, EventArgs e)
@@ -64,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
                 return;
 
             InfoBarViewModel.IsOpen = true;
-            InfoBarViewModel.Title = "Error";
+            InfoBarViewModel.Title = "Error".ToLocalized();
             InfoBarViewModel.CanBeClosed = true;
             InfoBarViewModel.Message = GetMessageForUpdateState(args.UpdateState);
             InfoBarViewModel.InfoBarSeverity = InfoBarSeverityType.Error;
@@ -87,7 +88,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             if (!result.Successful)
             {
                 InfoBarViewModel.IsOpen = true;
-                InfoBarViewModel.Title = "Error";
+                InfoBarViewModel.Title = "Error".ToLocalized();
                 InfoBarViewModel.CanBeClosed = true;
                 InfoBarViewModel.Message = result.GetMessage();
                 InfoBarViewModel.InfoBarSeverity = InfoBarSeverityType.Error;

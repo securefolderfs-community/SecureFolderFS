@@ -7,6 +7,7 @@ using SecureFolderFS.UI.Enums;
 using SecureFolderFS.WinUI.Helpers;
 using System.Globalization;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,14 +41,6 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
-        }
-
-        private async void AppLanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (AppLanguageComboBox.SelectedItem is not CultureInfo cultureInfo)
-                return;
-
-            await ViewModel.LocalizationService.SetCultureAsync(cultureInfo);
         }
 
         private async void AppThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

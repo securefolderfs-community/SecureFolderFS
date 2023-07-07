@@ -27,7 +27,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Opacity="0.6"
-                    Text="{Binding Path=VaultHealthLastCheckedDate, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|Last checked: {0}'}"
+                    Text="{Binding Path=VaultHealthLastCheckedDate, ElementName=HealthControl, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}, ConverterParameter='LOCALIZE|LastChecked'}"
                     TextTrimming="CharacterEllipsis" />
             </StackPanel>
         </DataTemplate>

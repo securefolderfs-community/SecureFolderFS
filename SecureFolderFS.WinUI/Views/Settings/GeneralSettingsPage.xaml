@@ -115,7 +115,7 @@
                         x:Name="AppLanguageComboBox"
                         ItemsSource="{x:Bind ViewModel.Languages}"
                         SelectedIndex="0"
-                        SelectionChanged="AppLanguageComboBox_SelectionChanged">
+                        SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:LanguageViewModel">
                                 <TextBlock Text="{x:Bind FriendlyName}" />

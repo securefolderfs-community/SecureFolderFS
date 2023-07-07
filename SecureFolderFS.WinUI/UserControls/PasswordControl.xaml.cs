@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.AppModels;
@@ -61,7 +62,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(TitleProperty, value);
         }
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(PasswordControl), new PropertyMetadata("Enter password"));
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(PasswordControl), new PropertyMetadata("EnterPassword".ToLocalized()));
 
         public string? Placeholder
         {
@@ -69,7 +70,7 @@ namespace SecureFolderFS.WinUI.UserControls
             set => SetValue(PlaceholderProperty, value);
         }
         public static readonly DependencyProperty PlaceholderProperty =
-            DependencyProperty.Register(nameof(Placeholder), typeof(string), typeof(PasswordControl), new PropertyMetadata("Password"));
+            DependencyProperty.Register(nameof(Placeholder), typeof(string), typeof(PasswordControl), new PropertyMetadata("Password".ToLocalized()));
 
         public bool ShowInvalidPasswordMessage
         {

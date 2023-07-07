@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:SecureFolderFS.WinUI.Helpers"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
     Closing="SettingsDialog_Closing"
@@ -30,8 +31,8 @@
 
                 <!--  General  -->
                 <NavigationViewItem
-                    AutomationProperties.Name="General"
-                    Content="General"
+                    AutomationProperties.Name="{l:ResourceString Name=SettingsGeneral}"
+                    Content="{l:ResourceString Name=SettingsGeneral}"
                     IsSelected="True"
                     Tag="0">
                     <NavigationViewItem.Icon>
@@ -41,8 +42,8 @@
 
                 <!--  Preferences  -->
                 <NavigationViewItem
-                    AutomationProperties.Name="Preferences"
-                    Content="Preferences"
+                    AutomationProperties.Name="{l:ResourceString Name=SettingsPreferences}"
+                    Content="{l:ResourceString Name=SettingsPreferences}"
                     Tag="1">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE90F;" />
@@ -51,8 +52,8 @@
 
                 <!--  Privacy  -->
                 <NavigationViewItem
-                    AutomationProperties.Name="Privacy"
-                    Content="Privacy"
+                    AutomationProperties.Name="{l:ResourceString Name=SettingsPrivacy}"
+                    Content="{l:ResourceString Name=SettingsPrivacy}"
                     Tag="2">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEA18;" />
@@ -62,7 +63,8 @@
                 <!--  About  -->
                 <NavigationViewItem
                     Margin="0,0,45,0"
-                    Content="About"
+                    AutomationProperties.Name="{l:ResourceString Name=SettingsAbout}"
+                    Content="{l:ResourceString Name=SettingsAbout}"
                     Tag="3">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE946;" />
@@ -90,5 +92,4 @@
             <FontIcon FontSize="10" Glyph="&#xE8BB;" />
         </Button>
     </Grid>
-
 </ContentDialog>
