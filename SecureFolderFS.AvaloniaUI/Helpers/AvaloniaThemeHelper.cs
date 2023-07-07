@@ -16,7 +16,7 @@ namespace SecureFolderFS.AvaloniaUI.Helpers
 
         private AvaloniaThemeHelper()
         {
-            _fluentAvaloniaTheme = AvaloniaLocator.Current.GetRequiredService<FluentAvaloniaTheme>();
+            _fluentAvaloniaTheme = (FluentAvaloniaTheme)Application.Current!.Styles[0];
             _fluentAvaloniaTheme.PreferSystemTheme = CurrentTheme == ThemeType.Default;
         }
 

@@ -1,17 +1,22 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Collections;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.VisualTree;
 using SecureFolderFS.AvaloniaUI.Extensions;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.Animations
 {
-    internal class AnimationExtended : Animation
+    // TODO Rewrite this
+    internal class AnimationExtended
     {
+        private readonly Animation _animation = new();
+        
         /// <summary>
         /// Gets or sets the animated control.
         /// </summary>
@@ -37,26 +42,28 @@ namespace SecureFolderFS.AvaloniaUI.Animations
 
         public Task RunAnimationAsync()
         {
-            if (Children.IsEmpty() && (!From.IsEmpty() || !To.IsEmpty()))
+            _animation.Duration = TimeSpan.FromMicroseconds(1);
+            
+            if (_animation.Children.IsEmpty() && (!From.IsEmpty() || !To.IsEmpty()))
             {
                 if (!From.IsEmpty())
                 {
                     var from = new KeyFrame { Cue = new(0) };
                     from.Setters.AddRange(From);
-                    Children.Add(from);
+                    _animation.Children.Add(from);
                 }
 
                 if (!To.IsEmpty())
                 {
                     var to = new KeyFrame { Cue = new(1) };
                     to.Setters.AddRange(To);
-                    Children.Add(to);
+                    _animation.Children.Add(to);
                 }
             }
 
             // Apply setters of the first frame immediately
-            foreach (var keyFrame in Children.Where(keyFrame => keyFrame.Cue.CueValue == 0))
-            foreach (var setter in keyFrame.Setters.Where(setter => setter.Property is not null))
+            foreach (var keyFrame in _animation.Children.Where(keyFrame => keyFrame.Cue.CueValue == 0))
+            foreach (var setter in keyFrame.Setters.Cast<Setter>().Where(setter => setter.Property is not null))
             {
                 if (setter.Property == TranslateTransform.XProperty || setter.Property == TranslateTransform.YProperty)
                     Target.GetTransform<TranslateTransform>().SetValue(setter.Property, setter.Value);
@@ -66,7 +73,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations
                     Target.SetValue(setter.Property!, setter.Value);
             }
 
-            return RunAsync(Target, null);
+            return _animation.RunAsync(Target);
         }
     }
 }

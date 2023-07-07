@@ -44,10 +44,10 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
             return new AnimationExtended
             {
                 Target = Target,
-                Duration = Duration,
-                Easing = Easing,
-                FillMode = FillMode,
-                Delay = Delay
+                // Duration = Duration,
+                // Easing = Easing,
+                // FillMode = FillMode,
+                // Delay = Delay
             };
         }
 

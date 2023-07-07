@@ -77,7 +77,7 @@ namespace SecureFolderFS.AvaloniaUI.Animations.Transitions
                 {
                     await infoBarOpacityTransition.RunAnimationAsync();
                     ContentBelow.GetTransform<TranslateTransform>().Y = 0;
-                }).GetTask(),
+                }),
                 infoBarTranslateTransition.RunAnimationAsync(),
                 contentBelowTranslateTransition.RunAnimationAsync()
             );

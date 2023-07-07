@@ -73,7 +73,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
                     if (target is null)
                         return false;
 
-                    return await (Dispatcher.UIThread.InvokeAsync(() => NavigationControl.NavigateAsync(target, (NavigationTransition?)null)).GetTask().Unwrap());
+                    return await Dispatcher.UIThread.InvokeAsync(() => NavigationControl.NavigateAsync(target, (NavigationTransition?)null));
                 }
             }
         }

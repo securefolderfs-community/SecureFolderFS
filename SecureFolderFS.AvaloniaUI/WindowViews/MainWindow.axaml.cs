@@ -57,7 +57,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
             });
 
             // Use Mica
-            TransparencyLevelHint = WindowTransparencyLevel.Mica;
+            TransparencyLevelHint = new [] { WindowTransparencyLevel.Mica, WindowTransparencyLevel.None };
             PrepareBackgroundForMica();
             Application.Current!.ActualThemeVariantChanged += OnApplicationThemeChanged;
         }

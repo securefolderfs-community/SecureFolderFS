@@ -31,10 +31,10 @@ namespace SecureFolderFS.AvaloniaUI.Animations2
             return new AnimationExtended
             {
                 Target = target,
-                Duration = Duration,
-                Easing = EasingFunction,
-                FillMode = FillMode,
-                Delay = BeginTime
+                // Duration = Duration,
+                // Easing = EasingFunction,
+                // FillMode = FillMode,
+                // Delay = BeginTime
             };
         }
     }
