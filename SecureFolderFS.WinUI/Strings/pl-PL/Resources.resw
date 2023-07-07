@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AutoLock" xml:space="preserve">
+    <value>Automatycznie zablokuj sejfy</value>
+  </data>
+  <data name="AutoLockDescription" xml:space="preserve">
+    <value>Zablokuj wszystkie sejfy, gdy urządzenie jest zablokowane</value>
+  </data>
+  <data name="AutoStart" xml:space="preserve">
+    <value>Uruchom z systemem</value>
+  </data>
+  <data name="AutoStartDescription" xml:space="preserve">
+    <value>Uruchom SecureFolderFS przy starcie systemu</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Anuluj</value>
   </data>
@@ -165,6 +177,21 @@
   <data name="DataEncryption" xml:space="preserve">
     <value>Szyfrowanie danych</value>
   </data>
+  <data name="DisableRecentAccess" xml:space="preserve">
+    <value>Wyłącz listę ostatnich plików</value>
+  </data>
+  <data name="DisableRecentAccessDescription" xml:space="preserve">
+    <value>Tymczasowo wyłącz listę ostatnich plików podczas odblokowania sejfów</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Pobieranie {0}%</value>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Wprowadź hasło</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Błąd</value>
+  </data>
   <data name="ExportSettings" xml:space="preserve">
     <value>Eksportuj ustawienia</value>
   </data>
@@ -177,8 +204,26 @@
   <data name="FileSystemProviderDescription" xml:space="preserve">
     <value>Wybierz preferowany typ wirtualnego systemu plików</value>
   </data>
+  <data name="HealthAttention" xml:space="preserve">
+    <value>Wymaga uwagi</value>
+  </data>
+  <data name="HealthNoProblems" xml:space="preserve">
+    <value>Nie znaleziono problemów</value>
+  </data>
+  <data name="HealthProblems" xml:space="preserve">
+    <value>Znaleziono problemy</value>
+  </data>
   <data name="ImportSettings" xml:space="preserve">
     <value>Importuj ustawienia</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Instalowanie...</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Nieprawidłowe hasło</value>
+  </data>
+  <data name="InvalidPasswordMessage" xml:space="preserve">
+    <value>Wprowadzone hasło jest nieprawidłowe.</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Język</value>
@@ -189,11 +234,20 @@
   <data name="LastChecked" xml:space="preserve">
     <value>Ostatnio sprawdzono: {0}</value>
   </data>
+  <data name="LatestVersionInstalled" xml:space="preserve">
+    <value>Najnowsza wersja</value>
+  </data>
   <data name="License" xml:space="preserve">
     <value>Licencja</value>
   </data>
   <data name="Licenses" xml:space="preserve">
     <value>Licencje</value>
+  </data>
+  <data name="LockVault" xml:space="preserve">
+    <value>Zablokuj sejf</value>
+  </data>
+  <data name="LockVaultDescription" xml:space="preserve">
+    <value>Bezpiecznie zablokuj ten sejf i zamknij pulpit</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
     <value>Zarządzaj ustawieniami</value>
@@ -219,11 +273,23 @@
   <data name="OpenLogLocationDescription" xml:space="preserve">
     <value>Uruchamia eksplorator plików, gdzie znajduje się plik dziennika</value>
   </data>
+  <data name="OpenVaultFolder" xml:space="preserve">
+    <value>Otwórz folder sejfu</value>
+  </data>
+  <data name="OpenVaultFolderDescription" xml:space="preserve">
+    <value>Automatycznie otwórz folder po odblokowaniu sejfu</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Hasło</value>
+  </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Polityka prywatności</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
     <value>Zobacz oświadczenie dotyczące polityki prywatności</value>
+  </data>
+  <data name="ReadSpeeds" xml:space="preserve">
+    <value>Prędkość odczytu</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Usuń sejf z listy</value>
@@ -231,11 +297,29 @@
   <data name="RepeatPassword" xml:space="preserve">
     <value>Powtórz hasło</value>
   </data>
+  <data name="RestoreLastSession" xml:space="preserve">
+    <value>Kontynuuj tam, gdzie skończyłeś</value>
+  </data>
+  <data name="RestoreLastSessionDescription" xml:space="preserve">
+    <value>Rozpocznij na poprzednio wybranym sejfie</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Szukaj</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
     <value>Wybierz ścieżkę sejfu</value>
+  </data>
+  <data name="SettingsAbout" xml:space="preserve">
+    <value>O programie</value>
+  </data>
+  <data name="SettingsGeneral" xml:space="preserve">
+    <value>Ogólne</value>
+  </data>
+  <data name="SettingsPreferences" xml:space="preserve">
+    <value>Preferencje</value>
+  </data>
+  <data name="SettingsPrivacy" xml:space="preserve">
+    <value>Prywatność</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
     <value>Pokaż zaszyfrowany sejf w Eksploratorze plików</value>
@@ -245,6 +329,12 @@
   </data>
   <data name="SocialDescription" xml:space="preserve">
     <value>Zapytaj, sugeruj i rozmawiaj o SecureFolderFS</value>
+  </data>
+  <data name="Telemetry" xml:space="preserve">
+    <value>Włącz telemetrię</value>
+  </data>
+  <data name="TelemetryDescription" xml:space="preserve">
+    <value>Zbieraj anonimowe raporty o awariach i dane użytkowania</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Motyw</value>
@@ -267,14 +357,35 @@
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
     <value>Zobacz biblioteki firm trzecich używane przez SecureFolderFS</value>
   </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Odblokuj</value>
+  </data>
   <data name="VaultAdded" xml:space="preserve">
     <value>Sejf został dodany</value>
+  </data>
+  <data name="VaultInformation" xml:space="preserve">
+    <value>Informacje o sejfie</value>
+  </data>
+  <data name="VaultLocked" xml:space="preserve">
+    <value>Sejf jest zablokowany</value>
+  </data>
+  <data name="VaultProperties" xml:space="preserve">
+    <value>Właściwości sejfu</value>
+  </data>
+  <data name="VaultPropertiesDescription" xml:space="preserve">
+    <value>Zobacz informacje o tym sejfie</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
     <value>Zobacz na GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
     <value>Zobacz repozytorium</value>
+  </data>
+  <data name="ViewVault" xml:space="preserve">
+    <value>Pokaż sejf</value>
+  </data>
+  <data name="ViewVaultDescription" xml:space="preserve">
+    <value>Pokaż ten sejf w Eksploratorze plików</value>
   </data>
   <data name="Website" xml:space="preserve">
     <value>Strona internetowa</value>
@@ -284,5 +395,8 @@
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>Co nowego</value>
+  </data>
+  <data name="WriteSpeeds" xml:space="preserve">
+    <value>Prędkość zapisu</value>
   </data>
 </root>

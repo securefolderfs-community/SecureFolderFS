@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AutoLock" xml:space="preserve">
+    <value>Automatically lock vaults</value>
+  </data>
+  <data name="AutoLockDescription" xml:space="preserve">
+    <value>Lock all vaults when device is locked</value>
+  </data>
+  <data name="AutoStart" xml:space="preserve">
+    <value>Start with system</value>
+  </data>
+  <data name="AutoStartDescription" xml:space="preserve">
+    <value>Launch SecureFolderFS on system startup</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -165,6 +177,21 @@
   <data name="DataEncryption" xml:space="preserve">
     <value>Data encryption</value>
   </data>
+  <data name="DisableRecentAccess" xml:space="preserve">
+    <value>Disable recently accessed list</value>
+  </data>
+  <data name="DisableRecentAccessDescription" xml:space="preserve">
+    <value>Temporarily disable recent files list when unlocking vaults</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Downloading {0}%</value>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Enter password</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
   <data name="ExportSettings" xml:space="preserve">
     <value>Export settings</value>
   </data>
@@ -177,8 +204,26 @@
   <data name="FileSystemProviderDescription" xml:space="preserve">
     <value>Choose the preferred virtual file system type</value>
   </data>
+  <data name="HealthAttention" xml:space="preserve">
+    <value>Needs attention</value>
+  </data>
+  <data name="HealthNoProblems" xml:space="preserve">
+    <value>No problems found</value>
+  </data>
+  <data name="HealthProblems" xml:space="preserve">
+    <value>Problems found</value>
+  </data>
   <data name="ImportSettings" xml:space="preserve">
     <value>Import settings</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Installing...</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Invalid password</value>
+  </data>
+  <data name="InvalidPasswordMessage" xml:space="preserve">
+    <value>The provided password is incorrect.</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
@@ -189,11 +234,20 @@
   <data name="LastChecked" xml:space="preserve">
     <value>Last checked: {0}</value>
   </data>
+  <data name="LatestVersionInstalled" xml:space="preserve">
+    <value>Latest version installed</value>
+  </data>
   <data name="License" xml:space="preserve">
     <value>License</value>
   </data>
   <data name="Licenses" xml:space="preserve">
     <value>Licenses</value>
+  </data>
+  <data name="LockVault" xml:space="preserve">
+    <value>Lock vault</value>
+  </data>
+  <data name="LockVaultDescription" xml:space="preserve">
+    <value>Securely lock this vault and close the dashboard</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
     <value>Manage settings</value>
@@ -219,11 +273,23 @@
   <data name="OpenLogLocationDescription" xml:space="preserve">
     <value>Launches file explorer where log file is located</value>
   </data>
+  <data name="OpenVaultFolder" xml:space="preserve">
+    <value>Open vault folder</value>
+  </data>
+  <data name="OpenVaultFolderDescription" xml:space="preserve">
+    <value>Automatically open folder when vault is unlocked</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Privacy policy</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
     <value>View the privacy policy statement</value>
+  </data>
+  <data name="ReadSpeeds" xml:space="preserve">
+    <value>Read speeds</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Remove vault from the list</value>
@@ -231,11 +297,29 @@
   <data name="RepeatPassword" xml:space="preserve">
     <value>Repeat password</value>
   </data>
+  <data name="RestoreLastSession" xml:space="preserve">
+    <value>Continue where you left off</value>
+  </data>
+  <data name="RestoreLastSessionDescription" xml:space="preserve">
+    <value>Start on previously selected vault</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
     <value>Select vault path</value>
+  </data>
+  <data name="SettingsAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="SettingsGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsPreferences" xml:space="preserve">
+    <value>Preferences</value>
+  </data>
+  <data name="SettingsPrivacy" xml:space="preserve">
+    <value>Privacy</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
     <value>Show encrypted vault in File Explorer</value>
@@ -245,6 +329,12 @@
   </data>
   <data name="SocialDescription" xml:space="preserve">
     <value>Ask, suggest, and discuss SecureFolderFS</value>
+  </data>
+  <data name="Telemetry" xml:space="preserve">
+    <value>Enable telemetry</value>
+  </data>
+  <data name="TelemetryDescription" xml:space="preserve">
+    <value>Collect anonymous crash reports and usage data</value>
   </data>
   <data name="Theme" xml:space="preserve">
     <value>Theme</value>
@@ -267,14 +357,35 @@
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
     <value>View third-party libraries used by SecureFolderFS</value>
   </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Unlock</value>
+  </data>
   <data name="VaultAdded" xml:space="preserve">
     <value>Vault has been added</value>
+  </data>
+  <data name="VaultInformation" xml:space="preserve">
+    <value>Vault information</value>
+  </data>
+  <data name="VaultLocked" xml:space="preserve">
+    <value>Vault is locked</value>
+  </data>
+  <data name="VaultProperties" xml:space="preserve">
+    <value>Vault properties</value>
+  </data>
+  <data name="VaultPropertiesDescription" xml:space="preserve">
+    <value>View information about this vault</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
     <value>View on GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
     <value>View repository</value>
+  </data>
+  <data name="ViewVault" xml:space="preserve">
+    <value>View vault</value>
+  </data>
+  <data name="ViewVaultDescription" xml:space="preserve">
+    <value>Show this vault in File Explorer</value>
   </data>
   <data name="Website" xml:space="preserve">
     <value>Website</value>
@@ -284,5 +395,8 @@
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>What's new</value>
+  </data>
+  <data name="WriteSpeeds" xml:space="preserve">
+    <value>Write speeds</value>
   </data>
 </root>
