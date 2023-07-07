@@ -9,7 +9,6 @@ using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
-using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SkiaSharp;
 using System;
@@ -18,15 +17,13 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.UserControls
 {
-    internal sealed partial class GraphControl : UserControl, IRecipient<DialogShownMessage>, IRecipient<DialogHiddenMessage>
+    internal sealed partial class GraphControl : UserControl
     {
         public event EventHandler<RoutedEventArgs>? Click;
 
         public GraphControl()
         {
             AvaloniaXamlLoader.Load(this);
-            WeakReferenceMessenger.Default.Register<DialogShownMessage>(this);
-            WeakReferenceMessenger.Default.Register<DialogHiddenMessage>(this);
         }
 
         private async void Chart_Loaded(object sender, RoutedEventArgs e)
@@ -80,20 +77,6 @@ namespace SecureFolderFS.AvaloniaUI.UserControls
         private void RootButton_Click(object sender, RoutedEventArgs e)
         {
             Click?.Invoke(sender, e);
-        }
-
-        // Fix major graphical glitches when a dialog and a chart are visible at the same time
-        // Disabling deferred rendering does solve this, but it causes invisible elements to appear
-        // on the screen, which prevents the user from pressing buttons.
-        public void Receive(DialogShownMessage message)
-        {
-            Chart.IsVisible = false;
-        }
-
-        public async void Receive(DialogHiddenMessage message)
-        {
-            await Task.Delay(250); // Ensure the dialog is closed
-            Chart.IsVisible = true;
         }
 
         public IList<GraphPoint>? Data

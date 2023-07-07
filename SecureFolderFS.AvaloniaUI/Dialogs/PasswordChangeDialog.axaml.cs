@@ -1,9 +1,7 @@
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -47,7 +45,6 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
             if (await ViewModel.ChangePasswordAsync(new(existingPassword, newPassword), CancellationToken.None))
             {
                 Hide();
-                WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
             }
         }
 

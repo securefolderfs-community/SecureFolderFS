@@ -1,9 +1,7 @@
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -36,7 +34,6 @@ namespace SecureFolderFS.AvaloniaUI.Dialogs
         private void CloseButton_Click(object? sender, RoutedEventArgs e)
         {
             Hide();
-            WeakReferenceMessenger.Default.Send(new DialogHiddenMessage());
         }
 
         private void Licenses_Loaded(object? sender, RoutedEventArgs e)

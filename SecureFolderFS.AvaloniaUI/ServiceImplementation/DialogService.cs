@@ -1,14 +1,10 @@
-using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.AvaloniaUI.Dialogs;
-using SecureFolderFS.AvaloniaUI.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
@@ -16,7 +12,6 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
     internal sealed class DialogService : IDialogService
     {
         private readonly Dictionary<Type, Func<IDialog>> _dialogs;
-        private IDialog? _currentDialog;
 
         public DialogService()
         {
@@ -30,7 +25,8 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IDialog GetDialog<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
+        public IDialog GetDialog<TViewModel>(TViewModel viewModel)
+            where TViewModel : class, INotifyPropertyChanged
         {
             if (!_dialogs.TryGetValue(typeof(TViewModel), out var initializer))
                 throw new ArgumentException($"{typeof(TViewModel)} does not have an appropriate dialog associated with it.");
@@ -46,20 +42,6 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
         public void ReleaseDialog()
         {
             return; // TODO: Implement dialog releasing
-        }
-
-        [Obsolete]
-        public async Task<IResult> ShowDialogAsync<TViewModel>(TViewModel viewModel) where TViewModel : class, INotifyPropertyChanged
-        {
-            _currentDialog?.Hide();
-            _currentDialog = GetDialog(viewModel);
-            WeakReferenceMessenger.Default.Send(new DialogShownMessage());
-
-            var result = await _currentDialog.ShowAsync();
-
-            // Not setting _currentDialog to null would cause DialogHidden message to be sent after DialogShownMessage
-            _currentDialog = null;
-            return result;
         }
     }
 }
