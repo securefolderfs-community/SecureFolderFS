@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
@@ -66,9 +67,9 @@
             <StackPanel Spacing="4">
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
-                    Title="View vault"
+                    Title="{l:ResourceString Name=ViewVault}"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand}"
-                    Description="Show this vault in File Explorer"
+                    Description="{l:ResourceString Name=ViewVaultDescription}"
                     IsClickable="True">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xEC50;" />
@@ -80,9 +81,9 @@
 
                 <!--  Vault properties  -->
                 <ucab:ActionBlockControl
-                    Title="Vault properties"
+                    Title="{l:ResourceString Name=VaultProperties}"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand}"
-                    Description="View information about this vault"
+                    Description="{l:ResourceString Name=VaultPropertiesDescription}"
                     IsClickable="True">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
@@ -94,9 +95,9 @@
 
                 <!--  Lock vault  -->
                 <ucab:ActionBlockControl
-                    Title="Lock vault"
+                    Title="{l:ResourceString Name=LockVault}"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand}"
-                    Description="Securely lock this vault and close the dashboard"
+                    Description="{l:ResourceString Name=LockVaultDescription}"
                     IsClickable="True">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE72E;" />

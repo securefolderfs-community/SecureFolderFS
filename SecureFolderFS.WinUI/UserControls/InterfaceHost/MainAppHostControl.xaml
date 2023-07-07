@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc2="using:SecureFolderFS.WinUI.UserControls.Navigation"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
@@ -26,7 +27,7 @@
         IsSettingsVisible="False"
         MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
         OpenPaneLength="260"
-        PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|My vaults'}"
+        PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|MyVaults'}"
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
 
@@ -36,7 +37,7 @@
         <NavigationView.AutoSuggestBox>
             <AutoSuggestBox
                 ItemsSource="{x:Bind ViewModel.SidebarViewModel.SearchViewModel.SearchItems}"
-                PlaceholderText="Search"
+                PlaceholderText="{l:ResourceString Name=Search}"
                 QueryIcon="Find"
                 QuerySubmitted="SidebarSearchBox_QuerySubmitted"
                 TextChanged="SidebarSearchBox_TextChanged" />
@@ -67,7 +68,7 @@
                             Margin="2,0,2,-4"
                             FontSize="16"
                             Glyph="&#xECC8;" />
-                        <TextBlock Text="New vault" />
+                        <TextBlock Text="{l:ResourceString Name=NewVault}" />
                     </StackPanel>
                 </Button>
                 <Button
@@ -151,7 +152,7 @@
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
-                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand}" Text="Show encrypted vault in File Explorer">
+                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand}" Text="{l:ResourceString Name=ShowEncryptedVault}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>
@@ -159,7 +160,7 @@
                             <MenuFlyoutItem
                                 Command="{x:Bind RemoveVaultCommand}"
                                 IsEnabled="{x:Bind CanRemoveVault, Mode=OneWay}"
-                                Text="Remove vault from the list">
+                                Text="{l:ResourceString Name=RemoveFromList}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE738;" />
                                 </MenuFlyoutItem.Icon>

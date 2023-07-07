@@ -8,7 +8,6 @@ using Windows.Globalization;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
-    // TODO: Implement localization
     /// <inheritdoc cref="ILocalizationService"/>
     internal sealed class LocalizationService : ILocalizationService
     {
@@ -31,10 +30,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         /// <inheritdoc/>
         public string? GetString(string resourceKey)
         {
-            // TODO: Localize strings
-            // return ResourceLoader.GetString(resourceKey);
-
-            return resourceKey;
+            return ResourceLoader.GetString(resourceKey);
         }
 
         /// <inheritdoc/>

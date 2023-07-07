@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Vault;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 {
@@ -56,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         private async Task RemoveVaultAsync(CancellationToken cancellationToken)
         {
             _vaultCollectionModel.Remove(VaultViewModel.VaultModel);
-            await _vaultCollectionModel.SaveAsync(cancellationToken);
+            await _vaultCollectionModel.TrySaveAsync(cancellationToken);
         }
 
         [RelayCommand]

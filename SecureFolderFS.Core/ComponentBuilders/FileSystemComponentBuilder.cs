@@ -19,7 +19,7 @@ using System;
 
 namespace SecureFolderFS.Core.ComponentBuilders
 {
-    internal sealed class FileSystemComponentBuilder // Terrible.
+    internal sealed class FileSystemComponentBuilder // TODO: Terrible.
     { 
         public required VaultConfigurationDataModel ConfigDataModel { get; init; }
 
@@ -31,11 +31,10 @@ namespace SecureFolderFS.Core.ComponentBuilders
         {
             var security = Security.CreateNew(encKey.CreateCopy(), macKey.CreateCopy(), ConfigDataModel.ContentCipherScheme, ConfigDataModel.FileNameCipherScheme);
 
-            var directoryIdStreamAccess = new DirectoryIdStreamAccess(); // TODO: Provide from consumer
             IDirectoryIdAccess directoryIdAccess = FileSystemOptions.DirectoryIdCachingStrategy switch
             {
-                DirectoryIdCachingStrategy.NoCache => new InstantDirectoryIdAccess(directoryIdStreamAccess, FileSystemOptions.FileSystemStatistics, FileSystemOptions.HealthStatistics),
-                DirectoryIdCachingStrategy.RandomAccessMemoryCache => new CachingDirectoryIdAccess(directoryIdStreamAccess, FileSystemOptions.FileSystemStatistics, FileSystemOptions.HealthStatistics),
+                DirectoryIdCachingStrategy.NoCache => new InstantDirectoryIdAccess(FileSystemOptions.FileSystemStatistics),
+                DirectoryIdCachingStrategy.RandomAccessMemoryCache => new CachingDirectoryIdAccess(FileSystemOptions.FileSystemStatistics),
                 _ => throw new ArgumentOutOfRangeException(nameof(FileSystemOptions.DirectoryIdCachingStrategy))
             };
 
@@ -44,8 +43,8 @@ namespace SecureFolderFS.Core.ComponentBuilders
             {
                 IFileNameAccess fileNameAccess = FileSystemOptions.FileNameCachingStrategy switch
                 {
-                    FileNameCachingStrategy.RandomAccessMemoryCache => new CachingFileNameAccess(security, FileSystemOptions.FileSystemStatistics),
                     FileNameCachingStrategy.NoCache => new InstantFileNameAccess(security, FileSystemOptions.FileSystemStatistics),
+                    FileNameCachingStrategy.RandomAccessMemoryCache => new CachingFileNameAccess(security, FileSystemOptions.FileSystemStatistics),
                     _ => throw new ArgumentOutOfRangeException(nameof(FileSystemOptions.FileNameCachingStrategy))
                 };
 
@@ -55,9 +54,7 @@ namespace SecureFolderFS.Core.ComponentBuilders
                 pathConverter = new CiphertextPathConverter(locatableContentFolder.Path, fileNameAccess, directoryIdAccess);
             }
             else if (ConfigDataModel.FileNameCipherScheme == FileNameCipherScheme.None)
-            {
                 pathConverter = new CleartextPathConverter();
-            }
             else
                 throw new ArgumentOutOfRangeException(nameof(VaultConfigurationDataModel.FileNameCipherScheme));
 

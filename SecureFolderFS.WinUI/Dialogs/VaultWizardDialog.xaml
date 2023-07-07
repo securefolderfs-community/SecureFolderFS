@@ -5,6 +5,7 @@
     xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:SecureFolderFS.WinUI.Helpers"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
     HorizontalAlignment="Stretch"
@@ -16,7 +17,7 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    SecondaryButtonText="Cancel"
+    SecondaryButtonText="{l:ResourceString Name=Cancel}"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 

@@ -10,9 +10,9 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
     public interface ICryptFile : IDisposable
     {
         /// <summary>
-        /// Gets the ciphertext path of the file.
+        /// Gets the unique ID of the file.
         /// </summary>
-        string CiphertextPath { get; }
+        string Id { get; }
 
         /// <summary>
         /// Opens a new <see cref="CleartextStream"/> on top of <paramref name="ciphertextStream"/>.

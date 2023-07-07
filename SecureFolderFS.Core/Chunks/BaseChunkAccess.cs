@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
-using SecureFolderFS.Core.FileSystem.Analytics;
+using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using System;
 

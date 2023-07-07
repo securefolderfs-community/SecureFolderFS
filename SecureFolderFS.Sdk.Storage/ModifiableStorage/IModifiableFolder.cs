@@ -13,17 +13,7 @@ namespace SecureFolderFS.Sdk.Storage.ModifiableStorage
         /// Deletes the provided storable item from this folder.
         /// </summary>
         Task DeleteAsync(INestedStorable item, bool permanently = default, CancellationToken cancellationToken = default);
-    
-        /// <summary>
-        /// Creates a copy of the provided storable item in this folder.
-        /// </summary>
-        Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default);
-    
-        /// <summary>
-        /// Moves a storable item out of the provided folder, and into this folder. Returns the new item that resides in this folder.
-        /// </summary>
-        Task<INestedStorable> MoveFromAsync(INestedStorable itemToMove, IModifiableFolder source, bool overwrite = default, CancellationToken cancellationToken = default);
-    
+
         /// <summary>
         /// Creates a new file with the desired name inside this folder.
         /// </summary>

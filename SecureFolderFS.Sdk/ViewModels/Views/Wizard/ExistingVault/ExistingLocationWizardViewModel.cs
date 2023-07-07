@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
 
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
-        [ObservableProperty] private string? _SelectedLocationText = "No folder selected";
+        [ObservableProperty] private string? _SelectedLocationText = "NoFolderSelected".ToLocalized();
 
         public ExistingLocationWizardViewModel(VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
@@ -35,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
 
             var vaultModel = new VaultModel(_vaultFolder);
             DialogViewModel.VaultCollectionModel.Add(vaultModel);
-            await DialogViewModel.VaultCollectionModel.SaveAsync(cancellationToken);
+            await DialogViewModel.VaultCollectionModel.TrySaveAsync(cancellationToken);
 
             await NavigationService.TryNavigateAsync(() => new SummaryWizardViewModel(vaultModel.VaultName, DialogViewModel));
         }

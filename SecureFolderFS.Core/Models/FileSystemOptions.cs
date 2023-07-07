@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.FileSystem.Analytics;
+using SecureFolderFS.Core.FileSystem.Statistics;
 
 namespace SecureFolderFS.Core.Models
 {
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.Models
         public FileNameCachingStrategy FileNameCachingStrategy { get; init; } = FileNameCachingStrategy.RandomAccessMemoryCache;
 
         /// <summary>
-        /// Gets the caching strategy for directory IDs.
+        /// Gets the caching strategy for DirectoryIDs.
         /// </summary>
         public DirectoryIdCachingStrategy DirectoryIdCachingStrategy { get; init; } = DirectoryIdCachingStrategy.RandomAccessMemoryCache;
     }

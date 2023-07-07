@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         public AboutSettingsViewModel()
         {
-            AppVersion = ApplicationService.GetAppVersion().ToString();
+            AppVersion = $"{ApplicationService.AppVersion} ({ApplicationService.Platform})";
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
@@ -37,10 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         private async Task CopySystemVersionAsync(CancellationToken cancellationToken)
         {
             if (await ClipboardService.IsSupportedAsync())
-            {
-                var systemVersion = ApplicationService.GetSystemVersion();
-                await ClipboardService.SetTextAsync(systemVersion, cancellationToken);
-            }
+                await ClipboardService.SetTextAsync(ApplicationService.GetSystemVersion(), cancellationToken);
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
@@ -58,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenChangelogAsync()
         {
-            var viewModel = new ChangelogDialogViewModel(ApplicationService.GetAppVersion());
+            var viewModel = new ChangelogDialogViewModel(ApplicationService.AppVersion);
             _ = viewModel.InitAsync();
 
             await DialogService.ShowDialogAsync(viewModel);

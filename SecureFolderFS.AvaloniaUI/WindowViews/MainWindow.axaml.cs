@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using FluentAvalonia.UI.Windowing;
 using SecureFolderFS.Sdk.Services;
 using System;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.AvaloniaUI.WindowViews
 {
@@ -86,7 +87,7 @@ namespace SecureFolderFS.AvaloniaUI.WindowViews
         private async void Window_Closing(object? sender, WindowClosingEventArgs e)
         {
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
-            await settingsService.SaveAsync();
+            await settingsService.TrySaveAsync();
         }
 
         public static readonly StyledProperty<bool> IsCustomTitleBarVisibleProperty =

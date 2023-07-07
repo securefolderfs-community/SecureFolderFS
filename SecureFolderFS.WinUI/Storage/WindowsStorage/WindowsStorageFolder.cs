@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.DirectStorage;
 using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -14,7 +15,7 @@ using Windows.Storage;
 namespace SecureFolderFS.WinUI.Storage.WindowsStorage
 {
     /// <inheritdoc cref="IFolder"/>
-    internal sealed class WindowsStorageFolder : WindowsStorable<StorageFolder>, ILocatableFolder, IModifiableFolder, IFolderExtended, INestedFolder
+    internal sealed class WindowsStorageFolder : WindowsStorable<StorageFolder>, ILocatableFolder, IFolderExtended, INestedFolder, IDirectCopy, IDirectMove
     {
         // TODO: Implement IMutableFolder
 

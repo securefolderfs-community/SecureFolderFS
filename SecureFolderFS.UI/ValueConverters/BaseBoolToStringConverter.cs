@@ -1,13 +1,10 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Services;
+﻿using SecureFolderFS.Sdk.Extensions;
 using System;
 
 namespace SecureFolderFS.UI.ValueConverters
 {
     public abstract class BaseBoolToStringConverter : BaseConverter
     {
-        private static ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
-
         /// <inheritdoc/>
         protected override object? TryConvert(object? value, Type targetType, object? parameter)
         {
@@ -24,7 +21,7 @@ namespace SecureFolderFS.UI.ValueConverters
             var valueSplit = formatString.Split(':');
             var splitOption = bValue ? valueSplit[3].Split('|') : valueSplit[1].Split('|');
 
-            return splitOption[0] == "LOCALIZE" ? LocalizationService.GetString(splitOption[1]) : splitOption[1];
+            return splitOption[0] == "LOCALIZE" ? splitOption[1].ToLocalized() : splitOption[1];
         }
 
         /// <inheritdoc/>

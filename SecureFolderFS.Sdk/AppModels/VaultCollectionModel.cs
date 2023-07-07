@@ -91,11 +91,9 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
+        public async Task LoadAsync(CancellationToken cancellationToken = default)
         {
-            var result = true;
-            result &= await VaultConfigurations.LoadAsync(cancellationToken);
-            result &= await VaultWidgets.LoadAsync(cancellationToken);
+            await Task.WhenAll(VaultConfigurations.LoadAsync(cancellationToken), VaultWidgets.LoadAsync(cancellationToken));
 
             // Clear previous vaults
             Items.Clear();
@@ -113,18 +111,12 @@ namespace SecureFolderFS.Sdk.AppModels
                 var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
                 Items.Add(vaultModel);
             }
-
-            return result;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
+        public Task SaveAsync(CancellationToken cancellationToken = default)
         {
-            var result = true;
-            result &= await VaultWidgets.SaveAsync(cancellationToken);
-            result &= await VaultConfigurations.SaveAsync(cancellationToken);
-
-            return result;
+            return Task.WhenAll(VaultConfigurations.SaveAsync(cancellationToken), VaultWidgets.SaveAsync(cancellationToken));
         }
     }
 }

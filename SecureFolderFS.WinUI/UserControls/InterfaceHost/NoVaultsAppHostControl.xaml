@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -34,13 +35,13 @@
                     HorizontalAlignment="Center"
                     FontSize="22"
                     FontWeight="SemiBold"
-                    Text="Welcome to SecureFolderFS" />
+                    Text="{l:ResourceString Name=Welcome}" />
 
                 <TextBlock
                     MaxWidth="450"
                     HorizontalAlignment="Center"
                     Opacity="0.6"
-                    Text="You haven't added any vaults yet. Create a new one or add existing to begin!"
+                    Text="{l:ResourceString Name=NoVaultsMessage}"
                     TextAlignment="Center"
                     TextWrapping="WrapWholeWords" />
             </StackPanel>
@@ -51,7 +52,7 @@
                 Padding="32,6"
                 HorizontalAlignment="Center"
                 Command="{x:Bind ViewModel.AddNewVaultCommand}"
-                Content="Add vault"
+                Content="{l:ResourceString Name=NewVault}"
                 Style="{ThemeResource AccentButtonStyle}" />
         </Grid>
 

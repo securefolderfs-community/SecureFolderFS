@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Enums;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace SecureFolderFS.UI.Helpers
             AppSettings.ApplicationTheme = ConvertThemeType(themeType);
 
             UpdateTheme();
-            return AppSettings.SaveAsync(cancellationToken);
+            return AppSettings.TrySaveAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

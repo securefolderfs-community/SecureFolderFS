@@ -4,10 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:SecureFolderFS.WinUI.Helpers"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tuc="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    Title="What's new"
+    Title="{l:ResourceString Name=WhatsNew}"
     DefaultButton="Primary"
     PrimaryButtonText="Awesome!"
     RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
@@ -52,7 +53,7 @@
 
             <HyperlinkButton Grid.Row="1" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="View on GitHub" />
+                    <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />
                     <FontIcon
                         Margin="0,0,0,-2"
                         FontSize="14"
@@ -66,7 +67,7 @@
             Grid.Row="0"
             HorizontalAlignment="Center"
             x:Load="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
-            <TextBlock HorizontalAlignment="Center" Text="An issue occurred while loading the changelog." />
+            <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Name=ChangelogError}" />
             <TextBlock
                 HorizontalAlignment="Center"
                 FontSize="12"
@@ -83,7 +84,7 @@
                 <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand}" Content="Retry" />
                 <HyperlinkButton NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <TextBlock Text="View on GitHub" />
+                        <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />
                         <FontIcon
                             Margin="0,0,0,-2"
                             FontSize="14"

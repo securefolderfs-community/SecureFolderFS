@@ -1,5 +1,4 @@
 using SecureFolderFS.AvaloniaUI.Helpers;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
 using System;
@@ -13,17 +12,13 @@ using SecureFolderFS.AvaloniaUI.UnsafeNative;
 namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
 {
     /// <inheritdoc cref="IApplicationService"/>
-    internal sealed class AvaloniaApplicationService : BaseApplicationService
+    internal sealed class ApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
-        public override string Platform => "AvaloniaUI";
+        public override string Platform { get; } = "AvaloniaUI";
 
         /// <inheritdoc/>
-        public override AppVersion GetAppVersion()
-        {
-            var version = Assembly.GetExecutingAssembly().GetName().Version!;
-            return new(version, Platform);
-        }
+        public override Version AppVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version!;
 
         /// <inheritdoc/>
         public override Task OpenUriAsync(Uri uri)
@@ -31,7 +26,7 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             LauncherHelpers.Launch(uri);
             return Task.CompletedTask;
         }
-
+        
         public override string GetSystemVersion()
         {
             if (!OperatingSystem.IsLinux()) // TODO 

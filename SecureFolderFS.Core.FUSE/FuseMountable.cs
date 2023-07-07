@@ -19,8 +19,7 @@ namespace SecureFolderFS.Core.FUSE
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class FuseMountable : IMountableFileSystem, IAvailabilityChecker
     {
-        private static readonly string MountDirectory =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), nameof(SecureFolderFS), "mount");
+        private static readonly string MountDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), nameof(SecureFolderFS), "mount");
 
         private readonly FuseWrapper _fuseWrapper;
         private readonly string _vaultName;
@@ -101,14 +100,18 @@ namespace SecureFolderFS.Core.FUSE
         private static unsafe bool IsMountPoint(string directory)
         {
             stat stat = new();
-            fixed (byte *pathPtr = Encoding.UTF8.GetBytes(directory))
+            fixed (byte* pathPtr = Encoding.UTF8.GetBytes(directory))
+            {
                 if (LibC.stat(pathPtr, &stat) == -1)
                     return false;
+            }
 
             stat parentStat = new();
-            fixed (byte *parentPathPtr = Encoding.UTF8.GetBytes(Directory.GetParent(directory)!.FullName))
+            fixed (byte* parentPathPtr = Encoding.UTF8.GetBytes(Directory.GetParent(directory)!.FullName))
+            {
                 if (LibC.stat(parentPathPtr, &parentStat) == -1)
                     return false;
+            }
 
             return stat.st_dev != parentStat.st_dev;
         }
@@ -119,7 +122,9 @@ namespace SecureFolderFS.Core.FUSE
 
             var i = 1;
             while (IsMountPoint(mountPoint))
+            {
                 mountPoint = Path.Combine(MountDirectory, $"{vaultName} ({i++})");
+            }
 
             return mountPoint;
         }
@@ -130,7 +135,9 @@ namespace SecureFolderFS.Core.FUSE
         private static void Cleanup()
         {
             foreach (var directory in Directory.GetDirectories(MountDirectory))
+            {
                 Cleanup(directory);
+            }
         }
 
         /// <summary>
@@ -155,8 +162,7 @@ namespace SecureFolderFS.Core.FUSE
         {
             try
             {
-                return File.ReadAllLines("/etc/fuse.conf")
-                    .Any(x => x.Trim() == "user_allow_other");
+                return File.ReadAllLines("/etc/fuse.conf").Any(x => x.Trim() == "user_allow_other");
             }
             catch
             {

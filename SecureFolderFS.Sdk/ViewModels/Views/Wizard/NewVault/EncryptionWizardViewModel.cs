@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.ObjectModel;
@@ -64,12 +65,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
                 return; // TODO: Report issue
 
             var deployResult = await _vaultCreationModel.DeployAsync(cancellationToken);
-            if (!deployResult.Successful)
+            if (!deployResult.Successful || deployResult.Value is null)
                 return; // TODO: Report issue
 
             // Add vault
-            DialogViewModel.VaultCollectionModel.Add(deployResult.Value!);
-            await DialogViewModel.VaultCollectionModel.SaveAsync(cancellationToken);
+            DialogViewModel.VaultCollectionModel.Add(deployResult.Value);
+            await DialogViewModel.VaultCollectionModel.TrySaveAsync(cancellationToken);
 
             // Navigate
             await NavigationService.TryNavigateAsync(() => new SummaryWizardViewModel(deployResult.Value!.VaultName, DialogViewModel));

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.ObjectModel;
@@ -26,7 +27,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Load widgets for vault
-            await _widgetsContextModel.LoadAsync(cancellationToken);
+            if (!await _widgetsContextModel.TryLoadAsync(cancellationToken))
+                return;
 
             // Add widgets
             foreach (var item in _widgetsContextModel.GetWidgets())

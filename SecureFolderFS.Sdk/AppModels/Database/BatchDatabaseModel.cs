@@ -3,6 +3,7 @@ using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -64,17 +65,16 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
-        public override async Task<bool> LoadAsync(CancellationToken cancellationToken = default)
+        public override async Task LoadAsync(CancellationToken cancellationToken = default)
         {
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
-                if (!await EnsureSettingsFolderAsync(cancellationToken))
-                    return false;
+                await EnsureSettingsFolderAsync(cancellationToken);
 
-                _ = _databaseFolder!;
+                _ = _databaseFolder ?? throw new InvalidOperationException("The database folder was not properly initialized.");
 
-                var allFiles = await _databaseFolder!.GetFilesAsync(cancellationToken).ToListAsync(cancellationToken);
+                var allFiles = await _databaseFolder.GetFilesAsync(cancellationToken).ToListAsync(cancellationToken);
                 var nonTypeFiles = allFiles.Where(x => !x.Name.Contains(TYPE_FILE_SUFFIX, StringComparison.OrdinalIgnoreCase));
 
                 foreach (var dataFile in nonTypeFiles)
@@ -96,12 +96,8 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         if (originalType is null)
                             continue;
 
-                        // Open file stream
+                        // Open file stream and deserialize
                         await using var dataStream = await dataFile.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-                        if (dataStream is null)
-                            continue;
-
-                        // Deserialize
                         var deserialized = await serializer.DeserializeAsync(dataStream, originalType, cancellationToken);
 
                         // Set settings cache
@@ -111,15 +107,9 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                     {
                         // TODO: Re-throw exceptions in some cases?
                         _ = ex;
+                        Debugger.Break();
                     }
                 }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                // If the exception was re-thrown...
-                return false;
             }
             finally
             {
@@ -128,13 +118,14 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         }
 
         /// <inheritdoc/>
-        public override async Task<bool> SaveAsync(CancellationToken cancellationToken = default)
+        public override async Task SaveAsync(CancellationToken cancellationToken = default)
         {
             try
             {
                 await storageSemaphore.WaitAsync(cancellationToken);
-                if (!await EnsureSettingsFolderAsync(cancellationToken))
-                    return false;
+                await EnsureSettingsFolderAsync(cancellationToken);
+
+                _ = _databaseFolder ?? throw new InvalidOperationException("The database folder was not properly initialized.");
 
                 foreach (var item in settingsCache)
                 {
@@ -144,23 +135,15 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         if (FlushOnlyChangedValues && !item.Value.IsDirty)
                             continue;
 
-                        if (_databaseFolder is null)
-                            return false;
-
-                        var dataFile = await _databaseFolder.TryCreateFileAsync(item.Key, false, cancellationToken);
-                        var typeFile = await _databaseFolder.TryCreateFileAsync($"{item.Key}{TYPE_FILE_SUFFIX}", false, cancellationToken);
-                        if (dataFile is null || typeFile is null)
-                            continue;
+                        // Get files
+                        var dataFile = await _databaseFolder.CreateFileAsync(item.Key, false, cancellationToken);
+                        var typeFile = await _databaseFolder.CreateFileAsync($"{item.Key}{TYPE_FILE_SUFFIX}", false, cancellationToken);
 
                         // Data file part
 
-                        // Serialize the data
+                        // Open file stream and serialize
+                        await using var dataStream = await dataFile.OpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
                         await using var serializedDataStream = await serializer.SerializeAsync(item.Value.Data, item.Value.Type, cancellationToken);
-
-                        // Open file stream
-                        await using var dataStream = await dataFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
-                        if (dataStream is null)
-                            continue;
 
                         // Overwrite existing content
                         dataStream.Position = 0L;
@@ -176,9 +159,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         var typeBuffer = Encoding.UTF8.GetBytes(item.Value.Type.FullName ?? string.Empty);
 
                         // Open file stream
-                        await using var typeStream = await typeFile.TryOpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
-                        if (typeStream is null)
-                            continue;
+                        await using var typeStream = await typeFile.OpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
 
                         // Reset the stream
                         typeStream.Position = 0L;
@@ -194,15 +175,9 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                     {
                         // TODO: Re-throw exceptions in some cases?
                         _ = ex;
+                        Debugger.Break();
                     }
                 }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                // If the exception was re-thrown...
-                return false;
             }
             finally
             {
@@ -210,13 +185,9 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             }
         }
 
-        private async Task<bool> EnsureSettingsFolderAsync(CancellationToken cancellationToken)
+        private async Task EnsureSettingsFolderAsync(CancellationToken cancellationToken)
         {
-            if (_databaseFolder is not null)
-                return true;
-
-            _databaseFolder = (IModifiableFolder?)await _settingsFolder.TryCreateFolderAsync(_folderName, false, cancellationToken);
-            return _databaseFolder is not null;
+            _databaseFolder ??= (IModifiableFolder?)await _settingsFolder.CreateFolderAsync(_folderName, false, cancellationToken);
         }
 
         public sealed record SettingValue(Type Type, object? Data, bool IsDirty = true)

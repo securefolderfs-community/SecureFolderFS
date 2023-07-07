@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="Changelog" xml:space="preserve">
+    <value>Lista zmian</value>
+  </data>
+  <data name="ChangelogDescription" xml:space="preserve">
+    <value>Zobacz najnowszą listę zmian dla tej wersji</value>
+  </data>
+  <data name="ChangelogError" xml:space="preserve">
+    <value>Wystąpił problem podczas ładowania dziennika zmian.</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Zmień hasło</value>
+  </data>
+  <data name="ChangePasswordDescription" xml:space="preserve">
+    <value>Zmień hasło używane do odblokowywania tego sejfu</value>
+  </data>
+  <data name="CheckForUpdates" xml:space="preserve">
+    <value>Sprawdź dostępność aktualizacji</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Potwierdź</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Kontynuuj</value>
+  </data>
+  <data name="Copied" xml:space="preserve">
+    <value>Skopiowano</value>
+  </data>
+  <data name="CopyAppVersion" xml:space="preserve">
+    <value>Kopiuj wersję aplikacji</value>
+  </data>
+  <data name="CopySystemVersion" xml:space="preserve">
+    <value>Kopiuj wersję systemu</value>
+  </data>
+  <data name="CopyVersion" xml:space="preserve">
+    <value>Kopiuj wersję</value>
+  </data>
+  <data name="CopyVersionMessage" xml:space="preserve">
+    <value>Wybierz wersję do skopiowania do schowka</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Obecne hasło</value>
+  </data>
+  <data name="DataEncryption" xml:space="preserve">
+    <value>Szyfrowanie danych</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Eksportuj ustawienia</value>
+  </data>
+  <data name="FileNameEncryption" xml:space="preserve">
+    <value>Szyfrowanie nazw plików</value>
+  </data>
+  <data name="FileSystemProvider" xml:space="preserve">
+    <value>Dostawca systemu plików</value>
+  </data>
+  <data name="FileSystemProviderDescription" xml:space="preserve">
+    <value>Wybierz preferowany typ wirtualnego systemu plików</value>
+  </data>
+  <data name="ImportSettings" xml:space="preserve">
+    <value>Importuj ustawienia</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Język</value>
+  </data>
+  <data name="LanguageDescription" xml:space="preserve">
+    <value>Wybierz wyświetlany język</value>
+  </data>
+  <data name="LastChecked" xml:space="preserve">
+    <value>Ostatnio sprawdzono: {0}</value>
+  </data>
+  <data name="License" xml:space="preserve">
+    <value>Licencja</value>
+  </data>
+  <data name="Licenses" xml:space="preserve">
+    <value>Licencje</value>
+  </data>
+  <data name="ManageSettings" xml:space="preserve">
+    <value>Zarządzaj ustawieniami</value>
+  </data>
+  <data name="MyVaults" xml:space="preserve">
+    <value>Moje sejfy</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nowe hasło</value>
+  </data>
+  <data name="NewVault" xml:space="preserve">
+    <value>Nowy sejf</value>
+  </data>
+  <data name="NoFolderSelected" xml:space="preserve">
+    <value>Nie wybrano folderu</value>
+  </data>
+  <data name="NoVaultsMessage" xml:space="preserve">
+    <value>Nie dodałeś jeszcze żadnych sejfów. Utwórz nowy lub dodaj istniejący, aby rozpocząć!</value>
+  </data>
+  <data name="OpenLogLocation" xml:space="preserve">
+    <value>Otwórz lokalizację dziennika</value>
+  </data>
+  <data name="OpenLogLocationDescription" xml:space="preserve">
+    <value>Uruchamia eksplorator plików, gdzie znajduje się plik dziennika</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Polityka prywatności</value>
+  </data>
+  <data name="PrivacyPolicyDescription" xml:space="preserve">
+    <value>Zobacz oświadczenie dotyczące polityki prywatności</value>
+  </data>
+  <data name="RemoveFromList" xml:space="preserve">
+    <value>Usuń sejf z listy</value>
+  </data>
+  <data name="RepeatPassword" xml:space="preserve">
+    <value>Powtórz hasło</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Szukaj</value>
+  </data>
+  <data name="SelectVaultPath" xml:space="preserve">
+    <value>Wybierz ścieżkę sejfu</value>
+  </data>
+  <data name="ShowEncryptedVault" xml:space="preserve">
+    <value>Pokaż zaszyfrowany sejf w Eksploratorze plików</value>
+  </data>
+  <data name="Social" xml:space="preserve">
+    <value>Społeczność</value>
+  </data>
+  <data name="SocialDescription" xml:space="preserve">
+    <value>Zapytaj, sugeruj i rozmawiaj o SecureFolderFS</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Motyw</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Ciemny</value>
+  </data>
+  <data name="ThemeDescription" xml:space="preserve">
+    <value>Wybierz motyw aplikacji</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Jasny</value>
+  </data>
+  <data name="ThemeSystemDefault" xml:space="preserve">
+    <value>Domyślny systemu</value>
+  </data>
+  <data name="ThirdPartyLicenses" xml:space="preserve">
+    <value>Licencje firm trzecich</value>
+  </data>
+  <data name="ThirdPartyLicensesDescription" xml:space="preserve">
+    <value>Zobacz biblioteki firm trzecich używane przez SecureFolderFS</value>
+  </data>
+  <data name="VaultAdded" xml:space="preserve">
+    <value>Sejf został dodany</value>
+  </data>
+  <data name="ViewOnGitHub" xml:space="preserve">
+    <value>Zobacz na GitHub</value>
+  </data>
+  <data name="ViewRepository" xml:space="preserve">
+    <value>Zobacz repozytorium</value>
+  </data>
+  <data name="Website" xml:space="preserve">
+    <value>Strona internetowa</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Witamy w SecureFolderFS</value>
+  </data>
+  <data name="WhatsNew" xml:space="preserve">
+    <value>Co nowego</value>
+  </data>
+</root>

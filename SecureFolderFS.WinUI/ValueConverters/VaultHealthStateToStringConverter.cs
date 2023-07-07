@@ -1,6 +1,7 @@
-﻿using System;
-using Microsoft.UI.Xaml.Data;
+﻿using Microsoft.UI.Xaml.Data;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
+using System;
 
 namespace SecureFolderFS.WinUI.ValueConverters
 {
@@ -16,9 +17,9 @@ namespace SecureFolderFS.WinUI.ValueConverters
             // TODO: Localize
             return vaultHealthState switch
             {
-                VaultHealthState.Healthy => "No problems found",
-                VaultHealthState.NeedsAttention => "Needs attention",
-                VaultHealthState.Error => "Problems found",
+                VaultHealthState.Healthy => "HealthNoProblems".ToLocalized(),
+                VaultHealthState.NeedsAttention => "HealthAttention".ToLocalized(),
+                VaultHealthState.Error => "HealthProblems".ToLocalized(),
                 _ => throw new ArgumentOutOfRangeException(nameof(vaultHealthState))
             };
         }

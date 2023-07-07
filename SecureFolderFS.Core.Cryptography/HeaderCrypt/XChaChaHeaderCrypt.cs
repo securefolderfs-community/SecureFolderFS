@@ -6,7 +6,7 @@ using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.X
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {
     /// <inheritdoc cref="IHeaderCrypt"/>
-    public sealed class XChaChaHeaderCrypt : BaseHeaderCrypt
+    internal sealed class XChaChaHeaderCrypt : BaseHeaderCrypt
     {
         /// <inheritdoc/>
         public override int HeaderCiphertextSize { get; } = HEADER_SIZE;

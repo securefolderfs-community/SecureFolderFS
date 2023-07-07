@@ -1,7 +1,8 @@
-﻿using System;
-using System.Globalization;
-using Avalonia.Data.Converters;
+﻿using Avalonia.Data.Converters;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
+using System;
+using System.Globalization;
 
 namespace SecureFolderFS.AvaloniaUI.ValueConverters
 {
@@ -17,9 +18,9 @@ namespace SecureFolderFS.AvaloniaUI.ValueConverters
             // TODO: Localize
             return vaultHealthState switch
             {
-                VaultHealthState.Healthy => "No problems found",
-                VaultHealthState.NeedsAttention => "Needs attention",
-                VaultHealthState.Error => "Problems found",
+                VaultHealthState.Healthy => "HealthNoProblems".ToLocalized(),
+                VaultHealthState.NeedsAttention => "HealthAttention".ToLocalized(),
+                VaultHealthState.Error => "HealthProblems".ToLocalized(),
                 _ => throw new ArgumentOutOfRangeException(nameof(vaultHealthState))
             };
         }

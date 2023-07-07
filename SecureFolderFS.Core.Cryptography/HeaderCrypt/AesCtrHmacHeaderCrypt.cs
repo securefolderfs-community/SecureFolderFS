@@ -7,7 +7,7 @@ using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.A
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {
     /// <inheritdoc cref="IHeaderCrypt"/>
-    public sealed class AesCtrHmacHeaderCrypt : BaseHeaderCrypt
+    internal sealed class AesCtrHmacHeaderCrypt : BaseHeaderCrypt
     {
         /// <inheritdoc/>
         public override int HeaderCiphertextSize { get; } = HEADER_SIZE;

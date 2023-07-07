@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Services;
+﻿using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
 using System;
 using System.Threading.Tasks;
@@ -15,12 +14,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public override string Platform { get; } = "WinUI";
 
         /// <inheritdoc/>
-        public override AppVersion GetAppVersion()
+        public override Version AppVersion
         {
-            var packageVersion = Package.Current.Id.Version;
-            var version = new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
-
-            return new(version, Platform);
+            get
+            {
+                var packageVersion = Package.Current.Id.Version;
+                return new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+            }
         }
 
         /// <inheritdoc/>

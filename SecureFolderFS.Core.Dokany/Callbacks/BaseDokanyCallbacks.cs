@@ -1,10 +1,10 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
-using SecureFolderFS.Core.FileSystem.Analytics;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FileSystem.Statistics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -320,7 +320,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static bool IsContextInvalid(IDokanFileInfo info)
         {
-            return GetContextValue(info) == FileSystem.Constants.INVALID_HANDLE;
+            return info.Context is not ulong ctxUlong || ctxUlong == FileSystem.Constants.INVALID_HANDLE;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

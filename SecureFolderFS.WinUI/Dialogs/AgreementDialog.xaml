@@ -21,6 +21,7 @@
         Spacing="24">
         <FontIcon FontSize="36" Glyph="&#xE73E;" />
         <TextBlock TextAlignment="Center" TextWrapping="Wrap">
-            Please review and agree to our <Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md">Privacy Policy</Hyperlink>.</TextBlock>
+            Please review and agree to our<Hyperlink NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md">Privacy Policy</Hyperlink>
+            .</TextBlock>
     </StackPanel>
 </ContentDialog>

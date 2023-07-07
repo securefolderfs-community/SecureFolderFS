@@ -7,16 +7,21 @@ namespace SecureFolderFS.Sdk.Extensions
     {
         private static ILocalizationService? FallbackLocalizationService;
 
-        public static string ToLocalized(this string resourceKey, ILocalizationService? localizationService = null)
+        public static string ToLocalized(this string resourceKey)
+        {
+            return ToLocalized(resourceKey, null);
+        }
+
+        public static string ToLocalized(this string resourceKey, ILocalizationService? localizationService)
         {
             localizationService = GetLocalizationService(localizationService);
             return localizationService?.GetString(resourceKey) ?? string.Empty;
-        }
 
-        private static ILocalizationService? GetLocalizationService(ILocalizationService? fallback)
-        {
-            FallbackLocalizationService ??= fallback ?? Ioc.Default.GetService<ILocalizationService>();
-            return FallbackLocalizationService;
+            static ILocalizationService? GetLocalizationService(ILocalizationService? fallback)
+            {
+                FallbackLocalizationService ??= fallback ?? Ioc.Default.GetService<ILocalizationService>();
+                return FallbackLocalizationService;
+            }
         }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using Miscreant;
-using SecureFolderFS.Core.Cryptography.Cipher;
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
-namespace SecureFolderFS.Core.Cryptography.CryptImpl
+namespace SecureFolderFS.Core.Cryptography.Cipher.Default
 {
     /// <inheritdoc cref="IAesSivCrypt"/>
     public sealed class AesSivCrypt : IAesSivCrypt

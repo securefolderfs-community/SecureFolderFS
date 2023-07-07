@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     mc:Ignorable="d">
@@ -24,7 +25,7 @@
 
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
-            <ucab:ActionBlockControl Title="Disable recently accessed list" Description="Temporarily disable recent files list when unlocking vaults">
+            <ucab:ActionBlockControl Title="{l:ResourceString Name=DisableRecentAccess}" Description="{l:ResourceString Name=DisableRecentAccessDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE81C;" />
                 </ucab:ActionBlockControl.Icon>
@@ -35,7 +36,7 @@
                         IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="Automatically lock vaults" Description="Lock all vaults when device is locked">
+            <ucab:ActionBlockControl Title="{l:ResourceString Name=AutoLock}" Description="{l:ResourceString Name=AutoLockDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE72E;" />
                 </ucab:ActionBlockControl.Icon>
@@ -46,7 +47,7 @@
                         IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="Enable telemetry" Description="Collect anonymous crash reports and usage data">
+            <ucab:ActionBlockControl Title="{l:ResourceString Name=Telemetry}" Description="{l:ResourceString Name=TelemetryDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE9D2;" />
                 </ucab:ActionBlockControl.Icon>

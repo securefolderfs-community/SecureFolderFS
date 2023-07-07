@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:anim="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
@@ -44,7 +45,7 @@
                             <TextBlock
                                 FontSize="11"
                                 Opacity="0.8"
-                                Text="Last checked:" />
+                                Text="{l:ResourceString Name=LastChecked}" />
                             <TextBlock
                                 FontSize="11"
                                 Opacity="0.8"
@@ -63,7 +64,7 @@
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     FontWeight="SemiBold"
-                                    Text="Check for updates" />
+                                    Text="{l:ResourceString Name=CheckForUpdates}" />
                             </StackPanel>
                         </Button>
                     </Grid>
@@ -105,7 +106,7 @@
 
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
-            <ucab:ActionBlockControl Title="Language" Description="Select the display language">
+            <ucab:ActionBlockControl Title="{l:ResourceString Name=Language}" Description="{l:ResourceString Name=LanguageDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF2B7;" />
                 </ucab:ActionBlockControl.Icon>
@@ -114,7 +115,7 @@
                         x:Name="AppLanguageComboBox"
                         ItemsSource="{x:Bind ViewModel.Languages}"
                         SelectedIndex="0"
-                        SelectionChanged="AppLanguageComboBox_SelectionChanged">
+                        SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:LanguageViewModel">
                                 <TextBlock Text="{x:Bind FriendlyName}" />
@@ -123,7 +124,7 @@
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="Theme" Description="Choose application theme">
+            <ucab:ActionBlockControl Title="{l:ResourceString Name=Theme}" Description="{l:ResourceString Name=ThemeDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE790;" />
                 </ucab:ActionBlockControl.Icon>
@@ -133,20 +134,20 @@
                         SelectedIndex="{x:Bind SelectedThemeIndex}"
                         SelectionChanged="AppThemeComboBox_SelectionChanged">
                         <ComboBox.Items>
-                            <ComboBoxItem Content="System default" />
-                            <ComboBoxItem Content="Light" />
-                            <ComboBoxItem Content="Dark" />
+                            <ComboBoxItem Content="{l:ResourceString Name=ThemeSystemDefault}" />
+                            <ComboBoxItem Content="{l:ResourceString Name=ThemeLight}" />
+                            <ComboBoxItem Content="{l:ResourceString Name=ThemeDark}" />
                         </ComboBox.Items>
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="Configure settings" IsEnabled="False">
+            <ucab:ActionBlockControl Title="{l:ResourceString Name=ManageSettings}" IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE713;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
                     <StackPanel Margin="-16" Spacing="1">
-                        <ucab:ActionBlockControl Title="Import settings" IsClickable="True">
+                        <ucab:ActionBlockControl Title="{l:ResourceString Name=ImportSettings}" IsClickable="True">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xE8B5;" />
                             </ucab:ActionBlockControl.Icon>
@@ -154,7 +155,7 @@
                                 <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                             </ucab:ActionBlockControl.ActionElement>
                         </ucab:ActionBlockControl>
-                        <ucab:ActionBlockControl Title="Export settings" IsClickable="True">
+                        <ucab:ActionBlockControl Title="{l:ResourceString Name=ExportSettings}" IsClickable="True">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xEDE2;" />
                             </ucab:ActionBlockControl.Icon>

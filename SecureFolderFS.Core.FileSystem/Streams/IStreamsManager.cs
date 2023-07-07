@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
     public interface IStreamsManager : IDisposable
     {
         /// <summary>
-        /// Adds <paramref name="stream"/> to the list of available streams.
+        /// Adds <paramref name="stream"/> to the list of available read-only and read-write streams.
         /// </summary>
         /// <remarks>
         /// The stream may be added to both read-only and read-write lists based on <see cref="Stream.CanWrite"/> property.
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         void AddStream(Stream stream);
 
         /// <summary>
-        /// Removes <paramref name="stream"/> from the list of available streams.
+        /// Removes <paramref name="stream"/> from the list of available read-only and read-write streams.
         /// </summary>
         /// <remarks>
         /// The stream may be removed from both read-only and read-write lists based on <see cref="Stream.CanWrite"/> property.

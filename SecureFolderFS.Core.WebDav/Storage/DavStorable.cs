@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.WebDav.Storage
 {
     /// <inheritdoc cref="IDavStorable"/>
-    internal abstract class DavStorable<TImplementation, TCapability> : IWrapper<TCapability>, IInstantiableDavStorage, IDavStorable
+    internal abstract class DavStorable<TImplementation, TCapability> : IDavStorable, IInstantiableDavStorage, IWrapper<TCapability>, IWrappable<IFile>, IWrappable<IFolder>
         where TCapability : IStorable
         where TImplementation : IDavStorable
     {
@@ -65,17 +65,23 @@ namespace SecureFolderFS.Core.WebDav.Storage
         }
 
         /// <inheritdoc/>
-        public virtual IDavFile NewFile<T>(T inner)
+        public IDavFile NewFile<T>(T inner)
             where T : IFile
         {
-            return new DavFile<T>(inner);
+            return (IDavFile)Wrap(inner);
         }
 
         /// <inheritdoc/>
-        public virtual IDavFolder NewFolder<T>(T inner)
+        public IDavFolder NewFolder<T>(T inner)
             where T : IFolder
         {
-            return new DavFolder<T>(inner);
+            return (IDavFolder)Wrap(inner);
         }
+
+        /// <inheritdoc/>
+        public abstract IWrapper<IFile> Wrap(IFile file);
+
+        /// <inheritdoc/>
+        public abstract IWrapper<IFolder> Wrap(IFolder folder);
     }
 }
