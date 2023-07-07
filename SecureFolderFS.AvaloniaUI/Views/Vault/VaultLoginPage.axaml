@@ -6,15 +6,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.AvaloniaUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
-    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy"
+    xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
     <uc:Page.Resources>
-        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
-
         <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreViewModel">
             <StackPanel Spacing="24">
                 <TextBlock
@@ -68,50 +66,68 @@
         </DataTemplate>
     </uc:Page.Resources>
 
-    <ScrollViewer>
-        <Grid>
-            <Grid
-                Grid.Row="0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                RowDefinitions="Auto,32,Auto,32,*">
+    <Border Padding="32">
+        <ScrollViewer>
+            <Grid HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <!--  Main Input  -->
+                    <RowDefinition />
+                    <!--  Notification  -->
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <!--  Header  -->
-                <StackPanel Spacing="6">
-                    <TextBlock
+                <!-- Main Input -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    VerticalAlignment="Center"
+                    Spacing="64">
+                    
+                    <!-- Header -->
+                    <StackPanel VerticalAlignment="Center" Spacing="6">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="26"
+                            FontWeight="SemiBold"
+                            Text="{Binding ViewModel.VaultName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTip.Tip="{Binding ViewModel.VaultName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Opacity="0.6"
+                            Text="Vault is locked" />
+                    </StackPanel>
+                    
+                    <!-- Input -->
+                    <ContentControl
                         HorizontalAlignment="Center"
-                        FontSize="26"
-                        FontWeight="SemiBold"
-                        Text="{Binding ViewModel.VaultName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding ViewModel.VaultName, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Opacity="0.6"
-                        Text="Vault is locked" />
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Content="{Binding ViewModel.StrategyViewModel, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        IsTabStop="False">
+                        <ContentControl.DataTemplates>
+                            <ts:LoginMethodTemplateSelector
+                                AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
+                                InvalidTemplate="{StaticResource VaultInvalidTemplate}"
+                                LoginTemplate="{StaticResource LoginTemplate}" />
+                        </ContentControl.DataTemplates>
+                        <ContentControl.Transitions>
+                            <!-- TODO Transitions -->
+                        </ContentControl.Transitions>
+                    </ContentControl>
                 </StackPanel>
 
-                <!--  Image  -->
-                <Image Grid.Row="2" />
-
-                <!--  Input  -->
-                <ContentControl
-                    Grid.Row="4"
-                    HorizontalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Content="{Binding ViewModel.StrategyViewModel, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
-                    <ContentControl.DataTemplates>
-                        <ts:LoginMethodTemplateSelector
-                            AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
-                            InvalidTemplate="{StaticResource VaultInvalidTemplate}"
-                            LoginTemplate="{StaticResource LoginTemplate}" />
-                    </ContentControl.DataTemplates>
-                    <ContentControl.Transitions>
-                        <!--  TODO Transition  -->
-                    </ContentControl.Transitions>
-                </ContentControl>
+                <!--  Notification  -->
+                <ui:InfoBar
+                    Title="Unsupported settings"
+                    Grid.Row="1"
+                    MaxWidth="580"
+                    IsClosable="False"
+                    IsOpen="False"
+                    Message="Selected file system is not supported"
+                    Severity="Error" />
             </Grid>
-        </Grid>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Border>
 </uc:Page>

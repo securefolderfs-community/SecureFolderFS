@@ -8,24 +8,34 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:svg="using:Avalonia.Svg.Skia"
     xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
+    xmlns:sg="using:AvaloniaSpacedGrid"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
     <Grid>
-        <Grid
+        <sg:SpacedGrid
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            RowDefinitions="Auto,24,*,24,*">
+            RowSpacing="24">
+            <Grid.RowDefinitions>
+                <!--  Banner  -->
+                <RowDefinition Height="Auto" />
+                <!--  Title  -->
+                <RowDefinition />
+                <!--  Continue button  -->
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
             <!--  Banner  -->
             <Image
+                Grid.Row="0"
                 Width="296"
                 Source="{DynamicResource AddNewVaultBanner}"
                 Stretch="UniformToFill" />
 
             <!--  Title  -->
-            <StackPanel Grid.Row="2" Spacing="3">
+            <StackPanel Grid.Row="1" Spacing="3">
                 <TextBlock
                     HorizontalAlignment="Center"
                     FontSize="22"
@@ -43,13 +53,13 @@
 
             <!--  Continue button  -->
             <Button
-                Grid.Row="4"
+                Grid.Row="2"
                 Padding="32,6"
                 HorizontalAlignment="Center"
                 Classes="accent"
                 Command="{Binding ViewModel.AddNewVaultCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                 Content="Add vault" />
-        </Grid>
+        </sg:SpacedGrid>
 
         <!--  Settings  -->
         <Button

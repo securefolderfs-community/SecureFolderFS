@@ -1,22 +1,28 @@
 <UserControl
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.GraphControl"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.UserControls.GraphControl">
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
 
     <Button
         Height="232"
-        Padding="12,12,12,0"
+        Padding="12,12,12,12"
         HorizontalAlignment="Stretch"
         HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"
         BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
         Click="RootButton_Click">
 
-        <Grid RowDefinitions="Auto,Auto,*">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            
             <!--  Header (small)  -->
             <TextBlock
                 Grid.Row="0"

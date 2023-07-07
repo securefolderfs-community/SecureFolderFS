@@ -23,8 +23,14 @@
     </UserControl.Resources>
 
     <!--  Root  -->
-    <Grid RowDefinitions="Auto,*">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
         <!--  Titlebar is in MainWindow  -->
+        <!-- TODO Check if it's possible to move it here -->
 
         <!--  Main Content  -->
         <uc3:RootNavigationControl x:Name="Navigation" Grid.Row="1">

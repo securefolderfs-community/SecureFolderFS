@@ -12,6 +12,7 @@
     xmlns:ic="using:FluentAvalonia.FluentIcons"
     xmlns:i="using:Avalonia.Xaml.Interactivity"
     xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+    xmlns:sg="using:AvaloniaSpacedGrid"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.GeneralSettingsPage">
 
@@ -20,12 +21,19 @@
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
     </uc:Page.Resources>
 
-    <Grid
+    <sg:SpacedGrid
         x:Name="RootGrid"
         Loaded="RootGrid_Loaded"
-        RowDefinitions="Auto,12,*">
+        RowSpacing="12">
+        <Grid.RowDefinitions>
+            <!--  Banner  -->
+            <RowDefinition Height="Auto" />
+            <!--  Other settings  -->
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
         <!--  Banner  -->
-        <StackPanel>
+        <StackPanel Grid.Row="0">
             <uc:BannerControl>
                 <uc:BannerControl.LeftSide>
                     <StackPanel VerticalAlignment="Center">
@@ -113,7 +121,7 @@
         </StackPanel>
 
         <!--  Other settings  -->
-        <StackPanel x:Name="OtherSettings" Grid.Row="2" Spacing="4">
+        <StackPanel x:Name="OtherSettings" Grid.Row="1" Spacing="4">
             <StackPanel.RenderTransform>
                 <TranslateTransform />
             </StackPanel.RenderTransform>
@@ -177,5 +185,5 @@
                 </StackPanel>
             </ui:SettingsExpander>
         </StackPanel>
-    </Grid>
+    </sg:SpacedGrid>
 </uc:Page>

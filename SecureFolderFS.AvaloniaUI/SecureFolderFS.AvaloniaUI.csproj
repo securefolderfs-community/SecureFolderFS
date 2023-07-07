@@ -31,6 +31,7 @@
         <PackageReference Include="Avalonia.Svg" Version="11.0.0-rc1.1" />
         <PackageReference Include="Avalonia.Svg.Skia" Version="11.0.0-rc1.1" />
         <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.0-rc1.1" />
+        <PackageReference Include="AvaloniaSpacedGrid" Version="11.0.0-rc1.1" />
         <PackageReference Include="FluentAvaloniaUI" Version="2.0.0-rc1" />
         <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-beta.802-11.0.0-rc1.1" />
         <PackageReference Include="TextCopy" Version="6.2.1" />

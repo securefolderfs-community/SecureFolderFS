@@ -1,13 +1,15 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="using:SecureFolderFS.AvaloniaUI.UserControls"
-             xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
-             xmlns:svg="using:Avalonia.Svg.Skia"
-             xmlns:ic="using:FluentAvalonia.FluentIcons"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SecureFolderFS.AvaloniaUI.UserControls.VaultHealthControl">
+<UserControl 
+    x:Class="SecureFolderFS.AvaloniaUI.UserControls.VaultHealthControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:svg="using:Avalonia.Svg.Skia"
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:sg="using:AvaloniaSpacedGrid"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
 
     <UserControl.Resources>
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
@@ -31,14 +33,20 @@
                     TextTrimming="CharacterEllipsis" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="WithoutDetailedHealthTemplate" x:DataType="local:VaultHealthControl">
+        <DataTemplate x:Key="WithoutDetailedHealthTemplate">
             <Grid />
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid ColumnDefinitions="Auto,8,*,8,Auto">
+    <sg:SpacedGrid ColumnSpacing="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
         <!--  Icon  -->
-        <Grid Margin="-8,0,0,0">
+        <Grid Grid.Column="0" Margin="-8,0,0,0">
             <Image
                 Width="60"
                 Height="60"
@@ -49,16 +57,17 @@
         </Grid>
 
         <!--  Health status  -->
+        <!-- TODO Change template on window resize -->
         <ContentPresenter
             x:Name="DetailedHealthContentPresenter"
-            Grid.Column="2"
+            Grid.Column="1"
             VerticalContentAlignment="Center"
             ZIndex="1"
             ContentTemplate="{StaticResource WithDetailedHealthTemplate}"/>
 
         <!--  Start scanning  -->
         <StackPanel
-            Grid.Column="4"
+            Grid.Column="2"
             Margin="0,-6,0,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
@@ -70,39 +79,17 @@
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 Command="{Binding StartScanningCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                Content="Start scanning" />
+                Content="Start scanning" 
+                IsEnabled="False" />
             <Button
                 Width="36"
                 Height="33"
                 Padding="9"
                 HorizontalAlignment="Center"
                 Command="{Binding OpenVaultHealthCommand, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                IsEnabled="False"
                 ToolTip.Tip="Go to Vault Health"
                 Content="{ic:FluentIcon ChevronRight48Regular}" />
         </StackPanel>
-
-        <!-- TODO  -->
-        <!-- <VisualStateManager.VisualStateGroups> -->
-        <!--     <VisualStateGroup> -->
-        <!--         ~1~  Default window  @1@ -->
-        <!--         <VisualState> -->
-        <!--             <VisualState.StateTriggers> -->
-        <!--                 <AdaptiveTrigger MinWindowWidth="350" /> -->
-        <!--             </VisualState.StateTriggers> -->
-        <!--             <VisualState.Setters> -->
-        <!--                 <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithDetailedHealthTemplate}" /> -->
-        <!--             </VisualState.Setters> -->
-        <!--         </VisualState> -->
-        <!--         ~1~  Small window  @1@ -->
-        <!--         <VisualState> -->
-        <!--             <VisualState.StateTriggers> -->
-        <!--                 <AdaptiveTrigger MinWindowWidth="0" /> -->
-        <!--             </VisualState.StateTriggers> -->
-        <!--             <VisualState.Setters> -->
-        <!--                 <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithoutDetailedHealthTemplate}" /> -->
-        <!--             </VisualState.Setters> -->
-        <!--         </VisualState> -->
-        <!--     </VisualStateGroup> -->
-        <!-- </VisualStateManager.VisualStateGroups> -->
-    </Grid>
+    </sg:SpacedGrid>
 </UserControl>

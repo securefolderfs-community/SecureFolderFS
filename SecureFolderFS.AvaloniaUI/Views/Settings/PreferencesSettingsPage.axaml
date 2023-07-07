@@ -14,6 +14,7 @@
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Banners"
     xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls"
+    xmlns:sg="using:AvaloniaSpacedGrid"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Loaded="PreferencesSettingsPage_Loaded"
@@ -24,10 +25,11 @@
 
         <DataTemplate x:Key="DokanyUnavailableInfoBarTemplate" x:DataType="uc2:DokanyInfoBar">
             <ui:InfoBar
-                IsClosable="{Binding CanBeClosed}"
+                IsClosable="{Binding CanBeClosed, Mode=OneWay}"
                 IsOpen="True"
-                Message="{Binding Message}"
-                Severity="{Binding InfoBarSeverity, Converter={StaticResource GenericEnumConverter}}">
+                Message="{Binding Message, Mode=OneWay}"
+                Severity="{Binding InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
+                IsVisible="{Binding IsOpen, Mode=OneWay}">
 
                 <Border Padding="16,8,16,8">
                     <ui:HyperlinkButton
@@ -37,24 +39,32 @@
                         <TextBlock Text="Open website" />
                     </ui:HyperlinkButton>
                 </Border>
+                
+                <!-- TODO Animation -->
             </ui:InfoBar>
         </DataTemplate>
-        <DataTemplate x:Key="GenericInfoBarTemplate" x:DataType="vm2:InfoBarViewModel">
+        <DataTemplate x:Key="WebDavExperimentalInfoBarTemplate" x:DataType="vm2:InfoBarViewModel">
             <ui:InfoBar
-                IsClosable="{Binding CanBeClosed}"
+                IsClosable="{Binding CanBeClosed, Mode=OneWay}"
                 IsOpen="True"
-                Message="{Binding Message}"
-                Severity="{Binding InfoBarSeverity, Converter={StaticResource GenericEnumConverter}}" />
+                Message="{Binding Message, Mode=OneWay}"
+                Severity="{Binding InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
         </DataTemplate>
     </uc:Page.Resources>
 
-    <Grid
+    <sg:SpacedGrid
         x:Name="RootGrid"
         Loaded="RootGrid_Loaded"
-        RowDefinitions="Auto,12,*">
+        RowSpacing="12">
+        <Grid.RowDefinitions>
+            <!--  Banner  -->
+            <RowDefinition Height="Auto" />
+            <!--  Other settings  -->
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
         <!--  Banner  -->
-        <uc:BannerControl>
+        <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
                 <StackPanel Spacing="2">
                     <TextBlock
@@ -97,8 +107,7 @@
                     <ContentControl.DataTemplates>
                         <ts:FileSystemInfoBarTemplateSelector
                             DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}"
-                            FuseExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}"
-                            WebDavExperimentalInfoBarTemplate="{StaticResource GenericInfoBarTemplate}" />
+                            WebDavExperimentalInfoBarTemplate="{StaticResource WebDavExperimentalInfoBarTemplate}" />
                     </ContentControl.DataTemplates>
 
                     <anim:Storyboard.Storyboards>
@@ -128,7 +137,7 @@
         <!--  Other settings  -->
         <StackPanel
             x:Name="OtherSettings"
-            Grid.Row="2"
+            Grid.Row="1"
             Spacing="4">
             <StackPanel.RenderTransform>
                 <TranslateTransform />
@@ -160,5 +169,5 @@
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
         </StackPanel>
-    </Grid>
+    </sg:SpacedGrid>
 </uc:Page>

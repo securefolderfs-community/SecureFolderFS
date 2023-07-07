@@ -8,14 +8,21 @@
     xmlns:svg="using:Avalonia.Svg.Skia"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:sg="using:AvaloniaSpacedGrid"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <Grid RowDefinitions="Auto,12,*">
+    <sg:SpacedGrid RowSpacing="12">
+        <Grid.RowDefinitions>
+            <!--  Banner  -->
+            <RowDefinition Height="Auto" />
+            <!--  Other info  -->
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
         <!--  Banner  -->
-        <uc:BannerControl>
+        <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
                 <Image
                     HorizontalAlignment="Left"
@@ -75,7 +82,7 @@
             </ui:TeachingTip.IconSource>
         </ui:TeachingTip>
 
-        <StackPanel Grid.Row="2" Spacing="4">
+        <StackPanel Grid.Row="1" Spacing="4">
             <ui:SettingsExpander
                 Description="Join the discussion!"
                 Header="Social"
@@ -112,5 +119,5 @@
                 IconSource="{ic:FluentIconSource DocumentText24Regular}"
                 IsClickEnabled="True" />
         </StackPanel>
-    </Grid>
+    </sg:SpacedGrid>
 </uc:Page>

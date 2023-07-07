@@ -10,6 +10,7 @@
     xmlns:uc2="using:SecureFolderFS.AvaloniaUI.UserControls.Navigation"
     xmlns:uc3="using:SecureFolderFS.UI.UserControls.BreadcrumbBar"
 	xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:sg="using:AvaloniaSpacedGrid"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -74,10 +75,19 @@
 	</anim:Storyboard.Storyboards>
 
     <Border Padding="32,16">
-        <Grid MaxWidth="960" RowDefinitions="Auto,24,*">
-
-            <!--  Navigation -->
-			<Grid ColumnDefinitions="Auto,*">
+	    <sg:SpacedGrid MaxWidth="960" RowSpacing="24">
+		    <sg:SpacedGrid.RowDefinitions>
+			    <RowDefinition Height="Auto" />
+			    <RowDefinition />
+		    </sg:SpacedGrid.RowDefinitions>
+		    
+		    <!--  Navigation -->
+			<Grid Grid.Row="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				
 				<Button
 					x:Name="GoBack"
 					Width="32"
@@ -105,13 +115,12 @@
 					</ItemsControl.RenderTransform>
 				</ItemsControl>
 			</Grid>
-
-
+		    
 			<!--  Content  -->
-            <uc2:VaultDashboardNavigationControl
-                x:Name="Navigation"
-                Grid.Row="2"
-                Loaded="Navigation_Loaded" />
-        </Grid>
+	        <uc2:VaultDashboardNavigationControl
+	            x:Name="Navigation"
+	            Grid.Row="2"
+	            Loaded="Navigation_Loaded" />
+	    </sg:SpacedGrid>
     </Border>
 </uc:Page>

@@ -11,6 +11,7 @@
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Sidebar"
+    xmlns:sg="using:AvaloniaSpacedGrid"
     Loaded="MainAppHostControl_Loaded"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -63,11 +64,15 @@
         <ui:NavigationView.PaneFooter>
             <!-- 260 (Sidebar.OpenPaneLength) - 20*2 (margins) = 220 -->
             <!-- Grid doesn't have a padding Property -->
-            <Grid
+            <sg:SpacedGrid
                 Width="220"
                 Margin="0,0,0,12"
                 HorizontalAlignment="Stretch"
-                ColumnDefinitions="Auto,*">
+                RowSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
                 
                 <Button
                     x:Name="StandardAddVaultButton"
@@ -130,7 +135,7 @@
                     Subtitle="Adding more than two vaults is free during the beta period"
                     Target="{Binding ElementName=StandardAddVaultButton}"
                     IconSource="{ic:FluentIconSource Info16Regular}" />
-            </Grid>
+            </sg:SpacedGrid>
         </ui:NavigationView.PaneFooter>
         <ui:NavigationView.MenuItemTemplate>
             <DataTemplate x:DataType="vm:SidebarItemViewModel">

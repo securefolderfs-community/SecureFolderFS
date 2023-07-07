@@ -7,9 +7,8 @@
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
 	xmlns:ui="using:FluentAvalonia.UI.Controls"
 	xmlns:ic="using:FluentAvalonia.FluentIcons"
-	d:DesignWidth="800" 
-	d:DesignHeight="450"
-    mc:Ignorable="d">
+	xmlns:sg="using:AvaloniaSpacedGrid"
+	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
 
 	<StackPanel Spacing="4">
 		<ui:SettingsExpander
@@ -17,17 +16,22 @@
 			IsExpanded="True"
 			IconSource="{ic:FluentIconSource Info28Regular}">
 
-			<!-- Padding is not requied, because SettingsExpander already has it. -->
-			<Grid ColumnDefinitions="Auto,32,*">
+			<!-- Padding is not required, because SettingsExpander already has it. -->
+			<sg:SpacedGrid ColumnSpacing="32">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				
 				<StackPanel Grid.Column="0" Spacing="4">
 					<TextBlock Text="Content encryption" />
 					<TextBlock Text="Filename encryption" />
 				</StackPanel>
-				<StackPanel Grid.Column="2" Spacing="4">
+				<StackPanel Grid.Column="1" Spacing="4">
 					<TextBlock Opacity="0.8" Text="{Binding ViewModel.ContentCipherName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
 					<TextBlock Opacity="0.8" Text="{Binding ViewModel.FileNameCipherName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
 				</StackPanel>
-			</Grid>
+			</sg:SpacedGrid>
 		</ui:SettingsExpander>
 		<ui:SettingsExpander
 			Header="Change password"

@@ -30,8 +30,12 @@
 
     <Grid
         Height="500"
-        Margin="-8"
-        RowDefinitions="Auto,*">
+        Margin="-8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
         <Grid
             Grid.Row="0"
             Margin="-16,-56,-16,8"

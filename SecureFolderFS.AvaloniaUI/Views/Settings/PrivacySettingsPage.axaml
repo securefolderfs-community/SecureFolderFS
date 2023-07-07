@@ -6,10 +6,18 @@
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
     xmlns:ui="using:FluentAvalonia.UI.Controls"
     xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:sg="using:AvaloniaSpacedGrid"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.PrivacySettingsPage">
 
-    <Grid RowDefinitions="Auto,12,*">
+    <sg:SpacedGrid RowSpacing="12">
+        <Grid.RowDefinitions>
+            <!--  Banner  -->
+            <RowDefinition Height="Auto" />
+            <!--  Other settings  -->
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
         <!--  Banner  -->
         <!--<uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
@@ -18,7 +26,7 @@
         </uc:BannerControl>-->
 
         <!--  Other settings  -->
-        <StackPanel Grid.Row="2" Spacing="4">
+        <StackPanel Grid.Row="1" Spacing="4">
             <ui:SettingsExpander
                 Header="Disable recently accessed list"
                 Description="Temporarily disable recent files list when unlocking vaults"
@@ -53,5 +61,5 @@
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
         </StackPanel>
-    </Grid>
+    </sg:SpacedGrid>
 </uc:Page>

@@ -1,34 +1,40 @@
 <uc:Page
+    x:Class="SecureFolderFS.AvaloniaUI.Views.VaultWizard.CreationPathWizardPage"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:sg="using:AvaloniaSpacedGrid"
     Width="464"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.Views.VaultWizard.CreationPathWizardPage">
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
 
     <Border Padding="0,16,0,8">
-        <Grid
+        <sg:SpacedGrid
             HorizontalAlignment="Center"
-            RowDefinitions="Auto,16,*">
+            RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
             <TextBlock
+                Grid.Row="0"
                 HorizontalAlignment="Center"
                 FontSize="18"
                 Text="Select vault path" />
 
-            <StackPanel Grid.Row="2" Spacing="8">
+            <StackPanel Grid.Row="1" Spacing="8">
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="{Binding ViewModel.VaultName, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}" />
+                    Text="{Binding ViewModel.SelectedLocationText, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}, Mode=OneWay}" />
 
                 <Button
                     HorizontalAlignment="Center"
                     Command="{Binding ViewModel.BrowseLocationCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     Content="Browse" />
             </StackPanel>
-        </Grid>
+        </sg:SpacedGrid>
     </Border>
 </uc:Page>
