@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Dodaj istniejący sejf</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Wybierz istniejący sejf ze swojego urządzenia</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Dodaj nowy sejf</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Automatycznie zablokuj sejfy</value>
@@ -160,7 +160,7 @@
     <value>Sprawdź dostępność aktualizacji</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Zamknij</value>
   </data>
   <data name="Confirm" xml:space="preserve">
     <value>Potwierdź</value>
@@ -184,10 +184,10 @@
     <value>Wybierz wersję do skopiowania do schowka</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Utwórz nowy sejf</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Create new SecureFolderFS vault</value>
+    <value>Utwórz nowy sejf SecureFolderFS</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
     <value>Obecne hasło</value>
@@ -205,7 +205,7 @@
     <value>Pobieranie {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Szyfrowanie</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
     <value>Wprowadź hasło</value>
@@ -331,7 +331,7 @@
     <value>Wybierz ścieżkę sejfu</value>
   </data>
   <data name="SetPassword" xml:space="preserve">
-    <value>Set password</value>
+    <value>Ustaw hasło</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
     <value>O programie</value>
@@ -355,7 +355,7 @@
     <value>Zapytaj, sugeruj i rozmawiaj o SecureFolderFS</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>Summary</value>
+    <value>Podsumowanie</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
     <value>Włącz telemetrię</value>
