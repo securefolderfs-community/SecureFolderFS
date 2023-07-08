@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddExistingVault" xml:space="preserve">
+    <value>Add existing vault</value>
+  </data>
+  <data name="AddExistingVaultDescription" xml:space="preserve">
+    <value>Select an existing vault from your device</value>
+  </data>
+  <data name="AddNewVault" xml:space="preserve">
+    <value>Add new vault</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Automatically lock vaults</value>
   </data>
@@ -129,11 +138,17 @@
   <data name="AutoStartDescription" xml:space="preserve">
     <value>Launch SecureFolderFS on system startup</value>
   </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
   <data name="Changelog" xml:space="preserve">
     <value>Release notes</value>
+  </data>
+  <data name="ChangelogCloseButton" xml:space="preserve">
+    <value>Awesome!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
     <value>View latest release notes for this version</value>
@@ -149,6 +164,9 @@
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
     <value>Check for updates</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
   </data>
   <data name="Confirm" xml:space="preserve">
     <value>Confirm</value>
@@ -171,6 +189,12 @@
   <data name="CopyVersionMessage" xml:space="preserve">
     <value>Select which version to copy to clipboard</value>
   </data>
+  <data name="CreateNewVault" xml:space="preserve">
+    <value>Create new vault</value>
+  </data>
+  <data name="CreateNewVaultDescription" xml:space="preserve">
+    <value>Create new SecureFolderFS vault</value>
+  </data>
   <data name="CurrentPassword" xml:space="preserve">
     <value>Current password</value>
   </data>
@@ -185,6 +209,9 @@
   </data>
   <data name="Downloading" xml:space="preserve">
     <value>Downloading {0}%</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Encryption</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
     <value>Enter password</value>
@@ -261,6 +288,10 @@
   <data name="NewVault" xml:space="preserve">
     <value>New vault</value>
   </data>
+  <data name="NoEncryption" xml:space="preserve">
+    <value>No encryption</value>
+    <comment>Used as an option when choosing vault encryption</comment>
+  </data>
   <data name="NoFolderSelected" xml:space="preserve">
     <value>No folder selected</value>
   </data>
@@ -303,11 +334,21 @@
   <data name="RestoreLastSessionDescription" xml:space="preserve">
     <value>Start on previously selected vault</value>
   </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Retry</value>
+    <comment>Used to retry a failed action</comment>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
     <value>Select vault path</value>
+  </data>
+  <data name="SetPassword" xml:space="preserve">
+    <value>Set password</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
     <value>About</value>
@@ -329,6 +370,9 @@
   </data>
   <data name="SocialDescription" xml:space="preserve">
     <value>Ask, suggest, and discuss SecureFolderFS</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Summary</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
     <value>Enable telemetry</value>
@@ -374,6 +418,9 @@
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
     <value>View information about this vault</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
     <value>View on GitHub</value>

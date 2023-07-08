@@ -118,332 +118,332 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Dodaj istniejący sejf</value>
+    <value>Añadir caja fuerte existente</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Wybierz istniejący sejf ze swojego urządzenia</value>
+    <value>Seleccione una caja fuerte de su dispositivo</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Dodaj nowy sejf</value>
+    <value>Añadir nueva caja fuerte</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
-    <value>Automatycznie zablokuj sejfy</value>
+    <value>Bloquear automáticamente las cajas fuertes</value>
   </data>
   <data name="AutoLockDescription" xml:space="preserve">
-    <value>Zablokuj wszystkie sejfy, gdy urządzenie jest zablokowane</value>
+    <value>Bloquear todas las cajas fuertes al bloquear el dispositivo</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Uruchom z systemem</value>
+    <value>Ejecutar automáticamente al iniciar el sistema</value>
   </data>
   <data name="AutoStartDescription" xml:space="preserve">
-    <value>Uruchom SecureFolderFS przy starcie systemu</value>
+    <value>Iniciar SecureFolderFS al iniciar el sistema</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Wstecz</value>
+    <value>Back</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Anuluj</value>
+    <value>Cancelar</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Lista zmian</value>
+    <value>Notas de la versión</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Wspaniale!</value>
+    <value>Awesome!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>Zobacz najnowszą listę zmian dla tej wersji</value>
+    <value>Ver las últimas notas de la versión actual</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>Wystąpił problem podczas ładowania dziennika zmian.</value>
+    <value>Se ha producido un error al cargar el registro de cambios.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Zmień hasło</value>
+    <value>Cambiar contraseña</value>
   </data>
   <data name="ChangePasswordDescription" xml:space="preserve">
-    <value>Zmień hasło używane do odblokowywania tego sejfu</value>
+    <value>Cambiar la contraseña utilizada para desbloquear esta caja fuerte</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Sprawdź aktualizacje</value>
+    <value>Comprobar actualizaciones</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Zamknij</value>
+    <value>Cerrar</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Potwierdź</value>
+    <value>Confirmar</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Kontynuuj</value>
+    <value>Continuar</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Skopiowano</value>
+    <value>Copiado</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Kopiuj wersję aplikacji</value>
+    <value>Copiar versión de la aplicación</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Kopiuj wersję systemu</value>
+    <value>Copiar versión del sistema operativo</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Kopiuj wersję</value>
+    <value>Copiar versión</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Wybierz wersję do skopiowania do schowka</value>
+    <value>Seleccione que versión copiar al portapapeles</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Utwórz nowy sejf</value>
+    <value>Crear nueva caja fuerte</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Utwórz nowy sejf SecureFolderFS</value>
+    <value>Crear nueva caja fuerte de SecureFolderFS</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Obecne hasło</value>
+    <value>Contraseña actual</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Szyfrowanie danych</value>
+    <value>Cifrado de datos</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Wyłącz listę ostatnich plików</value>
+    <value>Desactivar la lista de acceso reciente</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Tymczasowo wyłącz listę ostatnich plików podczas odblokowania sejfów</value>
+    <value>Deshabilitar temporalmente la lista de archivos recientes cuando se desbloqueen las cajas fuertes</value>
   </data>
   <data name="Downloading" xml:space="preserve">
-    <value>Pobieranie {0}%</value>
+    <value>Descargando {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Szyfrowanie</value>
+    <value>Cifrado</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Wprowadź hasło</value>
+    <value>Introduzca la contraseña</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Błąd</value>
+    <value>Error</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
-    <value>Eksportuj ustawienia</value>
+    <value>Exportar ajustes</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>Szyfrowanie nazw plików</value>
+    <value>Cifrado del nombre de archivo</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>Dostawca systemu plików</value>
+    <value>Proveedor del sistema de archivos</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Wybierz preferowany typ wirtualnego systemu plików</value>
+    <value>Elija el tipo de sistema de archivos virtual preferido</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
-    <value>Wymaga uwagi</value>
+    <value>Requiere atención</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>Nie znaleziono problemów</value>
+    <value>No se encontraron problemas</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Znaleziono problemy</value>
+    <value>Problemas encontrados</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Importuj ustawienia</value>
+    <value>Importar ajustes</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Instalowanie...</value>
+    <value>Instalando...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Nieprawidłowe hasło</value>
+    <value>Contraseña incorrecta</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>Wprowadzone hasło jest nieprawidłowe.</value>
+    <value>La contraseña introducida es incorrecta.</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Język</value>
+    <value>Idioma</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Wybierz wyświetlany język</value>
+    <value>Seleccione el idioma de visualización</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
-    <value>Ostatnio sprawdzono: {0}</value>
+    <value>Última comprobación: {0}</value>
   </data>
   <data name="LatestVersionInstalled" xml:space="preserve">
-    <value>Najnowsza wersja</value>
+    <value>Ya está instalada la última versión</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>Licencja</value>
+    <value>Licencia</value>
   </data>
   <data name="Licenses" xml:space="preserve">
-    <value>Licencje</value>
+    <value>Licencias</value>
   </data>
   <data name="LockVault" xml:space="preserve">
-    <value>Zablokuj sejf</value>
+    <value>Bloquear caja fuerte</value>
   </data>
   <data name="LockVaultDescription" xml:space="preserve">
-    <value>Bezpiecznie zablokuj ten sejf i zamknij pulpit</value>
+    <value>Bloquea esta caja fuerte de forma segura y cierra el panel de control</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
-    <value>Zarządzaj ustawieniami</value>
+    <value>Administrar ajustes</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
-    <value>Moje sejfy</value>
+    <value>Mis cajas fuertes</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>Nowe hasło</value>
+    <value>Nueva contraseña</value>
   </data>
   <data name="NewVault" xml:space="preserve">
-    <value>Nowy sejf</value>
+    <value>Nueva caja fuerte</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>Bez szyfrowania</value>
+    <value>No encryption</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
-    <value>Nie wybrano folderu</value>
+    <value>Ninguna carpeta seleccionada</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>Nie dodałeś jeszcze żadnych sejfów. Utwórz nowy lub dodaj istniejący, aby rozpocząć!</value>
+    <value>No ha añadido ninguna caja fuerte todavía. ¡Cree una nueva o añada una existente para empezar!</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
-    <value>Otwórz lokalizację dziennika</value>
+    <value>Abrir ubicación del registro</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Uruchamia eksplorator plików, gdzie znajduje się plik dziennika</value>
+    <value>Ejecuta el explorador de archivos donde se encuentra el archivo de registro</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
-    <value>Otwórz folder sejfu</value>
+    <value>Abrir carpeta de caja fuerte</value>
   </data>
   <data name="OpenVaultFolderDescription" xml:space="preserve">
-    <value>Automatycznie otwórz folder po odblokowaniu sejfu</value>
+    <value>Abrir carpeta automáticamente cuando la caja fuerte se desbloquee</value>
   </data>
   <data name="Password" xml:space="preserve">
-    <value>Hasło</value>
+    <value>Contraseña</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Polityka prywatności</value>
+    <value>Política de privacidad</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
-    <value>Zobacz oświadczenie dotyczące polityki prywatności</value>
+    <value>Ver la declaración de la política de privacidad</value>
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
-    <value>Prędkość odczytu</value>
+    <value>Velocidades de lectura</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
-    <value>Usuń sejf z listy</value>
+    <value>Eliminar caja fuerte de la lista</value>
   </data>
   <data name="RepeatPassword" xml:space="preserve">
-    <value>Powtórz hasło</value>
+    <value>Repita la contraseña</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
-    <value>Kontynuuj tam, gdzie skończyłeś</value>
+    <value>Continúe donde lo dejó</value>
   </data>
   <data name="RestoreLastSessionDescription" xml:space="preserve">
-    <value>Rozpocznij na poprzednio wybranym sejfie</value>
+    <value>Iniciar en la caja fuerte seleccionada previamente</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Spróbuj ponownie</value>
+    <value>Retry</value>
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Szukaj</value>
+    <value>Buscar</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
-    <value>Wybierz ścieżkę sejfu</value>
+    <value>Seleccionar ruta de la caja fuerte</value>
   </data>
   <data name="SetPassword" xml:space="preserve">
-    <value>Ustaw hasło</value>
+    <value>Establecer contraseña</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Ustawienia</value>
+    <value>Settings</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
-    <value>O programie</value>
+    <value>Acerca de</value>
   </data>
   <data name="SettingsGeneral" xml:space="preserve">
-    <value>Ogólne</value>
+    <value>General</value>
   </data>
   <data name="SettingsPreferences" xml:space="preserve">
-    <value>Preferencje</value>
+    <value>Preferencias</value>
   </data>
   <data name="SettingsPrivacy" xml:space="preserve">
-    <value>Prywatność</value>
+    <value>Privacidad</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Pokaż zaszyfrowany sejf w Eksploratorze plików</value>
+    <value>Mostrar caja fuerte cifrada en el explorador de archivos</value>
   </data>
   <data name="Social" xml:space="preserve">
-    <value>Społeczność</value>
+    <value>Social</value>
   </data>
   <data name="SocialDescription" xml:space="preserve">
-    <value>Zapytaj, sugeruj i rozmawiaj o SecureFolderFS</value>
+    <value>Preguntar, sugerir y debatir sobre SecureFolderFS</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>Podsumowanie</value>
+    <value>Resumen</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
-    <value>Włącz telemetrię</value>
+    <value>Activar telemetría</value>
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
-    <value>Zbieraj anonimowe raporty o awariach i dane użytkowania</value>
+    <value>Recopilar informes anónimos de errores, bloqueos y datos de uso</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Motyw</value>
+    <value>Tema</value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
-    <value>Ciemny</value>
+    <value>Oscuro</value>
   </data>
   <data name="ThemeDescription" xml:space="preserve">
-    <value>Wybierz motyw aplikacji</value>
+    <value>Seleccionar tema de la aplicación</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Jasny</value>
+    <value>Claro</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>Domyślny systemu</value>
+    <value>Predeterminado del sistema</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Licencje firm trzecich</value>
+    <value>Licencias de terceros</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>Zobacz biblioteki firm trzecich używane przez SecureFolderFS</value>
+    <value>Ver las bibliotecas de terceros utilizadas por SecureFolderFS</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Odblokuj</value>
+    <value>Desbloquear</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Sejf został dodany</value>
+    <value>Se ha añadido la caja fuerte</value>
   </data>
   <data name="VaultInformation" xml:space="preserve">
-    <value>Informacje o sejfie</value>
+    <value>Información de la caja fuerte</value>
   </data>
   <data name="VaultLocked" xml:space="preserve">
-    <value>Sejf jest zablokowany</value>
+    <value>La caja fuerte está bloqueada</value>
   </data>
   <data name="VaultProperties" xml:space="preserve">
-    <value>Właściwości sejfu</value>
+    <value>Propiedades de la caja fuerte</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>Zobacz informacje o tym sejfie</value>
+    <value>Ver información sobre este caja fuerte</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Wersja</value>
+    <value>Version</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>Zobacz na GitHub</value>
+    <value>Ver en GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>Zobacz repozytorium</value>
+    <value>Ver repositorio</value>
   </data>
   <data name="ViewVault" xml:space="preserve">
-    <value>Pokaż sejf</value>
+    <value>Ver caja fuerte</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Pokaż ten sejf w Eksploratorze plików</value>
+    <value>Mostrar esta caja fuerte en el explorador de archivos</value>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>Strona internetowa</value>
+    <value>Página web</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Witamy w SecureFolderFS</value>
+    <value>Bienvenido a SecureFolderFS</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>Co nowego</value>
+    <value>Novedades</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Prędkość zapisu</value>
+    <value>Velocidades de escritura</value>
   </data>
 </root>
