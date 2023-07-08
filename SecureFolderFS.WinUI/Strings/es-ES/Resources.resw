@@ -118,312 +118,332 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Añadir caja fuerte existente</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Seleccione una caja fuerte de su dispositivo</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Añadir nueva caja fuerte</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
-    <value>Automatically lock vaults</value>
+    <value>Bloquear automáticamente las cajas fuertes</value>
   </data>
   <data name="AutoLockDescription" xml:space="preserve">
-    <value>Lock all vaults when device is locked</value>
+    <value>Bloquear todas las cajas fuertes al bloquear el dispositivo</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Start with system</value>
+    <value>Ejecutar automáticamente al iniciar el sistema</value>
   </data>
   <data name="AutoStartDescription" xml:space="preserve">
-    <value>Launch SecureFolderFS on system startup</value>
+    <value>Iniciar SecureFolderFS al iniciar el sistema</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Release notes</value>
+    <value>Notas de la versión</value>
+  </data>
+  <data name="ChangelogCloseButton" xml:space="preserve">
+    <value>Awesome!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>View latest release notes for this version</value>
+    <value>Ver las últimas notas de la versión actual</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>An issue occurred while loading the changelog.</value>
+    <value>Se ha producido un error al cargar el registro de cambios.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Change password</value>
+    <value>Cambiar contraseña</value>
   </data>
   <data name="ChangePasswordDescription" xml:space="preserve">
-    <value>Change the password used to unlock this vault</value>
+    <value>Cambiar la contraseña utilizada para desbloquear esta caja fuerte</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>Comprobar actualizaciones</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Cerrar</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Confirmar</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Continuar</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Copiado</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Copiar versión de la aplicación</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Copiar versión del sistema operativo</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Copy version</value>
+    <value>Copiar versión</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Select which version to copy to clipboard</value>
+    <value>Seleccione que versión copiar al portapapeles</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Crear nueva caja fuerte</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Create new SecureFolderFS vault</value>
+    <value>Crear nueva caja fuerte de SecureFolderFS</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Current password</value>
+    <value>Contraseña actual</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>Cifrado de datos</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
+    <value>Desactivar la lista de acceso reciente</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
+    <value>Deshabilitar temporalmente la lista de archivos recientes cuando se desbloqueen las cajas fuertes</value>
   </data>
   <data name="Downloading" xml:space="preserve">
-    <value>Downloading {0}%</value>
+    <value>Descargando {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Cifrado</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Introduzca la contraseña</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
-    <value>Export settings</value>
+    <value>Exportar ajustes</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>Cifrado del nombre de archivo</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>File system provider</value>
+    <value>Proveedor del sistema de archivos</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>Elija el tipo de sistema de archivos virtual preferido</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
-    <value>Needs attention</value>
+    <value>Requiere atención</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>No se encontraron problemas</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>Problemas encontrados</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Importar ajustes</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Instalando...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>Contraseña incorrecta</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>La contraseña introducida es incorrecta.</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Idioma</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Seleccione el idioma de visualización</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
-    <value>Last checked: {0}</value>
+    <value>Última comprobación: {0}</value>
   </data>
   <data name="LatestVersionInstalled" xml:space="preserve">
-    <value>Latest version installed</value>
+    <value>Ya está instalada la última versión</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>License</value>
+    <value>Licencia</value>
   </data>
   <data name="Licenses" xml:space="preserve">
-    <value>Licenses</value>
+    <value>Licencias</value>
   </data>
   <data name="LockVault" xml:space="preserve">
-    <value>Lock vault</value>
+    <value>Bloquear caja fuerte</value>
   </data>
   <data name="LockVaultDescription" xml:space="preserve">
-    <value>Securely lock this vault and close the dashboard</value>
+    <value>Bloquea esta caja fuerte de forma segura y cierra el panel de control</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
-    <value>Manage settings</value>
+    <value>Administrar ajustes</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
-    <value>My vaults</value>
+    <value>Mis cajas fuertes</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>New password</value>
+    <value>Nueva contraseña</value>
   </data>
   <data name="NewVault" xml:space="preserve">
-    <value>New vault</value>
+    <value>Nueva caja fuerte</value>
+  </data>
+  <data name="NoEncryption" xml:space="preserve">
+    <value>No encryption</value>
+    <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
-    <value>No folder selected</value>
+    <value>Ninguna carpeta seleccionada</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>You haven't added any vaults yet. Create a new one or add existing to begin!</value>
+    <value>No ha añadido ninguna caja fuerte todavía. ¡Cree una nueva o añada una existente para empezar!</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
-    <value>Open log location</value>
+    <value>Abrir ubicación del registro</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+    <value>Ejecuta el explorador de archivos donde se encuentra el archivo de registro</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
-    <value>Open vault folder</value>
+    <value>Abrir carpeta de caja fuerte</value>
   </data>
   <data name="OpenVaultFolderDescription" xml:space="preserve">
-    <value>Automatically open folder when vault is unlocked</value>
+    <value>Abrir carpeta automáticamente cuando la caja fuerte se desbloquee</value>
   </data>
   <data name="Password" xml:space="preserve">
-    <value>Password</value>
+    <value>Contraseña</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>Política de privacidad</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
-    <value>View the privacy policy statement</value>
+    <value>Ver la declaración de la política de privacidad</value>
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
-    <value>Read speeds</value>
+    <value>Velocidades de lectura</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
-    <value>Remove vault from the list</value>
+    <value>Eliminar caja fuerte de la lista</value>
   </data>
   <data name="RepeatPassword" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>Repita la contraseña</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
-    <value>Continue where you left off</value>
+    <value>Continúe donde lo dejó</value>
   </data>
   <data name="RestoreLastSessionDescription" xml:space="preserve">
-    <value>Start on previously selected vault</value>
+    <value>Iniciar en la caja fuerte seleccionada previamente</value>
+  </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Retry</value>
+    <comment>Used to retry a failed action</comment>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Buscar</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
-    <value>Select vault path</value>
+    <value>Seleccionar ruta de la caja fuerte</value>
   </data>
   <data name="SetPassword" xml:space="preserve">
-    <value>Set password</value>
+    <value>Establecer contraseña</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
-    <value>About</value>
+    <value>Acerca de</value>
   </data>
   <data name="SettingsGeneral" xml:space="preserve">
     <value>General</value>
   </data>
   <data name="SettingsPreferences" xml:space="preserve">
-    <value>Preferences</value>
+    <value>Preferencias</value>
   </data>
   <data name="SettingsPrivacy" xml:space="preserve">
-    <value>Privacy</value>
+    <value>Privacidad</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show encrypted vault in File Explorer</value>
+    <value>Mostrar caja fuerte cifrada en el explorador de archivos</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Social</value>
   </data>
   <data name="SocialDescription" xml:space="preserve">
-    <value>Ask, suggest, and discuss SecureFolderFS</value>
+    <value>Preguntar, sugerir y debatir sobre SecureFolderFS</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>Summary</value>
+    <value>Resumen</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
-    <value>Enable telemetry</value>
+    <value>Activar telemetría</value>
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
-    <value>Collect anonymous crash reports and usage data</value>
+    <value>Recopilar informes anónimos de errores, bloqueos y datos de uso</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>Oscuro</value>
   </data>
   <data name="ThemeDescription" xml:space="preserve">
-    <value>Choose application theme</value>
+    <value>Seleccionar tema de la aplicación</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>Claro</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>System default</value>
+    <value>Predeterminado del sistema</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Third party licenses</value>
+    <value>Licencias de terceros</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>Ver las bibliotecas de terceros utilizadas por SecureFolderFS</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value>Desbloquear</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Vault has been added</value>
+    <value>Se ha añadido la caja fuerte</value>
   </data>
   <data name="VaultInformation" xml:space="preserve">
-    <value>Vault information</value>
+    <value>Información de la caja fuerte</value>
   </data>
   <data name="VaultLocked" xml:space="preserve">
-    <value>Vault is locked</value>
+    <value>La caja fuerte está bloqueada</value>
   </data>
   <data name="VaultProperties" xml:space="preserve">
-    <value>Vault properties</value>
+    <value>Propiedades de la caja fuerte</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>View information about this vault</value>
+    <value>Ver información sobre este caja fuerte</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>Ver en GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>View repository</value>
+    <value>Ver repositorio</value>
   </data>
   <data name="ViewVault" xml:space="preserve">
-    <value>View vault</value>
+    <value>Ver caja fuerte</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+    <value>Mostrar esta caja fuerte en el explorador de archivos</value>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>Website</value>
+    <value>Página web</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Welcome to SecureFolderFS</value>
+    <value>Bienvenido a SecureFolderFS</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>What's new</value>
+    <value>Novedades</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Write speeds</value>
+    <value>Velocidades de escritura</value>
   </data>
 </root>
