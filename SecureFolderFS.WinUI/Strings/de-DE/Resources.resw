@@ -138,11 +138,17 @@
   <data name="AutoStartDescription" xml:space="preserve">
     <value>SecureFolderFS beim Systemstart ausführen</value>
   </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
   <data name="Changelog" xml:space="preserve">
     <value>Versionshinweise</value>
+  </data>
+  <data name="ChangelogCloseButton" xml:space="preserve">
+    <value>Awesome!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
     <value>Aktuelle Versionshinweise für diese Version anzeigen</value>
@@ -282,6 +288,10 @@
   <data name="NewVault" xml:space="preserve">
     <value>Neuer Tresor</value>
   </data>
+  <data name="NoEncryption" xml:space="preserve">
+    <value>No encryption</value>
+    <comment>Used as an option when choosing vault encryption</comment>
+  </data>
   <data name="NoFolderSelected" xml:space="preserve">
     <value>Kein Ordner ausgewählt</value>
   </data>
@@ -324,6 +334,10 @@
   <data name="RestoreLastSessionDescription" xml:space="preserve">
     <value>Beim zuvor ausgewählten Tresor starten</value>
   </data>
+  <data name="Retry" xml:space="preserve">
+    <value>Retry</value>
+    <comment>Used to retry a failed action</comment>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Suchen</value>
   </data>
@@ -332,6 +346,9 @@
   </data>
   <data name="SetPassword" xml:space="preserve">
     <value>Passwort festlegen</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
     <value>Über</value>
@@ -401,6 +418,9 @@
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
     <value>Informationen zu diesem Tresor anzeigen</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
     <value>Auf GitHub anzeigen</value>
