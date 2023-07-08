@@ -55,7 +55,10 @@
                 </uc:BannerControl.LeftSide>
                 <uc:BannerControl.RightSide>
                     <Grid>
-                        <Button Command="{x:Bind ViewModel.BannerViewModel.UpdateAppCommand}" IsEnabled="{x:Bind ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay}">
+                        <Button
+                            AutomationProperties.Name="{l:ResourceString Name=CheckForUpdates}"
+                            Command="{x:Bind ViewModel.BannerViewModel.UpdateAppCommand}"
+                            IsEnabled="{x:Bind ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <FontIcon
                                     VerticalAlignment="Center"
@@ -113,6 +116,7 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ComboBox
                         x:Name="AppLanguageComboBox"
+                        AutomationProperties.Name="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
                         ItemsSource="{x:Bind ViewModel.Languages}"
                         SelectedIndex="0"
                         SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
@@ -131,6 +135,7 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ComboBox
                         x:Name="AppThemeComboBox"
+                        AutomationProperties.Name="{l:ResourceString Name=Theme}"
                         SelectedIndex="{x:Bind SelectedThemeIndex}"
                         SelectionChanged="AppThemeComboBox_SelectionChanged">
                         <ComboBox.Items>

@@ -44,6 +44,7 @@
                     Padding="{StaticResource ExpanderContentPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    AutomationProperties.Name="{x:Bind Title, Mode=OneWay}"
                     Background="{ThemeResource ExpanderHeaderBackground}"
                     BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
                     BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"

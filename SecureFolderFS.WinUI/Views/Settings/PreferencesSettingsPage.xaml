@@ -12,7 +12,6 @@
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Banners"
-    Loaded="PreferencesSettingsPage_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -93,12 +92,12 @@
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
                 <ComboBox
-                    x:Name="FileSystemAdapterChoice"
                     VerticalAlignment="Center"
+                    AutomationProperties.Name="{x:Bind ViewModel.BannerViewModel.SelectedItem, Mode=OneWay}"
                     ItemsSource="{x:Bind ViewModel.BannerViewModel.FileSystemAdapters}"
-                    SelectionChanged="FileSystemComboBox_SelectionChanged">
+                    SelectedItem="{x:Bind ViewModel.BannerViewModel.SelectedItem, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:FileSystemAdapterItemViewModel">
+                        <DataTemplate x:DataType="vm:FileSystemItemViewModel">
                             <TextBlock Text="{x:Bind Name}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
@@ -148,7 +147,10 @@
                     <FontIcon Glyph="&#xF71C;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.StartOnSystemStartup, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=AutoStart}"
+                        IsOn="{x:Bind ViewModel.StartOnSystemStartup, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl Title="{l:ResourceString Name=RestoreLastSession}" Description="{l:ResourceString Name=RestoreLastSessionDescription}">
@@ -156,7 +158,10 @@
                     <FontIcon Glyph="&#xE7E8;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.ContinueOnLastVault, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=RestoreLastSession}"
+                        IsOn="{x:Bind ViewModel.ContinueOnLastVault, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl Title="{l:ResourceString Name=OpenVaultFolder}" Description="{l:ResourceString Name=OpenVaultFolderDescription}">
@@ -164,7 +169,10 @@
                     <FontIcon Glyph="&#xED25;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
-                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind ViewModel.OpenFolderOnUnlock, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=OpenVaultFolder}"
+                        IsOn="{x:Bind ViewModel.OpenFolderOnUnlock, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
         </StackPanel>

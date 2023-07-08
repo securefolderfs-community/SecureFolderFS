@@ -8,6 +8,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,15 +41,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         {
             foreach (var item in VaultService.GetContentCiphers())
             {
-                var name = string.IsNullOrEmpty(item) ? "None" : item;
+                var name = string.IsNullOrEmpty(item) ? "NoEncryption".ToLocalized() : item;
                 ContentCiphers.Add(new(name));
             }
 
             foreach (var item in VaultService.GetFileNameCiphers())
             {
-                var name = string.IsNullOrEmpty(item) ? "None" : item;
+                var name = string.IsNullOrEmpty(item) ? "NoEncryption".ToLocalized() : item;
                 FileNameCiphers.Add(new(item, name));
             }
+
+            ContentCipher = ContentCiphers.FirstOrDefault();
+            FileNameCipher = FileNameCiphers.FirstOrDefault();
 
             return Task.CompletedTask;
         }

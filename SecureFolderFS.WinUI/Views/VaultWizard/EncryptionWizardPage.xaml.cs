@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 
@@ -31,12 +30,6 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
-        }
-
-        private void ComboBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is ComboBox comboBox)
-                comboBox.SelectedIndex = 0;
         }
     }
 }

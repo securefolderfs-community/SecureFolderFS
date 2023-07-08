@@ -67,6 +67,7 @@
             VerticalAlignment="Bottom"
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
+            AutomationProperties.Name="{l:ResourceString Name=Settings}"
             Background="Transparent"
             BorderThickness="0"
             Command="{x:Bind ViewModel.OpenSettingsCommand}">

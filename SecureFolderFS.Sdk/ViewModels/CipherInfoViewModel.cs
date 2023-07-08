@@ -22,5 +22,11 @@ namespace SecureFolderFS.Sdk.ViewModels
             Id = id;
             Name = name ?? id;
         }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

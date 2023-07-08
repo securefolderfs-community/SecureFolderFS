@@ -10,9 +10,9 @@
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     Title="{l:ResourceString Name=WhatsNew}"
     DefaultButton="Primary"
-    PrimaryButtonText="Awesome!"
+    PrimaryButtonText="{l:ResourceString Name=ChangelogCloseButton}"
     RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
-    Style="{StaticResource DefaultContentDialogStyle}"
+    Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
@@ -51,7 +51,10 @@
                     Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />
             </ScrollViewer>
 
-            <HyperlinkButton Grid.Row="1" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
+            <HyperlinkButton
+                Grid.Row="1"
+                AutomationProperties.Name="{l:ResourceString Name=ViewOnGitHub}"
+                NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />
                     <FontIcon
@@ -81,8 +84,8 @@
                 HorizontalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="8">
-                <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand}" Content="Retry" />
-                <HyperlinkButton NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
+                <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand}" Content="{l:ResourceString Name=Retry}" />
+                <HyperlinkButton AutomationProperties.Name="{l:ResourceString Name=ViewOnGitHub}" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />
                         <FontIcon

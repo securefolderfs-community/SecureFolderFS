@@ -60,6 +60,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
+                    AutomationProperties.Name="{l:ResourceString Name=NewVault}"
                     Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
@@ -81,13 +82,13 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     x:Load="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}"
+                    AutomationProperties.Name="{l:ResourceString Name=NewVault}"
                     Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand}"
                     Style="{ThemeResource AccentButtonStyle}">
                     <FontIcon FontSize="16" Glyph="&#xECC8;" />
                 </Button>
 
                 <Button
-                    Grid.Row="1"
                     Grid.Column="1"
                     Width="36"
                     Height="36"
@@ -96,6 +97,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
+                    AutomationProperties.Name="{l:ResourceString Name=Settings}"
                     Background="Transparent"
                     BorderThickness="0"
                     Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand}"

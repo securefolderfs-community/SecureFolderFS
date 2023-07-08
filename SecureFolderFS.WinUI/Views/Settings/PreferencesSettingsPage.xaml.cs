@@ -3,12 +3,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.UserControls.InfoBars;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,17 +23,11 @@ namespace SecureFolderFS.WinUI.Views.Settings
     /// </summary>
     public sealed partial class PreferencesSettingsPage : Page
     {
-        private bool _isFirstTime = true;
-
         public PreferencesSettingsViewModel ViewModel
         {
             get => (PreferencesSettingsViewModel)DataContext;
             set => DataContext = value;
         }
-
-        //public InfoBarViewModel? FileSystemInfoBar { get; private set; }
-
-        //public bool IsInfoBarOpen => FileSystemInfoBar?.IsOpen ?? false;
 
         public PreferencesSettingsPage()
         {
@@ -43,38 +37,34 @@ namespace SecureFolderFS.WinUI.Views.Settings
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is PreferencesSettingsViewModel viewModel)
+            {
                 ViewModel = viewModel;
+                ViewModel.BannerViewModel.PropertyChanged += BannerViewModel_PropertyChanged;
+            }
 
+            _ = UpdateAdapterStatus();
             base.OnNavigatedTo(e);
         }
 
-        private async void PreferencesSettingsPage_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            FileSystemAdapterChoice.SelectedItem = ViewModel.BannerViewModel.FileSystemAdapters
-                .FirstOrDefault(x =>
-                    x.FileSystemInfoModel.Id.Equals(ViewModel.BannerViewModel.PreferredFileSystemId));
-
-            FileSystemAdapterChoice.SelectedItem ??= await GetSupportedAdapter();
+            ViewModel.BannerViewModel.PropertyChanged -= BannerViewModel_PropertyChanged;
+            base.OnNavigatingFrom(e);
         }
 
-        private async void FileSystemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void BannerViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (_isFirstTime)
-            {
-                _isFirstTime = false;
-                return;
-            }
-
-            ViewModel.BannerViewModel.PreferredFileSystemId = ViewModel.BannerViewModel.FileSystemAdapters[FileSystemAdapterChoice.SelectedIndex].FileSystemInfoModel.Id;
-            await UpdateAdapterStatus((FileSystemAdapterChoice.SelectedItem as FileSystemAdapterItemViewModel)?.FileSystemInfoModel);
+            if (e.PropertyName == nameof(ViewModel.BannerViewModel.SelectedItem))
+                await UpdateAdapterStatus();
         }
 
-        private async Task UpdateAdapterStatus(IFileSystemInfoModel? fileSystemAdapter, CancellationToken cancellationToken = default)
+        private async Task UpdateAdapterStatus(CancellationToken cancellationToken = default)
         {
+            var fileSystemAdapter = ViewModel.BannerViewModel.SelectedItem?.FileSystemInfoModel;
             if (fileSystemAdapter is null)
                 return;
 
-            var fileSystemAdapterResult = await fileSystemAdapter.GetStatusAsync(cancellationToken);
+            var adapterResult = await fileSystemAdapter.GetStatusAsync(cancellationToken);
             if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
             {
                 FileSystemInfoBar = new WebDavInfoBar();
@@ -82,11 +72,11 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Warning;
                 FileSystemInfoBar.CanBeClosed = false;
             }
-            else if (fileSystemAdapterResult.Successful && FileSystemInfoBar is not null)
+            else if (adapterResult.Successful && FileSystemInfoBar is not null)
             {
                 FileSystemInfoBar.IsOpen = false;
             }
-            else if (!fileSystemAdapterResult.Successful)
+            else if (!adapterResult.Successful)
             {
                 FileSystemInfoBar = fileSystemAdapter.Id switch
                 {
@@ -100,13 +90,13 @@ namespace SecureFolderFS.WinUI.Views.Settings
                 FileSystemInfoBar.IsOpen = true;
                 FileSystemInfoBar.InfoBarSeverity = InfoBarSeverityType.Error;
                 FileSystemInfoBar.CanBeClosed = false;
-                FileSystemInfoBar.Message = fileSystemAdapterResult.GetMessage("Invalid state.");
+                FileSystemInfoBar.Message = adapterResult.GetMessage("Invalid state.");
             }
 
             IsInfoBarOpen = FileSystemInfoBar?.IsOpen ?? false;
         }
 
-        private async Task<FileSystemAdapterItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
+        private async Task<FileSystemItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
         {
             foreach (var item in ViewModel.BannerViewModel.FileSystemAdapters)
             {
@@ -120,14 +110,13 @@ namespace SecureFolderFS.WinUI.Views.Settings
 
         private void RootGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            _ = AddItemsTransitionAsync();
-        }
-
-        private async Task AddItemsTransitionAsync()
-        {
-            // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
-            await Task.Delay(400);
-            RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
+            _ = AddTransitionsAsync();
+            async Task AddTransitionsAsync()
+            {
+                // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
+                await Task.Delay(400);
+                RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
+            }
         }
 
         public InfoBarViewModel FileSystemInfoBar

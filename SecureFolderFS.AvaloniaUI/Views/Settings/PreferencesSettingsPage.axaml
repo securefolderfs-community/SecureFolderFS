@@ -74,7 +74,7 @@
                     ItemsSource="{Binding ViewModel.BannerViewModel.FileSystemAdapters, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                     SelectionChanged="FileSystemComboBox_SelectionChanged">
                     <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:FileSystemAdapterItemViewModel">
+                        <DataTemplate x:DataType="vm:FileSystemItemViewModel">
                             <TextBlock Text="{Binding Name}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
@@ -104,21 +104,21 @@
                     <anim:Storyboard.Storyboards>
                         <anim:Storyboard x:Name="ShowFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
-                                Target="FileSystemInfoBarContainer"
                                 ContentBelow="OtherSettings"
-                                Mode="Show" />
+                                Mode="Show"
+                                Target="FileSystemInfoBarContainer" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="HideFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
-                                Target="FileSystemInfoBarContainer"
                                 ContentBelow="OtherSettings"
-                                Mode="Hide" />
+                                Mode="Hide"
+                                Target="FileSystemInfoBarContainer" />
                         </anim:Storyboard>
                         <anim:Storyboard x:Name="QuickHideFileSystemInfoBarStoryboard">
                             <trans:InfoBarTransition
-                                Target="FileSystemInfoBarContainer"
                                 ContentBelow="OtherSettings"
-                                Mode="QuickHide" />
+                                Mode="QuickHide"
+                                Target="FileSystemInfoBarContainer" />
                         </anim:Storyboard>
                     </anim:Storyboard.Storyboards>
                 </ContentControl>

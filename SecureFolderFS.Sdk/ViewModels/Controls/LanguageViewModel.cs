@@ -22,10 +22,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public LanguageViewModel(CultureInfo cultureInfo)
         {
             CultureInfo = cultureInfo;
-            FriendlyName = FormatFriendlyName(CultureInfo.NativeName);
+            FriendlyName = FormatName(CultureInfo.NativeName);
         }
 
-        private static string FormatFriendlyName(string unformatted)
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return FriendlyName;
+        }
+
+        private static string FormatName(string unformatted)
         {
             return string.Concat(unformatted[0].ToString().ToUpperInvariant(), unformatted.AsSpan(1));
         }

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
@@ -90,6 +91,7 @@
                 Height="32"
                 Margin="0,0,16,0"
                 Padding="8"
+                AutomationProperties.Name="{l:ResourceString Name=Back}"
                 Background="Transparent"
                 BorderThickness="0"
                 Command="{x:Bind ViewModel.GoBackCommand, Mode=OneWay}">

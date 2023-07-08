@@ -3,26 +3,23 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
-    public sealed class FileSystemBannerViewModel : ObservableObject, IAsyncInitialize
+    public sealed partial class FileSystemBannerViewModel : ObservableObject, IAsyncInitialize
     {
         private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
+        private IUserSettings UserSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().UserSettings;
 
-        public ObservableCollection<FileSystemAdapterItemViewModel> FileSystemAdapters { get; }
-
-        public string PreferredFileSystemId
-        {
-            get => SettingsService.UserSettings.PreferredFileSystemId;
-            set => SettingsService.UserSettings.PreferredFileSystemId = value;
-        }
+        [ObservableProperty] private ObservableCollection<FileSystemItemViewModel> _FileSystemAdapters;
+        [ObservableProperty] private FileSystemItemViewModel? _SelectedItem;
 
         public FileSystemBannerViewModel()
         {
@@ -35,23 +32,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             foreach (var item in VaultService.GetFileSystems())
             {
                 var fileSystemResult = await item.GetStatusAsync(cancellationToken);
-                if (fileSystemResult is FileSystemResult { CanSupport: true }
-                    || (fileSystemResult.Successful && fileSystemResult is not FileSystemResult))
-                    FileSystemAdapters.Add(new(item));
+                if (fileSystemResult is FileSystemResult { CanSupport: true } || (fileSystemResult.Successful && fileSystemResult is not FileSystemResult))
+                    FileSystemAdapters.Add(new(item, item.Name));
             }
+
+            SelectedItem = FileSystemAdapters.FirstOrDefault(x => x.FileSystemInfoModel.Id == UserSettings.PreferredFileSystemId);
+        }
+
+        partial void OnSelectedItemChanged(FileSystemItemViewModel? value)
+        {
+            if (value is not null)
+                UserSettings.PreferredFileSystemId = value.FileSystemInfoModel.Id;
         }
     }
 
-    public sealed class FileSystemAdapterItemViewModel : ObservableObject
+    public sealed record FileSystemItemViewModel(IFileSystemInfoModel FileSystemInfoModel, string Name)
     {
-        public IFileSystemInfoModel FileSystemInfoModel { get; }
-
-        public string Name { get; }
-
-        public FileSystemAdapterItemViewModel(IFileSystemInfoModel fileSystemInfoModel)
+        /// <inheritdoc/>
+        public override string ToString()
         {
-            FileSystemInfoModel = fileSystemInfoModel;
-            Name = fileSystemInfoModel.Name;
+            return Name;
         }
     }
 }

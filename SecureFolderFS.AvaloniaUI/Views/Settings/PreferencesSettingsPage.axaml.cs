@@ -73,7 +73,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
                 return; // Fix crash upon changing page
 
             ViewModel.BannerViewModel.PreferredFileSystemId = ViewModel.BannerViewModel.FileSystemAdapters[FileSystemAdapterChoice.SelectedIndex].FileSystemInfoModel.Id;
-            await UpdateAdapterStatus((FileSystemAdapterChoice.SelectedItem as FileSystemAdapterItemViewModel)?.FileSystemInfoModel);
+            await UpdateAdapterStatus((FileSystemAdapterChoice.SelectedItem as FileSystemItemViewModel)?.FileSystemInfoModel);
         }
 
         private async Task UpdateAdapterStatus(IFileSystemInfoModel? fileSystemAdapter, CancellationToken cancellationToken = default)
@@ -129,7 +129,7 @@ namespace SecureFolderFS.AvaloniaUI.Views.Settings
             IsInfoBarOpen = _playShowFileSystemInfoBarAnimation = isOpen;
         }
 
-        private async Task<FileSystemAdapterItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
+        private async Task<FileSystemItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
         {
             foreach (var item in ViewModel.BannerViewModel.FileSystemAdapters)
             {

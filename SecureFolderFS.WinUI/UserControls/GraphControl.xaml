@@ -19,6 +19,7 @@
         HorizontalAlignment="Stretch"
         HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"
+        AutomationProperties.Name="{x:Bind GraphHeader, Mode=OneWay}"
         BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
         Click="RootButton_Click"
         Loaded="RootButton_Loaded">

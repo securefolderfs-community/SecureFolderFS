@@ -18,8 +18,8 @@
         <StackPanel Grid.Row="0" Spacing="4">
             <TextBlock Text="{l:ResourceString Name=DataEncryption}" />
             <ComboBox
+                AutomationProperties.Name="{x:Bind ViewModel.ContentCipher, Mode=OneWay}"
                 ItemsSource="{x:Bind ViewModel.ContentCiphers}"
-                Loaded="ComboBox_Loaded"
                 SelectedIndex="0"
                 SelectedItem="{x:Bind ViewModel.ContentCipher, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
@@ -33,8 +33,8 @@
         <StackPanel Grid.Row="1" Spacing="4">
             <TextBlock Text="{l:ResourceString Name=FileNameEncryption}" />
             <ComboBox
+                AutomationProperties.Name="{x:Bind ViewModel.FileNameCipher, Mode=OneWay}"
                 ItemsSource="{x:Bind ViewModel.FileNameCiphers}"
-                Loaded="ComboBox_Loaded"
                 SelectedIndex="0"
                 SelectedItem="{x:Bind ViewModel.FileNameCipher, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>

@@ -10,14 +10,14 @@ namespace SecureFolderFS.Sdk.Models
     public interface IFileSystemInfoModel
     {
         /// <summary>
-        /// Gets the name of this file system.
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
         /// Gets an unique id associated with this file system.
         /// </summary>
         string Id { get; }
+
+        /// <summary>
+        /// Gets the name of this file system.
+        /// </summary>
+        string Name { get; }
 
         /// <summary>
         /// Determines whether this file system is available on the device.

@@ -12,7 +12,7 @@
     PrimaryButtonClick="AgreementDialog_PrimaryButtonClick"
     PrimaryButtonText="{l:ResourceString Name=Continue}"
     RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
-    Style="{StaticResource DefaultContentDialogStyle}"
+    Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
     <StackPanel

@@ -9,7 +9,7 @@
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
     Closing="SettingsDialog_Closing"
     RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
-    Style="{StaticResource DefaultContentDialogStyle}"
+    Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
@@ -85,6 +85,7 @@
             Padding="0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
+            AutomationProperties.Name="{l:ResourceString Name=Close}"
             Background="Transparent"
             BorderThickness="0"
             Click="CloseButton_Click"

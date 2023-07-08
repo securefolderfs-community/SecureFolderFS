@@ -32,6 +32,7 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=DisableRecentAccess}"
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
@@ -43,6 +44,7 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=AutoLock}"
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
@@ -55,6 +57,7 @@
                     <ToggleSwitch
                         x:Name="EnableTelemetry"
                         MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=Telemetry}"
                         IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>

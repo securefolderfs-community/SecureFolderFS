@@ -68,7 +68,7 @@ namespace SecureFolderFS.WinUI.Dialogs
                     break;
 
                 case EncryptionWizardViewModel:
-                    TitleText.Text = "ChooseEncryption".ToLocalized();
+                    TitleText.Text = "Choose encryption"; // TODO: Not localized since the page will be removed in the near future
                     PrimaryButtonText = "Continue".ToLocalized();
                     break;
 
