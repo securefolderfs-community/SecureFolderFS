@@ -14,7 +14,7 @@ namespace SecureFolderFS.WinUI.Localization
         /// <summary>
         /// Gets or sets the name identifier that is associated with a resource.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <inheritdoc/>
         protected override object ProvideValue()
@@ -23,7 +23,7 @@ namespace SecureFolderFS.WinUI.Localization
             if (LocalizationService is null)
                 return $"{{{Name}}}";
 
-            return LocalizationService.GetString(Name) ?? $"{{{Name}}}";
+            return LocalizationService.GetString(Name ?? string.Empty) ?? $"{{{Name}}}";
         }
     }
 }

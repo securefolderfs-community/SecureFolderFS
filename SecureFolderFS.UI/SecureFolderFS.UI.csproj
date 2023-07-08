@@ -11,6 +11,8 @@
         <EmbeddedResource Include="Assets\*" />
         <None Remove="Assets\AppAssets\AppIcon.png" />
         <None Remove="Assets\AppAssets\AppTitle.svg" />
+        <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
+        <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
         <EmbeddedResource Include="Assets\AppAssets\AppIcon.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
@@ -30,46 +32,92 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\Tmds.Fuse LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\Tmds.Fuse LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\FluentAvalonia LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\Licenses\Tmds.Fuse LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\NWebDav LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\NWebDav LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\NWebDav LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\DokanNet LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\DokanNet LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\DokanNet LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\DotnetCommunityToolkit LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\DotnetCommunityToolkit LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\DotnetCommunityToolkit LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\WindowsCommunityToolkit LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\WindowsCommunityToolkit LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WindowsCommunityToolkit LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\WinUIEx LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\WinUIEx LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WinUIEx LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\ByteSize LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\ByteSize LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\ByteSize LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\Miscreant LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\Miscreant LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\Miscreant LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\Konscious.Security.Cryptography LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\KonsciousSecurityCryptography LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\KonsciousSecurityCryptography LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\NSec LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\NSec LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\NSec LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\LiveCharts2 LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\LiveCharts2 LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\LiveCharts2 LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\WindowsAppSDK LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\WindowsAppSDK LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WindowsAppSDK LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection" />
         <None Remove="Assets\Licenses\AppCenter LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\AppCenter LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\AppCenter LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\WindowsSDKBuildTools LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\WindowsSDKBuildTools LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WindowsSDKBuildTools LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\Avalonia LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\Avalonia LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\Avalonia LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\SvgSkia LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\SvgSkia LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\SvgSkia LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\AvaloniaBehaviors LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\AvaloniaBehaviors LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\AvaloniaBehaviors LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\TextCopy LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\TextCopy LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\TextCopy LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\AvaloniaNameGenerator LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\AvaloniaNameGenerator LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\AvaloniaNameGenerator LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <None Remove="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -83,5 +131,35 @@
     <ItemGroup>
       <ProjectReference Include="..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
       <ProjectReference Include="..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Strings\cs-CZ\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\da-DK\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\de-DE\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\es-ES\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\fr-FR\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\it-IT\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\pl-PL\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\ru-RU\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\uk-UA\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 </Project>

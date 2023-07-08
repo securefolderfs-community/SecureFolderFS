@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Globalization;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
@@ -22,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public LanguageViewModel(CultureInfo cultureInfo)
         {
             CultureInfo = cultureInfo;
-            FriendlyName = FormatName(CultureInfo.NativeName);
+            FriendlyName = FormatName(cultureInfo);
         }
 
         /// <inheritdoc/>
@@ -31,9 +30,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             return FriendlyName;
         }
 
-        private static string FormatName(string unformatted)
+        private static string FormatName(CultureInfo cultureInfo)
         {
-            return string.Concat(unformatted[0].ToString().ToUpperInvariant(), unformatted.AsSpan(1));
+            // Sometimes the name may not have the country
+            var name = cultureInfo.NativeName;
+            if (name.Contains('('))
+                return name;
+
+            // Convert the first letter to uppercase
+            name = char.ToUpperInvariant(name[0]) + name.Substring(1);
+
+            // Get the region to use for the country name
+            var regionInfo = new RegionInfo(cultureInfo.Name);
+
+            return $"{name} ({regionInfo.DisplayName})";
         }
     }
 }
