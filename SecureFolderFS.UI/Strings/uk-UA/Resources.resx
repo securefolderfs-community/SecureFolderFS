@@ -328,6 +328,9 @@
   <data name="RepeatPassword" xml:space="preserve">
     <value>Repeat password</value>
   </data>
+  <data name="RestartRequired" xml:space="preserve">
+    <value>Restart required</value>
+  </data>
   <data name="RestoreLastSession" xml:space="preserve">
     <value>Continue where you left off</value>
   </data>
