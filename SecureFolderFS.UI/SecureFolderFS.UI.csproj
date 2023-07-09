@@ -143,6 +143,9 @@
       <EmbeddedResource Update="Strings\de-DE\Resources.resx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+      <EmbeddedResource Update="Strings\en-US\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
       <EmbeddedResource Update="Strings\es-ES\Resources.resx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>

@@ -142,7 +142,7 @@
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
                                 FontWeight="Semibold"
-                                Text="Restart required" />
+                                Text="{l:ResourceString Name=RestartRequired}" />
 
                             <!--  TODO: Button hidden. Blocking issue: https://github.com/microsoft/WindowsAppSDK/issues/2792  -->
                             <Button
