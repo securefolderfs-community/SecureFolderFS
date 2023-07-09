@@ -29,7 +29,7 @@
                         <HyperlinkButton
                             Margin="0,-16,0,0"
                             HorizontalAlignment="Right"
-                            Content="Open website"
+                            Content="{l:ResourceString Name=Website}"
                             NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000" />
                     </Grid>
                 </InfoBar.Content>
@@ -65,9 +65,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid
-        Loaded="Root_Loaded"
-        RowSpacing="12">
+    <Grid Loaded="Root_Loaded" RowSpacing="12">
         <Grid.RowDefinitions>
             <!--  Banner  -->
             <RowDefinition Height="Auto" />
