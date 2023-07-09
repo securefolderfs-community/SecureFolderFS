@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.ViewModels.Controls;
+﻿using SecureFolderFS.Sdk.ViewModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -37,6 +36,12 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="uri">The URI to launch.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task OpenUriAsync(Uri uri);
+
+        /// <summary>
+        /// Tries to schedule the application for restart.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task TryRestartAsync();
 
         /// <summary>
         /// Retrieves all licenses of packages and libraries that are used by the app.

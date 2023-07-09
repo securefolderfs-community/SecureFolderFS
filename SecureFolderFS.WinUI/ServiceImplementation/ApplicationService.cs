@@ -28,5 +28,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         {
             await Launcher.LaunchUriAsync(uri);
         }
+
+        /// <inheritdoc/>
+        public override Task TryRestartAsync()
+        {
+            Microsoft.Windows.AppLifecycle.AppInstance.Restart("/RestartCalled");
+            return Task.CompletedTask;
+        }
     }
 }

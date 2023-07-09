@@ -66,8 +66,7 @@
     </Page.Resources>
 
     <Grid
-        x:Name="RootGrid"
-        Loaded="RootGrid_Loaded"
+        Loaded="Root_Loaded"
         RowSpacing="12">
         <Grid.RowDefinitions>
             <!--  Banner  -->

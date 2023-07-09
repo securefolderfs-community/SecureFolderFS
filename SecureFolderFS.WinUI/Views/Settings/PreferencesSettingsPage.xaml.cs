@@ -108,14 +108,14 @@ namespace SecureFolderFS.WinUI.Views.Settings
             return ViewModel.BannerViewModel.FileSystemAdapters.FirstOrDefault();
         }
 
-        private void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        private void Root_Loaded(object sender, RoutedEventArgs e)
         {
             _ = AddTransitionsAsync();
             async Task AddTransitionsAsync()
             {
                 // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
                 await Task.Delay(400);
-                RootGrid?.ChildrenTransitions?.Add(new ReorderThemeTransition());
+                (sender as Panel)?.ChildrenTransitions?.Add(new ReorderThemeTransition());
             }
         }
 

@@ -7,18 +7,21 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     public sealed partial class GeneralSettingsViewModel : BasePageViewModel
     {
-        public ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
+        private ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
+
+        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
         public UpdateBannerViewModel BannerViewModel { get; }
 
-        public ObservableCollection<LanguageViewModel> Languages { get; }
-
+        [ObservableProperty] private ObservableCollection<LanguageViewModel> _Languages;
         [ObservableProperty] private LanguageViewModel? _SelectedLanguage;
+        [ObservableProperty] private bool _IsRestartRequired;
 
         public GeneralSettingsViewModel()
         {
@@ -39,10 +42,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             await BannerViewModel.InitAsync(cancellationToken);
         }
 
+        [RelayCommand]
+        private async Task RestartAsync()
+        {
+            await ApplicationService.TryRestartAsync();
+        }
+
         async partial void OnSelectedLanguageChanged(LanguageViewModel? value)
         {
             if (value is not null)
+            {
                 await LocalizationService.SetCultureAsync(value.CultureInfo);
+                IsRestartRequired = !LocalizationService.CurrentCulture.Equals(SelectedLanguage?.CultureInfo);
+            }
         }
     }
 }

@@ -1,19 +1,21 @@
 <uc:Page
+    x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.GeneralSettingsPage"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:anim="using:SecureFolderFS.AvaloniaUI.Animations"
-    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
-    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
-    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
-    xmlns:ui="using:FluentAvalonia.UI.Controls"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
-    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="using:Avalonia.Xaml.Interactivity"
     xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
-    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="SecureFolderFS.AvaloniaUI.Views.Settings.GeneralSettingsPage">
+    xmlns:ic="using:FluentAvalonia.FluentIcons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:trans="using:SecureFolderFS.AvaloniaUI.Animations.Transitions"
+    xmlns:uc="using:SecureFolderFS.AvaloniaUI.UserControls"
+    xmlns:ui="using:FluentAvalonia.UI.Controls"
+    xmlns:vc="using:SecureFolderFS.AvaloniaUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
 
     <uc:Page.Resources>
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
@@ -51,13 +53,11 @@
                 </uc:BannerControl.LeftSide>
                 <uc:BannerControl.RightSide>
                     <Grid>
-                        <Button
-                            Command="{Binding ViewModel.BannerViewModel.UpdateAppCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                            IsEnabled="{Binding ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                        <Button Command="{Binding ViewModel.BannerViewModel.UpdateAppCommand, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" IsEnabled="{Binding ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <ic:FluentIcon
-                                    VerticalAlignment="Center"
                                     Width="14"
+                                    VerticalAlignment="Center"
                                     Icon="ArrowClockwise28Regular" />
                                 <TextBlock
                                     VerticalAlignment="Center"
@@ -73,11 +73,11 @@
                         x:Name="VersionInfoBar"
                         IsClosable="{Binding ViewModel.BannerViewModel.UpdateInfoBar.CanBeClosed, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                         IsOpen="True"
-                        Message="{Binding ViewModel.BannerViewModel.UpdateInfoBar.Message, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                        Severity="{Binding ViewModel.BannerViewModel.UpdateInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                         IsVisible="{Binding ViewModel.BannerViewModel.UpdateInfoBar.IsOpen, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        LayoutUpdated="VersionInfoBar_LayoutUpdated"
+                        Message="{Binding ViewModel.BannerViewModel.UpdateInfoBar.Message, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                         Opacity="0"
-                        LayoutUpdated="VersionInfoBar_LayoutUpdated">
+                        Severity="{Binding ViewModel.BannerViewModel.UpdateInfoBar.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
                         <ui:InfoBar.RenderTransform>
                             <TranslateTransform />
                         </ui:InfoBar.RenderTransform>
@@ -85,15 +85,15 @@
                         <anim:Storyboard.Storyboards>
                             <anim:Storyboard x:Name="ShowVersionInfoBarStoryboard">
                                 <trans:InfoBarTransition
-                                    Target="VersionInfoBar"
                                     ContentBelow="OtherSettings"
-                                    Mode="Show" />
+                                    Mode="Show"
+                                    Target="VersionInfoBar" />
                             </anim:Storyboard>
                             <anim:Storyboard x:Name="QuickHideVersionInfoBarStoryboard">
                                 <trans:InfoBarTransition
-                                    Target="VersionInfoBar"
                                     ContentBelow="OtherSettings"
-                                    Mode="QuickHide" />
+                                    Mode="QuickHide"
+                                    Target="VersionInfoBar" />
                             </anim:Storyboard>
                         </anim:Storyboard.Storyboards>
 
@@ -102,9 +102,7 @@
                                 Binding="{Binding ElementName=VersionInfoBar, Path=IsVisible}"
                                 ComparisonCondition="Equal"
                                 Value="true">
-                                <ia:CallMethodAction
-                                    TargetObject="{Binding Path=., RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
-                                    MethodName="ShowVersionInfoBar" />
+                                <ia:CallMethodAction MethodName="ShowVersionInfoBar" TargetObject="{Binding Path=., RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}" />
                             </ia:DataTriggerBehavior>
                         </i:Interaction.Behaviors>
                     </ui:InfoBar>
@@ -113,35 +111,41 @@
         </StackPanel>
 
         <!--  Other settings  -->
-        <StackPanel x:Name="OtherSettings" Grid.Row="2" Spacing="4">
+        <StackPanel
+            x:Name="OtherSettings"
+            Grid.Row="2"
+            Spacing="4">
             <StackPanel.RenderTransform>
                 <TranslateTransform />
             </StackPanel.RenderTransform>
 
             <ui:SettingsExpander
-                Header="Language"
                 Description="Select the display language"
+                Header="Language"
                 IconSource="{ic:FluentIconSource LocalLanguage28Regular}">
                 <ui:SettingsExpander.Footer>
                     <ComboBox
+                        Name="AppLanguageComboBox"
                         ItemsSource="{Binding ViewModel.Languages, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
                         SelectedIndex="0"
-                        Name="AppLanguageComboBox"
                         SelectionChanged="AppLanguageComboBox_SelectionChanged">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:LanguageViewModel">
-                                <TextBlock Text="{Binding FriendlyName}" />
+                                <TextBlock Text="{Binding DisplayName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
             <ui:SettingsExpander
-                Header="Theme"
                 Description="Choose application theme"
+                Header="Theme"
                 IconSource="{ic:FluentIconSource Color24Regular}">
                 <ui:SettingsExpander.Footer>
-                    <ComboBox Name="AppThemeComboBox" SelectionChanged="AppThemeComboBox_SelectionChanged" SelectedIndex="{Binding SelectedThemeIndex, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}">
+                    <ComboBox
+                        Name="AppThemeComboBox"
+                        SelectedIndex="{Binding SelectedThemeIndex, Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type uc:Page}}}"
+                        SelectionChanged="AppThemeComboBox_SelectionChanged">
                         <ComboBox.Items>
                             <ComboBoxItem Content="System default" />
                             <ComboBoxItem Content="Light" />
@@ -152,24 +156,24 @@
             </ui:SettingsExpander>
             <ui:SettingsExpander
                 Header="Configure settings"
-                IsEnabled="False"
-                IconSource="{ic:FluentIconSource Settings48Regular}">
+                IconSource="{ic:FluentIconSource Settings48Regular}"
+                IsEnabled="False">
                 <StackPanel Margin="-16" Spacing="1">
                     <ui:SettingsExpander Header="Import settings" IsClickEnabled="True">
                         <ui:SettingsExpander.ActionIconSource>
                             <ui:SymbolIconSource Symbol="Import" />
                         </ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
+                        <!--  TODO Icon  -->
                         <ui:SettingsExpander.Footer>
                             <ui:SymbolIconSource Symbol="Placeholder" />
                         </ui:SettingsExpander.Footer>
                     </ui:SettingsExpander>
                     <ui:SettingsExpander Header="Export settings" IsClickEnabled="True">
                         <ui:SettingsExpander.ActionIconSource>
-                            <!-- TODO Icon -->
+                            <!--  TODO Icon  -->
                             <ui:SymbolIconSource Symbol="Placeholder" />
                         </ui:SettingsExpander.ActionIconSource>
-                        <!-- TODO Icon -->
+                        <!--  TODO Icon  -->
                         <ui:SettingsExpander.Footer>
                             <ui:SymbolIconSource Symbol="Placeholder" />
                         </ui:SettingsExpander.Footer>

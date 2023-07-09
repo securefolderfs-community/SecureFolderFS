@@ -68,5 +68,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
         /// <inheritdoc/>
         public abstract Task OpenUriAsync(Uri uri);
+
+        /// <inheritdoc/>
+        public abstract Task TryRestartAsync();
     }
 }

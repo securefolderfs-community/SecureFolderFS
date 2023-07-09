@@ -16,29 +16,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <summary>
         /// Gets the user-friendly name representation of the language.
         /// </summary>
-        public string FriendlyName { get; }
+        public string DisplayName { get; }
 
         public LanguageViewModel(CultureInfo cultureInfo)
         {
             CultureInfo = cultureInfo;
-            FriendlyName = FormatName(cultureInfo);
+            DisplayName = FormatName(cultureInfo);
         }
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return FriendlyName;
+            return DisplayName;
         }
 
         private static string FormatName(CultureInfo cultureInfo)
         {
-            // Sometimes the name may not have the country
             var name = cultureInfo.NativeName;
-            if (name.Contains('('))
-                return name;
 
             // Convert the first letter to uppercase
             name = char.ToUpperInvariant(name[0]) + name.Substring(1);
+
+            // Sometimes the name may not have the country
+            if (name.Contains('('))
+                return name;
 
             // Get the region to use for the country name
             var regionInfo = new RegionInfo(cultureInfo.Name);
