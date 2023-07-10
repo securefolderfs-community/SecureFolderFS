@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -10,17 +11,15 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
+    [Inject<IDialogService>, Inject<ISettingsService>]
     public sealed partial class EmptyHostViewModel : BasePageViewModel
     {
         private readonly INavigationService _hostNavigationService;
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
-        private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
-
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
         public EmptyHostViewModel(INavigationService hostNavigationService, IVaultCollectionModel vaultCollectionModel)
         {
+            ServiceProvider = Ioc.Default;
             _hostNavigationService = hostNavigationService;
             _vaultCollectionModel = vaultCollectionModel;
         }

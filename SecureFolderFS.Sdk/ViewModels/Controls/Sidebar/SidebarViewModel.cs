@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 {
+    [Inject<ISettingsService>]
     public sealed partial class SidebarViewModel : ObservableObject, IAsyncInitialize
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
@@ -23,10 +25,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         [ObservableProperty] private SidebarFooterViewModel _FooterViewModel;
         [ObservableProperty] private ObservableCollection<SidebarItemViewModel> _SidebarItems;
 
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
         public SidebarViewModel(IVaultCollectionModel vaultCollectionModel)
         {
+            ServiceProvider = Ioc.Default;
             _vaultCollectionModel = vaultCollectionModel;
             _SidebarItems = new();
             _SearchViewModel = new(SidebarItems);

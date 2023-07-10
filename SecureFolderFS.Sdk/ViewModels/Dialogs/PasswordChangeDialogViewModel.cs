@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.Extensions;
@@ -11,18 +12,16 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
+    [Inject<IVaultService>, Inject<IPasswordChangeService>]
     public sealed partial class PasswordChangeDialogViewModel : DialogViewModel, IDisposable
     {
         private readonly IVaultModel _vaultModel;
-
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
-        private IPasswordChangeService PasswordChangeService { get; } = Ioc.Default.GetRequiredService<IPasswordChangeService>();
 
         [ObservableProperty] private bool _IsInvalidPasswordShown;
 
         public PasswordChangeDialogViewModel(IVaultModel vaultModel)
         {
+            ServiceProvider = Ioc.Default;
             _vaultModel = vaultModel;
         }
 

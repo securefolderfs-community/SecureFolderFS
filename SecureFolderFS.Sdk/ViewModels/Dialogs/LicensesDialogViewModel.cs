@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared.Utils;
@@ -8,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    public sealed class LicensesDialogViewModel : DialogViewModel, IAsyncInitialize
+    [Inject<IApplicationService>]
+    public sealed partial class LicensesDialogViewModel : DialogViewModel, IAsyncInitialize
     {
-        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
-
         public ObservableCollection<LicenseViewModel> Licenses { get; }
 
         public LicensesDialogViewModel()
         {
+            ServiceProvider = Ioc.Default;
             Licenses = new();
         }
 

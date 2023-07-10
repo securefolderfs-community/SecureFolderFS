@@ -2,22 +2,22 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 {
+    [Inject<IFileExplorerService>]
     public sealed partial class SidebarItemViewModel : ObservableObject, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
-
-        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         public VaultViewModel VaultViewModel { get; }
 
@@ -26,6 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 
         public SidebarItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
+            ServiceProvider = Ioc.Default;
             VaultViewModel = vaultViewModel;
             _vaultCollectionModel = vaultCollectionModel;
 

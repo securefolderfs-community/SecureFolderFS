@@ -1,15 +1,15 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    public sealed class PreferencesSettingsViewModel : BasePageViewModel
+    [Inject<ISettingsService>]
+    public sealed partial class PreferencesSettingsViewModel : BasePageViewModel
     {
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
         public FileSystemBannerViewModel BannerViewModel { get; }
 
         public bool StartOnSystemStartup
@@ -32,6 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         public PreferencesSettingsViewModel()
         {
+            ServiceProvider = Ioc.Default;
             BannerViewModel = new();
         }
 

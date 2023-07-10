@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
@@ -14,16 +15,16 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
+    [Inject<IFileExplorerService>]
     public sealed partial class VaultControlsViewModel : ObservableObject
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private readonly INavigationService _dashboardNavigationService;
         private readonly INavigationService _navigationService;
 
-        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
-
         public VaultControlsViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService, INavigationService navigationService)
         {
+            ServiceProvider = Ioc.Default;
             _unlockedVaultViewModel = unlockedVaultViewModel;
             _dashboardNavigationService = dashboardNavigationService;
             _navigationService = navigationService;

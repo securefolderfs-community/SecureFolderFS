@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
@@ -13,19 +14,19 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
 {
+    [Inject<IFileExplorerService>, Inject<IVaultService>]
     public sealed partial class ExistingLocationWizardViewModel : BaseWizardPageViewModel
     {
-        private readonly IAsyncValidator<IFolder> _vaultValidator;
         private IFolder? _vaultFolder;
-
-        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
+        private readonly IAsyncValidator<IFolder> _vaultValidator;
 
         [ObservableProperty] private string? _SelectedLocationText = "NoFolderSelected".ToLocalized();
 
         public ExistingLocationWizardViewModel(VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
         {
-            _vaultValidator = Ioc.Default.GetRequiredService<IVaultService>().GetVaultValidator();
+            ServiceProvider = Ioc.Default;
+            _vaultValidator = VaultService.GetVaultValidator();
         }
 
         public override async Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)

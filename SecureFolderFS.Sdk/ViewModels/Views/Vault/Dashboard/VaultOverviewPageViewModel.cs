@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Controls;
@@ -9,12 +10,9 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 {
-    public sealed class VaultOverviewPageViewModel : BaseDashboardPageViewModel
+    [Inject<ISettingsService>, Inject<IFileExplorerService>]
+    public sealed partial class VaultOverviewPageViewModel : BaseDashboardPageViewModel
     {
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
-        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
-
         public WidgetsListViewModel WidgetsViewModel { get; }
 
         public VaultControlsViewModel VaultControlsViewModel { get; }
@@ -22,6 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, VaultControlsViewModel vaultControlsViewModel, INavigationService dashboardNavigationService)
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {
+            ServiceProvider = Ioc.Default;
             WidgetsViewModel = new(unlockedVaultViewModel.UnlockedVaultModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);
             VaultControlsViewModel = vaultControlsViewModel;
         }

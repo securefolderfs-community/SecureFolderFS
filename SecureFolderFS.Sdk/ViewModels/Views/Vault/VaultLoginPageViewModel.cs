@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
+    [Inject<IThreadingService>]
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel, IRecipient<VaultUnlockedMessage>
     {
         private readonly IVaultLoginModel _vaultLoginModel;
@@ -25,11 +27,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [ObservableProperty] private string? _VaultName;
         [ObservableProperty] private INotifyPropertyChanged? _StrategyViewModel;
 
-        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
-
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
             : base(vaultViewModel, navigationService)
         {
+            ServiceProvider = Ioc.Default;
             VaultName = vaultViewModel.VaultModel.VaultName;
             _vaultLoginModel = new VaultLoginModel(vaultViewModel.VaultModel, new VaultWatcherModel(vaultViewModel.VaultModel.Folder));
             _vaultLoginModel.StateChanged += VaultLoginModel_StateChanged;

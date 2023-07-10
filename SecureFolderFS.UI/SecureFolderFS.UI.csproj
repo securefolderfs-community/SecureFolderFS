@@ -13,6 +13,10 @@
         <None Remove="Assets\AppAssets\AppTitle.svg" />
         <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
+        <None Remove="Assets\Licenses\PolySharp LICENSE" />
+        <None Remove="Assets\Licenses\Roslyn Analyzers LICENSE" />
+        <None Remove="Assets\Licenses\Roslyn LICENSE" />
+        <None Remove="Assets\Licenses\WinUI3Utilities LICENSE" />
         <EmbeddedResource Include="Assets\AppAssets\AppIcon.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
@@ -38,6 +42,15 @@
         <EmbeddedResource Include="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
+        <EmbeddedResource Include="Assets\Licenses\PolySharp LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\Licenses\Roslyn Analyzers LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\Licenses\Roslyn LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <EmbeddedResource Include="Assets\Licenses\Tmds.Fuse LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
@@ -58,6 +71,9 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\WinUIEx LICENSE" />
+        <EmbeddedResource Include="Assets\Licenses\WinUI3Utilities LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <EmbeddedResource Include="Assets\Licenses\WinUIEx LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>

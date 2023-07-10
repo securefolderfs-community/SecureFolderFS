@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utils;
@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
+    [Inject<IApplicationService>, Inject<IChangelogService>]
     public sealed partial class ChangelogDialogViewModel : DialogViewModel, IAsyncInitialize
     {
         private readonly Version _changelogSince;
@@ -19,12 +20,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
         [ObservableProperty] private string? _UpdateText;
         [ObservableProperty] private string? _ErrorText;
 
-        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
-
-        private IChangelogService ChangelogService { get; } = Ioc.Default.GetRequiredService<IChangelogService>();
-
         public ChangelogDialogViewModel(Version changelogSince)
         {
+            ServiceProvider = Ioc.Default;
             _changelogSince = changelogSince;
         }
 

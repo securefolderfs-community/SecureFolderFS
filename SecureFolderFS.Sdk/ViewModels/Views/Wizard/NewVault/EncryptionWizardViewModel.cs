@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
+    [Inject<IVaultService>]
     public sealed partial class EncryptionWizardViewModel : BaseWizardPageViewModel
     {
         private readonly IVaultCreationModel _vaultCreationModel;
@@ -23,11 +25,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         [ObservableProperty] private ObservableCollection<CipherInfoViewModel> _ContentCiphers;
         [ObservableProperty] private ObservableCollection<CipherInfoViewModel> _FileNameCiphers;
 
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
         public EncryptionWizardViewModel(IVaultCreationModel vaultCreationModel, VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
         {
+            ServiceProvider = Ioc.Default;
             _vaultCreationModel = vaultCreationModel;
             _ContentCiphers = new();
             _FileNameCiphers = new();

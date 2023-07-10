@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
+    [Inject<IDialogService>, Inject<ISettingsService>]
     public sealed partial class IntroductionDialogViewModel : ObservableObject
     {
         private readonly int _maxAmount;
@@ -18,12 +20,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 
         public TaskCompletionSource<IResult> TaskCompletion { get; }
 
-        private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
-
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
         public IntroductionDialogViewModel(int maxAmount)
         {
+            ServiceProvider = Ioc.Default;
             _maxAmount = maxAmount;
             CurrentStep = $"1/{maxAmount}";
             TaskCompletion = new();

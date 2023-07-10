@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
@@ -7,16 +9,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
+    [Inject<ILocalizationService>, Inject<IApplicationService>]
     public sealed partial class GeneralSettingsViewModel : BasePageViewModel
     {
-        private ILocalizationService LocalizationService { get; } = Ioc.Default.GetRequiredService<ILocalizationService>();
-
-        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
-
         public UpdateBannerViewModel BannerViewModel { get; }
 
         [ObservableProperty] private ObservableCollection<LanguageViewModel> _Languages;
@@ -25,6 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         public GeneralSettingsViewModel()
         {
+            ServiceProvider = Ioc.Default;
             BannerViewModel = new();
             Languages = new();
         }

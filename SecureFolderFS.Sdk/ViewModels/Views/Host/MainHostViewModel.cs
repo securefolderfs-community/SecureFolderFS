@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
@@ -7,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
-    public sealed class MainHostViewModel : BasePageViewModel
+    [Inject<INavigationService>(Visibility = "public")]
+    public sealed partial class MainHostViewModel : BasePageViewModel
     {
         private readonly INavigationService _hostNavigationService;
-
-        public INavigationService NavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
 
         public SidebarViewModel SidebarViewModel { get; }
 
         public MainHostViewModel(INavigationService hostNavigationService, IVaultCollectionModel vaultCollectionModel)
         {
+            ServiceProvider = Ioc.Default;
             _hostNavigationService = hostNavigationService;
             SidebarViewModel = new(vaultCollectionModel);
         }

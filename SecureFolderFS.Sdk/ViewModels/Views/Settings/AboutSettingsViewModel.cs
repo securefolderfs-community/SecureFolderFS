@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -9,20 +10,14 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
+    [Inject<IDialogService>, Inject<IClipboardService>, Inject<IApplicationService>, Inject<IFileExplorerService>]
     public sealed partial class AboutSettingsViewModel : BasePageViewModel
     {
-        private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
-
-        private IClipboardService ClipboardService { get; } = Ioc.Default.GetRequiredService<IClipboardService>();
-
-        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
-
-        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
-
         public string AppVersion { get; }
 
         public AboutSettingsViewModel()
         {
+            ServiceProvider = Ioc.Default;
             AppVersion = $"{ApplicationService.AppVersion} ({ApplicationService.Platform})";
         }
 

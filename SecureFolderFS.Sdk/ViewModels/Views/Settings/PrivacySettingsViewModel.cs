@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    public sealed class PrivacySettingsViewModel : BasePageViewModel
+    [Inject<ITelemetryService>, Inject<ISettingsService>]
+    public sealed partial class PrivacySettingsViewModel : BasePageViewModel
     {
-        private IUserSettings UserSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().UserSettings;
-
-        private ITelemetryService TelemetryService { get; } = Ioc.Default.GetRequiredService<ITelemetryService>();
+        private IUserSettings UserSettings => SettingsService.UserSettings;
 
         public bool AutoLockVaults
         {
@@ -25,6 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         public PrivacySettingsViewModel()
         {
+            ServiceProvider = Ioc.Default;
             UserSettings.PropertyChanged += UserSettings_PropertyChanged;
         }
 

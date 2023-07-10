@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
@@ -15,20 +16,16 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
+    [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IDialogService>, Inject<INavigationService>(Visibility = "public", Name = "HostNavigationService")]
     public sealed partial class MainViewModel : ObservableObject, IAsyncInitialize
     {
-        public INavigationService HostNavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
-
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
-        private ITelemetryService TelemetryService { get; } = Ioc.Default.GetRequiredService<ITelemetryService>();
-
-        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
-
-        private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
-
         [ObservableProperty]
         private INotifyPropertyChanged? _AppContentViewModel;
+
+        public MainViewModel()
+        {
+            ServiceProvider = Ioc.Default;
+        }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -15,11 +16,10 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultWatcherModel"/>
-    internal sealed class VaultWatcherModel : IVaultWatcherModel
+    [Inject<IVaultService>]
+    internal sealed partial class VaultWatcherModel : IVaultWatcherModel
     {
         private IFolderWatcher? _folderWatcher;
-
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         /// <inheritdoc/>
         public IFolder VaultFolder { get; }
@@ -29,6 +29,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public VaultWatcherModel(IFolder vaultFolder)
         {
+            ServiceProvider = Ioc.Default;
             VaultFolder = vaultFolder;
         }
 

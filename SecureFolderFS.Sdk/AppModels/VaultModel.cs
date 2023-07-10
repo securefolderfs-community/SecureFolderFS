@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -13,9 +14,10 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultModel"/>
-    public sealed class VaultModel : IVaultModel
+    [Inject<IVaultPersistenceService>]
+    public sealed partial class VaultModel : IVaultModel
     {
-        private IVaultConfigurations VaultConfigurations { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultConfigurations;
+        private IVaultConfigurations VaultConfigurations => VaultPersistenceService.VaultConfigurations;
 
         /// <inheritdoc/>
         public IFolder Folder { get; }
@@ -28,6 +30,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public VaultModel(IFolder folder, string? vaultName = null, DateTime? lastAccessDate = null)
         {
+            ServiceProvider = Ioc.Default;
             Folder = folder;
             VaultName = vaultName ?? folder.Name;
             LastAccessDate = lastAccessDate;

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -13,18 +14,20 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IWidgetsCollectionModel"/>
-    public sealed class WidgetsCollectionModel : IWidgetsCollectionModel
+    [Inject<IVaultPersistenceService>]
+    public sealed partial class WidgetsCollectionModel : IWidgetsCollectionModel
     {
         private readonly IFolder _vaultFolder;
         private readonly List<IWidgetModel> _widgets;
 
-        private IVaultWidgets VaultWidgets { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultWidgets;
+        private IVaultWidgets VaultWidgets => VaultPersistenceService.VaultWidgets;
 
         /// <inheritdoc/>
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         public WidgetsCollectionModel(IFolder vaultFolder)
         {
+            ServiceProvider = Ioc.Default;
             _vaultFolder = vaultFolder;
             _widgets = new();
         }

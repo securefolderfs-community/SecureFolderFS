@@ -1,24 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
+    [Inject<IUpdateService>, Inject<ISettingsService>]
     public sealed partial class UpdateBannerViewModel : ObservableObject, IAsyncInitialize, IProgress<double>
     {
-        private IUpdateService UpdateService { get; } = Ioc.Default.GetRequiredService<IUpdateService>();
-
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
         [ObservableProperty] private InfoBarViewModel _InfoBarViewModel = new();
         [ObservableProperty] private bool _AreUpdatesSupported;
         [ObservableProperty] private string? _UpdateText;
@@ -31,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 
         public UpdateBannerViewModel()
         {
+            ServiceProvider = Ioc.Default;
             _UpdateText = "LatestVersionInstalled".ToLocalized();
             UpdateService.StateChanged += UpdateService_StateChanged;
         }

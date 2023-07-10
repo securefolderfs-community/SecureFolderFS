@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
@@ -14,13 +15,13 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultUnlockingModel"/>
-    public sealed class VaultUnlockingModel : IVaultUnlockingModel
+    [Inject<IVaultService>, Inject<ISettingsService>, Inject<IVaultUnlockingService>]
+    public sealed partial class VaultUnlockingModel : IVaultUnlockingModel
     {
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
-        private IVaultUnlockingService VaultUnlockingService { get; } = Ioc.Default.GetRequiredService<IVaultUnlockingService>();
+        public VaultUnlockingModel()
+        {
+            ServiceProvider = Ioc.Default;
+        }
 
         /// <inheritdoc/>
         public async Task<IResult> SetFolderAsync(IFolder folder, CancellationToken cancellationToken = default)

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
@@ -10,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
+    [Inject<INavigationService>(Visibility = "public")]
     public sealed partial class VaultWizardDialogViewModel : DialogViewModel, IDisposable
     {
-        public INavigationService NavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
-
         public IVaultCollectionModel VaultCollectionModel { get; }
 
         public VaultWizardDialogViewModel(IVaultCollectionModel vaultCollectionModel)
         {
+            ServiceProvider = Ioc.Default;
             VaultCollectionModel = vaultCollectionModel;
         }
 

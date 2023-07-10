@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
@@ -10,16 +12,14 @@ using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.EventArguments;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultLoginModel"/>
-    public sealed class VaultLoginModel : IVaultLoginModel
+    [Inject<IVaultService>]
+    public sealed partial class VaultLoginModel : IVaultLoginModel
     {
         private readonly IAsyncValidator<IFolder> _vaultValidator;
-
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
 
         /// <inheritdoc/>
         public IVaultModel VaultModel { get; }
@@ -32,6 +32,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public VaultLoginModel(IVaultModel vaultModel, IVaultWatcherModel vaultWatcher)
         {
+            ServiceProvider = Ioc.Default;
             VaultModel = vaultModel;
             VaultWatcher = vaultWatcher;
             _vaultValidator = VaultService.GetVaultValidator();

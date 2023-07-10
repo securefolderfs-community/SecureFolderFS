@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -12,18 +13,14 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 {
+    [Inject<IIapService>, Inject<IDialogService>, Inject<ISettingsService>]
     public sealed partial class SidebarFooterViewModel : ObservableObject
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
-        private IIapService IapService { get; } = Ioc.Default.GetRequiredService<IIapService>();
-
-        private IDialogService DialogService { get; } = Ioc.Default.GetRequiredService<IDialogService>();
-
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
-
         public SidebarFooterViewModel(IVaultCollectionModel vaultCollectionModel)
         {
+            ServiceProvider = Ioc.Default;
             _vaultCollectionModel = vaultCollectionModel;
         }
 

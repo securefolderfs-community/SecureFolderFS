@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
@@ -16,16 +17,20 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultCollectionModel"/>
-    public sealed class VaultCollectionModel : Collection<IVaultModel>, IVaultCollectionModel
+    [Inject<IVaultPersistenceService>, Inject<IStorageService>]
+    public sealed partial class VaultCollectionModel : Collection<IVaultModel>, IVaultCollectionModel
     {
-        private IVaultWidgets VaultWidgets { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultWidgets;
+        private IVaultWidgets VaultWidgets => VaultPersistenceService.VaultWidgets;
 
-        private IVaultConfigurations VaultConfigurations { get; } = Ioc.Default.GetRequiredService<IVaultPersistenceService>().VaultConfigurations;
-
-        private IStorageService StorageService { get; } = Ioc.Default.GetRequiredService<IStorageService>();
+        private IVaultConfigurations VaultConfigurations => VaultPersistenceService.VaultConfigurations;
 
         /// <inheritdoc/>
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
+
+        public VaultCollectionModel()
+        {
+            ServiceProvider = Ioc.Default;
+        }
 
         /// <inheritdoc/>
         protected override void ClearItems()

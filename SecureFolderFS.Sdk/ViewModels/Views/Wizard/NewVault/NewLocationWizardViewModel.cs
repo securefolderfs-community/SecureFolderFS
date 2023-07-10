@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -14,20 +15,18 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
+    [Inject<IVaultService>, Inject<IFileExplorerService>]
     public sealed partial class NewLocationWizardViewModel : BaseWizardPageViewModel
     {
         private readonly IVaultCreationModel _vaultCreationModel;
         private IModifiableFolder? _vaultFolder;
-
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
-        private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         [ObservableProperty] private string? _SelectedLocationText = "NoFolderSelected".ToLocalized();
 
         public NewLocationWizardViewModel(VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
         {
+            ServiceProvider = Ioc.Default;
             _vaultCreationModel = new VaultCreationModel();
         }
 

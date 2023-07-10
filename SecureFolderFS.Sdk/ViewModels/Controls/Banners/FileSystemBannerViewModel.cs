@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.SettingsPersistence;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,17 +12,15 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
+    [Inject<IVaultService>, Inject<ISettingsService>]
     public sealed partial class FileSystemBannerViewModel : ObservableObject, IAsyncInitialize
     {
-        private IVaultService VaultService { get; } = Ioc.Default.GetRequiredService<IVaultService>();
-
-        private IUserSettings UserSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().UserSettings;
-
         [ObservableProperty] private ObservableCollection<FileSystemItemViewModel> _FileSystemAdapters;
         [ObservableProperty] private FileSystemItemViewModel? _SelectedItem;
 
         public FileSystemBannerViewModel()
         {
+            ServiceProvider = Ioc.Default;
             FileSystemAdapters = new();
         }
 
@@ -36,13 +34,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
                     FileSystemAdapters.Add(new(item, item.Name));
             }
 
-            SelectedItem = FileSystemAdapters.FirstOrDefault(x => x.FileSystemInfoModel.Id == UserSettings.PreferredFileSystemId);
+            SelectedItem = FileSystemAdapters.FirstOrDefault(x => x.FileSystemInfoModel.Id == SettingsService.UserSettings.PreferredFileSystemId);
         }
 
         partial void OnSelectedItemChanged(FileSystemItemViewModel? value)
         {
             if (value is not null)
-                UserSettings.PreferredFileSystemId = value.FileSystemInfoModel.Id;
+                SettingsService.UserSettings.PreferredFileSystemId = value.FileSystemInfoModel.Id;
         }
     }
 

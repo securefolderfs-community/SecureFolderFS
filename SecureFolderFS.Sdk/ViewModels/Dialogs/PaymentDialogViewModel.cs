@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utils;
@@ -7,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
+    [Inject<IIapService>]
     public sealed partial class PaymentDialogViewModel : DialogViewModel, IAsyncInitialize
     {
         public static PaymentDialogViewModel Instance { get; } = new();
 
-        private IIapService IapService { get; } = Ioc.Default.GetRequiredService<IIapService>();
-
         private PaymentDialogViewModel()
         {
+            ServiceProvider = Ioc.Default;
         }
 
         /// <inheritdoc/>
