@@ -118,332 +118,335 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Tilføj eksisterende boks</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Vælg en eksisterende boks fra din enhed</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Tilføj ny boks</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
-    <value>Automatically lock vaults</value>
+    <value>Lås bokserne automatisk</value>
   </data>
   <data name="AutoLockDescription" xml:space="preserve">
-    <value>Lock all vaults when device is locked</value>
+    <value>Lås alle bokse, når computeren er låst</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Start with system</value>
+    <value>Start med systemet</value>
   </data>
   <data name="AutoStartDescription" xml:space="preserve">
-    <value>Launch SecureFolderFS on system startup</value>
+    <value>Start SecureFolderFS ved systemopstart</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Tilbage</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Afbryd</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Release notes</value>
+    <value>Udgivelsesbemærkninger</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Fantastisk!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>View latest release notes for this version</value>
+    <value>Se seneste udgivelsesbemærkninger til denne version</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>An issue occurred while loading the changelog.</value>
+    <value>Der opstod en fejl under indlæsning af udgivelsesbemærkninger.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Change password</value>
+    <value>Skift adgangskode</value>
   </data>
   <data name="ChangePasswordDescription" xml:space="preserve">
-    <value>Change the password used to unlock this vault</value>
+    <value>Skift adgangskoden, der bruges til at låse denne boks op</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>Tjek for opdateringer</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Afslut</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Godkend</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Fortsætte</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Kopieret</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Kopi app-version</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Kopi OS-version</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Copy version</value>
+    <value>Kopi version</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Select which version to copy to clipboard</value>
+    <value>Vælg hvilken version der skal kopieres</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Opret ny boks</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Create new SecureFolderFS vault</value>
+    <value>Opret ny SecureFolderFS boks</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Current password</value>
+    <value>Nuværende adgangskode</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>Datakryptering</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
+    <value>Deaktivér nyligt tilgåede liste</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
+    <value>Deaktiver midlertidigt listen over seneste filer, når du låser bokserne op</value>
   </data>
   <data name="Downloading" xml:space="preserve">
-    <value>Downloading {0}%</value>
+    <value>Downloader {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Kryptering</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Indtast adgangskode</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Fejl</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
-    <value>Export settings</value>
+    <value>Eksportindstillinger</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>Kryptering af filnavn</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>File system provider</value>
+    <value>Filsystemudbyder</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>Vælg den mest foretrukne virtuelle filsystemtype</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
-    <value>Needs attention</value>
+    <value>Behøver opmærksomhed</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>Ingen problemer fundet</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>Problemer fundet</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Importindstillinger</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Installerer...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>Forkert adgangskode</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>Adgangskoden er forkert.</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Sprog</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Vælg sprog</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
-    <value>Last checked: {0}</value>
+    <value>Sidst tjekket: {0}</value>
   </data>
   <data name="LatestVersionInstalled" xml:space="preserve">
-    <value>Latest version installed</value>
+    <value>Nyeste version er installeret</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>License</value>
+    <value>Licens</value>
   </data>
   <data name="Licenses" xml:space="preserve">
-    <value>Licenses</value>
+    <value>Licenser</value>
   </data>
   <data name="LockVault" xml:space="preserve">
-    <value>Lock vault</value>
+    <value>Lås boksen</value>
   </data>
   <data name="LockVaultDescription" xml:space="preserve">
-    <value>Securely lock this vault and close the dashboard</value>
+    <value>Lås denne boks og luk kontrolpanelet</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
-    <value>Manage settings</value>
+    <value>Indstillinger</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
-    <value>My vaults</value>
+    <value>Mine bokse</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>New password</value>
+    <value>Ny adgangskode</value>
   </data>
   <data name="NewVault" xml:space="preserve">
-    <value>New vault</value>
+    <value>Ny boks</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>Ingen datakryptering</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
-    <value>No folder selected</value>
+    <value>Ingen mappe valgt</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>You haven't added any vaults yet. Create a new one or add existing to begin!</value>
+    <value>Du har ikke tilføjet nogen bokse endnu. Opret en ny eller tilføj eksisterende for at begynde!</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
-    <value>Open log location</value>
+    <value>Åbn log</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+    <value>Åbner logfilens placering</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
-    <value>Open vault folder</value>
+    <value>Åbn boks mappe</value>
   </data>
   <data name="OpenVaultFolderDescription" xml:space="preserve">
-    <value>Automatically open folder when vault is unlocked</value>
+    <value>Åbn automatisk mappe, når boksen låses op</value>
   </data>
   <data name="Password" xml:space="preserve">
-    <value>Password</value>
+    <value>Adgangskode</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>Privatlivspolitik</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
-    <value>View the privacy policy statement</value>
+    <value>Se privatlivspolitik</value>
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
-    <value>Read speeds</value>
+    <value>Læs hastighed</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
-    <value>Remove vault from the list</value>
+    <value>Fjern boksen fra listen</value>
   </data>
   <data name="RepeatPassword" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>Gentag adgangskode</value>
+  </data>
+  <data name="RestartRequired" xml:space="preserve">
+    <value>Genstart nødvendig</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
-    <value>Continue where you left off</value>
+    <value>Fortsæt hvor du slukkede</value>
   </data>
   <data name="RestoreLastSessionDescription" xml:space="preserve">
-    <value>Start on previously selected vault</value>
+    <value>Start med tidligere valgte boks</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>Prøv igen</value>
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Søg</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
-    <value>Select vault path</value>
+    <value>Vælg boksens placering</value>
   </data>
   <data name="SetPassword" xml:space="preserve">
-    <value>Set password</value>
+    <value>Opsæt adgangskode</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Indstillinger</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
-    <value>About</value>
+    <value>Om</value>
   </data>
   <data name="SettingsGeneral" xml:space="preserve">
-    <value>General</value>
+    <value>Generel</value>
   </data>
   <data name="SettingsPreferences" xml:space="preserve">
-    <value>Preferences</value>
+    <value>Præferencer</value>
   </data>
   <data name="SettingsPrivacy" xml:space="preserve">
-    <value>Privacy</value>
+    <value>Privatliv</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show encrypted vault in File Explorer</value>
+    <value>Vis krypteret boks i File Explorer</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Social</value>
   </data>
   <data name="SocialDescription" xml:space="preserve">
-    <value>Ask, suggest, and discuss SecureFolderFS</value>
+    <value>Foreslå og diskutere om SecureFolderFS</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>Summary</value>
+    <value>Oversigt</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
-    <value>Enable telemetry</value>
+    <value>Aktiver telemetri</value>
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
-    <value>Collect anonymous crash reports and usage data</value>
+    <value>Indsaml anonyme nedbrudsrapporter og data</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>Mørk</value>
   </data>
   <data name="ThemeDescription" xml:space="preserve">
-    <value>Choose application theme</value>
+    <value>Vælg tema</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>Lys</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>System default</value>
+    <value>System standard</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Third party licenses</value>
+    <value>Tredje parts licenser</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>Se tredje parts licenser som SecureFolderFS bruger</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value>Låse op</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Vault has been added</value>
+    <value>Boksen er tilføjet</value>
   </data>
   <data name="VaultInformation" xml:space="preserve">
-    <value>Vault information</value>
+    <value>Information om boksen</value>
   </data>
   <data name="VaultLocked" xml:space="preserve">
-    <value>Vault is locked</value>
+    <value>Boksen er låst</value>
   </data>
   <data name="VaultProperties" xml:space="preserve">
-    <value>Vault properties</value>
+    <value>Egenskaber om boksen</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>View information about this vault</value>
+    <value>Vis information om denne boks</value>
   </data>
   <data name="Version" xml:space="preserve">
     <value>Version</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>Se på GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>View repository</value>
+    <value>Se repository</value>
   </data>
   <data name="ViewVault" xml:space="preserve">
-    <value>View vault</value>
+    <value>Vis boksen</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+    <value>Vis denne boks i File Explorer</value>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>Website</value>
+    <value>Webside</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Welcome to SecureFolderFS</value>
+    <value>Velkommen til SecureFolderFS</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>What's new</value>
+    <value>Hvad er nyt</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Write speeds</value>
+    <value>Skriv hastighed</value>
   </data>
 </root>
