@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             foreach (var item in LocalizationService.AppLanguages)
                 Languages.Add(new(item));
 
+            // Add wildcard language
+            Languages.Add(new(CultureInfo.InvariantCulture, "Not seeing your language?"));
+
             // Set selected language
             SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Equals(LocalizationService.CurrentCulture));
 
@@ -49,7 +53,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         async partial void OnSelectedLanguageChanged(LanguageViewModel? value)
         {
-            if (value is not null)
+            if (value is null)
+                return;
+
+            if (value.CultureInfo.Equals(CultureInfo.InvariantCulture))
+            {
+                // Wildcard
+                await ApplicationService.OpenUriAsync(new("https://github.com/securefolderfs-community/SecureFolderFS/issues/50"));
+
+                SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Equals(LocalizationService.CurrentCulture));
+                if (SelectedLanguage is not null)
+                    await LocalizationService.SetCultureAsync(SelectedLanguage.CultureInfo);
+            }
+            else
             {
                 await LocalizationService.SetCultureAsync(value.CultureInfo);
                 IsRestartRequired = !LocalizationService.CurrentCulture.Equals(SelectedLanguage?.CultureInfo);

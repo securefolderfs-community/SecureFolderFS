@@ -23,7 +23,7 @@ namespace SecureFolderFS.WinUI.Localization
             if (LocalizationService is null)
                 return $"{{{Name}}}";
 
-            return LocalizationService.GetString(Name ?? string.Empty) ?? $"{{{Name}}}";
+            return LocalizationService.TryGetString(Name ?? string.Empty) ?? $"{{{Name}}}";
         }
     }
 }

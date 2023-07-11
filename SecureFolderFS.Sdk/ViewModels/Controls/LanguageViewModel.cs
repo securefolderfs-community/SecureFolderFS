@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
@@ -19,9 +21,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public string DisplayName { get; }
 
         public LanguageViewModel(CultureInfo cultureInfo)
+            : this(cultureInfo, FormatName(cultureInfo))
+        {
+        }
+
+        public LanguageViewModel(CultureInfo cultureInfo, string displayName)
         {
             CultureInfo = cultureInfo;
-            DisplayName = FormatName(cultureInfo);
+            DisplayName = displayName;
         }
 
         /// <inheritdoc/>
@@ -42,9 +49,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 return name;
 
             // Get the region to use for the country name
-            var regionInfo = new RegionInfo(cultureInfo.Name);
+            try
+            {
+                var regionInfo = new RegionInfo(cultureInfo.LCID);
+                return $"{name} ({regionInfo.DisplayName})";
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+                Debugger.Break();
 
-            return $"{name} ({regionInfo.DisplayName})";
+                return name;
+            }
         }
     }
 }

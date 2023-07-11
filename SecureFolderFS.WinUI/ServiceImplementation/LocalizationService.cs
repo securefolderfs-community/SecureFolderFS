@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Services;
-using System;
+using SecureFolderFS.UI.ServiceImplementation;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Resources;
@@ -11,55 +11,37 @@ using Windows.Globalization;
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="ILocalizationService"/>
-    internal sealed class LocalizationService : ILocalizationService
+    internal sealed class LocalizationService : BaseLocalizationService
     {
-        private ResourceManager ResourceManager { get; set; }
+        /// <inheritdoc/>
+        protected override ResourceManager ResourceManager { get; }
 
         /// <inheritdoc/>
-        public CultureInfo CurrentCulture { get; }
+        public override CultureInfo CurrentCulture { get; }
 
         /// <inheritdoc/>
-        public IReadOnlyList<CultureInfo> AppLanguages { get; }
+        public override IReadOnlyList<CultureInfo> AppLanguages { get; }
 
         public LocalizationService()
         {
-            CurrentCulture = new(ApplicationLanguages.PrimaryLanguageOverride);
-            AppLanguages = ApplicationLanguages.ManifestLanguages
-                .Select(x => new CultureInfo(x))
-                .ToList();
-
+            CurrentCulture = new(SupportedLanguages.First(x => x.Contains(ApplicationLanguages.PrimaryLanguageOverride)));
+            AppLanguages = GetAppLanguages().ToImmutableList();
             ResourceManager = new($"SecureFolderFS.UI.Strings.{GetLanguageString(CurrentCulture)}.Resources", typeof(UI.Constants).Assembly);
         }
 
         /// <inheritdoc/>
-        public string? GetString(string resourceKey)
-        {
-            try
-            {
-                return ResourceManager.GetString(resourceKey);
-            }
-            catch (Exception ex)
-            {
-                _ = ex;
-                Debugger.Break();
-
-                return null;
-            }
-        }
-
-        /// <inheritdoc/>
-        public Task SetCultureAsync(CultureInfo cultureInfo)
+        public override Task SetCultureAsync(CultureInfo cultureInfo)
         {
             ApplicationLanguages.PrimaryLanguageOverride = cultureInfo.Name;
             return Task.CompletedTask;
         }
 
-        private static string GetLanguageString(CultureInfo cultureInfo)
+        private IEnumerable<CultureInfo> GetAppLanguages()
         {
-            if (cultureInfo.Name.Contains('-', StringComparison.OrdinalIgnoreCase))
-                return cultureInfo.Name.Replace('-', '_');
-
-            return $"{cultureInfo.Name}_{cultureInfo.TwoLetterISOLanguageName.ToUpperInvariant()}";
+            foreach (var item in ApplicationLanguages.ManifestLanguages)
+            {
+                yield return new(SupportedLanguages.First(x => x.Contains(item)));
+            }
         }
     }
 }

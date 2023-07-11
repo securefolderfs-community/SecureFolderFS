@@ -20,15 +20,18 @@ namespace SecureFolderFS.Sdk.Services
         IReadOnlyList<CultureInfo> AppLanguages { get; }
 
         /// <summary>
-        /// Gets the localized version for the <paramref name="resourceKey"/>.
+        /// Tries to gets the localized string for the <paramref name="resourceKey"/>.
         /// </summary>
         /// <param name="resourceKey">The resource key that associates with translations.</param>
-        /// <returns>A localized string for the <see cref="CurrentCulture"/>.</returns>
-        string? GetString(string resourceKey);
+        /// <returns>If successful, returns a localized string for the <see cref="CurrentCulture"/>; otherwise null.</returns>
+        string? TryGetString(string resourceKey);
 
         /// <summary>
-        /// Sets the current language of the app and updates <see cref="CurrentCulture"/>.
+        /// Sets the current language of the app.
         /// </summary>
+        /// <remarks>
+        /// This method does not update <see cref="CurrentCulture"/> with the new value.
+        /// </remarks>
         /// <param name="cultureInfo">The language to set.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task SetCultureAsync(CultureInfo cultureInfo);

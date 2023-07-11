@@ -35,13 +35,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task GoBackAsync()
         {
-            await NavigationService.TryNavigateAsync<VaultOverviewPageViewModel>();
+            await DashboardNavigationService.TryNavigateAsync<VaultOverviewPageViewModel>();
         }
 
         /// <inheritdoc/>
         public override void Dispose()
         {
-            NavigationService.Dispose();
+            DashboardNavigationService.Dispose();
         }
     }
 }
