@@ -12,7 +12,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
     /// <inheritdoc cref="ILocalizationService"/>
     public abstract class BaseLocalizationService : ILocalizationService
     {
-        protected static IReadOnlyList<string> SupportedLanguages = new List<string>()
+        protected static IReadOnlyList<string> SupportedLanguages { get; } = new List<string>()
         {
             "cz-CZ", "da-DK", "de-DE", "en-US", "es-ES", "fr-FR", "it-IT", "pl-PL", "ru-RU", "ua-UA"
         };
