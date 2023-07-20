@@ -27,6 +27,11 @@
         <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
         <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
     </PropertyGroup>
+
+    <!-- Define UNPACKAGED constant -->
+    <PropertyGroup Condition="'$(WindowsPackageType)' == 'None'">
+        <DefineConstants>UNPACKAGED</DefineConstants>
+    </PropertyGroup>
 	
 	<!-- Added manually, prevent from removing framework package references -->
     <Target Name="_RemoveFrameworkReferences" />

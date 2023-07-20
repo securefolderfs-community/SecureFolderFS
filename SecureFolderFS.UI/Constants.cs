@@ -34,6 +34,7 @@
         {
             public const string EXCEPTION_BLOCK_DATE_FORMAT = "dd.MM.yyyy HH_mm_ss";
             public const string EXCEPTION_LOG_FILENAME = "securefolderfs_exceptionlog.log";
+            public const string DEFAULT_CULTURE_STRING = "en-US";
         }
     }
 }

@@ -16,17 +16,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
     [Inject<ILocalizationService>, Inject<IApplicationService>]
     public sealed partial class GeneralSettingsViewModel : BasePageViewModel
     {
-        public UpdateBannerViewModel BannerViewModel { get; }
+        private readonly CultureInfo _currentCulture;
 
         [ObservableProperty] private ObservableCollection<LanguageViewModel> _Languages;
         [ObservableProperty] private LanguageViewModel? _SelectedLanguage;
         [ObservableProperty] private bool _IsRestartRequired;
+
+        public UpdateBannerViewModel BannerViewModel { get; }
 
         public GeneralSettingsViewModel()
         {
             ServiceProvider = Ioc.Default;
             BannerViewModel = new();
             Languages = new();
+            
+            _currentCulture = LocalizationService.CurrentCulture;
         }
 
         /// <inheritdoc/>
@@ -68,7 +72,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             else
             {
                 await LocalizationService.SetCultureAsync(value.CultureInfo);
-                IsRestartRequired = !LocalizationService.CurrentCulture.Equals(SelectedLanguage?.CultureInfo);
+                IsRestartRequired = !_currentCulture.Equals(SelectedLanguage?.CultureInfo);
             }
         }
     }

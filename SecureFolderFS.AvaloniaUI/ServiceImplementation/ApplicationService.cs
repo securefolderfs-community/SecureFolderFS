@@ -22,5 +22,11 @@ namespace SecureFolderFS.AvaloniaUI.ServiceImplementation
             LauncherHelpers.Launch(uri);
             return Task.CompletedTask;
         }
+
+        /// <inheritdoc/>
+        public override Task TryRestartAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

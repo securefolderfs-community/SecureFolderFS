@@ -35,21 +35,28 @@ namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
         /// <inheritdoc/>
         public string? LastVaultFolderId
         {
-            get => GetSetting<string>();
+            get => GetSetting<string?>();
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
         public string? ApplicationTheme
         {
-            get => GetSetting<string>();
+            get => GetSetting<string?>();
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
         public string? LastVersion
         {
-            get => GetSetting<string>();
+            get => GetSetting<string?>();
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public string? AppLanguage
+        {
+            get => GetSetting<string?>();
             set => SetSetting(value);
         }
 

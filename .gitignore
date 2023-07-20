@@ -5,6 +5,8 @@
 
 # SecureFolderFS
 ApiKeys.Private.cs
+SecureFolderFS.WinUI/settings/
+SecureFolderFS.AvaloniaUI/settings/
 
 # User-specific files
 *.rsuser

@@ -29,9 +29,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Sets the current language of the app.
         /// </summary>
-        /// <remarks>
-        /// This method does not update <see cref="CurrentCulture"/> with the new value.
-        /// </remarks>
         /// <param name="cultureInfo">The language to set.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task SetCultureAsync(CultureInfo cultureInfo);

@@ -13,7 +13,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 #if !DEBUG
 using Microsoft.AppCenter;
@@ -51,10 +50,14 @@ namespace SecureFolderFS.WinUI
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            // Get settings folder
+#if UNPACKAGED
+            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.LocalSettings.SETTINGS_FOLDER_NAME);
+#else
             var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.LocalSettings.SETTINGS_FOLDER_NAME);
-            _ = Directory.CreateDirectory(settingsFolderPath);
-            var settingsFolder = new NativeFolder(settingsFolderPath);
+#endif
+
+            // Get settings folder
+            var settingsFolder = new NativeFolder(Directory.CreateDirectory(settingsFolderPath));
 
             // Configure IoC
             _serviceProvider = ConfigureServices(settingsFolder);
@@ -99,26 +102,37 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
-                .AddSingleton<ILocalizationService, LocalizationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
-
-                // Conditional (singleton) services
-#if DEBUG
-                .AddSingleton<IIapService, DebugIapService>()
-                .AddSingleton<IUpdateService, DebugUpdateService>()
-                .AddSingleton<ITelemetryService, DebugTelemetryService>()
-#else
-                .AddSingleton<IIapService, DebugIapService>() // .AddSingleton<IIapService, MicrosoftStoreIapService>() // TODO: Change in the future
-                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
-                .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
-#endif
 
                 // Transient services
                 .AddTransient<INavigationService, WindowsNavigationService>()
                 .AddTransient<IPasswordChangeService, PasswordChangeService>()
                 .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
                 .AddTransient<IVaultCreationService, VaultCreationService>()
+
+                // ILocalizationService
+#if UNPACKAGED
+                .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+#else
+                .AddSingleton<ILocalizationService, PackageLocalizationService>()
+#endif
+
+                // IIApService, IUpdateService
+#if DEBUG || UNPACKAGED
+                .AddSingleton<IIapService, DebugIapService>()
+                .AddSingleton<IUpdateService, DebugUpdateService>()
+#else
+                .AddSingleton<IIapService, DebugIapService>() // .AddSingleton<IIapService, MicrosoftStoreIapService>() // TODO: Change in the future
+                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
+#endif
+
+                // ITelemetryService
+#if DEBUG
+                .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
+#else
+                .AddSingleton<ITelemetryService, DebugTelemetryService>()
+#endif
                 
                 ; // Finish service initialization
 
