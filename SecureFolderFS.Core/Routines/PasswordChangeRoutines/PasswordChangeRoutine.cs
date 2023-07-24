@@ -108,6 +108,7 @@ namespace SecureFolderFS.Core.Routines.PasswordChangeRoutines
                 {
                     ContentCipherScheme = _configDataModel.ContentCipherScheme,
                     FileNameCipherScheme = _configDataModel.FileNameCipherScheme,
+                    Version = Constants.VaultVersion.LATEST_VERSION,
                     PayloadMac = payloadMac
                 };
 

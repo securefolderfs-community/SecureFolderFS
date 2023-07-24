@@ -29,11 +29,6 @@ namespace SecureFolderFS.Core
             return new CreationRoutine();
         }
 
-        public static IAsyncValidator<Stream> NewVersionValidator(IAsyncSerializer<Stream> serializer)
-        {
-            return new VersionValidator(serializer);
-        }
-
         public static IAsyncValidator<IFolder> NewVaultValidator(IAsyncSerializer<Stream> serializer)
         {
             return new VaultValidator(serializer);

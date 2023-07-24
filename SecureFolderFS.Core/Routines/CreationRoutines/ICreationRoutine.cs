@@ -1,22 +1,29 @@
-﻿using SecureFolderFS.Core.Models;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Utils;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Models;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Routines.CreationRoutines
 {
     // TODO: Needs docs
     public interface ICreationRoutine : IDisposable
     {
-        Task CreateContentFolderAsync(IModifiableFolder vaultFolder, CancellationToken cancellationToken = default);
+        ICreationRoutine SetPassword(IPassword password);
 
-        void SetVaultPassword(IPassword password);
+        ICreationRoutine SetOptions(VaultOptions vaultOptions);
 
-        Task WriteKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
+        Task FinalizeAsync(CancellationToken cancellationToken);
+    }
 
-        Task WriteConfigurationAsync(VaultOptions vaultOptions, Stream configStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
+    public interface IAuthenticationCreationRoutine : IDisposable
+    {
+        IAsyncInitialize AsWindowsHello();
+
+        IAsyncInitialize AsHardwareKey();
+
+        IAsyncInitialize AsKeyFile();
     }
 }

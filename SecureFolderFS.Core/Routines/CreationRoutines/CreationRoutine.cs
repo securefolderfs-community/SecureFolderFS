@@ -1,41 +1,41 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Models;
-using SecureFolderFS.Core.SecureStore;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.Models;
+using SecureFolderFS.Core.SecureStore;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Routines.CreationRoutines
 {
     /// <inheritdoc cref="ICreationRoutine"/>
     internal sealed class CreationRoutine : ICreationRoutine
     {
+        private readonly IFolder _vaultFolder;
         private readonly CipherProvider _cipherProvider;
+        private readonly IAsyncSerializer<Stream> _serializer;
+        private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private SecretKey? _macKey;
 
-        public CreationRoutine()
+        public CreationRoutine(IFolder vaultFolder, IAsyncSerializer<Stream> serializer)
         {
+            _vaultFolder = vaultFolder;
+            _serializer = serializer;
             _cipherProvider = CipherProvider.CreateNew();
         }
 
         /// <inheritdoc/>
-        public async Task CreateContentFolderAsync(IModifiableFolder vaultFolder, CancellationToken cancellationToken = default)
-        {
-            _ = await vaultFolder.CreateFolderAsync(Constants.CONTENT_FOLDERNAME, false, cancellationToken);
-        }
-
-        /// <inheritdoc/>
         [SkipLocalsInit]
-        public void SetVaultPassword(IPassword password)
+        public ICreationRoutine SetPassword(IPassword password)
         {
             using (password)
             {
@@ -68,44 +68,77 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
                 // Create MAC key copy for later use
                 _macKey = macKey.CreateCopy();
             }
+            
+            return this;
         }
 
         /// <inheritdoc/>
-        public async Task WriteKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
+        public ICreationRoutine SetOptions(VaultOptions vaultOptions)
         {
-            await using var serializedKeystoreStream = await serializer.SerializeAsync(_keystoreDataModel, cancellationToken);
-            await serializedKeystoreStream.CopyToAsync(keystoreStream, cancellationToken);
+            _configDataModel = new()
+            {
+                ContentCipherScheme = vaultOptions.ContentCipherScheme,
+                FileNameCipherScheme = vaultOptions.FileNameCipherScheme,
+                Version = Constants.VaultVersion.LATEST_VERSION,
+                Id = Guid.NewGuid().ToString(),
+                AuthMethod = Constants.AuthenticationMethods.AUTH_PASSWORD,
+                PayloadMac = new byte[_cipherProvider.HmacSha256Crypt.MacSize]
+            };
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public async Task FinalizeAsync(CancellationToken cancellationToken)
+        {
+            if (_vaultFolder is not IModifiableFolder modifiableFolder)
+                throw new ArgumentException("The vault folder is not modifiable");
+
+            // Create content folder
+            _ = await modifiableFolder.CreateFolderAsync(Constants.CONTENT_FOLDERNAME, false, cancellationToken);
+
+            // Create keystore file
+            var keystoreFile = await modifiableFolder.CreateFileAsync(Constants.VAULT_KEYSTORE_FILENAME, true, cancellationToken);
+
+            // Create configuration file
+            var configFile = await modifiableFolder.CreateFileAsync(Constants.VAULT_CONFIGURATION_FILENAME, true, cancellationToken);
+
+            // Write to keystore
+            await using var keystoreStream = await keystoreFile.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await WriteKeystoreAsync(keystoreStream, cancellationToken);
+
+            // Write to configuration
+            await using var configStream = await configFile.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await WriteConfigurationAsync(configStream, cancellationToken);
+        }
+
+        private async Task WriteKeystoreAsync(Stream keystoreStream, CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
+
+            await using var serializedKeystore = await _serializer.SerializeAsync(_keystoreDataModel, cancellationToken);
+            await serializedKeystore.CopyToAsync(keystoreStream, cancellationToken);
             keystoreStream.Position = 0L;
         }
 
-        /// <inheritdoc/>
-        public async Task WriteConfigurationAsync(VaultOptions vaultOptions, Stream configStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
+        private async Task WriteConfigurationAsync(Stream configStream, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(_macKey);
+            ArgumentNullException.ThrowIfNull(_configDataModel);
 
             using (_macKey)
             {
                 using var hmacSha256Crypt = _cipherProvider.HmacSha256Crypt.GetInstance();
                 hmacSha256Crypt.InitializeHmac(_macKey);
                 hmacSha256Crypt.Update(BitConverter.GetBytes(Constants.VaultVersion.LATEST_VERSION));
-                hmacSha256Crypt.Update(BitConverter.GetBytes((uint)vaultOptions.FileNameCipherScheme));
-                hmacSha256Crypt.Update(BitConverter.GetBytes((uint)vaultOptions.ContentCipherScheme));
+                hmacSha256Crypt.Update(BitConverter.GetBytes((uint)_configDataModel.FileNameCipherScheme));
+                hmacSha256Crypt.Update(BitConverter.GetBytes((uint)_configDataModel.ContentCipherScheme));
 
-                var payloadMac = new byte[_cipherProvider.HmacSha256Crypt.MacSize];
-                hmacSha256Crypt.GetHash(payloadMac);
-
-                var configDataModel = new VaultConfigurationDataModel()
-                {
-                    ContentCipherScheme = vaultOptions.ContentCipherScheme,
-                    FileNameCipherScheme = vaultOptions.FileNameCipherScheme,
-                    PayloadMac = payloadMac
-                };
+                // Fill the hash to payload
+                hmacSha256Crypt.GetHash(_configDataModel.PayloadMac);
                 
-                // Serialize data
-                await using var serializedConfigStream = await serializer.SerializeAsync(configDataModel, cancellationToken);
-
-                // Write configuration
-                await serializedConfigStream.CopyToAsync(configStream, cancellationToken);
+                // Serialize data and write
+                await using var serializedConfig = await _serializer.SerializeAsync(_configDataModel, cancellationToken);
+                await serializedConfig.CopyToAsync(configStream, cancellationToken);
             }
         }
 

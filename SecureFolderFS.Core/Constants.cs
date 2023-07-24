@@ -4,6 +4,7 @@
     {
         public const string CONTENT_FOLDERNAME = "content";
         public const string VAULT_CONFIGURATION_FILENAME = "sfconfig.cfg";
+        public const string VAULT_AUTHENTICATION_FILENAME = "sfauth.cfg";
         public const string VAULT_KEYSTORE_FILENAME = "keystore.cfg";
         public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
 
@@ -41,7 +42,17 @@
         public static class VaultVersion
         {
             public const int V1 = 1;
-            public const int LATEST_VERSION = V1;
+            public const int V2 = 2;
+            public const int LATEST_VERSION = V2;
+        }
+
+        public static class AuthenticationMethods
+        {
+            public const string AUTH_NONE = "None";
+            public const string AUTH_PASSWORD = "Password";
+            public const string AUTH_KEYFILE = "KeyFile";
+            public const string AUTH_WINDOWS_HELLO = "WindowsHello";
+            public const string AUTH_HARDWARE_KEY = "HardwareKey";
         }
     }
 }

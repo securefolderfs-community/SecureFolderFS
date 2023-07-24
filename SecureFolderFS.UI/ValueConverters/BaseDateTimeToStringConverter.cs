@@ -21,7 +21,7 @@ namespace SecureFolderFS.UI.ValueConverters
             {
                 var split = formatString.Split('|');
                 if (split[0] == "LOCALIZE")
-                    return string.Format(split[1].ToLocalized(), dateString); // TODO: Localize
+                    return string.Format(split[1].ToLocalized(), dateString);
                 else
                     return string.Format(split[1], dateString);
             }

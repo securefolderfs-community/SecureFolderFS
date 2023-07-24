@@ -1,38 +1,51 @@
-﻿using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Routines.PasswordChangeRoutines;
-using SecureFolderFS.Core.Validators;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Routines.CreationRoutines;
+using SecureFolderFS.Core.Routines.PasswordChangeRoutines;
+using SecureFolderFS.Core.Routines.UnlockRoutines;
+using SecureFolderFS.Core.Validators;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Routines
 {
-    public static class VaultRoutines
+    public sealed class VaultRoutines
     {
-        public static async Task<IResult<IPasswordChangeRoutine>> NewPasswordChangeRoutineAsync(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken)
+        private readonly IFolder _vaultFolder;
+        private readonly IAsyncSerializer<Stream> _serializer;
+
+        private VaultRoutines(IFolder vaultFolder, IAsyncSerializer<Stream> serializer)
+        {
+            _vaultFolder = vaultFolder;
+            _serializer = serializer;
+        }
+
+        public IUnlockRoutine UnlockVault()
+        {
+            return new UnlockRoutine();
+        }
+
+        public ICreationRoutine CreateVault()
+        {
+            return new CreationRoutine();
+        }
+
+        public IPasswordChangeRoutine ChangePassword()
+        {
+            throw new NotImplementedException();
+            return new PasswordChangeRoutine(null);
+        }
+
+        public static async Task<VaultRoutines> CreateRoutineAsync(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
         {
             var vaultValidator = new VaultValidator(serializer);
             var validationResult = await vaultValidator.ValidateAsync(vaultFolder, cancellationToken);
             if (!validationResult.Successful)
-                return new CommonResult<IPasswordChangeRoutine>(validationResult.Exception);
+                throw validationResult.Exception ?? new InvalidDataException("Vault folder was not valid.");
 
-            if (validationResult is not IResult<VaultConfigurationDataModel> configResult || configResult.Value is null)
-                return new CommonResult<IPasswordChangeRoutine>(new InvalidCastException($"Cannot cast {nameof(validationResult)} to {nameof(IResult<VaultConfigurationDataModel>)}."));
-
-            var routine = configResult.Value.Version switch
-            {
-                Constants.VaultVersion.LATEST_VERSION => new PasswordChangeRoutine(configResult.Value),
-                _ => null
-            };
-
-            if (routine is null)
-                return new CommonResult<IPasswordChangeRoutine>(new NotSupportedException($"Routine for vault version {configResult.Value.Version} is not supported."));
-
-            return new CommonResult<IPasswordChangeRoutine>(routine);
+            return new VaultRoutines(vaultFolder, serializer);
         }
     }
 }

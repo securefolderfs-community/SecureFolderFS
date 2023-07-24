@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.Validators
 
             await using (configStreamResult.Value)
             {
-                var versionValidator = VaultHelpers.NewVersionValidator(_serializer);
+                var versionValidator = new VersionValidator(_serializer);
                 return await versionValidator.ValidateAsync(configStreamResult.Value!, cancellationToken);
             }
         }

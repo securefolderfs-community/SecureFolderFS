@@ -15,7 +15,6 @@ namespace SecureFolderFS.AvaloniaUI.ValueConverters
                 return string.Empty;
             }
 
-            // TODO: Localize
             return vaultHealthState switch
             {
                 VaultHealthState.Healthy => "HealthNoProblems".ToLocalized(),

@@ -14,7 +14,6 @@ namespace SecureFolderFS.WinUI.ValueConverters
                 return string.Empty;
             }
 
-            // TODO: Localize
             return vaultHealthState switch
             {
                 VaultHealthState.Healthy => "HealthNoProblems".ToLocalized(),
