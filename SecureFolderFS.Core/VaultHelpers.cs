@@ -24,11 +24,6 @@ namespace SecureFolderFS.Core
             return new UnlockRoutine();
         }
 
-        public static ICreationRoutine NewCreationRoutine()
-        {
-            return new CreationRoutine();
-        }
-
         public static IAsyncValidator<IFolder> NewVaultValidator(IAsyncSerializer<Stream> serializer)
         {
             return new VaultValidator(serializer);
