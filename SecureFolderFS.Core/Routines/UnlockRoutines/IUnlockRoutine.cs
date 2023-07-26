@@ -1,30 +1,16 @@
-﻿using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.Models;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utils;
-using System;
-using System.IO;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {
     // TODO: Needs docs
-    public interface IUnlockRoutine : IDisposable
+    public interface IUnlockRoutine : IAsyncInitialize, IDisposable
     {
-        string? ContentCipherId { get; }
+        IUnlockRoutine SetCredentials(IPassword password, SecretKey? magic);
 
-        string? FileNameCipherId { get; }
-
-        Task SetVaultStoreAsync(IFolder vaultFolder, IStorageService storageService, CancellationToken cancellationToken = default);
-
-        Task ReadConfigurationAsync(Stream configStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
-
-        Task ReadKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default);
-
-        void DeriveKeystore(IPassword password);
-
-        // TODO: Change name of this function
-        Task<IMountableFileSystem> PrepareAndUnlockAsync(FileSystemOptions fileSystemOptions, CancellationToken cancellationToken = default);
+        Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken);
     }
 }

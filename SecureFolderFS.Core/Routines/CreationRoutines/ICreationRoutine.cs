@@ -1,9 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Models;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Routines.CreationRoutines
@@ -15,15 +13,6 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
 
         ICreationRoutine SetOptions(VaultOptions vaultOptions);
 
-        Task FinalizeAsync(CancellationToken cancellationToken);
-    }
-
-    public interface IAuthenticationCreationRoutine : IDisposable
-    {
-        IAsyncInitialize AsWindowsHello();
-
-        IAsyncInitialize AsHardwareKey();
-
-        IAsyncInitialize AsKeyFile();
+        Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken);
     }
 }

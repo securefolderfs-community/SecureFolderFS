@@ -6,36 +6,46 @@ using SecureFolderFS.Core.Routines.CreationRoutines;
 using SecureFolderFS.Core.Routines.PasswordChangeRoutines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.Validators;
+using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Routines
 {
+    // TODO: Needs docs
     public sealed class VaultRoutines
     {
         private readonly IFolder _vaultFolder;
         private readonly IAsyncSerializer<Stream> _serializer;
+        private readonly IVaultReader _vaultReader;
+        private readonly IVaultWriter _vaultWriter;
 
         private VaultRoutines(IFolder vaultFolder, IAsyncSerializer<Stream> serializer)
         {
             _vaultFolder = vaultFolder;
             _serializer = serializer;
+            _vaultReader = new VaultReader(vaultFolder, serializer);
+            _vaultWriter = new VaultWriter(vaultFolder, serializer);
         }
 
         public IUnlockRoutine UnlockVault()
         {
-            return new UnlockRoutine();
+            return new UnlockRoutine(_vaultFolder, _vaultReader);
         }
 
         public ICreationRoutine CreateVault()
         {
-            return new CreationRoutine();
+            return new CreationRoutine(_vaultFolder, _vaultWriter);
+        }
+
+        public IDisposable SetupAuthentication()
+        {
+            throw new NotImplementedException();
         }
 
         public IPasswordChangeRoutine ChangePassword()
         {
             throw new NotImplementedException();
-            return new PasswordChangeRoutine(null);
         }
 
         public static async Task<VaultRoutines> CreateRoutineAsync(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
@@ -43,7 +53,7 @@ namespace SecureFolderFS.Core.Routines
             var vaultValidator = new VaultValidator(serializer);
             var validationResult = await vaultValidator.ValidateAsync(vaultFolder, cancellationToken);
             if (!validationResult.Successful)
-                throw validationResult.Exception ?? new InvalidDataException("Vault folder was not valid.");
+                throw validationResult.Exception ?? new InvalidDataException("Vault folder is not valid.");
 
             return new VaultRoutines(vaultFolder, serializer);
         }

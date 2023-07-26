@@ -2,6 +2,7 @@
 
 namespace SecureFolderFS.Core.Models
 {
+    // TODO: Needs docs
     public sealed class VaultOptions
     {
         public ContentCipherScheme ContentCipherScheme { get; }

@@ -1,38 +1,33 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Validators
 {
     internal sealed class ConfigurationValidator : IAsyncValidator<VaultConfigurationDataModel>
     {
         private readonly SecretKey _macKey;
-        private readonly CipherProvider _cipherProvider;
+        private readonly IHmacSha256Crypt _hmacSha256;
 
-        public ConfigurationValidator(CipherProvider cipherProvider, SecretKey macKey)
+        public ConfigurationValidator(IHmacSha256Crypt hmacSha256, SecretKey macKey)
         {
             _macKey = macKey;
-            _cipherProvider = cipherProvider;
+            _hmacSha256 = hmacSha256;
         }
 
         /// <inheritdoc/>
         public Task<IResult> ValidateAsync(VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
         {
-            using var hmacSha256Crypt = _cipherProvider.HmacSha256Crypt.GetInstance();
-            hmacSha256Crypt.InitializeHmac(_macKey);
-            hmacSha256Crypt.Update(BitConverter.GetBytes(value.Version));
-            hmacSha256Crypt.Update(BitConverter.GetBytes((uint)value.FileNameCipherScheme));
-            hmacSha256Crypt.Update(BitConverter.GetBytes((uint)value.ContentCipherScheme));
-
-            Span<byte> payloadMac = stackalloc byte[_cipherProvider.HmacSha256Crypt.MacSize];
-            hmacSha256Crypt.GetHash(payloadMac);
+            Span<byte> payloadMac = stackalloc byte[_hmacSha256.MacSize];
+            VaultParser.CalculatePayloadMac(value, _macKey, _hmacSha256, payloadMac);
 
             // Check if stored hash equals to computed hash
             if (!payloadMac.SequenceEqual(value.PayloadMac))

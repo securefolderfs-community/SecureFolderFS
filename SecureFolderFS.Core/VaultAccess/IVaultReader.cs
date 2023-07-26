@@ -7,6 +7,6 @@ namespace SecureFolderFS.Core.VaultAccess
     // TODO: Needs docs
     internal interface IVaultReader
     {
-        Task<(VaultKeystoreDataModel, VaultConfigurationDataModel)> ReadAsync(CancellationToken cancellationToken);
+        Task<(VaultKeystoreDataModel, VaultConfigurationDataModel, VaultAuthenticationDataModel?)> ReadAsync(CancellationToken cancellationToken);
     }
 }

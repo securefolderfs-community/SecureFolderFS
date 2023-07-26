@@ -2,8 +2,6 @@
 using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
-using SecureFolderFS.Core.Routines.CreationRoutines;
-using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.Storage;
@@ -19,11 +17,6 @@ namespace SecureFolderFS.Core
     /// </summary>
     public static class VaultHelpers
     {
-        public static IUnlockRoutine NewUnlockRoutine()
-        {
-            return new UnlockRoutine();
-        }
-
         public static IAsyncValidator<IFolder> NewVaultValidator(IAsyncSerializer<Stream> serializer)
         {
             return new VaultValidator(serializer);

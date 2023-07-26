@@ -11,10 +11,10 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Routines.PasswordChangeRoutines
+namespace SecureFolderFS.Core.Routines.CredentialsRoutines
 {
-    /// <inheritdoc cref="IPasswordChangeRoutine"/>
-    internal sealed class PasswordChangeRoutine : IPasswordChangeRoutine
+    /// <inheritdoc cref="ICredentialsRoutine"/>
+    internal sealed class CredentialsRoutine : ICredentialsRoutine
     {
         private readonly CipherProvider _cipherProvider;
         private readonly VaultConfigurationDataModel _configDataModel;
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Core.Routines.PasswordChangeRoutines
         private VaultKeystoreDataModel? _newKeystoreDataModel;
         private SecretKey? _macKey;
 
-        public PasswordChangeRoutine(VaultConfigurationDataModel configDataModel)
+        public CredentialsRoutine(VaultConfigurationDataModel configDataModel)
         {
             _configDataModel = configDataModel;
             _cipherProvider = CipherProvider.CreateNew();

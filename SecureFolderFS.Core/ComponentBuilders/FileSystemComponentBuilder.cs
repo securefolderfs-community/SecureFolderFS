@@ -48,15 +48,10 @@ namespace SecureFolderFS.Core.ComponentBuilders
                     _ => throw new ArgumentOutOfRangeException(nameof(FileSystemOptions.FileNameCachingStrategy))
                 };
 
-                if (ContentFolder is not ILocatableFolder locatableContentFolder)
-                    throw new ArgumentException($"{nameof(ContentFolder)} is not locatable vault folder.");
-
-                pathConverter = new CiphertextPathConverter(locatableContentFolder.Path, fileNameAccess, directoryIdAccess);
+                pathConverter = new CiphertextPathConverter(ContentFolder.Id, fileNameAccess, directoryIdAccess);
             }
-            else if (ConfigDataModel.FileNameCipherScheme == FileNameCipherScheme.None)
-                pathConverter = new CleartextPathConverter();
             else
-                throw new ArgumentOutOfRangeException(nameof(VaultConfigurationDataModel.FileNameCipherScheme));
+                pathConverter = new CleartextPathConverter();
 
             var cryptFileManager = new OpenCryptFileManager(security, FileSystemOptions.ChunkCachingStrategy, FileSystemOptions.FileSystemStatistics);
             var streamsAccess = new FileStreamAccess(security, cryptFileManager);

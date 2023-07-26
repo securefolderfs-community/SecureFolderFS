@@ -9,6 +9,12 @@ namespace SecureFolderFS.Core.DataModels
     internal sealed class VaultConfigurationDataModel
     {
         /// <summary>
+        /// Gets the version of the vault.
+        /// </summary>
+        [JsonPropertyName("version")]
+        public required int Version { get; init; }
+
+        /// <summary>
         /// Gets scheme type of the vault for content encryption.
         /// </summary>
         [JsonPropertyName("contentCipherScheme")]
@@ -23,27 +29,21 @@ namespace SecureFolderFS.Core.DataModels
         public required FileNameCipherScheme FileNameCipherScheme { get; init; }
 
         /// <summary>
-        /// Gets the version of the vault.
-        /// </summary>
-        [JsonPropertyName("version")]
-        public required int Version { get; init; }
-
-        /// <summary>
         /// Gets the unique identifier of the vault represented by a GUID.
         /// </summary>
         [JsonPropertyName("vaultId")]
-        public required string? Id { get; init; }
+        public required string Id { get; init; } = string.Empty;
 
         /// <summary>
         /// Gets the information about the authentication method used for this vault.
         /// </summary>
         [JsonPropertyName("authMode")]
-        public required string? AuthMethod { get; init; }
+        public required string AuthMethod { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets the HMAC-SHA256 hash of the payload.
         /// </summary>
         [JsonPropertyName("hmacsha256mac")]
-        public byte[]? PayloadMac { get; init; }
+        public byte[]? PayloadMac { get; set; }
     }
 }
