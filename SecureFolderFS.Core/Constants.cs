@@ -29,14 +29,6 @@
             public const string AES_SIV = "AES-SIV";
         }
 
-        internal static class Caching
-        {
-            public const int CHUNK_CACHE_SIZE = 6;
-            public const int DIRECTORY_ID_CACHE_SIZE = 1000;
-            public const int CIPHERTEXT_FILENAMES_CACHE_SIZE = 2000;
-            public const int CLEARTEXT_FILENAMES_CACHE_SIZE = 2000;
-        }
-
         public static class KeyChains
         {
             public const int ENCKEY_LENGTH = 32;

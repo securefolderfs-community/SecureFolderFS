@@ -14,7 +14,7 @@ namespace SecureFolderFS.Shared.Utils
         /// </summary>
         /// <param name="value">The value to validate.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns <see cref="IResult"/> based on validation of the data.</returns>
-        Task<IResult> ValidateAsync(T value, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task ValidateAsync(T value, CancellationToken cancellationToken = default);
     }
 }

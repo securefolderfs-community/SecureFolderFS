@@ -64,7 +64,7 @@ namespace SecureFolderFS.Core.Cryptography.Storage
             await directoryIdStream.WriteAsync(directoryId, cancellationToken);
 
             // Set DirectoryID to known IDs
-            directoryIdAccess.SetDirectoryId(dirIdFile.Id, Guid.NewGuid().ToByteArray());
+            directoryIdCache.SetDirectoryId(dirIdFile.Id, Guid.NewGuid().ToByteArray());
 
             return (INestedFolder)Wrap(folder);
         }

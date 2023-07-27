@@ -7,7 +7,6 @@ using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Validators
@@ -24,16 +23,16 @@ namespace SecureFolderFS.Core.Validators
         }
 
         /// <inheritdoc/>
-        public Task<IResult> ValidateAsync(VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
+        public Task ValidateAsync(VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
         {
             Span<byte> payloadMac = stackalloc byte[_hmacSha256.MacSize];
             VaultParser.CalculatePayloadMac(value, _macKey, _hmacSha256, payloadMac);
 
             // Check if stored hash equals to computed hash
             if (!payloadMac.SequenceEqual(value.PayloadMac))
-                return Task.FromResult<IResult>(new CommonResult(new CryptographicException("Vault hash doesn't match the computed hash.")));
+                return Task.FromException(new CryptographicException("Vault hash doesn't match the computed hash."));
 
-            return Task.FromResult<IResult>(CommonResult.Success);
+            return Task.CompletedTask;
         }
     }
 }

@@ -21,23 +21,14 @@ namespace SecureFolderFS.Core.Validators
         }
 
         /// <inheritdoc/>
-        public async Task<IResult> ValidateAsync(Stream value, CancellationToken cancellationToken = default)
+        public async Task ValidateAsync(Stream value, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var configDataModel = await _serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(value, cancellationToken);
-                if (configDataModel is null)
-                    return new CommonResult<VaultConfigurationDataModel>(new SerializationException("Couldn't deserialize configuration buffer to configuration data model"));
+            var configDataModel = await _serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(value, cancellationToken);
+            if (configDataModel is null)
+                throw new SerializationException("Couldn't deserialize configuration buffer to configuration data model");
 
-                if (configDataModel.Version != Constants.VaultVersion.LATEST_VERSION)
-                    return new CommonResult<VaultConfigurationDataModel>(new NotSupportedException($"Vault version {configDataModel.Version} is not supported."));
-
-                return new CommonResult<VaultConfigurationDataModel>(configDataModel);
-            }
-            catch (Exception ex)
-            {
-                return new CommonResult<VaultConfigurationDataModel>(ex);
-            }
+            if (configDataModel.Version != Constants.VaultVersion.LATEST_VERSION)
+                throw new NotSupportedException($"Vault version {configDataModel.Version} is not supported.");
         }
     }
 }

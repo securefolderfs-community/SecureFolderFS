@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Cryptography.Storage
 {
-    public class CryptoFile : CryptoStorable<IFile>, IFileExtended, INestedFile, IWrapper<IFile>
+    public class CryptoFile : CryptoStorable<IFile>, IFileExtended, INestedFile
     {
         /// <inheritdoc/>
         public IFile Inner { get; }

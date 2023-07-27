@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.FileSystem.Directories;
+﻿using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.Storage;
@@ -18,17 +18,17 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
     {
         private readonly IStreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
-        private readonly IDirectoryIdAccess _directoryIdAccess;
+        private readonly DirectoryIdCache _directoryIdCache;
 
         /// <inheritdoc/>
         public override string Path => _pathConverter.ToCleartext(base.Path) ?? string.Empty;
 
-        public EncryptingDavFile(TCapability inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess)
+        public EncryptingDavFile(TCapability inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache)
             : base(inner)
         {
             _streamsAccess = streamsAccess;
             _pathConverter = pathConverter;
-            _directoryIdAccess = directoryIdAccess;
+            _directoryIdCache = directoryIdCache;
         }
 
         /// <inheritdoc/>
@@ -48,13 +48,13 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
         /// <inheritdoc/>
         public override IWrapper<IFile> Wrap(IFile file)
         {
-            return new EncryptingDavFile<IFile>(file, _streamsAccess, _pathConverter, _directoryIdAccess);
+            return new EncryptingDavFile<IFile>(file, _streamsAccess, _pathConverter, _directoryIdCache);
         }
 
         /// <inheritdoc/>
         public override IWrapper<IFolder> Wrap(IFolder folder)
         {
-            return new EncryptingDavFolder<IFolder>(folder, _streamsAccess, _pathConverter, _directoryIdAccess);
+            return new EncryptingDavFolder<IFolder>(folder, _streamsAccess, _pathConverter, _directoryIdCache);
         }
 
         private Stream OpenCleartextStream(Stream ciphertextStream)

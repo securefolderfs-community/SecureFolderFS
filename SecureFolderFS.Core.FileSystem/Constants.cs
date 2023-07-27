@@ -7,5 +7,13 @@
         public const int DIRECTORY_ID_SIZE = 16;
         public const int FILE_EOF = 0;
         public const ulong INVALID_HANDLE = 0UL;
+
+        public static class Caching
+        {
+            public const int RECOMMENDED_SIZE_CHUNK = 6;
+            public const int RECOMMENDED_SIZE_DIRECTORYID = 1000;
+            public const int RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES = 2000;
+            public const int RECOMMENDED_SIZE_CLEARTEXT_FILENAMES = 2000;
+        }
     }
 }

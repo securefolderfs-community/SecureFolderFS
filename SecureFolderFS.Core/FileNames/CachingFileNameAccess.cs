@@ -16,8 +16,8 @@ namespace SecureFolderFS.Core.FileNames
         public CachingFileNameAccess(Security security, IFileSystemStatistics? fileSystemStatistics)
             : base(security, fileSystemStatistics)
         {
-            _cleartextNames = new(Constants.Caching.CLEARTEXT_FILENAMES_CACHE_SIZE);
-            _ciphertextNames = new(Constants.Caching.CIPHERTEXT_FILENAMES_CACHE_SIZE);
+            _cleartextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CLEARTEXT_FILENAMES);
+            _ciphertextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES);
         }
 
         /// <inheritdoc/>
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Core.FileNames
 
         private void SetCleartextName(string cleartextName, string ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            if (_cleartextNames.Count >= Constants.Caching.CLEARTEXT_FILENAMES_CACHE_SIZE)
+            if (_cleartextNames.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_CLEARTEXT_FILENAMES)
                 _cleartextNames.Remove(_cleartextNames.Keys.First(), out _);
 
             _cleartextNames[new(directoryId.ToArray(), ciphertextName)] = cleartextName;
@@ -94,7 +94,7 @@ namespace SecureFolderFS.Core.FileNames
 
         private void SetCiphertextName(string ciphertextName, string cleartextName, ReadOnlySpan<byte> directoryId)
         {
-            if (_ciphertextNames.Count >= Constants.Caching.CIPHERTEXT_FILENAMES_CACHE_SIZE)
+            if (_ciphertextNames.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES)
                 _ciphertextNames.Remove(_ciphertextNames.Keys.First(), out _);
 
             _ciphertextNames[new(directoryId.ToArray(), cleartextName)] = ciphertextName;

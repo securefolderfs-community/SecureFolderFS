@@ -71,7 +71,7 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
                     // According to docs, the PackageDownloadProgress ranges from 0.0 to 0.8 (inclusive)
                     // which indicates the download progress where 0.8 is the end of the download stage.
-                    // Therefore, we need to readjust the value to fit the percentage range 0-100%
+                    // Therefore, we need to re-adjust the value to fit the percentage range 0-100%
                     var percentage = update.PackageDownloadProgress * 100 / 0.8d;
 
                     // Report the percentage without rounding

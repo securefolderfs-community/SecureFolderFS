@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography;
@@ -7,7 +6,6 @@ using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
@@ -67,9 +65,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
 
                 // Check if the payload has not been tampered with
                 var validator = new ConfigurationValidator(_cipherProvider.HmacSha256Crypt, macKeyCopy);
-                var validationResult = await validator.ValidateAsync(_configDataModel, cancellationToken);
-                if (!validationResult.Successful)
-                    throw validationResult.Exception ?? throw new CryptographicException();
+                await validator.ValidateAsync(_configDataModel, cancellationToken);
 
                 // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
                 // Key copies need to be created because the original ones are disposed of here

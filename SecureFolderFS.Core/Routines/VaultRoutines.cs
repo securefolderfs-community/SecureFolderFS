@@ -55,9 +55,7 @@ namespace SecureFolderFS.Core.Routines
         public static async Task<VaultRoutines> CreateRoutinesAsync(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
         {
             var vaultValidator = new VaultValidator(serializer);
-            var validationResult = await vaultValidator.ValidateAsync(vaultFolder, cancellationToken);
-            if (!validationResult.Successful)
-                throw validationResult.Exception ?? new InvalidDataException("Vault folder is not valid.");
+            await vaultValidator.ValidateAsync(vaultFolder, cancellationToken);
 
             return new VaultRoutines(vaultFolder, serializer);
         }

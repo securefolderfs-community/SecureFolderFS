@@ -1,5 +1,5 @@
 using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FUSE.OpenHandles;
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
         public required Security Security { get; init; }
 
-        public required IDirectoryIdAccess DirectoryIdAccess { get; init; }
+        public required DirectoryIdCache DirectoryIdAccess { get; init; }
 
         public override bool SupportsMultiThreading => true;
 

@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.FileSystem.Directories;
+﻿using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -13,13 +13,13 @@ namespace SecureFolderFS.Core.Paths
     {
         private readonly string _vaultRootPath;
         private readonly IFileNameAccess _fileNameAccess;
-        private readonly IDirectoryIdAccess _directoryIdAccess;
+        private readonly DirectoryIdCache _directoryIdCache;
 
-        public CiphertextPathConverter(string vaultRootPath, IFileNameAccess fileNameAccess, IDirectoryIdAccess directoryIdAccess)
+        public CiphertextPathConverter(string vaultRootPath, IFileNameAccess fileNameAccess, DirectoryIdCache directoryIdCache)
         {
             _vaultRootPath = vaultRootPath;
             _fileNameAccess = fileNameAccess;
-            _directoryIdAccess = directoryIdAccess;
+            _directoryIdCache = directoryIdCache;
         }
 
         /// <inheritdoc/>
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.Paths
 
             // Allocate byte* for DirectoryID, or empty if path is root
             var directoryId = directoryIdPath.Length == 0 ? Span<byte>.Empty : stackalloc byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-            if (directoryId.Length != 0 && !_directoryIdAccess.GetDirectoryId(directoryIdPath, directoryId))
+            if (directoryId.Length != 0 && !_directoryIdCache.GetDirectoryId(directoryIdPath, directoryId))
             {
                 using var directoryIdStream = File.Open(directoryIdPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
                 var read = directoryIdStream.Read(directoryId);
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.Paths
                 }
 
                 // Set the DirectoryID to known IDs
-                _directoryIdAccess.SetDirectoryId(directoryIdPath, directoryId);
+                _directoryIdCache.SetDirectoryId(directoryIdPath, directoryId);
             }
 
             // Get cleartext name
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Core.Paths
 
             // Allocate byte* for DirectoryID, or empty if path is root
             var directoryId = directoryIdPath.Length == 0 ? Span<byte>.Empty : stackalloc byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-            if (directoryId.Length != 0 && !_directoryIdAccess.GetDirectoryId(directoryIdPath, directoryId))
+            if (directoryId.Length != 0 && !_directoryIdCache.GetDirectoryId(directoryIdPath, directoryId))
             {
                 using var directoryIdStream = File.Open(directoryIdPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
                 var read = directoryIdStream.Read(directoryId);
@@ -89,7 +89,7 @@ namespace SecureFolderFS.Core.Paths
                 }
 
                 // Set the DirectoryID to known IDs
-                _directoryIdAccess.SetDirectoryId(directoryIdPath, directoryId);
+                _directoryIdCache.SetDirectoryId(directoryIdPath, directoryId);
             }
 
             // Get ciphertext name
