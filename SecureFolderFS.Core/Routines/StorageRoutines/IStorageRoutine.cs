@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
     // TODO: Needs docs
     public interface IStorageRoutine : IDisposable
     {
-        IStorageRoutine SetUnlockFinalizer(IDisposable unlockFinalizer);
+        IStorageRoutine SetUnlockContract(IDisposable unlockContract);
 
         IStorageRoutine SetStorageService(IStorageService storageService);
 

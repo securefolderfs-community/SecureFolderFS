@@ -3,7 +3,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Routines.CreationRoutines;
-using SecureFolderFS.Core.Routines.PasswordChangeRoutines;
+using SecureFolderFS.Core.Routines.CredentialsRoutines;
+using SecureFolderFS.Core.Routines.StorageRoutines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
@@ -16,21 +17,19 @@ namespace SecureFolderFS.Core.Routines
     public sealed class VaultRoutines
     {
         private readonly IFolder _vaultFolder;
-        private readonly IAsyncSerializer<Stream> _serializer;
         private readonly IVaultReader _vaultReader;
         private readonly IVaultWriter _vaultWriter;
 
         private VaultRoutines(IFolder vaultFolder, IAsyncSerializer<Stream> serializer)
         {
             _vaultFolder = vaultFolder;
-            _serializer = serializer;
             _vaultReader = new VaultReader(vaultFolder, serializer);
             _vaultWriter = new VaultWriter(vaultFolder, serializer);
         }
 
         public IUnlockRoutine UnlockVault()
         {
-            return new UnlockRoutine(_vaultFolder, _vaultReader);
+            return new UnlockRoutine(_vaultReader);
         }
 
         public ICreationRoutine CreateVault()
@@ -38,17 +37,22 @@ namespace SecureFolderFS.Core.Routines
             return new CreationRoutine(_vaultFolder, _vaultWriter);
         }
 
+        public IStorageRoutine BuildStorage()
+        {
+            return new StorageRoutine(_vaultFolder);
+        }
+
         public IDisposable SetupAuthentication()
         {
             throw new NotImplementedException();
         }
 
-        public IPasswordChangeRoutine ChangePassword()
+        public ICredentialsRoutine ChangePassword()
         {
-            throw new NotImplementedException();
+            return new CredentialsRoutine(_vaultWriter);
         }
 
-        public static async Task<VaultRoutines> CreateRoutineAsync(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
+        public static async Task<VaultRoutines> CreateRoutinesAsync(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
         {
             var vaultValidator = new VaultValidator(serializer);
             var validationResult = await vaultValidator.ValidateAsync(vaultFolder, cancellationToken);

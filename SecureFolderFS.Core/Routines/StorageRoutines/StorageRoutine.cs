@@ -6,6 +6,7 @@ using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.Models;
+using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
@@ -15,17 +16,22 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
     /// <inheritdoc cref="IStorageRoutine"/>
     internal sealed class StorageRoutine : IStorageRoutine
     {
+        private readonly IFolder _vaultFolder;
+        private UnlockContract? _unlockContract;
         private IStorageService? _storageService;
-        private CipherProvider _cipherProvider;
 
-        public StorageRoutine()
+        public StorageRoutine(IFolder vaultFolder)
         {
-            _cipherProvider = CipherProvider.CreateNew();
+            _vaultFolder = vaultFolder;
         }
 
         /// <inheritdoc/>
-        public IStorageRoutine SetUnlockFinalizer(IDisposable unlockFinalizer)
+        public IStorageRoutine SetUnlockContract(IDisposable unlockContract)
         {
+            if (unlockContract is not UnlockContract contract)
+                throw new ArgumentException($"The {nameof(unlockContract)} is invalid");
+
+            _unlockContract = contract;
             return this;
         }
 
@@ -39,8 +45,6 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
         /// <inheritdoc/>
         public async Task<IStorageService> CreateStorageAsync(CancellationToken cancellationToken)
         {
-            // First, validate the config file
-            await ValidateConfigurationAsync(cancellationToken);
 
             throw new NotImplementedException();
             //return new CryptoStorageService(storageService);
@@ -49,26 +53,13 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
         /// <inheritdoc/>
         public async Task<IMountableFileSystem> CreateMountableAsync(FileSystemOptions options, CancellationToken cancellationToken)
         {
-            // First, validate the config file
-            await ValidateConfigurationAsync(cancellationToken);
-        }
-
-        private async Task ValidateConfigurationAsync(CancellationToken cancellationToken)
-        {
-            // Create MAC key copy for the validator that can be disposed here
-            using var macKeyCopy = _macKey.CreateCopy();
-
-            // Check if the payload has not been tampered with
-            var validator = new ConfigurationValidator(_cipherProvider.HmacSha256Crypt, macKeyCopy);
-            var validationResult = await validator.ValidateAsync(_configDataModel, cancellationToken);
-            if (!validationResult.Successful)
-                throw validationResult.Exception ?? throw new CryptographicException();
+            
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _cipherProvider.Dispose();
+            // Security is not disposed of here because it's populated into filesystem and storage objects
         }
     }
 }

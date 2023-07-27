@@ -23,37 +23,37 @@ namespace SecureFolderFS.Core.VaultAccess
         }
 
         /// <inheritdoc/>
-        public async Task WriteAsync(VaultKeystoreDataModel keystoreDataModel, VaultConfigurationDataModel configDataModel, VaultAuthenticationDataModel? authDataModel, CancellationToken cancellationToken)
+        public async Task WriteAsync(VaultKeystoreDataModel? keystoreDataModel, VaultConfigurationDataModel? configDataModel, VaultAuthenticationDataModel? authDataModel, CancellationToken cancellationToken)
         {
-            IFile configFile;
-            IFile keystoreFile;
+            IFile? configFile;
+            IFile? keystoreFile;
             IFile? authFile;
 
             if (_vaultFolder is IModifiableFolder modifiableFolder)
             {
                 // Create new or overwrite existing
-                configFile = await modifiableFolder.CreateFileAsync(Constants.VAULT_CONFIGURATION_FILENAME, true, cancellationToken);
-                keystoreFile = await modifiableFolder.CreateFileAsync(Constants.VAULT_KEYSTORE_FILENAME, true, cancellationToken);
-                authFile = authDataModel is null ? null : await modifiableFolder.CreateFileAsync(Constants.VAULT_AUTHENTICATION_FILENAME, true, cancellationToken);
+                configFile = configDataModel is null ? null : await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_CONFIGURATION_FILENAME, true, cancellationToken);
+                keystoreFile = keystoreDataModel is null ? null : await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_KEYSTORE_FILENAME, true, cancellationToken);
+                authFile = authDataModel is null ? null : await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_AUTHENTICATION_FILENAME, true, cancellationToken);
             }
             else
             {
                 // Get existing or fail
-                configFile = await _vaultFolder.GetFileAsync(Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
-                keystoreFile = await _vaultFolder.GetFileAsync(Constants.VAULT_KEYSTORE_FILENAME, cancellationToken);
-                authFile = authDataModel is null ? null : await _vaultFolder.GetFileAsync(Constants.VAULT_AUTHENTICATION_FILENAME, cancellationToken);
+                configFile = configDataModel is null ? null : await _vaultFolder.GetFileAsync(Constants.Vault.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+                keystoreFile = keystoreDataModel is null ? null : await _vaultFolder.GetFileAsync(Constants.Vault.VAULT_KEYSTORE_FILENAME, cancellationToken);
+                authFile = authDataModel is null ? null : await _vaultFolder.GetFileAsync(Constants.Vault.VAULT_AUTHENTICATION_FILENAME, cancellationToken);
             }
 
             await WriteDataAsync(keystoreFile, keystoreDataModel, cancellationToken);
             await WriteDataAsync(configFile, configDataModel, cancellationToken);
-
-            if (authFile is not null && authDataModel is not null)
-                await WriteDataAsync(authFile, authDataModel, cancellationToken);
+            await WriteDataAsync(authFile, authDataModel, cancellationToken);
         }
 
-        private async Task WriteDataAsync<TData>(IFile file, TData data, CancellationToken cancellationToken)
-            where TData : notnull
+        private async Task WriteDataAsync<TData>(IFile? file, TData? data, CancellationToken cancellationToken)
         {
+            if (file is null)
+                return;
+
             // Open a stream to the data file
             await using var dataStream = await file.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
 

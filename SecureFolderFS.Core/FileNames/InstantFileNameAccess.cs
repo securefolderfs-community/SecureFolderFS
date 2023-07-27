@@ -40,7 +40,7 @@ namespace SecureFolderFS.Core.FileNames
             fileSystemStatistics?.NotifyFileNameAccess();
 
             var ciphertextName = security.NameCrypt!.EncryptName(cleartextName, directoryId);
-            return Path.ChangeExtension(ciphertextName, Constants.ENCRYPTED_FILE_EXTENSION);
+            return Path.ChangeExtension(ciphertextName, Constants.Vault.ENCRYPTED_FILE_EXTENSION);
         }
     }
 }

@@ -7,6 +7,6 @@ namespace SecureFolderFS.Core.VaultAccess
     // TODO: Needs docs
     internal interface IVaultWriter
     {
-        Task WriteAsync(VaultKeystoreDataModel keystoreDataModel, VaultConfigurationDataModel configDataModel, VaultAuthenticationDataModel? authDataModel, CancellationToken cancellationToken);
+        Task WriteAsync(VaultKeystoreDataModel? keystoreDataModel, VaultConfigurationDataModel? configDataModel, VaultAuthenticationDataModel? authDataModel, CancellationToken cancellationToken);
     }
 }

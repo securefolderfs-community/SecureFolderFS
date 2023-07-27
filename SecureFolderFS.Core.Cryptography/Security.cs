@@ -1,9 +1,9 @@
-﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
+﻿using System;
+using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.Cryptography.Enums;
 using SecureFolderFS.Core.Cryptography.HeaderCrypt;
 using SecureFolderFS.Core.Cryptography.NameCrypt;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using System;
 
 namespace SecureFolderFS.Core.Cryptography
 {
@@ -12,8 +12,10 @@ namespace SecureFolderFS.Core.Cryptography
     /// </summary>
     public sealed class Security : IDisposable
     {
-        // TODO: Needs docs
+        private readonly SecretKey _encKey;
+        private readonly SecretKey _macKey;
 
+        // TODO: Needs docs
         public required CipherProvider CipherProvider { get; init; }
 
         public required IHeaderCrypt HeaderCrypt { get; init; }
@@ -22,6 +24,30 @@ namespace SecureFolderFS.Core.Cryptography
 
         public required INameCrypt? NameCrypt { get; init; }
 
+        private Security(SecretKey encKey, SecretKey macKey)
+        {
+            _encKey = encKey;
+            _macKey = macKey;
+        }
+
+        public SecretKey CopyEncryptionKey()
+        {
+            return _encKey.CreateCopy();
+        }
+
+        public SecretKey CopyMacKey()
+        {
+            return _macKey.CreateCopy();
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="Security"/> object that provides content encryption and cipher access.
+        /// </summary>
+        /// <param name="encKey">The DEK key that this class takes ownership of.</param>
+        /// <param name="macKey">The MAC key that this class takes ownership of.</param>
+        /// <param name="contentCipher">The content cipher type.</param>
+        /// <param name="fileNameCipher">The file name cipher type.</param>
+        /// <returns>A new <see cref="Security"/> object.</returns>
         public static Security CreateNew(SecretKey encKey, SecretKey macKey, ContentCipherScheme contentCipher, FileNameCipherScheme fileNameCipher)
         {
             var cipherProvider = CipherProvider.CreateNew();
@@ -48,7 +74,7 @@ namespace SecureFolderFS.Core.Cryptography
                 _ => throw new ArgumentOutOfRangeException(nameof(fileNameCipher))
             };
 
-            return new()
+            return new(encKey, macKey)
             {
                 CipherProvider = cipherProvider,
                 ContentCrypt = contentCrypt,
@@ -63,6 +89,7 @@ namespace SecureFolderFS.Core.Cryptography
             CipherProvider.Dispose();
             ContentCrypt.Dispose();
             HeaderCrypt.Dispose();
+            NameCrypt?.Dispose();
         }
     }
 }

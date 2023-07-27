@@ -1,22 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.ComponentBuilders;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Dokany;
-using SecureFolderFS.Core.Enums;
-using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FUSE;
-using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 
@@ -25,7 +15,6 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
     /// <inheritdoc cref="IUnlockRoutine"/>
     internal sealed class UnlockRoutine : IUnlockRoutine
     {
-        private readonly IFolder _vaultFolder;
         private readonly IVaultReader _vaultReader;
         private readonly CipherProvider _cipherProvider;
         private VaultConfigurationDataModel? _configDataModel;
@@ -33,34 +22,30 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         private SecretKey? _encKey;
         private SecretKey? _macKey;
 
-        public UnlockRoutine(IFolder vaultFolder, IVaultReader vaultReader)
+        public UnlockRoutine(IVaultReader vaultReader)
         {
-            _vaultFolder = vaultFolder;
             _vaultReader = vaultReader;
             _cipherProvider = CipherProvider.CreateNew();
         }
 
         /// <inheritdoc/>
-        public string? ContentCipherId { get; private set; }
-
-        /// <inheritdoc/>
-        public string? FileNameCipherId { get; private set; }
-
-        /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken)
         {
-            var (keystore, config) = await _vaultReader.ReadAsync(cancellationToken);
+            var (keystore, config, _) = await _vaultReader.ReadAsync(cancellationToken);
             _keystoreDataModel = keystore;
             _configDataModel = config;
         }
 
         /// <inheritdoc/>
-        public IUnlockRoutine SetPassword(IPassword password, SecretKey? magic)
+        public IUnlockRoutine SetCredentials(IPassword password, SecretKey? magic)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            var (encKey, macKey) = VaultParser.DeriveKeystore(password, magic, _keystoreDataModel, _cipherProvider);
+            // Construct passkey
+            using var passkey = VaultParser.ConstructPasskey(password, magic);
+
+            var (encKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel, _cipherProvider);
             _encKey = encKey;
             _macKey = macKey;
 
@@ -68,46 +53,28 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         }
 
         /// <inheritdoc/>
-        public Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
+        public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
-
-        }
-
-        /// <inheritdoc/>
-        public async Task<IMountableFileSystem> PrepareAndUnlockAsync(FileSystemOptions fileSystemOptions, CancellationToken cancellationToken = default)
-        {
-            ArgumentNullException.ThrowIfNull(_configDataModel);
-            ArgumentNullException.ThrowIfNull(_vaultFolder);
-            ArgumentNullException.ThrowIfNull(_macKey);
             ArgumentNullException.ThrowIfNull(_encKey);
+            ArgumentNullException.ThrowIfNull(_macKey);
+            ArgumentNullException.ThrowIfNull(_configDataModel);
 
-            // Create MAC key copy for the validator that can be disposed here
-            using var macKeyCopy = _macKey.CreateCopy();
-
-            // Check if the payload has not been tampered with
-            var validator = new ConfigurationValidator(_cipherProvider, macKeyCopy);
-            var validationResult = await validator.ValidateAsync(_configDataModel, cancellationToken);
-            if (!validationResult.Successful)
-                throw validationResult.Exception ?? throw new CryptographicException();
-
-            // Build the file system mountable
-            var componentBuilder = new FileSystemComponentBuilder()
+            using (_encKey)
+            using (_macKey)
             {
-                ConfigDataModel = _configDataModel,
-                ContentFolder = _contentFolder,
-                FileSystemOptions = fileSystemOptions
-            };
+                // Create MAC key copy for the validator that can be disposed here
+                using var macKeyCopy = _macKey.CreateCopy();
 
-            var (security, directoryIdAccess, pathConverter, streamsAccess) = componentBuilder.BuildComponents(_encKey, _macKey);
-            var mountable = fileSystemOptions.AdapterType switch
-            {
-                FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess, fileSystemOptions.HealthStatistics),
-                FileSystemAdapterType.FuseAdapter => FuseMountable.CreateMountable(_vaultFolder.Name, pathConverter, _contentFolder, security, directoryIdAccess, streamsAccess),
-                FileSystemAdapterType.WebDavAdapter => WebDavMountable.CreateMountable(_storageService, _vaultFolder.Name, _contentFolder, security, directoryIdAccess, pathConverter, streamsAccess),
-                _ => throw new ArgumentOutOfRangeException(nameof(fileSystemOptions.AdapterType))
-            };
+                // Check if the payload has not been tampered with
+                var validator = new ConfigurationValidator(_cipherProvider.HmacSha256Crypt, macKeyCopy);
+                var validationResult = await validator.ValidateAsync(_configDataModel, cancellationToken);
+                if (!validationResult.Successful)
+                    throw validationResult.Exception ?? throw new CryptographicException();
 
-            return mountable;
+                // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
+                // Key copies need to be created because the original ones are disposed of here
+                return Security.CreateNew(_encKey.CreateCopy(), _macKey.CreateCopy(), _configDataModel.ContentCipherScheme, _configDataModel.FileNameCipherScheme);
+            }
         }
 
         /// <inheritdoc/>
@@ -118,14 +85,18 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         }
     }
 
-    internal sealed class UnlockFinalization : IDisposable
+    internal sealed class UnlockContract : IDisposable
     {
+        public required Security Security { get; init; }
 
+        public required VaultConfigurationDataModel ConfigurationDataModel { get; init; }
+
+        public required VaultKeystoreDataModel KeystoreDataModel { get; init; }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            
+            Security.Dispose();
         }
     }
 }

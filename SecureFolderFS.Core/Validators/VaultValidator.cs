@@ -20,11 +20,11 @@ namespace SecureFolderFS.Core.Validators
         /// <inheritdoc/>
         public async Task<IResult> ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
         {
-            var contentFolderResult = await value.GetFolderWithResultAsync(Constants.CONTENT_FOLDERNAME, cancellationToken);
+            var contentFolderResult = await value.GetFolderWithResultAsync(Constants.Vault.VAULT_CONTENT_FOLDERNAME, cancellationToken);
             if (!contentFolderResult.Successful)
                 return contentFolderResult;
 
-            var configFileResult = await value.GetFileWithResultAsync(Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            var configFileResult = await value.GetFileWithResultAsync(Constants.Vault.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             if (!configFileResult.Successful)
                 return configFileResult;
 

@@ -69,7 +69,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             try
             {
-                var configFile = await _vaultFolder.GetFileWithResultAsync(Core.Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+                var configFile = await _vaultFolder.GetFileWithResultAsync(Core.Constants.Vault.VAULT_CONFIGURATION_FILENAME, cancellationToken);
                 if (!configFile.Successful)
                     return configFile;
 

@@ -21,18 +21,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
         };
 
         /// <inheritdoc/>
-        public string KeystoreFileName { get; } = Core.Constants.VAULT_KEYSTORE_FILENAME;
+        public string KeystoreFileName { get; } = Core.Constants.Vault.VAULT_KEYSTORE_FILENAME;
 
         /// <inheritdoc/>
-        public string ConfigurationFileName { get; } = Core.Constants.VAULT_CONFIGURATION_FILENAME;
+        public string ConfigurationFileName { get; } = Core.Constants.Vault.VAULT_CONFIGURATION_FILENAME;
 
         /// <inheritdoc/>
         public bool IsNameReserved(string? name)
         {
             return name is not null && (
-                   name.Equals(Core.Constants.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
-                   name.Equals(Core.Constants.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal) ||
-                   name.Equals(Core.Constants.CONTENT_FOLDERNAME, StringComparison.Ordinal));
+                   name.Equals(Core.Constants.Vault.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
+                   name.Equals(Core.Constants.Vault.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal) ||
+                   name.Equals(Core.Constants.Vault.VAULT_CONTENT_FOLDERNAME, StringComparison.Ordinal));
         }
 
         /// <inheritdoc/>

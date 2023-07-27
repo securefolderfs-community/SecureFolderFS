@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography;
@@ -35,41 +33,27 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
-        public ICreationRoutine SetPassword(IPassword password)
+        public ICreationRoutine SetCredentials(IPassword password, SecretKey? magic)
         {
-            using (password)
-            {
-                using var encKey = new SecureKey(new byte[Constants.KeyChains.ENCKEY_LENGTH]);
-                using var macKey = new SecureKey(new byte[Constants.KeyChains.MACKEY_LENGTH]);
-                var salt = new byte[Constants.KeyChains.SALT_LENGTH];
+            using var encKey = new SecureKey(new byte[Constants.KeyChains.ENCKEY_LENGTH]);
+            using var macKey = new SecureKey(new byte[Constants.KeyChains.MACKEY_LENGTH]);
+            var salt = new byte[Constants.KeyChains.SALT_LENGTH];
 
-                // Fill keys
-                using var secureRandom = RandomNumberGenerator.Create();
-                secureRandom.GetNonZeroBytes(encKey.Key);
-                secureRandom.GetNonZeroBytes(macKey.Key);
-                secureRandom.GetNonZeroBytes(salt);
+            // Fill keys
+            using var secureRandom = RandomNumberGenerator.Create();
+            secureRandom.GetNonZeroBytes(encKey.Key);
+            secureRandom.GetNonZeroBytes(macKey.Key);
+            secureRandom.GetNonZeroBytes(salt);
 
-                // Derive KEK
-                Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
-                _cipherProvider.Argon2idCrypt.DeriveKey(password.GetPassword(), salt, kek);
+            // Construct passkey
+            using var passkey = VaultParser.ConstructPasskey(password, magic);
 
-                // Wrap keys
-                var wrappedEncKey = _cipherProvider.Rfc3394KeyWrap.WrapKey(encKey, kek);
-                var wrappedMacKey = _cipherProvider.Rfc3394KeyWrap.WrapKey(macKey, kek);
+            // Generate keystore
+            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt, _cipherProvider);
 
-                // Construct keystore data model
-                _keystoreDataModel = new()
-                {
-                    WrappedEncKey = wrappedEncKey,
-                    WrappedMacKey = wrappedMacKey,
-                    Salt = salt
-                };
-
-                // Create key copies for later use
-                _macKey = macKey.CreateCopy();
-                _encKey = encKey.CreateCopy();
-            }
+            // Create key copies for later use
+            _macKey = macKey.CreateCopy();
+            _encKey = encKey.CreateCopy();
 
             return this;
         }
@@ -99,19 +83,17 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
             ArgumentNullException.ThrowIfNull(_encKey);
 
             // First we need to fill in the PayloadMac of the content
-            using (_macKey)
-            {
-                VaultParser.CalculatePayloadMac(_configDataModel, _macKey, _cipherProvider.HmacSha256Crypt, _configDataModel.PayloadMac);
-            }
+            VaultParser.CalculatePayloadMac(_configDataModel, _macKey, _cipherProvider.HmacSha256Crypt, _configDataModel.PayloadMac);
 
             // Write the whole config
-            await _vaultWriter.WriteAsync(_keystoreDataModel, _configDataModel, cancellationToken);
+            await _vaultWriter.WriteAsync(_keystoreDataModel, _configDataModel, null, cancellationToken);
 
             // Create content folder
             if (_vaultFolder is IModifiableFolder modifiableFolder)
-                await modifiableFolder.CreateFolderAsync(Constants.CONTENT_FOLDERNAME, false, cancellationToken);
+                await modifiableFolder.CreateFolderAsync(Constants.Vault.VAULT_CONTENT_FOLDERNAME, false, cancellationToken);
 
-            return new CreationFinalization(_encKey);
+            // Key copies need to be created because the original ones are disposed of here
+            return new CreationContract(_encKey.CreateCopy(), _macKey.CreateCopy());
         }
 
         /// <inheritdoc/>
@@ -123,19 +105,21 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         }
     }
 
-    internal sealed class CreationFinalization : IDisposable
+    internal sealed class CreationContract : IDisposable
     {
         private readonly SecretKey _encKey;
+        private readonly SecretKey _macKey;
 
-        public CreationFinalization(SecretKey encKey)
+        public CreationContract(SecretKey encKey, SecretKey macKey)
         {
             _encKey = encKey;
+            _macKey = macKey;
         }
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return Encoding.UTF8.GetString(_encKey);
+            return $"{Convert.ToBase64String(_encKey)}{Constants.KEY_TEXT_SEPARATOR}{Convert.ToBase64String(_macKey)}";
         }
 
         /// <inheritdoc/>

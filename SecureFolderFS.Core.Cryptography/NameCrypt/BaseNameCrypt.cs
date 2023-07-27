@@ -1,8 +1,8 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Shared.Helpers;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.Cryptography.NameCrypt
 {
@@ -52,5 +52,10 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         protected abstract byte[] EncryptFileName(ReadOnlySpan<byte> cleartextFileNameBuffer, ReadOnlySpan<byte> directoryId);
 
         protected abstract byte[]? DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId);
+
+        /// <inheritdoc/>
+        public virtual void Dispose()
+        {
+        }
     }
 }
