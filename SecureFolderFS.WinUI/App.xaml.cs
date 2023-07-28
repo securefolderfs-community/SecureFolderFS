@@ -14,6 +14,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
+#if !UNPACKAGED
+using Windows.Storage;
+#endif
+
 #if !DEBUG
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
