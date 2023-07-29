@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using SecureFolderFS.Core.CryptFiles;
 using SecureFolderFS.Core.Cryptography.Enums;
 using SecureFolderFS.Core.Cryptography.Storage;
@@ -20,6 +17,9 @@ using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Routines.StorageRoutines
 {
@@ -58,25 +58,29 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
         {
             ArgumentNullException.ThrowIfNull(_storageService);
 
-            var contentFolder = await _vaultFolder.GetFolderAsync(Constants.Vault.VAULT_CONTENT_FOLDERNAME, cancellationToken);
             return new CryptoStorageService(_storageService);
         }
 
         /// <inheritdoc/>
         public async Task<IMountableFileSystem> CreateMountableAsync(FileSystemOptions options, CancellationToken cancellationToken)
         {
-            var (directoryIdCache, pathConverter, streamsAccess) = CreateStorageComponents(options);
+            ArgumentNullException.ThrowIfNull(_unlockContract);
+            ArgumentNullException.ThrowIfNull(_storageService);
+
+            var contentFolder = await _vaultFolder.GetFolderAsync(Constants.Vault.VAULT_CONTENT_FOLDERNAME, cancellationToken);
+            var volumeName = options.VolumeName ?? _vaultFolder.Name;
+            var (directoryIdCache, pathConverter, streamsAccess) = CreateStorageComponents(options, contentFolder.Id);
 
             return options.AdapterType switch
             {
-                FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(_vaultFolder.Name, cont),
-                FileSystemAdapterType.FuseAdapter => FuseMountable.CreateMountable(_vaultFolder.Name, ),
-                FileSystemAdapterType.WebDavAdapter => WebDavMountable.CreateMountable(),
+                FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, options.HealthStatistics),
+                FileSystemAdapterType.FuseAdapter => FuseMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess),
+                FileSystemAdapterType.WebDavAdapter => WebDavMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, new CryptoStorageService(_storageService)),
                 _ => throw new ArgumentOutOfRangeException(nameof(options))
             };
         }
 
-        private (DirectoryIdCache, IPathConverter, IStreamsAccess) CreateStorageComponents(FileSystemOptions options)
+        private (DirectoryIdCache, IPathConverter, IStreamsAccess) CreateStorageComponents(FileSystemOptions options, string vaultRootPath)
         {
             ArgumentNullException.ThrowIfNull(_unlockContract);
 
@@ -91,7 +95,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
                     _ => throw new ArgumentOutOfRangeException(nameof(options))
                 };
 
-                pathConverter = new CiphertextPathConverter(ContentFolder.Id, fileNameAccess, directoryIdCache);
+                pathConverter = new CiphertextPathConverter(vaultRootPath, fileNameAccess, directoryIdCache);
             }
             else
                 pathConverter = new CleartextPathConverter();

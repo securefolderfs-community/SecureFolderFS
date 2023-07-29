@@ -17,7 +17,6 @@
 
         public static class Vault
         {
-            public const int MAX_FREE_AMOUNT_OF_VAULTS = 2;
             public const string VAULT_README_FILENAME = "_readme_before_continuing.txt";
             public const string VAULT_README_MESSAGE = "\n\t\t\t\tIMPORTATNT INFORMATION BEFORE USE" +
                                                        "\n" +
@@ -28,6 +27,11 @@
                                                        "\nTo ensure that your files are stored securely, first unlock the vault in SecureFolderFS app," +
                                                        "\nand then click the \"View vault\" button. This will open the folder where you can place your files," +
                                                        "\nwhich will be automatically encrypted.";
+        }
+
+        public static class Iap
+        {
+            public const int MAX_FREE_AMOUNT_OF_VAULTS = 2;
         }
     }
 }

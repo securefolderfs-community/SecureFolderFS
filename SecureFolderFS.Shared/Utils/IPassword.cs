@@ -9,14 +9,20 @@ namespace SecureFolderFS.Shared.Utils
     public interface IPassword : IDisposable
     {
         /// <summary>
-        /// Gets the encoding used to encode the password.
+        /// Retrieves the password as a byte array encoded with <paramref name="encoding"/>.
         /// </summary>
-        Encoding Encoding { get; }
+        /// <param name="encoding">The encoding used to encode the password.</param>
+        /// <returns>Returns a password in bytes.</returns>
+        byte[] GetRepresentation(Encoding encoding);
 
         /// <summary>
-        /// Retrieves the password as a byte array encoded with <see cref="Encoding"/>.
+        /// Gets the password as a sequence of characters.
         /// </summary>
-        /// <returns>Returns a password in bytes, the array is empty if disposed.</returns>
-        byte[] GetPassword();
+        /// <remarks>
+        /// Prefer to use <see cref="GetRepresentation"/> over <see cref="ToString"/>
+        /// to avoid leaving traces of the password in memory.
+        /// </remarks>
+        /// <returns>A password as a <see cref="string"/>.</returns>
+        string ToString();
     }
 }

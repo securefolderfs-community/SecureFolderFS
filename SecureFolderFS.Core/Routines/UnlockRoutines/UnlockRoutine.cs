@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography;
+﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {
@@ -56,6 +56,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             ArgumentNullException.ThrowIfNull(_encKey);
             ArgumentNullException.ThrowIfNull(_macKey);
             ArgumentNullException.ThrowIfNull(_configDataModel);
+            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
             using (_encKey)
             using (_macKey)
@@ -67,9 +68,14 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
                 var validator = new ConfigurationValidator(_cipherProvider.HmacSha256Crypt, macKeyCopy);
                 await validator.ValidateAsync(_configDataModel, cancellationToken);
 
-                // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
-                // Key copies need to be created because the original ones are disposed of here
-                return Security.CreateNew(_encKey.CreateCopy(), _macKey.CreateCopy(), _configDataModel.ContentCipherScheme, _configDataModel.FileNameCipherScheme);
+                return new UnlockContract()
+                {
+                    // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
+                    // Key copies need to be created because the original ones are disposed of here
+                    Security = Security.CreateNew(_encKey.CreateCopy(), _macKey.CreateCopy(), _configDataModel.ContentCipherScheme, _configDataModel.FileNameCipherScheme),
+                    ConfigurationDataModel = _configDataModel,
+                    KeystoreDataModel = _keystoreDataModel
+                };
             }
         }
 

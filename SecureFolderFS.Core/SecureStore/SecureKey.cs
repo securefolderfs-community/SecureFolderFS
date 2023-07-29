@@ -9,18 +9,18 @@ namespace SecureFolderFS.Core.SecureStore
         /// <inheritdoc/>
         public override byte[] Key { get; }
 
-        public SecureKey(byte[] key)
+        public SecureKey(int size)
         {
-            Key = key;
+            Key = new byte[size];
         }
 
         /// <inheritdoc/>
         public override SecretKey CreateCopy()
         {
-            var keyCopy = new byte[Key.Length];
-            Array.Copy(Key, 0, keyCopy, 0, Key.Length);
+            var secureKey = new SecureKey(Key.Length);
+            Array.Copy(Key, 0, secureKey.Key, 0, Key.Length);
 
-            return new SecureKey(keyCopy);
+            return secureKey;
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Services.SettingsPersistence;
+﻿using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Services

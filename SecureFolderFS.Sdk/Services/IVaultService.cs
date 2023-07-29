@@ -1,4 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using System.Collections.Generic;
@@ -11,14 +12,12 @@ namespace SecureFolderFS.Sdk.Services
     public interface IVaultService
     {
         /// <summary>
-        /// Gets the default name for vault keystore file.
+        /// Gets the vault creator.
         /// </summary>
-        string KeystoreFileName { get; } // TODO: Remove, Sdk shouldn't know about vault structure - that's handled by the Core
+        IVaultCreator VaultCreator { get; }
 
-        /// <summary>
-        /// Gets the default name for vault configuration file.
-        /// </summary>
-        string ConfigurationFileName { get; } // TODO: Remove, Sdk shouldn't know about vault structure - that's handled by the Core
+
+
 
         /// <summary>
         /// Determines whether provided <paramref name="name"/> is part of vault core configuration files.

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.Cipher;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Validators
 {
@@ -23,10 +23,11 @@ namespace SecureFolderFS.Core.Validators
         }
 
         /// <inheritdoc/>
+        [SkipLocalsInit]
         public Task ValidateAsync(VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
         {
             Span<byte> payloadMac = stackalloc byte[_hmacSha256.MacSize];
-            VaultParser.CalculatePayloadMac(value, _macKey, _hmacSha256, payloadMac);
+            VaultParser.CalculateConfigMac(value, _macKey, _hmacSha256, payloadMac);
 
             // Check if stored hash equals to computed hash
             if (!payloadMac.SequenceEqual(value.PayloadMac))

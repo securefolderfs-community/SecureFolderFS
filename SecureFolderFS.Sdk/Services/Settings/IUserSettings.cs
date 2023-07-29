@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Shared.Utils;
 using System.ComponentModel;
 
-namespace SecureFolderFS.Sdk.Services.SettingsPersistence
+namespace SecureFolderFS.Sdk.Services.Settings
 {
     /// <summary>
     /// An interface to manage user preferences and settings.

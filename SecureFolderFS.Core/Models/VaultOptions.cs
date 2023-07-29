@@ -5,14 +5,8 @@ namespace SecureFolderFS.Core.Models
     // TODO: Needs docs
     public sealed class VaultOptions
     {
-        public ContentCipherScheme ContentCipherScheme { get; }
+        public required ContentCipherScheme ContentCipher { get; init; }
 
-        public FileNameCipherScheme FileNameCipherScheme { get; }
-
-        public VaultOptions(ContentCipherScheme contentCipherScheme, FileNameCipherScheme fileNameCipherScheme)
-        {
-            ContentCipherScheme = contentCipherScheme;
-            FileNameCipherScheme = fileNameCipherScheme;
-        }
+        public required FileNameCipherScheme FileNameCipher { get; init; }
     }
 }

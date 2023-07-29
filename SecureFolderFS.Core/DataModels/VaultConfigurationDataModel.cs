@@ -32,12 +32,14 @@ namespace SecureFolderFS.Core.DataModels
         /// Gets the unique identifier of the vault represented by a GUID.
         /// </summary>
         [JsonPropertyName("vaultId")]
+        [DefaultValue("")]
         public required string Id { get; init; } = string.Empty;
 
         /// <summary>
         /// Gets the information about the authentication method used for this vault.
         /// </summary>
         [JsonPropertyName("authMode")]
+        [DefaultValue("")]
         public required string AuthMethod { get; set; } = string.Empty;
 
         /// <summary>

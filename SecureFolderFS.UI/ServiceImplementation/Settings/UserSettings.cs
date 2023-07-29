@@ -3,11 +3,11 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.SettingsPersistence;
+using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using System.ComponentModel;
 
-namespace SecureFolderFS.UI.ServiceImplementation.SettingsPersistence
+namespace SecureFolderFS.UI.ServiceImplementation.Settings
 {
     /// <inheritdoc cref="IUserSettings"/>
     public sealed class UserSettings : SettingsModel, IUserSettings

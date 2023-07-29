@@ -37,7 +37,7 @@ namespace SecureFolderFS.WinUI.UserControls.InterfaceHost
         /// <inheritdoc/>
         public void Receive(AddVaultMessage message)
         {
-            if (ViewModel.SidebarViewModel.SidebarItems.Count >= Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
+            if (ViewModel.SidebarViewModel.SidebarItems.Count >= Sdk.Constants.Iap.MAX_FREE_AMOUNT_OF_VAULTS
                 && !SettingsService.AppSettings.WasBetaNotificationShown1)
             {
                 BetaTeachingTip.IsOpen = true;

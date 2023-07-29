@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.FUSE
             return Task.FromResult<IVirtualFileSystem>(fuseFileSystem);
         }
 
-        public static IMountableFileSystem CreateMountable(string vaultName, IPathConverter pathConverter, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(string vaultName, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
         {
             if (contentFolder is not ILocatableFolder locatableContentFolder)
                 throw new ArgumentException("The vault content folder is not locatable.");

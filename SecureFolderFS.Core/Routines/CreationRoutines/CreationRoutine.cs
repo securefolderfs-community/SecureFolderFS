@@ -1,8 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography;
+﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Models;
@@ -11,6 +7,10 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Routines.CreationRoutines
 {
@@ -35,8 +35,8 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         /// <inheritdoc/>
         public ICreationRoutine SetCredentials(IPassword password, SecretKey? magic)
         {
-            using var encKey = new SecureKey(new byte[Constants.KeyChains.ENCKEY_LENGTH]);
-            using var macKey = new SecureKey(new byte[Constants.KeyChains.MACKEY_LENGTH]);
+            using var encKey = new SecureKey(Constants.KeyChains.ENCKEY_LENGTH);
+            using var macKey = new SecureKey(Constants.KeyChains.MACKEY_LENGTH);
             var salt = new byte[Constants.KeyChains.SALT_LENGTH];
 
             // Fill keys
@@ -63,8 +63,8 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         {
             _configDataModel = new()
             {
-                ContentCipherScheme = vaultOptions.ContentCipherScheme,
-                FileNameCipherScheme = vaultOptions.FileNameCipherScheme,
+                ContentCipherScheme = vaultOptions.ContentCipher,
+                FileNameCipherScheme = vaultOptions.FileNameCipher,
                 Version = Constants.VaultVersion.LATEST_VERSION,
                 Id = Guid.NewGuid().ToString(),
                 AuthMethod = Constants.AuthenticationMethods.AUTH_PASSWORD,
@@ -126,6 +126,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         public void Dispose()
         {
             _encKey.Dispose();
+            _macKey.Dispose();
         }
     }
 }

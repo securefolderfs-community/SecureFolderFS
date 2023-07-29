@@ -83,7 +83,10 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
 
-                // Conditional (singleton) services
+                // Transient services
+                .AddTransient<INavigationService, AvaloniaNavigationService>()
+
+                // Conditional services
 #if DEBUG
                 .AddSingleton<IIapService, DebugIapService>()
                 .AddSingleton<IUpdateService, DebugUpdateService>()
@@ -93,12 +96,6 @@ namespace SecureFolderFS.AvaloniaUI
                 .AddSingleton<IUpdateService, AvaloniaUpdateService>()
                 .AddSingleton<ITelemetryService, TelemetryService>()
 #endif
-
-                // Transient services
-                .AddTransient<INavigationService, AvaloniaNavigationService>()
-                .AddTransient<IPasswordChangeService, PasswordChangeService>()
-                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
-                .AddTransient<IVaultCreationService, VaultCreationService>()
 
                 ; // Finish service initialization
 

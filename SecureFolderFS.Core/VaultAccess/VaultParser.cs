@@ -1,12 +1,12 @@
-using System;
-using System.Runtime.CompilerServices;
-using System.Text;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Shared.Utils;
+using System;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace SecureFolderFS.Core.VaultAccess
 {
@@ -20,10 +20,10 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <returns>A concatenated <see cref="SecretKey"/> that represents the password key.</returns>
         public static SecretKey ConstructPasskey(IPassword password, SecretKey? magic)
         {
-            var pwd = password.GetPassword();
+            var pwd = password.GetRepresentation(Encoding.UTF8);
             if (magic is not null) // Combine password and 'magic'
             {
-                var passkey = new SecureKey(new byte[pwd.Length + magic.Key.Length]);
+                var passkey = new SecureKey((pwd.Length + magic.Key.Length));
                 var passkeySpan = passkey.Key.AsSpan();
 
                 // Copy and combine
@@ -37,7 +37,7 @@ namespace SecureFolderFS.Core.VaultAccess
                 // We need to copy the password to a SecretKey instance to represent the passkey.
                 // By doing this, we no longer have to rely on provider's role of disposing the password object,
                 // and thus we allow the consumer of the passkey to dispose of the key at their own discretion
-                var passwordSecret = new SecureKey(new byte[pwd.Length]);
+                var passwordSecret = new SecureKey(pwd.Length);
                 pwd.CopyTo(passwordSecret.Key.AsSpan());
 
                 return passwordSecret;
@@ -45,27 +45,27 @@ namespace SecureFolderFS.Core.VaultAccess
         }
 
         /// <summary>
-        /// Computes unique HMAC thumbprint of <paramref name="configDataModel"/> properties.
+        /// Computes a unique HMAC thumbprint of <paramref name="configDataModel"/> properties.
         /// </summary>
         /// <param name="configDataModel">The <see cref="VaultConfigurationDataModel"/> to compute the thumbprint for.</param>
         /// <param name="macKey">The key part of HMAC.</param>
-        /// <param name="hmacSha256">The HMAC-SHA256 cryptographic provider.</param>
+        /// <param name="hmacSha256Crypt">The HMAC-SHA256 cryptographic provider.</param>
         /// <param name="mac">The destination to fill the calculated HMAC thumbprint into.</param>
-        public static void CalculatePayloadMac(VaultConfigurationDataModel configDataModel, SecretKey macKey, IHmacSha256Crypt hmacSha256, Span<byte> mac)
+        public static void CalculateConfigMac(VaultConfigurationDataModel configDataModel, SecretKey macKey, IHmacSha256Crypt hmacSha256Crypt, Span<byte> mac)
         {
             // Initialize HMAC
-            using var hmacSha256Crypt = hmacSha256.GetInstance();
-            hmacSha256Crypt.InitializeHmac(macKey);
+            using var hmacSha256 = hmacSha256Crypt.GetInstance();
+            hmacSha256.InitializeHmac(macKey);
 
             // Update HMAC
-            hmacSha256Crypt.Update(BitConverter.GetBytes(Constants.VaultVersion.LATEST_VERSION));       // Version
-            hmacSha256Crypt.Update(BitConverter.GetBytes((uint)configDataModel.ContentCipherScheme));   // ContentCipherScheme
-            hmacSha256Crypt.Update(BitConverter.GetBytes((uint)configDataModel.FileNameCipherScheme));  // FileNameCipherScheme
-            hmacSha256Crypt.Update(Encoding.UTF8.GetBytes(configDataModel.Id));                         // Id
-            hmacSha256Crypt.Update(Encoding.UTF8.GetBytes(configDataModel.AuthMethod));                 // AuthMethod
+            hmacSha256.Update(BitConverter.GetBytes(Constants.VaultVersion.LATEST_VERSION));       // Version
+            hmacSha256.Update(BitConverter.GetBytes((uint)configDataModel.ContentCipherScheme));   // ContentCipherScheme
+            hmacSha256.Update(BitConverter.GetBytes((uint)configDataModel.FileNameCipherScheme));  // FileNameCipherScheme
+            hmacSha256.Update(Encoding.UTF8.GetBytes(configDataModel.Id));                         // Id
+            hmacSha256.Update(Encoding.UTF8.GetBytes(configDataModel.AuthMethod));                 // AuthMethod
 
             // Fill the hash to payload
-            hmacSha256Crypt.GetHash(mac);
+            hmacSha256.GetHash(mac);
         }
 
         /// <summary>
@@ -76,13 +76,10 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <param name="cipherProvider">The cryptographic cipher provider.</param>
         /// <returns>A tuple containing the DEK and MAC keys respectively.</returns>
         [SkipLocalsInit]
-        public static (SecretKey encKey, SecretKey macKey) DeriveKeystore(
-            SecretKey passkey,
-            VaultKeystoreDataModel keystoreDataModel,
-            CipherProvider cipherProvider)
+        public static (SecretKey encKey, SecretKey macKey) DeriveKeystore(SecretKey passkey, VaultKeystoreDataModel keystoreDataModel, CipherProvider cipherProvider)
         {
-            var encKey = new SecureKey(new byte[Constants.KeyChains.ENCKEY_LENGTH]);
-            var macKey = new SecureKey(new byte[Constants.KeyChains.MACKEY_LENGTH]);
+            var encKey = new SecureKey(Constants.KeyChains.ENCKEY_LENGTH);
+            var macKey = new SecureKey(Constants.KeyChains.MACKEY_LENGTH);
 
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
