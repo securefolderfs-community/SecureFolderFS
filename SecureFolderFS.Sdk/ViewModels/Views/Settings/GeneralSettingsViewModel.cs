@@ -17,6 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
     public sealed partial class GeneralSettingsViewModel : BasePageViewModel
     {
         private readonly CultureInfo _currentCulture;
+        private bool _noNotify;
 
         [ObservableProperty] private ObservableCollection<LanguageViewModel> _Languages;
         [ObservableProperty] private LanguageViewModel? _SelectedLanguage;
@@ -43,7 +44,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             Languages.Add(new(CultureInfo.InvariantCulture, "Not seeing your language?"));
 
             // Set selected language
+            _noNotify = true;
             SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Equals(LocalizationService.CurrentCulture));
+            _noNotify = false;
 
             // Initialize the banner
             await BannerViewModel.InitAsync(cancellationToken);
@@ -57,7 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         async partial void OnSelectedLanguageChanged(LanguageViewModel? value)
         {
-            if (value is null)
+            if (value is null || _noNotify)
                 return;
 
             if (value.CultureInfo.Equals(CultureInfo.InvariantCulture))
