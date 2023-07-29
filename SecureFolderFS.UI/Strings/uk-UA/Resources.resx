@@ -118,335 +118,336 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Додати наявне сховище</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Виберіть наявне сховище з вашого пристрою</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Додайте нове сховище</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
-    <value>Automatically lock vaults</value>
+    <value>Автоматично блокувати сховища</value>
   </data>
   <data name="AutoLockDescription" xml:space="preserve">
-    <value>Lock all vaults when device is locked</value>
+    <value>Блокувати всі сховища при блокуванні пристрою</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Start with system</value>
+    <value>Почати зі запуску системи</value>
   </data>
   <data name="AutoStartDescription" xml:space="preserve">
-    <value>Launch SecureFolderFS on system startup</value>
+    <value>Запустити SecureFolderFS під час запуску системи</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Назад</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Скасувати</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Release notes</value>
+    <value>Примітки до випуску</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Чудово!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>View latest release notes for this version</value>
+    <value>Переглянути останні замітки до випуску для цієї версії</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>An issue occurred while loading the changelog.</value>
+    <value>Помилка при завантаженні об`єкта.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Change password</value>
+    <value>Змінити пароль</value>
   </data>
   <data name="ChangePasswordDescription" xml:space="preserve">
-    <value>Change the password used to unlock this vault</value>
+    <value>Змінити пароль, що використовується для розблокування цього сховища</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>Перевірка оновлень</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Закрити</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Підтвердити</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Продовжити</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Скопійовано</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Копіювати версію додатку</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Копіювати версію ОС</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Copy version</value>
+    <value>Копіювати версію</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Select which version to copy to clipboard</value>
+    <value>Виберіть, яку версію скопіювати в буфер обміну</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Створити нове сховище</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Create new SecureFolderFS vault</value>
+    <value>Створити нове сховище SecureFolderFS</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Current password</value>
+    <value>Поточний пароль</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>Шифрування даних</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
+    <value>Вимкнути список з нещодавно відвідуваних</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
+    <value>Тимчасово вимкнути список останніх файлів під час розблокування сховищ</value>
   </data>
   <data name="Downloading" xml:space="preserve">
-    <value>Downloading {0}%</value>
+    <value>Завантаження {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Шифрування</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Введіть пароль</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Помилка</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
-    <value>Export settings</value>
+    <value>Експортувати налаштування</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>Шифрування імені файлу</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>File system provider</value>
+    <value>Провайдер файлової системи</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>Виберіть бажаний тип віртуальної файлової системи</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
-    <value>Needs attention</value>
+    <value>Потребує уваги</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>Проблем не виявлено</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>Знайдено проблеми</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Імпортувати налаштування</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Встановлення...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>Невірний пароль</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>Наданий пароль невірний.</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Мова</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Вибір мови інтерфейсу</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
-    <value>Last checked: {0}</value>
+    <value>Востаннє перевірено: {0}</value>
   </data>
   <data name="LatestVersionInstalled" xml:space="preserve">
-    <value>Latest version installed</value>
+    <value>Встановлена остання версія</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>License</value>
+    <value>Ліцензія</value>
   </data>
   <data name="Licenses" xml:space="preserve">
-    <value>Licenses</value>
+    <value>Ліцензії</value>
   </data>
   <data name="LockVault" xml:space="preserve">
-    <value>Lock vault</value>
+    <value>Блокування сховища</value>
   </data>
   <data name="LockVaultDescription" xml:space="preserve">
-    <value>Securely lock this vault and close the dashboard</value>
+    <value>Безпечно заблокувати це сховище і закрити панель керування</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
-    <value>Manage settings</value>
+    <value>Керування налаштуваннями</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
-    <value>My vaults</value>
+    <value>Моє сховище</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>New password</value>
+    <value>Новий пароль</value>
   </data>
   <data name="NewVault" xml:space="preserve">
-    <value>New vault</value>
+    <value>Нове сховище</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>Без шифрування</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
-    <value>No folder selected</value>
+    <value>Жодної теки не вибрано</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>You haven't added any vaults yet. Create a new one or add existing to begin!</value>
+    <value>Ви ще не додали жодного сховища
+Створіть нову або додайте вже існуючу!</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
-    <value>Open log location</value>
+    <value>Відкрити розташування журналу змін</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+    <value>Запускає файл провідника, де знайдено файл журналу</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
-    <value>Open vault folder</value>
+    <value>Відкрити папку сховища</value>
   </data>
   <data name="OpenVaultFolderDescription" xml:space="preserve">
-    <value>Automatically open folder when vault is unlocked</value>
+    <value>Автоматично відкривати папку, коли сховище розблоковано</value>
   </data>
   <data name="Password" xml:space="preserve">
-    <value>Password</value>
+    <value>Пароль</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>Політика конфіденційності</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
-    <value>View the privacy policy statement</value>
+    <value>Переглянути звіт політики конфіденційності</value>
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
-    <value>Read speeds</value>
+    <value>Швидкість зчитування</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
-    <value>Remove vault from the list</value>
+    <value>Видалити сховище зі списку</value>
   </data>
   <data name="RepeatPassword" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>Повторіть пароль</value>
   </data>
   <data name="RestartRequired" xml:space="preserve">
-    <value>Restart required</value>
+    <value>Необхідне перезаванатаження</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
-    <value>Continue where you left off</value>
+    <value>Продовжити, де ви зупинилися</value>
   </data>
   <data name="RestoreLastSessionDescription" xml:space="preserve">
-    <value>Start on previously selected vault</value>
+    <value>Запустити на попередньо вибраному сховищі</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>Повторити</value>
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Шукати</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
-    <value>Select vault path</value>
+    <value>Виберіть шлях до сховища</value>
   </data>
   <data name="SetPassword" xml:space="preserve">
-    <value>Set password</value>
+    <value>Встановити пароль</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Налаштування</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
-    <value>About</value>
+    <value>Про додаток</value>
   </data>
   <data name="SettingsGeneral" xml:space="preserve">
-    <value>General</value>
+    <value>Загальне</value>
   </data>
   <data name="SettingsPreferences" xml:space="preserve">
-    <value>Preferences</value>
+    <value>Властивості</value>
   </data>
   <data name="SettingsPrivacy" xml:space="preserve">
-    <value>Privacy</value>
+    <value>Конфіденційність</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show encrypted vault in File Explorer</value>
+    <value>Показати це сховище в файловому провіднику</value>
   </data>
   <data name="Social" xml:space="preserve">
-    <value>Social</value>
+    <value>Соціальний</value>
   </data>
   <data name="SocialDescription" xml:space="preserve">
-    <value>Ask, suggest, and discuss SecureFolderFS</value>
+    <value>Запитайте, запропонуйте та обговоріть SecureFolderFS</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>Summary</value>
+    <value>Підсумок</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
-    <value>Enable telemetry</value>
+    <value>Увімкнути телеметрію</value>
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
-    <value>Collect anonymous crash reports and usage data</value>
+    <value>Збирати анонімні звіти про збої та використання даних</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Тема</value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>Темна</value>
   </data>
   <data name="ThemeDescription" xml:space="preserve">
-    <value>Choose application theme</value>
+    <value>Оберіть тему для додатку</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>Світла</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>System default</value>
+    <value>Система за умовчанням</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Third party licenses</value>
+    <value>Ліцензії третіх сторін</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>Перегляд бібліотек сторонніх сайтів, що використовуються в SecureFolderFS</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value>Розблокувати</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Vault has been added</value>
+    <value>Сховище було додано</value>
   </data>
   <data name="VaultInformation" xml:space="preserve">
-    <value>Vault information</value>
+    <value>Інформація про сховище</value>
   </data>
   <data name="VaultLocked" xml:space="preserve">
-    <value>Vault is locked</value>
+    <value>Сховище заблоковано</value>
   </data>
   <data name="VaultProperties" xml:space="preserve">
-    <value>Vault properties</value>
+    <value>Параметри сховища</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>View information about this vault</value>
+    <value>Переглянути інформацію про це сховище</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Версія</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>Переглянути на GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>View repository</value>
+    <value>Перегляд репозиторію</value>
   </data>
   <data name="ViewVault" xml:space="preserve">
-    <value>View vault</value>
+    <value>Перегляд сховища</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+    <value>Показати це сховище в файловому провіднику</value>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>Website</value>
+    <value>Веб-сайт</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Welcome to SecureFolderFS</value>
+    <value>Ласкаво просимо до SecureFolderFS</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>What's new</value>
+    <value>Що нового</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Write speeds</value>
+    <value>Швидкість запису</value>
   </data>
 </root>
