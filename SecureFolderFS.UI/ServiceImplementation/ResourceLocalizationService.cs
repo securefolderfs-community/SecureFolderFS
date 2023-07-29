@@ -23,7 +23,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             /* "cz-CZ", */ "da-DK", "de-DE", "en-US", 
             "es-ES", /* "fr-FR", */ /* "it-IT", */ "pl-PL",
-            /* "ru-RU", */ /*"ua-UA" */
+            /* "ru-RU", */ "uk-UA"
         };
 
         protected IAppSettings AppSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().AppSettings;
