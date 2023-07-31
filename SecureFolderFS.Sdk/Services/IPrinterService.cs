@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
     /// A service to print specialized content.
     /// </summary>
-    public interface IPrinterService : INotifyStateChanged, IDisposable
+    public interface IPrinterService
     {
         /// <summary>
         /// Determines whether the printing operation is supported by the system.
