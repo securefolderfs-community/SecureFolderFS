@@ -1,8 +1,8 @@
-﻿using System;
-using SecureFolderFS.Sdk.Storage;
+﻿using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Shared.Utils;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Utils;
 
 namespace SecureFolderFS.Sdk.Services.Vault
 {
@@ -27,6 +27,6 @@ namespace SecureFolderFS.Sdk.Services.Vault
         /// <param name="contentCipherId">The content cipher scheme to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the master key used to decrypt the vault.</returns>
-        Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IPassword password , string nameCipherId, string contentCipherId, CancellationToken cancellationToken = default);
+        Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IPassword password, string nameCipherId, string contentCipherId, CancellationToken cancellationToken = default);
     }
 }

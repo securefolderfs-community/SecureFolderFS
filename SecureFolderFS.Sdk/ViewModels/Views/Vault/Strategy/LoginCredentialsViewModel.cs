@@ -39,7 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
             if (password is null)
                 return;
 
-            IUnlockedVaultModel? unlockedVaultModel;
+            IVaultLifetimeModel? unlockedVaultModel;
             using (await _vaultWatcherModel.LockFolderAsync(cancellationToken))
             using (_vaultUnlockingModel)
             using (password)

@@ -18,8 +18,8 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
             { typeof(ExistingLocationWizardViewModel), typeof(AddExistingWizardPage) },
             { typeof(NewLocationWizardViewModel), typeof(CreationPathWizardPage) },
             { typeof(PasswordWizardViewModel), typeof(PasswordWizardPage) },
-            { typeof(EncryptionWizardViewModel), typeof(EncryptionWizardPage) },
-            { typeof(SummaryWizardViewModel), typeof(SummaryWizardPage) },
+            { typeof(RecoveryKeyWizardViewModel), typeof(RecoveryKeyWizardPage) },
+            { typeof(SummaryWizardViewModel), typeof(SummaryWizardPage) }
         };
 
         /// <inheritdoc/>

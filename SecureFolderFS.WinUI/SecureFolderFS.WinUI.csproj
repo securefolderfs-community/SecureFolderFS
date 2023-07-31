@@ -63,6 +63,7 @@
         <None Remove="UserControls\PasswordControl.xaml" />
         <None Remove="UserControls\TitleBarControl.xaml" />
         <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
+        <None Remove="Views\PrintPages\MasterKeyPrintPage.xaml" />
         <None Remove="Views\Settings\AboutSettingsPage.xaml" />
         <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
         <None Remove="Views\Settings\PreferencesSettingsPage.xaml" />
@@ -73,9 +74,9 @@
         <None Remove="Views\VaultMainDashboardPage.xaml" />
         <None Remove="Views\VaultWizard\AddExistingWizardPage.xaml" />
         <None Remove="Views\VaultWizard\CreationPathWizardPage.xaml" />
-        <None Remove="Views\VaultWizard\EncryptionWizardPage.xaml" />
         <None Remove="Views\VaultWizard\MainWizardPage.xaml" />
         <None Remove="Views\VaultWizard\PasswordWizardPage.xaml" />
+        <None Remove="Views\VaultWizard\RecoveryKeyWizardPage.xaml" />
         <None Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
     </ItemGroup>
 
@@ -198,9 +199,6 @@
         <Page Update="Views\Settings\AboutSettingsPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-        <Page Update="Views\VaultWizard\EncryptionWizardPage.xaml">
-            <Generator>MSBuild:Compile</Generator>
-        </Page>
         <Page Update="Views\VaultWizard\PasswordWizardPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
@@ -295,5 +293,15 @@
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-150.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\VaultWizard\RecoveryKeyWizardPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\PrintPages\MasterKeyPrintPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
 </Project>

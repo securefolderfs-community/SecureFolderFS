@@ -83,7 +83,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
             ArgumentNullException.ThrowIfNull(_encKey);
 
             // First we need to fill in the PayloadMac of the content
-            VaultParser.CalculatePayloadMac(_configDataModel, _macKey, _cipherProvider.HmacSha256Crypt, _configDataModel.PayloadMac);
+            VaultParser.CalculateConfigMac(_configDataModel, _macKey, _cipherProvider.HmacSha256Crypt, _configDataModel.PayloadMac);
 
             // Write the whole config
             await _vaultWriter.WriteAsync(_keystoreDataModel, _configDataModel, null, cancellationToken);

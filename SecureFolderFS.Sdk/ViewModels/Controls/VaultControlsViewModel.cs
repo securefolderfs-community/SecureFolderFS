@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async Task LockVaultAsync()
         {
             // Lock vault
-            await _unlockedVaultViewModel.UnlockedVaultModel.LockAsync();
+            await _unlockedVaultViewModel.UnlockedVaultModel.DisposeAsync();
 
             // Navigate away
             var loginPageViewModel = new VaultLoginPageViewModel(_unlockedVaultViewModel.VaultViewModel, _navigationService);

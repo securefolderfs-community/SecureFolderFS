@@ -10,6 +10,7 @@
     <ItemGroup>
         <EmbeddedResource Include="Assets\*" />
         <None Remove="Assets\AppAssets\AppIcon.png" />
+        <None Remove="Assets\AppAssets\AppTitle.png" />
         <None Remove="Assets\AppAssets\AppTitle.svg" />
         <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
@@ -18,6 +19,9 @@
         <None Remove="Assets\Licenses\Roslyn LICENSE" />
         <None Remove="Assets\Licenses\WinUI3Utilities LICENSE" />
         <EmbeddedResource Include="Assets\AppAssets\AppIcon.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\AppAssets\AppTitle.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg">

@@ -47,7 +47,7 @@ namespace SecureFolderFS.Core.DataModels
         }
 
         /// <summary>
-        /// Updates the <see cref="hmacSha256"/> instance with the properties of this class.
+        /// Updates the <paramref name="hmacSha256"/> instance with the properties of this class.
         /// </summary>
         /// <param name="hmacSha256">The HMAC instance.</param>
         protected virtual void UpdateHmac(IHmacSha256Instance hmacSha256)

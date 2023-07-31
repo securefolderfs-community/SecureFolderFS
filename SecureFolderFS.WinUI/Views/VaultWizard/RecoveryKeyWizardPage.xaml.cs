@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 
@@ -10,23 +10,23 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class EncryptionWizardPage : Page
+    public sealed partial class RecoveryKeyWizardPage : Page
     {
-        public EncryptionWizardViewModel ViewModel
+        public RecoveryKeyWizardViewModel ViewModel
         {
-            get => (EncryptionWizardViewModel)DataContext;
+            get => (RecoveryKeyWizardViewModel)DataContext;
             set => DataContext = value;
         }
 
-        public EncryptionWizardPage()
+        public RecoveryKeyWizardPage()
         {
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            InitializeComponent();
-            if (e.Parameter is EncryptionWizardViewModel viewModel)
+            if (e.Parameter is RecoveryKeyWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

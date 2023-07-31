@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.AppModels
 {
-    /// <inheritdoc cref="IUnlockedVaultModel"/>
-    internal sealed class FileSystemUnlockedVaultModel : IUnlockedVaultModel
+    /// <inheritdoc cref="IVaultLifetimeModel"/>
+    internal sealed class VaultLifetimeModel : IVaultLifetimeModel
     {
         private readonly IVirtualFileSystem _virtualFileSystem;
 
@@ -21,7 +21,7 @@ namespace SecureFolderFS.UI.AppModels
         /// <inheritdoc/>
         public VaultInfoModel VaultInfoModel { get; }
 
-        public FileSystemUnlockedVaultModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel, VaultInfoModel vaultInfoModel)
+        public VaultLifetimeModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel, VaultInfoModel vaultInfoModel)
         {
             _virtualFileSystem = virtualFileSystem;
             RootFolder = virtualFileSystem.RootFolder;
@@ -30,9 +30,15 @@ namespace SecureFolderFS.UI.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task LockAsync()
+        public async ValueTask DisposeAsync()
         {
             await _virtualFileSystem.CloseAsync(FileSystemCloseMethod.CloseForcefully);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            _virtualFileSystem.CloseAsync(FileSystemCloseMethod.CloseForcefully).Wait();
         }
     }
 }

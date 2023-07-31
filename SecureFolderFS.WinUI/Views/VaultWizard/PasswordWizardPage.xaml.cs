@@ -29,7 +29,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
             if (e.Parameter is PasswordWizardViewModel viewModel)
             {
                 ViewModel = viewModel;
-                ViewModel.InitializeWithPassword = FirstPassword.GetPassword;
+                ViewModel.PasswordGetter = FirstPassword.GetPassword;
             }
 
             base.OnNavigatedTo(e);

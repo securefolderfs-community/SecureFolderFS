@@ -12,11 +12,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IWidgetsCollectionModel _widgetsContextModel;
-        private readonly IUnlockedVaultModel _unlockedVaultModel;
+        private readonly IVaultLifetimeModel _unlockedVaultModel;
 
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
-        public WidgetsListViewModel(IUnlockedVaultModel unlockedVaultModel, IWidgetsCollectionModel widgetsContextModel)
+        public WidgetsListViewModel(IVaultLifetimeModel unlockedVaultModel, IWidgetsCollectionModel widgetsContextModel)
         {
             _unlockedVaultModel = unlockedVaultModel;
             _widgetsContextModel = widgetsContextModel;

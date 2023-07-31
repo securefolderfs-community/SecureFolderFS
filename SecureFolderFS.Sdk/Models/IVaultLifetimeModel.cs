@@ -1,13 +1,13 @@
-﻿using System.Threading.Tasks;
-using SecureFolderFS.Sdk.AppModels;
+﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Storage;
+using System;
 
 namespace SecureFolderFS.Sdk.Models
 {
     /// <summary>
     /// Represents a model of an unlocked vault.
     /// </summary>
-    public interface IUnlockedVaultModel
+    public interface IVaultLifetimeModel : IDisposable, IAsyncDisposable
     {
         /// <summary>
         /// Gets the unlocked root folder of the vault.
@@ -23,11 +23,5 @@ namespace SecureFolderFS.Sdk.Models
         /// Gets the model that contains additional information about the vault.
         /// </summary>
         VaultInfoModel VaultInfoModel { get; }
-
-        /// <summary>
-        /// Locks the vault, invalidates associated resources and restricts vault file system access.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task LockAsync();
     }
 }

@@ -16,8 +16,15 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         IVaultCreator VaultCreator { get; }
 
+        /// <summary>
+        /// Gets the vault unlocker.
+        /// </summary>
+        IVaultUnlocker VaultUnlocker { get; }
 
-
+        /// <summary>
+        /// Gets the vault authenticator.
+        /// </summary>
+        IVaultAuthenticator VaultAuthenticator { get; }
 
         /// <summary>
         /// Determines whether provided <paramref name="name"/> is part of vault core configuration files.

@@ -1,18 +1,36 @@
-﻿using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.Vault;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.Utils;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
-    public sealed class PasswordWizardViewModel : BaseWizardPageViewModel
+    [Inject<IVaultService>]
+    public sealed partial class PasswordWizardViewModel : BaseWizardPageViewModel
     {
-        private readonly IVaultCreationModel _vaultCreationModel;
+        private readonly IVaultCreator _vaultCreator;
+        private readonly IModifiableFolder _vaultFolder;
 
-        public Func<IPassword?>? InitializeWithPassword { get; set; }
+        [ObservableProperty] private CipherInfoViewModel? _ContentCipher;
+        [ObservableProperty] private CipherInfoViewModel? _FileNameCipher;
+        [ObservableProperty] private ObservableCollection<CipherInfoViewModel> _ContentCiphers;
+        [ObservableProperty] private ObservableCollection<CipherInfoViewModel> _FileNameCiphers;
+
+        /// <summary>
+        /// Gets or sets the password getter delegate used to retrieve the password from the view.
+        /// </summary>
+        public Func<IPassword?>? PasswordGetter { get; set; }
 
         /// <inheritdoc cref="DialogViewModel.PrimaryButtonEnabled"/>
         public bool PrimaryButtonEnabled
@@ -21,13 +39,38 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             set => DialogViewModel.PrimaryButtonEnabled = value;
         }
 
-        public PasswordWizardViewModel(IVaultCreationModel vaultCreationModel, VaultWizardDialogViewModel dialogViewModel)
+        public PasswordWizardViewModel(IModifiableFolder vaultFolder, IVaultCreator vaultCreator, VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
         {
-            _vaultCreationModel = vaultCreationModel;
+            ServiceProvider = Ioc.Default;
+            _vaultFolder = vaultFolder;
+            _vaultCreator = vaultCreator;
+            _ContentCiphers = new();
+            _FileNameCiphers = new();
 
-            // Always false since passwords are not preserved
+            // Disallow continuation before passwords are validated
             DialogViewModel.PrimaryButtonEnabled = false;
+        }
+
+        /// <inheritdoc/>
+        public override Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            EnumerateCiphers(VaultService.GetContentCiphers(), ContentCiphers);
+            EnumerateCiphers(VaultService.GetFileNameCiphers(), FileNameCiphers);
+
+            ContentCipher = ContentCiphers.FirstOrDefault();
+            FileNameCipher = FileNameCiphers.FirstOrDefault();
+
+            return Task.CompletedTask;
+
+            static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherInfoViewModel> destination)
+            {
+                foreach (var item in source)
+                {
+                    var name = string.IsNullOrEmpty(item) ? "NoEncryption".ToLocalized() : item;
+                    destination.Add(new(item, name));
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -35,14 +78,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         {
             eventDispatch?.NoForwarding();
 
-            var password = InitializeWithPassword?.Invoke();
+            ArgumentNullException.ThrowIfNull(ContentCipher);
+            ArgumentNullException.ThrowIfNull(FileNameCipher);
+
+            var password = PasswordGetter?.Invoke();
             if (password is null)
                 return;
 
-            if (!await _vaultCreationModel.SetPasswordAsync(password, cancellationToken))
-                return; // TODO: Report issue
+            // Create the vault
+            var superSecret = await _vaultCreator.CreateVaultAsync(_vaultFolder, password, FileNameCipher.Id, ContentCipher.Id, cancellationToken);
 
-            await NavigationService.TryNavigateAsync(() => new EncryptionWizardViewModel(_vaultCreationModel, DialogViewModel));
+            // Navigate
+            await NavigationService.TryNavigateAsync(() => new RecoveryKeyWizardViewModel(_vaultFolder, superSecret, DialogViewModel));
         }
     }
 }

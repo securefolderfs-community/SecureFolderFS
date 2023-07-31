@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utils;
 using System;
@@ -56,7 +57,7 @@ namespace SecureFolderFS.Sdk.AppModels
         private async Task DetermineStrategyAsync(CancellationToken cancellationToken)
         {
             // TODO: Use validationResult for 2fa detection as well
-            var validationResult = await _vaultValidator.ValidateAsync(VaultModel.Folder, cancellationToken);
+            var validationResult = await _vaultValidator.TryValidateAsync(VaultModel.Folder, cancellationToken);
 
             // TODO: 2FA is currently unimplemented
             var is2faEnabled = false;
@@ -68,7 +69,7 @@ namespace SecureFolderFS.Sdk.AppModels
             }
             else if (validationResult.Successful) // Credentials
             {
-                var keystoreResult = await VaultModel.Folder.GetFileWithResultAsync(VaultService.KeystoreFileName, cancellationToken);
+                var keystoreResult = await VaultModel.Folder.GetFileWithResultAsync(null, cancellationToken);
                 if (!keystoreResult.Successful)
                     StateChanged?.Invoke(this, new CommonResult<VaultLoginStateType>(VaultLoginStateType.VaultError, false));
                 else

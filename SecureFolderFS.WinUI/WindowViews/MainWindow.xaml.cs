@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.WinUI.Views.PrintPages;
 using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -53,6 +55,10 @@ namespace SecureFolderFS.WinUI.WindowViews
 
             // Hook up event for window closing
             AppWindow.Closing += AppWindow_Closing;
+
+            var testWindow = new Window();
+            testWindow.Content = new MasterKeyPrintPage();
+            testWindow.Show();
         }
 
         private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)

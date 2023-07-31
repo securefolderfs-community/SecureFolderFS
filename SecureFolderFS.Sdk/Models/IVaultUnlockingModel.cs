@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         /// <param name="password">The password used for unlocking the vault.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of type <see cref="IUnlockedVaultModel"/> that represents the action.</returns>
-        Task<IResult<IUnlockedVaultModel?>> UnlockAsync(IPassword password, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult{T}"/> of type <see cref="IVaultLifetimeModel"/> that represents the action.</returns>
+        Task<IResult<IVaultLifetimeModel?>> UnlockAsync(IPassword password, CancellationToken cancellationToken = default);
     }
 }

@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System.Threading;
@@ -49,7 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
             if (_vaultFolder is null)
                 return;
 
-            var validationResult = await _vaultValidator.ValidateAsync(_vaultFolder, cancellationToken);
+            var validationResult = await _vaultValidator.TryValidateAsync(_vaultFolder, cancellationToken);
             if (!validationResult.Successful)
                 return;
 

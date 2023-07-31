@@ -2,9 +2,11 @@
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utils;
 using SecureFolderFS.UI.AppModels;
+using SecureFolderFS.UI.ServiceImplementation.Vault;
 using System;
 using System.Collections.Generic;
 
@@ -21,10 +23,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
         };
 
         /// <inheritdoc/>
-        public string KeystoreFileName { get; } = Core.Constants.Vault.VAULT_KEYSTORE_FILENAME;
+        public IVaultCreator VaultCreator { get; } = new VaultCreator();
 
         /// <inheritdoc/>
-        public string ConfigurationFileName { get; } = Core.Constants.Vault.VAULT_CONFIGURATION_FILENAME;
+        public IVaultUnlocker VaultUnlocker { get; }
+
+        /// <inheritdoc/>
+        public IVaultAuthenticator VaultAuthenticator { get; }
 
         /// <inheritdoc/>
         public bool IsNameReserved(string? name)
