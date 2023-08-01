@@ -4,6 +4,7 @@ using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.WebDav.UnsafeNative;
 using SecureFolderFS.Sdk.Storage;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -33,7 +34,7 @@ namespace SecureFolderFS.Core.WebDav
         {
             if (IsOperational)
             {
-                var closeResult = !await Task.Run(() => _webDavWrapper.CloseFileSystem(closeMethod));
+                var closeResult = await Task.Run(() => _webDavWrapper.CloseFileSystem(closeMethod));
                 IsOperational = !closeResult;
 
                 if (closeResult && OperatingSystem.IsWindows()) // Closed successfully
@@ -54,53 +55,62 @@ namespace SecureFolderFS.Core.WebDav
 
         private static async Task CloseExplorerShellAsync(string path)
         {
-            var formattedPath = PathHelpers.EnsureNoTrailingPathSeparator(path);
-            var shellWindows = new SHDocVw.ShellWindows();
-
-            foreach (SHDocVw.InternetExplorer ie in shellWindows)
+            try
             {
-                var formattedName = Path.GetFileNameWithoutExtension(ie.FullName);
-                if (!formattedName.Equals("explorer", StringComparison.OrdinalIgnoreCase))
-                    continue;
+                var formattedPath = PathHelpers.EnsureNoTrailingPathSeparator(path);
+                var shellWindows = new SHDocVw.ShellWindows();
 
-                var url = ie.LocationURL.Replace('/', Path.DirectorySeparatorChar);
-                var formattedUrl = Uri.UnescapeDataString(url);
-                if (!formattedUrl.Contains(formattedPath))
-                    continue;
-
-                var windowClosed = false;
-                try
+                foreach (SHDocVw.InternetExplorer ie in shellWindows)
                 {
-                    // Hook up closing event
-                    ie.WindowClosing += Window_Closing;
+                    var formattedName = Path.GetFileNameWithoutExtension(ie.FullName);
+                    if (!formattedName.Equals("explorer", StringComparison.OrdinalIgnoreCase))
+                        continue;
 
-                    // Try quit first
-                    ie.Quit();
+                    var url = ie.LocationURL.Replace('/', Path.DirectorySeparatorChar);
+                    var formattedUrl = Uri.UnescapeDataString(url);
+                    if (!formattedUrl.Contains(formattedPath))
+                        continue;
 
-                    // Wait a short delay
-                    await Task.Delay(100);
-
-                    if (!windowClosed)
+                    var windowClosed = false;
+                    try
                     {
-                        // Retry with WM_CLOSE
-                        _ = UnsafeNativeApis.SendMessageA(ie.HWND, WindowMessages.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                        // Hook up closing event
+                        ie.WindowClosing += Window_Closing;
+
+                        // Try quit first
+                        ie.Quit();
+
+                        // Wait a short delay
+                        await Task.Delay(100);
+
+                        if (!windowClosed)
+                        {
+                            // Retry with WM_CLOSE
+                            var hWnd = new IntPtr(ie.HWND);
+                            _ = UnsafeNativeApis.SendMessageA(hWnd, WindowMessages.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // May sometimes throw when trying to access invalid window handle
+                        _ = ex;
+                    }
+                    finally
+                    {
+                        // Unhook to avoid leaking memory
+                        ie.WindowClosing -= Window_Closing;
+                    }
+
+                    void Window_Closing(bool IsChildWindow, ref bool Cancel)
+                    {
+                        windowClosed = true;
                     }
                 }
-                catch (Exception ex)
-                {
-                    // May sometimes throw when trying to access invalid window handle
-                    _ = ex;
-                }
-                finally
-                {
-                    // Unhook to avoid leaking memory
-                    ie.WindowClosing -= Window_Closing;
-                }
-
-                void Window_Closing(bool IsChildWindow, ref bool Cancel)
-                {
-                    windowClosed = true;
-                }
+            }
+            catch (Exception)
+            {
+                // Something went terribly wrong
+                Debugger.Break();
             }
         }
     }
