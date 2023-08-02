@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Services.VaultPersistence;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Sdk.Services
 {

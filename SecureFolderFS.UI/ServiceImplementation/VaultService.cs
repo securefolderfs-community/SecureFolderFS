@@ -4,7 +4,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation.Vault;
 using System;
@@ -15,13 +15,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
     /// <inheritdoc cref="IVaultService"/>
     public sealed class VaultService : IVaultService
     {
-        private static Dictionary<string, IFileSystemInfoModel> FileSystems { get; } = new()
-        {
-            { Core.Constants.FileSystemId.DOKAN_ID, new DokanyFileSystemDescriptor() },
-            { Core.Constants.FileSystemId.FUSE_ID, new FuseFileSystemDescriptor() },
-            { Core.Constants.FileSystemId.WEBDAV_ID, new WebDavFileSystemDescriptor() }
-        };
-
         /// <inheritdoc/>
         public IVaultCreator VaultCreator { get; } = new VaultCreator();
 
@@ -35,9 +28,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public bool IsNameReserved(string? name)
         {
             return name is not null && (
-                   name.Equals(Core.Constants.Vault.VAULT_KEYSTORE_FILENAME, StringComparison.Ordinal) ||
-                   name.Equals(Core.Constants.Vault.VAULT_CONFIGURATION_FILENAME, StringComparison.Ordinal) ||
-                   name.Equals(Core.Constants.Vault.VAULT_CONTENT_FOLDERNAME, StringComparison.Ordinal));
+                   name.Equals(Core.Constants.Vault.VAULT_KEYSTORE_FILENAME, StringComparison.OrdinalIgnoreCase) ||
+                   name.Equals(Core.Constants.Vault.VAULT_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase) ||
+                   name.Equals(Core.Constants.Vault.VAULT_CONTENT_FOLDERNAME, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <inheritdoc/>
@@ -49,10 +42,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public IEnumerable<IFileSystemInfoModel> GetFileSystems()
         {
-            foreach (var item in FileSystems.Values)
-            {
-                yield return item;
-            }
+            yield return new DokanyFileSystemDescriptor();
+            yield return new FuseFileSystemDescriptor();
+            yield return new WebDavFileSystemDescriptor();
         }
 
         /// <inheritdoc/>

@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;

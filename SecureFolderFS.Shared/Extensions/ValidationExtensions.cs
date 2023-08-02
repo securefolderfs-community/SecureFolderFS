@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Shared
 {

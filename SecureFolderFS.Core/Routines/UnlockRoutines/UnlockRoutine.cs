@@ -3,7 +3,7 @@ using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

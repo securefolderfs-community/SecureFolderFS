@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Printing;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using SecureFolderFS.WinUI.Views.PrintPages;
 using SecureFolderFS.WinUI.WindowViews;
 using System;
@@ -15,7 +15,7 @@ using WinUIEx;
 namespace SecureFolderFS.WinUI.ServiceImplementation
 {
     /// <inheritdoc cref="IPrinterService"/>
-    internal sealed class PrinterService : IPrinterService
+    internal sealed class WindowsPrinterService : IPrinterService
     {
         /// <inheritdoc/>
         public Task<bool> IsSupportedAsync()

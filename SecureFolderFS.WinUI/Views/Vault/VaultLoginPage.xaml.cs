@@ -47,7 +47,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
         {
             if (_continueButton?.IsEnabled ?? false)
             {
-                if (_passwordControl is null || _continueButton?.DataContext is not LoginCredentialsViewModel viewModel)
+                if (_passwordControl is null || _continueButton?.DataContext is not LoginPasswordViewModel viewModel)
                     return;
 
                 _continueButton.IsEnabled = false;

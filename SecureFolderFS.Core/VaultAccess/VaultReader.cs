@@ -6,7 +6,7 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Core.VaultAccess
 {

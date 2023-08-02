@@ -9,7 +9,7 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

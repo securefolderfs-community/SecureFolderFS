@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.Shared.Utils
+﻿namespace SecureFolderFS.Shared.Utilities
 {
     /// <summary>
     /// Provides dispatch for notifying the caller whether the event should be forwarded or not.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace SecureFolderFS.Shared.Utils
+namespace SecureFolderFS.Shared.Utilities
 {
     /// <summary>
     /// Represents a password that can be cleared.

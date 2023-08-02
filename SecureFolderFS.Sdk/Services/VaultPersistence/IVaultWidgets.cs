@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.DataModels;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System.Collections.Generic;
 
 namespace SecureFolderFS.Sdk.Services.VaultPersistence

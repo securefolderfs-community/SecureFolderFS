@@ -3,7 +3,7 @@ using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Security.Cryptography;
 using System.Threading;

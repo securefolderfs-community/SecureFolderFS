@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Shared.Utils;
+﻿using SecureFolderFS.Shared.Utilities;
 using SecureFolderFS.UI.Enums;
 using System.ComponentModel;
 using System.Threading;

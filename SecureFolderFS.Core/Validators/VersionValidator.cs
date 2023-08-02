@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.IO;
 using System.Runtime.Serialization;

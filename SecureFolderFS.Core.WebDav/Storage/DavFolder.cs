@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

@@ -5,7 +5,7 @@ using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.IO;
 using SecureFolderFS.Core.FUSE;

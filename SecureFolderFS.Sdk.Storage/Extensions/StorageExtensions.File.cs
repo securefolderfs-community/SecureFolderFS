@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.IO;
 using System.Text;

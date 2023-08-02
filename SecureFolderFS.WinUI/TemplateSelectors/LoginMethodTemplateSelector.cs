@@ -17,7 +17,7 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
             return item switch
             {
                 LoginKeystoreViewModel => AuthenticateTemplate,
-                LoginCredentialsViewModel => LoginTemplate,
+                LoginPasswordViewModel => LoginTemplate,
                 LoginErrorViewModel => InvalidTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };

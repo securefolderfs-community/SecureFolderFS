@@ -102,7 +102,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
                 .AddSingleton<IDialogService, DialogService>()
-                .AddSingleton<IPrinterService, PrinterService>()
+                .AddSingleton<IPrinterService, WindowsPrinterService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<IStorageService, NativeStorageService>()

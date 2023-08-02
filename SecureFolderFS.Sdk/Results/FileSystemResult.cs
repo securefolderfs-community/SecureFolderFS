@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 
 namespace SecureFolderFS.Sdk.Results

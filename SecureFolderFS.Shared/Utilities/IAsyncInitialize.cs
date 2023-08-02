@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Shared.Utils
+namespace SecureFolderFS.Shared.Utilities
 {
     /// <summary>
     /// Allows an object to be initialized asynchronously.

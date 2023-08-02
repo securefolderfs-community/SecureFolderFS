@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Storage.Enums;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Sdk.Storage.Extensions
 {

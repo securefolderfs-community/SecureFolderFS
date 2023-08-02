@@ -6,17 +6,16 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 {
-    public sealed partial class LoginCredentialsViewModel : ObservableObject, IDisposable
+    public sealed partial class LoginPasswordViewModel : ObservableObject, IDisposable
     {
         private readonly VaultViewModel _vaultViewModel;
-        private readonly IKeystoreModel _keystoreModel;
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private readonly IVaultUnlockingModel _vaultUnlockingModel;
         private readonly INavigationService _navigationService;
@@ -24,10 +23,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
         [ObservableProperty] private bool _IsInvalidPasswordShown;
 
         // TODO: Reduce number of parameters
-        public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IKeystoreModel keystoreModel, IVaultWatcherModel vaultWatcherModel, IVaultUnlockingModel vaultUnlockingModel, INavigationService navigationService)
+        public LoginPasswordViewModel(VaultViewModel vaultViewModel, IVaultWatcherModel vaultWatcherModel, IVaultUnlockingModel vaultUnlockingModel, INavigationService navigationService)
         {
             _vaultViewModel = vaultViewModel;
-            _keystoreModel = keystoreModel;
             _vaultWatcherModel = vaultWatcherModel;
             _vaultUnlockingModel = vaultUnlockingModel;
             _navigationService = navigationService;

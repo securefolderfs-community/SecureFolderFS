@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

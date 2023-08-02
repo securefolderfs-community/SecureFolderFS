@@ -6,7 +6,7 @@ using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Core.Routines.CredentialsRoutines
 {

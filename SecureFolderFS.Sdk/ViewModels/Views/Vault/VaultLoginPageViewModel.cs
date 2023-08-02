@@ -11,7 +11,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 case VaultLoginStateType.AwaitingCredentials:
                     if (e is ResultWithKeystore resultWithKeystore)
-                        StrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, resultWithKeystore.Keystore, _vaultLoginModel.VaultWatcher, new VaultUnlockingModel(), NavigationService);
+                        StrategyViewModel = new LoginPasswordViewModel(VaultViewModel, resultWithKeystore.Keystore, _vaultLoginModel.VaultWatcher, new VaultUnlockingModel(), NavigationService);
                     break;
 
                 case VaultLoginStateType.AwaitingTwoFactorAuth:

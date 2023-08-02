@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SecureFolderFS.Shared.Utils
+namespace SecureFolderFS.Shared.Utilities
 {
     /// <summary>
     /// Provides functionality for cleaning up class instances.

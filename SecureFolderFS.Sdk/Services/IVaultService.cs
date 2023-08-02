@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System.Collections.Generic;
 
 namespace SecureFolderFS.Sdk.Services

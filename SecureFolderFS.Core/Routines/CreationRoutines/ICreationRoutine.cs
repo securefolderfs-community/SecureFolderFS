@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.Models;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Core.Routines.CreationRoutines
 {

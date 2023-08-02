@@ -6,7 +6,7 @@ using SecureFolderFS.Core.SecureStore;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Security.Cryptography;
 using System.Threading;
