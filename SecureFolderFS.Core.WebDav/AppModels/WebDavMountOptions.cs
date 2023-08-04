@@ -19,6 +19,9 @@ namespace SecureFolderFS.Core.WebDav.AppModels
         /// <summary>
         /// Gets the port number used for the connection.
         /// </summary>
-        public required int Port { get; init; }
+        /// <remarks>
+        /// This property does not guarantee that the specified port will be used.
+        /// </remarks>
+        public required int PreferredPort { get; init; }
     }
 }

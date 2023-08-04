@@ -1,10 +1,9 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
-using System;
+﻿using System;
 
-namespace SecureFolderFS.Core.SecureStore
+namespace SecureFolderFS.Core.Cryptography.SecureStore
 {
     /// <inheritdoc cref="SecretKey"/>
-    internal sealed class SecureKey : SecretKey
+    public sealed class SecureKey : SecretKey
     {
         /// <inheritdoc/>
         public override byte[] Key { get; }

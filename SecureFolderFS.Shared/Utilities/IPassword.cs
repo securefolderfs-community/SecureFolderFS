@@ -9,6 +9,11 @@ namespace SecureFolderFS.Shared.Utilities
     public interface IPassword : IDisposable
     {
         /// <summary>
+        /// Gets the number of characters in the password.
+        /// </summary>
+        int Length { get; }
+
+        /// <summary>
         /// Retrieves the password as a byte array encoded with <paramref name="encoding"/>.
         /// </summary>
         /// <param name="encoding">The encoding used to encode the password.</param>

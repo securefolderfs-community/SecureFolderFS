@@ -7,31 +7,33 @@ namespace SecureFolderFS.UI.AppModels
     /// <inheritdoc cref="IPassword"/>
     public sealed class VaultPassword : IPassword
     {
-        private string? _password;
+        private readonly byte[] _password;
+
+        /// <inheritdoc/>
+        public int Length { get; }
 
         public VaultPassword(string password)
         {
-            _password = password;
+            _password = Encoding.UTF8.GetBytes(password);
+            Length = password.Length;
         }
 
         /// <inheritdoc/>
         public byte[] GetRepresentation(Encoding encoding)
         {
-            _ = _password ?? throw new ObjectDisposedException(nameof(VaultPassword));
-            return encoding.GetBytes(_password);
+            return encoding.Equals(Encoding.UTF8) ? _password : Encoding.Convert(Encoding.UTF8, encoding, _password);
         }
 
         /// <inheritdoc/>
         public new string ToString()
         {
-            _ = _password ?? throw new ObjectDisposedException(nameof(VaultPassword));
-            return _password;
+            return Encoding.UTF8.GetString(_password);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _password = null;
+            Array.Clear(_password);
         }
     }
 }

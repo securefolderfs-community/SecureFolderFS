@@ -1,20 +1,20 @@
-﻿using SecureFolderFS.Shared.Utilities;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Shared.Utilities;
 using System;
 
 namespace SecureFolderFS.UI.AppModels
 {
     public sealed class CredentialsCombo : IDisposable
     {
-        public IPassword? Password { get; set; }
+        public IPassword? Password { get; init; }
 
-        public byte[]? Authentication { get; set; }
+        public SecretKey? Authentication { get; init; }
 
         /// <inheritdoc/>
         public void Dispose()
         {
             Password?.Dispose();
-            if (Authentication is not null)
-                Array.Clear(Authentication);
+            Authentication?.Dispose();
         }
     }
 }

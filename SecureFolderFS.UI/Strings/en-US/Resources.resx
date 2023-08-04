@@ -126,6 +126,12 @@
   <data name="AddNewVault" xml:space="preserve">
     <value>Add new vault</value>
   </data>
+  <data name="Authenticate" xml:space="preserve">
+    <value>Authenticate</value>
+  </data>
+  <data name="AuthenticateUsing" xml:space="preserve">
+    <value>Authenticate using {0}</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Automatically lock vaults</value>
   </data>

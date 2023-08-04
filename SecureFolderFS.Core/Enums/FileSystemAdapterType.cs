@@ -1,8 +1,11 @@
-﻿namespace SecureFolderFS.Core.Enums
+﻿using System;
+
+namespace SecureFolderFS.Core.Enums
 {
     /// <summary>
     /// Defines types of virtual file system adapters that can be used by SecureFolderFS.
     /// </summary>
+    [Obsolete("Deprecated. Use string-based IDs for file systems.")]
     public enum FileSystemAdapterType : uint
     {
         /// <summary>

@@ -2,12 +2,20 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Sdk.Services.Vault
 {
     public interface IVaultUnlocker
     {
-        Task<IVaultLifetimeModel> UnlockAsync(IFolder vaultFolder, IDisposable credentials, CancellationToken cancellationToken = default);
+        ICredentialsBuilder GetCredentialsBuilder();
+
+        Task<IVaultLifetimeModel> UnlockAsync(IVaultModel vaultModel, IDisposable credentials, CancellationToken cancellationToken = default);
+    }
+
+    public interface ICredentialsBuilder : IDisposable
+    {
+        void Add(IDisposable authentication);
+
+        IDisposable BuildCredentials();
     }
 }

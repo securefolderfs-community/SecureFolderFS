@@ -33,7 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            if (_unlockedVaultViewModel.UnlockedVaultModel.RootFolder is not ILocatableFolder rootFolder)
+            if (_unlockedVaultViewModel.VaultLifeTimeModel.RootFolder is not ILocatableFolder rootFolder)
                 return;
 
             await FileExplorerService.OpenInFileExplorerAsync(rootFolder, cancellationToken);
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async Task LockVaultAsync()
         {
             // Lock vault
-            await _unlockedVaultViewModel.UnlockedVaultModel.DisposeAsync();
+            await _unlockedVaultViewModel.VaultLifeTimeModel.DisposeAsync();
 
             // Navigate away
             var loginPageViewModel = new VaultLoginPageViewModel(_unlockedVaultViewModel.VaultViewModel, _navigationService);

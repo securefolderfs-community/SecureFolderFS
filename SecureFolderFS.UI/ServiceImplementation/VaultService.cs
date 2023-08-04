@@ -19,10 +19,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public IVaultCreator VaultCreator { get; } = new VaultCreator();
 
         /// <inheritdoc/>
-        public IVaultUnlocker VaultUnlocker { get; }
+        public IVaultUnlocker VaultUnlocker { get; } = new VaultUnlocker();
 
         /// <inheritdoc/>
-        public IVaultAuthenticator VaultAuthenticator { get; }
+        public IVaultAuthenticator VaultAuthenticator { get; } = new VaultAuthenticator();
 
         /// <inheritdoc/>
         public bool IsNameReserved(string? name)

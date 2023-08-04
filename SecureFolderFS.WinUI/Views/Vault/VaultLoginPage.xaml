@@ -7,48 +7,52 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Login"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreViewModel">
+        <vc:PasswordControlToPasswordConverter x:Key="PasswordControlToPasswordConverter" />
+
+        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:AuthenticationViewModel">
             <StackPanel Spacing="24">
+                <!--  Title  -->
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="Provide keystore to continue" />
+                    Text="{x:Bind AuthenticationText}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
-                    Command="{x:Bind SelectKeystoreCommand}"
+                    Command="{x:Bind AuthenticateUserCommand}"
                     Content="Authenticate"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginCredentialsViewModel">
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordViewModel">
             <StackPanel Spacing="24">
                 <!--  Password Control  -->
                 <uc:PasswordControl
+                    x:Name="PasswordBoxControl"
                     Width="364"
-                    Loaded="PasswordControl_Loaded"
-                    PasswordSubmittedCommand="{x:Bind UnlockVaultCommand}"
-                    ShowInvalidPasswordMessage="{x:Bind IsInvalidPasswordShown, Mode=TwoWay}" />
+                    PasswordSubmittedCommand="{x:Bind ProvideCredentialsCommand}"
+                    ShowInvalidPasswordMessage="{x:Bind ShowInvalidPassword, Mode=TwoWay}" />
 
                 <!--  Continue  -->
                 <Button
                     x:Name="ContinueButton"
                     Padding="32,6"
                     HorizontalAlignment="Center"
-                    Click="ContinueButton_Click"
+                    Command="{x:Bind ProvideCredentialsCommand}"
+                    CommandParameter="{Binding ElementName=PasswordBoxControl, Converter={StaticResource PasswordControlToPasswordConverter}}"
                     Content="{l:ResourceString Name=Unlock}"
-                    Loaded="ContinueButton_Loaded"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginErrorViewModel">
+        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm:ErrorViewModel">
             <StackPanel Spacing="4">
                 <TextBlock
                     HorizontalAlignment="Center"
@@ -60,7 +64,7 @@
                     HorizontalTextAlignment="Center"
                     IsTextSelectionEnabled="True"
                     Opacity="0.8"
-                    Text="{x:Bind Message, Mode=OneWay}" />
+                    Text="{x:Bind ErrorMessage, Mode=OneWay}" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
@@ -102,13 +106,13 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
-                    Content="{x:Bind ViewModel.StrategyViewModel, Mode=OneWay}"
+                    Content="{x:Bind ViewModel.LoginViewModel, Mode=OneWay}"
                     IsTabStop="False">
                     <ContentControl.ContentTemplateSelector>
                         <ts:LoginMethodTemplateSelector
                             AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
-                            InvalidTemplate="{StaticResource VaultInvalidTemplate}"
-                            LoginTemplate="{StaticResource LoginTemplate}" />
+                            ErrorTemplate="{StaticResource ErrorTemplate}"
+                            PasswordTemplate="{StaticResource PasswordTemplate}" />
                     </ContentControl.ContentTemplateSelector>
                     <ContentControl.ContentTransitions>
                         <TransitionCollection>
@@ -117,16 +121,6 @@
                     </ContentControl.ContentTransitions>
                 </ContentControl>
             </StackPanel>
-
-            <!--  Notification  -->
-            <InfoBar
-                Title="Unsupported settings"
-                Grid.Row="1"
-                MaxWidth="580"
-                IsClosable="False"
-                IsOpen="False"
-                Message="Selected file system is not supported"
-                Severity="Error" />
         </Grid>
     </ScrollViewer>
 </Page>
