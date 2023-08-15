@@ -1,9 +1,9 @@
-﻿using System;
-using SecureFolderFS.Core.Cryptography.ContentCrypt;
+﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.Cryptography.Enums;
 using SecureFolderFS.Core.Cryptography.HeaderCrypt;
 using SecureFolderFS.Core.Cryptography.NameCrypt;
 using SecureFolderFS.Core.Cryptography.SecureStore;
+using System;
 
 namespace SecureFolderFS.Core.Cryptography
 {
@@ -16,8 +16,6 @@ namespace SecureFolderFS.Core.Cryptography
         private readonly SecretKey _macKey;
 
         // TODO: Needs docs
-        public required CipherProvider CipherProvider { get; init; }
-
         public required IHeaderCrypt HeaderCrypt { get; init; }
 
         public required IContentCrypt ContentCrypt { get; init; }
@@ -50,33 +48,30 @@ namespace SecureFolderFS.Core.Cryptography
         /// <returns>A new <see cref="Security"/> object.</returns>
         public static Security CreateNew(SecretKey encKey, SecretKey macKey, ContentCipherScheme contentCipher, FileNameCipherScheme fileNameCipher)
         {
-            var cipherProvider = CipherProvider.CreateNew();
-
             // Initialize crypt implementation
             IHeaderCrypt headerCrypt = contentCipher switch
             {
-                ContentCipherScheme.AES_CTR_HMAC => new AesCtrHmacHeaderCrypt(encKey, macKey, cipherProvider),
-                ContentCipherScheme.AES_GCM => new AesGcmHeaderCrypt(encKey, macKey, cipherProvider),
-                ContentCipherScheme.XChaCha20_Poly1305 => new XChaChaHeaderCrypt(encKey, macKey, cipherProvider),
+                ContentCipherScheme.AES_CTR_HMAC => new AesCtrHmacHeaderCrypt(encKey, macKey),
+                ContentCipherScheme.AES_GCM => new AesGcmHeaderCrypt(encKey, macKey),
+                ContentCipherScheme.XChaCha20_Poly1305 => new XChaChaHeaderCrypt(encKey, macKey),
                 _ => throw new ArgumentOutOfRangeException(nameof(contentCipher))
             };
             IContentCrypt contentCrypt = contentCipher switch
             {
-                ContentCipherScheme.AES_CTR_HMAC => new AesCtrHmacContentCrypt(macKey, cipherProvider),
-                ContentCipherScheme.AES_GCM => new AesGcmContentCrypt(cipherProvider),
-                ContentCipherScheme.XChaCha20_Poly1305 => new XChaChaContentCrypt(cipherProvider),
+                ContentCipherScheme.AES_CTR_HMAC => new AesCtrHmacContentCrypt(macKey),
+                ContentCipherScheme.AES_GCM => new AesGcmContentCrypt(),
+                ContentCipherScheme.XChaCha20_Poly1305 => new XChaChaContentCrypt(),
                 _ => throw new ArgumentOutOfRangeException(nameof(contentCipher))
             };
             INameCrypt? nameCrypt = fileNameCipher switch
             {
-                FileNameCipherScheme.AES_SIV => new AesSivNameCrypt(encKey, macKey, cipherProvider),
+                FileNameCipherScheme.AES_SIV => new AesSivNameCrypt(encKey, macKey),
                 FileNameCipherScheme.None => null,
                 _ => throw new ArgumentOutOfRangeException(nameof(fileNameCipher))
             };
 
             return new(encKey, macKey)
             {
-                CipherProvider = cipherProvider,
                 ContentCrypt = contentCrypt,
                 HeaderCrypt = headerCrypt,
                 NameCrypt = nameCrypt
@@ -89,7 +84,6 @@ namespace SecureFolderFS.Core.Cryptography
             _encKey.Dispose();
             _macKey.Dispose();
 
-            CipherProvider.Dispose();
             ContentCrypt.Dispose();
             HeaderCrypt.Dispose();
             NameCrypt?.Dispose();

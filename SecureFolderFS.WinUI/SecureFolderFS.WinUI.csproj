@@ -56,6 +56,7 @@
         <None Remove="UserControls\Introduction\AgreementScreen.xaml" />
         <None Remove="UserControls\Introduction\EndScreen.xaml" />
         <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
+        <None Remove="UserControls\LoginControl.xaml" />
         <None Remove="UserControls\MainWindowRootControl.xaml" />
         <None Remove="UserControls\NavigationControl.xaml" />
         <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
@@ -293,6 +294,11 @@
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-150.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="UserControls\LoginControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ItemGroup>
       <Page Update="Views\VaultWizard\RecoveryKeyWizardPage.xaml">

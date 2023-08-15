@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.Utilities;
@@ -14,20 +13,18 @@ namespace SecureFolderFS.Core.Validators
     internal sealed class ConfigurationValidator : IAsyncValidator<VaultConfigurationDataModel>
     {
         private readonly SecretKey _macKey;
-        private readonly IHmacSha256Crypt _hmacSha256;
 
-        public ConfigurationValidator(IHmacSha256Crypt hmacSha256, SecretKey macKey)
+        public ConfigurationValidator(SecretKey macKey)
         {
             _macKey = macKey;
-            _hmacSha256 = hmacSha256;
         }
 
         /// <inheritdoc/>
         [SkipLocalsInit]
         public Task ValidateAsync(VaultConfigurationDataModel value, CancellationToken cancellationToken = default)
         {
-            Span<byte> payloadMac = stackalloc byte[_hmacSha256.MacSize];
-            VaultParser.CalculateConfigMac(value, _macKey, _hmacSha256, payloadMac);
+            Span<byte> payloadMac = stackalloc byte[HMACSHA256.HashSizeInBytes];
+            VaultParser.CalculateConfigMac(value, _macKey, payloadMac);
 
             // Check if stored hash equals to computed hash
             if (!payloadMac.SequenceEqual(value.PayloadMac))

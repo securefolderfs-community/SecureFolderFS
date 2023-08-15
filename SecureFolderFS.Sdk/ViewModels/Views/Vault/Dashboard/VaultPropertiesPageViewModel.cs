@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using System.Threading;
@@ -22,8 +23,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
             var contentCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultInfoModel.ContentCipherId;
             var fileNameCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultInfoModel.FileNameCipherId;
 
-            ContentCipherName = contentCipherId == string.Empty ? "None" : (contentCipherId ?? "Unknown");
-            FileNameCipherName = fileNameCipherId == string.Empty ? "None" : (fileNameCipherId ?? "Unknown");
+            ContentCipherName = contentCipherId == string.Empty ? "NoEncryption".ToLocalized() : (contentCipherId ?? "Unknown");
+            FileNameCipherName = fileNameCipherId == string.Empty ? "NoEncryption".ToLocalized() : (fileNameCipherId ?? "Unknown");
         }
 
         /// <inheritdoc/>
@@ -37,6 +38,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         {
             //using var viewModel = new PasswordChangeDialogViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
             //await DialogService.ShowDialogAsync(viewModel);
+        }
+
+        [RelayCommand]
+        private async Task ChangeAuthenticationAsync()
+        {
+            // The dialog would have to have a common control for providing credentials which would be shared between the dialog and login screen
         }
     }
 }

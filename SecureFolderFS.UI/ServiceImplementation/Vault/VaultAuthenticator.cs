@@ -14,7 +14,9 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
         public async IAsyncEnumerable<AuthenticationModel> GetAuthenticationAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
-            yield return new("Password", AuthenticationType.Password, null);
+
+            yield return new("password", AuthenticationType.Password, null);
+            //yield return new("key file", AuthenticationType.Other, new KeyFileAuthenticator());
         }
     }
 }

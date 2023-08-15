@@ -6,7 +6,6 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
     /// <inheritdoc cref="IContentCrypt"/>
     internal abstract class BaseContentCrypt : IContentCrypt
     {
-        protected readonly CipherProvider cipherProvider;
         protected readonly RandomNumberGenerator secureRandom;
 
         /// <inheritdoc/>
@@ -18,9 +17,8 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public abstract int ChunkFirstReservedSize { get; }
 
-        protected BaseContentCrypt(CipherProvider cipherProvider)
+        protected BaseContentCrypt()
         {
-            this.cipherProvider = cipherProvider;
             this.secureRandom = RandomNumberGenerator.Create();
         }
 
@@ -49,9 +47,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             var additionalCiphertextBytes = ciphertextSize % ChunkCiphertextSize;
 
             if (additionalCiphertextBytes > 0 && additionalCiphertextBytes <= chunkOverhead)
-            {
                 return -1L;
-            }
 
             var additionalCleartextBytes = (additionalCiphertextBytes == 0L) ? 0L : additionalCiphertextBytes - chunkOverhead;
             var final = ChunkCleartextSize * chunksCount + additionalCleartextBytes;

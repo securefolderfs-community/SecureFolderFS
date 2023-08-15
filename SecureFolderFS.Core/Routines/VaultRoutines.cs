@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Routines.CreationRoutines;
+﻿using SecureFolderFS.Core.Routines.CreationRoutines;
 using SecureFolderFS.Core.Routines.CredentialsRoutines;
 using SecureFolderFS.Core.Routines.StorageRoutines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
@@ -11,6 +7,10 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Utilities;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Routines
 {
@@ -19,8 +19,8 @@ namespace SecureFolderFS.Core.Routines
     {
         private readonly IFolder _vaultFolder;
         private readonly IResult _validationResult;
-        private readonly IVaultReader _vaultReader;
-        private readonly IVaultWriter _vaultWriter;
+        private readonly VaultReader _vaultReader;
+        private readonly VaultWriter _vaultWriter;
 
         private VaultRoutines(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, IResult validationResult)
         {

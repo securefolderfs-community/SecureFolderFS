@@ -6,21 +6,21 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     /// <inheritdoc cref="INameCrypt"/>
     internal sealed class AesSivNameCrypt : BaseNameCrypt
     {
-        public AesSivNameCrypt(SecretKey encKey, SecretKey macKey, CipherProvider cipherProvider)
-            : base(encKey, macKey, cipherProvider)
+        public AesSivNameCrypt(SecretKey encKey, SecretKey macKey)
+            : base(encKey, macKey)
         {
         }
 
         /// <inheritdoc/>
         protected override byte[] EncryptFileName(ReadOnlySpan<byte> cleartextFileNameBuffer, ReadOnlySpan<byte> directoryId)
         {
-            return cipherProvider.AesSivCrypt.Encrypt(cleartextFileNameBuffer, encKey, macKey, directoryId);
+            return aesSiv128.Encrypt(cleartextFileNameBuffer, directoryId);
         }
 
         /// <inheritdoc/>
         protected override byte[]? DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId)
         {
-            return cipherProvider.AesSivCrypt.Decrypt(ciphertextFileNameBuffer, encKey, macKey, directoryId);
+            return aesSiv128.Decrypt(ciphertextFileNameBuffer, directoryId);
         }
     }
 }

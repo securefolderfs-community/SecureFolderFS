@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Cryptography.Helpers;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.Helpers;
 using System;
 using System.Runtime.CompilerServices;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.XChaCha20Poly1305;
@@ -20,11 +21,6 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public override int ChunkFirstReservedSize { get; } = CHUNK_NONCE_SIZE;
 
-        public XChaChaContentCrypt(CipherProvider cipherProvider)
-            : base(cipherProvider)
-        {
-        }
-
         /// <inheritdoc/>
         [SkipLocalsInit]
         public override void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
@@ -37,7 +33,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             CryptHelpers.FillAssociatedData(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Encrypt
-            cipherProvider.XChaCha20Poly1305Crypt.Encrypt(
+            XChaCha20Poly1305.Encrypt(
                 cleartextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
@@ -55,7 +51,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             CryptHelpers.FillAssociatedData(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Decrypt
-            return cipherProvider.XChaCha20Poly1305Crypt.Decrypt(
+            return XChaCha20Poly1305.Decrypt(
                 ciphertextChunk.GetChunkPayloadWithTag(),
                 header.GetHeaderContentKey(),
                 ciphertextChunk.GetChunkNonce(),

@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core;
-using SecureFolderFS.Core.Enums;
+﻿using SecureFolderFS.Core.Dokany;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
@@ -22,7 +21,7 @@ namespace SecureFolderFS.UI.AppModels
         /// <inheritdoc/>
         public Task<IResult> GetStatusAsync(CancellationToken cancellationToken = default)
         {
-            var result = VaultHelpers.DetermineAvailability(FileSystemAdapterType.DokanAdapter);
+            var result = DokanyMountable.IsSupported();
             if (result != FileSystemAvailabilityType.Available)
             {
                 // TODO: Use translation strings

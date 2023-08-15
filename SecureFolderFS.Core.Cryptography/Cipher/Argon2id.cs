@@ -1,14 +1,13 @@
-﻿using Konscious.Security.Cryptography;
-using System;
+﻿using System;
 
-namespace SecureFolderFS.Core.Cryptography.Cipher.Default
+namespace SecureFolderFS.Core.Cryptography.Cipher
 {
-    /// <inheritdoc cref="IArgon2idCrypt"/>
-    public sealed class Argon2idCrypt : IArgon2idCrypt
+    /// TODO: Needs docs
+    public static class Argon2id
     {
-        public void DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result)
+        public static void DeriveKey(ReadOnlySpan<byte> password, ReadOnlySpan<byte> salt, Span<byte> result)
         {
-            using var argon2id = new Argon2id(password.ToArray());
+            using var argon2id = new Konscious.Security.Cryptography.Argon2id(password.ToArray());
             argon2id.Salt = salt.ToArray();
             argon2id.DegreeOfParallelism = Constants.Crypt.CryptImpl.Argon2.DEGREE_OF_PARALLELISM;
             argon2id.Iterations = Constants.Crypt.CryptImpl.Argon2.ITERATIONS;

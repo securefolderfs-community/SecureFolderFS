@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SecureFolderFS.Core.Cryptography.Enums;
+using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
-using SecureFolderFS.Core.Cryptography.Enums;
 
 namespace SecureFolderFS.Core.DataModels
 {

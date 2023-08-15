@@ -1,6 +1,8 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Headers.AesCtrHmac;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.AesCtrHmacHeaderExtensions;
 
@@ -15,8 +17,8 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public override int HeaderCleartextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
 
-        public AesCtrHmacHeaderCrypt(SecretKey encKey, SecretKey macKey, CipherProvider cipherProvider)
-            : base(encKey, macKey, cipherProvider)
+        public AesCtrHmacHeaderCrypt(SecretKey encKey, SecretKey macKey)
+            : base(encKey, macKey)
         {
         }
 
@@ -37,7 +39,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             cleartextHeader.Slice(0, HEADER_NONCE_SIZE).CopyTo(ciphertextHeader);
 
             // Encrypt
-            cipherProvider.AesCtrCrypt.Encrypt(
+            AesCtr128.Encrypt(
                 cleartextHeader.GetHeaderContentKey(),
                 encKey,
                 cleartextHeader.GetHeaderNonce(),
@@ -71,7 +73,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             ciphertextHeader.GetHeaderNonce().CopyTo(cleartextHeader);
 
             // Decrypt
-            cipherProvider.AesCtrCrypt.Decrypt(
+            AesCtr128.Decrypt(
                 ciphertextHeader.GetHeaderContentKey(),
                 encKey,
                 ciphertextHeader.GetHeaderNonce(),
@@ -82,12 +84,13 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 
         private void CalculateHeaderMac(ReadOnlySpan<byte> headerNonce, ReadOnlySpan<byte> ciphertextPayload, Span<byte> headerMac)
         {
-            using var hmacSha256 = cipherProvider.HmacSha256Crypt.GetInstance();
+            // Initialize HMAC
+            using var hmacSha256 = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, macKey);
 
-            hmacSha256.InitializeHmac(macKey);
-            hmacSha256.Update(headerNonce);
-            hmacSha256.Update(ciphertextPayload);
-            hmacSha256.GetHash(headerMac);
+            hmacSha256.AppendData(headerNonce);         // headerNonce
+            hmacSha256.AppendData(ciphertextPayload);   // ciphertextPayload
+
+            hmacSha256.GetCurrentHash(headerMac);
         }
     }
 }

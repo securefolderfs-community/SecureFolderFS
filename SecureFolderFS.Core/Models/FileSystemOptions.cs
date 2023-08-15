@@ -9,9 +9,9 @@ namespace SecureFolderFS.Core.Models
     public sealed class FileSystemOptions
     {
         /// <summary>
-        /// Gets or sets the type of the virtual file system adapter to be used.
+        /// Gets or sets the type of the virtual file system adapter ID to be used.
         /// </summary>
-        public required FileSystemAdapterType AdapterType { get; init; }
+        public required string FileSystemId { get; init; }
 
         /// <summary>
         /// Gets or sets the name to use for the volume. If no value is provided, the name of the vault folder is used.

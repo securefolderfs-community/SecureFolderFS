@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private readonly IAsyncValidator<IFolder> _vaultValidator;
         private IAsyncEnumerator<AuthenticationModel>? _enumerator;
 
-        [ObservableProperty] private INotifyPropertyChanged? _LoginViewModel;
+        [ObservableProperty] private INotifyPropertyChanged? _LoginTypeViewModel;
         [ObservableProperty] private string? _VaultName;
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             // Set up the first authentication method
             if (!await TryNextAuthAsync())
-                LoginViewModel = new ErrorViewModel("No authentication methods available");
+                LoginTypeViewModel = new ErrorViewModel("No authentication methods available");
         }
 
         private async Task<bool> TryNextAuthAsync()
@@ -68,7 +68,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
             // Get the appropriate method
             var authenticationModel = _enumerator.Current;
-            LoginViewModel = authenticationModel.AuthenticationType switch
+            LoginTypeViewModel = authenticationModel.AuthenticationType switch
             {
                 AuthenticationType.Password => new PasswordViewModel(authenticationModel),
                 AuthenticationType.Other => new AuthenticationViewModel(authenticationModel),
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             // Add authentication
             _credentialsBuilder.Add(args.Authentication);
 
-            if (!await TryNextAuthAsync() && LoginViewModel is not ErrorViewModel)
+            if (!await TryNextAuthAsync() && LoginTypeViewModel is not ErrorViewModel)
             {
                 // Reached the end, in which case we should try to unlock the vault
                 await TryUnlockAsync();
@@ -105,7 +105,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (result.Successful)
                 return;
 
-            LoginViewModel = new ErrorViewModel(result.GetMessage());
+            LoginTypeViewModel = new ErrorViewModel(result.GetMessage());
         }
 
         private async Task TryUnlockAsync(CancellationToken cancellationToken = default)
@@ -137,7 +137,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             }
         }
 
-        partial void OnLoginViewModelChanging(INotifyPropertyChanged? oldValue, INotifyPropertyChanged? newValue)
+        partial void OnLoginTypeViewModelChanging(INotifyPropertyChanged? oldValue, INotifyPropertyChanged? newValue)
         {
             // Unhook old
             if (oldValue is INotifyStateChanged notifyStateChanged)
@@ -155,7 +155,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             _vaultWatcherModel.Dispose();
             _vaultWatcherModel.StateChanged -= VaultWatcherModel_StateChanged;
 
-            if (LoginViewModel is INotifyStateChanged notifyStateChanged)
+            if (LoginTypeViewModel is INotifyStateChanged notifyStateChanged)
                 notifyStateChanged.StateChanged -= LoginViewModel_StateChanged;
         }
     }

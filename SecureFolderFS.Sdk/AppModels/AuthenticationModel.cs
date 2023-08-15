@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Shared.Utilities;
+using System;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -9,9 +10,9 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public AuthenticationType AuthenticationType { get; }
 
-        public IAuthenticator? Authenticator { get; }
+        public IAuthenticator<IDisposable>? Authenticator { get; }
 
-        public AuthenticationModel(string authenticationName, AuthenticationType authenticationType, IAuthenticator? authenticator)
+        public AuthenticationModel(string authenticationName, AuthenticationType authenticationType, IAuthenticator<IDisposable>? authenticator)
         {
             AuthenticationName = authenticationName;
             AuthenticationType = authenticationType;

@@ -1,17 +1,17 @@
-using System.IO;
-using System.Runtime.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utilities;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.VaultAccess
 {
-    /// <inheritdoc cref="IVaultReader"/>
-    internal sealed class VaultReader : IVaultReader
+    // TODO: Needs docs
+    internal sealed class VaultReader
     {
         private readonly IFolder _vaultFolder;
         private readonly IAsyncSerializer<Stream> _serializer;
@@ -22,22 +22,25 @@ namespace SecureFolderFS.Core.VaultAccess
             _serializer = serializer;
         }
 
-        /// <inheritdoc/>
-        public async Task<(VaultKeystoreDataModel, VaultConfigurationDataModel, VaultAuthenticationDataModel?)> ReadAsync(CancellationToken cancellationToken)
+        public async Task<VaultKeystoreDataModel> ReadKeystoreAsync(CancellationToken cancellationToken)
+        {
+            // Get keystore file
+            var keystoreFile = await _vaultFolder.GetFileAsync(Constants.Vault.VAULT_KEYSTORE_FILENAME, cancellationToken);
+            return await ReadDataAsync<VaultKeystoreDataModel>(keystoreFile, cancellationToken);
+        }
+
+        public async Task<VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)
         {
             // Get configuration file
             var configFile = await _vaultFolder.GetFileAsync(Constants.Vault.VAULT_CONFIGURATION_FILENAME, cancellationToken);
-            var configDataModel = await ReadDataAsync<VaultConfigurationDataModel>(configFile, cancellationToken);
+            return await ReadDataAsync<VaultConfigurationDataModel>(configFile, cancellationToken);
+        }
 
-            // Get keystore file
-            var keystoreFile = await _vaultFolder.GetFileAsync(Constants.Vault.VAULT_KEYSTORE_FILENAME, cancellationToken);
-            var keystoreDataModel = await ReadDataAsync<VaultKeystoreDataModel>(keystoreFile, cancellationToken);
-
+        public async Task<VaultAuthenticationDataModel?> ReadAuthenticationAsync(CancellationToken cancellationToken)
+        {
             // Try get authentication file
             var authFile = await _vaultFolder.TryGetFileAsync(Constants.Vault.VAULT_AUTHENTICATION_FILENAME, cancellationToken);
-            var authDataModel = authFile is null ? null : await ReadDataAsync<VaultAuthenticationDataModel>(authFile, cancellationToken);
-
-            return (keystoreDataModel, configDataModel, authDataModel);
+            return authFile is null ? null : await ReadDataAsync<VaultAuthenticationDataModel?>(authFile, cancellationToken);
         }
 
         private async Task<TData> ReadDataAsync<TData>(IFile file, CancellationToken cancellationToken)

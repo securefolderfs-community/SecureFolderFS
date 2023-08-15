@@ -1,23 +1,23 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.Utilities;
+using System;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Routines.CredentialsRoutines
 {
     /// <inheritdoc cref="ICredentialsRoutine"/>
     internal sealed class CredentialsRoutine : ICredentialsRoutine
     {
-        private readonly IVaultWriter _vaultWriter;
+        private readonly VaultWriter _vaultWriter;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private UnlockContract? _unlockContract;
 
-        public CredentialsRoutine(IVaultWriter vaultWriter)
+        public CredentialsRoutine(VaultWriter vaultWriter)
         {
             _vaultWriter = vaultWriter;
         }
@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.Routines.CredentialsRoutines
             using var passkey = VaultParser.ConstructPasskey(password, magic);
 
             // Generate keystore
-            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt, _unlockContract.Security.CipherProvider);
+            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt);
 
             return this;
         }
@@ -60,7 +60,7 @@ namespace SecureFolderFS.Core.Routines.CredentialsRoutines
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
             // Write only the keystore
-            await _vaultWriter.WriteAsync(_keystoreDataModel, null, null, cancellationToken);
+            await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -1,0 +1,92 @@
+<UserControl
+    x:Class="SecureFolderFS.WinUI.UserControls.LoginControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.WinUI.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Login"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <vc:PasswordControlToPasswordConverter x:Key="PasswordControlToPasswordConverter" />
+
+        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:AuthenticationViewModel">
+            <StackPanel Spacing="24">
+                <!--  Title  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="{x:Bind AuthenticationText}" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind AuthenticateUserCommand}"
+                    Content="Authenticate"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordViewModel">
+            <StackPanel Spacing="24">
+                <!--  Password Control  -->
+                <uc:PasswordControl
+                    x:Name="PasswordBoxControl"
+                    Width="364"
+                    PasswordSubmittedCommand="{x:Bind ProvideCredentialsCommand}"
+                    ShowInvalidPasswordMessage="{x:Bind ShowInvalidPassword, Mode=TwoWay}" />
+
+                <!--  Continue  -->
+                <Button
+                    x:Name="ContinueButton"
+                    Padding="32,6"
+                    HorizontalAlignment="Center"
+                    Click="ContinueButton_Click"
+                    Command="{x:Bind ProvideCredentialsCommand}"
+                    Content="{l:ResourceString Name=Continue}"
+                    DataContext="{Binding ElementName=PasswordBoxControl}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm:ErrorViewModel">
+            <StackPanel Spacing="4">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="17"
+                    Text="Vault could not be loaded" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="12"
+                    HorizontalTextAlignment="Center"
+                    IsTextSelectionEnabled="True"
+                    Opacity="0.8"
+                    Text="{x:Bind ErrorMessage, Mode=OneWay}" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <ContentControl
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            HorizontalContentAlignment="Center"
+            Content="{x:Bind LoginTypeViewModel, Mode=OneWay}"
+            IsTabStop="False">
+            <ContentControl.ContentTemplateSelector>
+                <ts:LoginMethodTemplateSelector
+                    AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
+                    ErrorTemplate="{StaticResource ErrorTemplate}"
+                    PasswordTemplate="{StaticResource PasswordTemplate}" />
+            </ContentControl.ContentTemplateSelector>
+            <ContentControl.ContentTransitions>
+                <TransitionCollection>
+                    <ContentThemeTransition />
+                </TransitionCollection>
+            </ContentControl.ContentTransitions>
+        </ContentControl>
+    </Grid>
+</UserControl>

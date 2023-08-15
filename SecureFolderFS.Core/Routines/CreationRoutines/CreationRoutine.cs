@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.VaultAccess;
@@ -17,18 +16,16 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
     internal sealed class CreationRoutine : ICreationRoutine
     {
         private readonly IFolder _vaultFolder;
-        private readonly IVaultWriter _vaultWriter;
-        private readonly CipherProvider _cipherProvider;
+        private readonly VaultWriter _vaultWriter;
         private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private SecretKey? _macKey;
         private SecretKey? _encKey;
 
-        public CreationRoutine(IFolder vaultFolder, IVaultWriter vaultWriter)
+        public CreationRoutine(IFolder vaultFolder, VaultWriter vaultWriter)
         {
             _vaultFolder = vaultFolder;
             _vaultWriter = vaultWriter;
-            _cipherProvider = CipherProvider.CreateNew();
         }
 
         /// <inheritdoc/>
@@ -48,7 +45,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
             using var passkey = VaultParser.ConstructPasskey(password, magic);
 
             // Generate keystore
-            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt, _cipherProvider);
+            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt);
 
             // Create key copies for later use
             _macKey = macKey.CreateCopy();
@@ -67,7 +64,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
                 Version = Constants.VaultVersion.LATEST_VERSION,
                 Id = Guid.NewGuid().ToString(),
                 AuthMethod = Constants.AuthenticationMethods.AUTH_PASSWORD,
-                PayloadMac = new byte[_cipherProvider.HmacSha256Crypt.MacSize]
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
 
             return this;
@@ -82,10 +79,11 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
             ArgumentNullException.ThrowIfNull(_encKey);
 
             // First we need to fill in the PayloadMac of the content
-            VaultParser.CalculateConfigMac(_configDataModel, _macKey, _cipherProvider.HmacSha256Crypt, _configDataModel.PayloadMac);
+            VaultParser.CalculateConfigMac(_configDataModel, _macKey, _configDataModel.PayloadMac);
 
             // Write the whole config
-            await _vaultWriter.WriteAsync(_keystoreDataModel, _configDataModel, null, cancellationToken);
+            await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
+            await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
             // Create content folder
             if (_vaultFolder is IModifiableFolder modifiableFolder)
@@ -100,7 +98,6 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         {
             _encKey?.Dispose();
             _macKey?.Dispose();
-            _cipherProvider.Dispose();
         }
     }
 

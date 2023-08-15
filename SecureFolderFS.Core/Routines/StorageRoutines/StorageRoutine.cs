@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
         public IStorageRoutine SetUnlockContract(IDisposable unlockContract)
         {
             if (unlockContract is not UnlockContract contract)
-                throw new ArgumentException($"The {nameof(unlockContract)} is invalid");
+                throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
             _unlockContract = contract;
             return this;
@@ -71,11 +71,11 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
             var volumeName = options.VolumeName ?? _vaultFolder.Name;
             var (directoryIdCache, pathConverter, streamsAccess) = CreateStorageComponents(options, contentFolder.Id);
 
-            return options.AdapterType switch
+            return options.FileSystemId switch
             {
-                FileSystemAdapterType.DokanAdapter => DokanyMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, options.HealthStatistics),
-                FileSystemAdapterType.FuseAdapter => FuseMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess),
-                FileSystemAdapterType.WebDavAdapter => WebDavMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, new CryptoStorageService(_storageService)),
+                Constants.FileSystemId.DOKAN_ID => DokanyMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, options.HealthStatistics),
+                Constants.FileSystemId.FUSE_ID => FuseMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess),
+                Constants.FileSystemId.WEBDAV_ID => WebDavMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, new CryptoStorageService(_storageService)),
                 _ => throw new ArgumentOutOfRangeException(nameof(options))
             };
         }

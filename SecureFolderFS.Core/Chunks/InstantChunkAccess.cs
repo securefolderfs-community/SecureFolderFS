@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Chunks;
+using SecureFolderFS.Core.FileSystem.Statistics;
 using System;
 using System.Buffers;
 using System.Security.Cryptography;
@@ -8,15 +8,23 @@ using System.Security.Cryptography;
 namespace SecureFolderFS.Core.Chunks
 {
     /// <inheritdoc cref="IChunkAccess"/>
-    internal sealed class InstantChunkAccess : BaseChunkAccess
+    internal class InstantChunkAccess : IChunkAccess
     {
+        protected readonly IChunkReader chunkReader;
+        protected readonly IChunkWriter chunkWriter;
+        protected readonly IContentCrypt contentCrypt;
+        protected readonly IFileSystemStatistics? fileSystemStatistics;
+
         public InstantChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics? fileSystemStatistics)
-            : base(chunkReader, chunkWriter, contentCrypt, fileSystemStatistics)
         {
+            this.chunkReader = chunkReader;
+            this.chunkWriter = chunkWriter;
+            this.contentCrypt = contentCrypt;
+            this.fileSystemStatistics = fileSystemStatistics;
         }
 
         /// <inheritdoc/>
-        public override int CopyFromChunk(long chunkNumber, Span<byte> destination, int offsetInChunk)
+        public virtual int CopyFromChunk(long chunkNumber, Span<byte> destination, int offsetInChunk)
         {
             // Rent buffer
             var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
@@ -49,7 +57,7 @@ namespace SecureFolderFS.Core.Chunks
         }
 
         /// <inheritdoc/>
-        public override int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk)
+        public virtual int CopyToChunk(long chunkNumber, ReadOnlySpan<byte> source, int offsetInChunk)
         {
             // Rent buffer
             var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
@@ -86,7 +94,7 @@ namespace SecureFolderFS.Core.Chunks
         }
 
         /// <inheritdoc/>
-        public override void SetChunkLength(long chunkNumber, int length, bool includeCurrentLength = false)
+        public virtual void SetChunkLength(long chunkNumber, int length, bool includeCurrentLength = false)
         {
             // Rent buffer
             var cleartextChunk = ArrayPool<byte>.Shared.Rent(contentCrypt.ChunkCleartextSize);
@@ -136,8 +144,15 @@ namespace SecureFolderFS.Core.Chunks
         }
 
         /// <inheritdoc/>
-        public override void Flush()
+        public virtual void Flush()
         {
+        }
+
+        /// <inheritdoc/>
+        public virtual void Dispose()
+        {
+            chunkReader.Dispose();
+            chunkWriter.Dispose();
         }
     }
 }

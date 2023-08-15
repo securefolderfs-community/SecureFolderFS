@@ -13,25 +13,22 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
     /// <inheritdoc cref="IUnlockRoutine"/>
     internal sealed class UnlockRoutine : IUnlockRoutine
     {
-        private readonly IVaultReader _vaultReader;
-        private readonly CipherProvider _cipherProvider;
+        private readonly VaultReader _vaultReader;
         private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private SecretKey? _encKey;
         private SecretKey? _macKey;
 
-        public UnlockRoutine(IVaultReader vaultReader)
+        public UnlockRoutine(VaultReader vaultReader)
         {
             _vaultReader = vaultReader;
-            _cipherProvider = CipherProvider.CreateNew();
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken)
         {
-            var (keystore, config, _) = await _vaultReader.ReadAsync(cancellationToken);
-            _keystoreDataModel = keystore;
-            _configDataModel = config;
+            _keystoreDataModel = await _vaultReader.ReadKeystoreAsync(cancellationToken);
+            _configDataModel = await _vaultReader.ReadConfigurationAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -43,7 +40,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             // Construct passkey
             using var passkey = VaultParser.ConstructPasskey(password, magic);
 
-            var (encKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel, _cipherProvider);
+            var (encKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel);
             _encKey = encKey;
             _macKey = macKey;
 
@@ -65,7 +62,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
                 using var macKeyCopy = _macKey.CreateCopy();
 
                 // Check if the payload has not been tampered with
-                var validator = new ConfigurationValidator(_cipherProvider.HmacSha256Crypt, macKeyCopy);
+                var validator = new ConfigurationValidator(macKeyCopy);
                 await validator.ValidateAsync(_configDataModel, cancellationToken);
 
                 return new UnlockContract()

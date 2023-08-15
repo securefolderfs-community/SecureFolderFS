@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace SecureFolderFS.Core.Cryptography.Cipher.Default
+namespace SecureFolderFS.Core.Cryptography.Cipher
 {
-    /// <inheritdoc cref="IAesCtrCrypt"/>
-    public sealed class AesCtrCrypt : IAesCtrCrypt
+    [Obsolete("AES-CTR + HMAC encryption mode is deprecated.")]
+    public static class AesCtr128
     {
         private const ulong CTR_START = 0UL;
 
-        /// <inheritdoc/>
-        public void Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, Span<byte> result)
+        public static void Encrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, Span<byte> result)
         {
             ulong ulIv = BitConverter.ToUInt64(iv); // TODO: ulIv good here?
 
@@ -22,8 +21,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher.Default
             result2.CopyTo(result);
         }
 
-        /// <inheritdoc/>
-        public bool Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, Span<byte> result)
+        public static bool Decrypt(ReadOnlySpan<byte> bytes, ReadOnlySpan<byte> key, ReadOnlySpan<byte> iv, Span<byte> result)
         {
             try
             {
@@ -69,7 +67,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher.Default
 
         // Source: https://gist.github.com/hanswolff/8809275
 
-        internal sealed class AesCounterMode : SymmetricAlgorithm
+        private sealed class AesCounterMode : SymmetricAlgorithm
         {
             private readonly ulong _nonce;
             private readonly ulong _counter;

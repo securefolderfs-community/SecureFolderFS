@@ -9,7 +9,7 @@ using System.Linq;
 namespace SecureFolderFS.Core.Chunks
 {
     /// <inheritdoc cref="IChunkAccess"/>
-    internal sealed class CachingChunkAccess : BaseChunkAccess
+    internal sealed class CachingChunkAccess : InstantChunkAccess
     {
         private readonly Dictionary<long, ChunkBuffer> _chunkCache;
 

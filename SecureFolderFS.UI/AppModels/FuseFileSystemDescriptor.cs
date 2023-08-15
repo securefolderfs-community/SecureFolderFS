@@ -1,6 +1,5 @@
-using SecureFolderFS.Core;
-using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Enums;
+using SecureFolderFS.Core.FUSE;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Shared.Utilities;
@@ -22,7 +21,7 @@ namespace SecureFolderFS.UI.AppModels
         /// <inheritdoc/>
         public Task<IResult> GetStatusAsync(CancellationToken cancellationToken = default)
         {
-            var result = VaultHelpers.DetermineAvailability(FileSystemAdapterType.FuseAdapter);
+            var result = FuseMountable.IsSupported();
             if (result != FileSystemAvailabilityType.Available)
             {
                 // TODO: Use translation strings

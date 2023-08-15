@@ -5,6 +5,7 @@ using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SecureFolderFS.Core.VaultAccess
@@ -22,7 +23,7 @@ namespace SecureFolderFS.Core.VaultAccess
             var pwd = password.GetRepresentation(Encoding.UTF8);
             if (magic is not null) // Combine password and 'magic'
             {
-                var passkey = new SecureKey((pwd.Length + magic.Key.Length));
+                var passkey = new SecureKey((pwd.Length + magic.Length));
                 var passkeySpan = passkey.Key.AsSpan();
 
                 // Copy and combine
@@ -48,23 +49,21 @@ namespace SecureFolderFS.Core.VaultAccess
         /// </summary>
         /// <param name="configDataModel">The <see cref="VaultConfigurationDataModel"/> to compute the thumbprint for.</param>
         /// <param name="macKey">The key part of HMAC.</param>
-        /// <param name="hmacSha256Crypt">The HMAC-SHA256 cryptographic provider.</param>
         /// <param name="mac">The destination to fill the calculated HMAC thumbprint into.</param>
-        public static void CalculateConfigMac(VaultConfigurationDataModel configDataModel, SecretKey macKey, IHmacSha256Crypt hmacSha256Crypt, Span<byte> mac)
+        public static void CalculateConfigMac(VaultConfigurationDataModel configDataModel, SecretKey macKey, Span<byte> mac)
         {
             // Initialize HMAC
-            using var hmacSha256 = hmacSha256Crypt.GetInstance();
-            hmacSha256.InitializeHmac(macKey);
+            using var hmacSha256 = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, macKey);
 
             // Update HMAC
-            hmacSha256.Update(BitConverter.GetBytes(Constants.VaultVersion.LATEST_VERSION));       // Version
-            hmacSha256.Update(BitConverter.GetBytes((uint)configDataModel.ContentCipherScheme));   // ContentCipherScheme
-            hmacSha256.Update(BitConverter.GetBytes((uint)configDataModel.FileNameCipherScheme));  // FileNameCipherScheme
-            hmacSha256.Update(Encoding.UTF8.GetBytes(configDataModel.Id));                         // Id
-            hmacSha256.Update(Encoding.UTF8.GetBytes(configDataModel.AuthMethod));                 // AuthMethod
+            hmacSha256.AppendData(BitConverter.GetBytes(Constants.VaultVersion.LATEST_VERSION));       // Version
+            hmacSha256.AppendData(BitConverter.GetBytes((uint)configDataModel.ContentCipherScheme));   // ContentCipherScheme
+            hmacSha256.AppendData(BitConverter.GetBytes((uint)configDataModel.FileNameCipherScheme));  // FileNameCipherScheme
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Id));                         // Id
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AuthMethod));                 // AuthMethod
 
             // Fill the hash to payload
-            hmacSha256.GetHash(mac);
+            hmacSha256.GetCurrentHash(mac);
         }
 
         /// <summary>
@@ -72,21 +71,20 @@ namespace SecureFolderFS.Core.VaultAccess
         /// </summary>
         /// <param name="passkey">The passkey credential that combines password and 'magic'.</param>
         /// <param name="keystoreDataModel">The keystore that holds wrapped keys.</param>
-        /// <param name="cipherProvider">The cryptographic cipher provider.</param>
         /// <returns>A tuple containing the DEK and MAC keys respectively.</returns>
         [SkipLocalsInit]
-        public static (SecretKey encKey, SecretKey macKey) DeriveKeystore(SecretKey passkey, VaultKeystoreDataModel keystoreDataModel, CipherProvider cipherProvider)
+        public static (SecretKey encKey, SecretKey macKey) DeriveKeystore(SecretKey passkey, VaultKeystoreDataModel keystoreDataModel)
         {
             var encKey = new SecureKey(Constants.KeyChains.ENCKEY_LENGTH);
             var macKey = new SecureKey(Constants.KeyChains.MACKEY_LENGTH);
 
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
-            cipherProvider.Argon2idCrypt.DeriveKey(passkey.Key, keystoreDataModel.Salt, kek);
+            Argon2id.DeriveKey(passkey.Key, keystoreDataModel.Salt, kek);
 
             // Unwrap keys
-            cipherProvider.Rfc3394KeyWrap.UnwrapKey(keystoreDataModel.WrappedEncKey, kek, encKey.Key);
-            cipherProvider.Rfc3394KeyWrap.UnwrapKey(keystoreDataModel.WrappedMacKey, kek, macKey.Key);
+            Rfc3394KeyWrap.UnwrapKey(keystoreDataModel.WrappedEncKey, kek, encKey.Key);
+            Rfc3394KeyWrap.UnwrapKey(keystoreDataModel.WrappedMacKey, kek, macKey.Key);
 
             return (encKey, macKey);
         }
@@ -98,23 +96,21 @@ namespace SecureFolderFS.Core.VaultAccess
         /// <param name="encKey">The DEK key.</param>
         /// <param name="macKey">The MAC key.</param>
         /// <param name="salt">The salt used during KEK derivation.</param>
-        /// <param name="cipherProvider">The cryptographic cipher provider.</param>
         /// <returns>A new instance of <see cref="VaultKeystoreDataModel"/> containing the encrypted cryptographic keys.</returns>
         [SkipLocalsInit]
         public static VaultKeystoreDataModel EncryptKeystore(
             SecretKey passkey,
             SecretKey encKey,
             SecretKey macKey,
-            byte[] salt,
-            CipherProvider cipherProvider)
+            byte[] salt)
         {
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
-            cipherProvider.Argon2idCrypt.DeriveKey(passkey, salt, kek);
+            Argon2id.DeriveKey(passkey, salt, kek);
 
             // Wrap keys
-            var wrappedEncKey = cipherProvider.Rfc3394KeyWrap.WrapKey(encKey, kek);
-            var wrappedMacKey = cipherProvider.Rfc3394KeyWrap.WrapKey(macKey, kek);
+            var wrappedEncKey = Rfc3394KeyWrap.WrapKey(encKey, kek);
+            var wrappedMacKey = Rfc3394KeyWrap.WrapKey(macKey, kek);
 
             // Generate keystore
             return new()
