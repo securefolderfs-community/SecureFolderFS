@@ -8,7 +8,7 @@ using System.Linq;
 namespace SecureFolderFS.Core.FileNames
 {
     /// <inheritdoc cref="IFileNameAccess"/>
-    internal sealed class CachingFileNameAccess : InstantFileNameAccess
+    internal sealed class CachingFileNameAccess : FileNameAccess
     {
         private readonly Dictionary<NameWithDirectoryId, string> _cleartextNames;
         private readonly Dictionary<NameWithDirectoryId, string> _ciphertextNames;

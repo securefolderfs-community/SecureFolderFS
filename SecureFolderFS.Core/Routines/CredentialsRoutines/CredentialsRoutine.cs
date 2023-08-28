@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.Routines.CredentialsRoutines
         public ICredentialsRoutine SetUnlockContract(IDisposable unlockContract)
         {
             if (unlockContract is not UnlockContract contract)
-                throw new ArgumentException($"The {nameof(unlockContract)} is invalid");
+                throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
             _unlockContract = contract;
             return this;
