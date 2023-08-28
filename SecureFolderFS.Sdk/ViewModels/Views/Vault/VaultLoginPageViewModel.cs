@@ -32,7 +32,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private readonly IAsyncValidator<IFolder> _vaultValidator;
         private IAsyncEnumerator<AuthenticationModel>? _enumerator;
 
-        [ObservableProperty] private INotifyPropertyChanged? _LoginTypeViewModel;
         [ObservableProperty] private string? _VaultName;
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
@@ -78,20 +77,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             return true;
         }
 
-        private async void LoginViewModel_StateChanged(object? sender, EventArgs e)
-        {
-            if (e is not AuthenticationChangedEventArgs args)
-                return;
 
-            // Add authentication
-            _credentialsBuilder.Add(args.Authentication);
-
-            if (!await TryNextAuthAsync() && LoginTypeViewModel is not ErrorViewModel)
-            {
-                // Reached the end, in which case we should try to unlock the vault
-                await TryUnlockAsync();
-            }
-        }
 
         private async void VaultWatcherModel_StateChanged(object? sender, EventArgs e)
         {
@@ -135,17 +121,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 // TODO: Above ^
                 _ = ex;
             }
-        }
-
-        partial void OnLoginTypeViewModelChanging(INotifyPropertyChanged? oldValue, INotifyPropertyChanged? newValue)
-        {
-            // Unhook old
-            if (oldValue is INotifyStateChanged notifyStateChanged)
-                notifyStateChanged.StateChanged -= LoginViewModel_StateChanged;
-
-            // Hook up new
-            if (newValue is INotifyStateChanged notifyStateChanged2)
-                notifyStateChanged2.StateChanged += LoginViewModel_StateChanged;
         }
 
         /// <inheritdoc/>

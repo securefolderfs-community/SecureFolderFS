@@ -105,11 +105,5 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
 
             return (directoryIdCache, pathConverter, streamsAccess);
         }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            // UnlockContract is not disposed of here because it's populated into filesystem and storage objects
-        }
     }
 }

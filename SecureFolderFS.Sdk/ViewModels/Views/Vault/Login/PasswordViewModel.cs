@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.Utilities;
+using System;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 {
@@ -12,8 +12,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
         [ObservableProperty] private string _ContinuationText;
         [ObservableProperty] private bool _ShowInvalidPassword;
 
-        public PasswordViewModel(AuthenticationModel authenticationModel, bool isFinal = false)
-            : base(authenticationModel)
+        /// <inheritdoc/>
+        public override event EventHandler<EventArgs>? StateChanged;
+
+        public PasswordViewModel(bool isFinal = false)
         {
             _ContinuationText = isFinal ? "Unlock".ToLocalized() : "Continue".ToLocalized();
         }
@@ -30,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
             if (password is null || password.Length == 0)
                 return;
 
-            InvokeStateChanged(this, new AuthenticationChangedEventArgs(password));
+            StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(password));
         }
     }
 }

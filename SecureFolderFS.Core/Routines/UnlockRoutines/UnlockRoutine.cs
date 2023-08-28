@@ -65,14 +65,9 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
                 var validator = new ConfigurationValidator(macKeyCopy);
                 await validator.ValidateAsync(_configDataModel, cancellationToken);
 
-                return new UnlockContract()
-                {
-                    // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
-                    // Key copies need to be created because the original ones are disposed of here
-                    Security = Security.CreateNew(_encKey.CreateCopy(), _macKey.CreateCopy(), _configDataModel.ContentCipherScheme, _configDataModel.FileNameCipherScheme),
-                    ConfigurationDataModel = _configDataModel,
-                    KeystoreDataModel = _keystoreDataModel
-                };
+                // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
+                // Key copies need to be created because the original ones are disposed of here
+                return new UnlockContract(_encKey.CreateCopy(), _macKey.CreateCopy(), _configDataModel, _keystoreDataModel);
             }
         }
 
@@ -86,16 +81,35 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
 
     internal sealed class UnlockContract : IDisposable
     {
-        public required Security Security { get; init; }
+        private readonly SecretKey _encKey;
+        private readonly SecretKey _macKey;
 
-        public required VaultConfigurationDataModel ConfigurationDataModel { get; init; }
+        public Security Security { get; }
 
-        public required VaultKeystoreDataModel KeystoreDataModel { get; init; }
+        public VaultConfigurationDataModel ConfigurationDataModel { get; }
+
+        public VaultKeystoreDataModel KeystoreDataModel { get; }
+
+        public UnlockContract(SecretKey encKey, SecretKey macKey, VaultConfigurationDataModel configDataModel, VaultKeystoreDataModel keystoreDataModel)
+        {
+            _encKey = encKey;
+            _macKey = macKey;
+            ConfigurationDataModel = configDataModel;
+            KeystoreDataModel = keystoreDataModel;
+            Security = Security.CreateNew(_encKey, _macKey, ConfigurationDataModel.ContentCipherScheme, ConfigurationDataModel.FileNameCipherScheme);
+        }
+        
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return $"{Convert.ToBase64String(_encKey)}{Constants.KEY_TEXT_SEPARATOR}{Convert.ToBase64String(_macKey)}";
+        }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            Security.Dispose();
+            _encKey.Dispose();
+            _macKey.Dispose();
         }
     }
 }

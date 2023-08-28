@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Storage;
 namespace SecureFolderFS.Core.Routines.StorageRoutines
 {
     // TODO: Needs docs
-    public interface IStorageRoutine : IDisposable
+    public interface IStorageRoutine
     {
         IStorageRoutine SetUnlockContract(IDisposable unlockContract);
 

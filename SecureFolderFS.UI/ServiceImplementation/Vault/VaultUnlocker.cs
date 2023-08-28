@@ -42,30 +42,40 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
                 .SetCredentials(credentialsCombo.Password, credentialsCombo.Authentication)
                 .FinalizeAsync(cancellationToken);
 
-            using var storageRoutine = routines.BuildStorage();
-            var fileSystemId = await GetBestAvailableFileSystemAsync(cancellationToken);
-
-            var storageService = Ioc.Default.GetRequiredService<IStorageService>();
-            var statisticsBridge = new FileSystemStatisticsToVaultStatisticsModelBridge();
-
-            var mountable = await storageRoutine
-                .SetUnlockContract(unlockContract)
-                .SetStorageService(storageService)
-                .CreateMountableAsync(new FileSystemOptions()
-                {
-                    FileSystemId = fileSystemId,
-                    FileSystemStatistics = statisticsBridge,
-                    VolumeName = vaultModel.VaultName // TODO: Format name to exclude illegal characters
-                }, cancellationToken);
-
-            var vaultInfoModel = new VaultInfoModel()
+            try
             {
-                ContentCipherId = "TODO",
-                FileNameCipherId = "TODO"
-            };
+                var storageRoutine = routines.BuildStorage();
+                var fileSystemId = await GetBestAvailableFileSystemAsync(cancellationToken);
 
-            var virtualFileSystem = await mountable.MountAsync(GetMountOptions(fileSystemId), cancellationToken);
-            return new VaultLifetimeModel(virtualFileSystem, statisticsBridge, vaultInfoModel);
+                var storageService = Ioc.Default.GetRequiredService<IStorageService>();
+                var statisticsBridge = new FileSystemStatisticsToVaultStatisticsModelBridge();
+
+                var mountable = await storageRoutine
+                    .SetUnlockContract(unlockContract)
+                    .SetStorageService(storageService)
+                    .CreateMountableAsync(new FileSystemOptions()
+                    {
+                        FileSystemId = fileSystemId,
+                        FileSystemStatistics = statisticsBridge,
+                        VolumeName = vaultModel.VaultName // TODO: Format name to exclude illegal characters
+                    }, cancellationToken);
+
+                var vaultInfoModel = new VaultInfoModel()
+                {
+                    ContentCipherId = "TODO",
+                    FileNameCipherId = "TODO"
+                };
+
+                var virtualFileSystem = await mountable.MountAsync(GetMountOptions(fileSystemId), cancellationToken);
+                return new VaultLifetimeModel(virtualFileSystem, statisticsBridge, vaultInfoModel);
+            }
+            catch (Exception)
+            {
+                // Make sure to dispose the unlock contract when failed
+                unlockContract.Dispose();
+
+                throw;
+            }
         }
 
         private async Task<string> GetBestAvailableFileSystemAsync(CancellationToken cancellationToken)
@@ -73,7 +83,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
             var vaultService = Ioc.Default.GetRequiredService<IVaultService>();
             var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
 
-            string lastBestId = null;
+            string? lastBestId = null;
             foreach (var item in vaultService.GetFileSystems())
             {
                 if (item.Id == settingsService.UserSettings.PreferredFileSystemId)

@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     /// <inheritdoc cref="INameCrypt"/>
     internal abstract class BaseNameCrypt : INameCrypt
     {
-        protected readonly AesSiv128Lifetime aesSiv128;
+        protected readonly AesSiv128 aesSiv128;
 
         protected BaseNameCrypt(SecretKey encKey, SecretKey macKey)
         {

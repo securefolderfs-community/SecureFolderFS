@@ -1,15 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Services;
+﻿using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Shared.Utilities;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 {
-    public abstract class BaseDashboardPageViewModel : ObservableObject, INavigationTarget, IAsyncInitialize, IDisposable
+    public abstract class BaseDashboardPageViewModel : BasePageViewModel
     {
         protected UnlockedVaultViewModel UnlockedVaultViewModel { get; }
 
@@ -20,17 +14,5 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
             UnlockedVaultViewModel = unlockedVaultViewModel;
             DashboardNavigationService = dashboardNavigationService;
         }
-
-        /// <inheritdoc/>
-        public abstract Task InitAsync(CancellationToken cancellationToken = default);
-
-        /// <inheritdoc/>
-        public virtual void OnNavigatingTo(NavigationType navigationType) { }
-
-        /// <inheritdoc/>
-        public virtual void OnNavigatingFrom() { }
-
-        /// <inheritdoc/>
-        public virtual void Dispose() { }
     }
 }

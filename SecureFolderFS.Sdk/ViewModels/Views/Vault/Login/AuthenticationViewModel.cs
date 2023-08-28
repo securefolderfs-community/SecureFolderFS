@@ -13,12 +13,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 {
     public sealed partial class AuthenticationViewModel : BaseLoginViewModel
     {
+        private readonly AuthenticationModel _authenticationModel;
+
         [ObservableProperty] private string? _ErrorMessage;
         [ObservableProperty] private string? _AuthenticationText;
 
+        /// <inheritdoc/>
+        public override event EventHandler<EventArgs>? StateChanged;
+
         public AuthenticationViewModel(AuthenticationModel authenticationModel)
-            : base(authenticationModel)
         {
+            _authenticationModel = authenticationModel;
             _AuthenticationText = string.Format("AuthenticateUsing".ToLocalized(), authenticationModel.AuthenticationName);
         }
 
@@ -31,15 +36,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
         [RelayCommand]
         private async Task AuthenticateUserAsync(CancellationToken cancellationToken)
         {
-            _ = authenticationModel.Authenticator ?? throw new InvalidOperationException("Could not authenticate");
+            _ = _authenticationModel.Authenticator ?? throw new InvalidOperationException("Could not authenticate.");
 
             try
             {
-                var identity = await authenticationModel.Authenticator.AuthenticateAsync(cancellationToken);
-                if (identity is not IDisposable disposable)
-                    return;
-
-                InvokeStateChanged(this, new AuthenticationChangedEventArgs(disposable));
+                var authentication = await _authenticationModel.Authenticator.AuthenticateAsync(cancellationToken);
+                StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(authentication));
             }
             catch (Exception ex)
             {

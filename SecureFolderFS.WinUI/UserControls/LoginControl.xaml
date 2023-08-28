@@ -12,8 +12,23 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:PasswordControlToPasswordConverter x:Key="PasswordControlToPasswordConverter" />
+        <DataTemplate x:Key="MigrationTemplate" x:DataType="vm:MigrationViewModel">
+            <StackPanel Spacing="24">
+                <!--  Title  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="The vault needs to be migrated before it can be used." />
 
+                <!--  Migrate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind MigrateCommand}"
+                    Content="Migrate"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:AuthenticationViewModel">
             <StackPanel Spacing="24">
                 <!--  Title  -->

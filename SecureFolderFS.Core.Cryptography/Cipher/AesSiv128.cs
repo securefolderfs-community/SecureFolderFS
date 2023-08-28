@@ -6,9 +6,16 @@ using System.Security.Cryptography;
 namespace SecureFolderFS.Core.Cryptography.Cipher
 {
     // TODO: Needs docs
-    public static class AesSiv128
+    public sealed class AesSiv128 : IDisposable
     {
-        public static AesSiv128Lifetime CreateInstance(ReadOnlySpan<byte> encKey, ReadOnlySpan<byte> macKey)
+        private readonly Aead _aesCmacSiv;
+
+        private AesSiv128(Aead aesCmacSiv)
+        {
+            _aesCmacSiv = aesCmacSiv;
+        }
+
+        public static AesSiv128 CreateInstance(ReadOnlySpan<byte> encKey, ReadOnlySpan<byte> macKey)
         {
             // The longKey will be split into two keys - one for S2V and the other one for CTR
             var longKey = new byte[encKey.Length + macKey.Length];
@@ -20,17 +27,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
 
             var aesCmacSiv = Aead.CreateAesCmacSiv(longKey);
 
-            return new AesSiv128Lifetime(aesCmacSiv);
-        }
-    }
-
-    public sealed class AesSiv128Lifetime : IDisposable
-    {
-        private readonly Aead _aesCmacSiv;
-
-        internal AesSiv128Lifetime(Aead aesCmacSiv)
-        {
-            _aesCmacSiv = aesCmacSiv;
+            return new AesSiv128(aesCmacSiv);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

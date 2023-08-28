@@ -1,12 +1,12 @@
 ﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utilities;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using static SecureFolderFS.Core.Constants.VaultVersion;
 
 namespace SecureFolderFS.Core.Validators
 {
@@ -25,10 +25,19 @@ namespace SecureFolderFS.Core.Validators
         {
             var configDataModel = await _serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(value, cancellationToken);
             if (configDataModel is null)
-                throw new SerializationException("Couldn't deserialize configuration buffer to configuration data model");
+                throw new SerializationException("Couldn't deserialize configuration buffer to configuration data model.");
 
-            if (configDataModel.Version != Constants.VaultVersion.LATEST_VERSION)
-                throw new NotSupportedException($"Vault version {configDataModel.Version} is not supported.");
+            if (configDataModel.Version > LATEST_VERSION)
+                throw new FormatException("Unknown vault version.");
+
+            if (configDataModel.Version < V1)
+                throw new FormatException("Invalid vault version.");
+
+            _ = configDataModel.Version switch
+            {
+                (V1 or V2) and not LATEST_VERSION => throw new NotSupportedException($"Vault version {configDataModel.Version} is not supported."),
+                _ => configDataModel.Version
+            };
         }
     }
 }
