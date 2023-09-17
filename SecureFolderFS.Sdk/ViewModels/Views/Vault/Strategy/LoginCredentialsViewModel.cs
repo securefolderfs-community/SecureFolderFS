@@ -1,11 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utils;
 using System;
 using System.Threading;
@@ -13,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 {
+    [Inject<IDialogService>, Inject<ISettingsService>]
     public sealed partial class LoginCredentialsViewModel : ObservableObject, IDisposable
     {
         private readonly VaultViewModel _vaultViewModel;
@@ -26,6 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
         // TODO: Reduce number of parameters
         public LoginCredentialsViewModel(VaultViewModel vaultViewModel, IKeystoreModel keystoreModel, IVaultWatcherModel vaultWatcherModel, IVaultUnlockingModel vaultUnlockingModel, INavigationService navigationService)
         {
+            ServiceProvider = Ioc.Default;
             _vaultViewModel = vaultViewModel;
             _keystoreModel = keystoreModel;
             _vaultWatcherModel = vaultWatcherModel;
@@ -76,6 +82,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy
 
             WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(_vaultViewModel.VaultModel));
             await _navigationService.TryNavigateAndForgetAsync(dashboardPage);
+
+            if (!SettingsService.AppSettings.WasVaultFolderExplanationShown)
+            {
+                var explanationDialog = new ExplanationDialogViewModel();
+                await explanationDialog.InitAsync(cancellationToken);
+                await DialogService.ShowDialogAsync(explanationDialog);
+
+                SettingsService.AppSettings.WasVaultFolderExplanationShown = true;
+                await SettingsService.AppSettings.TrySaveAsync(cancellationToken);
+            }
         }
 
         /// <inheritdoc/>

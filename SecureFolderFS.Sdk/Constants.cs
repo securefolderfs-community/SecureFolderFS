@@ -15,6 +15,11 @@
             public const string GRAPHS_WIDGET_ID = "graphs_widget";
         }
 
+        public static class Dialogs
+        {
+            public const int EXPLANATION_DIALOG_TIME_TICKS = 5;
+        }
+
         public static class Vault
         {
             public const int MAX_FREE_AMOUNT_OF_VAULTS = 2;
