@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // TODO: Temporary fix for file share issue
-            share = FileShare.ReadWrite | FileShare.Delete;
+            //share = FileShare.ReadWrite | FileShare.Delete;
 
             // Open ciphertext stream
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);

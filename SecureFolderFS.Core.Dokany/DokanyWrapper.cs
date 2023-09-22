@@ -22,7 +22,7 @@ namespace SecureFolderFS.Core.Dokany
             var dokanBuilder = new DokanInstanceBuilder(_dokan)
                 .ConfigureOptions(opt =>
                 {
-                    opt.Options = DokanOptions.CaseSensitive | DokanOptions.FixedDrive;
+                    opt.Options = DokanOptions.CaseSensitive;
                     opt.UNCName = FileSystem.Constants.UNC_NAME;
                     opt.MountPoint = mountPoint;
                 });
