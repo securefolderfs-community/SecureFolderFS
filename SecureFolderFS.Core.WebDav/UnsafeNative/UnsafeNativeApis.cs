@@ -9,20 +9,20 @@ namespace SecureFolderFS.Core.WebDav.UnsafeNative
         public const int CONNECT_TEMPORARY = 4;
         public const int RESOURCETYPE_DISK = 1;
 
-        [DllImport("Mpr.dll", CharSet = CharSet.Unicode)]
+        [DllImport("Mpr.dll")]
         public static extern int WNetAddConnection2(
             [In] NETRESOURCE lpNetResource,
             [In] string lpPassword,
             [In] string lpUserName,
             [In] uint dwFlags);
 
-        [DllImport("Mpr.dll", CharSet = CharSet.Unicode)]
+        [DllImport("Mpr.dll")]
         public static extern int WNetCancelConnection2(
             [In] string lpName,
             [In] uint dwFlags,
             [In] bool fForce);
 
-        [DllImport("Mpr.dll", CharSet = CharSet.Unicode)]
+        [DllImport("Mpr.dll")]
         public static extern int WNetGetConnection(
             [In] string lpLocalName,
             [Out] StringBuilder lpRemoteName,
