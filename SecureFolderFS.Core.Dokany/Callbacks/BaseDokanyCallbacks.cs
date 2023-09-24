@@ -63,12 +63,12 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public virtual NtStatus FlushFileBuffers(string fileName, IDokanFileInfo info)
         {
             if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
-                return Trace(DokanResult.InvalidHandle, nameof(FlushFileBuffers), fileName, info);
+                return Trace(DokanResult.InvalidHandle, fileName, info);
 
             try
             {
                 fileHandle.Stream.Flush();
-                return Trace(DokanResult.Success, nameof(FlushFileBuffers), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (IOException)
             {
@@ -86,10 +86,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public virtual NtStatus SetEndOfFile(string fileName, long length, IDokanFileInfo info)
         {
             if (handlesManager.GetHandle<FileHandle>(GetContextValue(info)) is not { } fileHandle)
-                return Trace(DokanResult.InvalidHandle, nameof(SetEndOfFile), fileName, info);
+                return Trace(DokanResult.InvalidHandle, fileName, info);
 
             fileHandle.Stream.SetLength(length);
-            return Trace(DokanResult.Success, nameof(SetEndOfFile), fileName, info);
+            return Trace(DokanResult.Success, fileName, info);
         }
 
         /// <inheritdoc/>
@@ -107,27 +107,27 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             maximumComponentLength = volumeModel.MaximumComponentLength;
             features = volumeModel.FileSystemFeatures;
 
-            return Trace(DokanResult.Success, nameof(GetVolumeInformation), null, info);
+            return Trace(DokanResult.Success, null, info);
         }
 
         /// <inheritdoc/>
         public virtual NtStatus Mounted(string mountPoint, IDokanFileInfo info)
         {
             _ = mountPoint; // TODO: Check if mountPoint is different and update the RootFolder (?)
-            return Trace(DokanResult.Success, nameof(Mounted), null, info);
+            return Trace(DokanResult.Success, null, info);
         }
 
         /// <inheritdoc/>
         public virtual NtStatus Unmounted(IDokanFileInfo info)
         {
-            return Trace(DokanResult.Success, nameof(Unmounted), null, info);
+            return Trace(DokanResult.Success, null, info);
         }
 
         /// <inheritdoc/>
         public virtual NtStatus FindStreams(string fileName, out IList<FileInformation> streams, IDokanFileInfo info)
         {
             streams = Array.Empty<FileInformation>();
-            return Trace(DokanResult.NotImplemented, nameof(FindStreams), fileName, info);
+            return Trace(DokanResult.NotImplemented, fileName, info);
         }
 
         /// <inheritdoc/>
@@ -143,7 +143,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (ciphertextPath is null)
             {
                 bytesRead = 0;
-                return Trace(DokanResult.PathNotFound, nameof(ReadFile), fileName, info);
+                return Trace(DokanResult.PathNotFound, fileName, info);
             }
 
             // Memory-mapped
@@ -170,22 +170,22 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var bufferSpan = new Span<byte>(buffer.ToPointer(), (int)bufferLength);
                 bytesRead = fileHandle.Stream.Read(bufferSpan);
 
-                return Trace(DokanResult.Success, nameof(ReadFile), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (PathTooLongException)
             {
                 bytesRead = 0;
-                return Trace(DokanResult.InvalidName, nameof(ReadFile), fileName, info);
+                return Trace(DokanResult.InvalidName, fileName, info);
             }
             catch (CryptographicException)
             {
                 bytesRead = 0;
-                return Trace(NtStatus.CrcError, nameof(ReadFile), fileName, info);
+                return Trace(NtStatus.CrcError, fileName, info);
             }
             catch (UnavailableStreamException)
             {
                 bytesRead = 0;
-                return Trace(NtStatus.HandleNoLongerValid, nameof(ReadFile), fileName, info);
+                return Trace(NtStatus.HandleNoLongerValid, fileName, info);
             }
             finally
             {
@@ -207,7 +207,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             if (ciphertextPath is null)
             {
                 bytesWritten = 0;
-                return Trace(DokanResult.PathNotFound, nameof(WriteFile), fileName, info);
+                return Trace(DokanResult.PathNotFound, fileName, info);
             }
 
             // Memory-mapped
@@ -235,29 +235,29 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 fileHandle.Stream.Write(bufferSpan);
                 bytesWritten = alignedBytesToCopy;
 
-                return Trace(DokanResult.Success, nameof(WriteFile), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (PathTooLongException)
             {
                 bytesWritten = 0;
-                return Trace(DokanResult.InvalidName, nameof(WriteFile), fileName, info);
+                return Trace(DokanResult.InvalidName, fileName, info);
             }
             catch (CryptographicException)
             {
                 bytesWritten = 0;
-                return Trace(NtStatus.CrcError, nameof(WriteFile), fileName, info);
+                return Trace(NtStatus.CrcError, fileName, info);
             }
             catch (UnavailableStreamException)
             {
                 bytesWritten = 0;
-                return Trace(NtStatus.HandleNoLongerValid, nameof(WriteFile), fileName, info);
+                return Trace(NtStatus.HandleNoLongerValid, fileName, info);
             }
             catch (IOException ioEx)
             {
                 if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
                 {
                     bytesWritten = 0;
-                    return Trace((NtStatus)ntStatus, nameof(WriteFile), fileName, info);
+                    return Trace((NtStatus)ntStatus, fileName, info);
                 }
 
                 throw;
@@ -354,8 +354,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             return bufferLength;
         }
 
-        protected static NtStatus Trace(NtStatus result, string methodName, string fileName, IDokanFileInfo info,
-            FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes)
+        protected static NtStatus Trace(NtStatus result, string fileName, IDokanFileInfo info,
+            FileAccess access, FileShare share, FileMode mode, FileOptions options, FileAttributes attributes, [CallerMemberName] string methodName = "")
         {
 #if !DEBUG
             return result;
@@ -373,7 +373,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             return result;
         }
 
-        protected static NtStatus Trace(NtStatus result, string methodName, string? fileName, IDokanFileInfo info, params object[]? args)
+        protected static NtStatus Trace(NtStatus result, string? fileName, IDokanFileInfo info, [CallerMemberName] string methodName = "", params object[]? args)
         {
 #if !DEBUG
             return result;

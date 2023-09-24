@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             var result = DokanResult.Success;
             var ciphertextPath = GetCiphertextPath(fileName);
             if (ciphertextPath is null)
-                return Trace(DokanResult.PathNotFound, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                return Trace(DokanResult.PathNotFound, fileName, info, access, share, mode, options, attributes);
 
             if (info.IsDirectory)
             {
@@ -60,14 +60,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                                 try
                                 {
                                     if (!File.GetAttributes(ciphertextPath).HasFlag(FileAttributes.Directory))
-                                        return Trace(DokanResult.NotADirectory, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                                        return Trace(DokanResult.NotADirectory, fileName, info, access, share, mode, options, attributes);
                                 }
                                 catch (Exception)
                                 {
-                                    return Trace(DokanResult.FileNotFound, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                                    return Trace(DokanResult.FileNotFound, fileName, info, access, share, mode, options, attributes);
                                 }
 
-                                return Trace(DokanResult.PathNotFound, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                                return Trace(DokanResult.PathNotFound, fileName, info, access, share, mode, options, attributes);
                             }
 
                             // .Any() iterator moves by one - corresponds to FindNextFile
@@ -79,12 +79,12 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         case FileMode.CreateNew:
                         {
                             if (Directory.Exists(ciphertextPath))
-                                return Trace(DokanResult.FileExists, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                                return Trace(DokanResult.FileExists, fileName, info, access, share, mode, options, attributes);
 
                             try
                             {
                                 _ = File.GetAttributes(ciphertextPath).HasFlag(FileAttributes.Directory);
-                                return Trace(DokanResult.AlreadyExists, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                                return Trace(DokanResult.AlreadyExists, fileName, info, access, share, mode, options, attributes);
                             }
                             catch (IOException)
                             {
@@ -109,7 +109,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    return Trace(DokanResult.AccessDenied, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                    return Trace(DokanResult.AccessDenied, fileName, info, access, share, mode, options, attributes);
                 }
             }
             else
@@ -141,29 +141,29 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                                 if (pathIsDirectory && (access & FileAccess.Delete) == FileAccess.Delete && (access & FileAccess.Synchronize) != FileAccess.Synchronize)
                                 {
                                     // It is a DeleteFile request on a directory
-                                    return Trace(DokanResult.AccessDenied, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                                    return Trace(DokanResult.AccessDenied, fileName, info, access, share, mode, options, attributes);
                                 }
 
                                 info.IsDirectory = pathIsDirectory;
                                 InvalidateContext(info); // Must invalidate before returning DokanResult.Success
 
-                                return Trace(DokanResult.Success, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                                return Trace(DokanResult.Success, fileName, info, access, share, mode, options, attributes);
                             }
                         }
                         else
                         {
-                            return Trace(DokanResult.FileNotFound, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                            return Trace(DokanResult.FileNotFound, fileName, info, access, share, mode, options, attributes);
                         }
                         break;
 
                     case FileMode.CreateNew:
                         if (pathExists)
-                            return Trace(DokanResult.FileExists, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                            return Trace(DokanResult.FileExists, fileName, info, access, share, mode, options, attributes);
                         break;
 
                     case FileMode.Truncate:
                         if (!pathExists)
-                            return Trace(DokanResult.FileNotFound, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                            return Trace(DokanResult.FileNotFound, fileName, info, access, share, mode, options, attributes);
                         break;
                 }
 
@@ -194,34 +194,34 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     // Must invalidate here, because cleanup is not called
                     CloseHandle(info);
                     InvalidateContext(info);
-                    return Trace(NtStatus.CrcError, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                    return Trace(NtStatus.CrcError, fileName, info, access, share, mode, options, attributes);
                 }
                 catch (UnauthorizedAccessException) // Don't have access rights
                 {
                     // Must invalidate here, because cleanup is not called
                     CloseHandle(info);
                     InvalidateContext(info);
-                    return Trace(DokanResult.AccessDenied, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                    return Trace(DokanResult.AccessDenied, fileName, info, access, share, mode, options, attributes);
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    return Trace(DokanResult.PathNotFound, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                    return Trace(DokanResult.PathNotFound, fileName, info, access, share, mode, options, attributes);
                 }
                 catch (IOException ioEx)
                 {
                     // Already exists
                     if (ErrorHandlingHelpers.IsFileAlreadyExistsException(ioEx))
-                        return Trace(DokanResult.AlreadyExists, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                        return Trace(DokanResult.AlreadyExists, fileName, info, access, share, mode, options, attributes);
 
                     // Sharing violation
                     if (ErrorHandlingHelpers.IsSharingViolationException(ioEx))
-                        return Trace(DokanResult.SharingViolation, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+                        return Trace(DokanResult.SharingViolation, fileName, info, access, share, mode, options, attributes);
 
                     throw;
                 }
             }
 
-            return Trace(result, nameof(CreateFile), fileName, info, access, share, mode, options, attributes);
+            return Trace(result, fileName, info, access, share, mode, options, attributes);
         }
 
         /// <inheritdoc/>
@@ -264,7 +264,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (ciphertextPath is null)
                 {
                     fileInfo = default;
-                    return Trace(DokanResult.PathNotFound, nameof(GetFileInformation), fileName, info);
+                    return Trace(DokanResult.PathNotFound, fileName, info);
                 }
 
                 FileSystemInfo finfo = new FileInfo(ciphertextPath);
@@ -283,32 +283,32 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         : 0L
                 };
 
-                return Trace(DokanResult.Success, nameof(GetFileInformation), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (PathTooLongException)
             {
                 fileInfo = default;
-                return Trace(DokanResult.InvalidName, nameof(GetFileInformation), fileName, info);
+                return Trace(DokanResult.InvalidName, fileName, info);
             }
             catch (FileNotFoundException)
             {
                 fileInfo = default;
-                return Trace(DokanResult.FileNotFound, nameof(GetFileInformation), fileName, info);
+                return Trace(DokanResult.FileNotFound, fileName, info);
             }
             catch (DirectoryNotFoundException)
             {
                 fileInfo = default;
-                return Trace(DokanResult.PathNotFound, nameof(GetFileInformation), fileName, info);
+                return Trace(DokanResult.PathNotFound, fileName, info);
             }
             catch (UnauthorizedAccessException)
             {
                 fileInfo = default;
-                return Trace(DokanResult.AccessDenied, nameof(GetFileInformation), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
             catch (Exception)
             {
                 fileInfo = default;
-                return Trace(DokanResult.Unsuccessful, nameof(GetFileInformation), fileName, info);
+                return Trace(DokanResult.Unsuccessful, fileName, info);
             }
         }
 
@@ -327,7 +327,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             totalNumberOfBytes = _vaultDriveInfo?.TotalSize ?? 0L;
             totalNumberOfFreeBytes = _vaultDriveInfo?.AvailableFreeSpace ?? 0L;
 
-            return Trace(DokanResult.Success, nameof(GetDiskFreeSpace), null, info);
+            return Trace(DokanResult.Success, null, info);
         }
 
         /// <inheritdoc/>
@@ -339,7 +339,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (ciphertextPath is null)
                 {
                     files = Array.Empty<FileInformation>();
-                    return Trace(DokanResult.PathNotFound, nameof(FindFilesWithPattern), fileName, info);
+                    return Trace(DokanResult.PathNotFound, fileName, info);
                 }
 
                 var directory = new DirectoryInfo(ciphertextPath);
@@ -373,12 +373,12 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 }
 
                 files = fileList is null ? Array.Empty<FileInformation>() : fileList;
-                return Trace(DokanResult.Success, nameof(FindFilesWithPattern), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (PathTooLongException)
             {
                 files = Array.Empty<FileInformation>();
-                return Trace(DokanResult.InvalidName, nameof(FindFilesWithPattern), fileName, info);
+                return Trace(DokanResult.InvalidName, fileName, info);
             }
         }
 
@@ -393,28 +393,28 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 {
                     var ciphertextPath = GetCiphertextPath(fileName);
                     if (ciphertextPath is null)
-                        return Trace(DokanResult.PathNotFound, nameof(SetFileAttributes), fileName, info);
+                        return Trace(DokanResult.PathNotFound, fileName, info);
 
                     File.SetAttributes(ciphertextPath, attributes);
                 }
 
-                return Trace(DokanResult.Success, nameof(SetFileAttributes), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (PathTooLongException)
             {
-                return Trace(DokanResult.InvalidName, nameof(SetFileAttributes), fileName, info);
+                return Trace(DokanResult.InvalidName, fileName, info);
             }
             catch (UnauthorizedAccessException)
             {
-                return Trace(DokanResult.AccessDenied, nameof(SetFileAttributes), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
             catch (FileNotFoundException)
             {
-                return Trace(DokanResult.FileNotFound, nameof(SetFileAttributes), fileName, info);
+                return Trace(DokanResult.FileNotFound, fileName, info);
             }
             catch (DirectoryNotFoundException)
             {
-                return Trace(DokanResult.PathNotFound, nameof(SetFileAttributes), fileName, info);
+                return Trace(DokanResult.PathNotFound, fileName, info);
             }
         }
 
@@ -432,11 +432,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
                     {
                         if (fileHandle.SetFileTime(ref ct, ref lat, ref lwt))
-                            return Trace(DokanResult.Success, nameof(SetFileTime), fileName, info);
+                            return Trace(DokanResult.Success, fileName, info);
                     }
                     else
                     {
-                        return Trace(DokanResult.InvalidHandle, nameof(SetFileTime), fileName, info);
+                        return Trace(DokanResult.InvalidHandle, fileName, info);
                     }
 
                     var hrException = Marshal.GetExceptionForHR(Marshal.GetLastWin32Error());
@@ -446,7 +446,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                 var ciphertextPath = GetCiphertextPath(fileName);
                 if (ciphertextPath is null)
-                    return Trace(NtStatus.ObjectPathInvalid, nameof(SetFileTime), fileName, info);
+                    return Trace(NtStatus.ObjectPathInvalid, fileName, info);
 
                 if (creationTime is not null)
                     File.SetCreationTime(ciphertextPath, creationTime.Value);
@@ -457,19 +457,19 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (lastWriteTime is not null)
                     File.SetLastWriteTime(ciphertextPath, lastWriteTime.Value);
 
-                return Trace(DokanResult.Success, nameof(SetFileTime), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (PathTooLongException)
             {
-                return Trace(DokanResult.InvalidName, nameof(SetFileTime), fileName, info);
+                return Trace(DokanResult.InvalidName, fileName, info);
             }
             catch (UnauthorizedAccessException)
             {
-                return Trace(DokanResult.AccessDenied, nameof(SetFileTime), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
             catch (FileNotFoundException)
             {
-                return Trace(DokanResult.FileNotFound, nameof(SetFileTime), fileName, info);
+                return Trace(DokanResult.FileNotFound, fileName, info);
             }
         }
 
@@ -480,15 +480,15 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
             // Just check if we can delete the file - the true deletion is done in Cleanup()
             if (Directory.Exists(ciphertextPath))
-                return Trace(DokanResult.AccessDenied, nameof(DeleteFile), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
 
             if (!File.Exists(ciphertextPath))
-                return Trace(DokanResult.FileNotFound, nameof(DeleteFile), fileName, info);
+                return Trace(DokanResult.FileNotFound, fileName, info);
 
             if (File.GetAttributes(ciphertextPath).HasFlag(FileAttributes.Directory))
-                return Trace(DokanResult.AccessDenied, nameof(DeleteFile), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
 
-            return Trace(DokanResult.Success, nameof(DeleteFile), fileName, info);
+            return Trace(DokanResult.Success, fileName, info);
         }
 
         /// <inheritdoc/>
@@ -497,7 +497,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             var canDelete = true;
             var ciphertextPath = GetCiphertextPath(fileName);
             if (ciphertextPath is null)
-                return Trace(NtStatus.ObjectPathInvalid, nameof(DeleteDirectory), fileName, info);
+                return Trace(NtStatus.ObjectPathInvalid, fileName, info);
 
             using var directoryEnumerator = Directory.EnumerateFileSystemEntries(ciphertextPath).GetEnumerator();
 
@@ -512,7 +512,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             }
 
             var result = canDelete ? DokanResult.Success : DokanResult.DirectoryNotEmpty;
-            return Trace(result, nameof(DeleteDirectory), fileName, info);
+            return Trace(result, fileName, info);
         }
 
         /// <inheritdoc/>
@@ -524,7 +524,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             var fileNameCombined = $"{oldName} -> {newName}";
 
             if (oldCiphertextPath is null || newCiphertextPath is null)
-                return Trace(NtStatus.ObjectPathInvalid, nameof(MoveFile), fileNameCombined, info);
+                return Trace(NtStatus.ObjectPathInvalid, fileNameCombined, info);
 
             CloseHandle(info);
             InvalidateContext(info);
@@ -545,7 +545,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         File.Move(oldCiphertextPath, newCiphertextPath);
                     }
 
-                    return Trace(DokanResult.Success, nameof(MoveFile), fileNameCombined, info);
+                    return Trace(DokanResult.Success, fileNameCombined, info);
                 }
                 else if (replace)
                 {
@@ -553,47 +553,47 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     if (info.IsDirectory)
                     {
                         // Cannot replace directory destination - See MOVEFILE_REPLACE_EXISTING
-                        return Trace(DokanResult.AccessDenied, nameof(MoveFile), fileNameCombined, info);
+                        return Trace(DokanResult.AccessDenied, fileNameCombined, info);
                     }
 
                     // File
                     File.Delete(newCiphertextPath);
                     File.Move(oldCiphertextPath, newCiphertextPath);
                     
-                    return Trace(DokanResult.Success, nameof(MoveFile), fileNameCombined, info);
+                    return Trace(DokanResult.Success, fileNameCombined, info);
                 }
                 else
-                    return Trace(DokanResult.FileExists, nameof(MoveFile), fileNameCombined, info);
+                    return Trace(DokanResult.FileExists, fileNameCombined, info);
             }
             catch (PathTooLongException)
             {
-                return Trace(DokanResult.InvalidName, nameof(MoveFile), fileNameCombined, info);
+                return Trace(DokanResult.InvalidName, fileNameCombined, info);
             }
             catch (FileNotFoundException)
             {
-                return Trace(DokanResult.FileNotFound, nameof(MoveFile), fileNameCombined, info);
+                return Trace(DokanResult.FileNotFound, fileNameCombined, info);
             }
             catch (DirectoryNotFoundException)
             {
-                return Trace(DokanResult.PathNotFound, nameof(MoveFile), fileNameCombined, info);
+                return Trace(DokanResult.PathNotFound, fileNameCombined, info);
             }
             catch (UnauthorizedAccessException)
             {
-                return Trace(DokanResult.AccessDenied, nameof(MoveFile), fileNameCombined, info);
+                return Trace(DokanResult.AccessDenied, fileNameCombined, info);
             }
             catch (IOException ioEx)
             {
                 if (ErrorHandlingHelpers.IsFileAlreadyExistsException(ioEx))
-                    return Trace(DokanResult.AlreadyExists, nameof(MoveFile), fileNameCombined, info);
+                    return Trace(DokanResult.AlreadyExists, fileNameCombined, info);
 
                 if (ErrorHandlingHelpers.IsDirectoryNotEmptyException(ioEx))
-                    return Trace(DokanResult.DirectoryNotEmpty, nameof(MoveFile), fileNameCombined, info);
+                    return Trace(DokanResult.DirectoryNotEmpty, fileNameCombined, info);
 
                 if (ErrorHandlingHelpers.IsDiskFullException(ioEx))
-                    return Trace(DokanResult.DiskFull, nameof(MoveFile), fileNameCombined, info);
+                    return Trace(DokanResult.DiskFull, fileNameCombined, info);
 
                 if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
-                    return Trace((NtStatus)ntStatus, nameof(MoveFile), fileNameCombined, info);
+                    return Trace((NtStatus)ntStatus, fileNameCombined, info);
 
                 throw;
             }
@@ -609,7 +609,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             catch (IOException ioEx)
             {
                 if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
-                    return Trace((NtStatus)ntStatus, nameof(SetEndOfFile), fileName, info);
+                    return Trace((NtStatus)ntStatus, fileName, info);
 
                 throw;
             }
@@ -623,14 +623,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
                     fileHandle.Lock(offset, length);
-                    return Trace(DokanResult.Success, nameof(LockFile), fileName, info);
+                    return Trace(DokanResult.Success, fileName, info);
                 }
                 
-                return Trace(DokanResult.InvalidHandle, nameof(LockFile), fileName, info);
+                return Trace(DokanResult.InvalidHandle, fileName, info);
             }
             catch (IOException)
             {
-                return Trace(DokanResult.AccessDenied, nameof(LockFile), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
         }
 
@@ -642,14 +642,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (handlesManager.GetHandle<Win32FileHandle>(GetContextValue(info)) is { } fileHandle)
                 {
                     fileHandle.Unlock(offset, length);
-                    return Trace(DokanResult.Success, nameof(UnlockFile), fileName, info);
+                    return Trace(DokanResult.Success, fileName, info);
                 }
 
-                return Trace(DokanResult.InvalidHandle, nameof(UnlockFile), fileName, info);
+                return Trace(DokanResult.InvalidHandle, fileName, info);
             }
             catch (IOException)
             {
-                return Trace(DokanResult.AccessDenied, nameof(UnlockFile), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
         }
 
@@ -662,7 +662,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (ciphertextPath is null)
                 {
                     security = null;
-                    return Trace(DokanResult.PathNotFound, nameof(GetFileSecurity), fileName, info);
+                    return Trace(DokanResult.PathNotFound, fileName, info);
                 }
 
 #pragma warning disable CA1416 // Validate platform compatibility
@@ -671,27 +671,27 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     : new FileInfo(ciphertextPath).GetAccessControl();
 #pragma warning restore CA1416 // Validate platform compatibility
 
-                return Trace(DokanResult.Success, nameof(GetFileSecurity), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (FileNotFoundException)
             {
                 security = null;
-                return Trace(DokanResult.FileNotFound, nameof(GetFileSecurity), fileName, info);
+                return Trace(DokanResult.FileNotFound, fileName, info);
             }
             catch (DirectoryNotFoundException)
             {
                 security = null;
-                return Trace(DokanResult.PathNotFound, nameof(GetFileSecurity), fileName, info);
+                return Trace(DokanResult.PathNotFound, fileName, info);
             }
             catch (PathTooLongException)
             {
                 security = null;
-                return Trace(DokanResult.InvalidName, nameof(GetFileSecurity), fileName, info);
+                return Trace(DokanResult.InvalidName, fileName, info);
             }
             catch (UnauthorizedAccessException)
             {
                 security = null;
-                return Trace(DokanResult.AccessDenied, nameof(GetFileSecurity), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
         }
 
@@ -702,7 +702,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             {
                 var ciphertextPath = GetCiphertextPath(fileName);
                 if (ciphertextPath is null)
-                    return Trace(DokanResult.PathNotFound, nameof(SetFileSecurity), fileName, info);
+                    return Trace(DokanResult.PathNotFound, fileName, info);
 
 #pragma warning disable CA1416 // Validate platform compatibility
                 if (info.IsDirectory)
@@ -715,23 +715,23 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 }
 #pragma warning restore CA1416 // Validate platform compatibility
 
-                return Trace(DokanResult.Success, nameof(SetFileSecurity), fileName, info);
+                return Trace(DokanResult.Success, fileName, info);
             }
             catch (FileNotFoundException)
             {
-                return Trace(DokanResult.FileNotFound, nameof(SetFileSecurity), fileName, info);
+                return Trace(DokanResult.FileNotFound, fileName, info);
             }
             catch (DirectoryNotFoundException)
             {
-                return Trace(DokanResult.PathNotFound, nameof(SetFileSecurity), fileName, info);
+                return Trace(DokanResult.PathNotFound, fileName, info);
             }
             catch (PathTooLongException)
             {
-                return Trace(DokanResult.InvalidName, nameof(SetFileSecurity), fileName, info);
+                return Trace(DokanResult.InvalidName, fileName, info);
             }
             catch (UnauthorizedAccessException)
             {
-                return Trace(DokanResult.AccessDenied, nameof(SetFileSecurity), fileName, info);
+                return Trace(DokanResult.AccessDenied, fileName, info);
             }
         }
 
@@ -748,7 +748,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
                 {
                     bytesRead = 0;
-                    return Trace((NtStatus)ntStatus, nameof(ReadFile), fileName, info);
+                    return Trace((NtStatus)ntStatus, fileName, info);
                 }
 
                 throw;
@@ -759,7 +759,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 bytesRead = 0;
                 Debugger.Break();
 
-                return Trace(DokanResult.InternalError, nameof(ReadFile), fileName, info);
+                return Trace(DokanResult.InternalError, fileName, info);
             }
         }
 
@@ -776,7 +776,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 if (ErrorHandlingHelpers.NtStatusFromException(ioEx, out var ntStatus))
                 {
                     bytesWritten = 0;
-                    return Trace((NtStatus)ntStatus, nameof(WriteFile), fileName, info);
+                    return Trace((NtStatus)ntStatus, fileName, info);
                 }
 
                 throw;
@@ -787,7 +787,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 bytesWritten = 0;
 
                 Debugger.Break();
-                return Trace(DokanResult.InternalError, nameof(WriteFile), fileName, info);
+                return Trace(DokanResult.InternalError, fileName, info);
             }
         }
 
