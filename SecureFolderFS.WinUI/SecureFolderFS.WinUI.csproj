@@ -301,9 +301,4 @@
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
     </ItemGroup>
-    <ItemGroup>
-      <Content Update="Assets\ExplanationVideo.mp4">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
 </Project>

@@ -38,8 +38,11 @@ namespace SecureFolderFS.WinUI.Dialogs
         private void Media_Loaded(object sender, RoutedEventArgs e)
         {
             var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "SecureFolderFS.UI")!;
-            var stream = assembly.GetManifestResourceStream("SecureFolderFS.UI.Assets.AppAssets.ExplanationVideo.mp4");
+            var stream = assembly.GetManifestResourceStream("SecureFolderFS.UI.Assets.AppAssets.Media.ExplanationVideoDark.mov");
             _disposable = stream;
+
+            if (stream is null)
+                return;
 
             Media.Source = MediaSource.CreateFromStream(stream.AsRandomAccessStream(), string.Empty);
             Media.MediaPlayer.IsLoopingEnabled = true;
