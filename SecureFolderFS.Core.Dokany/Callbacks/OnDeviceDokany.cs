@@ -1,11 +1,10 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
-using SecureFolderFS.Core.FileSystem.Directories;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -21,7 +20,6 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
 using FileAccess = DokanNet.FileAccess;
-using SecureFolderFS.Core.Directories;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
 {
