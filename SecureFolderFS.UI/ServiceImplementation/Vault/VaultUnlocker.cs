@@ -23,12 +23,6 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
     public sealed class VaultUnlocker : IVaultUnlocker
     {
         /// <inheritdoc/>
-        public ICredentialsBuilder GetCredentialsBuilder()
-        {
-            return new CredentialsBuilder();
-        }
-
-        /// <inheritdoc/>
         public async Task<IVaultLifetimeModel> UnlockAsync(IVaultModel vaultModel, IDisposable credentials, CancellationToken cancellationToken = default)
         {
             if (credentials is not CredentialsCombo credentialsCombo || credentialsCombo.Password is null)
@@ -113,36 +107,6 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
                 Core.Constants.FileSystemId.WEBDAV_ID => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
                 _ => throw new ArgumentOutOfRangeException(nameof(fileSystemId))
             };
-        }
-    }
-
-    file sealed class CredentialsBuilder : ICredentialsBuilder
-    {
-        private IPassword? _password;
-        private SecretKey? _authentication;
-
-        /// <inheritdoc/>
-        public void Add(IDisposable authentication)
-        {
-            _password = authentication as IPassword ?? _password;
-            _authentication = authentication as SecretKey ?? _authentication;
-        }
-
-        /// <inheritdoc/>
-        public IDisposable BuildCredentials()
-        {
-            return new CredentialsCombo()
-            {
-                Password = _password,
-                Authentication = _authentication
-            };
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            _password?.Dispose();
-            _authentication?.Dispose();
         }
     }
 }

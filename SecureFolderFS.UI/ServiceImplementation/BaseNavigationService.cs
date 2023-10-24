@@ -135,7 +135,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             CurrentTarget = null;
             NavigationControl?.Dispose();
 
-            Targets.DisposeCollection();
+            Targets.DisposeElements();
             Targets.Clear();
         }
     }

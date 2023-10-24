@@ -27,11 +27,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Inject<IThreadingService>, Inject<IVaultService>]
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
-        private readonly IVaultWatcherModel _vaultWatcherModel;
-        private readonly ICredentialsBuilder _credentialsBuilder;
-        private readonly IAsyncValidator<IFolder> _vaultValidator;
-        private IAsyncEnumerator<AuthenticationModel>? _enumerator;
-
         [ObservableProperty] private string? _VaultName;
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
@@ -39,11 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             ServiceProvider = Ioc.Default;
             VaultName = vaultViewModel.VaultModel.VaultName;
-            _credentialsBuilder = VaultService.VaultUnlocker.GetCredentialsBuilder();
-            _vaultValidator = VaultService.GetVaultValidator();
 
-            _vaultWatcherModel = new VaultWatcherModel(vaultViewModel.VaultModel.Folder);
-            _vaultWatcherModel.StateChanged += VaultWatcherModel_StateChanged;
         }
 
         /// <inheritdoc/>
@@ -52,76 +43,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             // Initialize vault watcher
             await _vaultWatcherModel.InitAsync(cancellationToken);
 
-            // Get the authentication method enumerator for this vault
-            _enumerator = VaultService.VaultAuthenticator.GetAuthenticationAsync(VaultViewModel.VaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
+            
 
             // Set up the first authentication method
             if (!await TryNextAuthAsync())
                 LoginTypeViewModel = new ErrorViewModel("No authentication methods available");
         }
 
-        private async Task<bool> TryNextAuthAsync()
-        {
-            if (_enumerator is null || !await _enumerator.MoveNextAsync())
-                return false;
-
-            // Get the appropriate method
-            var authenticationModel = _enumerator.Current;
-            LoginTypeViewModel = authenticationModel.AuthenticationType switch
-            {
-                AuthenticationType.Password => new PasswordViewModel(authenticationModel),
-                AuthenticationType.Other => new AuthenticationViewModel(authenticationModel),
-                _ => new ErrorViewModel("Could not determine the authentication type.")
-            };
-
-            return true;
-        }
 
 
 
-        private async void VaultWatcherModel_StateChanged(object? sender, EventArgs e)
-        {
-            if (e is VaultChangedEventArgs { ContentsChanged: true })
-                await ValidateVaultAsync();
-        }
 
-        private async Task ValidateVaultAsync(CancellationToken cancellationToken = default)
-        {
-            var result = await _vaultValidator.TryValidateAsync(VaultViewModel.VaultModel.Folder, cancellationToken);
-            if (result.Successful)
-                return;
-
-            LoginTypeViewModel = new ErrorViewModel(result.GetMessage());
-        }
-
-        private async Task TryUnlockAsync(CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                using var credentials = _credentialsBuilder.BuildCredentials();
-                var lifetimeModel = await VaultService.VaultUnlocker.UnlockAsync(VaultViewModel.VaultModel, credentials, cancellationToken);
-
-                // Update last access date
-                await VaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now, cancellationToken);
-
-                // Create view models
-                var unlockedVaultViewModel = new UnlockedVaultViewModel(VaultViewModel, lifetimeModel);
-                var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, NavigationService);
-
-                // Notify that the vault has been unlocked
-                WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultViewModel.VaultModel));
-
-                // Dispose current instance and navigate
-                Dispose();
-                await NavigationService.TryNavigateAndForgetAsync(dashboardPage);
-            }
-            catch (Exception ex)
-            {
-                // If failed, restart the process
-                // TODO: Above ^
-                _ = ex;
-            }
-        }
+        
 
         /// <inheritdoc/>
         public override void Dispose()

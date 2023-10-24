@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
             {
                 IFileNameAccess fileNameAccess = options.FileNameCachingStrategy switch
                 {
-                    FileNameCachingStrategy.NoCache => new InstantFileNameAccess(_unlockContract.Security, options.FileSystemStatistics),
+                    FileNameCachingStrategy.NoCache => new FileNameAccess(_unlockContract.Security, options.FileSystemStatistics),
                     FileNameCachingStrategy.RandomAccessMemoryCache => new CachingFileNameAccess(_unlockContract.Security, options.FileSystemStatistics),
                     _ => throw new ArgumentOutOfRangeException(nameof(options))
                 };

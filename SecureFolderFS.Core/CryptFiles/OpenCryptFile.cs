@@ -79,7 +79,7 @@ namespace SecureFolderFS.Core.CryptFiles
         public void Dispose()
         {
             _streamsManager.Dispose();
-            _openedStreams.Keys.DisposeCollection();
+            _openedStreams.Keys.DisposeElements();
             _openedStreams.Clear();
         }
     }
