@@ -12,6 +12,7 @@
         <None Remove="Assets\AppAssets\AppIcon.png" />
         <None Remove="Assets\AppAssets\AppTitle.png" />
         <None Remove="Assets\AppAssets\AppTitle.svg" />
+        <None Remove="Assets\AppAssets\Media\ExplanationVideoDark.mov" />
         <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
         <None Remove="Assets\Licenses\PolySharp LICENSE" />
@@ -28,6 +29,9 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\AppAssets\Vault_dark.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\Media\ExplanationVideoDark.mov">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>

@@ -15,7 +15,12 @@
             public const string GRAPHS_WIDGET_ID = "graphs_widget";
         }
 
-        public static class Iap
+        public static class Dialogs
+        {
+            public const int EXPLANATION_DIALOG_TIME_TICKS = 14;
+        }
+
+        public static class Vault
         {
             public const int MAX_FREE_AMOUNT_OF_VAULTS = 2;
             public const string VAULT_README_FILENAME = "_readme_before_continuing.txt";

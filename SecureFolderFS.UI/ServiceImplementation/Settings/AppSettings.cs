@@ -26,6 +26,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
+        public bool WasVaultFolderExplanationShown
+        {
+            get => GetSetting(() => false);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
         public bool IsIntroduced
         {
             get => GetSetting(() => false);

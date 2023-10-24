@@ -30,7 +30,8 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 { typeof(PasswordChangeDialogViewModel), () => new PasswordChangeDialog() },
                 { typeof(IntroductionDialogViewModel), () => new IntroductionControl() },
                 { typeof(AgreementDialogViewModel), () => new AgreementDialog() },
-                { typeof(PaymentDialogViewModel), () => new PaymentDialog() }
+                { typeof(PaymentDialogViewModel), () => new PaymentDialog() },
+                { typeof(ExplanationDialogViewModel), () => new ExplanationDialog() }
             };
         }
 

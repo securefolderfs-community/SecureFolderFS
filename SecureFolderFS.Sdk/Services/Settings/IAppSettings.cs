@@ -15,6 +15,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool WasBetaNotificationShown1 { get; set; }
 
         /// <summary>
+        /// Gets or sets the value that determines whether the explanation of vault folder was shown.
+        /// </summary>
+        bool WasVaultFolderExplanationShown { get; set; }
+
+        /// <summary>
         /// Gets or sets the value that determines whether Out of Box Experience was shown.
         /// </summary>
         bool IsIntroduced { get; set; }
