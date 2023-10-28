@@ -9,9 +9,9 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
         {
             using var argon2id = new Konscious.Security.Cryptography.Argon2id(password.ToArray());
             argon2id.Salt = salt.ToArray();
-            argon2id.DegreeOfParallelism = Constants.Crypt.CryptImpl.Argon2.DEGREE_OF_PARALLELISM;
-            argon2id.Iterations = Constants.Crypt.CryptImpl.Argon2.ITERATIONS;
-            argon2id.MemorySize = Constants.Crypt.CryptImpl.Argon2.MEMORY_SIZE;
+            argon2id.DegreeOfParallelism = Constants.Crypto.Argon2.DEGREE_OF_PARALLELISM;
+            argon2id.Iterations = Constants.Crypto.Argon2.ITERATIONS;
+            argon2id.MemorySize = Constants.Crypto.Argon2.MEMORY_SIZE;
 
             argon2id.GetBytes(Constants.ARGON2_KEK_LENGTH).CopyTo(result);
         }

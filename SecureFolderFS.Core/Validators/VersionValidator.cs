@@ -6,7 +6,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using static SecureFolderFS.Core.Constants.VaultVersion;
+using static SecureFolderFS.Core.Constants.Vault.Versions.VaultVersion;
 
 namespace SecureFolderFS.Core.Validators
 {

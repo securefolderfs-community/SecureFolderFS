@@ -16,9 +16,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault
         /// <summary>
         /// Gets the unlocked vault model that manages the life time of the vault.
         /// </summary>
-        public IVaultLifetimeModel VaultLifeTimeModel { get; }
+        public IVaultLifecycle VaultLifeTimeModel { get; }
 
-        public UnlockedVaultViewModel(VaultViewModel vaultViewModel, IVaultLifetimeModel vaultLifeTimeModel)
+        public UnlockedVaultViewModel(VaultViewModel vaultViewModel, IVaultLifecycle vaultLifeTimeModel)
         {
             VaultViewModel = vaultViewModel;
             VaultLifeTimeModel = vaultLifeTimeModel;

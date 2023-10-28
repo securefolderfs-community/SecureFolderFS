@@ -7,6 +7,6 @@ namespace SecureFolderFS.Sdk.Services.Vault
 {
     public interface IVaultUnlocker
     {
-        Task<IVaultLifetimeModel> UnlockAsync(IVaultModel vaultModel, IDisposable credentials, CancellationToken cancellationToken = default);
+        Task<IVaultLifecycle> UnlockAsync(IVaultModel vaultModel, IDisposable passkey, CancellationToken cancellationToken = default);
     }
 }

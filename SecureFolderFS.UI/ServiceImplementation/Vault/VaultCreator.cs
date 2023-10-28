@@ -1,15 +1,16 @@
-﻿using SecureFolderFS.Core.Cryptography.Enums;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static SecureFolderFS.Core.Constants;
 
 namespace SecureFolderFS.UI.ServiceImplementation.Vault
 {
@@ -17,16 +18,15 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
     public sealed class VaultCreator : IVaultCreator
     {
         /// <inheritdoc/>
-        public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IPassword password, string nameCipherId, string contentCipherId, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IDisposable passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
-
-            var nameCipher = GetNameCipher(nameCipherId);
-            var contentCipher = GetContentCipher(contentCipherId);
+            using var passkeySecret = GetPasskeySecret(passkey);
+            var options = ParseOptions(vaultOptions);
 
             var superSecret = await creationRoutine
-                .SetCredentials(password, null)
-                .SetOptions(new() { ContentCipher = contentCipher, FileNameCipher = nameCipher })
+                .SetCredentials(passkeySecret)
+                .SetOptions(options)
                 .FinalizeAsync(cancellationToken);
 
             if (vaultFolder is IModifiableFolder modifiableFolder)
@@ -39,24 +39,19 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
             return superSecret;
         }
 
-        private static FileNameCipherScheme GetNameCipher(string cipherId)
+        private static SecretKey GetPasskeySecret(IDisposable passkey)
         {
-            return cipherId switch
-            {
-                Core.Constants.CipherId.NONE => FileNameCipherScheme.None,
-                Core.Constants.CipherId.AES_SIV => FileNameCipherScheme.AES_SIV,
-                _ => throw new ArgumentOutOfRangeException(nameof(cipherId))
-            };
+
         }
 
-        private static ContentCipherScheme GetContentCipher(string cipherId)
+        private static IReadOnlyDictionary<string, string> ParseOptions(VaultOptions vaultOptions)
         {
-            return cipherId switch
+            return new Dictionary<string, string>()
             {
-                Core.Constants.CipherId.AES_CTR_HMAC => ContentCipherScheme.AES_CTR_HMAC,
-                Core.Constants.CipherId.AES_GCM => ContentCipherScheme.AES_GCM,
-                Core.Constants.CipherId.XCHACHA20_POLY1305 => ContentCipherScheme.XChaCha20_Poly1305,
-                _ => throw new ArgumentOutOfRangeException(nameof(cipherId))
+                { Associations.ASSOC_CONTENT_CIPHER_ID, vaultOptions.ContentCipherId },
+                { Associations.ASSOC_FILENAME_CIPHER_ID, vaultOptions.FileNameCipherId },
+                { Associations.ASSOC_SPECIALIZATION, vaultOptions.Specialization },
+                { Associations.ASSOC_AUTHENTICATION, vaultOptions.AuthenticationMethod }
             };
         }
     }

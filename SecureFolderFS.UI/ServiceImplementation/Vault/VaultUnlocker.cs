@@ -23,7 +23,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
     public sealed class VaultUnlocker : IVaultUnlocker
     {
         /// <inheritdoc/>
-        public async Task<IVaultLifetimeModel> UnlockAsync(IVaultModel vaultModel, IDisposable credentials, CancellationToken cancellationToken = default)
+        public async Task<IVaultLifecycle> UnlockAsync(IVaultModel vaultModel, IDisposable passkey, CancellationToken cancellationToken = default)
         {
             if (credentials is not CredentialsCombo credentialsCombo || credentialsCombo.Password is null)
                 throw new ArgumentException("Credentials were not in a correct format.", nameof(credentials));

@@ -1,5 +1,5 @@
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.Utilities;
@@ -56,11 +56,11 @@ namespace SecureFolderFS.Core.VaultAccess
             using var hmacSha256 = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, macKey);
 
             // Update HMAC
-            hmacSha256.AppendData(BitConverter.GetBytes(Constants.VaultVersion.LATEST_VERSION));       // Version
-            hmacSha256.AppendData(BitConverter.GetBytes((uint)configDataModel.ContentCipherScheme));   // ContentCipherScheme
-            hmacSha256.AppendData(BitConverter.GetBytes((uint)configDataModel.FileNameCipherScheme));  // FileNameCipherScheme
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Id));                         // Id
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AuthMethod));                 // AuthMethod
+            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));                                // Version
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));        // ContentCipherScheme
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));      // FileNameCipherScheme
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Id));                                                  // Id
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                                          // AuthMethod
 
             // Fill the hash to payload
             hmacSha256.GetCurrentHash(mac);
@@ -75,8 +75,8 @@ namespace SecureFolderFS.Core.VaultAccess
         [SkipLocalsInit]
         public static (SecretKey encKey, SecretKey macKey) DeriveKeystore(SecretKey passkey, VaultKeystoreDataModel keystoreDataModel)
         {
-            var encKey = new SecureKey(Constants.KeyChains.ENCKEY_LENGTH);
-            var macKey = new SecureKey(Constants.KeyChains.MACKEY_LENGTH);
+            var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
+            var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
 
             // Derive KEK
             Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];

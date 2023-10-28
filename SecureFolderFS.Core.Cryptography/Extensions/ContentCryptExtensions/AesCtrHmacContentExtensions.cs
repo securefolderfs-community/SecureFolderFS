@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.AesCtrHmac;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Chunks.AesCtrHmac;
 
 namespace SecureFolderFS.Core.Cryptography.Extensions.ContentCryptExtensions
 {

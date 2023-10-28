@@ -1,5 +1,4 @@
 using SecureFolderFS.Core.CryptFiles;
-using SecureFolderFS.Core.Cryptography.Enums;
 using SecureFolderFS.Core.Cryptography.Storage;
 using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.Dokany;
@@ -67,7 +66,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
             ArgumentNullException.ThrowIfNull(_unlockContract);
             ArgumentNullException.ThrowIfNull(_storageService);
 
-            var contentFolder = await _vaultFolder.GetFolderAsync(Constants.Vault.VAULT_CONTENT_FOLDERNAME, cancellationToken);
+            var contentFolder = await _vaultFolder.GetFolderAsync(Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
             var volumeName = options.VolumeName ?? _vaultFolder.Name;
             var (directoryIdCache, pathConverter, streamsAccess) = CreateStorageComponents(options, contentFolder.Id);
 
@@ -86,7 +85,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
 
             var directoryIdCache = new DirectoryIdCache(options.FileSystemStatistics);
             IPathConverter pathConverter;
-            if (_unlockContract.ConfigurationDataModel.FileNameCipherScheme != FileNameCipherScheme.None)
+            if (_unlockContract.ConfigurationDataModel.FileNameCipherId != Cryptography.Constants.CipherId.NONE)
             {
                 IFileNameAccess fileNameAccess = options.FileNameCachingStrategy switch
                 {

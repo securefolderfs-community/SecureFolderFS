@@ -13,9 +13,9 @@ namespace SecureFolderFS.Sdk.AppModels
             _authenticationData = new();
         }
 
-        public void Add(IDisposable disposable)
+        public void Add(IDisposable magic)
         {
-            _authenticationData.Add(disposable);
+            _authenticationData.Add(magic);
         }
 
         public IEnumerable<IDisposable> Retrieve()

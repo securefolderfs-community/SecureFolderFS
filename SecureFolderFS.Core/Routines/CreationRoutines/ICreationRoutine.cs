@@ -1,18 +1,17 @@
-﻿using System;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Core.Models;
-using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Core.Routines.CreationRoutines
 {
     // TODO: Needs docs
     public interface ICreationRoutine : IDisposable
     {
-        ICreationRoutine SetCredentials(IPassword password, SecretKey? magic);
+        ICreationRoutine SetCredentials(SecretKey passkey);
 
-        ICreationRoutine SetOptions(VaultOptions vaultOptions);
+        ICreationRoutine SetOptions(IReadOnlyDictionary<string, string> options);
 
         Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken);
     }

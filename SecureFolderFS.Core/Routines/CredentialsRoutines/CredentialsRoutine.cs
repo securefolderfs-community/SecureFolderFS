@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.Routines.CredentialsRoutines
             using var secureRandom = RandomNumberGenerator.Create();
 
             // Generate new salt
-            var salt = new byte[Constants.KeyChains.SALT_LENGTH];
+            var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
             secureRandom.GetNonZeroBytes(salt);
 
             // Construct passkey

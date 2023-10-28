@@ -1,9 +1,9 @@
 ﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
-using SecureFolderFS.Core.Cryptography.Enums;
 using SecureFolderFS.Core.Cryptography.HeaderCrypt;
 using SecureFolderFS.Core.Cryptography.NameCrypt;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
+using static SecureFolderFS.Core.Cryptography.Constants;
 
 namespace SecureFolderFS.Core.Cryptography
 {
@@ -43,31 +43,31 @@ namespace SecureFolderFS.Core.Cryptography
         /// </summary>
         /// <param name="encKey">The DEK key that this class takes ownership of.</param>
         /// <param name="macKey">The MAC key that this class takes ownership of.</param>
-        /// <param name="contentCipher">The content cipher type.</param>
-        /// <param name="fileNameCipher">The file name cipher type.</param>
+        /// <param name="contentCipherId">The content cipher id.</param>
+        /// <param name="fileNameCipherId">The file name cipher id.</param>
         /// <returns>A new <see cref="Security"/> object.</returns>
-        public static Security CreateNew(SecretKey encKey, SecretKey macKey, ContentCipherScheme contentCipher, FileNameCipherScheme fileNameCipher)
+        public static Security CreateNew(SecretKey encKey, SecretKey macKey, string contentCipherId, string fileNameCipherId)
         {
             // Initialize crypt implementation
-            IHeaderCrypt headerCrypt = contentCipher switch
+            IHeaderCrypt headerCrypt = contentCipherId switch
             {
-                ContentCipherScheme.AES_CTR_HMAC => new AesCtrHmacHeaderCrypt(encKey, macKey),
-                ContentCipherScheme.AES_GCM => new AesGcmHeaderCrypt(encKey, macKey),
-                ContentCipherScheme.XChaCha20_Poly1305 => new XChaChaHeaderCrypt(encKey, macKey),
-                _ => throw new ArgumentOutOfRangeException(nameof(contentCipher))
+                CipherId.AES_CTR_HMAC => new AesCtrHmacHeaderCrypt(encKey, macKey),
+                CipherId.AES_GCM => new AesGcmHeaderCrypt(encKey, macKey),
+                CipherId.XCHACHA20_POLY1305 => new XChaChaHeaderCrypt(encKey, macKey),
+                _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
-            IContentCrypt contentCrypt = contentCipher switch
+            IContentCrypt contentCrypt = contentCipherId switch
             {
-                ContentCipherScheme.AES_CTR_HMAC => new AesCtrHmacContentCrypt(macKey),
-                ContentCipherScheme.AES_GCM => new AesGcmContentCrypt(),
-                ContentCipherScheme.XChaCha20_Poly1305 => new XChaChaContentCrypt(),
-                _ => throw new ArgumentOutOfRangeException(nameof(contentCipher))
+                CipherId.AES_CTR_HMAC => new AesCtrHmacContentCrypt(macKey),
+                CipherId.AES_GCM => new AesGcmContentCrypt(),
+                CipherId.XCHACHA20_POLY1305 => new XChaChaContentCrypt(),
+                _ => throw new ArgumentOutOfRangeException(nameof(contentCipherId))
             };
-            INameCrypt? nameCrypt = fileNameCipher switch
+            INameCrypt? nameCrypt = fileNameCipherId switch
             {
-                FileNameCipherScheme.AES_SIV => new AesSivNameCrypt(encKey, macKey),
-                FileNameCipherScheme.None => null,
-                _ => throw new ArgumentOutOfRangeException(nameof(fileNameCipher))
+                CipherId.AES_SIV => new AesSivNameCrypt(encKey, macKey),
+                CipherId.NONE => null,
+                _ => throw new ArgumentOutOfRangeException(nameof(fileNameCipherId))
             };
 
             return new(encKey, macKey)

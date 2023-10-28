@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.Models
     /// <summary>
     /// Represents a model of an unlocked vault.
     /// </summary>
-    public interface IVaultLifetimeModel : IDisposable, IAsyncDisposable
+    public interface IVaultLifecycle : IDisposable, IAsyncDisposable
     {
         /// <summary>
         /// Gets the unlocked root folder of the vault.

@@ -63,7 +63,7 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task<IResult<IVaultLifetimeModel?>> UnlockAsync(IPassword password, CancellationToken cancellationToken = default)
+        public async Task<IResult<IVaultLifecycle?>> UnlockAsync(IPassword password, CancellationToken cancellationToken = default)
         {
             //// Get file system
             //var fileSystem = VaultService.GetFileSystems().FirstOrDefault(x => x.Id == SettingsService.UserSettings.PreferredFileSystemId);

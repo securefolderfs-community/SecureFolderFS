@@ -4,7 +4,23 @@
     {
         public const int ARGON2_KEK_LENGTH = 32;
 
-        internal static class Crypt
+        public static class KeyChains
+        {
+            public const int ENCKEY_LENGTH = 32;
+            public const int MACKEY_LENGTH = 32;
+            public const int SALT_LENGTH = 16;
+        }
+
+        public static class CipherId
+        {
+            public const string NONE = ""; // Empty string
+            public const string AES_CTR_HMAC = "AES-CTR HMAC";
+            public const string AES_GCM = "AES-GCM";
+            public const string XCHACHA20_POLY1305 = "XChaCha20-Poly1305";
+            public const string AES_SIV = "AES-SIV";
+        }
+
+        internal static class Crypto
         {
             internal static class Chunks
             {
@@ -60,14 +76,11 @@
                 }
             }
 
-            internal static class CryptImpl
+            internal static class Argon2
             {
-                internal static class Argon2
-                {
-                    public const int DEGREE_OF_PARALLELISM = 8;
-                    public const int ITERATIONS = 8;
-                    public const int MEMORY_SIZE = 102400;
-                }
+                public const int DEGREE_OF_PARALLELISM = 8;
+                public const int ITERATIONS = 8;
+                public const int MEMORY_SIZE = 102400;
             }
         }
     }

@@ -1,11 +1,10 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,20 +28,18 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         }
 
         /// <inheritdoc/>
-        public ICreationRoutine SetCredentials(IPassword password, SecretKey? magic)
+        public ICreationRoutine SetCredentials(SecretKey passkey)
         {
-            using var encKey = new SecureKey(Constants.KeyChains.ENCKEY_LENGTH);
-            using var macKey = new SecureKey(Constants.KeyChains.MACKEY_LENGTH);
-            var salt = new byte[Constants.KeyChains.SALT_LENGTH];
+            // Allocate keys
+            using var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
+            using var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
+            var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
 
             // Fill keys
             using var secureRandom = RandomNumberGenerator.Create();
             secureRandom.GetNonZeroBytes(encKey.Key);
             secureRandom.GetNonZeroBytes(macKey.Key);
             secureRandom.GetNonZeroBytes(salt);
-
-            // Construct passkey
-            using var passkey = VaultParser.ConstructPasskey(password, magic);
 
             // Generate keystore
             _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt);
@@ -55,15 +52,16 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         }
 
         /// <inheritdoc/>
-        public ICreationRoutine SetOptions(VaultOptions vaultOptions)
+        public ICreationRoutine SetOptions(IReadOnlyDictionary<string, string> options)
         {
             _configDataModel = new()
             {
-                ContentCipherScheme = vaultOptions.ContentCipher,
-                FileNameCipherScheme = vaultOptions.FileNameCipher,
-                Version = Constants.VaultVersion.LATEST_VERSION,
+                Version = Constants.Vault.Versions.LATEST_VERSION,
+                ContentCipherId = options[Constants.Associations.ASSOC_CONTENT_CIPHER_ID],
+                FileNameCipherId = options[Constants.Associations.ASSOC_FILENAME_CIPHER_ID],
+                Specialization = options[Constants.Associations.ASSOC_SPECIALIZATION],
+                AuthenticationMethod = options[Constants.Associations.ASSOC_AUTHENTICATION],
                 Id = Guid.NewGuid().ToString(),
-                AuthMethod = Constants.AuthenticationMethods.AUTH_PASSWORD,
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
 
@@ -87,7 +85,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
 
             // Create content folder
             if (_vaultFolder is IModifiableFolder modifiableFolder)
-                await modifiableFolder.CreateFolderAsync(Constants.Vault.VAULT_CONTENT_FOLDERNAME, false, cancellationToken);
+                await modifiableFolder.CreateFolderAsync(Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, false, cancellationToken);
 
             // Key copies need to be created because the original ones are disposed of here
             return new CreationContract(_encKey.CreateCopy(), _macKey.CreateCopy());

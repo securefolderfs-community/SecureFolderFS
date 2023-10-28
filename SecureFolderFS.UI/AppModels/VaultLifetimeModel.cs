@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.AppModels
 {
-    /// <inheritdoc cref="IVaultLifetimeModel"/>
-    internal sealed class VaultLifetimeModel : IVaultLifetimeModel
+    /// <inheritdoc cref="IVaultLifecycle"/>
+    internal sealed class VaultLifetimeModel : IVaultLifecycle
     {
         private readonly IVirtualFileSystem _virtualFileSystem;
 

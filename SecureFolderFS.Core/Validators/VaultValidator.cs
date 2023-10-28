@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.Validators
         public async Task ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
         {
             // Get configuration file
-            var configFile = await value.GetFileAsync(Constants.Vault.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            var configFile = await value.GetFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             await using var configStream = await configFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
 
             // Validate version

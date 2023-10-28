@@ -96,7 +96,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             _macKey = macKey;
             ConfigurationDataModel = configDataModel;
             KeystoreDataModel = keystoreDataModel;
-            Security = Security.CreateNew(_encKey, _macKey, ConfigurationDataModel.ContentCipherScheme, ConfigurationDataModel.FileNameCipherScheme);
+            Security = Security.CreateNew(_encKey, _macKey, ConfigurationDataModel.ContentCipherId, ConfigurationDataModel.FileNameCipherId);
         }
         
         /// <inheritdoc/>

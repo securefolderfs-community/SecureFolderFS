@@ -2,8 +2,8 @@
 using SecureFolderFS.Core.Cryptography.Helpers;
 using System;
 using System.Runtime.CompilerServices;
-using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.AesGcm;
-using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Headers.AesGcm;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Chunks.AesGcm;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Headers.AesGcm;
 using static SecureFolderFS.Core.Cryptography.Extensions.ContentCryptExtensions.AesGcmContentExtensions;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.AesGcmHeaderExtensions;
 
