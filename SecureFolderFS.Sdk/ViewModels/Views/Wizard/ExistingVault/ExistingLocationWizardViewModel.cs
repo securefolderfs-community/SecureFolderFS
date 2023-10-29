@@ -1,61 +1,70 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utilities;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
 {
-    [Inject<IFileExplorerService>, Inject<IVaultService>]
-    public sealed partial class ExistingLocationWizardViewModel : BaseWizardPageViewModel
+    [Inject<IVaultService>]
+    public sealed partial class ExistingLocationWizardViewModel : BaseVaultSelectionWizardViewModel
     {
-        private IFolder? _vaultFolder;
-        private readonly IAsyncValidator<IFolder> _vaultValidator;
-
-        [ObservableProperty] private string? _SelectedLocationText = "NoFolderSelected".ToLocalized();
-
         public ExistingLocationWizardViewModel(VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
         {
             ServiceProvider = Ioc.Default;
-            _vaultValidator = VaultService.GetVaultValidator();
         }
 
+        /// <inheritdoc/>
         public override async Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
             eventDispatch?.NoForwarding();
-            if (_vaultFolder is null)
+            if (vaultFolder is null)
                 return;
 
-            var vaultModel = new VaultModel(_vaultFolder);
+            var vaultModel = new VaultModel(vaultFolder);
             DialogViewModel.VaultCollectionModel.Add(vaultModel);
             await DialogViewModel.VaultCollectionModel.TrySaveAsync(cancellationToken);
 
             await NavigationService.TryNavigateAsync(() => new SummaryWizardViewModel(vaultModel.VaultName, DialogViewModel));
         }
 
-        [RelayCommand]
-        private async Task BrowseLocationAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        protected override async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken)
         {
-            _vaultFolder = await FileExplorerService.PickFolderAsync(cancellationToken);
-            if (_vaultFolder is null)
-                return;
+            var result = await base.UpdateStatusAsync(cancellationToken);
+            if (!result || vaultFolder is null)
+                return false;
 
-            var validationResult = await _vaultValidator.TryValidateAsync(_vaultFolder, cancellationToken);
+            var validationResult = await VaultService.VaultValidator.TryValidateAsync(vaultFolder, cancellationToken);
             if (!validationResult.Successful)
-                return;
+            {
+                if (validationResult.Exception is NotSupportedException)
+                {
+                    // Allow unsupported vaults to be migrated
+                    SelectionInfoBar.Severity = InfoBarSeverityType.Warning;
+                    SelectionInfoBar.Message = $"'{vaultFolder.Name}' may not be supported";
+                    return true;
+                }
+                else
+                {
+                    SelectionInfoBar.Severity = InfoBarSeverityType.Error;
+                    SelectionInfoBar.Message = "Vault folder is invalid";
+                    return false;
+                }
+            }
 
-            SelectedLocationText = _vaultFolder.Name;
-            DialogViewModel.PrimaryButtonEnabled = true;
+            SelectionInfoBar.Severity = InfoBarSeverityType.Success;
+            SelectionInfoBar.Message = vaultFolder.Name;
+            return true;
         }
     }
 }

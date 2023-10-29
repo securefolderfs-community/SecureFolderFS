@@ -3,7 +3,6 @@ using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,14 +31,12 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         }
 
         /// <inheritdoc/>
-        public IUnlockRoutine SetCredentials(IPassword password, SecretKey? magic)
+        public IUnlockRoutine SetCredentials(SecretKey passkey)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
-            // Construct passkey
-            using var passkey = VaultParser.ConstructPasskey(password, magic);
-
+            // Derive keystore
             var (encKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel);
             _encKey = encKey;
             _macKey = macKey;

@@ -21,8 +21,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {
             ServiceProvider = Ioc.Default;
-            var contentCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultInfoModel.ContentCipherId;
-            var fileNameCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultInfoModel.FileNameCipherId;
+            var contentCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultOptions.ContentCipherId;
+            var fileNameCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultOptions.FileNameCipherId;
 
             ContentCipherName = contentCipherId == string.Empty ? "NoEncryption".ToLocalized() : (contentCipherId ?? "Unknown");
             FileNameCipherName = fileNameCipherId == string.Empty ? "NoEncryption".ToLocalized() : (fileNameCipherId ?? "Unknown");

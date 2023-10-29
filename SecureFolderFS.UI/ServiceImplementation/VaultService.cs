@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core;
+﻿using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -25,18 +25,15 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public IVaultAuthenticator VaultAuthenticator { get; } = new VaultAuthenticator();
 
         /// <inheritdoc/>
+        public IAsyncValidator<IFolder> VaultValidator { get; } = new VaultValidator(StreamSerializer.Instance);
+
+        /// <inheritdoc/>
         public bool IsNameReserved(string? name)
         {
             return name is not null && (
                    name.Equals(Core.Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, StringComparison.OrdinalIgnoreCase) ||
                    name.Equals(Core.Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase) ||
                    name.Equals(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, StringComparison.OrdinalIgnoreCase));
-        }
-
-        /// <inheritdoc/>
-        public IAsyncValidator<IFolder> GetVaultValidator()
-        {
-            return VaultHelpers.NewVaultValidator(StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>

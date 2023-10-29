@@ -67,7 +67,7 @@
                     IsClosable="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.CanBeClosed, Mode=OneWay}"
                     IsOpen="True"
                     Message="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Message, Mode=OneWay}"
-                    Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
+                    Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
                     Visibility="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsOpen, Mode=OneWay}">
                     <anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation

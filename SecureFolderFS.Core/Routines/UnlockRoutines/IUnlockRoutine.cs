@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
     // TODO: Needs docs
     public interface IUnlockRoutine : IAsyncInitialize, IDisposable
     {
-        IUnlockRoutine SetCredentials(IPassword password, SecretKey? magic);
+        IUnlockRoutine SetCredentials(SecretKey passkey);
 
         Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken);
     }

@@ -19,14 +19,14 @@ namespace SecureFolderFS.UI.AppModels
         public IVaultStatisticsModel VaultStatisticsModel { get; }
 
         /// <inheritdoc/>
-        public VaultInfoModel VaultInfoModel { get; }
+        public VaultOptions VaultOptions { get; }
 
-        public VaultLifetimeModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel, VaultInfoModel vaultInfoModel)
+        public VaultLifetimeModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel, VaultOptions vaultOptions)
         {
             _virtualFileSystem = virtualFileSystem;
             RootFolder = virtualFileSystem.RootFolder;
             VaultStatisticsModel = vaultStatisticsModel;
-            VaultInfoModel = vaultInfoModel;
+            VaultOptions = vaultOptions;
         }
 
         /// <inheritdoc/>

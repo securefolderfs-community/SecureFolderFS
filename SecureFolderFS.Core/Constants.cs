@@ -26,7 +26,10 @@
 
             public static class Specializations
             {
-                public const string SPEC_STANDARD = "standard";
+                public const string SPEC_STANDARD = "Standard";
+                //public const string SPEC_JOURNAL = "Journal";
+                //public const string SPEC_GALLERY = "Gallery";
+                //public const string SPEC_NOTES = "Notes";
             }
 
             public static class Versions
@@ -43,6 +46,7 @@
             public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
             public const string ASSOC_SPECIALIZATION = "spec";
             public const string ASSOC_AUTHENTICATION = "authMode";
+            public const string ASSOC_VERSION = "version";
         }
 
         public static class FileSystemId

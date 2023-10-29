@@ -20,8 +20,6 @@ namespace SecureFolderFS.Sdk.AppModels
     [Inject<IVaultService>]
     public sealed partial class VaultLoginModel : IVaultLoginModel
     {
-        private readonly IAsyncValidator<IFolder> _vaultValidator;
-
         /// <inheritdoc/>
         public IVaultModel VaultModel { get; }
 
@@ -36,8 +34,6 @@ namespace SecureFolderFS.Sdk.AppModels
             ServiceProvider = Ioc.Default;
             VaultModel = vaultModel;
             VaultWatcher = vaultWatcher;
-            _vaultValidator = VaultService.GetVaultValidator();
-
             VaultWatcher.StateChanged += VaultWatcher_StateChanged;
         }
 
@@ -57,7 +53,7 @@ namespace SecureFolderFS.Sdk.AppModels
         private async Task DetermineStrategyAsync(CancellationToken cancellationToken)
         {
             // TODO: Use validationResult for 2fa detection as well
-            var validationResult = await _vaultValidator.TryValidateAsync(VaultModel.Folder, cancellationToken);
+            var validationResult = await VaultService.VaultValidator.TryValidateAsync(VaultModel.Folder, cancellationToken);
 
             // TODO: 2FA is currently unimplemented
             var is2faEnabled = false;

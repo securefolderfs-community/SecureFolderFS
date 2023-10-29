@@ -11,6 +11,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
 {
     public sealed class VaultAuthenticator : IVaultAuthenticator
     {
+        /// <inheritdoc/>
         public async IAsyncEnumerable<AuthenticationModel> GetAuthenticationAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;

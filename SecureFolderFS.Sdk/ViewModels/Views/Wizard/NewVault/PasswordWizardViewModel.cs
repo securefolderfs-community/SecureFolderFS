@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
@@ -12,7 +14,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
@@ -22,10 +23,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         private readonly IVaultCreator _vaultCreator;
         private readonly IModifiableFolder _vaultFolder;
 
-        [ObservableProperty] private CipherInfoViewModel? _ContentCipher;
-        [ObservableProperty] private CipherInfoViewModel? _FileNameCipher;
-        [ObservableProperty] private ObservableCollection<CipherInfoViewModel> _ContentCiphers;
-        [ObservableProperty] private ObservableCollection<CipherInfoViewModel> _FileNameCiphers;
+        [ObservableProperty] private CipherViewModel? _ContentCipher;
+        [ObservableProperty] private CipherViewModel? _FileNameCipher;
+        [ObservableProperty] private ObservableCollection<CipherViewModel> _ContentCiphers;
+        [ObservableProperty] private ObservableCollection<CipherViewModel> _FileNameCiphers;
 
         /// <summary>
         /// Gets or sets the password getter delegate used to retrieve the password from the view.
@@ -63,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 
             return Task.CompletedTask;
 
-            static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherInfoViewModel> destination)
+            static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherViewModel> destination)
             {
                 foreach (var item in source)
                 {
@@ -85,8 +86,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             if (password is null)
                 return;
 
+            var vaultOptions = new VaultOptions()
+            {
+                ContentCipherId = ContentCipher.Id,
+                FileNameCipherId = FileNameCipher.Id,
+                AuthenticationMethod = "TODO",
+                Specialization = "TODO"
+            };
+
             // Create the vault
-            var superSecret = await _vaultCreator.CreateVaultAsync(_vaultFolder, password, FileNameCipher.Id, ContentCipher.Id, cancellationToken);
+            var superSecret = await _vaultCreator.CreateVaultAsync(_vaultFolder, new[] { password }, vaultOptions, cancellationToken);
 
             // Navigate
             await NavigationService.TryNavigateAsync(() => new RecoveryKeyWizardViewModel(_vaultFolder, superSecret, DialogViewModel));

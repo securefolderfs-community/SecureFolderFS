@@ -4,35 +4,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:l="using:SecureFolderFS.WinUI.Localization"
+    xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
+    xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     Width="464"
     mc:Ignorable="d">
 
-    <Grid
-        Padding="0,16,0,8"
-        HorizontalAlignment="Center"
-        RowSpacing="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <UserControl.Resources>
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
+    </UserControl.Resources>
 
-        <TextBlock
-            Grid.Row="0"
-            HorizontalAlignment="Center"
-            FontSize="18"
-            Text="{l:ResourceString Name=SelectVaultPath}" />
-
-        <StackPanel Grid.Row="1" Spacing="8">
-            <TextBlock
-                HorizontalAlignment="Center"
-                Opacity="0.8"
-                Text="{x:Bind ViewModel.SelectedLocationText, Mode=OneWay}" />
-
-            <Button
-                HorizontalAlignment="Center"
-                Command="{x:Bind ViewModel.BrowseLocationCommand}"
-                Content="Browse" />
-        </StackPanel>
-    </Grid>
+    <uc:VaultFolderSelectionControl
+        Message="{x:Bind ViewModel.SelectionInfoBar.Message, Mode=OneWay}"
+        OpenCommand="{x:Bind ViewModel.OpenFolderCommand}"
+        Severity="{x:Bind ViewModel.SelectionInfoBar.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
 </Page>

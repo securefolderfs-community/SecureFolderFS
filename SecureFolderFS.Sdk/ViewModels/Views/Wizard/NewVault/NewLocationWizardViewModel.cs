@@ -1,25 +1,23 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Utilities;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
-    [Inject<IVaultService>, Inject<IFileExplorerService>]
-    public sealed partial class NewLocationWizardViewModel : BaseWizardPageViewModel
+    [Inject<IVaultService>]
+    public sealed partial class NewLocationWizardViewModel : BaseVaultSelectionWizardViewModel
     {
         private readonly IVaultCreator _vaultCreator;
-        private IModifiableFolder? _vaultFolder;
-
-        [ObservableProperty] private string? _SelectedLocationText = "NoFolderSelected".ToLocalized();
 
         public NewLocationWizardViewModel(VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
@@ -28,29 +26,48 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             _vaultCreator = VaultService.VaultCreator;
         }
 
+        /// <inheritdoc/>
+        public override async void OnNavigatingTo(NavigationType navigationType)
+        {
+            _ = navigationType;
+            await UpdateStatusAsync(default);
+        }
+
+        /// <inheritdoc/>
         public override async Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
             eventDispatch?.NoForwarding();
-
-            if (_vaultFolder is null)
+            if (vaultFolder is null)
                 return;
 
-            _ = await NavigationService.TryNavigateAsync<PasswordWizardViewModel>(() => new(_vaultFolder, _vaultCreator, DialogViewModel));
+            _ = await NavigationService.TryNavigateAsync<PasswordWizardViewModel>(() => new((IModifiableFolder)vaultFolder, _vaultCreator, DialogViewModel));
         }
 
-        [RelayCommand]
-        private async Task BrowseLocationAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        protected override async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken)
         {
-            var folder = await FileExplorerService.PickFolderAsync(cancellationToken);
-            if (folder is null)
-                return;
+            var result = await base.UpdateStatusAsync(cancellationToken);
+            if (!result || vaultFolder is null)
+                return false;
 
-            _vaultFolder = folder as IModifiableFolder;
-            if (_vaultFolder is null)
-                return;
+            var validationResult = await VaultService.VaultValidator.TryValidateAsync(vaultFolder, cancellationToken);
+            if (validationResult.Successful || validationResult.Exception is NotSupportedException)
+            {
+                // Check if a valid (or unsupported) vault exists at a specified path
+                SelectionInfoBar.Severity = InfoBarSeverityType.Warning;
+                SelectionInfoBar.Message = $"'{vaultFolder.Name}' will be overwritten";
+                return true;
+            }
 
-            SelectedLocationText = _vaultFolder.Name;
-            DialogViewModel.PrimaryButtonEnabled = true;
+            SelectionInfoBar.Severity = InfoBarSeverityType.Success;
+            SelectionInfoBar.Message = vaultFolder.Name;
+            return true;
+        }
+
+        protected override async Task OpenFolderAsync(CancellationToken cancellationToken)
+        {
+            vaultFolder = await FileExplorerService.PickFolderAsync(cancellationToken) as IModifiableFolder;
+            DialogViewModel.PrimaryButtonEnabled = await UpdateStatusAsync(cancellationToken);
         }
     }
 }

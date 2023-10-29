@@ -1,32 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Vault;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Login;
-using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Shared.Extensions;
+using System;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<IThreadingService>, Inject<IVaultService>, Inject<IDialogService>, Inject<ISettingsService>]
+    [Inject<IDialogService>, Inject<ISettingsService>]
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
         [ObservableProperty] private string? _VaultName;
@@ -36,34 +24,42 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             : base(vaultViewModel, navigationService)
         {
             ServiceProvider = Ioc.Default;
-            _LoginViewModel = new(vaultViewModel.VaultModel, true);
             VaultName = vaultViewModel.VaultModel.VaultName;
+            _LoginViewModel = new(vaultViewModel.VaultModel, true);
+            _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
 
-        /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            // TODO: Move to event handler where successful unlock is going to be handled:
             if (!SettingsService.AppSettings.WasVaultFolderExplanationShown)
             {
                 var explanationDialog = new ExplanationDialogViewModel();
-                await explanationDialog.InitAsync(cancellationToken);
+                await explanationDialog.InitAsync();
                 await DialogService.ShowDialogAsync(explanationDialog);
 
                 SettingsService.AppSettings.WasVaultFolderExplanationShown = true;
-                await SettingsService.AppSettings.TrySaveAsync(cancellationToken);
+                await SettingsService.AppSettings.TrySaveAsync();
             }
+
+            // Update last access date
+            await VaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now);
+
+            // Create view models
+            var unlockedVaultViewModel = new UnlockedVaultViewModel(VaultViewModel, e.VaultLifecycle);
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, NavigationService);
+
+            // Notify that the vault has been unlocked
+            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultViewModel.VaultModel));
+
+            // Dispose the current instance and navigate
+            Dispose();
+            await NavigationService.TryNavigateAndForgetAsync(dashboardPage);
         }
-
-
-
-
-
-        
 
         /// <inheritdoc/>
         public override void Dispose()
         {
+            LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
             LoginViewModel.Dispose();
         }
     }

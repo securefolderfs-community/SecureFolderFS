@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -60,21 +61,38 @@ namespace SecureFolderFS.SourceGenerator.Helpers
         /// <summary>
         /// Generate the following code:
         /// <code>
-        /// partial class <paramref name="specificType" /><br/>
+        /// partial class <paramref name="specificType"/>&lt;<see cref="INamedTypeSymbol.TypeParameters"/>&gt;<br/>
         /// {
         ///     <paramref name="members" /><br/>
         /// }
         /// </code>
         /// </summary>
         /// <returns><see cref="ClassDeclarationSyntax"/></returns>
-        internal static ClassDeclarationSyntax GetClassDeclaration(ISymbol specificType, IList<MemberDeclarationSyntax> members)
+        internal static ClassDeclarationSyntax GetClassDeclaration(INamedTypeSymbol specificType, IList<MemberDeclarationSyntax> members)
         {
             for (var i = 0; i < members.Count - 1; i++)
                 members[i] = members[i].WithTrailingTrivia(SyntaxTrivia(SyntaxKind.EndOfLineTrivia, "\n"));
 
-            return ClassDeclaration(specificType.Name)
-                .AddModifiers(Token(SyntaxKind.PartialKeyword))
-                .AddMembers(members.ToArray());
+            var name = specificType.Name.Contains('`') ? specificType.Name.Substring(specificType.Name.Length-2) : specificType.Name;
+            var classDeclarationSyntax = ClassDeclaration(name).AddModifiers(Token(SyntaxKind.PartialKeyword));
+
+            if (!specificType.TypeParameters.IsEmpty)
+            {
+                classDeclarationSyntax = classDeclarationSyntax.AddTypeParameterListParameters(TypeParameter("TFolder"));
+
+                var typeParameters = new SeparatedSyntaxList<TypeParameterSyntax>();
+                foreach (var item in specificType.TypeParameters)
+                {
+                    typeParameters.Add(TypeParameter(item.Name));
+                }
+
+                classDeclarationSyntax = classDeclarationSyntax.WithTypeParameterList(TypeParameterList(
+                        Token(SyntaxKind.LessThanToken),
+                        typeParameters,
+                        Token(SyntaxKind.GreaterThanToken)));
+            }
+
+            return classDeclarationSyntax.AddMembers(members.ToArray());
         }
 
         /// <summary>

@@ -22,7 +22,7 @@
                 IsClosable="{x:Bind CanBeClosed, Mode=OneWay}"
                 IsOpen="True"
                 Message="{x:Bind Message, Mode=OneWay}"
-                Severity="{x:Bind InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
+                Severity="{x:Bind Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
                 Visibility="{x:Bind IsOpen, Mode=OneWay}">
                 <InfoBar.Content>
                     <Grid Padding="16,8,16,8">
@@ -61,7 +61,7 @@
                 IsClosable="{x:Bind CanBeClosed, Mode=OneWay}"
                 IsOpen="True"
                 Message="{x:Bind Message, Mode=OneWay}"
-                Severity="{x:Bind InfoBarSeverity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
+                Severity="{x:Bind Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
         </DataTemplate>
     </Page.Resources>
 

@@ -6,14 +6,8 @@ using static SecureFolderFS.Core.Constants;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    internal sealed class VaultConfigurationDataModel
+    internal sealed class VaultConfigurationDataModel : VersionDataModel
     {
-        /// <summary>
-        /// Gets the version of the vault.
-        /// </summary>
-        [JsonPropertyName("version")]
-        public required int Version { get; init; }
-
         /// <summary>
         /// Gets scheme type of the vault for content encryption.
         /// </summary>
@@ -28,12 +22,12 @@ namespace SecureFolderFS.Core.DataModels
         [DefaultValue("")]
         public required string FileNameCipherId { get; init; }
 
-        /// <summary>
-        /// Gets the specialization of the vault that hints how the user data should be handled.
-        /// </summary>
-        [JsonPropertyName(Associations.ASSOC_SPECIALIZATION)]
-        [DefaultValue("")]
-        public required string Specialization { get; init; } = string.Empty;
+        ///// <summary>
+        ///// Gets the specialization of the vault that hints how the user data should be handled.
+        ///// </summary>
+        //[JsonPropertyName(Associations.ASSOC_SPECIALIZATION)]
+        //[DefaultValue("")]
+        //public required string Specialization { get; init; } = string.Empty;
 
         /// <summary>
         /// Gets the information about the authentication method used for this vault.

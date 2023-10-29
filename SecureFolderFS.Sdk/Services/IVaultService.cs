@@ -27,16 +27,16 @@ namespace SecureFolderFS.Sdk.Services
         IVaultAuthenticator VaultAuthenticator { get; }
 
         /// <summary>
+        /// Gets the <see cref="IAsyncValidator{T}"/> of type <see cref="IFolder"/> used to validate vaults.
+        /// </summary>
+        IAsyncValidator<IFolder> VaultValidator { get; }
+
+        /// <summary>
         /// Determines whether provided <paramref name="name"/> is part of vault core configuration files.
         /// </summary>
         /// <param name="name">The file name to check.</param>
         /// <returns>Returns true if the file name is a part of vault configuration data, otherwise false.</returns>
         bool IsNameReserved(string? name);
-
-        /// <summary>
-        /// Gets the <see cref="IAsyncValidator{T}"/> of type <see cref="IFolder"/> used to validate vaults.
-        /// </summary>
-        IAsyncValidator<IFolder> GetVaultValidator();
 
         /// <summary>
         /// Gets all file systems that are supported by SecureFolderFS.

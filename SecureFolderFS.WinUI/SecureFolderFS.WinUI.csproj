@@ -64,6 +64,7 @@
         <None Remove="UserControls\OverlayControl.xaml" />
         <None Remove="UserControls\PasswordControl.xaml" />
         <None Remove="UserControls\TitleBarControl.xaml" />
+        <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
         <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
         <None Remove="Views\PrintPages\MasterKeyPrintPage.xaml" />
         <None Remove="Views\Settings\AboutSettingsPage.xaml" />
@@ -299,6 +300,11 @@
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-150.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="UserControls\VaultFolderSelectionControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     <ItemGroup>
       <Page Update="UserControls\LoginControl.xaml">

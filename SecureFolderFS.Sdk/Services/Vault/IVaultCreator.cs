@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Storage;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,10 +23,10 @@ namespace SecureFolderFS.Sdk.Services.Vault
         /// very sensitive and should be disposed of as soon as it is no longer needed.
         /// </remarks>
         /// <param name="vaultFolder">The folder where the vault should be created.</param>
-        /// <param name="passkey">The compiled passkey to set for this vault.</param>
+        /// <param name="passkey">The passkey represented by <see cref="IEnumerable{T}"/> of <see cref="IDisposable"/> representing authentication elements to set for this vault.</param>
         /// <param name="vaultOptions">The required options to set for this vault.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the master key used to decrypt the vault.</returns>
-        Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IDisposable passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
+        Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IEnumerable<IDisposable> passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
     }
 }

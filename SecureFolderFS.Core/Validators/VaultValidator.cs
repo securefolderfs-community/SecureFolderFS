@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.Validators
 {
     /// <inheritdoc cref="IAsyncValidator{T}"/>
-    internal sealed class VaultValidator : IAsyncValidator<IFolder>
+    public sealed class VaultValidator : IAsyncValidator<IFolder>
     {
         private readonly IAsyncSerializer<Stream> _serializer;
 

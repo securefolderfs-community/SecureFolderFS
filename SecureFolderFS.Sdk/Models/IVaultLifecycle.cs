@@ -22,6 +22,6 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Gets the model that contains additional information about the vault.
         /// </summary>
-        VaultInfoModel VaultInfoModel { get; }
+        VaultOptions VaultOptions { get; }
     }
 }

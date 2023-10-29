@@ -18,10 +18,10 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
     public sealed class VaultCreator : IVaultCreator
     {
         /// <inheritdoc/>
-        public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IDisposable passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IEnumerable<IDisposable> passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
-            using var passkeySecret = GetPasskeySecret(passkey);
+            using var passkeySecret = (SecretKey)null!;
             var options = ParseOptions(vaultOptions);
 
             var superSecret = await creationRoutine
@@ -37,11 +37,6 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
             }
 
             return superSecret;
-        }
-
-        private static SecretKey GetPasskeySecret(IDisposable passkey)
-        {
-
         }
 
         private static IReadOnlyDictionary<string, string> ParseOptions(VaultOptions vaultOptions)

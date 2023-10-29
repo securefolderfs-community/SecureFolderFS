@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
                 Version = Constants.Vault.Versions.LATEST_VERSION,
                 ContentCipherId = options[Constants.Associations.ASSOC_CONTENT_CIPHER_ID],
                 FileNameCipherId = options[Constants.Associations.ASSOC_FILENAME_CIPHER_ID],
-                Specialization = options[Constants.Associations.ASSOC_SPECIALIZATION],
+                //Specialization = options[Constants.Associations.ASSOC_SPECIALIZATION],
                 AuthenticationMethod = options[Constants.Associations.ASSOC_AUTHENTICATION],
                 Id = Guid.NewGuid().ToString(),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
