@@ -40,8 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
         /// <inheritdoc/>
         protected override async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken)
         {
-            var result = await base.UpdateStatusAsync(cancellationToken);
-            if (!result || vaultFolder is null)
+            if (vaultFolder is null)
                 return false;
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(vaultFolder, cancellationToken);
@@ -63,7 +62,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
             }
 
             SelectionInfoBar.Severity = InfoBarSeverityType.Success;
-            SelectionInfoBar.Message = vaultFolder.Name;
+            SelectionInfoBar.Message = $"Selected '{vaultFolder.Name}'";
             return true;
         }
     }

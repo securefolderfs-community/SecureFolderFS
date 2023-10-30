@@ -27,13 +27,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         }
 
         /// <inheritdoc/>
-        public override async void OnNavigatingTo(NavigationType navigationType)
-        {
-            _ = navigationType;
-            await UpdateStatusAsync(default);
-        }
-
-        /// <inheritdoc/>
         public override async Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
             eventDispatch?.NoForwarding();
@@ -46,8 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         /// <inheritdoc/>
         protected override async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken)
         {
-            var result = await base.UpdateStatusAsync(cancellationToken);
-            if (!result || vaultFolder is null)
+            if (vaultFolder is null)
                 return false;
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(vaultFolder, cancellationToken);
@@ -60,14 +52,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             }
 
             SelectionInfoBar.Severity = InfoBarSeverityType.Success;
-            SelectionInfoBar.Message = vaultFolder.Name;
+            SelectionInfoBar.Message = $"Will be created in '{vaultFolder.Name}'";
             return true;
         }
 
         protected override async Task OpenFolderAsync(CancellationToken cancellationToken)
         {
             vaultFolder = await FileExplorerService.PickFolderAsync(cancellationToken) as IModifiableFolder;
-            DialogViewModel.PrimaryButtonEnabled = await UpdateStatusAsync(cancellationToken);
+            DialogViewModel.PrimaryButtonEnabled = await UpdateStatusInternalAsync(cancellationToken);
         }
     }
 }

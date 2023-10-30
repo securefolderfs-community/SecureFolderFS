@@ -30,10 +30,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public override async void OnNavigatingTo(NavigationType navigationType)
         {
             _ = navigationType;
-            await UpdateStatusAsync(default);
+            await UpdateStatusInternalAsync(default);
         }
 
-        protected virtual Task<bool> UpdateStatusAsync(CancellationToken cancellationToken)
+        protected Task<bool> UpdateStatusInternalAsync(CancellationToken cancellationToken)
         {
             if (vaultFolder is null)
             {
@@ -42,16 +42,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 return Task.FromResult(false);
             }
 
-            SelectionInfoBar.Severity = InfoBarSeverityType.Success;
-            SelectionInfoBar.Message = vaultFolder.Name;
-            return Task.FromResult(true);
+            return UpdateStatusAsync(cancellationToken);
         }
+
+        protected abstract Task<bool> UpdateStatusAsync(CancellationToken cancellationToken);
 
         [RelayCommand]
         protected virtual async Task OpenFolderAsync(CancellationToken cancellationToken)
         {
             vaultFolder = await FileExplorerService.PickFolderAsync(cancellationToken);
-            DialogViewModel.PrimaryButtonEnabled = await UpdateStatusAsync(cancellationToken);
+            DialogViewModel.PrimaryButtonEnabled = await UpdateStatusInternalAsync(cancellationToken);
         }
     }
 }
