@@ -17,6 +17,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 
         public VaultControlsViewModel VaultControlsViewModel { get; }
 
+        /// <inheritdoc/>
+        public override string PageName => UnlockedVaultViewModel.VaultViewModel.VaultModel.VaultName;
+
         public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, VaultControlsViewModel vaultControlsViewModel, INavigationService dashboardNavigationService)
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {

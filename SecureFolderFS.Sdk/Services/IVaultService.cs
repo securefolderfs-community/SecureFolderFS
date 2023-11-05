@@ -9,7 +9,7 @@ namespace SecureFolderFS.Sdk.Services
     /// <summary>
     /// Represents a service to interact with vault-related data.
     /// </summary>
-    public interface IVaultService
+    public interface IVaultService // TODO: Move some of the methods to IVaultModel?
     {
         /// <summary>
         /// Gets the vault creator.
@@ -30,6 +30,11 @@ namespace SecureFolderFS.Sdk.Services
         /// Gets the <see cref="IAsyncValidator{T}"/> of type <see cref="IFolder"/> used to validate vaults.
         /// </summary>
         IAsyncValidator<IFolder> VaultValidator { get; }
+
+        /// <summary>
+        /// Gets the latest vault version format.
+        /// </summary>
+        int LatestVaultVersion { get; }
 
         /// <summary>
         /// Determines whether provided <paramref name="name"/> is part of vault core configuration files.

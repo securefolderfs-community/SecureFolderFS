@@ -14,14 +14,6 @@ namespace SecureFolderFS.WinUI.UserControls
             InitializeComponent();
         }
 
-        public InfoBarSeverity Severity
-        {
-            get => (InfoBarSeverity)GetValue(SeverityProperty);
-            set => SetValue(SeverityProperty, value);
-        }
-        public static readonly DependencyProperty SeverityProperty =
-            DependencyProperty.Register(nameof(Severity), typeof(InfoBarSeverity), typeof(VaultFolderSelectionControl), new PropertyMetadata(InfoBarSeverity.Informational));
-
         public string Message
         {
             get => (string)GetValue(MessageProperty);

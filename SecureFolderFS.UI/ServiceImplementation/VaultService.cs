@@ -9,6 +9,8 @@ using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation.Vault;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -26,6 +28,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
         /// <inheritdoc/>
         public IAsyncValidator<IFolder> VaultValidator { get; } = new VaultValidator(StreamSerializer.Instance);
+
+        /// <inheritdoc/>
+        public int LatestVaultVersion { get; } = Core.Constants.Vault.Versions.LATEST_VERSION;
 
         /// <inheritdoc/>
         public bool IsNameReserved(string? name)

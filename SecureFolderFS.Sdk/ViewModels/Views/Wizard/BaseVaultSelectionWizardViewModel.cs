@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         protected IFolder? vaultFolder;
 
         [ObservableProperty] private InfoBarViewModel _SelectionInfoBar;
+        [ObservableProperty] private string _SelectedLocation;
 
         public BaseVaultSelectionWizardViewModel(VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
@@ -38,14 +40,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             if (vaultFolder is null)
             {
                 SelectionInfoBar.Severity = InfoBarSeverityType.Information;
-                SelectionInfoBar.Message = "No vault selected";
+                SelectionInfoBar.Message = "Select a vault folder to continue";
+                SelectedLocation = "No vault selected";
                 return Task.FromResult(false);
             }
 
+            SelectedLocation = $"..{Path.DirectorySeparatorChar}{Path.GetFileName(Path.GetDirectoryName(vaultFolder.Id))}{Path.DirectorySeparatorChar}{Path.GetFileName(vaultFolder.Id)}";
             return UpdateStatusAsync(cancellationToken);
         }
-
-        protected abstract Task<bool> UpdateStatusAsync(CancellationToken cancellationToken);
 
         [RelayCommand]
         protected virtual async Task OpenFolderAsync(CancellationToken cancellationToken)
@@ -53,5 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             vaultFolder = await FileExplorerService.PickFolderAsync(cancellationToken);
             DialogViewModel.PrimaryButtonEnabled = await UpdateStatusInternalAsync(cancellationToken);
         }
+
+        protected abstract Task<bool> UpdateStatusAsync(CancellationToken cancellationToken);
     }
 }

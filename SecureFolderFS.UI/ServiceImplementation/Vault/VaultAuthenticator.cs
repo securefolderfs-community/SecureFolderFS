@@ -16,7 +16,8 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
         {
             await Task.CompletedTask;
 
-            yield return new("NAME_PASSWORD", AuthenticationType.Password, null);
+            // Name not needed if authentication is a password
+            yield return new(string.Empty, AuthenticationType.Password, null);
             //yield return new("key file", AuthenticationType.Other, new KeyFileAuthenticator());
         }
     }

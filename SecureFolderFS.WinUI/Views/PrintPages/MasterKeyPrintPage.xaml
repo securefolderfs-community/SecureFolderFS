@@ -68,7 +68,7 @@
                     FontFamily="Consolas"
                     FontSize="16"
                     Foreground="Black"
-                    Text="Lorem ipsum dolor sit amet."
+                    Text="REPORT A BUG IF YOU SEE THIS TEXT"
                     TextWrapping="Wrap" />
             </Grid>
         </StackPanel>

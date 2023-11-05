@@ -47,12 +47,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             {
                 // Check if a valid (or unsupported) vault exists at a specified path
                 SelectionInfoBar.Severity = InfoBarSeverityType.Warning;
-                SelectionInfoBar.Message = $"'{vaultFolder.Name}' will be overwritten";
+                SelectionInfoBar.Message = "The selected vault will be overwritten";
                 return true;
             }
 
             SelectionInfoBar.Severity = InfoBarSeverityType.Success;
-            SelectionInfoBar.Message = $"Will be created in '{vaultFolder.Name}'";
+            SelectionInfoBar.Message = "A new vault will be created in selected folder";
             return true;
         }
 

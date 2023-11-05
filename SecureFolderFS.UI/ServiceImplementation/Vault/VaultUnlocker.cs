@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FUSE.AppModels;
@@ -12,6 +11,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.UI.AppModels;
+using SecureFolderFS.UI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
             using var unlockRoutine = routines.UnlockVault();
-            using var passkeySecret = (SecretKey)null!;
+            using var passkeySecret = AuthenticationHelpers.ParseSecretKey(passkey);
 
             await unlockRoutine.InitAsync(cancellationToken);
 

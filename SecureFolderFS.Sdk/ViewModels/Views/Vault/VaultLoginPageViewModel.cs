@@ -11,6 +11,8 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.Extensions;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -27,6 +29,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             VaultName = vaultViewModel.VaultModel.VaultName;
             _LoginViewModel = new(vaultViewModel.VaultModel, true);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
+        }
+
+        /// <inheritdoc/>
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            await LoginViewModel.InitAsync(cancellationToken);
         }
 
         private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)

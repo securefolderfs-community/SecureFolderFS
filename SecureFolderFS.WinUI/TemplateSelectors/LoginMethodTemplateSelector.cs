@@ -10,6 +10,8 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
 
         public DataTemplate? PasswordTemplate { get; set; }
 
+        public DataTemplate? MigrationTemplate { get; set; }
+
         public DataTemplate? ErrorTemplate { get; set; }
 
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
@@ -18,6 +20,7 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
             {
                 AuthenticationViewModel => AuthenticateTemplate,
                 PasswordViewModel => PasswordTemplate,
+                MigrationViewModel => MigrationTemplate,
                 ErrorViewModel => ErrorTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };

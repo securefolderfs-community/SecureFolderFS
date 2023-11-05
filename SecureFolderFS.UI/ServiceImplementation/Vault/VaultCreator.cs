@@ -1,10 +1,10 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Core.Routines;
+﻿using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.UI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,7 +21,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
         public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IEnumerable<IDisposable> passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default)
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
-            using var passkeySecret = (SecretKey)null!;
+            using var passkeySecret = AuthenticationHelpers.ParseSecretKey(passkey);
             var options = ParseOptions(vaultOptions);
 
             var superSecret = await creationRoutine

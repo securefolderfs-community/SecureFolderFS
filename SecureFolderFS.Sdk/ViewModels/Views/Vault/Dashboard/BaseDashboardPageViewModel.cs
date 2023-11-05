@@ -9,6 +9,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 
         protected INavigationService DashboardNavigationService { get; }
 
+        public abstract string PageName { get; }
+
         protected BaseDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService)
         {
             UnlockedVaultViewModel = unlockedVaultViewModel;

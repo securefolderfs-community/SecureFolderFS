@@ -7,30 +7,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <InfoBar
-        IsClosable="False"
-        IsOpen="True"
-        Severity="{x:Bind Severity, Mode=OneWay}">
-        <InfoBar.Content>
-            <Grid Margin="0,-54,0,0" Padding="0,0,8,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+    <Grid
+        Margin="1"
+        Padding="16,8"
+        Background="{ThemeResource InfoBarInformationalSeverityBackgroundBrush}"
+        ColumnSpacing="4"
+        CornerRadius="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
-                <TextBlock
-                    Grid.Column="0"
-                    Margin="0,2,0,0"
-                    VerticalAlignment="Center"
-                    Text="{x:Bind Message, Mode=OneWay}"
-                    TextTrimming="CharacterEllipsis"
-                    ToolTipService.ToolTip="{x:Bind Message, Mode=OneWay}" />
+        <TextBlock
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            FontWeight="SemiBold"
+            Text="{x:Bind Message, Mode=OneWay}"
+            ToolTipService.ToolTip="{x:Bind Message, Mode=OneWay}" />
 
-                <Button
-                    Grid.Column="1"
-                    Command="{x:Bind OpenCommand, Mode=OneWay}"
-                    Content="Open" />
-            </Grid>
-        </InfoBar.Content>
-    </InfoBar>
+        <Button
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            Command="{x:Bind OpenCommand, Mode=OneWay}"
+            Content="Open" />
+    </Grid>
 </UserControl>

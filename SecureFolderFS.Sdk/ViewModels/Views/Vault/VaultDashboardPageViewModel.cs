@@ -16,12 +16,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     {
         public UnlockedVaultViewModel UnlockedVaultViewModel { get; }
 
+        public string? PageTitle => (DashboardNavigationService.CurrentTarget as BaseDashboardPageViewModel)?.PageName;
+
         public VaultDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService navigationService)
             : base(unlockedVaultViewModel.VaultViewModel, navigationService)
         {
             ServiceProvider = Ioc.Default;
             UnlockedVaultViewModel = unlockedVaultViewModel;
+            DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
+
             WeakReferenceMessenger.Default.Register(this);
+        }
+
+        private void DashboardNavigationService_NavigationChanged(object? sender, INavigationTarget? e)
+        {
+            OnPropertyChanged(nameof(PageTitle));
         }
 
         /// <inheritdoc/>

@@ -17,6 +17,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         [ObservableProperty] private string? _ContentCipherName;
         [ObservableProperty] private string? _FileNameCipherName;
 
+        /// <inheritdoc/>
+        public override string PageName { get; } = "Properties";
+
         public VaultPropertiesPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService)
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {

@@ -13,8 +13,14 @@
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
     </UserControl.Resources>
 
-    <uc:VaultFolderSelectionControl
-        Message="{x:Bind ViewModel.SelectionInfoBar.Message, Mode=OneWay}"
-        OpenCommand="{x:Bind ViewModel.OpenFolderCommand}"
-        Severity="{x:Bind ViewModel.SelectionInfoBar.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
+    <StackPanel Spacing="4">
+        <InfoBar
+            IsClosable="False"
+            IsOpen="True"
+            Message="{x:Bind ViewModel.SelectionInfoBar.Message, Mode=OneWay}"
+            Severity="{x:Bind ViewModel.SelectionInfoBar.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
+
+        <uc:VaultFolderSelectionControl Message="{x:Bind ViewModel.SelectedLocation, Mode=OneWay}" OpenCommand="{x:Bind ViewModel.OpenFolderCommand}" />
+    </StackPanel>
+
 </Page>

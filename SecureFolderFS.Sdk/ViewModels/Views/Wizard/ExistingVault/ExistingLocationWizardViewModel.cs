@@ -50,7 +50,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
                 {
                     // Allow unsupported vaults to be migrated
                     SelectionInfoBar.Severity = InfoBarSeverityType.Warning;
-                    SelectionInfoBar.Message = $"'{vaultFolder.Name}' may not be supported";
+                    SelectionInfoBar.Message = "Selected vault may not be supported";
                     return true;
                 }
                 else
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault
             }
 
             SelectionInfoBar.Severity = InfoBarSeverityType.Success;
-            SelectionInfoBar.Message = $"Selected '{vaultFolder.Name}'";
+            SelectionInfoBar.Message = "Found a valid vault folder";
             return true;
         }
     }

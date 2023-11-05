@@ -7,8 +7,6 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.UI.UserControls.BreadcrumbBar;
-using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,8 +18,6 @@ namespace SecureFolderFS.WinUI.Views.Vault
     /// </summary>
     public sealed partial class VaultDashboardPage : Page
     {
-        public ObservableCollection<OrderedBreadcrumbBarItem> BreadcrumbItems { get; }
-
         public VaultDashboardPageViewModel ViewModel
         {
             get => (VaultDashboardPageViewModel)DataContext;
@@ -31,16 +27,12 @@ namespace SecureFolderFS.WinUI.Views.Vault
         public VaultDashboardPage()
         {
             InitializeComponent();
-            BreadcrumbItems = new();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultDashboardPageViewModel viewModel)
-            {
                 ViewModel = viewModel;
-                BreadcrumbItems.Add(new(ViewModel.VaultViewModel.VaultModel.VaultName, true));
-            }
 
             base.OnNavigatedTo(e);
         }
@@ -51,6 +43,7 @@ namespace SecureFolderFS.WinUI.Views.Vault
             ViewModel.DashboardNavigationService.ResetNavigation();
             ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
             Navigation.Dispose();
+
             base.OnNavigatingFrom(e);
         }
 
