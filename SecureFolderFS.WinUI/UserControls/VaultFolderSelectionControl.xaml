@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Grid
-        Margin="1"
+        Margin="1,0"
         Padding="16,8"
         Background="{ThemeResource InfoBarInformationalSeverityBackgroundBrush}"
         ColumnSpacing="4"
@@ -21,7 +21,7 @@
         <TextBlock
             Grid.Column="0"
             VerticalAlignment="Center"
-            FontWeight="SemiBold"
+            Opacity="0.8"
             Text="{x:Bind Message, Mode=OneWay}"
             ToolTipService.ToolTip="{x:Bind Message, Mode=OneWay}" />
 

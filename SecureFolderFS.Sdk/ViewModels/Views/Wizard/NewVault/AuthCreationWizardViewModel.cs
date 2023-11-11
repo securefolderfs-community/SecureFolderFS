@@ -4,7 +4,6 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.Utilities;
@@ -18,9 +17,8 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
     [Inject<IVaultService>]
-    public sealed partial class PasswordWizardViewModel : BaseWizardPageViewModel
+    public sealed partial class AuthCreationWizardViewModel : BaseWizardPageViewModel
     {
-        private readonly IVaultCreator _vaultCreator;
         private readonly IModifiableFolder _vaultFolder;
 
         [ObservableProperty] private CipherViewModel? _ContentCipher;
@@ -40,12 +38,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             set => DialogViewModel.PrimaryButtonEnabled = value;
         }
 
-        public PasswordWizardViewModel(IModifiableFolder vaultFolder, IVaultCreator vaultCreator, VaultWizardDialogViewModel dialogViewModel)
+        public AuthCreationWizardViewModel(IModifiableFolder vaultFolder, VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
         {
             ServiceProvider = Ioc.Default;
             _vaultFolder = vaultFolder;
-            _vaultCreator = vaultCreator;
             _ContentCiphers = new();
             _FileNameCiphers = new();
 
@@ -95,7 +92,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             };
 
             // Create the vault
-            var superSecret = await _vaultCreator.CreateVaultAsync(_vaultFolder, new[] { password }, vaultOptions, cancellationToken);
+            var superSecret = await VaultService.VaultCreator.CreateVaultAsync(_vaultFolder, new[] { password }, vaultOptions, cancellationToken);
 
             // Navigate
             await NavigationService.TryNavigateAsync(() => new RecoveryKeyWizardViewModel(_vaultFolder, superSecret, DialogViewModel));

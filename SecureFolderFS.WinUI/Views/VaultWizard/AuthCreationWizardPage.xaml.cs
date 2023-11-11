@@ -10,15 +10,15 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class PasswordWizardPage : Page
+    public sealed partial class AuthCreationWizardPage : Page
     {
-        public PasswordWizardViewModel ViewModel
+        public AuthCreationWizardViewModel ViewModel
         {
-            get => (PasswordWizardViewModel)DataContext;
+            get => (AuthCreationWizardViewModel)DataContext;
             set => DataContext = value;
         }
 
-        public PasswordWizardPage()
+        public AuthCreationWizardPage()
         {
             InitializeComponent();
         }
@@ -26,7 +26,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is PasswordWizardViewModel viewModel)
+            if (e.Parameter is AuthCreationWizardViewModel viewModel)
             {
                 ViewModel = viewModel;
                 ViewModel.PasswordGetter = FirstPassword.GetPassword;

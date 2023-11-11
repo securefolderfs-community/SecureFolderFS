@@ -1,6 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.WinUI.Views.VaultWizard;
 using System;
@@ -15,9 +14,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
             { typeof(MainWizardPageViewModel), typeof(MainWizardPage) },
-            { typeof(ExistingLocationWizardViewModel), typeof(AddExistingWizardPage) },
-            { typeof(NewLocationWizardViewModel), typeof(CreationPathWizardPage) },
-            { typeof(PasswordWizardViewModel), typeof(PasswordWizardPage) },
+            { typeof(AuthCreationWizardViewModel), typeof(AuthCreationWizardPage) },
             { typeof(RecoveryKeyWizardViewModel), typeof(RecoveryKeyWizardPage) },
             { typeof(SummaryWizardViewModel), typeof(SummaryWizardPage) }
         };
