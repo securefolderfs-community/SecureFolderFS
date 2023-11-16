@@ -145,7 +145,7 @@
     <value>Iniciar SecureFolderFS al iniciar el sistema</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Atrás</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
@@ -154,7 +154,7 @@
     <value>Notas de la versión</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>¡Increíble!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
     <value>Ver las últimas notas de la versión actual</value>
@@ -298,7 +298,7 @@
     <value>Nueva caja fuerte</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>Sin cifrado</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
@@ -341,7 +341,7 @@
     <value>Repita la contraseña</value>
   </data>
   <data name="RestartRequired" xml:space="preserve">
-    <value>Restart required</value>
+    <value>Se requiere reiniciar</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
     <value>Continúe donde lo dejó</value>
@@ -350,7 +350,7 @@
     <value>Iniciar en la caja fuerte seleccionada previamente</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>Reintentar</value>
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
@@ -366,7 +366,7 @@
     <value>Establecer contraseña</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Ajustes</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
     <value>Acerca de</value>
@@ -441,7 +441,7 @@
     <value>Vault recovery</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Versión</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
     <value>Ver en GitHub</value>
