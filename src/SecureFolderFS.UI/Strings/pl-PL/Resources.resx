@@ -126,6 +126,12 @@
   <data name="AddNewVault" xml:space="preserve">
     <value>Dodaj nowy sejf</value>
   </data>
+  <data name="Authenticate" xml:space="preserve">
+    <value>Uwierzytelnij</value>
+  </data>
+  <data name="AuthenticateUsing" xml:space="preserve">
+    <value>Uwierzytelnij za pomocą {0}</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Automatycznie zablokuj sejfy</value>
   </data>
@@ -279,6 +285,9 @@
   <data name="ManageSettings" xml:space="preserve">
     <value>Zarządzaj ustawieniami</value>
   </data>
+  <data name="MasterKeyDescription" xml:space="preserve">
+    <value>To jest klucz główny, którego możesz użyć, aby odzyskać dostęp do tego sejfu. Utrata go uniemożliwi zresetowanie hasła.</value>
+  </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Moje sejfy</value>
   </data>
@@ -313,6 +322,9 @@
   <data name="Password" xml:space="preserve">
     <value>Hasło</value>
   </data>
+  <data name="Print" xml:space="preserve">
+    <value>Drukuj</value>
+  </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Polityka prywatności</value>
   </data>
@@ -340,6 +352,9 @@
   <data name="Retry" xml:space="preserve">
     <value>Spróbuj ponownie</value>
     <comment>Used to retry a failed action</comment>
+  </data>
+  <data name="RevealMasterKey" xml:space="preserve">
+    <value>Pokaż klucz główny</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Szukaj</value>
@@ -421,6 +436,9 @@
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
     <value>Zobacz informacje o tym sejfie</value>
+  </data>
+  <data name="VaultRecovery" xml:space="preserve">
+    <value>Odzyskiwanie sejfu</value>
   </data>
   <data name="Version" xml:space="preserve">
     <value>Wersja</value>

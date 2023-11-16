@@ -126,6 +126,12 @@
   <data name="AddNewVault" xml:space="preserve">
     <value>Añadir nueva caja fuerte</value>
   </data>
+  <data name="Authenticate" xml:space="preserve">
+    <value>Authenticate</value>
+  </data>
+  <data name="AuthenticateUsing" xml:space="preserve">
+    <value>Authenticate using {0}</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Bloquear automáticamente las cajas fuertes</value>
   </data>
@@ -139,7 +145,7 @@
     <value>Iniciar SecureFolderFS al iniciar el sistema</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Atrás</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
@@ -148,7 +154,7 @@
     <value>Notas de la versión</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>¡Increíble!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
     <value>Ver las últimas notas de la versión actual</value>
@@ -279,6 +285,9 @@
   <data name="ManageSettings" xml:space="preserve">
     <value>Administrar ajustes</value>
   </data>
+  <data name="MasterKeyDescription" xml:space="preserve">
+    <value>This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+  </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Mis cajas fuertes</value>
   </data>
@@ -289,7 +298,7 @@
     <value>Nueva caja fuerte</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>Sin cifrado</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
@@ -313,6 +322,9 @@
   <data name="Password" xml:space="preserve">
     <value>Contraseña</value>
   </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Política de privacidad</value>
   </data>
@@ -329,7 +341,7 @@
     <value>Repita la contraseña</value>
   </data>
   <data name="RestartRequired" xml:space="preserve">
-    <value>Restart required</value>
+    <value>Se requiere reiniciar</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
     <value>Continúe donde lo dejó</value>
@@ -338,8 +350,11 @@
     <value>Iniciar en la caja fuerte seleccionada previamente</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>Reintentar</value>
     <comment>Used to retry a failed action</comment>
+  </data>
+  <data name="RevealMasterKey" xml:space="preserve">
+    <value>Reveal master key</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Buscar</value>
@@ -351,7 +366,7 @@
     <value>Establecer contraseña</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Ajustes</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
     <value>Acerca de</value>
@@ -422,8 +437,11 @@
   <data name="VaultPropertiesDescription" xml:space="preserve">
     <value>Ver información sobre este caja fuerte</value>
   </data>
+  <data name="VaultRecovery" xml:space="preserve">
+    <value>Vault recovery</value>
+  </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Versión</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
     <value>Ver en GitHub</value>

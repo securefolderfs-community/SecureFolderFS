@@ -118,13 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Ajouter un coffre-fort existant</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Sélectionnez un coffre-fort depuis votre appareil</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Ajouter un nouveau coffre-fort</value>
+  </data>
+  <data name="Authenticate" xml:space="preserve">
+    <value>Authenticate</value>
+  </data>
+  <data name="AuthenticateUsing" xml:space="preserve">
+    <value>Authenticate using {0}</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Automatically lock vaults</value>
@@ -148,7 +154,7 @@
     <value>Release notes</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Fantastique !</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
     <value>View latest release notes for this version</value>
@@ -169,19 +175,19 @@
     <value>Close</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Confirmer</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Continuer</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Copié</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Copier la version de l'application</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Copier la version de l'OS</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
     <value>Copy version</value>
@@ -190,7 +196,7 @@
     <value>Select which version to copy to clipboard</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Créer un nouveau coffre-fort</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
     <value>Create new SecureFolderFS vault</value>
@@ -214,16 +220,16 @@
     <value>Encryption</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Saisissez le mot de passe</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Erreur</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
     <value>Export settings</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>Chiffrement des noms de fichiers</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
     <value>File system provider</value>
@@ -235,28 +241,28 @@
     <value>Needs attention</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>Pas de problèmes trouvés</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>Problèmes trouvés</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Importer les paramètres</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Installation...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>Mot de passe incorrect</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>Le mot de passe saisi est incorrect.</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Langue</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Sélectionnez la langue d'affichage</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
     <value>Last checked: {0}</value>
@@ -278,6 +284,9 @@
   </data>
   <data name="ManageSettings" xml:space="preserve">
     <value>Manage settings</value>
+  </data>
+  <data name="MasterKeyDescription" xml:space="preserve">
+    <value>This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
     <value>My vaults</value>
@@ -313,6 +322,9 @@
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Privacy policy</value>
   </data>
@@ -340,6 +352,9 @@
   <data name="Retry" xml:space="preserve">
     <value>Retry</value>
     <comment>Used to retry a failed action</comment>
+  </data>
+  <data name="RevealMasterKey" xml:space="preserve">
+    <value>Reveal master key</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
@@ -421,6 +436,9 @@
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
     <value>View information about this vault</value>
+  </data>
+  <data name="VaultRecovery" xml:space="preserve">
+    <value>Vault recovery</value>
   </data>
   <data name="Version" xml:space="preserve">
     <value>Version</value>
