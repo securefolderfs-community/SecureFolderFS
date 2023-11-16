@@ -40,11 +40,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         {
             switch (e.Action)
             {
-                case NotifyCollectionChangedAction.Add when e.NewItems?[0] is IVaultModel vaultModel:
+                case NotifyCollectionChangedAction.Add when e.NewItems is not null && e.NewItems[0] is IVaultModel vaultModel:
                     AddVault(vaultModel);
                     break;
 
-                case NotifyCollectionChangedAction.Remove when e.OldItems?[0] is IVaultModel vaultModel:
+                case NotifyCollectionChangedAction.Remove when e.OldItems is not null && e.OldItems[0] is IVaultModel vaultModel:
                     RemoveVault(vaultModel);
                     break;
 
@@ -62,7 +62,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         public Task InitAsync(CancellationToken cancellationToken = default)
         {
             SidebarItems.Clear();
-
             foreach (var item in _vaultCollectionModel)
                 AddVault(item);
 
@@ -70,7 +69,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
                 SelectedItem = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
 
             SelectedItem ??= SidebarItems.FirstOrDefault();
-
             return Task.CompletedTask;
         }
 
