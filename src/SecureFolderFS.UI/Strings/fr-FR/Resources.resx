@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Ajouter un coffre-fort existant</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Sélectionnez un coffre-fort depuis votre appareil</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Ajouter un nouveau coffre-fort</value>
   </data>
   <data name="Authenticate" xml:space="preserve">
     <value>Authenticate</value>
@@ -154,7 +154,7 @@
     <value>Release notes</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Fantastique !</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
     <value>View latest release notes for this version</value>
@@ -175,19 +175,19 @@
     <value>Close</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Confirmer</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Continuer</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Copié</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Copier la version de l'application</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Copier la version de l'OS</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
     <value>Copy version</value>
@@ -196,7 +196,7 @@
     <value>Select which version to copy to clipboard</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Créer un nouveau coffre-fort</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
     <value>Create new SecureFolderFS vault</value>
@@ -220,16 +220,16 @@
     <value>Encryption</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Saisissez le mot de passe</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Erreur</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
     <value>Export settings</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>Chiffrement des noms de fichiers</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
     <value>File system provider</value>
@@ -241,28 +241,28 @@
     <value>Needs attention</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>Pas de problèmes trouvés</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>Problèmes trouvés</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Importer les paramètres</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Installation...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>Mot de passe incorrect</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>Le mot de passe saisi est incorrect.</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Langue</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Sélectionnez la langue d'affichage</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
     <value>Last checked: {0}</value>
