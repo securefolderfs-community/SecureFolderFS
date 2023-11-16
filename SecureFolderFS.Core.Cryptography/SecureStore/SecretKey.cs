@@ -13,6 +13,11 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         public abstract byte[] Key { get; }
 
         /// <summary>
+        /// Gets the number of bytes in the <see cref="Key"/>.
+        /// </summary>
+        public virtual int Length => Key.Length;
+
+        /// <summary>
         /// Creates a standalone copy of the key.
         /// </summary>
         /// <returns>A new copy of <see cref="SecretKey"/>.</returns>

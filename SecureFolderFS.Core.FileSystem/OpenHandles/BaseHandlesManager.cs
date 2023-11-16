@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
             disposed = true;
             lock (handlesLock)
             {
-                handles.Values.DisposeCollection();
+                handles.Values.DisposeElements();
                 handles.Clear();
             }
         }

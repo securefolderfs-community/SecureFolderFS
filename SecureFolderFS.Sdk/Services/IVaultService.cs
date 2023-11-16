@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System.Collections.Generic;
 
 namespace SecureFolderFS.Sdk.Services
@@ -8,17 +9,32 @@ namespace SecureFolderFS.Sdk.Services
     /// <summary>
     /// Represents a service to interact with vault-related data.
     /// </summary>
-    public interface IVaultService
+    public interface IVaultService // TODO: Move some of the methods to IVaultModel?
     {
         /// <summary>
-        /// Gets the default name for vault keystore file.
+        /// Gets the vault creator.
         /// </summary>
-        string KeystoreFileName { get; } // TODO: Remove, Sdk shouldn't know about vault structure - that's handled by the Core
+        IVaultCreator VaultCreator { get; }
 
         /// <summary>
-        /// Gets the default name for vault configuration file.
+        /// Gets the vault unlocker.
         /// </summary>
-        string ConfigurationFileName { get; } // TODO: Remove, Sdk shouldn't know about vault structure - that's handled by the Core
+        IVaultUnlocker VaultUnlocker { get; }
+
+        /// <summary>
+        /// Gets the vault authenticator.
+        /// </summary>
+        IVaultAuthenticator VaultAuthenticator { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IAsyncValidator{T}"/> of type <see cref="IFolder"/> used to validate vaults.
+        /// </summary>
+        IAsyncValidator<IFolder> VaultValidator { get; }
+
+        /// <summary>
+        /// Gets the latest vault version format.
+        /// </summary>
+        int LatestVaultVersion { get; }
 
         /// <summary>
         /// Determines whether provided <paramref name="name"/> is part of vault core configuration files.
@@ -26,11 +42,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="name">The file name to check.</param>
         /// <returns>Returns true if the file name is a part of vault configuration data, otherwise false.</returns>
         bool IsNameReserved(string? name);
-
-        /// <summary>
-        /// Gets the <see cref="IAsyncValidator{T}"/> of type <see cref="IFolder"/> used to validate vaults.
-        /// </summary>
-        IAsyncValidator<IFolder> GetVaultValidator();
 
         /// <summary>
         /// Gets all file systems that are supported by SecureFolderFS.

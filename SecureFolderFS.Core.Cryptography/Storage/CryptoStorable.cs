@@ -1,9 +1,9 @@
-﻿using SecureFolderFS.Core.FileSystem.Directories;
+﻿using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Security.Cryptography;
 using System.Threading;
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Core.Cryptography.Storage
     {
         protected readonly IStreamsAccess streamsAccess;
         protected readonly IPathConverter pathConverter;
-        protected readonly IDirectoryIdAccess directoryIdAccess;
+        protected readonly DirectoryIdCache directoryIdCache;
 
         //protected ICryptoTransform _contentEncryptor;
         //protected ICryptoTransform _contentDecryptor;

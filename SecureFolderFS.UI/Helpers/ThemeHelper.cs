@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.SettingsPersistence;
+using SecureFolderFS.Sdk.Services.Settings;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Enums;
 using System.Threading;

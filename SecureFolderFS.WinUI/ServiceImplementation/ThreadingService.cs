@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation

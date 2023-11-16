@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinUI.UI.Animations;
+﻿using CommunityToolkit.WinUI.Animations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
@@ -7,9 +7,8 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard.ExistingVault;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Threading.Tasks;
@@ -42,40 +41,30 @@ namespace SecureFolderFS.WinUI.Dialogs
         private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)
         {
             var canGoBack = false;
-
             switch (viewModel)
             {
                 case MainWizardPageViewModel:
                     TitleText.Text = "AddNewVault".ToLocalized();
-                    PrimaryButtonText = string.Empty;
-                    break;
-
-                case ExistingLocationWizardViewModel:
-                    TitleText.Text = "AddExistingVault".ToLocalized();
                     PrimaryButtonText = "Continue".ToLocalized();
-                    canGoBack = true;
                     break;
 
-                case NewLocationWizardViewModel:
-                    TitleText.Text = "CreateNewVault".ToLocalized();
-                    PrimaryButtonText = "Continue".ToLocalized();
-                    canGoBack = true;
-                    break;
-
-                case PasswordWizardViewModel:
+                case AuthCreationWizardViewModel:
                     TitleText.Text = "SetPassword".ToLocalized();
                     PrimaryButtonText = "Continue".ToLocalized();
+                    canGoBack = true;
                     break;
 
-                case EncryptionWizardViewModel:
-                    TitleText.Text = "Choose encryption"; // TODO: Not localized since the page will be removed in the near future
+                case RecoveryKeyWizardViewModel:
+                    TitleText.Text = "VaultRecovery".ToLocalized();
                     PrimaryButtonText = "Continue".ToLocalized();
+                    canGoBack = false;
                     break;
 
                 case SummaryWizardViewModel:
                     TitleText.Text = "Summary".ToLocalized();
                     PrimaryButtonText = "Close".ToLocalized();
                     SecondaryButtonText = string.Empty;
+                    canGoBack = false;
                     break;
             }
 
@@ -84,19 +73,21 @@ namespace SecureFolderFS.WinUI.Dialogs
                 _hasNavigationAnimatedOnLoaded = true;
                 GoBack.Visibility = Visibility.Collapsed;
             }
-            else if (!_isBackAnimationState && (canGoBack && Navigation.ContentFrame.CanGoBack))
+            else switch (_isBackAnimationState)
             {
-                _isBackAnimationState = true;
-                GoBack.Visibility = Visibility.Visible;
-                await ShowBackButtonStoryboard.BeginAsync();
-                ShowBackButtonStoryboard.Stop();
-            }
-            else if (_isBackAnimationState && !(canGoBack && Navigation.ContentFrame.CanGoBack))
-            {
-                _isBackAnimationState = false;
-                await HideBackButtonStoryboard.BeginAsync();
-                HideBackButtonStoryboard.Stop();
-                GoBack.Visibility = Visibility.Collapsed;
+                case false when (canGoBack && Navigation.ContentFrame.CanGoBack):
+                    _isBackAnimationState = true;
+                    GoBack.Visibility = Visibility.Visible;
+                    await ShowBackButtonStoryboard.BeginAsync();
+                    ShowBackButtonStoryboard.Stop();
+                    break;
+
+                case true when !(canGoBack && Navigation.ContentFrame.CanGoBack):
+                    _isBackAnimationState = false;
+                    await HideBackButtonStoryboard.BeginAsync();
+                    HideBackButtonStoryboard.Stop();
+                    GoBack.Visibility = Visibility.Collapsed;
+                    break;
             }
 
             GoBack.Visibility = canGoBack && Navigation.ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;

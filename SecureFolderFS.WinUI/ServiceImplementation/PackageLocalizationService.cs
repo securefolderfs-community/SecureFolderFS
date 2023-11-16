@@ -37,11 +37,11 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
 
             // By getting the identifier from PrimaryLanguageOverride we then check against ManifestLanguages,
             // to determine whether or not that specified language exists. Instead of checking if ManifestLanguages
-            // contains the specified languageString, we instead need to check whether that languageString contains
-            // an item from ManifestLanguages. This is due to the fact, that ManifestLanguages loses information
+            // contains the specified languageString, we instead need to check whether that languageString starts with
+            // an item from ManifestLanguages. This is due to the fact, that ManifestLanguages sometimes loses information
             // about the 'country' identifier whilst languageString may not (in case AppLanguage was chosen)
             // and therefore wouldn't yield any results.
-            if (!ApplicationLanguages.ManifestLanguages.Aggregate(false, (current, item) => current | languageString.Contains(item)))
+            if (!ApplicationLanguages.ManifestLanguages.Aggregate(false, (current, item) => current | languageString.StartsWith(item)))
                 return DefaultCulture;
 
             // To get the fully-qualified language identifier, and therefore the most compatible one,

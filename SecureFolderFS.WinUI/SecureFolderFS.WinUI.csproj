@@ -57,13 +57,16 @@
         <None Remove="UserControls\Introduction\AgreementScreen.xaml" />
         <None Remove="UserControls\Introduction\EndScreen.xaml" />
         <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
+        <None Remove="UserControls\LoginControl.xaml" />
         <None Remove="UserControls\MainWindowRootControl.xaml" />
         <None Remove="UserControls\NavigationControl.xaml" />
         <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
         <None Remove="UserControls\OverlayControl.xaml" />
         <None Remove="UserControls\PasswordControl.xaml" />
         <None Remove="UserControls\TitleBarControl.xaml" />
+        <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
         <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
+        <None Remove="Views\PrintPages\MasterKeyPrintPage.xaml" />
         <None Remove="Views\Settings\AboutSettingsPage.xaml" />
         <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
         <None Remove="Views\Settings\PreferencesSettingsPage.xaml" />
@@ -72,11 +75,9 @@
         <None Remove="Views\VaultDashboardPropertiesPage.xaml" />
         <None Remove="Views\VaultLoginPage.xaml" />
         <None Remove="Views\VaultMainDashboardPage.xaml" />
-        <None Remove="Views\VaultWizard\AddExistingWizardPage.xaml" />
-        <None Remove="Views\VaultWizard\CreationPathWizardPage.xaml" />
-        <None Remove="Views\VaultWizard\EncryptionWizardPage.xaml" />
+        <None Remove="Views\VaultWizard\AuthCreationWizardPage.xaml" />
         <None Remove="Views\VaultWizard\MainWizardPage.xaml" />
-        <None Remove="Views\VaultWizard\PasswordWizardPage.xaml" />
+        <None Remove="Views\VaultWizard\RecoveryKeyWizardPage.xaml" />
         <None Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
     </ItemGroup>
 
@@ -145,16 +146,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
-        <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
-        <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.230907" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.Segmented" Version="8.0.230907" />
         <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-beta.701" />
         <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.2" />
         <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.2" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230822000" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-        <PackageReference Include="WinUIEx" Version="2.2.0" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
+        <PackageReference Include="WinUIEx" Version="2.3.3" />
         <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
@@ -203,19 +203,10 @@
         <Page Update="Views\Settings\AboutSettingsPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-        <Page Update="Views\VaultWizard\EncryptionWizardPage.xaml">
-            <Generator>MSBuild:Compile</Generator>
-        </Page>
-        <Page Update="Views\VaultWizard\PasswordWizardPage.xaml">
+        <Page Update="Views\VaultWizard\AuthCreationWizardPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
         <Page Update="Views\VaultWizard\SummaryWizardPage.xaml">
-            <Generator>MSBuild:Compile</Generator>
-        </Page>
-        <Page Update="Views\VaultWizard\CreationPathWizardPage.xaml">
-            <Generator>MSBuild:Compile</Generator>
-        </Page>
-        <Page Update="Views\VaultWizard\AddExistingWizardPage.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
         <Page Update="Views\VaultWizard\MainWizardPage.xaml">
@@ -300,5 +291,25 @@
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-150.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
       <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="UserControls\VaultFolderSelectionControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="UserControls\LoginControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\VaultWizard\RecoveryKeyWizardPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\PrintPages\MasterKeyPrintPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
 </Project>

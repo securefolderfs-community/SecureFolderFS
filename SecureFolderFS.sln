@@ -43,7 +43,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.AvaloniaUI",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.UI", "SecureFolderFS.UI\SecureFolderFS.UI.csproj", "{9C87813E-B60D-4E69-AC74-131EF59F0DAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.SourceGenerator", "SecureFolderFS.SourceGenerator\SecureFolderFS.SourceGenerator.csproj", "{279C01B3-86B8-4F9E-9D21-3C535E152F2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.SourceGenerator", "SecureFolderFS.SourceGenerator\SecureFolderFS.SourceGenerator.csproj", "{279C01B3-86B8-4F9E-9D21-3C535E152F2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Core.Migration", "SecureFolderFS.Core.Migration\SecureFolderFS.Core.Migration.csproj", "{0703B2BC-6CE3-4B5F-9399-7B106324F599}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -321,6 +323,22 @@ Global
 		{279C01B3-86B8-4F9E-9D21-3C535E152F2F}.Release|x64.Build.0 = Release|Any CPU
 		{279C01B3-86B8-4F9E-9D21-3C535E152F2F}.Release|x86.ActiveCfg = Release|Any CPU
 		{279C01B3-86B8-4F9E-9D21-3C535E152F2F}.Release|x86.Build.0 = Release|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Debug|arm64.Build.0 = Debug|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Debug|x64.Build.0 = Debug|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Debug|x86.Build.0 = Debug|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Release|arm64.ActiveCfg = Release|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Release|arm64.Build.0 = Release|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Release|x64.ActiveCfg = Release|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Release|x64.Build.0 = Release|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Release|x86.ActiveCfg = Release|Any CPU
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -342,6 +360,7 @@ Global
 		{95DF07BC-96EC-425F-B3CE-F4D1522B9EA6} = {C213F51F-95B3-4F60-86B4-8C4CD362082B}
 		{B9A12D48-F61D-45EE-B4DF-B88DB7D9911A} = {66BC1E2B-D99A-49E2-8B8F-EF7851493CB0}
 		{9C87813E-B60D-4E69-AC74-131EF59F0DAF} = {66BC1E2B-D99A-49E2-8B8F-EF7851493CB0}
+		{0703B2BC-6CE3-4B5F-9399-7B106324F599} = {DA5AA2CC-F4FE-4C7F-B751-F4E6E50B78B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1906FD8-BB54-4688-BC0F-9ED7532D2CB0}

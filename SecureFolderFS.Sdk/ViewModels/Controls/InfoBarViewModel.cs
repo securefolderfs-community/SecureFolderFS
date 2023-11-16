@@ -10,6 +10,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private bool _CanBeClosed;
-        [ObservableProperty] private InfoBarSeverityType _InfoBarSeverity;
+        [ObservableProperty] private InfoBarSeverityType _Severity;
     }
 }

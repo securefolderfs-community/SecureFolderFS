@@ -6,30 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls.Navigation"
-    xmlns:uc2="using:SecureFolderFS.UI.UserControls.BreadcrumbBar"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="StandardBreadcrumbItem" x:DataType="uc2:OrderedBreadcrumbBarItem">
-            <TextBlock
-                FontSize="24"
-                FontWeight="SemiBold"
-                Opacity="0.8"
-                Text="{x:Bind Name, Mode=OneWay}"
-                TextTrimming="CharacterEllipsis"
-                ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}" />
-        </DataTemplate>
-        <DataTemplate x:Key="LeadingBreadcrumbItem" x:DataType="uc2:OrderedBreadcrumbBarItem">
-            <TextBlock
-                FontSize="24"
-                FontWeight="SemiBold"
-                Text="{x:Bind Name, Mode=OneWay}"
-                TextTrimming="CharacterEllipsis"
-                ToolTipService.ToolTip="{x:Bind Name, Mode=OneWay}" />
-        </DataTemplate>
         <Storyboard x:Name="HideBackButtonStoryboard">
             <DoubleAnimation
                 Storyboard.TargetName="GoBack"
@@ -38,7 +19,7 @@
                 Duration="0:0:0.2" />
             <DoubleAnimation
                 BeginTime="0:0:0.05"
-                Storyboard.TargetName="Breadcrumb"
+                Storyboard.TargetName="PageTitle"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
                 From="0"
                 To="-48"
@@ -56,7 +37,7 @@
                 To="1"
                 Duration="0:0:0.2" />
             <DoubleAnimation
-                Storyboard.TargetName="Breadcrumb"
+                Storyboard.TargetName="PageTitle"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
                 From="-48"
                 To="0"
@@ -84,6 +65,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
+            <!--  Back button  -->
             <Button
                 x:Name="GoBack"
                 Grid.Column="0"
@@ -104,23 +86,19 @@
                     </AnimatedIcon.FallbackIconSource>
                 </AnimatedIcon>
             </Button>
-            <BreadcrumbBar
-                x:Name="Breadcrumb"
+
+            <!--  Current page text  -->
+            <TextBlock
+                x:Name="PageTitle"
                 Grid.Column="1"
-                ItemsSource="{x:Bind BreadcrumbItems}">
-                <BreadcrumbBar.RenderTransform>
+                VerticalAlignment="Center"
+                FontSize="26"
+                FontWeight="SemiBold"
+                Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}">
+                <TextBlock.RenderTransform>
                     <TranslateTransform />
-                </BreadcrumbBar.RenderTransform>
-                <BreadcrumbBar.ItemTemplate>
-                    <DataTemplate x:DataType="uc2:OrderedBreadcrumbBarItem">
-                        <BreadcrumbBarItem DataContext="{Binding}">
-                            <BreadcrumbBarItem.ContentTemplateSelector>
-                                <ts:OrderedBreadcrumbBarItemTemplateSelector LeadingItemTemplate="{StaticResource LeadingBreadcrumbItem}" StandardItemTemplate="{StaticResource StandardBreadcrumbItem}" />
-                            </BreadcrumbBarItem.ContentTemplateSelector>
-                        </BreadcrumbBarItem>
-                    </DataTemplate>
-                </BreadcrumbBar.ItemTemplate>
-            </BreadcrumbBar>
+                </TextBlock.RenderTransform>
+            </TextBlock>
         </Grid>
 
         <!--  Content  -->

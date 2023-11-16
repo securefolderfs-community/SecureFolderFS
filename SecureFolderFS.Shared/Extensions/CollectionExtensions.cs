@@ -20,7 +20,7 @@ namespace SecureFolderFS.Shared.Extensions
             return !enumerable.Any();
         }
 
-        public static void DisposeCollection<T>(this IEnumerable<T?> enumerable)
+        public static void DisposeElements<T>(this IEnumerable<T?> enumerable)
         {
             foreach (var item in enumerable)
             {

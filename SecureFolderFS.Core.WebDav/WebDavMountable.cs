@@ -2,9 +2,9 @@
 using NWebDav.Server.Dispatching;
 using NWebDav.Server.Stores;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -49,9 +49,9 @@ namespace SecureFolderFS.Core.WebDav
             if (mountOptions is not WebDavMountOptions webDavMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
-            var port = webDavMountOptions.Port;
+            var port = webDavMountOptions.PreferredPort;
             if (port > 65536 || port <= 0)
-                throw new ArgumentException($"Parameter {nameof(WebDavMountOptions.Port)} is invalid.");
+                throw new ArgumentException($"Parameter {nameof(WebDavMountOptions.PreferredPort)} is invalid.");
 
             if (!PortHelpers.IsPortAvailable(port))
                 port = PortHelpers.GetNextAvailablePort(port);
@@ -87,13 +87,13 @@ namespace SecureFolderFS.Core.WebDav
             return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder(remotePath), webDavWrapper));
         }
 
-        public static IMountableFileSystem CreateMountable(IStorageService storageService, string volumeName, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IPathConverter pathConverter, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(string volumeName, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess, IStorageService storageService)
         {
             if (contentFolder is not ILocatableFolder locatableContentFolder)
                 throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
 
-            var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter, directoryIdAccess, volumeName);
-            var dispatcher = new WebDavDispatcher(new RootDiskStore(volumeName, new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter, directoryIdAccess, security)), davStorageService, new RequestHandlerProvider(), null);
+            var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter, directoryIdCache, volumeName);
+            var dispatcher = new WebDavDispatcher(new RootDiskStore(volumeName, new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter, directoryIdCache, security)), davStorageService, new RequestHandlerProvider(), null);
 
             return new WebDavMountable(dispatcher, volumeName);
         }

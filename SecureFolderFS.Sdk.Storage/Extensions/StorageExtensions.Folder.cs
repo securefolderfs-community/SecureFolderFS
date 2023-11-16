@@ -1,19 +1,54 @@
-﻿using SecureFolderFS.Sdk.Storage.Enums;
-using SecureFolderFS.Sdk.Storage.ExtendableStorage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Storage.Enums;
+using SecureFolderFS.Sdk.Storage.ExtendableStorage;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Sdk.Storage.Extensions
 {
     public static partial class StorageExtensions
     {
-        #region Without Result
+        #region Extension Methods
+
+        /// <inheritdoc cref="IFolderExtended.GetFileAsync"/>
+        public static async Task<IFile> GetFileAsync(this IFolder folder, string fileName, CancellationToken cancellationToken = default)
+        {
+            if (folder is IFolderExtended folderExtended)
+                return await folderExtended.GetFileAsync(fileName, cancellationToken);
+
+            await foreach (var item in folder.GetFilesAsync(cancellationToken))
+            {
+                if (item.Name == fileName)
+                    return item;
+            }
+
+            throw new FileNotFoundException();
+        }
+
+        /// <inheritdoc cref="IFolderExtended.GetFolderAsync"/>
+        public static async Task<IFolder> GetFolderAsync(this IFolder folder, string folderName, CancellationToken cancellationToken = default)
+        {
+            if (folder is IFolderExtended folderExtended)
+                return await folderExtended.GetFolderAsync(folderName, cancellationToken);
+
+            await foreach (var item in folder.GetFoldersAsync(cancellationToken))
+            {
+                if (item.Name == folderName)
+                    return item;
+            }
+
+            throw new DirectoryNotFoundException();
+        }
+
+        #endregion
+
+        #region Try Methods
 
         /// <returns>If file was found, returns the requested <see cref="IFile"/>, otherwise null.</returns>
         /// <inheritdoc cref="IFolderExtended.GetFileAsync"/>
@@ -21,16 +56,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         {
             try
             {
-                if (folder is IFolderExtended folderExtended)
-                    return await folderExtended.GetFileAsync(fileName, cancellationToken);
-
-                await foreach (var item in folder.GetFilesAsync(cancellationToken))
-                {
-                    if (item.Name == fileName)
-                        return item;
-                }
-
-                return null;
+                return await GetFileAsync(folder, fileName, cancellationToken);
             }
             catch (Exception)
             {
@@ -39,21 +65,12 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         }
 
         /// <returns>If folder was found, returns the requested <see cref="IFolder"/>, otherwise null.</returns>
-        /// <inheritdoc cref="IFolderExtended.GetFileAsync"/>
+        /// <inheritdoc cref="IFolderExtended.GetFolderAsync"/>
         public static async Task<IFolder?> TryGetFolderAsync(this IFolder folder, string folderName, CancellationToken cancellationToken = default)
         {
             try
             {
-                if (folder is IFolderExtended folderExtended)
-                    return await folderExtended.GetFolderAsync(folderName, cancellationToken);
-
-                await foreach (var item in folder.GetFoldersAsync(cancellationToken))
-                {
-                    if (item.Name == folderName)
-                        return item;
-                }
-
-                return null;
+                return await GetFolderAsync(folder, folderName, cancellationToken);
             }
             catch (Exception)
             {
@@ -91,7 +108,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
 
         #endregion
 
-        #region With Result
+        #region Try with Result
 
         /// <returns>Value is <see cref="IResult{T}"/> depending on whether the file was found or not.</returns>
         /// <inheritdoc cref="IFolderExtended.GetFileAsync"/>
@@ -99,16 +116,8 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         {
             try
             {
-                if (folder is IFolderExtended folderExtended)
-                    return new CommonResult<IFile?>(await folderExtended.GetFileAsync(fileName, cancellationToken));
-
-                await foreach (var item in folder.GetFilesAsync(cancellationToken))
-                {
-                    if (item.Name == fileName)
-                        return new CommonResult<IFile?>(item);
-                }
-
-                return new CommonResult<IFile?>(null, false);
+                var file = await GetFileAsync(folder, fileName, cancellationToken);
+                return new CommonResult<IFile?>(file);
             }
             catch (Exception ex)
             {
@@ -117,21 +126,13 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         }
 
         /// <returns>Value is <see cref="IResult{T}"/> depending on whether the folder was found or not.</returns>
-        /// <inheritdoc cref="IFolderExtended.GetFileAsync"/>
+        /// <inheritdoc cref="IFolderExtended.GetFolderAsync"/>
         public static async Task<IResult<IFolder?>> GetFolderWithResultAsync(this IFolder folder, string folderName, CancellationToken cancellationToken = default)
         {
             try
             {
-                if (folder is IFolderExtended folderExtended)
-                    return new CommonResult<IFolder?>(await folderExtended.GetFolderAsync(folderName, cancellationToken));
-
-                await foreach (var item in folder.GetFoldersAsync(cancellationToken))
-                {
-                    if (item.Name == folderName)
-                        return new CommonResult<IFolder?>(item);
-                }
-
-                return new CommonResult<IFolder?>(null, false);
+                var folder2 = await GetFolderAsync(folder, folderName, cancellationToken);
+                return new CommonResult<IFolder?>(folder2);
             }
             catch (Exception ex)
             {
@@ -145,7 +146,8 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         {
             try
             {
-                return new CommonResult<IFile?>(await folder.CreateFileAsync(desiredName, overwrite, cancellationToken));
+                var file = await folder.CreateFileAsync(desiredName, overwrite, cancellationToken);
+                return new CommonResult<IFile?>(file);
             }
             catch (Exception ex)
             {
@@ -159,7 +161,8 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         {
             try
             {
-                return new CommonResult<IFolder?>(await folder.CreateFolderAsync(desiredName, overwrite, cancellationToken));
+                var folder2 = await folder.CreateFolderAsync(desiredName, overwrite, cancellationToken);
+                return new CommonResult<IFolder?>(folder2);
             }
             catch (Exception ex)
             {

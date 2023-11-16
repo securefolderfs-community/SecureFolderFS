@@ -102,6 +102,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
                 .AddSingleton<IDialogService, DialogService>()
+                .AddSingleton<IPrinterService, WindowsPrinterService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<IStorageService, NativeStorageService>()
@@ -111,9 +112,6 @@ namespace SecureFolderFS.WinUI
 
                 // Transient services
                 .AddTransient<INavigationService, WindowsNavigationService>()
-                .AddTransient<IPasswordChangeService, PasswordChangeService>()
-                .AddTransient<IVaultUnlockingService, VaultUnlockingService>()
-                .AddTransient<IVaultCreationService, VaultCreationService>()
 
                 // ILocalizationService
 #if UNPACKAGED

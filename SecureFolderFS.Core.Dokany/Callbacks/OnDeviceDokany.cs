@@ -1,10 +1,10 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Paths;
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
         public required Security Security { get; init; }
 
-        public required IDirectoryIdAccess DirectoryIdAccess { get; init; }
+        public required DirectoryIdCache DirectoryIdAccess { get; init; }
 
         public OnDeviceDokany(IPathConverter pathConverter, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel, IFileSystemHealthStatistics? fileSystemHealthStatistics)
             : base(pathConverter, handlesManager, volumeModel, fileSystemHealthStatistics)

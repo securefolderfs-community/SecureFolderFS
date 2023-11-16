@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -12,13 +12,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IWidgetsCollectionModel _widgetsContextModel;
-        private readonly IUnlockedVaultModel _unlockedVaultModel;
+        private readonly IVaultLifecycle _vaultLifeTimeModel;
 
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
-        public WidgetsListViewModel(IUnlockedVaultModel unlockedVaultModel, IWidgetsCollectionModel widgetsContextModel)
+        public WidgetsListViewModel(IVaultLifecycle vaultLifeTimeModel, IWidgetsCollectionModel widgetsContextModel)
         {
-            _unlockedVaultModel = unlockedVaultModel;
+            _vaultLifeTimeModel = vaultLifeTimeModel;
             _widgetsContextModel = widgetsContextModel;
             Widgets = new();
         }
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                     return new VaultHealthWidgetViewModel(widgetModel);
 
                 case Constants.Widgets.GRAPHS_WIDGET_ID:
-                    return new GraphsWidgetViewModel(_unlockedVaultModel.VaultStatisticsModel, widgetModel);
+                    return new GraphsWidgetViewModel(_vaultLifeTimeModel.VaultStatisticsModel, widgetModel);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(widgetModel.WidgetId));

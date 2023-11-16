@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System.IO;
 
 #pragma warning disable CA1416 // Callsite is not supported on all platforms

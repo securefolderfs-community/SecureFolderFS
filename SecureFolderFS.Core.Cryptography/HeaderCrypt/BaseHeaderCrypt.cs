@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
-using System;
+﻿using System;
 using System.Security.Cryptography;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
 {
@@ -9,7 +9,6 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
     {
         protected readonly SecretKey encKey;
         protected readonly SecretKey macKey;
-        protected readonly CipherProvider cipherProvider;
         protected readonly RandomNumberGenerator secureRandom;
 
         /// <inheritdoc/>
@@ -18,11 +17,10 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public abstract int HeaderCleartextSize { get; }
 
-        protected BaseHeaderCrypt(SecretKey encKey, SecretKey macKey, CipherProvider cipherProvider)
+        protected BaseHeaderCrypt(SecretKey encKey, SecretKey macKey)
         {
             this.encKey = encKey;
             this.macKey = macKey;
-            this.cipherProvider = cipherProvider;
             this.secureRandom = RandomNumberGenerator.Create();
         }
 

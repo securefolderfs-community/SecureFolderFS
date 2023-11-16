@@ -9,14 +9,14 @@ using System.Linq;
 namespace SecureFolderFS.Core.Chunks
 {
     /// <inheritdoc cref="IChunkAccess"/>
-    internal sealed class CachingChunkAccess : BaseChunkAccess
+    internal sealed class CachingChunkAccess : InstantChunkAccess
     {
         private readonly Dictionary<long, ChunkBuffer> _chunkCache;
 
         public CachingChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics? fileSystemStatistics)
             : base(chunkReader, chunkWriter, contentCrypt, fileSystemStatistics)
         {
-            _chunkCache = new(Constants.Caching.CHUNK_CACHE_SIZE);
+            _chunkCache = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNK);
         }
 
         /// <inheritdoc/>
@@ -141,7 +141,7 @@ namespace SecureFolderFS.Core.Chunks
         {
             lock (_chunkCache)
             {
-                if (_chunkCache.Count >= Constants.Caching.CHUNK_CACHE_SIZE)
+                if (_chunkCache.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNK)
                 {
                     // Get chunk number to remove
                     var chunkNumberToRemove = _chunkCache.Keys.First();

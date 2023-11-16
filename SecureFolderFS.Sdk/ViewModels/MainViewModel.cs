@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             }
 
             // Check if the changelog is available
-            if (Version.TryParse(SettingsService.AppSettings.LastVersion, out var lastVersion))
+            if (Version.TryParse(SettingsService.AppSettings.LastVersion, out var lastVersion) && false) // TODO: Removed due to markdown being unavailable
             {
                 var currentVersion = ApplicationService.AppVersion;
                 if (lastVersion < currentVersion)

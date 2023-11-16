@@ -17,25 +17,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 
         public VaultControlsViewModel VaultControlsViewModel { get; }
 
+        /// <inheritdoc/>
+        public override string PageName => UnlockedVaultViewModel.VaultViewModel.VaultModel.VaultName;
+
         public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, VaultControlsViewModel vaultControlsViewModel, INavigationService dashboardNavigationService)
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {
             ServiceProvider = Ioc.Default;
-            WidgetsViewModel = new(unlockedVaultViewModel.UnlockedVaultModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);
+            WidgetsViewModel = new(unlockedVaultViewModel.VaultLifeTimeModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);
             VaultControlsViewModel = vaultControlsViewModel;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (SettingsService.UserSettings.OpenFolderOnUnlock && UnlockedVaultViewModel.UnlockedVaultModel.RootFolder is ILocatableFolder rootFolder)
+            if (SettingsService.UserSettings.OpenFolderOnUnlock && UnlockedVaultViewModel.VaultLifeTimeModel.RootFolder is ILocatableFolder rootFolder)
                 _ = FileExplorerService.OpenInFileExplorerAsync(rootFolder, cancellationToken);
 
             await WidgetsViewModel.InitAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public override void Dispose()
+        public override void OnNavigatingFrom()
         {
             WidgetsViewModel.Dispose();
         }

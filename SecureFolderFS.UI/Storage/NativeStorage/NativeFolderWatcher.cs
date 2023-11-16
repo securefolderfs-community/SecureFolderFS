@@ -62,7 +62,8 @@ namespace SecureFolderFS.UI.Storage.NativeStorage
 
         private void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            _collectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Move, e.FullPath, e.OldFullPath));
+            _collectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Remove, e.FullPath));
+            _collectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, e.FullPath));
         }
 
         private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)

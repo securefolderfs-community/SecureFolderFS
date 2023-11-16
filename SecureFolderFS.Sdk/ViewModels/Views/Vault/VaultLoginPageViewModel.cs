@@ -1,90 +1,74 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
 using System;
-using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<IThreadingService>]
-    public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel, IRecipient<VaultUnlockedMessage>
+    [Inject<IDialogService>, Inject<ISettingsService>]
+    public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
-        private readonly IVaultLoginModel _vaultLoginModel;
-
         [ObservableProperty] private string? _VaultName;
-        [ObservableProperty] private INotifyPropertyChanged? _StrategyViewModel;
+        [ObservableProperty] private LoginViewModel _LoginViewModel;
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
             : base(vaultViewModel, navigationService)
         {
             ServiceProvider = Ioc.Default;
             VaultName = vaultViewModel.VaultModel.VaultName;
-            _vaultLoginModel = new VaultLoginModel(vaultViewModel.VaultModel, new VaultWatcherModel(vaultViewModel.VaultModel.Folder));
-            _vaultLoginModel.StateChanged += VaultLoginModel_StateChanged;
-
-            WeakReferenceMessenger.Default.Register(this);
+            _LoginViewModel = new(vaultViewModel.VaultModel, true);
+            _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await _vaultLoginModel.InitAsync(cancellationToken);
+            await LoginViewModel.InitAsync(cancellationToken);
         }
 
-        /// <inheritdoc/>
-        public void Receive(VaultUnlockedMessage message)
+        private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            // Free resources that are no longer being used for login
-            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
-                Dispose();
-        }
-
-        private async void VaultLoginModel_StateChanged(object? sender, IResult<VaultLoginStateType> e)
-        {
-            // Dispose existing strategy
-            (StrategyViewModel as IDisposable)?.Dispose();
-
-            // Switch thread
-            await ThreadingService.ChangeThreadAsync();
-
-            // Choose new strategy
-            switch (e.Value)
+            if (!SettingsService.AppSettings.WasVaultFolderExplanationShown)
             {
-                case VaultLoginStateType.AwaitingCredentials:
-                    if (e is ResultWithKeystore resultWithKeystore)
-                        StrategyViewModel = new LoginCredentialsViewModel(VaultViewModel, resultWithKeystore.Keystore, _vaultLoginModel.VaultWatcher, new VaultUnlockingModel(), NavigationService);
-                    break;
+                var explanationDialog = new ExplanationDialogViewModel();
+                await explanationDialog.InitAsync();
+                await DialogService.ShowDialogAsync(explanationDialog);
 
-                case VaultLoginStateType.AwaitingTwoFactorAuth:
-                    StrategyViewModel = new LoginKeystoreViewModel();
-                    break;
-
-                default:
-                case VaultLoginStateType.VaultError:
-                    StrategyViewModel = new LoginErrorViewModel(e.GetMessage());
-                    break;
+                SettingsService.AppSettings.WasVaultFolderExplanationShown = true;
+                await SettingsService.AppSettings.TrySaveAsync();
             }
+
+            // Update last access date
+            await VaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now);
+
+            // Create view models
+            var unlockedVaultViewModel = new UnlockedVaultViewModel(VaultViewModel, e.VaultLifecycle);
+            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, NavigationService);
+
+            // Notify that the vault has been unlocked
+            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultViewModel.VaultModel));
+
+            // Dispose the current instance and navigate
+            Dispose();
+            await NavigationService.TryNavigateAndForgetAsync(dashboardPage);
         }
 
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _vaultLoginModel.Dispose();
-            _vaultLoginModel.StateChanged -= VaultLoginModel_StateChanged;
-            (StrategyViewModel as IDisposable)?.Dispose();
+            LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
+            LoginViewModel.Dispose();
         }
     }
 }

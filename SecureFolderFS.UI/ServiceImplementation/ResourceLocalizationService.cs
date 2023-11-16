@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.SettingsPersistence;
+using SecureFolderFS.Sdk.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.Runtime.CompilerServices;
@@ -9,15 +10,11 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     /// <inheritdoc cref="INameCrypt"/>
     internal abstract class BaseNameCrypt : INameCrypt
     {
-        protected readonly SecretKey encKey;
-        protected readonly SecretKey macKey;
-        protected readonly CipherProvider cipherProvider;
+        protected readonly AesSiv128 aesSiv128;
 
-        protected BaseNameCrypt(SecretKey encKey, SecretKey macKey, CipherProvider cipherProvider)
+        protected BaseNameCrypt(SecretKey encKey, SecretKey macKey)
         {
-            this.encKey = encKey;
-            this.macKey = macKey;
-            this.cipherProvider = cipherProvider;
+            aesSiv128 = AesSiv128.CreateInstance(encKey, macKey);
         }
 
         /// <inheritdoc/>
@@ -52,5 +49,11 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         protected abstract byte[] EncryptFileName(ReadOnlySpan<byte> cleartextFileNameBuffer, ReadOnlySpan<byte> directoryId);
 
         protected abstract byte[]? DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId);
+
+        /// <inheritdoc/>
+        public virtual void Dispose()
+        {
+            aesSiv128.Dispose();
+        }
     }
 }

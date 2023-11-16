@@ -1,8 +1,9 @@
-﻿using SecureFolderFS.Core.Cryptography.Helpers;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.Helpers;
 using System;
 using System.Runtime.CompilerServices;
-using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.AesGcm;
-using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Headers.AesGcm;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Chunks.AesGcm;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Headers.AesGcm;
 using static SecureFolderFS.Core.Cryptography.Extensions.ContentCryptExtensions.AesGcmContentExtensions;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.AesGcmHeaderExtensions;
 
@@ -20,11 +21,6 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public override int ChunkFirstReservedSize { get; } = CHUNK_NONCE_SIZE;
 
-        public AesGcmContentCrypt(CipherProvider cipherProvider)
-            : base(cipherProvider)
-        {
-        }
-
         /// <inheritdoc/>
         [SkipLocalsInit]
         public override void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
@@ -37,7 +33,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             CryptHelpers.FillAssociatedData(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Encrypt
-            cipherProvider.AesGcmCrypt.Encrypt(
+            AesGcm128.Encrypt(
                 cleartextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
@@ -55,7 +51,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             CryptHelpers.FillAssociatedData(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Decrypt
-            return cipherProvider.AesGcmCrypt.Decrypt(
+            return AesGcm128.TryDecrypt(
                 ciphertextChunk.GetChunkPayload(),
                 header.GetHeaderContentKey(),
                 ciphertextChunk.GetChunkNonce(),

@@ -176,7 +176,8 @@
                 Title="{l:ResourceString Name=Changelog}"
                 ClickCommand="{x:Bind ViewModel.OpenChangelogCommand}"
                 Description="{l:ResourceString Name=ChangelogDescription}"
-                IsClickable="True">
+                IsClickable="True"
+                Visibility="Collapsed">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE8FD;" />
                 </ucab:ActionBlockControl.Icon>

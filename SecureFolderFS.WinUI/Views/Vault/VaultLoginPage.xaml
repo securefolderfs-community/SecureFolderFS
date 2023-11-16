@@ -5,65 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Strategy"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:LoginKeystoreViewModel">
-            <StackPanel Spacing="24">
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Opacity="0.8"
-                    Text="Provide keystore to continue" />
-
-                <!--  Authenticate  -->
-                <Button
-                    Padding="24,6"
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind SelectKeystoreCommand}"
-                    Content="Authenticate"
-                    Style="{ThemeResource AccentButtonStyle}" />
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginCredentialsViewModel">
-            <StackPanel Spacing="24">
-                <!--  Password Control  -->
-                <uc:PasswordControl
-                    Width="364"
-                    Loaded="PasswordControl_Loaded"
-                    PasswordSubmittedCommand="{x:Bind UnlockVaultCommand}"
-                    ShowInvalidPasswordMessage="{x:Bind IsInvalidPasswordShown, Mode=TwoWay}" />
-
-                <!--  Continue  -->
-                <Button
-                    x:Name="ContinueButton"
-                    Padding="32,6"
-                    HorizontalAlignment="Center"
-                    Click="ContinueButton_Click"
-                    Content="{l:ResourceString Name=Unlock}"
-                    Loaded="ContinueButton_Loaded"
-                    Style="{ThemeResource AccentButtonStyle}" />
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="VaultInvalidTemplate" x:DataType="vm:LoginErrorViewModel">
-            <StackPanel Spacing="4">
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="17"
-                    Text="Vault could not be loaded" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="12"
-                    HorizontalTextAlignment="Center"
-                    IsTextSelectionEnabled="True"
-                    Opacity="0.8"
-                    Text="{x:Bind Message, Mode=OneWay}" />
-            </StackPanel>
-        </DataTemplate>
-    </Page.Resources>
 
     <ScrollViewer>
         <Grid Padding="32" HorizontalAlignment="Stretch">
@@ -97,36 +41,9 @@
                         Text="{l:ResourceString Name=VaultLocked}" />
                 </StackPanel>
 
-                <!--  Input  -->
-                <ContentControl
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Content="{x:Bind ViewModel.StrategyViewModel, Mode=OneWay}"
-                    IsTabStop="False">
-                    <ContentControl.ContentTemplateSelector>
-                        <ts:LoginMethodTemplateSelector
-                            AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
-                            InvalidTemplate="{StaticResource VaultInvalidTemplate}"
-                            LoginTemplate="{StaticResource LoginTemplate}" />
-                    </ContentControl.ContentTemplateSelector>
-                    <ContentControl.ContentTransitions>
-                        <TransitionCollection>
-                            <ContentThemeTransition />
-                        </TransitionCollection>
-                    </ContentControl.ContentTransitions>
-                </ContentControl>
+                <!--  Login  -->
+                <uc:LoginControl LoginTypeViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" />
             </StackPanel>
-
-            <!--  Notification  -->
-            <InfoBar
-                Title="Unsupported settings"
-                Grid.Row="1"
-                MaxWidth="580"
-                IsClosable="False"
-                IsOpen="False"
-                Message="Selected file system is not supported"
-                Severity="Error" />
         </Grid>
     </ScrollViewer>
 </Page>

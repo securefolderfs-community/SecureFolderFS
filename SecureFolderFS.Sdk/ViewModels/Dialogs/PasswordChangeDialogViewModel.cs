@@ -1,19 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Shared.Utils;
-using System;
+using SecureFolderFS.Shared.Utilities;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
-    [Inject<IVaultService>, Inject<IPasswordChangeService>]
-    public sealed partial class PasswordChangeDialogViewModel : DialogViewModel, IDisposable
+    [Inject<IVaultService>]
+    public sealed partial class PasswordChangeDialogViewModel : DialogViewModel
     {
         private readonly IVaultModel _vaultModel;
 
@@ -27,36 +24,31 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 
         public async Task<bool> ChangePasswordAsync(PasswordPair? passwordPair, CancellationToken cancellationToken)
         {
-            if (passwordPair is null)
-                return false;
+            //if (passwordPair is null)
+            //    return false;
 
-            var keystoreResult = await _vaultModel.Folder.GetFileWithResultAsync(VaultService.KeystoreFileName, cancellationToken);
-            if (!keystoreResult.Successful || keystoreResult.Value is null)
-                return false; // TODO: Notify
+            //var keystoreResult = await _vaultModel.Folder.GetFileWithResultAsync(null, cancellationToken);
+            //if (!keystoreResult.Successful || keystoreResult.Value is null)
+            //    return false; // TODO: Notify
 
-            using var keystoreModel = new FileKeystoreModel(keystoreResult.Value, StreamSerializer.Instance);
-            var result = await PasswordChangeService.SetVaultFolderAsync(_vaultModel.Folder, cancellationToken);
-            if (!result.Successful)
-                return false; // TODO: Notify
+            //using var keystoreModel = new FileKeystoreModel(keystoreResult.Value, StreamSerializer.Instance);
+            //var result = await PasswordChangeService.SetVaultFolderAsync(_vaultModel.Folder, cancellationToken);
+            //if (!result.Successful)
+            //    return false; // TODO: Notify
 
-            result = await PasswordChangeService.SetKeystoreAsync(keystoreModel, cancellationToken);
-            if (!result.Successful)
-                return false; // TODO: Notify
+            //result = await PasswordChangeService.SetKeystoreAsync(keystoreModel, cancellationToken);
+            //if (!result.Successful)
+            //    return false; // TODO: Notify
 
-            result = await PasswordChangeService.ChangePasswordAsync(passwordPair.ExistingPassword, passwordPair.NewPassword, cancellationToken);
-            if (!result.Successful)
-            {
-                IsInvalidPasswordShown = true;
-                return false;
-            }
+            //result = await PasswordChangeService.ChangePasswordAsync(passwordPair.ExistingPassword, passwordPair.NewPassword, cancellationToken);
+            //if (!result.Successful)
+            //{
+            //    IsInvalidPasswordShown = true;
+            //    return false;
+            //}
 
-            return true;
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            PasswordChangeService.Dispose();
+            //return true;
+            return false;
         }
     }
 

@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.DataModels;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System.Collections.Generic;
 
 namespace SecureFolderFS.Sdk.Services.VaultPersistence
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.Services.VaultPersistence
         /// </summary>
         /// <param name="id">The ID that is associated with a vault.</param>
         /// <param name="widgets">The collection of widgets to set.</param>
-        /// <returns>If succeeded, returns true, otherwise false.</returns>
+        /// <returns>If successful, returns true, otherwise false.</returns>
         bool SetForVault(string id, ICollection<WidgetDataModel>? widgets);
 
         /// <summary>

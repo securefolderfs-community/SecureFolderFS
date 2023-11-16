@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.Validators
 {
     /// <inheritdoc cref="IAsyncValidator{T}"/>
-    internal sealed class VaultValidator : IAsyncValidator<IFolder>
+    public sealed class VaultValidator : IAsyncValidator<IFolder>
     {
         private readonly IAsyncSerializer<Stream> _serializer;
 
@@ -18,25 +18,15 @@ namespace SecureFolderFS.Core.Validators
         }
 
         /// <inheritdoc/>
-        public async Task<IResult> ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
+        public async Task ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
         {
-            var contentFolderResult = await value.GetFolderWithResultAsync(Constants.CONTENT_FOLDERNAME, cancellationToken);
-            if (!contentFolderResult.Successful)
-                return contentFolderResult;
+            // Get configuration file
+            var configFile = await value.GetFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
+            await using var configStream = await configFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
 
-            var configFileResult = await value.GetFileWithResultAsync(Constants.VAULT_CONFIGURATION_FILENAME, cancellationToken);
-            if (!configFileResult.Successful)
-                return configFileResult;
-
-            var configStreamResult = await configFileResult.Value!.OpenStreamWithResultAsync(FileAccess.Read, FileShare.Read, cancellationToken);
-            if (!configStreamResult.Successful)
-                return configStreamResult;
-
-            await using (configStreamResult.Value)
-            {
-                var versionValidator = VaultHelpers.NewVersionValidator(_serializer);
-                return await versionValidator.ValidateAsync(configStreamResult.Value!, cancellationToken);
-            }
+            // Validate version
+            var versionValidator = new VersionValidator(_serializer);
+            await versionValidator.ValidateAsync(configStream, cancellationToken);
         }
     }
 }

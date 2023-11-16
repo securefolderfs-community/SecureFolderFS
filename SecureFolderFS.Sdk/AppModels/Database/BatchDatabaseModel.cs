@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             if (settingsCache.ContainsKey(key))
             {
                 settingsCache[key].Data = value;
-                settingsCache[key].IsDirty = true;
+                settingsCache[key].WasModified = true;
             }
             else
             {
@@ -132,7 +132,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                     try
                     {
                         // Don't save settings whose value didn't change
-                        if (FlushOnlyChangedValues && !item.Value.IsDirty)
+                        if (FlushOnlyChangedValues && !item.Value.WasModified)
                             continue;
 
                         // Get files
@@ -169,7 +169,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         await typeStream.WriteAsync(typeBuffer, cancellationToken);
 
                         // Setting saved, setting is no longer dirty
-                        item.Value.IsDirty = false;
+                        item.Value.WasModified = false;
                     }
                     catch (Exception ex)
                     {
@@ -190,11 +190,11 @@ namespace SecureFolderFS.Sdk.AppModels.Database
             _databaseFolder ??= (IModifiableFolder?)await _settingsFolder.CreateFolderAsync(_folderName, false, cancellationToken);
         }
 
-        public sealed record SettingValue(Type Type, object? Data, bool IsDirty = true)
+        public sealed record SettingValue(Type Type, object? Data, bool WasModified = true)
         {
             public object? Data { get; set; } = Data;
 
-            public bool IsDirty { get; set; } = IsDirty;
+            public bool WasModified { get; set; } = WasModified;
         }
     }
 }

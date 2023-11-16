@@ -1,7 +1,9 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using System.Runtime.CompilerServices;
-using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Chunks.AesCtrHmac;
+using System.Security.Cryptography;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Chunks.AesCtrHmac;
 using static SecureFolderFS.Core.Cryptography.Extensions.ContentCryptExtensions.AesCtrHmacContentExtensions;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.AesCtrHmacHeaderExtensions;
 
@@ -21,8 +23,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public override int ChunkFirstReservedSize { get; } = CHUNK_NONCE_SIZE;
 
-        public AesCtrHmacContentCrypt(SecretKey macKey, CipherProvider cipherProvider)
-            : base(cipherProvider)
+        public AesCtrHmacContentCrypt(SecretKey macKey)
         {
             _macKey = macKey;
         }
@@ -34,7 +35,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             secureRandom.GetBytes(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
 
             // Encrypt
-            cipherProvider.AesCtrCrypt.Encrypt(
+            AesCtr128.Encrypt(
                 cleartextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
@@ -70,7 +71,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
                 return false;
 
             // Decrypt
-            cipherProvider.AesCtrCrypt.Decrypt(
+            AesCtr128.Decrypt(
                 ciphertextChunk.GetChunkPayload(),
                 header.GetHeaderContentKey(),
                 ciphertextChunk.GetChunkNonce(),
@@ -90,14 +91,15 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
             if (BitConverter.IsLittleEndian)
                 beChunkNumber.Reverse();
 
-            using var hmacSha256 = cipherProvider.HmacSha256Crypt.GetInstance();
-            hmacSha256.InitializeHmac(_macKey);
-            hmacSha256.Update(headerNonce);
-            hmacSha256.Update(beChunkNumber);
-            hmacSha256.Update(chunkNonce);
-            hmacSha256.Update(ciphertextPayload);
+            // Initialize HMAC
+            using var hmacSha256 = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, _macKey);
 
-            hmacSha256.GetHash(chunkMac);
+            hmacSha256.AppendData(headerNonce);         // headerNonce
+            hmacSha256.AppendData(beChunkNumber);       // beChunkNumber
+            hmacSha256.AppendData(chunkNonce);          // chunkNonce
+            hmacSha256.AppendData(ciphertextPayload);   // ciphertextPayload   
+
+            hmacSha256.GetCurrentHash(chunkMac);
         }
     }
 }

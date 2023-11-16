@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Shared.Utils;
+﻿using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Text;
 
@@ -10,17 +10,24 @@ namespace SecureFolderFS.UI.AppModels
         private readonly byte[] _password;
 
         /// <inheritdoc/>
-        public Encoding Encoding { get; } = Encoding.UTF8;
+        public int Length { get; }
 
         public VaultPassword(string password)
         {
-            _password = Encoding.GetBytes(password);
+            _password = Encoding.UTF8.GetBytes(password);
+            Length = password.Length;
         }
 
         /// <inheritdoc/>
-        public byte[] GetPassword()
+        public byte[] GetRepresentation(Encoding encoding)
         {
-            return _password;
+            return encoding.Equals(Encoding.UTF8) ? _password : Encoding.Convert(Encoding.UTF8, encoding, _password);
+        }
+
+        /// <inheritdoc/>
+        public new string ToString()
+        {
+            return Encoding.UTF8.GetString(_password);
         }
 
         /// <inheritdoc/>

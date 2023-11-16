@@ -1,6 +1,6 @@
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Storage;
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.FUSE
             return Task.FromResult<IVirtualFileSystem>(fuseFileSystem);
         }
 
-        public static IMountableFileSystem CreateMountable(string vaultName, IPathConverter pathConverter, IFolder contentFolder, Security security, IDirectoryIdAccess directoryIdAccess, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(string vaultName, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
         {
             if (contentFolder is not ILocatableFolder locatableContentFolder)
                 throw new ArgumentException("The vault content folder is not locatable.");
@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.FUSE
             {
                 LocatableContentFolder = locatableContentFolder,
                 Security = security,
-                DirectoryIdAccess = directoryIdAccess
+                DirectoryIdAccess = directoryIdCache
             };
 
             return new FuseMountable(fuseCallbacks, vaultName);

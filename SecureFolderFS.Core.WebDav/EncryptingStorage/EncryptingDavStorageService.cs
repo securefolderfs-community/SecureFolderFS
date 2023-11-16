@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.FileSystem.Directories;
+﻿using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.Storage;
@@ -12,26 +12,26 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage
     {
         private readonly IStreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
-        private readonly IDirectoryIdAccess _directoryIdAccess;
+        private readonly DirectoryIdCache _directoryIdCache;
 
-        public EncryptingDavStorageService(ILocatableFolder baseDirectory, IStorageService storageService, IStreamsAccess streamsAccess, IPathConverter pathConverter, IDirectoryIdAccess directoryIdAccess, string? remoteRootDirectory = null)
+        public EncryptingDavStorageService(ILocatableFolder baseDirectory, IStorageService storageService, IStreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache, string? remoteRootDirectory = null)
             : base(baseDirectory, storageService, remoteRootDirectory)
         {
             _streamsAccess = streamsAccess;
             _pathConverter = pathConverter;
-            _directoryIdAccess = directoryIdAccess;
+            _directoryIdCache = directoryIdCache;
         }
 
         /// <inheritdoc/>
         public override DavFile<T> NewFile<T>(T inner)
         {
-            return new EncryptingDavFile<T>(inner, _streamsAccess, _pathConverter, _directoryIdAccess);
+            return new EncryptingDavFile<T>(inner, _streamsAccess, _pathConverter, _directoryIdCache);
         }
 
         /// <inheritdoc/>
         public override DavFolder<T> NewFolder<T>(T inner)
         {
-            return new EncryptingDavFolder<T>(inner, _streamsAccess, _pathConverter, _directoryIdAccess);
+            return new EncryptingDavFolder<T>(inner, _streamsAccess, _pathConverter, _directoryIdCache);
         }
 
         /// <inheritdoc/>

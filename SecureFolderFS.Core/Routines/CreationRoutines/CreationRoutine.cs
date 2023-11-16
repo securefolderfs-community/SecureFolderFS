@@ -1,14 +1,10 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Models;
-using SecureFolderFS.Core.SecureStore;
+using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
 using System;
-using System.IO;
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,102 +14,113 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
     /// <inheritdoc cref="ICreationRoutine"/>
     internal sealed class CreationRoutine : ICreationRoutine
     {
-        private readonly CipherProvider _cipherProvider;
+        private readonly IFolder _vaultFolder;
+        private readonly VaultWriter _vaultWriter;
+        private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private SecretKey? _macKey;
+        private SecretKey? _encKey;
 
-        public CreationRoutine()
+        public CreationRoutine(IFolder vaultFolder, VaultWriter vaultWriter)
         {
-            _cipherProvider = CipherProvider.CreateNew();
+            _vaultFolder = vaultFolder;
+            _vaultWriter = vaultWriter;
         }
 
         /// <inheritdoc/>
-        public async Task CreateContentFolderAsync(IModifiableFolder vaultFolder, CancellationToken cancellationToken = default)
+        public ICreationRoutine SetCredentials(SecretKey passkey)
         {
-            _ = await vaultFolder.CreateFolderAsync(Constants.CONTENT_FOLDERNAME, false, cancellationToken);
+            // Allocate keys
+            using var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
+            using var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
+            var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
+
+            // Fill keys
+            using var secureRandom = RandomNumberGenerator.Create();
+            secureRandom.GetNonZeroBytes(encKey.Key);
+            secureRandom.GetNonZeroBytes(macKey.Key);
+            secureRandom.GetNonZeroBytes(salt);
+
+            // Generate keystore
+            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt);
+
+            // Create key copies for later use
+            _macKey = macKey.CreateCopy();
+            _encKey = encKey.CreateCopy();
+
+            return this;
         }
 
         /// <inheritdoc/>
-        [SkipLocalsInit]
-        public void SetVaultPassword(IPassword password)
+        public ICreationRoutine SetOptions(IReadOnlyDictionary<string, string> options)
         {
-            using (password)
+            _configDataModel = new()
             {
-                using var encKey = new SecureKey(new byte[Constants.KeyChains.ENCKEY_LENGTH]);
-                using var macKey = new SecureKey(new byte[Constants.KeyChains.MACKEY_LENGTH]);
-                var salt = new byte[Constants.KeyChains.SALT_LENGTH];
+                Version = Constants.Vault.Versions.LATEST_VERSION,
+                ContentCipherId = options[Constants.Associations.ASSOC_CONTENT_CIPHER_ID],
+                FileNameCipherId = options[Constants.Associations.ASSOC_FILENAME_CIPHER_ID],
+                Specialization = options[Constants.Associations.ASSOC_SPECIALIZATION],
+                AuthenticationMethod = options[Constants.Associations.ASSOC_AUTHENTICATION],
+                Id = Guid.NewGuid().ToString(),
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+            };
 
-                // Fill keys
-                using var secureRandom = RandomNumberGenerator.Create();
-                secureRandom.GetNonZeroBytes(encKey.Key);
-                secureRandom.GetNonZeroBytes(macKey.Key);
-                secureRandom.GetNonZeroBytes(salt);
-
-                // Derive KEK
-                Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
-                _cipherProvider.Argon2idCrypt.DeriveKey(password.GetPassword(), salt, kek);
-
-                // Wrap keys
-                var wrappedEncKey = _cipherProvider.Rfc3394KeyWrap.WrapKey(encKey, kek);
-                var wrappedMacKey = _cipherProvider.Rfc3394KeyWrap.WrapKey(macKey, kek);
-
-                // Construct keystore data model
-                _keystoreDataModel = new()
-                {
-                    WrappedEncKey = wrappedEncKey,
-                    WrappedMacKey = wrappedMacKey,
-                    Salt = salt
-                };
-
-                // Create MAC key copy for later use
-                _macKey = macKey.CreateCopy();
-            }
+            return this;
         }
 
         /// <inheritdoc/>
-        public async Task WriteKeystoreAsync(Stream keystoreStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
-            await using var serializedKeystoreStream = await serializer.SerializeAsync(_keystoreDataModel, cancellationToken);
-            await serializedKeystoreStream.CopyToAsync(keystoreStream, cancellationToken);
-            keystoreStream.Position = 0L;
-        }
-
-        /// <inheritdoc/>
-        public async Task WriteConfigurationAsync(VaultOptions vaultOptions, Stream configStream, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken = default)
-        {
+            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
+            ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_macKey);
+            ArgumentNullException.ThrowIfNull(_encKey);
 
-            using (_macKey)
-            {
-                using var hmacSha256Crypt = _cipherProvider.HmacSha256Crypt.GetInstance();
-                hmacSha256Crypt.InitializeHmac(_macKey);
-                hmacSha256Crypt.Update(BitConverter.GetBytes(Constants.VaultVersion.LATEST_VERSION));
-                hmacSha256Crypt.Update(BitConverter.GetBytes((uint)vaultOptions.FileNameCipherScheme));
-                hmacSha256Crypt.Update(BitConverter.GetBytes((uint)vaultOptions.ContentCipherScheme));
+            // First we need to fill in the PayloadMac of the content
+            VaultParser.CalculateConfigMac(_configDataModel, _macKey, _configDataModel.PayloadMac);
 
-                var payloadMac = new byte[_cipherProvider.HmacSha256Crypt.MacSize];
-                hmacSha256Crypt.GetHash(payloadMac);
+            // Write the whole config
+            await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
+            await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
-                var configDataModel = new VaultConfigurationDataModel()
-                {
-                    ContentCipherScheme = vaultOptions.ContentCipherScheme,
-                    FileNameCipherScheme = vaultOptions.FileNameCipherScheme,
-                    PayloadMac = payloadMac
-                };
-                
-                // Serialize data
-                await using var serializedConfigStream = await serializer.SerializeAsync(configDataModel, cancellationToken);
+            // Create content folder
+            if (_vaultFolder is IModifiableFolder modifiableFolder)
+                await modifiableFolder.CreateFolderAsync(Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, false, cancellationToken);
 
-                // Write configuration
-                await serializedConfigStream.CopyToAsync(configStream, cancellationToken);
-            }
+            // Key copies need to be created because the original ones are disposed of here
+            return new CreationContract(_encKey.CreateCopy(), _macKey.CreateCopy());
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
+            _encKey?.Dispose();
             _macKey?.Dispose();
-            _cipherProvider.Dispose();
+        }
+    }
+
+    internal sealed class CreationContract : IDisposable
+    {
+        private readonly SecretKey _encKey;
+        private readonly SecretKey _macKey;
+
+        public CreationContract(SecretKey encKey, SecretKey macKey)
+        {
+            _encKey = encKey;
+            _macKey = macKey;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return $"{Convert.ToBase64String(_encKey)}{Constants.KEY_TEXT_SEPARATOR}{Convert.ToBase64String(_macKey)}";
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            _encKey.Dispose();
+            _macKey.Dispose();
         }
     }
 }

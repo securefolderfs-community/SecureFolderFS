@@ -1,12 +1,12 @@
 ﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using static SecureFolderFS.Core.Constants.Vault.Versions;
 
 namespace SecureFolderFS.Core.Validators
 {
@@ -21,23 +21,23 @@ namespace SecureFolderFS.Core.Validators
         }
 
         /// <inheritdoc/>
-        public async Task<IResult> ValidateAsync(Stream value, CancellationToken cancellationToken = default)
+        public async Task ValidateAsync(Stream value, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var configDataModel = await _serializer.DeserializeAsync<Stream, VaultConfigurationDataModel?>(value, cancellationToken);
-                if (configDataModel is null)
-                    return new CommonResult<VaultConfigurationDataModel>(new SerializationException("Couldn't deserialize configuration buffer to configuration data model"));
+            var versionDataModel = await _serializer.DeserializeAsync<Stream, VersionDataModel?>(value, cancellationToken);
+            if (versionDataModel is null)
+                throw new SerializationException("Couldn't deserialize configuration buffer to version data model.");
 
-                if (configDataModel.Version != Constants.VaultVersion.LATEST_VERSION)
-                    return new CommonResult<VaultConfigurationDataModel>(new NotSupportedException($"Vault version {configDataModel.Version} is not supported."));
+            if (versionDataModel.Version > LATEST_VERSION)
+                throw new FormatException("Unknown vault version.");
 
-                return new CommonResult<VaultConfigurationDataModel>(configDataModel);
-            }
-            catch (Exception ex)
+            if (versionDataModel.Version < V1)
+                throw new FormatException("Invalid vault version.");
+
+            _ = versionDataModel.Version switch
             {
-                return new CommonResult<VaultConfigurationDataModel>(ex);
-            }
+                (V1 or V1) and not LATEST_VERSION => throw new NotSupportedException($"Vault version {versionDataModel.Version} is not supported."),
+                _ => 0
+            };
         }
     }
 }

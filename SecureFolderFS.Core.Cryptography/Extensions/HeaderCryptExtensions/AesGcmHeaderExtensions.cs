@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Headers.AesGcm;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Headers.AesGcm;
 
 namespace SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions
 {

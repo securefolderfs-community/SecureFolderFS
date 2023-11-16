@@ -41,5 +41,35 @@
                 <FontIcon Glyph="&#xE8D7;" />
             </ucab:ActionBlockControl.Icon>
         </ucab:ActionBlockControl>
+
+        <ucab:ActionBlockControl
+            x:Name="AuthControl"
+            Title="Two-factor authentication"
+            x:Load="False"
+            Description="Setup or change two-factor authentication">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xEC19;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
+                <Button Content="Setup" />
+            </ucab:ActionBlockControl.ActionElement>
+        </ucab:ActionBlockControl>
+        <ucab:ActionBlockControl
+            Title="Two-factor authentication"
+            Description="Setup or change two-factor authentication"
+            IsExpanded="True"
+            Visibility="Visible">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xEC19;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
+                <Button Command="{x:Bind ViewModel.ChangeAuthenticationCommand}" Content="Change" />
+            </ucab:ActionBlockControl.ActionElement>
+            <ucab:ActionBlockControl.ExpanderContent>
+                <Grid>
+                    <TextBlock Text="Windows Hello authentication has been set up for this vault." />
+                </Grid>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
     </StackPanel>
 </Page>

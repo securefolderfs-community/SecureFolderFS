@@ -17,15 +17,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         [ObservableProperty] private string? _ContentCipherName;
         [ObservableProperty] private string? _FileNameCipherName;
 
+        /// <inheritdoc/>
+        public override string PageName { get; } = "Properties";
+
         public VaultPropertiesPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService)
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {
             ServiceProvider = Ioc.Default;
-            var contentCipherId = unlockedVaultViewModel.UnlockedVaultModel.VaultInfoModel.ContentCipherId;
-            var fileNameCipherId = unlockedVaultViewModel.UnlockedVaultModel.VaultInfoModel.FileNameCipherId;
+            var contentCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultOptions.ContentCipherId;
+            var fileNameCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultOptions.FileNameCipherId;
 
-            ContentCipherName = contentCipherId == string.Empty ? "None" : (contentCipherId ?? "Unknown");
-            FileNameCipherName = fileNameCipherId == string.Empty ? "None" : (fileNameCipherId ?? "Unknown");
+            ContentCipherName = contentCipherId == string.Empty ? "NoEncryption".ToLocalized() : (contentCipherId ?? "Unknown");
+            FileNameCipherName = fileNameCipherId == string.Empty ? "NoEncryption".ToLocalized() : (fileNameCipherId ?? "Unknown");
         }
 
         /// <inheritdoc/>
@@ -37,8 +40,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         [RelayCommand]
         private async Task ChangePasswordAsync()
         {
-            using var viewModel = new PasswordChangeDialogViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
+            var viewModel = new PasswordChangeDialogViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
             await DialogService.ShowDialogAsync(viewModel);
+        }
+
+        [RelayCommand]
+        private async Task ChangeAuthenticationAsync()
+        {
+            // The dialog would have to have a common control for providing credentials which would be shared between the dialog and login screen
         }
     }
 }

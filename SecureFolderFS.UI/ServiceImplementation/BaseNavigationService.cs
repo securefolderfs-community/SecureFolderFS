@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utils;
+using SecureFolderFS.Shared.Utilities;
 using SecureFolderFS.UI.Utils;
 using System;
 using System.Collections.Generic;
@@ -135,7 +135,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             CurrentTarget = null;
             NavigationControl?.Dispose();
 
-            Targets.DisposeCollection();
+            Targets.DisposeElements();
             Targets.Clear();
         }
     }

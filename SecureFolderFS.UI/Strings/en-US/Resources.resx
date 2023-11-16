@@ -126,6 +126,12 @@
   <data name="AddNewVault" xml:space="preserve">
     <value>Add new vault</value>
   </data>
+  <data name="Authenticate" xml:space="preserve">
+    <value>Authenticate</value>
+  </data>
+  <data name="AuthenticateUsing" xml:space="preserve">
+    <value>Authenticate using {0}</value>
+  </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Automatically lock vaults</value>
   </data>
@@ -279,6 +285,9 @@
   <data name="ManageSettings" xml:space="preserve">
     <value>Manage settings</value>
   </data>
+  <data name="MasterKeyDescription" xml:space="preserve">
+    <value>This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+  </data>
   <data name="MyVaults" xml:space="preserve">
     <value>My vaults</value>
   </data>
@@ -313,6 +322,9 @@
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Privacy policy</value>
   </data>
@@ -340,6 +352,9 @@
   <data name="Retry" xml:space="preserve">
     <value>Retry</value>
     <comment>Used to retry a failed action</comment>
+  </data>
+  <data name="RevealMasterKey" xml:space="preserve">
+    <value>Reveal master key</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
@@ -421,6 +436,9 @@
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
     <value>View information about this vault</value>
+  </data>
+  <data name="VaultRecovery" xml:space="preserve">
+    <value>Vault recovery</value>
   </data>
   <data name="Version" xml:space="preserve">
     <value>Version</value>

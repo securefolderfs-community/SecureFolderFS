@@ -1,6 +1,7 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
-using static SecureFolderFS.Core.Cryptography.Constants.Crypt.Headers.AesGcm;
+using static SecureFolderFS.Core.Cryptography.Constants.Crypto.Headers.AesGcm;
 using static SecureFolderFS.Core.Cryptography.Extensions.HeaderCryptExtensions.AesGcmHeaderExtensions;
 
 namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
@@ -14,8 +15,8 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         /// <inheritdoc/>
         public override int HeaderCleartextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
 
-        public AesGcmHeaderCrypt(SecretKey encKey, SecretKey macKey, CipherProvider cipherProvider)
-            : base(encKey, macKey, cipherProvider)
+        public AesGcmHeaderCrypt(SecretKey encKey, SecretKey macKey)
+            : base(encKey, macKey)
         {
         }
 
@@ -36,7 +37,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             cleartextHeader.GetHeaderNonce().CopyTo(ciphertextHeader);
 
             // Encrypt
-            cipherProvider.AesGcmCrypt.Encrypt(
+            AesGcm128.Encrypt(
                 cleartextHeader.GetHeaderContentKey(),
                 encKey,
                 cleartextHeader.GetHeaderNonce(),
@@ -52,7 +53,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
             ciphertextHeader.GetHeaderNonce().CopyTo(cleartextHeader);
 
             // Decrypt
-            return cipherProvider.AesGcmCrypt.Decrypt(
+            return AesGcm128.TryDecrypt(
                 ciphertextHeader.GetHeaderContentKey(),
                 encKey,
                 ciphertextHeader.GetHeaderNonce(),

@@ -1,0 +1,76 @@
+<Page
+    x:Class="SecureFolderFS.WinUI.Views.PrintPages.MasterKeyPrintPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SecureFolderFS.WinUI.Views.PrintPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        Padding="48,32"
+        Background="White"
+        RowSpacing="40">
+        <Grid.RowDefinitions>
+            <!--  Header  -->
+            <RowDefinition Height="Auto" />
+            <!--  Content  -->
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--  Header  -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                Grid.Column="0"
+                Orientation="Horizontal"
+                Spacing="16">
+                <Image
+                    Height="52"
+                    VerticalAlignment="Center"
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppIcon.png" />
+                <Image
+                    Height="29"
+                    Margin="0,0,0,-3"
+                    VerticalAlignment="Center"
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.png" />
+
+            </StackPanel>
+            <TextBlock
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Foreground="Gray"
+                Text="V1" />
+        </Grid>
+
+        <!--  Content  -->
+        <StackPanel Grid.Row="1" Spacing="8">
+            <TextBlock
+                x:Name="MasterKeyVaultNameText"
+                x:FieldModifier="public"
+                FontSize="22"
+                FontWeight="Medium"
+                Foreground="#202020"
+                Text="Master key" />
+
+            <Grid
+                MinHeight="64"
+                Padding="8"
+                Background="#DFDFDF"
+                CornerRadius="4">
+                <TextBlock
+                    x:Name="MasterKeyText"
+                    x:FieldModifier="public"
+                    FontFamily="Consolas"
+                    FontSize="16"
+                    Foreground="Black"
+                    Text="REPORT A BUG IF YOU SEE THIS TEXT"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

@@ -5,7 +5,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     /// <summary>
     /// Represents an encryption method to encrypt and decrypt file/folder names.
     /// </summary>
-    public interface INameCrypt
+    public interface INameCrypt : IDisposable
     {
         /// <summary>
         /// Encrypts the <paramref name="cleartextName"/> using associated <paramref name="directoryId"/>.
