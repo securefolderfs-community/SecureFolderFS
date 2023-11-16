@@ -5,31 +5,31 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{66BC1E2B-D99A-49E2-8B8F-EF7851493CB0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Sdk", "SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj", "{3EDA3EAD-176F-4E00-B3D5-966E684E0C9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Sdk", "src\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj", "{3EDA3EAD-176F-4E00-B3D5-966E684E0C9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core", "SecureFolderFS.Core\SecureFolderFS.Core.csproj", "{1B9044F7-7332-4803-8F9F-5ED6B056DBD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core", "src\SecureFolderFS.Core\SecureFolderFS.Core.csproj", "{1B9044F7-7332-4803-8F9F-5ED6B056DBD4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{DA5AA2CC-F4FE-4C7F-B751-F4E6E50B78B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Shared", "SecureFolderFS.Shared\SecureFolderFS.Shared.csproj", "{AD6D47C4-FCEE-4638-B667-403DD16E5824}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Shared", "src\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj", "{AD6D47C4-FCEE-4638-B667-403DD16E5824}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FileSystems", "FileSystems", "{F2ACE2B7-1599-4769-8FF4-41FA03B25D26}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sdk", "Sdk", "{086CDAC6-2730-4F09-BA28-B41F737E6C4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.WinUI", "SecureFolderFS.WinUI\SecureFolderFS.WinUI.csproj", "{F39F513C-C0C6-4038-8279-1CB1FF24A666}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.WinUI", "src\SecureFolderFS.WinUI\SecureFolderFS.WinUI.csproj", "{F39F513C-C0C6-4038-8279-1CB1FF24A666}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Cryptography", "SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj", "{E9A65D92-A183-4A99-B840-C237833E10F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Cryptography", "src\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj", "{E9A65D92-A183-4A99-B840-C237833E10F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Sdk.Storage", "SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj", "{9C1735AF-65EA-4F26-8021-E4333B075F43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Sdk.Storage", "src\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj", "{9C1735AF-65EA-4F26-8021-E4333B075F43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.WebDav", "SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj", "{D3F757F7-8E51-41DD-9079-893677750CB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.WebDav", "src\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj", "{D3F757F7-8E51-41DD-9079-893677750CB1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.FileSystem", "SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj", "{9E958CE2-A420-4B72-909E-69FB344B7606}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.FileSystem", "src\SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj", "{9E958CE2-A420-4B72-909E-69FB344B7606}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Dokany", "SecureFolderFS.Core.Dokany\SecureFolderFS.Core.Dokany.csproj", "{847646C4-3D93-4CE3-9CEB-BFD87174C0F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Dokany", "src\SecureFolderFS.Core.Dokany\SecureFolderFS.Core.Dokany.csproj", "{847646C4-3D93-4CE3-9CEB-BFD87174C0F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.FUSE", "SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj", "{7783599F-48FA-4693-9BA9-C1031990D910}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.FUSE", "src\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj", "{7783599F-48FA-4693-9BA9-C1031990D910}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tmds.Fuse", "lib\Tmds.Fuse\src\Tmds.Fuse\Tmds.Fuse.csproj", "{8C0C23C5-D3D8-4495-93BB-2A200815DB10}"
 EndProject
@@ -39,15 +39,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NWebDav.Server", "lib\nwebd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NWebDav.Server.HttpListener", "lib\nwebdav\NWebDav.Server.HttpListener\NWebDav.Server.HttpListener.csproj", "{95DF07BC-96EC-425F-B3CE-F4D1522B9EA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.AvaloniaUI", "SecureFolderFS.AvaloniaUI\SecureFolderFS.AvaloniaUI.csproj", "{B9A12D48-F61D-45EE-B4DF-B88DB7D9911A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.AvaloniaUI", "src\SecureFolderFS.AvaloniaUI\SecureFolderFS.AvaloniaUI.csproj", "{B9A12D48-F61D-45EE-B4DF-B88DB7D9911A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.UI", "SecureFolderFS.UI\SecureFolderFS.UI.csproj", "{9C87813E-B60D-4E69-AC74-131EF59F0DAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.UI", "src\SecureFolderFS.UI\SecureFolderFS.UI.csproj", "{9C87813E-B60D-4E69-AC74-131EF59F0DAF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.SourceGenerator", "SecureFolderFS.SourceGenerator\SecureFolderFS.SourceGenerator.csproj", "{279C01B3-86B8-4F9E-9D21-3C535E152F2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.SourceGenerator", "src\SecureFolderFS.SourceGenerator\SecureFolderFS.SourceGenerator.csproj", "{279C01B3-86B8-4F9E-9D21-3C535E152F2F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Migration", "SecureFolderFS.Core.Migration\SecureFolderFS.Core.Migration.csproj", "{0703B2BC-6CE3-4B5F-9399-7B106324F599}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Migration", "src\SecureFolderFS.Core.Migration\SecureFolderFS.Core.Migration.csproj", "{0703B2BC-6CE3-4B5F-9399-7B106324F599}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src1", "src1", "{569EE399-94F3-47F1-A626-6A28E3C7D2B5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{569EE399-94F3-47F1-A626-6A28E3C7D2B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
