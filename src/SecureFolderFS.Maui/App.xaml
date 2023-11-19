@@ -1,14 +1,20 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
-<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:SecureFolderFS.Maui"
-             x:Class="SecureFolderFS.Maui.App">
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Application
+    x:Class="SecureFolderFS.Maui.App"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui"
+    xmlns:s="clr-namespace:System;assembly=mscorlib">
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <s:Boolean x:Key="True">True</s:Boolean>
+            <s:Boolean x:Key="False">False</s:Boolean>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

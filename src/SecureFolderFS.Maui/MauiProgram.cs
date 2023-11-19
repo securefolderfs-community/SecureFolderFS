@@ -1,8 +1,10 @@
-﻿using MauiIcons.SegoeFluent;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using MauiIcons.SegoeFluent;
 using Microsoft.Extensions.Logging;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.UI.ServiceImplementation;
+using SecureFolderFS.UI.Storage.NativeStorage;
 
 namespace SecureFolderFS.Maui
 {
@@ -26,17 +28,28 @@ namespace SecureFolderFS.Maui
             builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            var app = builder.Build();
+            Ioc.Default.ConfigureServices(app.Services);
+
+            return app;
         }
 
         private static void ConfigureServices(IServiceCollection services)
         {
+#if UNPACKAGED
+            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.LocalSettings.SETTINGS_FOLDER_NAME);
+#else
+            var settingsFolderPath = Path.Combine(FileSystem.AppDataDirectory, SecureFolderFS.UI.Constants.LocalSettings.SETTINGS_FOLDER_NAME);
+#endif
+
+            var settingsFolder = new NativeFolder(Directory.CreateDirectory(settingsFolderPath));
+
             // Singleton services
             services
 
                 // Singleton services
-                //.AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
-                //.AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
+                .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
+                .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
                 //.AddSingleton<IDialogService, DialogService>()
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
