@@ -1,0 +1,44 @@
+<ContentPage
+    x:Class="SecureFolderFS.Maui.Views.Vault.VaultLoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    Title="{Binding ViewModel.VaultName, Mode=OneWay, FallbackValue='VaultName'}">
+
+    <Grid Padding="32" HorizontalOptions="Fill">
+        <Grid.RowDefinitions>
+            <!--  Main Input  -->
+            <RowDefinition />
+            <!--  Notification  -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Main Input  -->
+        <VerticalStackLayout
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Spacing="64"
+            VerticalOptions="Center">
+
+            <!--  Header  -->
+            <VerticalStackLayout Spacing="6" VerticalOptions="Center">
+                <!--  TODO(m) TextTrimming="CharacterEllipsis"  -->
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="26"
+                    HorizontalOptions="Center"
+                    Text="{Binding ViewModel.VaultName, Mode=OneWay, FallbackValue='VaultName'}"
+                    ToolTipProperties.Text="{Binding ViewModel.VaultName, Mode=OneWay, FallbackValue='VaultName'}" />
+
+                <Label
+                    FontSize="14"
+                    HorizontalOptions="Center"
+                    Opacity="0.6"
+                    Text="{l:ResourceString Name=VaultLocked}" />
+            </VerticalStackLayout>
+
+            <!--  Login  -->
+            <!--<uc:LoginControl LoginTypeViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" />-->
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

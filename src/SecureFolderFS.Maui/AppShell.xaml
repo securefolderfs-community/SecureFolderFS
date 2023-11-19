@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SecureFolderFS.Maui.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;assembly=SecureFolderFS.Sdk"
+    xmlns:vv="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    Title="SecureFolderFS.Maui"
+    FlyoutBehavior="Flyout"
+    FlyoutWidth="260">
+
+    <Shell.FlyoutHeader>
+        <SearchBar Placeholder="Search" />
+    </Shell.FlyoutHeader>
+
+    <FlyoutItem Title="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay, FallbackValue='VaultName'}" FlyoutIcon="{mi:SegoeFluent Safe}">
+        <Tab>
+            <ShellContent
+                Title="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay, FallbackValue='VaultName'}"
+                ContentTemplate="{DataTemplate vv:VaultLoginPage}"
+                Route="VaultLoginPage" />
+        </Tab>
+    </FlyoutItem>
+</Shell>
