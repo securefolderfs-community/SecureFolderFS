@@ -11,11 +11,11 @@ namespace SecureFolderFS.Cli.Options
         public string VaultFolder { get; private set; }
         
         [ValidOptions(Constants.CipherId.AES_GCM, Constants.CipherId.XCHACHA20_POLY1305)]
-        [Option("content-cipher", HelpText = $"Valid values: {Constants.CipherId.AES_GCM}, {Constants.CipherId.XCHACHA20_POLY1305} (case insensitive).", Default = Constants.CipherId.XCHACHA20_POLY1305)]
+        [Option("content-cipher", HelpText = $"Valid values (case insensitive): {Constants.CipherId.AES_GCM}, {Constants.CipherId.XCHACHA20_POLY1305}.", Default = Constants.CipherId.XCHACHA20_POLY1305)]
         public string ContentCipher { get; private set; }
         
         [ValidOptions(Constants.CipherId.AES_SIV, Constants.CipherId.NONE)]
-        [Option("filename-cipher", HelpText = $"Valid values: {Constants.CipherId.AES_SIV}, {Constants.CipherId.NONE} (case insensitive).", Default = Constants.CipherId.AES_SIV)]
+        [Option("filename-cipher", HelpText = $"Valid values (case insensitive): {Constants.CipherId.AES_SIV}, {Constants.CipherId.NONE}.", Default = Constants.CipherId.AES_SIV)]
         public string FileNameCipher { get; private set; }
     }
 }

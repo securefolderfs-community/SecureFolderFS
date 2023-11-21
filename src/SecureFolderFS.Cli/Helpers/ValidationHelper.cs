@@ -17,10 +17,12 @@ namespace SecureFolderFS.Cli.Helpers
                 var option = property.GetCustomAttribute<OptionAttribute>();
                 if (option is null)
                     continue;
+                
+                
 
                 if (!validOptions.Values.Select(x => x.ToLower()).Contains(((string)property.GetValue(options)).ToLower()))
                 {
-                    Console.Error.WriteLine($"The parameter \"{option.LongName}\" has an invalid value. Valid values are: {string.Join(", ", validOptions.Values)} (case insensitive).");
+                    Console.Error.WriteLine($"The parameter \"{option.LongName}\" has an invalid value. Valid values are (case insensitive): {string.Join(", ", validOptions.Values)}.");
                     Environment.Exit(-1);
                 }
             }

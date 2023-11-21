@@ -14,8 +14,9 @@ namespace SecureFolderFS.Cli
                 with.HelpWriter = null;
                 with.CaseInsensitiveEnumValues = true;
             });
-            var parserResult = await parser.ParseArguments<CreateVaultOptions, UnlockVaultOptions>(args)
-                .WithParsedAsync<CreateVaultOptions>(async options => await CreateVaultHandler.Instance.HandleAsync(options));
+            var parserResult = parser.ParseArguments<CreateVaultOptions, UnlockVaultOptions>(args);
+            await parserResult.WithParsedAsync<CreateVaultOptions>(async options => await CreateVaultHandler.Instance.HandleAsync(options));
+            await parserResult.WithParsedAsync<UnlockVaultOptions>(async options => await UnlockVaultHandler.Instance.HandleAsync(options));
             parserResult.WithNotParsed(_ => DisplayHelp(parserResult));
         }
         
