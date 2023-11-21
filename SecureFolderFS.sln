@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Migrati
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{569EE399-94F3-47F1-A626-6A28E3C7D2B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.CLI", "src\SecureFolderFS.CLI\SecureFolderFS.CLI.csproj", "{7F94EE51-76EC-4FDD-B9DD-CE2DEEDFCAEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Cli", "src\SecureFolderFS.Cli\SecureFolderFS.Cli.csproj", "{7F94EE51-76EC-4FDD-B9DD-CE2DEEDFCAEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

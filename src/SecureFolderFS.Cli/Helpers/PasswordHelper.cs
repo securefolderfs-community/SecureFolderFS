@@ -1,4 +1,4 @@
-namespace SecureFolderFS.CLI.Helpers
+namespace SecureFolderFS.Cli.Helpers
 {
     public static class PasswordHelper
     {

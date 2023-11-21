@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 using CommandLine.Text;
-using SecureFolderFS.CLI.Handlers;
-using SecureFolderFS.CLI.Options;
+using SecureFolderFS.Cli.Handlers;
+using SecureFolderFS.Cli.Options;
 
-namespace SecureFolderFS.CLI
+namespace SecureFolderFS.Cli
 {
     internal static class Program
     {

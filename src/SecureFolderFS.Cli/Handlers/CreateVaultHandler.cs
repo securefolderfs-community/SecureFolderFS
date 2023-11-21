@@ -1,14 +1,14 @@
-using SecureFolderFS.CLI.Enums;
-using SecureFolderFS.CLI.Helpers;
-using SecureFolderFS.CLI.Options;
-using SecureFolderFS.CLI.Utilities;
+using SecureFolderFS.Cli.Enums;
+using SecureFolderFS.Cli.Helpers;
+using SecureFolderFS.Cli.Options;
+using SecureFolderFS.Cli.Utilities;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation.Vault;
 using SecureFolderFS.UI.Storage.NativeStorage;
 using Constants = SecureFolderFS.Core.Cryptography.Constants;
 
-namespace SecureFolderFS.CLI.Handlers
+namespace SecureFolderFS.Cli.Handlers
 {
     public sealed class CreateVaultHandler : SingletonBase<CreateVaultHandler>, IHandler<CreateVaultOptions>
     {

@@ -1,4 +1,4 @@
-namespace SecureFolderFS.CLI.Enums
+namespace SecureFolderFS.Cli.Enums
 {
     public enum FileNameCipher
     {

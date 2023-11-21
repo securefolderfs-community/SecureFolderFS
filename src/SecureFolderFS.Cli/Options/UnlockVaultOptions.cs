@@ -1,6 +1,6 @@
 using CommandLine;
 
-namespace SecureFolderFS.CLI.Options
+namespace SecureFolderFS.Cli.Options
 {
     [Verb("unlock-vault", HelpText = "Unlock a vault.")]
     public sealed class UnlockVaultOptions

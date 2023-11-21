@@ -1,4 +1,4 @@
-namespace SecureFolderFS.CLI.Handlers
+namespace SecureFolderFS.Cli.Handlers
 {
     public interface IHandler<TOptions>
     {

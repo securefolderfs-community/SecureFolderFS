@@ -1,7 +1,7 @@
 using CommandLine;
-using SecureFolderFS.CLI.Enums;
+using SecureFolderFS.Cli.Enums;
 
-namespace SecureFolderFS.CLI.Options
+namespace SecureFolderFS.Cli.Options
 {
     [Verb("create-vault", HelpText = "Create a new vault.")]
     public sealed class CreateVaultOptions

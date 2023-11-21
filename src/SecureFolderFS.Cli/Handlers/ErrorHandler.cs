@@ -1,7 +1,7 @@
 using CommandLine;
-using SecureFolderFS.CLI.Utilities;
+using SecureFolderFS.Cli.Utilities;
 
-namespace SecureFolderFS.CLI.Handlers
+namespace SecureFolderFS.Cli.Handlers
 {
     public sealed class ErrorHandler : SingletonBase<ErrorHandler>, IHandler<IEnumerable<Error>>
     {
