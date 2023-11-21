@@ -19,9 +19,6 @@ namespace SecureFolderFS.Sdk.ViewModels
     [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IDialogService>, Inject<INavigationService>(Visibility = "public", Name = "HostNavigationService")]
     public sealed partial class MainViewModel : ObservableObject, IAsyncInitialize
     {
-        [ObservableProperty]
-        private INotifyPropertyChanged? _AppContentViewModel;
-
         public MainViewModel()
         {
             ServiceProvider = Ioc.Default;
