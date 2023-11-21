@@ -1,4 +1,6 @@
-namespace SecureFolderFS.Cli.Utilities
+using System;
+
+namespace SecureFolderFS.Shared.Helpers
 {
     public abstract class SingletonBase<T> where T : SingletonBase<T>
     {

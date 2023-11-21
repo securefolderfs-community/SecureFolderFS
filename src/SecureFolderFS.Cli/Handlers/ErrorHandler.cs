@@ -1,5 +1,5 @@
 using CommandLine;
-using SecureFolderFS.Cli.Utilities;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Cli.Handlers
 {

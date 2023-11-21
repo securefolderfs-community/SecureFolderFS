@@ -1,8 +1,8 @@
 using SecureFolderFS.Cli.Enums;
 using SecureFolderFS.Cli.Helpers;
 using SecureFolderFS.Cli.Options;
-using SecureFolderFS.Cli.Utilities;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation.Vault;
 using SecureFolderFS.UI.Storage.NativeStorage;
