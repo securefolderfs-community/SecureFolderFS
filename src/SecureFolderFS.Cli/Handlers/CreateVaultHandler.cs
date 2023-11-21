@@ -1,4 +1,3 @@
-using SecureFolderFS.Cli.Enums;
 using SecureFolderFS.Cli.Helpers;
 using SecureFolderFS.Cli.Options;
 using SecureFolderFS.Sdk.AppModels;
@@ -6,7 +5,6 @@ using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation.Vault;
 using SecureFolderFS.UI.Storage.NativeStorage;
-using Constants = SecureFolderFS.Core.Cryptography.Constants;
 
 namespace SecureFolderFS.Cli.Handlers
 {
@@ -14,6 +12,7 @@ namespace SecureFolderFS.Cli.Handlers
     {
         public async Task HandleAsync(CreateVaultOptions options, CancellationToken cancellationToken = default)
         {
+            ValidationHelper.ValidateOptions(options);
             if (!Directory.Exists(options.VaultFolder))
                 Directory.CreateDirectory(options.VaultFolder);
             
@@ -21,16 +20,8 @@ namespace SecureFolderFS.Cli.Handlers
             var vaultCreator = new VaultCreator();
             using var encryptionKey = await vaultCreator.CreateVaultAsync(new NativeFolder(options.VaultFolder), new[] { password }, new VaultOptions
             {
-                ContentCipherId = options.ContentCipher switch
-                {
-                    ContentCipher.AesGcm => Constants.CipherId.AES_GCM,
-                    ContentCipher.XChaCha20Poly1305 => Constants.CipherId.XCHACHA20_POLY1305
-                },
-                FileNameCipherId = options.FileNameCipher switch
-                {
-                    FileNameCipher.AesSiv => Constants.CipherId.AES_SIV,
-                    FileNameCipher.None => Constants.CipherId.NONE
-                },
+                ContentCipherId = options.ContentCipher,
+                FileNameCipherId = options.FileNameCipher,
                 Specialization = "TODO",
                 AuthenticationMethod = "TODO"
             }, cancellationToken);

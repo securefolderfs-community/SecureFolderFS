@@ -1,5 +1,6 @@
 using CommandLine;
-using SecureFolderFS.Cli.Enums;
+using SecureFolderFS.Cli.Attributes;
+using SecureFolderFS.Core.Cryptography;
 
 namespace SecureFolderFS.Cli.Options
 {
@@ -9,10 +10,12 @@ namespace SecureFolderFS.Cli.Options
         [Option('v', "vault-folder", Required = true, HelpText = "Path to a folder where the vault should be created. If the specified folder does not exist, it will be created.")]
         public string VaultFolder { get; private set; }
         
-        [Option("content-cipher", Default = ContentCipher.XChaCha20Poly1305)]
-        public ContentCipher ContentCipher { get; private set; }
+        [ValidOptions(Constants.CipherId.AES_GCM, Constants.CipherId.XCHACHA20_POLY1305)]
+        [Option("content-cipher", HelpText = $"Valid values: {Constants.CipherId.AES_GCM}, {Constants.CipherId.XCHACHA20_POLY1305} (case insensitive).", Default = Constants.CipherId.XCHACHA20_POLY1305)]
+        public string ContentCipher { get; private set; }
         
-        [Option("filename-cipher", Default = FileNameCipher.AesSiv)]
-        public FileNameCipher FileNameCipher { get; private set; }
+        [ValidOptions(Constants.CipherId.AES_SIV, Constants.CipherId.NONE)]
+        [Option("filename-cipher", HelpText = $"Valid values: {Constants.CipherId.AES_SIV}, {Constants.CipherId.NONE} (case insensitive).", Default = Constants.CipherId.AES_SIV)]
+        public string FileNameCipher { get; private set; }
     }
 }
