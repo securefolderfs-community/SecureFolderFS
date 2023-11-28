@@ -76,17 +76,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var vaultLifecycle = await VaultService.VaultUnlocker.UnlockAsync(_vaultModel, _credentials, cancellationToken);
+                var vaultLifecycle =
+                    await VaultService.VaultUnlocker.UnlockAsync(_vaultModel, _credentials, cancellationToken);
                 VaultUnlocked?.Invoke(this, new(vaultLifecycle));
 
 
-                
             }
             catch (Exception ex)
             {
                 // If failed, restart the process
                 // TODO: Above ^
                 _ = ex;
+            }
+            finally
+            {
+                _credentials.Dispose();
             }
         }
 
