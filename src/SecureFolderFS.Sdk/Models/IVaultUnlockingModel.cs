@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         /// <param name="folder">The vault folder to be set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the folder was successfully set and configuration file found, returns true, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the folder was successfully set and configuration file found, returns true; otherwise false.</returns>
         Task<IResult> SetFolderAsync(IFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>

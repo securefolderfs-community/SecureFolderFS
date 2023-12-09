@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         /// <param name="value">The value to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the value was successfully set, returns true, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the value was successfully set, returns true; otherwise false.</returns>
         Task<bool> SetLastAccessDateAsync(DateTime? value, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         /// <param name="value">The value to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the value was successfully set, returns true, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the value was successfully set, returns true; otherwise false.</returns>
         Task<bool> SetVaultNameAsync(string value, CancellationToken cancellationToken = default);
     }
 }

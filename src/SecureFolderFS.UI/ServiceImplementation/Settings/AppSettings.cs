@@ -15,7 +15,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
 
         public AppSettings(IModifiableFolder settingsFolder)
         {
-            SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.APPLICATION_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.APPLICATION_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
         }
 
         /// <inheritdoc/>

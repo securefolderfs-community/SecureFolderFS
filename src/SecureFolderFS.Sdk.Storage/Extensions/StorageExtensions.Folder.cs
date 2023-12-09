@@ -50,7 +50,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
 
         #region Try Methods
 
-        /// <returns>If file was found, returns the requested <see cref="IFile"/>, otherwise null.</returns>
+        /// <returns>If file was found, returns the requested <see cref="IFile"/>; otherwise null.</returns>
         /// <inheritdoc cref="IFolderExtended.GetFileAsync"/>
         public static async Task<IFile?> TryGetFileAsync(this IFolder folder, string fileName, CancellationToken cancellationToken = default)
         {
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             }
         }
 
-        /// <returns>If folder was found, returns the requested <see cref="IFolder"/>, otherwise null.</returns>
+        /// <returns>If folder was found, returns the requested <see cref="IFolder"/>; otherwise null.</returns>
         /// <inheritdoc cref="IFolderExtended.GetFolderAsync"/>
         public static async Task<IFolder?> TryGetFolderAsync(this IFolder folder, string folderName, CancellationToken cancellationToken = default)
         {
@@ -78,7 +78,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             }
         }
 
-        /// <returns>If file was created, returns the requested <see cref="IFile"/>, otherwise null.</returns>
+        /// <returns>If file was created, returns the requested <see cref="IFile"/>; otherwise null.</returns>
         /// <inheritdoc cref="IModifiableFolder.CreateFileAsync"/>
         public static async Task<IFile?> TryCreateFileAsync(this IModifiableFolder folder, string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
@@ -92,7 +92,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             }
         }
 
-        /// <returns>If folder was created, returns the requested <see cref="IFolder"/>, otherwise null.</returns>
+        /// <returns>If folder was created, returns the requested <see cref="IFolder"/>; otherwise null.</returns>
         /// <inheritdoc cref="IModifiableFolder.CreateFolderAsync"/>
         public static async Task<IFolder?> TryCreateFolderAsync(this IModifiableFolder folder, string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
         {
@@ -117,11 +117,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 var file = await GetFileAsync(folder, fileName, cancellationToken);
-                return new CommonResult<IFile?>(file);
+                return CommonResult<IFile?>.Success(file);
             }
             catch (Exception ex)
             {
-                return new CommonResult<IFile?>(ex);
+                return CommonResult<IFile?>.Failure(ex);
             }
         }
 
@@ -132,11 +132,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 var folder2 = await GetFolderAsync(folder, folderName, cancellationToken);
-                return new CommonResult<IFolder?>(folder2);
+                return CommonResult<IFolder?>.Success(folder2);
             }
             catch (Exception ex)
             {
-                return new CommonResult<IFolder?>(ex);
+                return CommonResult<IFolder?>.Failure(ex);
             }
         }
 
@@ -147,11 +147,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 var file = await folder.CreateFileAsync(desiredName, overwrite, cancellationToken);
-                return new CommonResult<IFile?>(file);
+                return CommonResult<IFile?>.Success(file);
             }
             catch (Exception ex)
             {
-                return new CommonResult<IFile?>(ex);
+                return CommonResult<IFile?>.Failure(ex);
             }
         }
 
@@ -162,11 +162,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 var folder2 = await folder.CreateFolderAsync(desiredName, overwrite, cancellationToken);
-                return new CommonResult<IFolder?>(folder2);
+                return CommonResult<IFolder?>.Success(folder2);
             }
             catch (Exception ex)
             {
-                return new CommonResult<IFolder?>(ex);
+                return CommonResult<IFolder?>.Failure(ex);
             }
         }
 

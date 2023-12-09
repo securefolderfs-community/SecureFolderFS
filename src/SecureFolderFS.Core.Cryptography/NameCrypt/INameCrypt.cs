@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         /// </summary>
         /// <param name="ciphertextName">The ciphertext name to encrypt.</param>
         /// <param name="directoryId">The associated DirectoryID.</param>
-        /// <returns>If the name was successfully decrypted, returns cleartext name, otherwise null.</returns>
+        /// <returns>If the name was successfully decrypted, returns cleartext name; otherwise null.</returns>
         string? DecryptName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId);
     }
 }

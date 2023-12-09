@@ -19,7 +19,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
 
         public UserSettings(IModifiableFolder settingsFolder)
         {
-            SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.USER_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.USER_SETTINGS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
             PropertyChanged += UserSettings_PropertyChanged;
         }
 

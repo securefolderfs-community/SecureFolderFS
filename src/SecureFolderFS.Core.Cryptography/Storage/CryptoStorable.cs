@@ -67,7 +67,7 @@ namespace SecureFolderFS.Core.Cryptography.Storage
         /// Encrypts the provided <paramref name="name"/>.
         /// </summary>
         /// <param name="name">The name to encrypt.</param>
-        /// <returns>If successful, returns the encrypted name, otherwise empty.</returns>
+        /// <returns>If successful, returns the encrypted name; otherwise empty.</returns>
         protected virtual string EncryptName(string name)
         {
             var ciphertextName = pathConverter.GetCiphertextFileName(System.IO.Path.Combine(Id, name));
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.Cryptography.Storage
         /// Decrypts the provided <paramref name="name"/>.
         /// </summary>
         /// <param name="name">The name to decrypt.</param>
-        /// <returns>If successful, returns the decrypted name, otherwise empty.</returns>
+        /// <returns>If successful, returns the decrypted name; otherwise empty.</returns>
         protected virtual string DecryptName(string name)
         {
             var cleartextName = pathConverter.GetCleartextFileName(System.IO.Path.Combine(Id, name));

@@ -2,7 +2,6 @@ using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -12,38 +11,6 @@ namespace SecureFolderFS.Core.VaultAccess
 {
     internal static class VaultParser
     {
-        /// <summary>
-        /// Constructs a password key from provided <paramref name="password"/> and additional <paramref name="magic"/>.
-        /// </summary>
-        /// <param name="password">The user password part.</param>
-        /// <param name="magic">The optional 'magic' part.</param>
-        /// <returns>A concatenated <see cref="SecretKey"/> that represents the password key.</returns>
-        public static SecretKey ConstructPasskey(IPassword password, SecretKey? magic)
-        {
-            var pwd = password.GetRepresentation(Encoding.UTF8);
-            if (magic is not null) // Combine password and 'magic'
-            {
-                var passkey = new SecureKey((pwd.Length + magic.Length));
-                var passkeySpan = passkey.Key.AsSpan();
-
-                // Copy and combine
-                pwd.CopyTo(passkeySpan);
-                magic.Key.CopyTo(passkeySpan.Slice(pwd.Length));
-
-                return passkey;
-            }
-            else // Just use password, if 'magic' is empty
-            {
-                // We need to copy the password to a SecretKey instance to represent the passkey.
-                // By doing this, we no longer have to rely on provider's role of disposing the password object,
-                // and thus we allow the consumer of the passkey to dispose of the key at their own discretion
-                var passwordSecret = new SecureKey(pwd.Length);
-                pwd.CopyTo(passwordSecret.Key.AsSpan());
-
-                return passwordSecret;
-            }
-        }
-
         /// <summary>
         /// Computes a unique HMAC thumbprint of <paramref name="configDataModel"/> properties.
         /// </summary>

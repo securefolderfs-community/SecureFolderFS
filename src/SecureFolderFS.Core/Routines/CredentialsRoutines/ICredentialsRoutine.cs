@@ -1,8 +1,7 @@
-﻿using System;
+﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Core.Routines.CredentialsRoutines
 {
@@ -10,7 +9,7 @@ namespace SecureFolderFS.Core.Routines.CredentialsRoutines
     {
         ICredentialsRoutine SetUnlockContract(IDisposable unlockContract);
 
-        ICredentialsRoutine SetCredentials(IPassword password, SecretKey? magic);
+        ICredentialsRoutine SetCredentials(SecretKey passkey);
 
         // TODO: Would be nice if it also returned IDisposable
         Task FinalizeAsync(CancellationToken cancellationToken);

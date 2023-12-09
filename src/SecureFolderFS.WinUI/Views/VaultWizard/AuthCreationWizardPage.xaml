@@ -32,7 +32,10 @@
                     HorizontalAlignment="Center"
                     Text="{x:Bind Description, Mode=OneWay}"
                     TextWrapping="WrapWholeWords" />
-                <Button HorizontalAlignment="Center" Content="Setup Authentication" />
+                <Button
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind SetupAuthenticationCommand}"
+                    Content="Setup Authentication" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>

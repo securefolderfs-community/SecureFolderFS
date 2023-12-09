@@ -21,8 +21,8 @@
         public string? FileNameCipherId { get; init; }
 
         /// <summary>
-        /// Gets the unique identifier of the vault represented by a GUID.
+        /// Gets the unique identifier of the vault.
         /// </summary>
-        public string? Id { get; init; }
+        public string? VaultId { get; init; }
     }
 }

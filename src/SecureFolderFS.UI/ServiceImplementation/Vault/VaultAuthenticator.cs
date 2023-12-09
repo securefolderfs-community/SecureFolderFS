@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.UI.Authenticators;
 
 namespace SecureFolderFS.UI.ServiceImplementation.Vault
 {
@@ -16,15 +17,14 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
         {
             await Task.CompletedTask;
 
-            yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, "Password", AuthenticationType.Password, null);
-            //yield return new("Windows Hello", AuthenticationType.Other, );
-            //yield return new("Key File", AuthenticationType.Other, new KeyFileAuthenticator());
+            //yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, "Password", AuthenticationType.Password, null);
+            yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, "Key File", AuthenticationType.Other, new KeyFileAuthenticator());
         }
 
         public async IAsyncEnumerable<AuthenticationModel> GetAvailableAuthenticationsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, "Password", AuthenticationType.Password, null);
-            yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, "Key File", AuthenticationType.Other, null);
+            yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, "Key File", AuthenticationType.Other, new KeyFileAuthenticator());
             yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_HARDWARE_KEY, "Hardware File", AuthenticationType.Other, null);
             yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_APPLE_FACEID, "Face ID", AuthenticationType.Other, null);
             yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, "Windows Hello", AuthenticationType.Other, null);

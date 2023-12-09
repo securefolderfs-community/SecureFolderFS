@@ -17,7 +17,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 
         public VaultsWidgets(IModifiableFolder settingsFolder)
         {
-            SettingsDatabase = new BatchDatabaseModel(Constants.LocalSettings.VAULTS_WIDGETS_FOLDERNAME, settingsFolder, StreamSerializer.Instance);
+            SettingsDatabase = new BatchDatabaseModel(Constants.FileNames.VAULTS_WIDGETS_FOLDERNAME, settingsFolder, StreamSerializer.Instance);
         }
 
         /// <inheritdoc/>

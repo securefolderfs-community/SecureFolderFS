@@ -5,7 +5,7 @@ using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utilities;
 using System;
 using System.IO;

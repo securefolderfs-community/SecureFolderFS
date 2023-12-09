@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.Services
         /// Determines whether provided <paramref name="name"/> is part of vault core configuration files.
         /// </summary>
         /// <param name="name">The file name to check.</param>
-        /// <returns>Returns true if the file name is a part of vault configuration data, otherwise false.</returns>
+        /// <returns>Returns true if the file name is a part of vault configuration data; otherwise false.</returns>
         bool IsNameReserved(string? name);
 
         /// <summary>

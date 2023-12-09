@@ -46,7 +46,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
                 { Associations.ASSOC_CONTENT_CIPHER_ID, vaultOptions.ContentCipherId },
                 { Associations.ASSOC_FILENAME_CIPHER_ID, vaultOptions.FileNameCipherId },
                 { Associations.ASSOC_AUTHENTICATION, vaultOptions.AuthenticationMethod },
-                { Associations.ASSOC_ID, vaultOptions.Id }
+                { Associations.ASSOC_VAULT_ID, vaultOptions.VaultId }
             };
         }
     }

@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.DataModels
         /// <summary>
         /// Gets the unique identifier of the vault represented by a GUID.
         /// </summary>
-        [JsonPropertyName(Associations.ASSOC_ID)]
+        [JsonPropertyName(Associations.ASSOC_VAULT_ID)]
         [DefaultValue("")]
         public required string Id { get; init; } = string.Empty;
 

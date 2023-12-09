@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.FileSystem
         /// Tries to close this virtual file system instance invalidating <see cref="RootFolder"/> if successful.
         /// </summary>
         /// <param name="closeMethod">Determines the method to use when closing the file system.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns true if the file system was closed successfully, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Returns true if the file system was closed successfully; otherwise false.</returns>
         Task<bool> CloseAsync(FileSystemCloseMethod closeMethod);
     }
 }

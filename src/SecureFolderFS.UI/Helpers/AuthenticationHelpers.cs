@@ -1,10 +1,8 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 
 namespace SecureFolderFS.UI.Helpers
 {
@@ -15,7 +13,7 @@ namespace SecureFolderFS.UI.Helpers
             var length = 0;
             var data = passkey.Select(x => x switch
             {
-                IPassword p => p.GetRepresentation(Encoding.UTF8),
+                IEnumerable<byte> sequence => sequence.ToArray(),
                 _ => null
             }).Where(x =>
             {

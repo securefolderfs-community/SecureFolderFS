@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.Directories
         /// </summary>
         /// <param name="ciphertextPath">The ciphertext path to the DirectoryID file.</param>
         /// <param name="directoryId">The <see cref="Span{T}"/> to fill the DirectoryID into.</param>
-        /// <returns>If the <paramref name="directoryId"/> was retrieved successfully; returns true, otherwise false.</returns>
+        /// <returns>If the <paramref name="directoryId"/> was retrieved successfully; returns true; otherwise false.</returns>
         public bool GetDirectoryId(string ciphertextPath, Span<byte> directoryId)
         {
             // Check if directoryId is of correct length

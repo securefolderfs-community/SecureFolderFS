@@ -53,12 +53,12 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         public async Task<IResult> UpdateAsync(IProgress<double>? progress, CancellationToken cancellationToken = default)
         {
             if (!await SetStoreContextAsync() || _storeContext is null)
-                return new CommonResult<AppUpdateResultType>(AppUpdateResultType.FailedUnknownError, false);
+                return CommonResult<AppUpdateResultType>.Failure(AppUpdateResultType.FailedUnknownError);
 
             try
             {
                 if (_updates is null && !await IsUpdateAvailableAsync(cancellationToken))
-                    return new CommonResult(new InvalidOperationException("No available updates found."));
+                    return CommonResult.Failure(new InvalidOperationException("No available updates found."));
 
                 // Switch to UI thread for installation of packages (as per docs)
                 await ThreadingService.ChangeThreadAsync();
@@ -82,11 +82,13 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
                 var result = await operation.AsTask(cancellationToken);
                 var resultType = GetAppUpdateResultType(result.OverallState);
 
-                return new CommonResult<AppUpdateResultType>(resultType, resultType == AppUpdateResultType.Completed);
+                return resultType == AppUpdateResultType.Completed
+                        ? CommonResult<AppUpdateResultType>.Success(resultType)
+                        : CommonResult<AppUpdateResultType>.Failure(resultType);
             }
             catch (Exception ex)
             {
-                return new CommonResult(ex);
+                return CommonResult.Failure(ex);
             }
         }
 

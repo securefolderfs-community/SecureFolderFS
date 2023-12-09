@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.EventArguments;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,11 +9,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault.Signup
 {
     public sealed partial class AuthenticationWizardViewModel : BaseAuthWizardViewModel
     {
+        private readonly string _vaultId;
         private IDisposable? _authentication;
 
-        public AuthenticationWizardViewModel(AuthenticationModel authenticationModel)
+        /// <inheritdoc/>
+        public override event EventHandler<EventArgs>? StateChanged;
+
+        public AuthenticationWizardViewModel(string vaultId, AuthenticationModel authenticationModel)
             : base(authenticationModel)
         {
+            _vaultId = vaultId;
         }
 
         [RelayCommand]
@@ -23,9 +29,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault.Signup
 
             _authentication?.Dispose();
             _authentication = null;
-            _authentication = await AuthenticationModel.Authenticator.AuthenticateAsync("TODO", cancellationToken);
+            _authentication = await AuthenticationModel.Authenticator.CreateAsync(_vaultId, cancellationToken);
+
+            StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(_authentication));
         }
 
+        /// <inheritdoc/>
         public override IDisposable? GetAuthentication()
         {
             return _authentication;

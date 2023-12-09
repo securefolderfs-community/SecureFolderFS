@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.Cryptography.SecureStore
 {
     /// <summary>
     /// Represents a secret key store.
     /// </summary>
-    public abstract class SecretKey : IDisposable
+    public abstract class SecretKey : IEnumerable<byte>, IDisposable
     {
         /// <summary>
         /// Gets the underlying byte representation of the key.
@@ -16,6 +18,18 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
         /// Gets the number of bytes in the <see cref="Key"/>.
         /// </summary>
         public virtual int Length => Key.Length;
+
+        /// <inheritdoc/>
+        public virtual IEnumerator<byte> GetEnumerator()
+        {
+            return ((IEnumerable<byte>)Key).GetEnumerator();
+        }
+
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         /// <summary>
         /// Creates a standalone copy of the key.

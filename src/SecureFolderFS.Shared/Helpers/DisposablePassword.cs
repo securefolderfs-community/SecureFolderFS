@@ -1,27 +1,35 @@
 ﻿using SecureFolderFS.Shared.Utilities;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
-namespace SecureFolderFS.UI.AppModels
+namespace SecureFolderFS.Shared.Helpers
 {
     /// <inheritdoc cref="IPassword"/>
-    public sealed class VaultPassword : IPassword
+    public sealed class DisposablePassword : IPassword
     {
         private readonly byte[] _password;
 
         /// <inheritdoc/>
         public int Length { get; }
 
-        public VaultPassword(string password)
+        public DisposablePassword(string password)
         {
             _password = Encoding.UTF8.GetBytes(password);
             Length = password.Length;
         }
 
         /// <inheritdoc/>
-        public byte[] GetRepresentation(Encoding encoding)
+        public IEnumerator<byte> GetEnumerator()
         {
-            return encoding.Equals(Encoding.UTF8) ? _password : Encoding.Convert(Encoding.UTF8, encoding, _password);
+            return ((IEnumerable<byte>)_password).GetEnumerator();
+        }
+
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         /// <inheritdoc/>

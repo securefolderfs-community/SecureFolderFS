@@ -13,6 +13,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 {
     public sealed partial class AuthenticationViewModel : ReportableViewModel
     {
+        private readonly string _vaultId;
         private readonly AuthenticationModel _authenticationModel;
 
         [ObservableProperty] private string? _ErrorMessage;
@@ -21,8 +22,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        public AuthenticationViewModel(AuthenticationModel authenticationModel)
+        public AuthenticationViewModel(string vaultId, AuthenticationModel authenticationModel)
         {
+            _vaultId = vaultId;
             _authenticationModel = authenticationModel;
             _AuthenticationText = string.Format("AuthenticateUsing".ToLocalized(), authenticationModel.AuthenticationName);
         }
@@ -40,7 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 
             try
             {
-                var authentication = await _authenticationModel.Authenticator.AuthenticateAsync("TODO", cancellationToken);
+                var authentication = await _authenticationModel.Authenticator.AuthenticateAsync(_vaultId, cancellationToken);
                 StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(authentication));
             }
             catch (Exception ex)

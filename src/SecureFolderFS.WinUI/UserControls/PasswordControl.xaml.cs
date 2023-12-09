@@ -3,8 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utilities;
-using SecureFolderFS.UI.AppModels;
 using System;
 using System.Windows.Input;
 using Windows.System;
@@ -32,7 +32,7 @@ namespace SecureFolderFS.WinUI.UserControls
             if (PasswordInput.Password.IsEmpty())
                 return null;
 
-            return new VaultPassword(PasswordInput.Password);
+            return new DisposablePassword(PasswordInput.Password);
         }
 
         private void PasswordInput_KeyUp(object sender, KeyRoutedEventArgs e)

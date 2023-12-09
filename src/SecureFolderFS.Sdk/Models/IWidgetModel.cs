@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.Models
         /// Gets the data saved in this widget.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns value that can be null, otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns value that can be null; otherwise null.</returns>
         Task<string?> GetWidgetDataAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.Models
         /// </summary>
         /// <param name="value">The data to set.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
         Task<bool> SetWidgetDataAsync(string? value, CancellationToken cancellationToken = default);
     }
 }

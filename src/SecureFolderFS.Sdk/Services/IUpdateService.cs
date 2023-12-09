@@ -13,7 +13,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Checks whether the app supports updates.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The value is true if updates are supported, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. The value is true if updates are supported; otherwise false.</returns>
         Task<bool> IsSupportedAsync();
 
         /// <summary>

@@ -50,7 +50,7 @@ namespace SecureFolderFS.WinUI.UserControls.Navigation
         /// <param name="pageType">The type of page to navigate to.</param>
         /// <param name="parameter">The parameter to pass to the page.</param>
         /// <param name="transitionInfo">The transition to use when navigating.</param>
-        /// <returns>If successful, returns true, otherwise false.</returns>
+        /// <returns>If successful, returns true; otherwise false.</returns>
         protected abstract bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo);
 
         /// <inheritdoc/>

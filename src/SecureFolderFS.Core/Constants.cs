@@ -49,7 +49,7 @@
             public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
             public const string ASSOC_SPECIALIZATION = "spec";
             public const string ASSOC_AUTHENTICATION = "authMode";
-            public const string ASSOC_ID = "vaultId";
+            public const string ASSOC_VAULT_ID = "vaultId";
             public const string ASSOC_VERSION = "version";
         }
 

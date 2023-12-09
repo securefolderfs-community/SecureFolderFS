@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         /// </summary>
         /// <typeparam name="THandle">The type of handle.</typeparam>
         /// <param name="handleId">The ID of the handle.</param>
-        /// <returns>If successful, returns an instance of <typeparamref name="THandle"/>, otherwise false.</returns>
+        /// <returns>If successful, returns an instance of <typeparamref name="THandle"/>; otherwise false.</returns>
         public virtual THandle? GetHandle<THandle>(ulong handleId)
             where THandle : class, IDisposable
         {

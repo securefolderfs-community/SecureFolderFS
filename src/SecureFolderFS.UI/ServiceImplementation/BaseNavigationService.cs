@@ -126,7 +126,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// In such case, it is the implementor's responsibility to update the <see cref="CurrentTarget"/> property
         /// and notify the <see cref="INavigationTarget"/> that it's being navigated to.
         /// </remarks>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
         protected abstract Task<bool> BeginNavigationAsync(INavigationTarget? target, NavigationType navigationType);
 
         /// <inheritdoc/>

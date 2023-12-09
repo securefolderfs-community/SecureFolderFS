@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
@@ -21,6 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
     [Inject<IVaultService>]
     public sealed partial class AuthCreationWizardViewModel : BaseWizardPageViewModel
     {
+        private readonly string _vaultId;
         private readonly IModifiableFolder _vaultFolder;
 
         [ObservableProperty] private CipherViewModel? _ContentCipher;
@@ -30,22 +32,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         [ObservableProperty] private ObservableCollection<CipherViewModel> _FileNameCiphers;
         [ObservableProperty] private ObservableCollection<BaseAuthWizardViewModel> _AuthenticationOptions;
 
-        /// <summary>
-        /// Gets or sets the password getter delegate used to retrieve the password from the view.
-        /// </summary>
-        public Func<IPassword?>? PasswordGetter { get; set; }
-
-        /// <inheritdoc cref="DialogViewModel.PrimaryButtonEnabled"/>
-        public bool PrimaryButtonEnabled
-        {
-            get => DialogViewModel.PrimaryButtonEnabled;
-            set => DialogViewModel.PrimaryButtonEnabled = value;
-        }
-
         public AuthCreationWizardViewModel(IModifiableFolder vaultFolder, VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
         {
             ServiceProvider = Ioc.Default;
+            _vaultId = Guid.NewGuid().ToString();
             _vaultFolder = vaultFolder;
             _ContentCiphers = new();
             _FileNameCiphers = new();
@@ -69,11 +60,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
                 AuthenticationOptions.Add(item.AuthenticationType switch
                 {
                     AuthenticationType.Password => new PasswordWizardViewModel(DialogViewModel, item),
-                    _ => new AuthenticationWizardViewModel(item),
+                    _ => new AuthenticationWizardViewModel(_vaultId, item),
                 });
             }
 
             CurrentViewModel = AuthenticationOptions.FirstOrDefault();
+            if (CurrentViewModel is not null)
+                CurrentViewModel.StateChanged += CurrentViewModel_StateChanged;
 
             static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherViewModel> destination)
             {
@@ -94,22 +87,53 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             ArgumentNullException.ThrowIfNull(FileNameCipher);
             ArgumentNullException.ThrowIfNull(CurrentViewModel?.AuthenticationModel);
 
-            var password = PasswordGetter?.Invoke();
-            if (password is null)
-                return;
-
-            var vaultOptions = new VaultOptions()
+            // Make sure to also dispose the data within the current view model whether the navigation is successful or not
+            using (CurrentViewModel)
             {
-                ContentCipherId = ContentCipher.Id,
-                FileNameCipherId = FileNameCipher.Id,
-                AuthenticationMethod = CurrentViewModel.AuthenticationModel.AuthenticationId,
-            };
+                using var authentication = CurrentViewModel.GetAuthentication();
+                if (authentication is null)
+                    return;
 
-            // Create the vault
-            var superSecret = await VaultService.VaultCreator.CreateVaultAsync(_vaultFolder, new[] { password }, vaultOptions, cancellationToken);
+                var vaultOptions = new VaultOptions()
+                {
+                    ContentCipherId = ContentCipher.Id,
+                    FileNameCipherId = FileNameCipher.Id,
+                    AuthenticationMethod = CurrentViewModel.AuthenticationModel.AuthenticationId,
+                    VaultId = _vaultId
+                };
 
-            // Navigate
-            await NavigationService.TryNavigateAsync(() => new RecoveryKeyWizardViewModel(_vaultFolder, superSecret, DialogViewModel));
+                // Create the vault
+                var superSecret = await VaultService.VaultCreator.CreateVaultAsync(_vaultFolder,
+                    new[] { authentication }, vaultOptions, cancellationToken);
+
+                // Navigate
+                await NavigationService.TryNavigateAsync(() =>
+                    new RecoveryKeyWizardViewModel(_vaultFolder, superSecret, DialogViewModel));
+            }
+        }
+
+        public override void OnNavigatingFrom()
+        {
+            if (CurrentViewModel is not null)
+                CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;
+        }
+
+        partial void OnCurrentViewModelChanged(BaseAuthWizardViewModel? oldValue, BaseAuthWizardViewModel? newValue)
+        {
+            // Make sure to dispose the old value in case there was authentication data provided
+            oldValue?.Dispose();
+
+            if (oldValue is not null)
+                oldValue.StateChanged -= CurrentViewModel_StateChanged;
+
+            if (newValue is not null)
+                newValue.StateChanged += CurrentViewModel_StateChanged;
+        }
+
+        private void CurrentViewModel_StateChanged(object? sender, EventArgs e)
+        {
+            if (e is AuthenticationChangedEventArgs)
+                DialogViewModel.PrimaryButtonEnabled = true;
         }
     }
 }

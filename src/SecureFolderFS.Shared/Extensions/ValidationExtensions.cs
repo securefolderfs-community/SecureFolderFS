@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Utilities;
 
-namespace SecureFolderFS.Shared
+namespace SecureFolderFS.Shared.Extensions
 {
     public static class ValidationExtensions
     {
@@ -13,11 +13,11 @@ namespace SecureFolderFS.Shared
             try
             {
                 await validator.ValidateAsync(value, cancellationToken);
-                return new CommonResult(true);
+                return CommonResult.Success;
             }
             catch (Exception ex)
             {
-                return new CommonResult(ex);
+                return CommonResult.Failure(ex);
             }
         }
     }

@@ -8,7 +8,6 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Login;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utilities;
 using System;
@@ -102,7 +101,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             CurrentViewModel = authenticationModel.AuthenticationType switch
             {
                 AuthenticationType.Password => new PasswordViewModel(),
-                AuthenticationType.Other => new AuthenticationViewModel(authenticationModel),
+                AuthenticationType.Other => new AuthenticationViewModel("9761f3c1-bea0-4216-be82-81e2654b7a9b", authenticationModel),
                 _ => new ErrorViewModel("Could not determine the authentication type.")
             };
 

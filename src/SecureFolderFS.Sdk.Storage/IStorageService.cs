@@ -13,7 +13,7 @@ namespace SecureFolderFS.Sdk.Storage
         /// </summary>
         /// <param name="id">The unique ID of the file to retrieve.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="IFile"/>, otherwise throws an exception.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="IFile"/>; otherwise throws an exception.</returns>
         Task<IFile> GetFileAsync(string id, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.Storage
         /// </summary>
         /// <param name="id">The unique ID of the folder to retrieve.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If folder is found and access is granted, returns <see cref="IFolder"/>, otherwise throws an exception.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If folder is found and access is granted, returns <see cref="IFolder"/>; otherwise throws an exception.</returns>
         Task<IFolder> GetFolderAsync(string id, CancellationToken cancellationToken = default);
     }
 }

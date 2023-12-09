@@ -3,8 +3,11 @@ using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,22 +16,56 @@ namespace SecureFolderFS.UI.Authenticators
     /// <inheritdoc cref="IAuthenticator{TAuthentication}"/>
     public sealed class KeyFileAuthenticator : IAuthenticator<IDisposable>
     {
+        private const int KEY_LENGTH = 128;
+
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
+
+        /// <inheritdoc/>
+        public async Task<IDisposable> CreateAsync(string id, CancellationToken cancellationToken)
+        {
+            var keyFile = await FileExplorerService.SaveFileAsync("Vault authentication key", new Dictionary<string, string>()
+            {
+                { "Key File", Constants.FileNames.KEY_FILE_EXTENSION },
+                { "All Files", "*" }
+            }, cancellationToken);
+
+            if (keyFile is null)
+                throw new OperationCanceledException("The user did not save a file.");
+
+            await using var keyStream = await keyFile.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            using var secureRandom = RandomNumberGenerator.Create();
+            using var secretKey = new SecureKey(KEY_LENGTH + id.Length);
+
+            // Fill the first 128 bytes with secure random data
+            secureRandom.GetNonZeroBytes(secretKey.Key.AsSpan(0, KEY_LENGTH));
+
+            // Fill the remaining bytes with using the ID
+            // By using ASCII encoding we get 1:1 byte to char ratio which allows us
+            // to use the length of the string ID as part of the SecureKey length above
+            Encoding.ASCII.GetBytes(id, secretKey.Key.AsSpan(KEY_LENGTH));
+
+            // Write the key to the file
+            await keyStream.WriteAsync(secretKey.Key, cancellationToken);
+
+            // Create a copy of the secret key because we need to dispose the original
+            return secretKey.CreateCopy();
+        }
 
         /// <inheritdoc/>
         public async Task<IDisposable> AuthenticateAsync(string id, CancellationToken cancellationToken)
         {
-            var keyFile = await FileExplorerService.PickFileAsync(new[] { ".key" }, cancellationToken);
+            var keyFile = await FileExplorerService.PickFileAsync(new[] { ".key", "*" }, cancellationToken);
             if (keyFile is null)
                 throw new OperationCanceledException("The user did not pick a file.");
 
             await using var keyStream = await keyFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
-            using var secretKey = new SecureKey(128);
+            using var secretKey = new SecureKey(KEY_LENGTH + id.Length);
 
             var read = await keyStream.ReadAsync(secretKey.Key, cancellationToken);
             if (read < secretKey.Length)
                 throw new DataException("The key data was too short.");
 
+            // Create a copy of the secret key because we need to dispose the original
             return secretKey.CreateCopy();
         }
     }
