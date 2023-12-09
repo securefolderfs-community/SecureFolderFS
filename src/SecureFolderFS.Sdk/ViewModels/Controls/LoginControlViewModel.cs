@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Login;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
@@ -18,7 +19,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IVaultService>]
-    public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
+    public sealed partial class LoginControlViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly bool _enableMigration;
         private readonly IVaultModel _vaultModel;
@@ -26,11 +27,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private IAsyncEnumerator<AuthenticationModel>? _enumerator;
 
-        [ObservableProperty] private BaseLoginViewModel? _CurrentViewModel;
+        [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
 
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
 
-        public LoginViewModel(IVaultModel vaultModel, bool enableMigration)
+        public LoginControlViewModel(IVaultModel vaultModel, bool enableMigration)
         {
             ServiceProvider = Ioc.Default;
             _enableMigration = enableMigration;
@@ -76,11 +77,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var vaultLifecycle =
-                    await VaultService.VaultUnlocker.UnlockAsync(_vaultModel, _credentials, cancellationToken);
+                var vaultLifecycle = await VaultService.VaultUnlocker.UnlockAsync(_vaultModel, _credentials, cancellationToken);
                 VaultUnlocked?.Invoke(this, new(vaultLifecycle));
-
-
             }
             catch (Exception ex)
             {
@@ -132,7 +130,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
-        partial void OnCurrentViewModelChanging(BaseLoginViewModel? oldValue, BaseLoginViewModel? newValue)
+        partial void OnCurrentViewModelChanging(ReportableViewModel? oldValue, ReportableViewModel? newValue)
         {
             // Unhook old
             if (oldValue is not null)

@@ -2,9 +2,9 @@
 using SecureFolderFS.Shared.Utilities;
 using System;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
+namespace SecureFolderFS.Sdk.ViewModels.Views
 {
-    public abstract partial class BaseLoginViewModel : ObservableObject, INotifyStateChanged
+    public abstract partial class ReportableViewModel : ObservableObject, INotifyStateChanged
     {
         /// <inheritdoc/>
         public abstract event EventHandler<EventArgs>? StateChanged;

@@ -2,10 +2,12 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault.Signup;
 using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Collections.Generic;
@@ -23,8 +25,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 
         [ObservableProperty] private CipherViewModel? _ContentCipher;
         [ObservableProperty] private CipherViewModel? _FileNameCipher;
+        [ObservableProperty] private BaseAuthWizardViewModel? _CurrentViewModel;
         [ObservableProperty] private ObservableCollection<CipherViewModel> _ContentCiphers;
         [ObservableProperty] private ObservableCollection<CipherViewModel> _FileNameCiphers;
+        [ObservableProperty] private ObservableCollection<BaseAuthWizardViewModel> _AuthenticationOptions;
 
         /// <summary>
         /// Gets or sets the password getter delegate used to retrieve the password from the view.
@@ -45,13 +49,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             _vaultFolder = vaultFolder;
             _ContentCiphers = new();
             _FileNameCiphers = new();
+            _AuthenticationOptions = new();
 
             // Disallow continuation before passwords are validated
             DialogViewModel.PrimaryButtonEnabled = false;
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             EnumerateCiphers(VaultService.GetContentCiphers(), ContentCiphers);
             EnumerateCiphers(VaultService.GetFileNameCiphers(), FileNameCiphers);
@@ -59,7 +64,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             ContentCipher = ContentCiphers.FirstOrDefault();
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
-            return Task.CompletedTask;
+            await foreach (var item in VaultService.VaultAuthenticator.GetAvailableAuthenticationsAsync(cancellationToken))
+            {
+                AuthenticationOptions.Add(item.AuthenticationType switch
+                {
+                    AuthenticationType.Password => new PasswordWizardViewModel(DialogViewModel, item),
+                    _ => new AuthenticationWizardViewModel(item),
+                });
+            }
+
+            CurrentViewModel = AuthenticationOptions.FirstOrDefault();
 
             static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherViewModel> destination)
             {
@@ -78,6 +92,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 
             ArgumentNullException.ThrowIfNull(ContentCipher);
             ArgumentNullException.ThrowIfNull(FileNameCipher);
+            ArgumentNullException.ThrowIfNull(CurrentViewModel?.AuthenticationModel);
 
             var password = PasswordGetter?.Invoke();
             if (password is null)
@@ -87,8 +102,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             {
                 ContentCipherId = ContentCipher.Id,
                 FileNameCipherId = FileNameCipher.Id,
-                AuthenticationMethod = "TODO",
-                Specialization = "TODO"
+                AuthenticationMethod = CurrentViewModel.AuthenticationModel.AuthenticationId,
             };
 
             // Create the vault

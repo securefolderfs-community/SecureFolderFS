@@ -56,6 +56,14 @@ namespace SecureFolderFS.WinUI.UserControls
         public static readonly DependencyProperty PasswordSubmittedCommandProperty =
             DependencyProperty.Register(nameof(PasswordSubmittedCommand), typeof(ICommand), typeof(PasswordControl), new PropertyMetadata(null));
 
+        public string UnsecurePassword
+        {
+            get => (string)GetValue(UnsecurePasswordProperty);
+            set => SetValue(UnsecurePasswordProperty, value);
+        }
+        public static readonly DependencyProperty UnsecurePasswordProperty =
+            DependencyProperty.Register(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), new PropertyMetadata(null));
+
         public string? Title
         {
             get => (string?)GetValue(TitleProperty);

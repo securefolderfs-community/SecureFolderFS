@@ -39,14 +39,14 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
             return superSecret;
         }
 
-        private static IReadOnlyDictionary<string, string> ParseOptions(VaultOptions vaultOptions)
+        private static IDictionary<string, string?> ParseOptions(VaultOptions vaultOptions)
         {
-            return new Dictionary<string, string>()
+            return new Dictionary<string, string?>()
             {
                 { Associations.ASSOC_CONTENT_CIPHER_ID, vaultOptions.ContentCipherId },
                 { Associations.ASSOC_FILENAME_CIPHER_ID, vaultOptions.FileNameCipherId },
-                { Associations.ASSOC_SPECIALIZATION, vaultOptions.Specialization },
-                { Associations.ASSOC_AUTHENTICATION, vaultOptions.AuthenticationMethod }
+                { Associations.ASSOC_AUTHENTICATION, vaultOptions.AuthenticationMethod },
+                { Associations.ASSOC_ID, vaultOptions.Id }
             };
         }
     }

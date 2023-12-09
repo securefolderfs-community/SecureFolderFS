@@ -16,7 +16,7 @@ namespace SecureFolderFS.UI.Authenticators
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         /// <inheritdoc/>
-        public async Task<IDisposable> AuthenticateAsync(CancellationToken cancellationToken)
+        public async Task<IDisposable> AuthenticateAsync(string id, CancellationToken cancellationToken)
         {
             var keyFile = await FileExplorerService.PickFileAsync(new[] { ".key" }, cancellationToken);
             if (keyFile is null)

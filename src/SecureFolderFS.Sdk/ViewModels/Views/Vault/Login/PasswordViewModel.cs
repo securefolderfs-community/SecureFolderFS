@@ -7,7 +7,7 @@ using System;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 {
-    public sealed partial class PasswordViewModel : BaseLoginViewModel
+    public sealed partial class PasswordViewModel : ReportableViewModel
     {
         [ObservableProperty] private string _ContinuationText;
         [ObservableProperty] private bool _ShowInvalidPassword;

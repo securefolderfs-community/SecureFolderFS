@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 {
-    public sealed partial class MigrationViewModel : BaseLoginViewModel
+    public sealed partial class MigrationViewModel : ReportableViewModel
     {
         [ObservableProperty] private string? _CurrentVersion;
         [ObservableProperty] private string? _NewVersion;

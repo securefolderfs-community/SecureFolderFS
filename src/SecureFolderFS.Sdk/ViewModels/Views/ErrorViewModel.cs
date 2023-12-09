@@ -3,9 +3,9 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utilities;
 using System;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
+namespace SecureFolderFS.Sdk.ViewModels.Views
 {
-    public sealed partial class ErrorViewModel : BaseLoginViewModel
+    public sealed partial class ErrorViewModel : ReportableViewModel
     {
         [ObservableProperty] private string? _ErrorMessage;
 

@@ -58,7 +58,6 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
                     ContentCipherId = "TODO",
                     FileNameCipherId = "TODO",
                     AuthenticationMethod = "TODO",
-                    Specialization = "TODO"
                 };
 
                 var virtualFileSystem = await mountable.MountAsync(GetMountOptions(fileSystemId), cancellationToken);

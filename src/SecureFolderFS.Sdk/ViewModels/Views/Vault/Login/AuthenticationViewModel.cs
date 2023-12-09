@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 {
-    public sealed partial class AuthenticationViewModel : BaseLoginViewModel
+    public sealed partial class AuthenticationViewModel : ReportableViewModel
     {
         private readonly AuthenticationModel _authenticationModel;
 
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 
             try
             {
-                var authentication = await _authenticationModel.Authenticator.AuthenticateAsync(cancellationToken);
+                var authentication = await _authenticationModel.Authenticator.AuthenticateAsync("TODO", cancellationToken);
                 StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(authentication));
             }
             catch (Exception ex)

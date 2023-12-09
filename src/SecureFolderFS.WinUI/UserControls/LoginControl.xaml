@@ -9,6 +9,7 @@
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Login"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Views"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -95,7 +96,7 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm:ErrorViewModel">
+        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
             <StackPanel Spacing="4">
                 <TextBlock
                     HorizontalAlignment="Center"

@@ -8,5 +8,7 @@ namespace SecureFolderFS.Sdk.Services.Vault
     public interface IVaultAuthenticator
     {
         IAsyncEnumerable<AuthenticationModel> GetAuthenticationAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+
+        IAsyncEnumerable<AuthenticationModel> GetAvailableAuthenticationsAsync(CancellationToken cancellationToken = default);
     }
 }

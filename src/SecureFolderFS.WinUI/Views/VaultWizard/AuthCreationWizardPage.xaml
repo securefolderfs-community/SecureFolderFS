@@ -5,28 +5,34 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault.Signup"
     Width="464"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="PasswordTemplate">
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm2:PasswordWizardViewModel">
             <StackPanel Spacing="16">
                 <uc:PasswordControl
                     x:Name="FirstPassword"
                     Title="{l:ResourceString Name=NewPassword}"
-                    PasswordChanged="Password_PasswordChanged" />
+                    UnsecurePassword="{x:Bind FirstPassword, Mode=TwoWay}" />
                 <uc:PasswordControl
                     x:Name="SecondPassword"
                     Title="{l:ResourceString Name=RepeatPassword}"
-                    PasswordChanged="Password_PasswordChanged" />
+                    UnsecurePassword="{x:Bind SecondPassword, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="WindowsHelloTemplate">
-            <StackPanel>
-                <Button />
+        <DataTemplate x:Key="AuthenticationTemplate" x:DataType="vm2:AuthenticationWizardViewModel">
+            <StackPanel Spacing="16">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Text="{x:Bind Description, Mode=OneWay}"
+                    TextWrapping="WrapWholeWords" />
+                <Button HorizontalAlignment="Center" Content="Setup Authentication" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
@@ -46,25 +52,20 @@
                 <FontIcon Glyph="&#xEC19;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ActionElement>
-                <ComboBox>
-                    <ComboBox.Items>
-                        <ComboBoxItem Content="Password" />
-                        <ComboBoxItem Content="Windows Hello" />
-                    </ComboBox.Items>
+                <ComboBox ItemsSource="{x:Bind ViewModel.AuthenticationOptions}" SelectedItem="{x:Bind ViewModel.CurrentViewModel, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm2:BaseAuthWizardViewModel">
+                            <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </ucab:ActionBlockControl.ActionElement>
             <ucab:ActionBlockControl.ExpanderContent>
-                <!--<ContentControl HorizontalContentAlignment="Stretch" ContentTemplate="{StaticResource PasswordTemplate}" />-->
-                <StackPanel Spacing="16">
-                    <uc:PasswordControl
-                        x:Name="FirstPassword"
-                        Title="{l:ResourceString Name=NewPassword}"
-                        PasswordChanged="Password_PasswordChanged" />
-                    <uc:PasswordControl
-                        x:Name="SecondPassword"
-                        Title="{l:ResourceString Name=RepeatPassword}"
-                        PasswordChanged="Password_PasswordChanged" />
-                </StackPanel>
+                <ContentControl HorizontalContentAlignment="Stretch" Content="{x:Bind ViewModel.CurrentViewModel, Mode=OneWay}">
+                    <ContentControl.ContentTemplateSelector>
+                        <ts:WizardAuthenticationTemplateSelector AuthenticationTemplate="{StaticResource AuthenticationTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
+                    </ContentControl.ContentTemplateSelector>
+                </ContentControl>
             </ucab:ActionBlockControl.ExpanderContent>
         </ucab:ActionBlockControl>
 
