@@ -6,23 +6,24 @@ namespace SecureFolderFS.Shared.Utilities
     /// <summary>
     /// Represents an authentication interface that provides a method to authenticate entities asynchronously.
     /// </summary>
-    /// <typeparam name="TAuthentication">The type of the authentication.</typeparam>
-    public interface IAuthenticator<TAuthentication>
+    public interface IAuthenticator
     {
         /// <summary>
         /// Creates a new authentication for the user.
         /// </summary>
         /// <param name="id">The ID that uniquely identifies each authentication transaction.</param>
+        /// <param name="data">The data to sign.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, value is <typeparamref name="TAuthentication"/> that represents the authentication.</returns>
-        Task<TAuthentication> CreateAsync(string id, CancellationToken cancellationToken);
+        Task<IKey> CreateAsync(string id, byte[] data, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Authenticates the user asynchronously.
         /// </summary>
         /// <param name="id">The ID that uniquely identifies each authentication transaction.</param>
+        /// <param name="data">The data to sign.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, value is <typeparamref name="TAuthentication"/> that represents the authentication.</returns>
-        Task<TAuthentication> AuthenticateAsync(string id, CancellationToken cancellationToken);
+        Task<IKey> SignAsync(string id, byte[] data, CancellationToken cancellationToken = default);
     }
 }

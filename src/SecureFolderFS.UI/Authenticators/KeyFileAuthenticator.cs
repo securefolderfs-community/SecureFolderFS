@@ -13,16 +13,19 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.Authenticators
 {
-    /// <inheritdoc cref="IAuthenticator{TAuthentication}"/>
-    public sealed class KeyFileAuthenticator : IAuthenticator<IDisposable>
+    /// <inheritdoc cref="IAuthenticator"/>
+    public sealed class KeyFileAuthenticator : IAuthenticator
     {
         private const int KEY_LENGTH = 128;
 
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         /// <inheritdoc/>
-        public async Task<IDisposable> CreateAsync(string id, CancellationToken cancellationToken)
+        public async Task<IKey> CreateAsync(string id, byte[] data, CancellationToken cancellationToken = default)
         {
+            // The 'data' parameter is not needed in this type of authentication
+            _ = data;
+
             var keyFile = await FileExplorerService.SaveFileAsync("Vault authentication key", new Dictionary<string, string>()
             {
                 { "Key File", Constants.FileNames.KEY_FILE_EXTENSION },
@@ -52,8 +55,11 @@ namespace SecureFolderFS.UI.Authenticators
         }
 
         /// <inheritdoc/>
-        public async Task<IDisposable> AuthenticateAsync(string id, CancellationToken cancellationToken)
+        public async Task<IKey> SignAsync(string id, byte[] data, CancellationToken cancellationToken = default)
         {
+            // The 'data' parameter is not needed in this type of authentication
+            _ = data;
+
             var keyFile = await FileExplorerService.PickFileAsync(new[] { ".key", "*" }, cancellationToken);
             if (keyFile is null)
                 throw new OperationCanceledException("The user did not pick a file.");

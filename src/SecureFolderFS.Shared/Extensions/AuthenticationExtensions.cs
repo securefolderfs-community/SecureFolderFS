@@ -8,31 +8,31 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class AuthenticationExtensions
     {
-        public static async Task<IResult<TAuthentication>> TryCreateAsync<TAuthentication>(this IAuthenticator<TAuthentication> authenticator,
-            string id, CancellationToken cancellationToken)
+        public static async Task<IResult<IKey>> TryCreateAsync(this IAuthenticator authenticator,
+            string id, byte[] data, CancellationToken cancellationToken)
         {
             try
             {
-                var authentication = await authenticator.CreateAsync(id, cancellationToken);
-                return CommonResult<TAuthentication>.Success(authentication);
+                var key = await authenticator.CreateAsync(id, data, cancellationToken);
+                return CommonResult<IKey>.Success(key);
             }
             catch (Exception ex)
             {
-                return CommonResult<TAuthentication>.Failure(ex);
+                return CommonResult<IKey>.Failure(ex);
             }
         }
 
-        public static async Task<IResult<TAuthentication>> TryAuthenticateAsync<TAuthentication>(this IAuthenticator<TAuthentication> authenticator,
-            string id, CancellationToken cancellationToken)
+        public static async Task<IResult<IKey>> TrySignAsync(this IAuthenticator authenticator,
+            string id, byte[] data, CancellationToken cancellationToken)
         {
             try
             {
-                var authentication = await authenticator.AuthenticateAsync(id, cancellationToken);
-                return CommonResult<TAuthentication>.Success(authentication);
+                var key = await authenticator.SignAsync(id, data, cancellationToken);
+                return CommonResult<IKey>.Success(key);
             }
             catch (Exception ex)
             {
-                return CommonResult<TAuthentication>.Failure(ex);
+                return CommonResult<IKey>.Failure(ex);
             }
         }
     }

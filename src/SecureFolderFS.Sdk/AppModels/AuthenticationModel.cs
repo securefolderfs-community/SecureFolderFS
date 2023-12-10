@@ -1,23 +1,22 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Shared.Utilities;
-using System;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     public sealed class AuthenticationModel
     {
-        public string AuthenticationId { get; }
+        public string Id { get; }
 
-        public string AuthenticationName { get; }
+        public string Name { get; }
 
         public AuthenticationType AuthenticationType { get; }
 
-        public IAuthenticator<IDisposable>? Authenticator { get; }
+        public IAuthenticator? Authenticator { get; }
 
-        public AuthenticationModel(string authenticationId, string authenticationName, AuthenticationType authenticationType, IAuthenticator<IDisposable>? authenticator)
+        public AuthenticationModel(string id, string name, AuthenticationType authenticationType, IAuthenticator? authenticator)
         {
-            AuthenticationId = authenticationId;
-            AuthenticationName = authenticationName;
+            Id = id;
+            Name = name;
             AuthenticationType = authenticationType;
             Authenticator = authenticator;
         }

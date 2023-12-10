@@ -98,7 +98,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
                 {
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
-                    AuthenticationMethod = CurrentViewModel.AuthenticationModel.AuthenticationId,
+                    AuthenticationMethod = CurrentViewModel.AuthenticationModel.Id,
                     VaultId = _vaultId
                 };
 

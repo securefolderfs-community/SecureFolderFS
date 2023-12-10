@@ -18,8 +18,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault.Signup
         protected BaseAuthWizardViewModel(AuthenticationModel authenticationModel)
         {
             AuthenticationModel = authenticationModel;
-            _DisplayName = authenticationModel.AuthenticationName;
-            _Description = $"Create authentication for this vault using {authenticationModel.AuthenticationName}";
+            _DisplayName = authenticationModel.Name;
+            _Description = $"Create authentication for this vault using {authenticationModel.Name}";
         }
 
         public abstract IDisposable? GetAuthentication();

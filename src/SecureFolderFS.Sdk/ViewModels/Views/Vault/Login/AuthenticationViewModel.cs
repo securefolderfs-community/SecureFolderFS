@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
         {
             _vaultId = vaultId;
             _authenticationModel = authenticationModel;
-            _AuthenticationText = string.Format("AuthenticateUsing".ToLocalized(), authenticationModel.AuthenticationName);
+            _AuthenticationText = string.Format("AuthenticateUsing".ToLocalized(), authenticationModel.Name);
         }
 
         /// <inheritdoc/>
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Login
 
             try
             {
-                var authentication = await _authenticationModel.Authenticator.AuthenticateAsync(_vaultId, cancellationToken);
+                var authentication = await _authenticationModel.Authenticator.SignAsync(_vaultId, null, cancellationToken);
                 StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(authentication));
             }
             catch (Exception ex)

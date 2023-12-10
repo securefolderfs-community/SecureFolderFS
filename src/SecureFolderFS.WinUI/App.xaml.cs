@@ -109,6 +109,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
+                .AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
 
                 // Transient services
                 .AddTransient<INavigationService, WindowsNavigationService>()

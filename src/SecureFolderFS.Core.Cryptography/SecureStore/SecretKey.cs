@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecureFolderFS.Shared.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,7 +8,7 @@ namespace SecureFolderFS.Core.Cryptography.SecureStore
     /// <summary>
     /// Represents a secret key store.
     /// </summary>
-    public abstract class SecretKey : IEnumerable<byte>, IDisposable
+    public abstract class SecretKey : IKey
     {
         /// <summary>
         /// Gets the underlying byte representation of the key.

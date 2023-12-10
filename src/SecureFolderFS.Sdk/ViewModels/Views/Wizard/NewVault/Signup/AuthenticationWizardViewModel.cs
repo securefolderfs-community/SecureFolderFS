@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault.Signup
 
             _authentication?.Dispose();
             _authentication = null;
-            _authentication = await AuthenticationModel.Authenticator.CreateAsync(_vaultId, cancellationToken);
+            _authentication = await AuthenticationModel.Authenticator.CreateAsync(_vaultId, null, cancellationToken);
 
             StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(_authentication));
         }
