@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IVaultService>]
+    [Inject<IVaultService>, Inject<IVaultManagerService>]
     public sealed partial class LoginControlViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly bool _enableMigration;
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Get the authentication method enumerator for this vault
-            _enumerator = VaultService.VaultAuthenticator.GetAuthenticationAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
+            _enumerator = VaultManagerService.GetAuthenticationAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var vaultLifecycle = await VaultService.VaultUnlocker.UnlockAsync(_vaultModel, _credentials, cancellationToken);
+                var vaultLifecycle = await VaultManagerService.UnlockAsync(_vaultModel, _credentials, cancellationToken);
                 VaultUnlocked?.Invoke(this, new(vaultLifecycle));
             }
             catch (Exception ex)

@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 {
-    [Inject<IVaultService>]
+    [Inject<IVaultService>, Inject<IVaultManagerService>]
     public sealed partial class AuthCreationWizardViewModel : BaseWizardPageViewModel
     {
         private readonly string _vaultId;
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             ContentCipher = ContentCiphers.FirstOrDefault();
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
-            await foreach (var item in VaultService.VaultAuthenticator.GetAvailableAuthenticationsAsync(cancellationToken))
+            await foreach (var item in VaultManagerService.GetAvailableAuthenticationsAsync(cancellationToken))
             {
                 AuthenticationOptions.Add(item.AuthenticationType switch
                 {
@@ -103,8 +103,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
                 };
 
                 // Create the vault
-                var superSecret = await VaultService.VaultCreator.CreateVaultAsync(_vaultFolder,
-                    new[] { authentication }, vaultOptions, cancellationToken);
+                var superSecret = await VaultManagerService.CreateVaultAsync(
+                    _vaultFolder,
+                    new[] { authentication },
+                    vaultOptions,
+                    cancellationToken);
 
                 // Navigate
                 await NavigationService.TryNavigateAsync(() =>

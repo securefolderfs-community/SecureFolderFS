@@ -1,16 +1,14 @@
 ﻿using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Storage;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.Services.Vault
+namespace SecureFolderFS.Sdk.Services
 {
-    /// <summary>
-    /// Represents an interface used for creating vaults.
-    /// </summary>
-    public interface IVaultCreator
+    public interface IVaultManagerService
     {
         /// <summary>
         /// Creates new or overwrites an existing vault in the specified <paramref name="vaultFolder"/>.
@@ -28,5 +26,11 @@ namespace SecureFolderFS.Sdk.Services.Vault
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the master key used to decrypt the vault.</returns>
         Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IEnumerable<IDisposable> passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
+
+        Task<IVaultLifecycle> UnlockAsync(IVaultModel vaultModel, IEnumerable<IDisposable> passkey, CancellationToken cancellationToken = default);
+
+        IAsyncEnumerable<AuthenticationModel> GetAuthenticationAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+
+        IAsyncEnumerable<AuthenticationModel> GetAvailableAuthenticationsAsync(CancellationToken cancellationToken = default);
     }
 }

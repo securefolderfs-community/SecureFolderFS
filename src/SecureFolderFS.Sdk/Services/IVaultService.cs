@@ -1,5 +1,4 @@
 ﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utilities;
 using System.Collections.Generic;
@@ -11,21 +10,6 @@ namespace SecureFolderFS.Sdk.Services
     /// </summary>
     public interface IVaultService // TODO: Move some of the methods to IVaultModel?
     {
-        /// <summary>
-        /// Gets the vault creator.
-        /// </summary>
-        IVaultCreator VaultCreator { get; }
-
-        /// <summary>
-        /// Gets the vault unlocker.
-        /// </summary>
-        IVaultUnlocker VaultUnlocker { get; }
-
-        /// <summary>
-        /// Gets the vault authenticator.
-        /// </summary>
-        IVaultAuthenticator VaultAuthenticator { get; }
-
         /// <summary>
         /// Gets the <see cref="IAsyncValidator{T}"/> of type <see cref="IFolder"/> used to validate vaults.
         /// </summary>
