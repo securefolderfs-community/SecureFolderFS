@@ -7,7 +7,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Login;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utilities;
 using System;
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private readonly IVaultModel _vaultModel;
         private readonly CredentialsModel _credentials;
         private readonly IVaultWatcherModel _vaultWatcherModel;
-        private IAsyncEnumerator<AuthenticationModel>? _enumerator;
+        private IAsyncEnumerator<AuthenticationViewModel>? _enumerator;
 
         [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
 
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Get the authentication method enumerator for this vault
-            _enumerator = VaultManagerService.GetAuthenticationAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
+            _enumerator = VaultManagerService.GetLoginAuthenticationAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
@@ -97,13 +97,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 return false;
 
             // Get the appropriate method
-            var authenticationModel = _enumerator.Current;
-            CurrentViewModel = authenticationModel.AuthenticationType switch
-            {
-                AuthenticationType.Password => new PasswordViewModel(),
-                AuthenticationType.Other => new AuthenticationViewModel("9761f3c1-bea0-4216-be82-81e2654b7a9b", authenticationModel),
-                _ => new ErrorViewModel("Could not determine the authentication type.")
-            };
+            var viewModel = _enumerator.Current;
+            CurrentViewModel = viewModel;
 
             return true;
         }

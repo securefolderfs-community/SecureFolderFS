@@ -6,7 +6,7 @@ namespace SecureFolderFS.Shared.Utilities
     /// <summary>
     /// Represents a password that can be cleared.
     /// </summary>
-    public interface IPassword : IEnumerable<byte>, IDisposable
+    public interface IPassword : IKey
     {
         /// <summary>
         /// Gets the number of characters in the password.

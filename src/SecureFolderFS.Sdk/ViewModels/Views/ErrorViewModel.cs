@@ -18,7 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views
         }
 
         /// <inheritdoc/>
-        protected override void SetError(IResult? result)
+        public override void SetError(IResult? result)
         {
             ErrorMessage = result?.GetMessage();
         }

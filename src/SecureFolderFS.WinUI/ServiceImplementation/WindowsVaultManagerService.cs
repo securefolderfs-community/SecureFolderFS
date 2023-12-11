@@ -1,13 +1,14 @@
-﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.UI.Authenticators;
+﻿using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.WinUI.Authenticators;
+using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.WinUI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Security.Credentials;
 
 namespace SecureFolderFS.WinUI.ServiceImplementation
@@ -16,36 +17,26 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
     public sealed class WindowsVaultManagerService : BaseVaultManagerService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationModel> GetAvailableAuthenticationsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAuthenticationAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            yield return new KeyFileLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder);
+            //yield return new WindowsHelloLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder);
+            //yield return new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder);
+            await Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAuthenticationAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
-            yield return new(
-                Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD,
-                "Password",
-                AuthenticationType.Password,
-                null);
+            yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder);
 
             // Windows Hello
             if (await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken))
-                yield return new(
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO,
-                    "Windows Hello",
-                    AuthenticationType.Other,
-                    new WindowsHelloAuthenticator());
+                yield return new WindowsHelloCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder);
             
             // Key File
-            yield return new(
-                Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE,
-                "Key File",
-                AuthenticationType.Other,
-                new KeyFileAuthenticator());
-
-            // Hardware Key
-            yield return new(
-                Core.Constants.Vault.AuthenticationMethods.AUTH_HARDWARE_KEY,
-                "Hardware File",
-                AuthenticationType.Other,
-                null);
+            yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder);
         }
     }
 }

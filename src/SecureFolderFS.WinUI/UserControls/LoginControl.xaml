@@ -8,13 +8,89 @@
     xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:vc="using:SecureFolderFS.WinUI.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault.Login"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Vault"
     xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Views"
+    xmlns:vm3="using:SecureFolderFS.UI.ViewModels"
+    xmlns:vm4="using:SecureFolderFS.WinUI.ViewModels"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
 
+        <!--  Password Template  -->
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm3:PasswordLoginViewModel">
+            <StackPanel Spacing="24">
+                <!--  Password Control  -->
+                <uc:PasswordControl
+                    x:Name="PasswordBoxControl"
+                    Width="364"
+                    PasswordSubmittedCommand="{x:Bind ProvideCredentialsCommand}"
+                    ShowInvalidPasswordMessage="{x:Bind IsPasswordInvalid, Mode=TwoWay}" />
+
+                <!--  Continue  -->
+                <Button
+                    x:Name="ContinueButton"
+                    Padding="32,6"
+                    HorizontalAlignment="Center"
+                    Click="ContinueButton_Click"
+                    Command="{x:Bind ProvideCredentialsCommand}"
+                    Content="{l:ResourceString Name=Continue}"
+                    DataContext="{Binding ElementName=PasswordBoxControl}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!--  Key File Template  -->
+        <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm3:KeyFileLoginViewModel">
+            <StackPanel Spacing="24">
+                <!--  Logo  -->
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    Glyph="&#xE8D7;" />
+
+                <!--  Title  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="Authenticate using a Key File" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand}"
+                    Content="Authenticate"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!--  Windows Hello Template  -->
+        <DataTemplate x:Key="WindowsHelloTemplate" x:DataType="vm4:WindowsHelloLoginViewModel">
+            <StackPanel Spacing="24">
+                <!--  Logo  -->
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    Glyph="&#xEB68;" />
+
+                <!--  Title  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="Authenticate with Windows Hello" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand}"
+                    Content="Authenticate"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!--  Migration Template  -->
         <DataTemplate x:Key="MigrationTemplate" x:DataType="vm:MigrationViewModel">
             <StackPanel Spacing="4">
                 <!--  Title  -->
@@ -58,44 +134,8 @@
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="AuthenticateTemplate" x:DataType="vm:AuthenticationViewModel">
-            <StackPanel Spacing="24">
-                <!--  Title  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Opacity="0.8"
-                    Text="{x:Bind AuthenticationText}" />
 
-                <!--  Authenticate  -->
-                <Button
-                    Padding="24,6"
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind AuthenticateUserCommand}"
-                    Content="Authenticate"
-                    Style="{ThemeResource AccentButtonStyle}" />
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordViewModel">
-            <StackPanel Spacing="24">
-                <!--  Password Control  -->
-                <uc:PasswordControl
-                    x:Name="PasswordBoxControl"
-                    Width="364"
-                    PasswordSubmittedCommand="{x:Bind ProvideCredentialsCommand}"
-                    ShowInvalidPasswordMessage="{x:Bind ShowInvalidPassword, Mode=TwoWay}" />
-
-                <!--  Continue  -->
-                <Button
-                    x:Name="ContinueButton"
-                    Padding="32,6"
-                    HorizontalAlignment="Center"
-                    Click="ContinueButton_Click"
-                    Command="{x:Bind ProvideCredentialsCommand}"
-                    Content="{l:ResourceString Name=Continue}"
-                    DataContext="{Binding ElementName=PasswordBoxControl}"
-                    Style="{ThemeResource AccentButtonStyle}" />
-            </StackPanel>
-        </DataTemplate>
+        <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
             <StackPanel Spacing="4">
                 <TextBlock
@@ -122,10 +162,11 @@
             IsTabStop="False">
             <ContentControl.ContentTemplateSelector>
                 <ts:LoginMethodTemplateSelector
-                    AuthenticateTemplate="{StaticResource AuthenticateTemplate}"
                     ErrorTemplate="{StaticResource ErrorTemplate}"
+                    KeyFileTemplate="{StaticResource KeyFileTemplate}"
                     MigrationTemplate="{StaticResource MigrationTemplate}"
-                    PasswordTemplate="{StaticResource PasswordTemplate}" />
+                    PasswordTemplate="{StaticResource PasswordTemplate}"
+                    WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />
             </ContentControl.ContentTemplateSelector>
             <ContentControl.ContentTransitions>
                 <TransitionCollection>

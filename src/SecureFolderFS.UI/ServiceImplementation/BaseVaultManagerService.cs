@@ -2,14 +2,13 @@
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.AppModels;
-using SecureFolderFS.UI.Authenticators;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Collections.Generic;
@@ -95,16 +94,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
             }
         }
 
+        // TODO: Create a separate method that will determine the authentication method and return the correct auth method in the impl
         /// <inheritdoc/>
-        public async IAsyncEnumerable<AuthenticationModel> GetAuthenticationAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
-        {
-            await Task.CompletedTask;
-
-            //yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, "Password", AuthenticationType.Password, null);
-            yield return new(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, "Key File", AuthenticationType.Other, new KeyFileAuthenticator());
-        }
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetLoginAuthenticationAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationModel> GetAvailableAuthenticationsAsync(CancellationToken cancellationToken = default);
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAuthenticationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
     }
 }

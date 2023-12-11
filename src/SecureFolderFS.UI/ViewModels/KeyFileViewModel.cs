@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Collections.Generic;
@@ -11,23 +13,38 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.UI.Authenticators
+namespace SecureFolderFS.UI.ViewModels
 {
-    /// <inheritdoc cref="IAuthenticator"/>
-    public sealed class KeyFileAuthenticator : IAuthenticator
+    /// <inheritdoc cref="AuthenticationViewModel"/>
+    public abstract class KeyFileViewModel : AuthenticationViewModel
     {
         private const int KEY_LENGTH = 128;
+        private IKey? _key;
 
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         /// <inheritdoc/>
-        public Task RevokeAsync(string id, CancellationToken cancellationToken = default)
+        public override event EventHandler<EventArgs>? StateChanged;
+
+        protected KeyFileViewModel(string id, IFolder vaultFolder)
+            : base(id, vaultFolder)
+        {
+        }
+
+        /// <inheritdoc/>
+        public override IKey? RetrieveKey()
+        {
+            return _key;
+        }
+
+        /// <inheritdoc/>
+        public override Task RevokeAsync(string id, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public async Task<IKey> CreateAsync(string id, byte[] data, CancellationToken cancellationToken = default)
+        public override async Task<IKey> CreateAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
@@ -57,11 +74,13 @@ namespace SecureFolderFS.UI.Authenticators
             await keyStream.WriteAsync(secretKey.Key, cancellationToken);
 
             // Create a copy of the secret key because we need to dispose the original
-            return secretKey.CreateCopy();
+            _key?.Dispose();
+            _key = secretKey.CreateCopy();
+            return _key;
         }
 
         /// <inheritdoc/>
-        public async Task<IKey> SignAsync(string id, byte[] data, CancellationToken cancellationToken = default)
+        public override async Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
@@ -78,7 +97,15 @@ namespace SecureFolderFS.UI.Authenticators
                 throw new DataException("The key data was too short.");
 
             // Create a copy of the secret key because we need to dispose the original
-            return secretKey.CreateCopy();
+            _key?.Dispose();
+            _key = secretKey.CreateCopy();
+            return _key;
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            _key?.Dispose();
         }
     }
 }

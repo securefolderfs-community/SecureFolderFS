@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault.Signup;
+using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.WinUI.ViewModels;
 
 namespace SecureFolderFS.WinUI.TemplateSelectors
 {
@@ -8,14 +9,17 @@ namespace SecureFolderFS.WinUI.TemplateSelectors
     {
         public DataTemplate? PasswordTemplate { get; set; }
 
-        public DataTemplate? AuthenticationTemplate { get; set; }
+        public DataTemplate? KeyFileTemplate { get; set; }
+
+        public DataTemplate? WindowsHelloTemplate { get; set; }
 
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
         {
             return item switch
             {
-                PasswordWizardViewModel => PasswordTemplate,
-                AuthenticationWizardViewModel => AuthenticationTemplate,
+                PasswordCreationViewModel => PasswordTemplate,
+                KeyFileCreationViewModel => KeyFileTemplate,
+                WindowsHelloCreationViewModel => WindowsHelloTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

@@ -13,6 +13,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views
         /// Sets the error to display on the view.
         /// </summary>
         /// <param name="result">The error to be set. If <paramref name="result"/> is null or <see cref="IResult.Successful"/> is true, the error is unset.</param>
-        protected abstract void SetError(IResult? result);
+        public abstract void SetError(IResult? result);
     }
 }

@@ -2,13 +2,12 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault.Signup;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Collections.Generic;
@@ -27,10 +26,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 
         [ObservableProperty] private CipherViewModel? _ContentCipher;
         [ObservableProperty] private CipherViewModel? _FileNameCipher;
-        [ObservableProperty] private BaseAuthWizardViewModel? _CurrentViewModel;
+        [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
         [ObservableProperty] private ObservableCollection<CipherViewModel> _ContentCiphers;
         [ObservableProperty] private ObservableCollection<CipherViewModel> _FileNameCiphers;
-        [ObservableProperty] private ObservableCollection<BaseAuthWizardViewModel> _AuthenticationOptions;
+        [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
 
         public AuthCreationWizardViewModel(IModifiableFolder vaultFolder, VaultWizardDialogViewModel dialogViewModel)
             : base(dialogViewModel)
@@ -49,21 +48,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            // Get ciphers
             EnumerateCiphers(VaultService.GetContentCiphers(), ContentCiphers);
             EnumerateCiphers(VaultService.GetFileNameCiphers(), FileNameCiphers);
 
+            // Set default cipher options
             ContentCipher = ContentCiphers.FirstOrDefault();
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
-            await foreach (var item in VaultManagerService.GetAvailableAuthenticationsAsync(cancellationToken))
-            {
-                AuthenticationOptions.Add(item.AuthenticationType switch
-                {
-                    AuthenticationType.Password => new PasswordWizardViewModel(DialogViewModel, item),
-                    _ => new AuthenticationWizardViewModel(_vaultId, item)
-                });
-            }
+            // Get authentication options
+            await foreach (var item in VaultManagerService.GetCreationAuthenticationAsync(_vaultFolder, _vaultId, cancellationToken))
+                AuthenticationOptions.Add(item);
 
+            // Set default authentication option
             CurrentViewModel = AuthenticationOptions.FirstOrDefault();
             if (CurrentViewModel is not null)
                 CurrentViewModel.StateChanged += CurrentViewModel_StateChanged;
@@ -85,33 +82,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 
             ArgumentNullException.ThrowIfNull(ContentCipher);
             ArgumentNullException.ThrowIfNull(FileNameCipher);
-            ArgumentNullException.ThrowIfNull(CurrentViewModel?.AuthenticationModel);
+            ArgumentNullException.ThrowIfNull(CurrentViewModel);
 
             // Make sure to also dispose the data within the current view model whether the navigation is successful or not
             using (CurrentViewModel)
             {
-                using var authentication = CurrentViewModel.GetAuthentication();
-                if (authentication is null)
+                using var key = CurrentViewModel.RetrieveKey();
+                if (key is null)
                     return;
 
                 var vaultOptions = new VaultOptions()
                 {
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
-                    AuthenticationMethod = CurrentViewModel.AuthenticationModel.Id,
+                    AuthenticationMethod = CurrentViewModel.Id,
                     VaultId = _vaultId
                 };
 
                 // Create the vault
                 var superSecret = await VaultManagerService.CreateVaultAsync(
                     _vaultFolder,
-                    new[] { authentication },
+                    new[] { key },
                     vaultOptions,
                     cancellationToken);
 
                 // Navigate
-                await NavigationService.TryNavigateAsync(() =>
-                    new RecoveryKeyWizardViewModel(_vaultFolder, superSecret, DialogViewModel));
+                await NavigationService.TryNavigateAsync(() => new RecoveryKeyWizardViewModel(_vaultFolder, superSecret, DialogViewModel));
             }
         }
 
@@ -121,7 +117,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
                 CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;
         }
 
-        partial void OnCurrentViewModelChanged(BaseAuthWizardViewModel? oldValue, BaseAuthWizardViewModel? newValue)
+        partial void OnCurrentViewModelChanged(AuthenticationViewModel? oldValue, AuthenticationViewModel? newValue)
         {
             // Make sure to dispose the old value in case there was authentication data provided
             oldValue?.Dispose();
