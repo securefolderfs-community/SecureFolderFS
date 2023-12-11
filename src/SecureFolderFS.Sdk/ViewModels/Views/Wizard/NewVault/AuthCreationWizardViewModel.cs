@@ -60,7 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
                 AuthenticationOptions.Add(item.AuthenticationType switch
                 {
                     AuthenticationType.Password => new PasswordWizardViewModel(DialogViewModel, item),
-                    _ => new AuthenticationWizardViewModel(_vaultId, item),
+                    _ => new AuthenticationWizardViewModel(_vaultId, item)
                 });
             }
 

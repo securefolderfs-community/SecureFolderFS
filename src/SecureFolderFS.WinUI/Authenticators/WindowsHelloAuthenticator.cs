@@ -13,6 +13,12 @@ namespace SecureFolderFS.WinUI.Authenticators
     public sealed class WindowsHelloAuthenticator : IAuthenticator
     {
         /// <inheritdoc/>
+        public async Task RevokeAsync(string id, CancellationToken cancellationToken = default)
+        {
+            await KeyCredentialManager.DeleteAsync(id).AsTask(cancellationToken);
+        }
+
+        /// <inheritdoc/>
         public async Task<IKey> CreateAsync(string id, byte[] data, CancellationToken cancellationToken)
         {
             var result = await KeyCredentialManager.RequestCreateAsync(id, KeyCredentialCreationOption.ReplaceExisting).AsTask(cancellationToken);

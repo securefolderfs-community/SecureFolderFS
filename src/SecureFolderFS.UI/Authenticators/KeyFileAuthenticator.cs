@@ -21,6 +21,12 @@ namespace SecureFolderFS.UI.Authenticators
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         /// <inheritdoc/>
+        public Task RevokeAsync(string id, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
         public async Task<IKey> CreateAsync(string id, byte[] data, CancellationToken cancellationToken = default)
         {
             // The 'data' parameter is not needed in this type of authentication
@@ -42,9 +48,9 @@ namespace SecureFolderFS.UI.Authenticators
             // Fill the first 128 bytes with secure random data
             secureRandom.GetNonZeroBytes(secretKey.Key.AsSpan(0, KEY_LENGTH));
 
-            // Fill the remaining bytes with using the ID
+            // Fill the remaining bytes with the ID
             // By using ASCII encoding we get 1:1 byte to char ratio which allows us
-            // to use the length of the string ID as part of the SecureKey length above
+            // to use the length of the string ID as part of the SecretKey length above
             Encoding.ASCII.GetBytes(id, secretKey.Key.AsSpan(KEY_LENGTH));
 
             // Write the key to the file
