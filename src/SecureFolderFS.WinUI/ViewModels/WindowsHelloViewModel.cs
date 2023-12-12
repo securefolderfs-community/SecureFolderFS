@@ -22,6 +22,7 @@ namespace SecureFolderFS.WinUI.ViewModels
         protected WindowsHelloViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
         {
+            DisplayName = "Windows Hello";
         }
 
         /// <inheritdoc/>
@@ -71,7 +72,6 @@ namespace SecureFolderFS.WinUI.ViewModels
         private static async Task<IKey> CreateSignatureAsync(KeyCredential credential, byte[] data, CancellationToken cancellationToken)
         {
             var buffer = data.AsBuffer();
-
             var signed = await credential.RequestSignAsync(buffer).AsTask(cancellationToken);
             if (signed.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to sign the data.");

@@ -17,6 +17,7 @@ namespace SecureFolderFS.UI.ViewModels
         protected PasswordViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
         {
+            DisplayName = "Password";
         }
 
         partial void OnPrimaryPasswordChanged(string? value)

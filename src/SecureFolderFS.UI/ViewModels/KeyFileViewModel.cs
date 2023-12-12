@@ -29,6 +29,7 @@ namespace SecureFolderFS.UI.ViewModels
         protected KeyFileViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
         {
+            DisplayName = "Key File";
         }
 
         /// <inheritdoc/>

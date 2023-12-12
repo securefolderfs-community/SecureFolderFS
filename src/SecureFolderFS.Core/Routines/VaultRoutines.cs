@@ -7,7 +7,6 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utilities;
-using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,27 +18,29 @@ namespace SecureFolderFS.Core.Routines
     {
         private readonly IFolder _vaultFolder;
         private readonly IResult _validationResult;
-        private readonly VaultReader _vaultReader;
-        private readonly VaultWriter _vaultWriter;
+
+        public VaultReader VaultReader { get; }
+
+        public VaultWriter VaultWriter { get; }
 
         private VaultRoutines(IFolder vaultFolder, IAsyncSerializer<Stream> serializer, IResult validationResult)
         {
             _vaultFolder = vaultFolder;
-            _vaultReader = new VaultReader(vaultFolder, serializer);
-            _vaultWriter = new VaultWriter(vaultFolder, serializer);
+            VaultReader = new VaultReader(vaultFolder, serializer);
+            VaultWriter = new VaultWriter(vaultFolder, serializer);
             _validationResult = validationResult;
         }
 
         public ICreationRoutine CreateVault()
         {
             // Only in the case of creation, the validity is not checked
-            return new CreationRoutine(_vaultFolder, _vaultWriter);
+            return new CreationRoutine(_vaultFolder, VaultWriter);
         }
 
         public IUnlockRoutine UnlockVault()
         {
             CheckVaultValidation();
-            return new UnlockRoutine(_vaultReader);
+            return new UnlockRoutine(VaultReader);
         }
 
         public IStorageRoutine BuildStorage()
@@ -48,16 +49,10 @@ namespace SecureFolderFS.Core.Routines
             return new StorageRoutine(_vaultFolder);
         }
 
-        public IDisposable SetupAuthentication()
+        public ICredentialsRoutine ChangeCredentials()
         {
             CheckVaultValidation();
-            throw new NotImplementedException();
-        }
-
-        public ICredentialsRoutine ChangePassword()
-        {
-            CheckVaultValidation();
-            return new CredentialsRoutine(_vaultWriter);
+            return new CredentialsRoutine(VaultWriter);
         }
 
         private void CheckVaultValidation()

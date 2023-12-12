@@ -127,6 +127,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
 
             if (newValue is not null)
                 newValue.StateChanged += CurrentViewModel_StateChanged;
+
+            DialogViewModel.PrimaryButtonEnabled = false;
         }
 
         private void CurrentViewModel_StateChanged(object? sender, EventArgs e)

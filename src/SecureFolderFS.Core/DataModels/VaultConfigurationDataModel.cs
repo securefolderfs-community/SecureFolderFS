@@ -6,7 +6,7 @@ using static SecureFolderFS.Core.Constants;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    internal sealed class VaultConfigurationDataModel : VersionDataModel
+    public sealed class VaultConfigurationDataModel : VersionDataModel
     {
         /// <summary>
         /// Gets scheme type of the vault for content encryption.

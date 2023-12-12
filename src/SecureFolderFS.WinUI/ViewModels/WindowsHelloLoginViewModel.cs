@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Shared.Helpers;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +12,8 @@ namespace SecureFolderFS.WinUI.ViewModels
 {
     public sealed partial class WindowsHelloLoginViewModel : WindowsHelloViewModel
     {
+        private const int KEY_LENGTH = 128;
+
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
@@ -20,10 +25,23 @@ namespace SecureFolderFS.WinUI.ViewModels
         [RelayCommand]
         private async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            byte[] challenge = Array.Empty<byte>(); // TODO: Read data to sign and generate new to save it to the auth file
+            var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
+            var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
 
-            var key = await SignAsync(Id, challenge, cancellationToken);
+            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+            var auth = await vaultReader.ReadAuthenticationAsync(cancellationToken);
+            if (auth?.Challenge is null)
+            {
+                SetError(CommonResult.Failure(new ArgumentNullException(nameof(auth))));
+                return;
+            }
+
+            var key = await SignAsync(config.Id, auth.Challenge, cancellationToken);
             StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(key));
+
+            // TODO: Read data to sign and generate new to save it to the auth file
+            _ = config;
+            _ = vaultWriter;
         }
     }
 }

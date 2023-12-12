@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace SecureFolderFS.Core.DataModels
 {
     [Serializable]
-    internal sealed class VaultKeystoreDataModel
+    public sealed class VaultKeystoreDataModel
     {
         /// <summary>
         /// Gets wrapped version stored in keystore of the encryption key.

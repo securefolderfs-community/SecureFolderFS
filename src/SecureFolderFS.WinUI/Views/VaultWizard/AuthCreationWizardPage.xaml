@@ -61,7 +61,7 @@
                 <!--  Logo  -->
                 <FontIcon
                     HorizontalAlignment="Center"
-                    FontSize="24"
+                    FontSize="38"
                     Glyph="&#xEB68;" />
 
                 <!--  Title  -->
