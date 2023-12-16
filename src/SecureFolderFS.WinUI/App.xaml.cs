@@ -55,9 +55,9 @@ namespace SecureFolderFS.WinUI
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
 #if UNPACKAGED
-            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.LocalSettings.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
 #else
-            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.LocalSettings.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
 #endif
 
             // Get settings folder
@@ -109,6 +109,7 @@ namespace SecureFolderFS.WinUI
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
+                .AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
 
                 // Transient services
                 .AddTransient<INavigationService, WindowsNavigationService>()

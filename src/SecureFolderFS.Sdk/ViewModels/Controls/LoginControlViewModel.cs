@@ -6,8 +6,8 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Login;
-using SecureFolderFS.Shared;
+using SecureFolderFS.Sdk.ViewModels.Views;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Utilities;
 using System;
@@ -17,20 +17,20 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IVaultService>]
-    public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
+    [Inject<IVaultService>, Inject<IVaultManagerService>]
+    public sealed partial class LoginControlViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly bool _enableMigration;
         private readonly IVaultModel _vaultModel;
         private readonly CredentialsModel _credentials;
         private readonly IVaultWatcherModel _vaultWatcherModel;
-        private IAsyncEnumerator<AuthenticationModel>? _enumerator;
+        private IAsyncEnumerator<AuthenticationViewModel>? _enumerator;
 
-        [ObservableProperty] private BaseLoginViewModel? _CurrentViewModel;
+        [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
 
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
 
-        public LoginViewModel(IVaultModel vaultModel, bool enableMigration)
+        public LoginControlViewModel(IVaultModel vaultModel, bool enableMigration)
         {
             ServiceProvider = Ioc.Default;
             _enableMigration = enableMigration;
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Get the authentication method enumerator for this vault
-            _enumerator = VaultService.VaultAuthenticator.GetAuthenticationAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
+            _enumerator = VaultManagerService.GetLoginAuthenticationAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
@@ -76,11 +76,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var vaultLifecycle =
-                    await VaultService.VaultUnlocker.UnlockAsync(_vaultModel, _credentials, cancellationToken);
+                var vaultLifecycle = await VaultManagerService.UnlockAsync(_vaultModel, _credentials, cancellationToken);
                 VaultUnlocked?.Invoke(this, new(vaultLifecycle));
-
-
             }
             catch (Exception ex)
             {
@@ -100,13 +97,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 return false;
 
             // Get the appropriate method
-            var authenticationModel = _enumerator.Current;
-            CurrentViewModel = authenticationModel.AuthenticationType switch
-            {
-                AuthenticationType.Password => new PasswordViewModel(),
-                AuthenticationType.Other => new AuthenticationViewModel(authenticationModel),
-                _ => new ErrorViewModel("Could not determine the authentication type.")
-            };
+            var viewModel = _enumerator.Current;
+            CurrentViewModel = viewModel;
 
             return true;
         }
@@ -132,7 +124,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
-        partial void OnCurrentViewModelChanging(BaseLoginViewModel? oldValue, BaseLoginViewModel? newValue)
+        partial void OnCurrentViewModelChanging(ReportableViewModel? oldValue, ReportableViewModel? newValue)
         {
             // Unhook old
             if (oldValue is not null)

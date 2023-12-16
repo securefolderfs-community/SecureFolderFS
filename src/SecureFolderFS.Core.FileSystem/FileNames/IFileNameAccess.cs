@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
         /// </summary>
         /// <param name="ciphertextName">The associated ciphertext name.</param>
         /// <param name="directoryId">The ID of a directory where the item is stored.</param>
-        /// <returns>If successful, returns a cleartext representation of the name, otherwise empty.</returns>
+        /// <returns>If successful, returns a cleartext representation of the name; otherwise empty.</returns>
         string GetCleartextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId);
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
         /// </summary>
         /// <param name="cleartextName">The associated cleartext name.</param>
         /// <param name="directoryId">The ID of a directory where the item is stored.</param>
-        /// <returns>If successful, returns a ciphertext representation of the name, otherwise empty.</returns>
+        /// <returns>If successful, returns a ciphertext representation of the name; otherwise empty.</returns>
         string GetCiphertextName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId);
     }
 }

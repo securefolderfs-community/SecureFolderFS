@@ -13,14 +13,14 @@ namespace SecureFolderFS.Sdk.Models
         /// Adds a new widget model identified by <paramref name="widgetId"/>.
         /// </summary>
         /// <param name="widgetId">The id of a widget.</param>
-        /// <returns>If successful, returns true, otherwise false.</returns>
+        /// <returns>If successful, returns true; otherwise false.</returns>
         bool AddWidget(string widgetId);
 
         /// <summary>
         /// Removes persisted widget model identified by <paramref name="widgetId"/>.
         /// </summary>
         /// <param name="widgetId">The id of a widget.</param>
-        /// <returns>If successful, returns true, otherwise false.</returns>
+        /// <returns>If successful, returns true; otherwise false.</returns>
         bool RemoveWidget(string widgetId);
 
         /// <summary>

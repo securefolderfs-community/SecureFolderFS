@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.VaultAccess
 {
     // TODO: Needs docs
-    internal sealed class VaultReader
+    public sealed class VaultReader
     {
         private readonly IFolder _vaultFolder;
         private readonly IAsyncSerializer<Stream> _serializer;

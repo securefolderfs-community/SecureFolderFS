@@ -16,7 +16,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 
         public VaultConfigurations(IModifiableFolder settingsFolder)
         {
-            SettingsDatabase = new SingleFileDatabaseModel(Constants.LocalSettings.SAVED_VAULTS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
+            SettingsDatabase = new SingleFileDatabaseModel(Constants.FileNames.SAVED_VAULTS_FILENAME, settingsFolder, DoubleSerializedStreamSerializer.Instance);
         }
 
         /// <inheritdoc/>

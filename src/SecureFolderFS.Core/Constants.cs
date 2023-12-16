@@ -22,14 +22,17 @@
                 public const string AUTH_KEYFILE = "KeyFile";
                 public const string AUTH_WINDOWS_HELLO = "WindowsHello";
                 public const string AUTH_HARDWARE_KEY = "HardwareKey";
+                public const string AUTH_APPLE_FACEID = "AppleFaceID";
+                public const string AUTH_ANDROID_BIOMETRIC = "AndroidBiometric";
             }
 
             public static class Specializations
             {
                 public const string SPEC_STANDARD = "Standard";
-                //public const string SPEC_JOURNAL = "Journal";
-                //public const string SPEC_GALLERY = "Gallery";
-                //public const string SPEC_NOTES = "Notes";
+                public const string SPEC_JOURNAL = "Journal";
+                public const string SPEC_GALLERY = "Gallery";
+                public const string SPEC_MUSIC = "Music";
+                public const string SPEC_NOTES = "Notes";
             }
 
             public static class Versions
@@ -46,6 +49,7 @@
             public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
             public const string ASSOC_SPECIALIZATION = "spec";
             public const string ASSOC_AUTHENTICATION = "authMode";
+            public const string ASSOC_VAULT_ID = "vaultId";
             public const string ASSOC_VERSION = "version";
         }
 

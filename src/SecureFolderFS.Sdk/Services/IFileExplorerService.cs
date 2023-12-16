@@ -27,18 +27,27 @@ namespace SecureFolderFS.Sdk.Services
         Task OpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Awaits the user input and saves single file from the file explorer dialog.
+        /// </summary>
+        /// <param name="suggestedName">The name that will be suggested when saving the file.</param>
+        /// <param name="filter">The filter to apply when saving files.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been saved, returns <see cref="ILocatableFile"/>; otherwise null.</returns>
+        Task<ILocatableFile?> SaveFileAsync(string suggestedName, IDictionary<string, string>? filter, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Awaits the user input and picks single file from the file explorer dialog.
         /// </summary>
         /// <param name="filter">The filter to apply when picking files.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been picked, returns <see cref="ILocatableFile"/>, otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been picked, returns <see cref="ILocatableFile"/>; otherwise null.</returns>
         Task<ILocatableFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Awaits the user input and picks single folder from the file explorer dialog.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a folder has been picked, returns <see cref="ILocatableFolder"/>, otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a folder has been picked, returns <see cref="ILocatableFolder"/>; otherwise null.</returns>
         Task<ILocatableFolder?> PickFolderAsync(CancellationToken cancellationToken = default);
     }
 }

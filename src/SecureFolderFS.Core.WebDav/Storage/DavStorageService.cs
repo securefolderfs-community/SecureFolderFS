@@ -59,7 +59,7 @@ namespace SecureFolderFS.Core.WebDav.Storage
         /// Converts an <see cref="Uri"/> represented by a <see cref="string"/> into file system friendly path.
         /// </summary>
         /// <param name="uriPath">An <see cref="string"/> in <see cref="Uri"/> format that points to a file/folder.</param>
-        /// <returns>If successful, returns a filepath, otherwise false.</returns>
+        /// <returns>If successful, returns a filepath; otherwise false.</returns>
         /// <remarks>
         /// This method does not guarantee existence of the resource that the returned path points to.
         /// </remarks>

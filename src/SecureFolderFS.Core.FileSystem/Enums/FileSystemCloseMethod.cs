@@ -4,7 +4,7 @@
     public enum FileSystemCloseMethod : byte
     {
         /// <summary>
-        /// Closes the file system if possible, otherwise fails.
+        /// Closes the file system if possible; otherwise fails.
         /// </summary>
         CloseIfPossible = 0,
 

@@ -1,33 +1,55 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Core.Dokany.AppModels;
-using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Routines;
-using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.Extensions;
+using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.UI.ServiceImplementation.Vault
+namespace SecureFolderFS.UI.ServiceImplementation
 {
-    /// <inheritdoc cref="IVaultUnlocker"/>
-    public sealed class VaultUnlocker : IVaultUnlocker
+    /// <inheritdoc cref="IVaultManagerService"/>
+    public abstract class BaseVaultManagerService : IVaultManagerService
     {
+        /// <inheritdoc/>
+        public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IEnumerable<IDisposable> passkey, VaultOptions vaultOptions,
+            CancellationToken cancellationToken = default)
+        {
+            using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
+            using var passkeySecret = VaultHelpers.ParseSecretKey(passkey);
+            var options = VaultHelpers.ParseOptions(vaultOptions);
+
+            var superSecret = await creationRoutine
+                .SetCredentials(passkeySecret)
+                .SetOptions(options)
+                .FinalizeAsync(cancellationToken);
+
+            if (vaultFolder is IModifiableFolder modifiableFolder)
+            {
+                var readmeFile = await modifiableFolder.TryCreateFileAsync(Constants.Vault.VAULT_README_FILENAME, false, cancellationToken);
+                if (readmeFile is not null)
+                    await readmeFile.WriteAllTextAsync(Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
+            }
+
+            return superSecret;
+        }
+
         /// <inheritdoc/>
         public async Task<IVaultLifecycle> UnlockAsync(IVaultModel vaultModel, IEnumerable<IDisposable> passkey, CancellationToken cancellationToken = default)
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
             using var unlockRoutine = routines.UnlockVault();
-            using var passkeySecret = AuthenticationHelpers.ParseSecretKey(passkey);
+            using var passkeySecret = VaultHelpers.ParseSecretKey(passkey);
 
             await unlockRoutine.InitAsync(cancellationToken);
 
@@ -38,7 +60,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
             try
             {
                 var storageRoutine = routines.BuildStorage();
-                var fileSystemId = await GetBestFileSystemAsync(cancellationToken);
+                var fileSystemId = await VaultHelpers.GetBestFileSystemAsync(cancellationToken);
 
                 var storageService = Ioc.Default.GetRequiredService<IStorageService>();
                 var statisticsBridge = new FileSystemStatisticsToVaultStatisticsModelBridge();
@@ -58,10 +80,9 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
                     ContentCipherId = "TODO",
                     FileNameCipherId = "TODO",
                     AuthenticationMethod = "TODO",
-                    Specialization = "TODO"
                 };
 
-                var virtualFileSystem = await mountable.MountAsync(GetMountOptions(fileSystemId), cancellationToken);
+                var virtualFileSystem = await mountable.MountAsync(VaultHelpers.GetMountOptions(fileSystemId), cancellationToken);
                 return new VaultLifetimeModel(virtualFileSystem, statisticsBridge, vaultOptions);
             }
             catch (Exception)
@@ -73,41 +94,11 @@ namespace SecureFolderFS.UI.ServiceImplementation.Vault
             }
         }
 
-        private async Task<string> GetBestFileSystemAsync(CancellationToken cancellationToken)
-        {
-            var vaultService = Ioc.Default.GetRequiredService<IVaultService>();
-            var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
+        // TODO: Create a separate method that will determine the authentication method and return the correct auth method in the impl
+        /// <inheritdoc/>
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetLoginAuthenticationAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
-            string? lastBestId = null;
-            foreach (var item in vaultService.GetFileSystems())
-            {
-                if (item.Id == settingsService.UserSettings.PreferredFileSystemId)
-                {
-                    if ((await item.GetStatusAsync(cancellationToken)).Successful)
-                        return item.Id;
-                }
-                else
-                {
-                    if (lastBestId is null && (await item.GetStatusAsync(cancellationToken)).Successful)
-                        lastBestId = item.Id;
-                }
-            }
-
-            if (lastBestId is null)
-                throw new NotSupportedException("No supported adapters found.");
-
-            return lastBestId;
-        }
-
-        private MountOptions GetMountOptions(string fileSystemId)
-        {
-            return fileSystemId switch
-            {
-                Core.Constants.FileSystemId.DOKAN_ID => new DokanyMountOptions(),
-                Core.Constants.FileSystemId.FUSE_ID => new FuseMountOptions(),
-                Core.Constants.FileSystemId.WEBDAV_ID => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
-                _ => throw new ArgumentOutOfRangeException(nameof(fileSystemId))
-            };
-        }
+        /// <inheritdoc/>
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAuthenticationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
     }
 }

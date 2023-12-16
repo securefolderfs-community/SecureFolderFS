@@ -22,7 +22,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
         /// <param name="creationTime">Creation time to set.</param>
         /// <param name="lastAccessTime">Last access time to set.</param>
         /// <param name="lastWriteTime">Last write time to set.</param>
-        /// <returns>If the time was set successfully, returns true, otherwise false.</returns>
+        /// <returns>If the time was set successfully, returns true; otherwise false.</returns>
         public bool SetFileTime(ref long creationTime, ref long lastAccessTime, ref long lastWriteTime)
         {
             var hFile = GetHandle();

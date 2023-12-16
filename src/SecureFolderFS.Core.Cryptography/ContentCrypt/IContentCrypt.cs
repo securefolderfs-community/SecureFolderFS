@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <param name="chunkNumber">The chunk number part of encrypted data.</param>
         /// <param name="header">The header of the whole data.</param>
         /// <param name="cleartextChunk">The decrypted data to be written to.</param>
-        /// <returns>True if decryption was successful, otherwise false if an integrity error occurred.</returns>
+        /// <returns>True if decryption was successful; otherwise false if an integrity error occurred.</returns>
         bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> cleartextChunk);
 
         /// <summary>

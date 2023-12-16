@@ -1,31 +1,30 @@
 ﻿using System;
-using System.Text;
+using System.Collections.Generic;
 
 namespace SecureFolderFS.Shared.Utilities
 {
     /// <summary>
     /// Represents a password that can be cleared.
     /// </summary>
-    public interface IPassword : IDisposable
+    public interface IPassword : IKey
     {
         /// <summary>
         /// Gets the number of characters in the password.
         /// </summary>
+        /// <remarks>
+        /// The number of characters may not be equal to the number of bytes in the password.
+        /// </remarks>
         int Length { get; }
-
-        /// <summary>
-        /// Retrieves the password as a byte array encoded with <paramref name="encoding"/>.
-        /// </summary>
-        /// <param name="encoding">The encoding used to encode the password.</param>
-        /// <returns>Returns a password in bytes.</returns>
-        byte[] GetRepresentation(Encoding encoding);
 
         /// <summary>
         /// Gets the password as a sequence of characters.
         /// </summary>
         /// <remarks>
-        /// Prefer to use <see cref="GetRepresentation"/> over <see cref="ToString"/>
-        /// to avoid leaving traces of the password in memory.
+        /// By default, this method should return a UTF-8 encoded string
+        /// which may vary from the originally encoded password.
+        /// <br/>
+        /// Prefer to use the implementing <see cref="IEnumerable{T}"/> of <see cref="byte"/>
+        /// over <see cref="ToString"/> to avoid leaving copies of the password in memory.
         /// </remarks>
         /// <returns>A password as a <see cref="string"/>.</returns>
         string ToString();

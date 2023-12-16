@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Routines.CreationRoutines
 {
@@ -52,16 +53,15 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         }
 
         /// <inheritdoc/>
-        public ICreationRoutine SetOptions(IReadOnlyDictionary<string, string> options)
+        public ICreationRoutine SetOptions(IDictionary<string, string?> options)
         {
             _configDataModel = new()
             {
                 Version = Constants.Vault.Versions.LATEST_VERSION,
-                ContentCipherId = options[Constants.Associations.ASSOC_CONTENT_CIPHER_ID],
-                FileNameCipherId = options[Constants.Associations.ASSOC_FILENAME_CIPHER_ID],
-                Specialization = options[Constants.Associations.ASSOC_SPECIALIZATION],
-                AuthenticationMethod = options[Constants.Associations.ASSOC_AUTHENTICATION],
-                Id = Guid.NewGuid().ToString(),
+                ContentCipherId = options.Get(Constants.Associations.ASSOC_CONTENT_CIPHER_ID) ?? Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305,
+                FileNameCipherId = options.Get(Constants.Associations.ASSOC_FILENAME_CIPHER_ID) ?? Core.Cryptography.Constants.CipherId.AES_SIV,
+                AuthenticationMethod = options.Get(Constants.Associations.ASSOC_AUTHENTICATION) ?? throw new InvalidOperationException("Cannot create vault without specifying the authentication method."),
+                Id = options.Get(Constants.Associations.ASSOC_VAULT_ID) ?? Guid.NewGuid().ToString(),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
 

@@ -2,7 +2,6 @@
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Shared.Utilities;
 using System;
 using System.Security.Cryptography;
 using System.Threading;
@@ -33,7 +32,7 @@ namespace SecureFolderFS.Core.Routines.CredentialsRoutines
         }
 
         /// <inheritdoc/>
-        public ICredentialsRoutine SetCredentials(IPassword password, SecretKey? magic)
+        public ICredentialsRoutine SetCredentials(SecretKey passkey)
         {
             ArgumentNullException.ThrowIfNull(_unlockContract);
 
@@ -44,9 +43,6 @@ namespace SecureFolderFS.Core.Routines.CredentialsRoutines
             // Generate new salt
             var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
             secureRandom.GetNonZeroBytes(salt);
-
-            // Construct passkey
-            using var passkey = VaultParser.ConstructPasskey(password, magic);
 
             // Generate keystore
             _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt);

@@ -10,24 +10,21 @@
             public const string REPOSITORY_OWNER = "securefolderfs-community";
         }
 
-        public static class LocalSettings
+        public static class FileNames
         {
+            public const string KEY_FILE_EXTENSION = ".key";
             public const string VAULTS_WIDGETS_FOLDERNAME = "vaults_widgets";
             public const string SETTINGS_FOLDER_NAME = "settings";
             public const string APPLICATION_SETTINGS_FILENAME = "application_settings.json";
             public const string SAVED_VAULTS_FILENAME = "saved_vaults.json";
             public const string USER_SETTINGS_FILENAME = "user_settings.json";
+            public const string THEME_PREFERENCE_SETTING = "ImmersiveTheme";
         }
 
         public static class AppThemes
         {
             public const string LIGHT_THEME = "LIGHT";
             public const string DARK_THEME = "DARK";
-        }
-
-        public static class AppLocalSettings
-        {
-            public const string THEME_PREFERENCE_SETTING = "ImmersiveTheme";
         }
 
         public static class Application

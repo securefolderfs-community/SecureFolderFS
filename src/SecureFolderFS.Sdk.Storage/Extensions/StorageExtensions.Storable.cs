@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         /// Tries to obtain path from the storable.
         /// </summary>
         /// <param name="storable">The storable item to get the path from.</param>
-        /// <returns>A path pointing to the <paramref name="storable"/> item, otherwise null.</returns>
+        /// <returns>A path pointing to the <paramref name="storable"/> item; otherwise null.</returns>
         public static string? TryGetPath(this IStorable storable)
         {
             return (storable as ILocatableStorable)?.Path;

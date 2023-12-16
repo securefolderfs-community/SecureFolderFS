@@ -33,6 +33,28 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public async Task<ILocatableFile?> SaveFileAsync(string suggestedName, IDictionary<string, string>? filter, CancellationToken cancellationToken = default)
+        {
+            var filePicker = new FileSavePicker();
+            WinRT.Interop.InitializeWithWindow.Initialize(filePicker, MainWindow.Instance.GetWindowHandle());
+
+            filePicker.SuggestedFileName = suggestedName;
+            if (filter is not null)
+            {
+                foreach (var item in filter)
+                    filePicker.FileTypeChoices.Add(item.Key, new[] { item.Value == "*" ? "." : item.Value });
+            }
+            else
+                filePicker.FileTypeChoices.Add("All Files", new[] { "." });
+
+            var file = await filePicker.PickSaveFileAsync().AsTask(cancellationToken);
+            if (file is null)
+                return null;
+
+            return new WindowsStorageFile(file);
+        }
+
+        /// <inheritdoc/>
         public async Task<ILocatableFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();

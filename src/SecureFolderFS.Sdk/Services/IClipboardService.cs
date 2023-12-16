@@ -11,7 +11,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Checks and requests permission to access clipboard.
         /// </summary>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is granted returns true, otherwise false.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If access is granted returns true; otherwise false.</returns>
         Task<bool> IsSupportedAsync();
 
         /// <summary>

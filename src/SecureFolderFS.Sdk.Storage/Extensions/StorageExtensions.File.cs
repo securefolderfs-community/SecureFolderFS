@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             return await file.OpenStreamAsync(access, cancellationToken);
         }
 
-        /// <returns>If successful, returns a <see cref="Stream"/>, otherwise null.</returns>
+        /// <returns>If successful, returns a <see cref="Stream"/>; otherwise null.</returns>
         /// <inheritdoc cref="IFile.OpenStreamAsync"/>
         public static async Task<Stream?> TryOpenStreamAsync(this IFile file, FileAccess access, CancellationToken cancellationToken = default)
         {
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             }
         }
 
-        /// <returns>If successful, returns a <see cref="Stream"/>, otherwise null.</returns>
+        /// <returns>If successful, returns a <see cref="Stream"/>; otherwise null.</returns>
         /// <inheritdoc cref="IFile.OpenStreamAsync"/>
         public static async Task<Stream?> TryOpenStreamAsync(this IFile file, FileAccess access, FileShare share = FileShare.None, CancellationToken cancellationToken = default)
         {
@@ -57,11 +57,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         {
             try
             {
-                return new CommonResult<Stream?>(await file.OpenStreamAsync(access, cancellationToken));
+                return CommonResult<Stream?>.Success(await file.OpenStreamAsync(access, cancellationToken));
             }
             catch (Exception ex)
             {
-                return new CommonResult<Stream?>(ex);
+                return CommonResult<Stream?>.Failure(ex);
             }
         }
 
@@ -72,14 +72,14 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 if (file is IFileExtended fileExtended)
-                    return new CommonResult<Stream?>(await fileExtended.OpenStreamAsync(access, share, cancellationToken));
+                    return CommonResult<Stream?>.Success(await fileExtended.OpenStreamAsync(access, share, cancellationToken));
 
                 // TODO: Check if the file inherits from ILockableStorable and ensure a disposable handle to it via Stream bridge
-                return new CommonResult<Stream?>(await file.OpenStreamAsync(access, cancellationToken));
+                return CommonResult<Stream?>.Success(await file.OpenStreamAsync(access, cancellationToken));
             }
             catch (Exception ex)
             {
-                return new CommonResult<Stream?>(ex);
+                return CommonResult<Stream?>.Failure(ex);
             }
         }
 

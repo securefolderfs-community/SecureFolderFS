@@ -27,17 +27,9 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is AuthCreationWizardViewModel viewModel)
-            {
                 ViewModel = viewModel;
-                ViewModel.PasswordGetter = FirstPassword.GetPassword;
-            }
 
             base.OnNavigatedTo(e);
-        }
-
-        private void Password_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-        {
-            ViewModel.PrimaryButtonEnabled = !string.IsNullOrWhiteSpace(FirstPassword.PasswordInput.Password) && FirstPassword.Equals(SecondPassword);
         }
     }
 }

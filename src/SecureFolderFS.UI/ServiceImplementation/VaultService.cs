@@ -2,30 +2,17 @@
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Vault;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Utilities;
 using SecureFolderFS.UI.AppModels;
-using SecureFolderFS.UI.ServiceImplementation.Vault;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultService"/>
     public sealed class VaultService : IVaultService
     {
-        /// <inheritdoc/>
-        public IVaultCreator VaultCreator { get; } = new VaultCreator();
-
-        /// <inheritdoc/>
-        public IVaultUnlocker VaultUnlocker { get; } = new VaultUnlocker();
-
-        /// <inheritdoc/>
-        public IVaultAuthenticator VaultAuthenticator { get; } = new VaultAuthenticator();
-
         /// <inheritdoc/>
         public IAsyncValidator<IFolder> VaultValidator { get; } = new VaultValidator(StreamSerializer.Instance);
 

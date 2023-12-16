@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.Models
         /// Locks the vault folder preventing the deletion of it.
         /// </summary>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a lock handle represented by <see cref="IAsyncDisposable"/>, otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns a lock handle represented by <see cref="IAsyncDisposable"/>; otherwise null.</returns>
         Task<IDisposable?> LockFolderAsync(CancellationToken cancellationToken = default);
     }
 }

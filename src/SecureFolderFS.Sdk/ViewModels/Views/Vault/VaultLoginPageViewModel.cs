@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
         [ObservableProperty] private string? _VaultName;
-        [ObservableProperty] private LoginViewModel _LoginViewModel;
+        [ObservableProperty] private LoginControlViewModel _LoginViewModel;
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
             : base(vaultViewModel, navigationService)

@@ -5,28 +5,78 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.WinUI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.WinUI.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.WinUI.UserControls"
     xmlns:ucab="using:SecureFolderFS.WinUI.UserControls.ActionBlocks"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Views.Vault"
+    xmlns:vm3="using:SecureFolderFS.UI.ViewModels"
+    xmlns:vm4="using:SecureFolderFS.WinUI.ViewModels"
     Width="464"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="PasswordTemplate">
+        <!--  Password Template  -->
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm3:PasswordCreationViewModel">
             <StackPanel Spacing="16">
                 <uc:PasswordControl
                     x:Name="FirstPassword"
                     Title="{l:ResourceString Name=NewPassword}"
-                    PasswordChanged="Password_PasswordChanged" />
+                    UnsecurePassword="{x:Bind PrimaryPassword, Mode=TwoWay}" />
                 <uc:PasswordControl
                     x:Name="SecondPassword"
                     Title="{l:ResourceString Name=RepeatPassword}"
-                    PasswordChanged="Password_PasswordChanged" />
+                    UnsecurePassword="{x:Bind SecondaryPassword, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="WindowsHelloTemplate">
-            <StackPanel>
-                <Button />
+
+        <!--  Key File Template  -->
+        <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm3:KeyFileCreationViewModel">
+            <StackPanel Spacing="24">
+                <!--  Logo  -->
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    Glyph="&#xE8D7;" />
+
+                <!--  Title  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="Setup Key File authentication" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand}"
+                    Content="Setup"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!--  Windows Hello Template  -->
+        <DataTemplate x:Key="WindowsHelloTemplate" x:DataType="vm4:WindowsHelloCreationViewModel">
+            <StackPanel Spacing="24">
+                <!--  Logo  -->
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    FontSize="38"
+                    Glyph="&#xEB68;" />
+
+                <!--  Title  -->
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.8"
+                    Text="Setup Windows Hello authentication" />
+
+                <!--  Authenticate  -->
+                <Button
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ProvideCredentialsCommand}"
+                    Content="Setup"
+                    Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
@@ -46,25 +96,23 @@
                 <FontIcon Glyph="&#xEC19;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ActionElement>
-                <ComboBox>
-                    <ComboBox.Items>
-                        <ComboBoxItem Content="Password" />
-                        <ComboBoxItem Content="Windows Hello" />
-                    </ComboBox.Items>
+                <ComboBox ItemsSource="{x:Bind ViewModel.AuthenticationOptions}" SelectedItem="{x:Bind ViewModel.CurrentViewModel, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm2:AuthenticationViewModel">
+                            <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </ucab:ActionBlockControl.ActionElement>
             <ucab:ActionBlockControl.ExpanderContent>
-                <!--<ContentControl HorizontalContentAlignment="Stretch" ContentTemplate="{StaticResource PasswordTemplate}" />-->
-                <StackPanel Spacing="16">
-                    <uc:PasswordControl
-                        x:Name="FirstPassword"
-                        Title="{l:ResourceString Name=NewPassword}"
-                        PasswordChanged="Password_PasswordChanged" />
-                    <uc:PasswordControl
-                        x:Name="SecondPassword"
-                        Title="{l:ResourceString Name=RepeatPassword}"
-                        PasswordChanged="Password_PasswordChanged" />
-                </StackPanel>
+                <ContentControl HorizontalContentAlignment="Stretch" Content="{x:Bind ViewModel.CurrentViewModel, Mode=OneWay}">
+                    <ContentControl.ContentTemplateSelector>
+                        <ts:WizardAuthenticationTemplateSelector
+                            KeyFileTemplate="{StaticResource KeyFileTemplate}"
+                            PasswordTemplate="{StaticResource PasswordTemplate}"
+                            WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />
+                    </ContentControl.ContentTemplateSelector>
+                </ContentControl>
             </ucab:ActionBlockControl.ExpanderContent>
         </ucab:ActionBlockControl>
 

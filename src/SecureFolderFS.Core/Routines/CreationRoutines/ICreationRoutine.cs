@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
     {
         ICreationRoutine SetCredentials(SecretKey passkey);
 
-        ICreationRoutine SetOptions(IReadOnlyDictionary<string, string> options);
+        ICreationRoutine SetOptions(IDictionary<string, string?> options);
 
         Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken);
     }
