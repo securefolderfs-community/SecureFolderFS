@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);$(DotNetVersion)-windows10.0.19041</TargetFrameworks>
     <TargetFrameworks>$(TargetFrameworks);$(DotNetVersion);$(DotNetVersion)-android;$(DotNetVersion)-ios;$(DotNetVersion)-maccatalyst</TargetFrameworks>
@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Uno.WinUI" />
     <PackageReference Include="Uno.Resizetizer" />
@@ -60,6 +59,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ResourceDictionaries\ColorResources.xaml" />
+    <None Remove="ResourceDictionaries\ImageResources.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <None Remove="UserControls\BannerControl.xaml" />
@@ -97,6 +98,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
+    <UpToDateCheckInput Remove="ResourceDictionaries\ImageResources.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\BannerControl.xaml" />
@@ -142,6 +145,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="ResourceDictionaries\ColorResources.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ResourceDictionaries\ImageResources.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserControls\ActionBlocks\ActionBlockContentControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>

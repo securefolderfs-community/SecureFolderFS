@@ -11,6 +11,7 @@
     <PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.6" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI" Version="7.1.200" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Animations" Version="7.1.200" />
+    <PackageVersion Include="Uno.Core.Extensions.Logging" Version="4.0.1" />
     <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
     <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
     <PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />

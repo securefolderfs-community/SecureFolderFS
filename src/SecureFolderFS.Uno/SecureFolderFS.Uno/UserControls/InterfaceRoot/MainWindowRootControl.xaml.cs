@@ -26,7 +26,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.HostNavigationService.SetupNavigation(this.Navigation);
+            ViewModel.HostNavigationService.SetupNavigation(Navigation);
             _ = EnsureRootAsync();
         }
 

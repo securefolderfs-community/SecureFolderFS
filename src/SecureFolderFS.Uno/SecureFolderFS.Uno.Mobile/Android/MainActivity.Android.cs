@@ -1,10 +1,7 @@
 using Android.App;
-using Android.Content.PM;
-using Android.OS;
 using Android.Views;
-using Android.Widget;
 
-namespace SecureFolderFSUno.Droid;
+namespace SecureFolderFS.Uno.Droid;
 
 [Activity(
     MainLauncher = true,

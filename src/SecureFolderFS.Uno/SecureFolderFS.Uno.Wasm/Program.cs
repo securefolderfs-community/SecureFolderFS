@@ -1,4 +1,4 @@
-namespace SecureFolderFSUno.Wasm;
+namespace SecureFolderFS.Uno.Wasm;
 
 public class Program
 {

@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.Uno.Views.Vault;
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace SecureFolderFS.Uno.UserControls.Navigation
 {
     /// <inheritdoc cref="FrameNavigationControl"/>
-    internal sealed class VaultDashboardNavigationControl : FrameNavigationControl
+    internal sealed partial class VaultDashboardNavigationControl : FrameNavigationControl
     {
         private bool _isFirstTime = true;
 

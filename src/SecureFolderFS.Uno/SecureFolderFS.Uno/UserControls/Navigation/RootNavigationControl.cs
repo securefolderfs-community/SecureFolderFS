@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using System;
 using System.Threading.Tasks;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Uno.UserControls.Navigation
 {
     /// <inheritdoc cref="ContentNavigationControl"/>
-    internal sealed class RootNavigationControl : ContentNavigationControl
+    internal sealed partial class RootNavigationControl : ContentNavigationControl
     {
         /// <inheritdoc/>
         protected override Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTarget : default where TTransition : class

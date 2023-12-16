@@ -1,6 +1,6 @@
 using UIKit;
 
-namespace SecureFolderFSUno.iOS;
+namespace SecureFolderFS.Uno.iOS;
 
 public class EntryPoint
 {

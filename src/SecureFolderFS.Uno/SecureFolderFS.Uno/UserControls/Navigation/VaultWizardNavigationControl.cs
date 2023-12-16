@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.Uno.Views.VaultWizard;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace SecureFolderFS.Uno.UserControls.Navigation
 {
     /// <inheritdoc cref="FrameNavigationControl"/>
-    internal sealed class VaultWizardNavigationControl : FrameNavigationControl
+    internal sealed partial class VaultWizardNavigationControl : FrameNavigationControl
     {
         /// <inheritdoc/>
         public override Dictionary<Type, Type> TypeBinding { get; } = new()

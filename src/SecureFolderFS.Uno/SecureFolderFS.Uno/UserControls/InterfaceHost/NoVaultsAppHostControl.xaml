@@ -23,11 +23,11 @@
             </Grid.RowDefinitions>
 
             <!--  Banner  -->
-            <Image
+            <!--<Image
                 Grid.Row="0"
                 Width="296"
                 Stretch="UniformToFill"
-                Style="{ThemeResource AddNewVaultBanner}" />
+                Style="{ThemeResource AddNewVaultBanner}" />-->
 
             <!--  Title  -->
             <StackPanel Grid.Row="1" Spacing="3">

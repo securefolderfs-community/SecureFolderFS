@@ -1,6 +1,6 @@
 using UIKit;
 
-namespace SecureFolderFSUno.MacCatalyst;
+namespace SecureFolderFS.Uno.MacCatalyst;
 
 public class EntryPoint
 {

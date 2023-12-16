@@ -15,6 +15,7 @@ using SecureFolderFS.UI.Storage.NativeStorage;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 using Windows.Storage;
+using SecureFolderFS.Uno.ServiceImplementation;
 
 #if !UNPACKAGED
 //using Windows.Storage;
@@ -103,16 +104,6 @@ namespace SecureFolderFS.Uno
 #endif
         }
 
-        /// <summary>
-        /// Invoked when Navigation to a certain page fails
-        /// </summary>
-        /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
-            throw new InvalidOperationException($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
-        }
-
         private IServiceProvider ConfigureServices(IModifiableFolder settingsFolder)
         {
             var serviceCollection = new ServiceCollection()
@@ -126,13 +117,13 @@ namespace SecureFolderFS.Uno
                 //.AddSingleton<IClipboardService, ClipboardService>()
                 //.AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<IStorageService, NativeStorageService>()
-                //.AddSingleton<IApplicationService, ApplicationService>()
+                .AddSingleton<IApplicationService, ApplicationService>()
                 //.AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
                 //.AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
 
                 // Transient services
-                //.AddTransient<INavigationService, WindowsNavigationService>()
+                .AddTransient<INavigationService, WindowsNavigationService>()
 
                 // ILocalizationService
 #if UNPACKAGED
@@ -152,9 +143,9 @@ namespace SecureFolderFS.Uno
 
                 // ITelemetryService
 #if DEBUG
-                //.AddSingleton<ITelemetryService, AppCenterTelemetryService>()
-#else
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
+#else
+                .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
 #endif
 
                 ; // Finish service initialization

@@ -5,9 +5,9 @@
     <SingleProject>true</SingleProject>
     <OutputType>Exe</OutputType>
     <!-- Display name -->
-    <ApplicationTitle>SecureFolderFSUno</ApplicationTitle>
+    <ApplicationTitle>SecureFolderFS</ApplicationTitle>
     <!-- App Identifier -->
-    <ApplicationId>com.companyname.SecureFolderFSUno</ApplicationId>
+    <ApplicationId>com.companyname.SecureFolderFS</ApplicationId>
     <ApplicationIdGuid>893737E0-7414-45DE-94C7-3FC0E7710FA6</ApplicationIdGuid>
     <!-- Versions -->
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -71,9 +71,8 @@
   </Choose>
   <ItemGroup>
     <ProjectReference Include="..\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj" />
-    <ProjectReference Include="..\SecureFolderFSUno\SecureFolderFSUno.csproj" />
   </ItemGroup>
-  <Import Project="..\SecureFolderFSUno.Shared\base.props" />
+  <Import Project="..\SecureFolderFS.Uno.Shared\base.props" />
 
   <Target Name="ValidateOverrides" BeforeTargets="Restore;_CheckForUnsupportedTargetFramework" Condition="'$(OverrideTargetFramework)' != ''">
     <Error Text="OverrideTargetFramework set to '$(OverrideTargetFramework)' is missing valid target. Set OverrideTargetFramework to one of the TargetFrameworks for this project or skip building this project (eg unload the project in Visual Studio)" Condition="$(OverrideTargetFramework.Contains('windows10')) or !$(OverrideTargetFrameork.Contains('-'))" />

@@ -55,7 +55,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno" />
     <PackageReference Include="Microsoft.Windows.Compatibility" />
     <PackageReference Include="Uno.Wasm.Bootstrap" />
     <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
@@ -67,9 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj" />
-    <ProjectReference Include="..\SecureFolderFSUno\SecureFolderFSUno.csproj" />
   </ItemGroup>
-  <Import Project="..\SecureFolderFSUno.Shared\base.props" />
+  <Import Project="..\SecureFolderFS.Uno.Shared\base.props" />
 
   <Target Name="ValidateOverrides" BeforeTargets="Restore;_CheckForUnsupportedTargetFramework" Condition="'$(OverrideTargetFramework)' != ''">
     <Error Text="OverrideTargetFramework set to '$(OverrideTargetFramework)' is invalid. Set OverrideTargetFramework to $([MSBuild]::Escape('$'))(DotNetVersion) or skip building this project (eg unload the project in Visual Studio)" Condition="'$(OverrideTargetFramework)'!='$(DotNetVersion)'" />

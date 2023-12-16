@@ -47,7 +47,7 @@ namespace SecureFolderFS.Uno
 #if __WASM__
             builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #elif __IOS__ || __MACCATALYST__
-            builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
+            //builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #elif NETFX_CORE
             builder.AddDebug();
 #else
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Uno
             global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
 
 #if HAS_UNO
-        global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
+        //global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
 #endif
 #endif
         }

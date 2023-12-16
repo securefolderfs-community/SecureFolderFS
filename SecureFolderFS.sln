@@ -49,13 +49,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Migrati
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{569EE399-94F3-47F1-A626-6A28E3C7D2B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno", "src\SecureFolderFS.Uno\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj", "{975DE5F9-5816-4030-8AE7-816F74FDD8C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno", "src\SecureFolderFS.Uno\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj", "{975DE5F9-5816-4030-8AE7-816F74FDD8C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno.Shared", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Shared\SecureFolderFS.Uno.Shared.csproj", "{031FB209-C085-4D75-B9D8-E84E74DDB370}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno.Shared", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Shared\SecureFolderFS.Uno.Shared.csproj", "{031FB209-C085-4D75-B9D8-E84E74DDB370}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno.Mobile", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Mobile\SecureFolderFS.Uno.Mobile.csproj", "{32DE14EA-EEFE-4FB0-B049-870F18317DA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno.Windows", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Windows\SecureFolderFS.Uno.Windows.csproj", "{623E7641-4017-45F5-BDEA-29AC8C5B2F2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno.Windows", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Windows\SecureFolderFS.Uno.Windows.csproj", "{623E7641-4017-45F5-BDEA-29AC8C5B2F2E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno.Wasm", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Wasm\SecureFolderFS.Uno.Wasm.csproj", "{5EFC8E3F-467F-4A7E-810D-983E264E2A62}"
 EndProject
@@ -129,7 +129,6 @@ Global
 		{F39F513C-C0C6-4038-8279-1CB1FF24A666}.Debug|arm64.Deploy.0 = Debug|arm64
 		{F39F513C-C0C6-4038-8279-1CB1FF24A666}.Debug|x64.ActiveCfg = Debug|x64
 		{F39F513C-C0C6-4038-8279-1CB1FF24A666}.Debug|x64.Build.0 = Debug|x64
-		{F39F513C-C0C6-4038-8279-1CB1FF24A666}.Debug|x64.Deploy.0 = Debug|x64
 		{F39F513C-C0C6-4038-8279-1CB1FF24A666}.Debug|x86.ActiveCfg = Debug|x86
 		{F39F513C-C0C6-4038-8279-1CB1FF24A666}.Debug|x86.Build.0 = Debug|x86
 		{F39F513C-C0C6-4038-8279-1CB1FF24A666}.Debug|x86.Deploy.0 = Debug|x86

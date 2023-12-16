@@ -132,9 +132,9 @@ namespace SecureFolderFS.WinUI
 
                 // ITelemetryService
 #if DEBUG
-                .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
-#else
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
+#else
+                .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
 #endif
                 
                 ; // Finish service initialization
