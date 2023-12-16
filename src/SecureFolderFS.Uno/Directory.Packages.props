@@ -1,0 +1,30 @@
+﻿<Project ToolsVersion="15.0">
+  <ItemGroup>
+    <PackageVersion Include="LiveCharts" Version="0.9.7" />
+    <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno" Version="2.0.0-rc2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.4.231008000" />
+    <PackageVersion Include="SkiaSharp.Skottie" Version="2.88.6" />
+    <PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.6" />
+    <PackageVersion Include="Uno.CommunityToolkit.WinUI" Version="7.1.200" />
+    <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Animations" Version="7.1.200" />
+    <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
+    <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
+    <PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
+    <PackageVersion Include="Uno.Resizetizer" Version="1.2.1" />
+    <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.0.64" />
+    <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.4" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="8.0.4" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="8.0.4" />
+    <PackageVersion Include="Uno.WinUI" Version="5.0.64" />
+    <PackageVersion Include="Uno.WinUI.Lottie" Version="5.0.64" />
+    <PackageVersion Include="Uno.WinUI.DevServer" Version="5.0.64" />
+    <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.0.64" />
+    <PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.0.64" />
+    <PackageVersion Include="Xamarin.Google.Android.Material" Version="1.10.0.1" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,75 @@
+﻿<Page
+    x:Class="SecureFolderFS.Uno.Views.Vault.VaultPropertiesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    NavigationCacheMode="Disabled"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="4">
+        <ucab:ActionBlockControl Title="{l:ResourceString Name=VaultInformation}" IsExpanded="True">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE946;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ExpanderContent>
+                <Grid Padding="32,0,32,0" ColumnSpacing="32">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="{l:ResourceString Name=DataEncryption}" />
+                        <TextBlock Text="{l:ResourceString Name=FileNameEncryption}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.ContentCipherName}" />
+                        <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.FileNameCipherName}" />
+                    </StackPanel>
+                </Grid>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+        <ucab:ActionBlockControl
+            Title="{l:ResourceString Name=ChangePassword}"
+            ClickCommand="{x:Bind ViewModel.ChangePasswordCommand}"
+            Description="{l:ResourceString Name=ChangePasswordDescription}"
+            IsClickable="True">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xE8D7;" />
+            </ucab:ActionBlockControl.Icon>
+        </ucab:ActionBlockControl>
+
+        <ucab:ActionBlockControl
+            x:Name="AuthControl"
+            Title="Two-factor authentication"
+            x:Load="False"
+            Description="Setup or change two-factor authentication">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xEC19;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
+                <Button Content="Setup" />
+            </ucab:ActionBlockControl.ActionElement>
+        </ucab:ActionBlockControl>
+        <ucab:ActionBlockControl
+            Title="Two-factor authentication"
+            Description="Setup or change two-factor authentication"
+            IsExpanded="True"
+            Visibility="Visible">
+            <ucab:ActionBlockControl.Icon>
+                <FontIcon Glyph="&#xEC19;" />
+            </ucab:ActionBlockControl.Icon>
+            <ucab:ActionBlockControl.ActionElement>
+                <Button Command="{x:Bind ViewModel.ChangeAuthenticationCommand}" Content="Change" />
+            </ucab:ActionBlockControl.ActionElement>
+            <ucab:ActionBlockControl.ExpanderContent>
+                <Grid>
+                    <TextBlock Text="Windows Hello authentication has been set up for this vault." />
+                </Grid>
+            </ucab:ActionBlockControl.ExpanderContent>
+        </ucab:ActionBlockControl>
+    </StackPanel>
+</Page>

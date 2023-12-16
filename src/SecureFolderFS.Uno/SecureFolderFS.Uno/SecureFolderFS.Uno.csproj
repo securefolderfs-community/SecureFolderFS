@@ -1,0 +1,259 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);$(DotNetVersion)-windows10.0.19041</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);$(DotNetVersion);$(DotNetVersion)-android;$(DotNetVersion)-ios;$(DotNetVersion)-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OverrideTargetFramework)'!=''">$(OverrideTargetFramework)</TargetFrameworks>
+
+    <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Uno.WinUI" />
+    <PackageReference Include="Uno.Resizetizer" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+  </ItemGroup>
+
+
+  <Choose>
+    <When Condition="$(IsWinAppSdk)">
+      <PropertyGroup>
+        <!--
+        If you encounter this error message:
+
+          error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+          Please update to a newer .NET SDK in order to reference this assembly.
+
+        This means that the two packages below must be aligned with the "build" version number of
+        the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+        must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+        -->
+        <!-- <WindowsSdkPackageVersion>10.0.22621.28</WindowsSdkPackageVersion> -->
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.WindowsAppSDK" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="Uno.WinUI.Lottie" />
+        <PackageReference Include="Uno.WinUI.DevServer" Condition="'$(Configuration)'=='Debug'" />
+
+        <!-- Include all images by default - matches the __WindowsAppSdkDefaultImageIncludes property in the WindowsAppSDK -->
+        <Content Include="Assets\**;**/*.png;**/*.bmp;**/*.jpg;**/*.dds;**/*.tif;**/*.tga;**/*.gif" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder);**\*.svg" />
+        <Page Include="**\*.xaml" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+        <Compile Update="**\*.xaml.cs">
+          <DependentUpon>%(Filename)</DependentUpon>
+        </Compile>
+        <PRIResource Include="**\*.resw" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+
+  <ItemGroup>
+    <UnoImage Include="Assets\**\*.svg" />
+    <UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
+    <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
+    <None Remove="UserControls\BannerControl.xaml" />
+    <None Remove="UserControls\GraphControl.xaml" />
+    <None Remove="UserControls\InstallationControl.xaml" />
+    <None Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
+    <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
+    <None Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
+    <None Remove="UserControls\Introduction\AgreementScreen.xaml" />
+    <None Remove="UserControls\Introduction\EndScreen.xaml" />
+    <None Remove="UserControls\Introduction\IntroductionControl.xaml" />
+    <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
+    <None Remove="UserControls\LoginControl.xaml" />
+    <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
+    <None Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
+    <None Remove="UserControls\OverlayControl.xaml" />
+    <None Remove="UserControls\PasswordControl.xaml" />
+    <None Remove="UserControls\TitleBarControl.xaml" />
+    <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
+    <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
+    <None Remove="UserControls\Widgets\HealthWidget.xaml" />
+    <None Remove="Views\PrintPages\MasterKeyPrintPage.xaml" />
+    <None Remove="Views\Settings\AboutSettingsPage.xaml" />
+    <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
+    <None Remove="Views\Settings\PreferencesSettingsPage.xaml" />
+    <None Remove="Views\Settings\PrivacySettingsPage.xaml" />
+    <None Remove="Views\VaultWizard\AuthCreationWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\MainWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\RecoveryKeyWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
+    <None Remove="Views\Vault\VaultDashboardPage.xaml" />
+    <None Remove="Views\Vault\VaultLoginPage.xaml" />
+    <None Remove="Views\Vault\VaultOverviewPage.xaml" />
+    <None Remove="Views\Vault\VaultPropertiesPage.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\BannerControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\GraphControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\InstallationControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Introduction\AgreementScreen.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Introduction\EndScreen.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Introduction\IntroductionControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Introduction\WelcomeScreen.xaml" />
+    <UpToDateCheckInput Remove="UserControls\LoginControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\OverlayControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\PasswordControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\TitleBarControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\VaultFolderSelectionControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Widgets\GraphsWidget.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Widgets\HealthWidget.xaml" />
+    <UpToDateCheckInput Remove="Views\PrintPages\MasterKeyPrintPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Settings\AboutSettingsPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Settings\GeneralSettingsPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Settings\PreferencesSettingsPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Settings\PrivacySettingsPage.xaml" />
+    <UpToDateCheckInput Remove="Views\VaultWizard\AuthCreationWizardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\VaultWizard\MainWizardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\VaultWizard\RecoveryKeyWizardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Vault\VaultDashboardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
+    <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
+    <ProjectReference Include="..\..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj" />
+    <ProjectReference Include="..\..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
+    <ProjectReference Include="..\..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+    <ProjectReference Include="..\..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UserControls\ActionBlocks\ActionBlockContentControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\ActionBlocks\ActionBlockControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\BannerControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\GraphControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\InstallationControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\InterfaceHost\MainAppHostControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\InterfaceRoot\MainWindowRootControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\Introduction\AgreementScreen.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\Introduction\EndScreen.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\Introduction\IntroductionControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\Introduction\WelcomeScreen.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\LoginControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\Navigation\ContentNavigationControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\Navigation\FrameNavigationControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\OverlayControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\PasswordControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\TitleBarControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\VaultFolderSelectionControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="UserControls\Widgets\GraphsWidget.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\Widgets\HealthWidget.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\PrintPages\MasterKeyPrintPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Settings\AboutSettingsPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Settings\GeneralSettingsPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Settings\PreferencesSettingsPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Settings\PrivacySettingsPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\VaultWizard\AuthCreationWizardPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\VaultWizard\MainWizardPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\VaultWizard\RecoveryKeyWizardPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\VaultWizard\SummaryWizardPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Vault\VaultDashboardPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Vault\VaultLoginPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Vault\VaultOverviewPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Vault\VaultPropertiesPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+  </ItemGroup>
+</Project>
