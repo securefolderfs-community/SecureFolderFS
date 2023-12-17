@@ -12,7 +12,6 @@
     xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Views.Vault"
     xmlns:vm3="using:SecureFolderFS.UI.ViewModels"
     xmlns:vm4="using:SecureFolderFS.Uno.ViewModels"
-    Width="464"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -127,7 +126,7 @@
                 <FontIcon Glyph="&#xE90F;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ExpanderContent>
-                <Grid MinWidth="400" RowSpacing="16">
+                <Grid HorizontalAlignment="Stretch" RowSpacing="16">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />

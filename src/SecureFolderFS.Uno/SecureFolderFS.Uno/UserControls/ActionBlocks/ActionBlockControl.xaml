@@ -79,7 +79,10 @@
                         Description="{Binding Description, Mode=OneWay, FallbackValue={x:Null}}"
                         Icon="{Binding Icon, Mode=OneWay}" />
                 </Expander.Header>
-                <ContentControl HorizontalAlignment="Stretch" Content="{Binding ExpanderContent, Mode=OneWay}" />
+                <ContentControl
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    Content="{Binding ExpanderContent, Mode=OneWay}" />
             </Expander>
         </DataTemplate>
     </UserControl.Resources>
