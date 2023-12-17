@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(DotNetVersion)-android;$(DotNetVersion)-ios;$(DotNetVersion)-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OverrideTargetFramework)'!=''">$(OverrideTargetFramework)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OverrideTargetFrameworks)'!=''">$(OverrideTargetFrameworks)</TargetFrameworks>
     <SingleProject>true</SingleProject>
     <OutputType>Exe</OutputType>
     <!-- Display name -->
@@ -33,7 +33,6 @@
   <Choose>
     <When Condition="$(IsAndroid)">
       <ItemGroup>
-
         <PackageReference Include="Xamarin.Google.Android.Material" />
         <PackageReference Include="Uno.UniversalImageLoader" />
       </ItemGroup>
@@ -69,12 +68,15 @@
       </PropertyGroup>
     </When>
   </Choose>
+
   <ItemGroup>
     <ProjectReference Include="..\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj" />
   </ItemGroup>
-  <Import Project="..\SecureFolderFS.Uno.Shared\base.props" />
 
-  <Target Name="ValidateOverrides" BeforeTargets="Restore;_CheckForUnsupportedTargetFramework" Condition="'$(OverrideTargetFramework)' != ''">
-    <Error Text="OverrideTargetFramework set to '$(OverrideTargetFramework)' is missing valid target. Set OverrideTargetFramework to one of the TargetFrameworks for this project or skip building this project (eg unload the project in Visual Studio)" Condition="$(OverrideTargetFramework.Contains('windows10')) or !$(OverrideTargetFrameork.Contains('-'))" />
+  <Import Project="..\SecureFolderFS.Uno.Shared\base.props" />
+  <Import Project="..\..\..\targetframework-override.props" />
+
+  <Target Name="ValidateOverrides" BeforeTargets="Restore;_CheckForUnsupportedTargetFramework" Condition="'$(OverrideTargetFrameworks)' != ''">
+    <Error Text="OverrideTargetFrameworks set to '$(OverrideTargetFrameworks)' is missing valid target. Set OverrideTargetFrameworks to one of the TargetFrameworks for this project or skip building this project (eg unload the project in Visual Studio)" Condition="$(OverrideTargetFrameworks.Contains('windows10')) or !$(OverrideTargetFrameworks.Contains('-'))" />
   </Target>
 </Project>

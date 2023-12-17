@@ -23,7 +23,7 @@
   </ItemGroup>
   <Import Project="..\SecureFolderFS.Uno.Shared\base.props" />
 
-  <Target Name="ValidateOverrides" BeforeTargets="Restore;_CheckForUnsupportedTargetFramework" Condition="'$(OverrideTargetFramework)' != ''">
-    <Error Text="OverrideTargetFramework set to '$(OverrideTargetFramework)' is invalid. Set OverrideTargetFramework to $([MSBuild]::Escape('$'))(DotNetVersion) or skip building this project (eg unload the project in Visual Studio)" Condition="'$(OverrideTargetFramework)'!='$(DotNetVersion)'" />
+  <Target Name="ValidateOverrides" BeforeTargets="Restore;_CheckForUnsupportedTargetFramework" Condition="'$(OverrideTargetFrameworks)' != ''">
+    <Error Text="OverrideTargetFrameworks set to '$(OverrideTargetFrameworks)' is invalid. Set OverrideTargetFrameworks to $([MSBuild]::Escape('$'))(DotNetVersion) or skip building this project (eg unload the project in Visual Studio)" Condition="'$(OverrideTargetFrameworks)'!='$(DotNetVersion)'" />
   </Target>
 </Project>

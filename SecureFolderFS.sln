@@ -59,6 +59,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno.Wasm", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno.Skia.Gtk", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Skia.Gtk\SecureFolderFS.Uno.Skia.Gtk.csproj", "{88937B63-7F02-4B07-9B15-DDA5312744F2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{6DDF68B5-BAC2-4DE8-A024-7C06801D89F4}"
+	ProjectSection(SolutionItems) = preProject
+		solution-config.props = solution-config.props
+		solution-config.props.sample = solution-config.props.sample
+		targetframework-override.props = targetframework-override.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
