@@ -115,11 +115,11 @@
                         Opacity="0.8" />
                     <TextBlock Opacity="0.8" Text="{x:Bind NewVersion, Mode=OneWay}" />
                 </StackPanel>
-                <Grid x:Name="VersionInfo2" x:Load="{x:Bind CurrentVersion, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}">
+                <Grid x:Name="VersionInfo2" x:Load="{x:Bind CurrentVersion, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}">
                     <TextBlock
                         x:Name="VersionInfo3"
                         HorizontalAlignment="Center"
-                        x:Load="{x:Bind NewVersion, Converter={StaticResource NullToBoolConverter}}"
+                        x:Load="{x:Bind NewVersion, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                         Opacity="0.8"
                         Text="{x:Bind NewVersion, Mode=OneWay}" />
                 </Grid>

@@ -25,7 +25,7 @@
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="True"
         IsSettingsVisible="False"
-        MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems}"
+        MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems, Mode=OneWay}"
         OpenPaneLength="260"
         PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|MyVaults'}"
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -36,7 +36,7 @@
 
         <NavigationView.AutoSuggestBox>
             <AutoSuggestBox
-                ItemsSource="{x:Bind ViewModel.SidebarViewModel.SearchViewModel.SearchItems}"
+                ItemsSource="{x:Bind ViewModel.SidebarViewModel.SearchViewModel.SearchItems, Mode=OneWay}"
                 PlaceholderText="{l:ResourceString Name=Search}"
                 QueryIcon="Find"
                 QuerySubmitted="SidebarSearchBox_QuerySubmitted"

@@ -30,14 +30,14 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         /// <inheritdoc/>
         public void Receive(RemoveVaultMessage message)
         {
-            if (ViewModel.SidebarViewModel.SidebarItems.IsEmpty())
-                Navigation.ClearContent();
+            if (ViewModel?.SidebarViewModel.SidebarItems.IsEmpty() ?? false)
+                Navigation?.ClearContent();
         }
 
         /// <inheritdoc/>
         public void Receive(AddVaultMessage message)
         {
-            if (ViewModel.SidebarViewModel.SidebarItems.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
+            if (ViewModel?.SidebarViewModel.SidebarItems.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
                 && !SettingsService.AppSettings.WasBetaNotificationShown1)
             {
                 BetaTeachingTip.IsOpen = true;
@@ -46,6 +46,10 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async Task NavigateToItem(VaultViewModel vaultViewModel)
         {
+            await SetupNavigationAsync();
+            if (ViewModel is null)
+                return;
+            
             // Find existing target or create new
             var target = ViewModel.NavigationService.Targets.FirstOrDefault(x => (x as BaseVaultPageViewModel)?.VaultViewModel == vaultViewModel);
             target ??= new VaultLoginPageViewModel(vaultViewModel, ViewModel.NavigationService);
@@ -54,14 +58,21 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             await ViewModel.NavigationService.NavigateAsync(target);
         }
 
+        private async Task SetupNavigationAsync()
+        {
+            if (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? false)
+            {
+                await ViewModel.InitAsync();
+                Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
+            }
+        }
+
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.SetupNavigation(this.Navigation);
             WeakReferenceMessenger.Default.Register<RemoveVaultMessage>(this);
             WeakReferenceMessenger.Default.Register<AddVaultMessage>(this);
 
-            await ViewModel.InitAsync();
-            Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
+            await SetupNavigationAsync();
         }
 
         private async void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -92,9 +103,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             await SettingsService.AppSettings.TrySaveAsync();
         }
 
-        public MainHostViewModel ViewModel
+        public MainHostViewModel? ViewModel
         {
-            get => (MainHostViewModel)GetValue(ViewModelProperty);
+            get => (MainHostViewModel?)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly DependencyProperty ViewModelProperty =

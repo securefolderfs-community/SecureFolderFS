@@ -6,10 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:not_win="http://uno.ui/not_win"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     Width="464"
-    mc:Ignorable="d">
+    mc:Ignorable="d not_win">
 
-    <Grid RowSpacing="32">
+    <Grid RowSpacing="32" Margin="0 8 0 0">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
@@ -22,14 +24,15 @@
             Spacing="8">
             <Grid Width="32" Height="32">
                 <Ellipse Margin="0,-2,0,2" Fill="LimeGreen" />
-                <AnimatedVisualPlayer
+                <not_win:FontIcon FontSize="18" Glyph="&#xE73E;" />
+                <win:AnimatedVisualPlayer
                     x:Name="VisualPlayer"
                     AutoPlay="False"
                     Loaded="VisualPlayer_Loaded">
                     <AnimatedVisualPlayer.Source>
                         <animvis:AnimatedAcceptVisualSource x:Name="CheckVisualSource" />
                     </AnimatedVisualPlayer.Source>
-                </AnimatedVisualPlayer>
+                </win:AnimatedVisualPlayer>
             </Grid>
             <TextBlock FontSize="20" Text="{l:ResourceString Name=VaultAdded}" />
         </StackPanel>
@@ -38,8 +41,8 @@
             Grid.Row="1"
             HorizontalAlignment="Center"
             Opacity="0.8"
-            Text="{x:Bind ViewModel.VaultName}"
+            Text="{x:Bind ViewModel.VaultName, Mode=OneWay}"
             TextTrimming="CharacterEllipsis"
-            ToolTipService.ToolTip="{x:Bind ViewModel.VaultName}" />
+            ToolTipService.ToolTip="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
     </Grid>
 </Page>

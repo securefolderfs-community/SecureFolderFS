@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -11,12 +12,13 @@ namespace SecureFolderFS.Uno.Views.Vault
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    [INotifyPropertyChanged]
     public sealed partial class VaultOverviewPage : Page, IDisposable
     {
         public VaultOverviewPageViewModel ViewModel
         {
             get => (VaultOverviewPageViewModel)DataContext;
-            set => DataContext = value;
+            set { DataContext = value; OnPropertyChanged(); }
         }
 
         public VaultOverviewPage()

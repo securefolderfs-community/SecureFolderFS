@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.VaultAccess
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));        // ContentCipherScheme
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));      // FileNameCipherScheme
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Id));                                                  // Id
-            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                                // AuthMethod
+            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                           // AuthMethod
 
             // Fill the hash to payload
             hmacSha256.GetCurrentHash(mac);
