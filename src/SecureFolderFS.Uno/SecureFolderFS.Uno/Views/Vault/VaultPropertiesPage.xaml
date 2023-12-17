@@ -34,9 +34,9 @@
         </ucab:ActionBlockControl>
         <ucab:ActionBlockControl
             Title="{l:ResourceString Name=ChangePassword}"
-            ClickCommand="{x:Bind ViewModel.ChangePasswordCommand}"
+            ClickCommand="{x:Bind ViewModel.ChangePasswordCommand, Mode=OneWay}"
             Description="{l:ResourceString Name=ChangePasswordDescription}"
-            IsClickable="True">
+            BlockMode="Clickable">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE8D7;" />
             </ucab:ActionBlockControl.Icon>
@@ -63,7 +63,7 @@
                 <FontIcon Glyph="&#xEC19;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ActionElement>
-                <Button Command="{x:Bind ViewModel.ChangeAuthenticationCommand}" Content="Change" />
+        <Button Command="{x:Bind ViewModel.ChangeAuthenticationCommand, Mode=OneWay}" Content="Change" />
             </ucab:ActionBlockControl.ActionElement>
             <ucab:ActionBlockControl.ExpanderContent>
                 <Grid>

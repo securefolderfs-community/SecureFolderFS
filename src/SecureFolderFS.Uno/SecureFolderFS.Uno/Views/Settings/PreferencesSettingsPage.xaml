@@ -139,6 +139,7 @@
         <StackPanel Grid.Row="1" Spacing="4">
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Name=AutoStart}"
+                BlockMode="Default"
                 Description="{l:ResourceString Name=AutoStartDescription}"
                 IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
@@ -151,7 +152,10 @@
                         IsOn="{x:Bind ViewModel.StartOnSystemStartup, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=RestoreLastSession}" Description="{l:ResourceString Name=RestoreLastSessionDescription}">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=RestoreLastSession}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=RestoreLastSessionDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE7E8;" />
                 </ucab:ActionBlockControl.Icon>
@@ -162,7 +166,10 @@
                         IsOn="{x:Bind ViewModel.ContinueOnLastVault, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=OpenVaultFolder}" Description="{l:ResourceString Name=OpenVaultFolderDescription}">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=OpenVaultFolder}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=OpenVaultFolderDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xED25;" />
                 </ucab:ActionBlockControl.Icon>

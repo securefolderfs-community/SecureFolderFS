@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(StatusTextProperty, value);
         }
         public static readonly DependencyProperty StatusTextProperty =
-            DependencyProperty.Register(nameof(StatusText), typeof(string), typeof(InstallationControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(StatusText), typeof(string), typeof(InstallationControl), new PropertyMetadata(defaultValue: null));
 
         public ICommand? PauseResumeCommand
         {
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(PauseResumeCommandProperty, value);
         }
         public static readonly DependencyProperty PauseResumeCommandProperty =
-            DependencyProperty.Register(nameof(PauseResumeCommand), typeof(ICommand), typeof(InstallationControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(PauseResumeCommand), typeof(ICommand), typeof(InstallationControl), new PropertyMetadata(defaultValue: null));
 
         public ICommand? CancelCommand
         {
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(CancelCommandProperty, value);
         }
         public static readonly DependencyProperty CancelCommandProperty =
-            DependencyProperty.Register(nameof(CancelCommand), typeof(ICommand), typeof(InstallationControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(CancelCommand), typeof(ICommand), typeof(InstallationControl), new PropertyMetadata(defaultValue: null));
 
         public double Value
         {
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(ValueProperty, value);
         }
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register(nameof(Value), typeof(double), typeof(InstallationControl), new PropertyMetadata(0.0d));
+            DependencyProperty.Register(nameof(Value), typeof(double), typeof(InstallationControl), new PropertyMetadata(defaultValue: 0.0d));
 
         public bool IsPaused
         {
@@ -52,7 +52,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(IsPausedProperty, value);
         }
         public static readonly DependencyProperty IsPausedProperty =
-            DependencyProperty.Register(nameof(IsPaused), typeof(bool), typeof(InstallationControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsPaused), typeof(bool), typeof(InstallationControl), new PropertyMetadata(defaultValue: false));
 
         public bool IsIndeterminate
         {
@@ -60,6 +60,6 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(IsIndeterminateProperty, value);
         }
         public static readonly DependencyProperty IsIndeterminateProperty =
-            DependencyProperty.Register(nameof(IsIndeterminate), typeof(bool), typeof(InstallationControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsIndeterminate), typeof(bool), typeof(InstallationControl), new PropertyMetadata(defaultValue: false));
     }
 }

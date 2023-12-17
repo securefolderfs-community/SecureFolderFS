@@ -24,7 +24,8 @@
         <ucab:ActionBlockControl
             Title="{l:ResourceString Name=RevealMasterKey}"
             Grid.Row="1"
-            ExpanderExpandingCommand="{x:Bind ViewModel.RevealMasterKeyCommand}">
+            BlockMode="Expandable"
+            ExpanderExpandingCommand="{x:Bind ViewModel.RevealMasterKeyCommand, Mode=OneWay}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE8D7;" />
             </ucab:ActionBlockControl.Icon>
@@ -44,7 +45,7 @@
                         Padding="16,6"
                         HorizontalAlignment="Right"
                         AutomationProperties.Name="Print"
-                        Command="{x:Bind ViewModel.PrintCommand}"
+                        Command="{x:Bind ViewModel.PrintCommand, Mode=OneWay}"
                         Style="{ThemeResource AccentButtonStyle}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon

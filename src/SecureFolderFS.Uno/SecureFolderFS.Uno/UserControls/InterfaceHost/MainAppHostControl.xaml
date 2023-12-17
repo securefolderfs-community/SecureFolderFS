@@ -61,7 +61,7 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     AutomationProperties.Name="{l:ResourceString Name=NewVault}"
-                    Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand}"
+                    Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, Mode=OneWay}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -83,7 +83,7 @@
                     VerticalContentAlignment="Center"
                     x:Load="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}"
                     AutomationProperties.Name="{l:ResourceString Name=NewVault}"
-                    Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand}"
+                    Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.AddNewVaultCommand, Mode=OneWay}"
                     Style="{ThemeResource AccentButtonStyle}">
                     <FontIcon FontSize="16" Glyph="&#xECC8;" />
                 </Button>
@@ -100,7 +100,7 @@
                     AutomationProperties.Name="{l:ResourceString Name=Settings}"
                     Background="Transparent"
                     BorderThickness="0"
-                    Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand}"
+                    Command="{x:Bind ViewModel.SidebarViewModel.FooterViewModel.OpenSettingsCommand, Mode=OneWay}"
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                     <AnimatedIcon>
                         <AnimatedIcon.Source>
@@ -155,13 +155,13 @@
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
-                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand}" Text="{l:ResourceString Name=ShowEncryptedVault}">
+                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Name=ShowEncryptedVault}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutItem
-                                Command="{x:Bind RemoveVaultCommand}"
+                                Command="{x:Bind RemoveVaultCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind CanRemoveVault, Mode=OneWay}"
                                 Text="{l:ResourceString Name=RemoveFromList}">
                                 <MenuFlyoutItem.Icon>

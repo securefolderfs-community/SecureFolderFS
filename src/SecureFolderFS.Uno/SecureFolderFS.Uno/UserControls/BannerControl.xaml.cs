@@ -19,7 +19,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(LeftSideProperty, value);
         }
         public static readonly DependencyProperty LeftSideProperty =
-            DependencyProperty.Register(nameof(LeftSide), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(LeftSide), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(defaultValue: null));
 
 
         public FrameworkElement RightSide
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(RightSideProperty, value);
         }
         public static readonly DependencyProperty RightSideProperty =
-            DependencyProperty.Register(nameof(RightSide), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(RightSide), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(defaultValue: null));
 
 
         public FrameworkElement AdditionalBottomContent
@@ -37,6 +37,6 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(AdditionalBottomContentProperty, value);
         }
         public static readonly DependencyProperty AdditionalBottomContentProperty =
-            DependencyProperty.Register(nameof(AdditionalBottomContent), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(AdditionalBottomContent), typeof(FrameworkElement), typeof(BannerControl), new PropertyMetadata(defaultValue: null));
     }
 }

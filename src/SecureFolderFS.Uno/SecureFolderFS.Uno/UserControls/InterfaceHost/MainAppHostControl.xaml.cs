@@ -98,6 +98,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(MainHostViewModel), typeof(MainAppHostControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ViewModel), typeof(MainHostViewModel), typeof(MainAppHostControl), new PropertyMetadata(defaultValue: null));
     }
 }

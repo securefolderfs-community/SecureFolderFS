@@ -3,12 +3,12 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
             <Style x:Key="AddNewVaultBanner" TargetType="Image">
-                <Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Vault_light.svg" />
+                <Setter Property="Source" Value="ms-appx://../SecureFolderFS.UI/Assets/AppAssets/Vault_light.svg" />
             </Style>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <Style x:Key="AddNewVaultBanner" TargetType="Image">
-                <Setter Property="Source" Value="ms-appx://SecureFolderFS.UI/Assets/AppAssets/Vault_dark.svg" />
+                <Setter Property="Source" Value="ms-appx://../SecureFolderFS.UI/Assets/AppAssets/Vault_dark.svg" />
             </Style>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

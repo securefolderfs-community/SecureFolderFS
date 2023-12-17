@@ -20,7 +20,7 @@
                     IsOpen="True"
                     Message="{x:Bind SelectionInfoBar.Message, Mode=OneWay}"
                     Severity="{x:Bind SelectionInfoBar.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
-                <uc:VaultFolderSelectionControl Message="{x:Bind SelectedLocation, Mode=OneWay}" OpenCommand="{x:Bind OpenFolderCommand}" />
+                <uc:VaultFolderSelectionControl Message="{x:Bind SelectedLocation, Mode=OneWay}" OpenCommand="{x:Bind OpenFolderCommand, Mode=OneWay}" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
@@ -34,6 +34,23 @@
             <tuc:SegmentedItem Content="Add existing" Tag="EXISTING" />
             <tuc:SegmentedItem Content="Create new" Tag="CREATE" />
         </tuc:Segmented>-->
+        <StackPanel
+            HorizontalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="2">
+            <Button
+                Height="28"
+                Padding="12,0"
+                Click="SegmentButton_Click"
+                Content="Create new"
+                Tag="CREATE" />
+            <Button
+                Height="28"
+                Padding="12,0"
+                Click="SegmentButton_Click"
+                Content="Add existing"
+                Tag="EXISTING" />
+        </StackPanel>
 
         <ContentControl
             HorizontalContentAlignment="Stretch"

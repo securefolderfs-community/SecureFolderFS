@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(VaultHealthStateProperty, value);
         }
         public static readonly DependencyProperty VaultHealthStateProperty =
-            DependencyProperty.Register(nameof(VaultHealthState), typeof(VaultHealthState), typeof(HealthWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(VaultHealthState), typeof(VaultHealthState), typeof(HealthWidget), new PropertyMetadata(defaultValue: null));
 
         public DateTime VaultHealthLastCheckedDate
         {
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(VaultHealthLastCheckedDateProperty, value);
         }
         public static readonly DependencyProperty VaultHealthLastCheckedDateProperty =
-            DependencyProperty.Register(nameof(VaultHealthLastCheckedDate), typeof(DateTime), typeof(HealthWidget), new PropertyMetadata(0));
+            DependencyProperty.Register(nameof(VaultHealthLastCheckedDate), typeof(DateTime), typeof(HealthWidget), new PropertyMetadata(defaultValue: 0));
 
         public ICommand? StartScanningCommand
         {
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(StartScanningCommandProperty, value);
         }
         public static readonly DependencyProperty StartScanningCommandProperty =
-            DependencyProperty.Register(nameof(StartScanningCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(StartScanningCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(defaultValue: null));
 
         public ICommand? OpenVaultHealthCommand
         {
@@ -46,6 +46,6 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(OpenVaultHealthCommandProperty, value);
         }
         public static readonly DependencyProperty OpenVaultHealthCommandProperty =
-            DependencyProperty.Register(nameof(OpenVaultHealthCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(OpenVaultHealthCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(defaultValue: null));
     }
 }

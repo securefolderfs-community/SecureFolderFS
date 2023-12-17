@@ -100,7 +100,7 @@
                                             HorizontalAlignment="Stretch"
                                             AutomationProperties.Name="{l:ResourceString Name=CopySystemVersion}"
                                             Click="CopySystemVersion_Click"
-                                            Command="{x:Bind ViewModel.CopySystemVersionCommand}">
+                                            Command="{x:Bind ViewModel.CopySystemVersionCommand, Mode=OneWay}">
                                             <Grid x:Name="CopySystemVersionGrid">
                                                 <TextBlock Text="{l:ResourceString Name=CopySystemVersion}" />
                                                 <StackPanel
@@ -130,7 +130,7 @@
                             </StackPanel>
                         </StackPanel>
                     </Button>
-                    <Button AutomationProperties.Name="GitHub" Command="{x:Bind ViewModel.OpenGitHubRepositoryCommand}">
+                    <Button AutomationProperties.Name="GitHub" Command="{x:Bind ViewModel.OpenGitHubRepositoryCommand, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon
                                 VerticalAlignment="Center"
@@ -150,7 +150,10 @@
         </uc:BannerControl>
 
         <StackPanel Grid.Row="1" Spacing="4">
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=Social}" Description="{l:ResourceString Name=SocialDescription}">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=Social}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=SocialDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE8BD;" />
                 </ucab:ActionBlockControl.Icon>
@@ -162,9 +165,9 @@
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Name=PrivacyPolicy}"
-                ClickCommand="{x:Bind ViewModel.OpenPrivacyPolicyCommand}"
-                Description="{l:ResourceString Name=PrivacyPolicyDescription}"
-                IsClickable="True">
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.OpenPrivacyPolicyCommand, Mode=OneWay}"
+                Description="{l:ResourceString Name=PrivacyPolicyDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xEA18;" />
                 </ucab:ActionBlockControl.Icon>
@@ -174,9 +177,9 @@
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Name=Changelog}"
-                ClickCommand="{x:Bind ViewModel.OpenChangelogCommand}"
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.OpenChangelogCommand, Mode=OneWay}"
                 Description="{l:ResourceString Name=ChangelogDescription}"
-                IsClickable="True"
                 Visibility="Collapsed">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE8FD;" />
@@ -187,9 +190,9 @@
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Name=OpenLogLocation}"
-                ClickCommand="{x:Bind ViewModel.OpenLogLocationCommand}"
-                Description="{l:ResourceString Name=OpenLogLocationDescription}"
-                IsClickable="True">
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.OpenLogLocationCommand, Mode=OneWay}"
+                Description="{l:ResourceString Name=OpenLogLocationDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE838;" />
                 </ucab:ActionBlockControl.Icon>
@@ -199,9 +202,9 @@
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
                 Title="{l:ResourceString Name=ThirdPartyLicenses}"
-                ClickCommand="{x:Bind ViewModel.OpenLicensesCommand}"
-                Description="{l:ResourceString Name=ThirdPartyLicensesDescription}"
-                IsClickable="True">
+                BlockMode="Clickable"
+                ClickCommand="{x:Bind ViewModel.OpenLicensesCommand, Mode=OneWay}"
+                Description="{l:ResourceString Name=ThirdPartyLicensesDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF000;" />
                 </ucab:ActionBlockControl.Icon>

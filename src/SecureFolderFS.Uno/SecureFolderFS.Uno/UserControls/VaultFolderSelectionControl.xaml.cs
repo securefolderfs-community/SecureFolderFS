@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(MessageProperty, value);
         }
         public static readonly DependencyProperty MessageProperty =
-            DependencyProperty.Register(nameof(Message), typeof(string), typeof(VaultFolderSelectionControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Message), typeof(string), typeof(VaultFolderSelectionControl), new PropertyMetadata(defaultValue: null));
 
         public ICommand OpenCommand
         {
@@ -28,6 +28,6 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(OpenCommandProperty, value);
         }
         public static readonly DependencyProperty OpenCommandProperty =
-            DependencyProperty.Register(nameof(OpenCommand), typeof(ICommand), typeof(VaultFolderSelectionControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(OpenCommand), typeof(ICommand), typeof(VaultFolderSelectionControl), new PropertyMetadata(defaultValue: null));
     }
 }

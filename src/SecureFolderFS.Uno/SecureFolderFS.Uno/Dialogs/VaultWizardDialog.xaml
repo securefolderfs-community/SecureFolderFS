@@ -1,0 +1,97 @@
+﻿<ContentDialog
+    x:Class="SecureFolderFS.Uno.Dialogs.VaultWizardDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:SecureFolderFS.Uno.Helpers"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls.Navigation"
+    HorizontalAlignment="Stretch"
+    HorizontalContentAlignment="Stretch"
+    Closing="ContentDialog_Closing"
+    DefaultButton="Primary"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.PrimaryButtonEnabled, Mode=OneWay}"
+    Loaded="VaultWizardDialog_Loaded"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    SecondaryButtonText="{l:ResourceString Name=Cancel}"
+    Style="{ThemeResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <!--  RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"  -->
+
+    <ContentDialog.Resources>
+        <Storyboard x:Key="HideBackButtonStoryboard" x:Name="HideBackButtonStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="GoBack"
+                Storyboard.TargetProperty="Opacity"
+                To="0"
+                Duration="0:0:0.2" />
+            <DoubleAnimation
+                BeginTime="0:0:0.05"
+                Storyboard.TargetName="TitleText"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                From="0"
+                To="-48"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseInOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Key="ShowBackButtonStoryboard" x:Name="ShowBackButtonStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="GoBack"
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:0.2" />
+            <DoubleAnimation
+                Storyboard.TargetName="TitleText"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                From="-48"
+                To="0"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseInOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </ContentDialog.Resources>
+
+    <ContentDialog.Title>
+        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+            <Button
+                x:Name="GoBack"
+                Width="32"
+                Height="32"
+                Margin="0,0,16,0"
+                Padding="8"
+                AutomationProperties.Name="{l:ResourceString Name=Back}"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{x:Bind ViewModel.GoBackCommand, Mode=OneWay}">
+                <AnimatedIcon>
+                    <AnimatedIcon.Source>
+                        <animvis:AnimatedBackVisualSource />
+                    </AnimatedIcon.Source>
+                    <AnimatedIcon.FallbackIconSource>
+                        <SymbolIconSource Symbol="Back" />
+                    </AnimatedIcon.FallbackIconSource>
+                </AnimatedIcon>
+            </Button>
+            <TextBlock
+                x:Name="TitleText"
+                FontSize="22"
+                FontWeight="SemiBold">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform />
+                </TextBlock.RenderTransform>
+            </TextBlock>
+        </StackPanel>
+    </ContentDialog.Title>
+
+    <uc:VaultWizardNavigationControl x:Name="Navigation" />
+</ContentDialog>

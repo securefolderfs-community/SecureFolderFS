@@ -96,7 +96,7 @@
             VerticalContentAlignment="Center"
             Background="Transparent"
             BorderThickness="0"
-            Command="{x:Bind ViewModel.OpenSettingsCommand}">
+            Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}">
             <AnimatedIcon>
                 <AnimatedIcon.Source>
                     <animvis:AnimatedSettingsVisualSource />

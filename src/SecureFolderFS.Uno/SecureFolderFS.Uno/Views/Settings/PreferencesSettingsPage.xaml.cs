@@ -125,7 +125,7 @@ namespace SecureFolderFS.Uno.Views.Settings
             set => SetValue(FileSystemInfoBarProperty, value);
         }
         public static readonly DependencyProperty FileSystemInfoBarProperty =
-            DependencyProperty.Register(nameof(FileSystemInfoBar), typeof(InfoBarViewModel), typeof(PreferencesSettingsPage), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(FileSystemInfoBar), typeof(InfoBarViewModel), typeof(PreferencesSettingsPage), new PropertyMetadata(defaultValue: null));
 
         public bool IsInfoBarOpen
         {
@@ -133,6 +133,6 @@ namespace SecureFolderFS.Uno.Views.Settings
             set => SetValue(IsInfoBarOpenProperty, value);
         }
         public static readonly DependencyProperty IsInfoBarOpenProperty =
-            DependencyProperty.Register(nameof(IsInfoBarOpen), typeof(bool), typeof(PreferencesSettingsPage), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsInfoBarOpen), typeof(bool), typeof(PreferencesSettingsPage), new PropertyMetadata(defaultValue: false));
     }
 }

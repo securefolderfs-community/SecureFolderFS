@@ -19,6 +19,6 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(OverlayContentProperty, value);
         }
         public static readonly DependencyProperty OverlayContentProperty =
-            DependencyProperty.Register(nameof(OverlayContent), typeof(object), typeof(OverlayControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(OverlayContent), typeof(object), typeof(OverlayControl), new PropertyMetadata(defaultValue: null));
     }
 }

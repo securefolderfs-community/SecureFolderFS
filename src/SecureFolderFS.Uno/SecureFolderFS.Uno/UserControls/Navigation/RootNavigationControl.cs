@@ -1,7 +1,7 @@
-using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using System;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 
 namespace SecureFolderFS.Uno.UserControls.Navigation
 {
@@ -16,8 +16,8 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
                 || (MainContent.Content is not MainHostViewModel &&
                     MainContent.Content is not null && target is MainHostViewModel))
             {
-                MainContent.ContentTransitions.Clear();
-                MainContent.ContentTransitions.Add(new ContentThemeTransition());
+                MainContent.ContentTransitions?.Clear();
+                MainContent.ContentTransitions?.Add(new ContentThemeTransition());
 
                 return Task.FromResult<IAsyncDisposable?>(new RootContentTransition(MainContent.ContentTransitions));
             }
@@ -28,9 +28,9 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
 
     file sealed class RootContentTransition : IAsyncDisposable
     {
-        private readonly TransitionCollection _transitionCollection;
+        private readonly TransitionCollection? _transitionCollection;
 
-        public RootContentTransition(TransitionCollection transitionCollection)
+        public RootContentTransition(TransitionCollection? transitionCollection)
         {
             _transitionCollection = transitionCollection;
         }
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         public async ValueTask DisposeAsync()
         {
             await Task.Delay(250);
-            _transitionCollection.Clear();
+            _transitionCollection?.Clear();
         }
     }
 }

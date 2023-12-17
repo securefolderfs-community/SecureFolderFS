@@ -57,6 +57,6 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
             set => SetValue(TemplateSelectorProperty, value);
         }
         public static readonly DependencyProperty TemplateSelectorProperty =
-            DependencyProperty.Register(nameof(TemplateSelector), typeof(DataTemplateSelector), typeof(ContentNavigationControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(TemplateSelector), typeof(DataTemplateSelector), typeof(ContentNavigationControl), new PropertyMetadata(defaultValue: null));
     }
 }

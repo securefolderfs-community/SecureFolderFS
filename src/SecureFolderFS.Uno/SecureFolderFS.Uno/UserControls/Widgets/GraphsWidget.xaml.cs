@@ -162,7 +162,7 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(ReadGraphIsExtendedProperty, value);
         }
         public static readonly DependencyProperty ReadGraphIsExtendedProperty =
-            DependencyProperty.Register(nameof(ReadGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(ReadGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(defaultValue: false));
 
         public bool WriteGraphIsExtended
         {
@@ -170,7 +170,7 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(WriteGraphIsExtendedProperty, value);
         }
         public static readonly DependencyProperty WriteGraphIsExtendedProperty =
-            DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(defaultValue: false));
 
         public IList<GraphPoint>? ReadGraphData
         {
@@ -178,7 +178,7 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(ReadGraphDataProperty, value);
         }
         public static readonly DependencyProperty ReadGraphDataProperty =
-            DependencyProperty.Register(nameof(ReadGraphData), typeof(IList<GraphPoint>), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ReadGraphData), typeof(IList<GraphPoint>), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
 
         public IList<GraphPoint>? WriteGraphData
         {
@@ -186,7 +186,7 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(WriteGraphDataProperty, value);
         }
         public static readonly DependencyProperty WriteGraphDataProperty =
-            DependencyProperty.Register(nameof(WriteGraphData), typeof(IList<GraphPoint>), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(WriteGraphData), typeof(IList<GraphPoint>), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
 
         public string? ReadGraphSubheader
         {
@@ -194,7 +194,7 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(ReadGraphSubheaderProperty, value);
         }
         public static readonly DependencyProperty ReadGraphSubheaderProperty =
-            DependencyProperty.Register(nameof(ReadGraphSubheader), typeof(string), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ReadGraphSubheader), typeof(string), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
 
         public string? WriteGraphSubheader
         {
@@ -202,6 +202,6 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             set => SetValue(WriteGraphSubheaderProperty, value);
         }
         public static readonly DependencyProperty WriteGraphSubheaderProperty =
-            DependencyProperty.Register(nameof(WriteGraphSubheader), typeof(string), typeof(GraphsWidget), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(WriteGraphSubheader), typeof(string), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
     }
 }

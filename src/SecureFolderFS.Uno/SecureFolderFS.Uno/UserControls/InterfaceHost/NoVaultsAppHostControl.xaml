@@ -23,11 +23,11 @@
             </Grid.RowDefinitions>
 
             <!--  Banner  -->
-            <!--<Image
+            <Image
                 Grid.Row="0"
                 Width="296"
                 Stretch="UniformToFill"
-                Style="{ThemeResource AddNewVaultBanner}" />-->
+                Style="{ThemeResource AddNewVaultBanner}" />
 
             <!--  Title  -->
             <StackPanel Grid.Row="1" Spacing="3">
@@ -51,7 +51,7 @@
                 Grid.Row="2"
                 Padding="32,6"
                 HorizontalAlignment="Center"
-                Command="{x:Bind ViewModel.AddNewVaultCommand}"
+                Command="{x:Bind ViewModel.AddNewVaultCommand, Mode=OneWay}"
                 Content="{l:ResourceString Name=NewVault}"
                 Style="{ThemeResource AccentButtonStyle}" />
         </Grid>
@@ -70,7 +70,7 @@
             AutomationProperties.Name="{l:ResourceString Name=Settings}"
             Background="Transparent"
             BorderThickness="0"
-            Command="{x:Bind ViewModel.OpenSettingsCommand}">
+            Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}">
             <AnimatedIcon>
                 <AnimatedIcon.Source>
                     <animvis:AnimatedSettingsVisualSource />

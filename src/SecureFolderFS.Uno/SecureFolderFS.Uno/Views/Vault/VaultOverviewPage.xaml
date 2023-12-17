@@ -68,9 +68,9 @@
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
                     Title="{l:ResourceString Name=ViewVault}"
-                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand}"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand, Mode=OneWay}"
                     Description="{l:ResourceString Name=ViewVaultDescription}"
-                    IsClickable="True">
+                    BlockMode="Clickable">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xEC50;" />
                     </ucab:ActionBlockControl.Icon>
@@ -82,9 +82,9 @@
                 <!--  Vault properties  -->
                 <ucab:ActionBlockControl
                     Title="{l:ResourceString Name=VaultProperties}"
-                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand}"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand, Mode=OneWay}"
                     Description="{l:ResourceString Name=VaultPropertiesDescription}"
-                    IsClickable="True">
+                    BlockMode="Clickable">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </ucab:ActionBlockControl.Icon>
@@ -96,9 +96,9 @@
                 <!--  Lock vault  -->
                 <ucab:ActionBlockControl
                     Title="{l:ResourceString Name=LockVault}"
-                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand}"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand, Mode=OneWay}"
                     Description="{l:ResourceString Name=LockVaultDescription}"
-                    IsClickable="True">
+                    BlockMode="Clickable">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE72E;" />
                     </ucab:ActionBlockControl.Icon>

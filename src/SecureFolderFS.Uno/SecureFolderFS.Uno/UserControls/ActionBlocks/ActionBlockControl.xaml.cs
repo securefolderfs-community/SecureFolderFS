@@ -1,6 +1,7 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System.Windows.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using SecureFolderFS.Uno.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -19,13 +20,21 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             ExpanderExpandingCommand?.Execute(null);
         }
 
+        public ActionBlockMode BlockMode
+        {
+            get => (ActionBlockMode)GetValue(BlockModeProperty);
+            set => SetValue(BlockModeProperty, value);
+        }
+        public static readonly DependencyProperty BlockModeProperty =
+            DependencyProperty.Register(nameof(BlockMode), typeof(ActionBlockMode), typeof(ActionBlockControl), new PropertyMetadata(ActionBlockMode.Default));
+
         public ICommand? ClickCommand
         {
             get => (ICommand?)GetValue(ClickCommandProperty);
             set => SetValue(ClickCommandProperty, value);
         }
         public static readonly DependencyProperty ClickCommandProperty =
-            DependencyProperty.Register(nameof(ClickCommand), typeof(ICommand), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ClickCommand), typeof(ICommand), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
         public ICommand? ExpanderExpandingCommand
         {
@@ -33,7 +42,7 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(ExpanderExpandingCommandProperty, value);
         }
         public static readonly DependencyProperty ExpanderExpandingCommandProperty =
-            DependencyProperty.Register(nameof(ExpanderExpandingCommand), typeof(ICommand), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ExpanderExpandingCommand), typeof(ICommand), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
         public FrameworkElement ExpanderContent
         {
@@ -41,7 +50,7 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(ExpanderContentProperty, value);
         }
         public static readonly DependencyProperty ExpanderContentProperty =
-            DependencyProperty.Register(nameof(ExpanderContent), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ExpanderContent), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
         public bool IsExpanded
         {
@@ -49,15 +58,7 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(IsExpandedProperty, value);
         }
         public static readonly DependencyProperty IsExpandedProperty =
-            DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(ActionBlockControl), new PropertyMetadata(false));
-
-        public bool IsClickable
-        {
-            get => (bool)GetValue(IsClickableProperty);
-            set => SetValue(IsClickableProperty, value);
-        }
-        public static readonly DependencyProperty IsClickableProperty =
-            DependencyProperty.Register(nameof(IsClickable), typeof(bool), typeof(ActionBlockControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: false));
 
         public IconElement Icon
         {
@@ -65,7 +66,7 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(IconProperty, value);
         }
         public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register(nameof(Icon), typeof(IconElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Icon), typeof(IconElement), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
         public string? Title
         {
@@ -73,7 +74,7 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(TitleProperty, value);
         }
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
         public string? Description
         {
@@ -81,7 +82,7 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(DescriptionProperty, value);
         }
         public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register(nameof(Description), typeof(string), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Description), typeof(string), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
         public FrameworkElement CustomDescription
         {
@@ -89,7 +90,7 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(CustomDescriptionProperty, value);
         }
         public static readonly DependencyProperty CustomDescriptionProperty =
-            DependencyProperty.Register(nameof(CustomDescription), typeof(FrameworkElement), typeof(ActionBlockContentControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(CustomDescription), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
         public FrameworkElement ActionElement
         {
@@ -97,7 +98,7 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(ActionElementProperty, value);
         }
         public static readonly DependencyProperty ActionElementProperty =
-            DependencyProperty.Register(nameof(ActionElement), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ActionElement), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
 
         public FrameworkElement AdditionalActionElement
         {
@@ -105,6 +106,6 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
             set => SetValue(AdditionalActionElementProperty, value);
         }
         public static readonly DependencyProperty AdditionalActionElementProperty =
-            DependencyProperty.Register(nameof(AdditionalActionElement), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(AdditionalActionElement), typeof(FrameworkElement), typeof(ActionBlockControl), new PropertyMetadata(defaultValue: null));
     }
 }

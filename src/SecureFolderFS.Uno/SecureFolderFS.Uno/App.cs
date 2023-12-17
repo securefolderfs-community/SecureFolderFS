@@ -32,6 +32,8 @@ namespace SecureFolderFS.Uno
 {
     public class App : Application
     {
+        public static App? Instance { get; private set; }
+
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public Window? MainWindow { get; private set; }
@@ -42,6 +44,7 @@ namespace SecureFolderFS.Uno
         /// </summary>
         public App()
         {
+            Instance = this;
             EnsureEarlyApp();
         }
 
@@ -112,15 +115,15 @@ namespace SecureFolderFS.Uno
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
-                //.AddSingleton<IDialogService, DialogService>()
+                .AddSingleton<IDialogService, DialogService>()
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
-                //.AddSingleton<IClipboardService, ClipboardService>()
-                //.AddSingleton<IThreadingService, ThreadingService>()
+                .AddSingleton<IClipboardService, ClipboardService>()
+                .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
-                //.AddSingleton<IFileExplorerService, FileExplorerService>()
+                .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
-                //.AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
+                .AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
 
                 // Transient services
                 .AddTransient<INavigationService, WindowsNavigationService>()
@@ -129,7 +132,7 @@ namespace SecureFolderFS.Uno
 #if UNPACKAGED
                 .AddSingleton<ILocalizationService, ResourceLocalizationService>()
 #else
-                //.AddSingleton<ILocalizationService, PackageLocalizationService>()
+                .AddSingleton<ILocalizationService, PackageLocalizationService>()
 #endif
 
                 // IIApService, IUpdateService

@@ -1,7 +1,7 @@
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -30,23 +30,17 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             if (e.Parameter is MainWizardPageViewModel viewModel)
                 ViewModel = viewModel;
 
-            await UpdateChoice(default);
+            await ViewModel.UpdateSelectionAsync(NewVaultCreationType.CreateNew, default);
             base.OnNavigatedTo(e);
         }
 
-        private async void Segmented_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void SegmentButton_Click(object sender, RoutedEventArgs e)
         {
-            await UpdateChoice(default);
-        }
+            if (sender is not Button { Tag: string tag })
+                return;
 
-        private async Task UpdateChoice(CancellationToken cancellationToken)
-        {
-            //if (ViewModel is null || SegmentedControl.SelectedItem is not SegmentedItem segmentedItem)
-            //    return;
-
-            //var creationType = (string)segmentedItem.Tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
-
-            //await ViewModel.UpdateSelectionAsync(creationType, cancellationToken);
+            var creationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
+            await ViewModel.UpdateSelectionAsync(creationType, default);
         }
     }
 }

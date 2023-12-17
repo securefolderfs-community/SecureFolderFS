@@ -25,7 +25,10 @@
 
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=DisableRecentAccess}" Description="{l:ResourceString Name=DisableRecentAccessDescription}">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=DisableRecentAccess}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=DisableRecentAccessDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE81C;" />
                 </ucab:ActionBlockControl.Icon>
@@ -37,7 +40,10 @@
                         IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=AutoLock}" Description="{l:ResourceString Name=AutoLockDescription}">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=AutoLock}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=AutoLockDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE72E;" />
                 </ucab:ActionBlockControl.Icon>
@@ -49,7 +55,10 @@
                         IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=Telemetry}" Description="{l:ResourceString Name=TelemetryDescription}">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=Telemetry}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=TelemetryDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE9D2;" />
                 </ucab:ActionBlockControl.Icon>

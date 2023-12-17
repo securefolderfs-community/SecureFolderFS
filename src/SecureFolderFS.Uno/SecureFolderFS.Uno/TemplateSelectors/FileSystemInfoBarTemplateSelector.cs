@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.UI.UserControls.InfoBars;
 
@@ -12,13 +12,12 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 
         protected override DataTemplate? SelectTemplateCore(InfoBarViewModel? item, DependencyObject container)
         {
-            if (item is DokanyInfoBar)
-                return DokanyUnavailableInfoBarTemplate;
-
-            if (item is WebDavInfoBar)
-                return WebDavExperimentalInfoBarTemplate;
-
-            return base.SelectTemplateCore(item, container);
+            return item switch
+            {
+                DokanyInfoBar => DokanyUnavailableInfoBarTemplate,
+                WebDavInfoBar => WebDavExperimentalInfoBarTemplate,
+                _ => base.SelectTemplateCore(item, container)
+            };
         }
     }
 }

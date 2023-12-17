@@ -59,6 +59,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Dialogs\AgreementDialog.xaml" />
+    <None Remove="Dialogs\ChangelogDialog.xaml" />
+    <None Remove="Dialogs\ExplanationDialog.xaml" />
+    <None Remove="Dialogs\LicensesDialog.xaml" />
+    <None Remove="Dialogs\PasswordChangeDialog.xaml" />
+    <None Remove="Dialogs\PaymentDialog.xaml" />
+    <None Remove="Dialogs\SettingsDialog.xaml" />
+    <None Remove="Dialogs\VaultWizardDialog.xaml" />
     <None Remove="ResourceDictionaries\ColorResources.xaml" />
     <None Remove="ResourceDictionaries\ImageResources.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
@@ -98,6 +106,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <UpToDateCheckInput Remove="Dialogs\AgreementDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\ChangelogDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\ExplanationDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\LicensesDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\PasswordChangeDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\PaymentDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\SettingsDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ImageResources.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
@@ -145,6 +161,37 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Dialogs\AgreementDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\ChangelogDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\ExplanationDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\LicensesDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\PasswordChangeDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\PaymentDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\SettingsDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\VaultWizardDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="ResourceDictionaries\ColorResources.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

@@ -96,7 +96,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register(nameof(Data), typeof(IList<GraphPoint>), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Data), typeof(IList<GraphPoint>), typeof(GraphControl), new PropertyMetadata(defaultValue: null));
 
         public string? GraphHeader
         {
@@ -104,7 +104,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(GraphHeaderProperty, value);
         }
         public static readonly DependencyProperty GraphHeaderProperty =
-            DependencyProperty.Register(nameof(GraphHeader), typeof(string), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(GraphHeader), typeof(string), typeof(GraphControl), new PropertyMetadata(defaultValue: null));
 
         public string? GraphSubheader
         {
@@ -112,7 +112,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(GraphSubheaderProperty, value);
         }
         public static readonly DependencyProperty GraphSubheaderProperty =
-            DependencyProperty.Register(nameof(GraphSubheader), typeof(string), typeof(GraphControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(GraphSubheader), typeof(string), typeof(GraphControl), new PropertyMetadata(defaultValue: null));
 
         public Color ChartStrokeColor
         {
@@ -120,7 +120,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(ChartStrokeColorProperty, value);
         }
         public static readonly DependencyProperty ChartStrokeColorProperty =
-            DependencyProperty.Register(nameof(ChartStrokeColor), typeof(Brush), typeof(GraphControl), new PropertyMetadata(default));
+            DependencyProperty.Register(nameof(ChartStrokeColor), typeof(Brush), typeof(GraphControl), new PropertyMetadata(defaultValue: default));
 
         public Color ChartPrimaryColor
         {
@@ -128,7 +128,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(ChartPrimaryColorProperty, value);
         }
         public static readonly DependencyProperty ChartPrimaryColorProperty =
-            DependencyProperty.Register(nameof(ChartPrimaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(default));
+            DependencyProperty.Register(nameof(ChartPrimaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(defaultValue: default));
 
         public Color ChartSecondaryColor
         {
@@ -136,7 +136,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(ChartSecondaryColorProperty, value);
         }
         public static readonly DependencyProperty ChartSecondaryColorProperty =
-            DependencyProperty.Register(nameof(ChartSecondaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(default));
+            DependencyProperty.Register(nameof(ChartSecondaryColor), typeof(Color), typeof(GraphControl), new PropertyMetadata(defaultValue: default));
 
         public bool GraphLoaded
         {
@@ -144,6 +144,6 @@ namespace SecureFolderFS.Uno.UserControls
             private set => SetValue(GraphLoadedProperty, value);
         }
         public static readonly DependencyProperty GraphLoadedProperty =
-            DependencyProperty.Register(nameof(GraphLoaded), typeof(bool), typeof(GraphControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(GraphLoaded), typeof(bool), typeof(GraphControl), new PropertyMetadata(defaultValue: false));
     }
 }

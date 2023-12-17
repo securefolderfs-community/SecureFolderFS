@@ -54,7 +54,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(PasswordSubmittedCommandProperty, value);
         }
         public static readonly DependencyProperty PasswordSubmittedCommandProperty =
-            DependencyProperty.Register(nameof(PasswordSubmittedCommand), typeof(ICommand), typeof(PasswordControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(PasswordSubmittedCommand), typeof(ICommand), typeof(PasswordControl), new PropertyMetadata(defaultValue: null));
 
         public string UnsecurePassword
         {
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(UnsecurePasswordProperty, value);
         }
         public static readonly DependencyProperty UnsecurePasswordProperty =
-            DependencyProperty.Register(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), new PropertyMetadata(defaultValue: null));
 
         public string? Title
         {
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(TitleProperty, value);
         }
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(PasswordControl), new PropertyMetadata("EnterPassword".ToLocalized()));
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(PasswordControl), new PropertyMetadata(defaultValue: "EnterPassword".ToLocalized()));
 
         public string? Placeholder
         {
@@ -78,7 +78,7 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(PlaceholderProperty, value);
         }
         public static readonly DependencyProperty PlaceholderProperty =
-            DependencyProperty.Register(nameof(Placeholder), typeof(string), typeof(PasswordControl), new PropertyMetadata("Password".ToLocalized()));
+            DependencyProperty.Register(nameof(Placeholder), typeof(string), typeof(PasswordControl), new PropertyMetadata(defaultValue: "Password".ToLocalized()));
 
         public bool ShowInvalidPasswordMessage
         {
@@ -86,6 +86,6 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(ShowInvalidPasswordMessageProperty, value);
         }
         public static readonly DependencyProperty ShowInvalidPasswordMessageProperty =
-            DependencyProperty.Register(nameof(ShowInvalidPasswordMessage), typeof(bool), typeof(PasswordControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(ShowInvalidPasswordMessage), typeof(bool), typeof(PasswordControl), new PropertyMetadata(defaultValue: false));
     }
 }

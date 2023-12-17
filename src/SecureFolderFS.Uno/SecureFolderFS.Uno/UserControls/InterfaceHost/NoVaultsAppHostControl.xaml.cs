@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 
@@ -20,6 +20,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(EmptyHostViewModel), typeof(NoVaultsAppHostControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ViewModel), typeof(EmptyHostViewModel), typeof(NoVaultsAppHostControl), new PropertyMetadata(defaultValue: null));
     }
 }

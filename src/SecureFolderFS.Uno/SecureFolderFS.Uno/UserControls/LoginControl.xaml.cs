@@ -38,6 +38,6 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(LoginTypeViewModelProperty, value);
         }
         public static readonly DependencyProperty LoginTypeViewModelProperty =
-            DependencyProperty.Register(nameof(LoginTypeViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(LoginTypeViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl), new PropertyMetadata(defaultValue: null));
     }
 }

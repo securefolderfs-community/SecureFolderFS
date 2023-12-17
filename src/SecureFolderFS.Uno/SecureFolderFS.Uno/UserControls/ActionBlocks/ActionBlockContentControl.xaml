@@ -9,7 +9,6 @@
 
     <UserControl.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
-        <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid

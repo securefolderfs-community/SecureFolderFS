@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
@@ -12,13 +12,19 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         /// <inheritdoc/>
         protected sealed override DataTemplate? SelectTemplateCore(object item)
         {
-            return SelectTemplateCore((TItem?)item);
+            if (item is not TItem typedItem)
+                return SelectTemplateCore(default);
+
+            return SelectTemplateCore(typedItem);
         }
 
         /// <inheritdoc/>
         protected sealed override DataTemplate? SelectTemplateCore(object item, DependencyObject container)
         {
-            return SelectTemplateCore((TItem?)item, container);
+            if (item is not TItem typedItem)
+                return SelectTemplateCore(default, container);
+
+            return SelectTemplateCore(typedItem, container);
         }
 
         protected virtual DataTemplate? SelectTemplateCore(TItem? item)

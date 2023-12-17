@@ -49,7 +49,7 @@
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
-                    Command="{x:Bind ProvideCredentialsCommand}"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="Setup"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
@@ -74,7 +74,7 @@
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
-                    Command="{x:Bind ProvideCredentialsCommand}"
+                    Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="Setup"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
@@ -91,6 +91,7 @@
         <ucab:ActionBlockControl
             Title="Lock type"
             Grid.Row="0"
+            BlockMode="Expandable"
             IsExpanded="True">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xEC19;" />
@@ -120,7 +121,8 @@
         <ucab:ActionBlockControl
             Title="Advanced options"
             Grid.Row="1"
-            HorizontalAlignment="Stretch">
+            HorizontalAlignment="Stretch"
+            BlockMode="Expandable">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE90F;" />
             </ucab:ActionBlockControl.Icon>
@@ -144,12 +146,12 @@
                         Grid.Column="1"
                         HorizontalAlignment="Right"
                         AutomationProperties.Name="{x:Bind ViewModel.ContentCipher, Mode=OneWay}"
-                        ItemsSource="{x:Bind ViewModel.ContentCiphers}"
+                        ItemsSource="{x:Bind ViewModel.ContentCiphers, Mode=OneWay}"
                         SelectedIndex="0"
                         SelectedItem="{x:Bind ViewModel.ContentCipher, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:CipherViewModel">
-                                <TextBlock Text="{x:Bind Name}" />
+                                <TextBlock Text="{x:Bind Name, Mode=OneWay}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -163,12 +165,12 @@
                         Grid.Column="1"
                         HorizontalAlignment="Right"
                         AutomationProperties.Name="{x:Bind ViewModel.FileNameCipher, Mode=OneWay}"
-                        ItemsSource="{x:Bind ViewModel.FileNameCiphers}"
+                        ItemsSource="{x:Bind ViewModel.FileNameCiphers, Mode=OneWay}"
                         SelectedIndex="0"
                         SelectedItem="{x:Bind ViewModel.FileNameCipher, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:CipherViewModel">
-                                <TextBlock Text="{x:Bind Name}" />
+                                <TextBlock Text="{x:Bind Name, Mode=OneWay}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

@@ -44,7 +44,7 @@
                 <Grid>
                     <Button
                         AutomationProperties.Name="{l:ResourceString Name=CheckForUpdates}"
-                        Command="{x:Bind ViewModel.BannerViewModel.UpdateAppCommand}"
+                        Command="{x:Bind ViewModel.BannerViewModel.UpdateAppCommand, Mode=OneWay}"
                         IsEnabled="{x:Bind ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon
@@ -99,7 +99,10 @@
             Loaded="Root_Loaded"
             Spacing="4">
             <StackPanel>
-                <ucab:ActionBlockControl Title="{l:ResourceString Name=Language}" Description="{l:ResourceString Name=LanguageDescription}">
+                <ucab:ActionBlockControl
+                    Title="{l:ResourceString Name=Language}"
+                    BlockMode="Default"
+                    Description="{l:ResourceString Name=LanguageDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xF2B7;" />
                     </ucab:ActionBlockControl.Icon>
@@ -139,7 +142,7 @@
                             <!--  TODO: Button hidden. Blocking issue: https://github.com/microsoft/WindowsAppSDK/issues/2792  -->
                             <Button
                                 Grid.Column="1"
-                                Command="{x:Bind ViewModel.RestartCommand}"
+                                Command="{x:Bind ViewModel.RestartCommand, Mode=OneWay}"
                                 Content="Restart"
                                 Visibility="Collapsed" />
                         </Grid>
@@ -167,7 +170,10 @@
                     </anim:Implicit.HideAnimations>-->
                 </InfoBar>
             </StackPanel>
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=Theme}" Description="{l:ResourceString Name=ThemeDescription}">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=Theme}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=ThemeDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE790;" />
                 </ucab:ActionBlockControl.Icon>
@@ -185,13 +191,16 @@
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
-            <ucab:ActionBlockControl Title="{l:ResourceString Name=ManageSettings}" IsEnabled="False">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=ManageSettings}"
+                BlockMode="Expandable"
+                IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE713;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
                     <StackPanel Margin="-16" Spacing="1">
-                        <ucab:ActionBlockControl Title="{l:ResourceString Name=ImportSettings}" IsClickable="True">
+                        <ucab:ActionBlockControl Title="{l:ResourceString Name=ImportSettings}" BlockMode="Clickable">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xE8B5;" />
                             </ucab:ActionBlockControl.Icon>
@@ -199,7 +208,7 @@
                                 <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                             </ucab:ActionBlockControl.ActionElement>
                         </ucab:ActionBlockControl>
-                        <ucab:ActionBlockControl Title="{l:ResourceString Name=ExportSettings}" IsClickable="True">
+                        <ucab:ActionBlockControl Title="{l:ResourceString Name=ExportSettings}" BlockMode="Clickable">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xEDE2;" />
                             </ucab:ActionBlockControl.Icon>
