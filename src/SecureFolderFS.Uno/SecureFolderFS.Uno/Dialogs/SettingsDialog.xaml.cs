@@ -61,6 +61,15 @@ namespace SecureFolderFS.Uno.Dialogs
             Hide();
         }
 
+        private async void SettingsDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            if (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true)
+                return;
+
+            var target = GetTargetForTag(0);
+            await ViewModel.NavigationService.NavigateAsync(target);
+        }
+
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             // Remove the reference to the NavigationControl so the dialog can get properly garbage collected

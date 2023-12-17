@@ -14,10 +14,9 @@ using SecureFolderFS.UI.Storage.NativeStorage;
 using SecureFolderFS.Uno.ServiceImplementation;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
-using Windows.Storage;
 
 #if !UNPACKAGED
-//using Windows.Storage;
+using Windows.Storage;
 #endif
 
 #if !DEBUG
