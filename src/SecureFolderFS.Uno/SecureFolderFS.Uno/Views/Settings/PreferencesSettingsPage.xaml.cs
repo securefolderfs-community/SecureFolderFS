@@ -1,4 +1,9 @@
-﻿using Microsoft.UI.Xaml;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
@@ -8,10 +13,6 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.UserControls.InfoBars;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,12 +22,13 @@ namespace SecureFolderFS.Uno.Views.Settings
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    [INotifyPropertyChanged]
     public sealed partial class PreferencesSettingsPage : Page
     {
         public PreferencesSettingsViewModel ViewModel
         {
             get => (PreferencesSettingsViewModel)DataContext;
-            set => DataContext = value;
+            set { DataContext = value; OnPropertyChanged(); }
         }
 
         public PreferencesSettingsPage()

@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
@@ -10,12 +11,13 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    [INotifyPropertyChanged]
     public sealed partial class RecoveryKeyWizardPage : Page
     {
         public RecoveryKeyWizardViewModel ViewModel
         {
             get => (RecoveryKeyWizardViewModel)DataContext;
-            set => DataContext = value;
+            set { DataContext = value; OnPropertyChanged(); }
         }
 
         public RecoveryKeyWizardPage()

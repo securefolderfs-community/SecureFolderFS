@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 
@@ -10,12 +11,13 @@ namespace SecureFolderFS.Uno.Views.Settings
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    [INotifyPropertyChanged]
     public sealed partial class PrivacySettingsPage : Page
     {
         public PrivacySettingsViewModel ViewModel
         {
             get => (PrivacySettingsViewModel)DataContext;
-            set => DataContext = value;
+            set { DataContext = value; OnPropertyChanged(); }
         }
 
         public PrivacySettingsPage()

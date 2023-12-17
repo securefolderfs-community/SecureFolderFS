@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -16,12 +17,13 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
+    [INotifyPropertyChanged]
     public sealed partial class SummaryWizardPage : Page, IDisposable
     {
         public SummaryWizardViewModel ViewModel
         {
             get => (SummaryWizardViewModel)DataContext;
-            set => DataContext = value;
+            set { DataContext = value; OnPropertyChanged(); }
         }
 
         public SummaryWizardPage()

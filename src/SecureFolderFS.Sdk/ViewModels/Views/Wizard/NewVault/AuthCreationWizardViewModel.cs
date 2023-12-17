@@ -135,6 +135,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         {
             if (e is AuthenticationChangedEventArgs)
                 DialogViewModel.PrimaryButtonEnabled = true;
+
+            if (e is PasswordChangedEventArgs args)
+                DialogViewModel.PrimaryButtonEnabled = args.IsMatch;
         }
     }
 }

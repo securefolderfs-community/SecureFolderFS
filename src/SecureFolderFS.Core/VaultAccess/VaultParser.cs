@@ -23,11 +23,11 @@ namespace SecureFolderFS.Core.VaultAccess
             using var hmacSha256 = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, macKey);
 
             // Update HMAC
-            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));                                // Version
+            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));                              // Version
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));        // ContentCipherScheme
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));      // FileNameCipherScheme
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Id));                                                  // Id
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                                          // AuthMethod
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                                // AuthMethod
 
             // Fill the hash to payload
             hmacSha256.GetCurrentHash(mac);
