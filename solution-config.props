@@ -11,11 +11,11 @@
         -->
 		
 		
-        <!--<OverrideTargetFrameworks>$(OverrideTargetFrameworks);net8.0-windows10.0.19041.0</OverrideTargetFrameworks>-->
-        <!--<OverrideTargetFrameworks>$(OverrideTargetFrameworks);net8.0</OverrideTargetFrameworks>-->
-        <!--<OverrideTargetFrameworks>$(OverrideTargetFrameworks);net8.0-ios</OverrideTargetFrameworks>-->
-        <OverrideTargetFrameworks>$(OverrideTargetFrameworks);net8.0-android</OverrideTargetFrameworks> 
-        <!--<OverrideTargetFrameworks>$(OverrideTargetFrameworks);net8.0-maccatalyst</OverrideTargetFrameworks>-->
+        <!--<OverrideTargetFrameworks>net8.0-windows10.0.19041.0</OverrideTargetFrameworks>-->
+        <!--<OverrideTargetFrameworks>net8.0</OverrideTargetFrameworks>-->
+        <!--<OverrideTargetFrameworks>net8.0-ios</OverrideTargetFrameworks>-->
+        <OverrideTargetFrameworks>net8.0-android</OverrideTargetFrameworks> 
+        <!--<OverrideTargetFrameworks>net8.0-maccatalyst</OverrideTargetFrameworks>-->
 		
         <!--<MyAppTargetFrameworkOverride>net8.0-ios</MyAppTargetFrameworkOverride>-->
         <!--<MyAppTargetFrameworkOverride>net8.0-maccatalyst</MyAppTargetFrameworkOverride>-->

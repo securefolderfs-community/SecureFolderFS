@@ -34,8 +34,8 @@ namespace SecureFolderFS.Core.Cryptography.Helpers
         {
             return id switch
             {
-                NONE => 1,
-                AES_SIV => 2,
+                NONE => 1u,
+                AES_SIV => 2u,
                 _ => 0u
             };
         }
