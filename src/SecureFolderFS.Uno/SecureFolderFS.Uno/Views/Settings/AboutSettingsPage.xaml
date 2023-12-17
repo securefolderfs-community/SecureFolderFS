@@ -34,7 +34,7 @@
                     Margin="0,0,0,-10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.svg" />
+                    Source="ms-appx:///../SecureFolderFS.UI/Assets/AppAssets/AppTitle.svg" />
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
                 <StackPanel
