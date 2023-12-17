@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.Uno.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,10 +40,10 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             _ = ViewModel.InitAsync();
 
             // First register the ThemeHelper
-            //WindowsThemeHelper.Instance.RegisterWindowInstance(MainWindow.Instance.AppWindow, MainWindow.Instance.RootControl); // TODO(u)
+            UnoThemeHelper.Instance.RegisterWindowInstance(App.Instance?.MainWindow?.Content as FrameworkElement);
 
             // Then, initialize it to refresh the theme and UI
-            //await WindowsThemeHelper.Instance.InitAsync();
+            await UnoThemeHelper.Instance.InitAsync();
         }
     }
 }

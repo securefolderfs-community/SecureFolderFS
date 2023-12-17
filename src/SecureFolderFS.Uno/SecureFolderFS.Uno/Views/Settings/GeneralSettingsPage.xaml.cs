@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.UI.Enums;
+using SecureFolderFS.Uno.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,7 +27,7 @@ namespace SecureFolderFS.Uno.Views.Settings
             set { DataContext = value; OnPropertyChanged(); }
         }
 
-        public int SelectedThemeIndex => 0; // TODO(u) // (int)WindowsThemeHelper.Instance.CurrentTheme;
+        public int SelectedThemeIndex => (int)UnoThemeHelper.Instance.CurrentTheme;
 
         public GeneralSettingsPage()
         {
@@ -49,7 +51,7 @@ namespace SecureFolderFS.Uno.Views.Settings
                 return;
             }
 
-            //await WindowsThemeHelper.Instance.SetThemeAsync((ThemeType)AppThemeComboBox.SelectedIndex); // TODO(u)
+            await UnoThemeHelper.Instance.SetThemeAsync((ThemeType)AppThemeComboBox.SelectedIndex);
         }
 
         private void Root_Loaded(object sender, RoutedEventArgs e)

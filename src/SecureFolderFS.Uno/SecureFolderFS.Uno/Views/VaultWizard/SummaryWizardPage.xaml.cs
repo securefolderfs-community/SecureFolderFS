@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.Uno.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,7 +30,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         public SummaryWizardPage()
         {
             InitializeComponent();
-            //WindowsThemeHelper.Instance.PropertyChanged += ThemeHelper_PropertyChanged; // TODO(u)
+            UnoThemeHelper.Instance.PropertyChanged += ThemeHelper_PropertyChanged;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -63,7 +64,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         /// <inheritdoc/>
         public void Dispose()
         {
-            //WindowsThemeHelper.Instance.PropertyChanged -= ThemeHelper_PropertyChanged; // TODO(u)
+            UnoThemeHelper.Instance.PropertyChanged -= ThemeHelper_PropertyChanged; 
         }
     }
 }

@@ -11,10 +11,9 @@
     Title="{l:ResourceString Name=WhatsNew}"
     DefaultButton="Primary"
     PrimaryButtonText="{l:ResourceString Name=ChangelogCloseButton}"
+    RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
-
-    <!--  RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"  -->
 
     <ContentDialog.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
@@ -86,7 +85,7 @@
                 HorizontalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="8">
-        <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand, Mode=OneWay}" Content="{l:ResourceString Name=Retry}" />
+                <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand, Mode=OneWay}" Content="{l:ResourceString Name=Retry}" />
                 <HyperlinkButton AutomationProperties.Name="{l:ResourceString Name=ViewOnGitHub}" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />

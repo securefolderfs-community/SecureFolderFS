@@ -1,13 +1,19 @@
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.Resizetizer;
 
 namespace SecureFolderFS.Uno
 {
     public sealed partial class AppHead : App
     {
-        static AppHead() =>
-            InitializeLogging();
+        static AppHead() => InitializeLogging();
 
         /// <summary>
         /// Initializes the singleton application object. This is the first line of authored code
@@ -15,18 +21,52 @@ namespace SecureFolderFS.Uno
         /// </summary>
         public AppHead()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used such as when the application is launched to open a specific file.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
+        /// <inheritdoc/>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             base.OnLaunched(args);
             MainWindow.SetWindowIcon();
+        }
+
+        /// <inheritdoc/>
+        protected override void EnsureEarlyWindow(Window window)
+        {
+            base.EnsureEarlyWindow(window);
+#if WINDOWS
+
+            // Set backdrop
+            window.SystemBackdrop = new MicaBackdrop();
+
+            // Set title
+            window.AppWindow.Title = "SecureFolderFS";
+
+            if (AppWindowTitleBar.IsCustomizationSupported())
+            {
+                // Extend title bar
+                window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+
+                // Set window buttons background to transparent
+                window.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                window.AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            }
+            else if (window.Content is MainWindowRootControl rootControl)
+            {
+                window.ExtendsContentIntoTitleBar = true;
+                window.SetTitleBar(rootControl.CustomTitleBar);
+            }
+            
+            // Hook up event for window closing
+            window.AppWindow.Closing += AppWindow_Closing;
+#endif
+        }
+
+        private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
+        {
+            var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
+            await settingsService.TrySaveAsync();
         }
 
         /// <summary>
@@ -45,11 +85,11 @@ namespace SecureFolderFS.Uno
             var factory = LoggerFactory.Create(builder =>
             {
 #if __WASM__
-            builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
+                builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #elif __IOS__ || __MACCATALYST__
-            //builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
+                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #elif NETFX_CORE
-            builder.AddDebug();
+                builder.AddDebug();
 #else
                 builder.AddConsole();
 #endif
@@ -93,7 +133,7 @@ namespace SecureFolderFS.Uno
             global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
 
 #if HAS_UNO
-        //global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
+            //global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
 #endif
 #endif
         }

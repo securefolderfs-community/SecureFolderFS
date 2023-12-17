@@ -15,12 +15,11 @@
     IsPrimaryButtonEnabled="{x:Bind ViewModel.PrimaryButtonEnabled, Mode=OneWay}"
     Loaded="VaultWizardDialog_Loaded"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
     SecondaryButtonText="{l:ResourceString Name=Cancel}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
-
-    <!--  RequestedTheme="{x:Bind h:WindowsThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"  -->
 
     <ContentDialog.Resources>
         <Storyboard x:Key="HideBackButtonStoryboard" x:Name="HideBackButtonStoryboard">

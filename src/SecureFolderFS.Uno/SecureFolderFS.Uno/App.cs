@@ -5,17 +5,16 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Storage.NativeStorage;
+using SecureFolderFS.Uno.ServiceImplementation;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 using Windows.Storage;
-using SecureFolderFS.Uno.ServiceImplementation;
 
 #if !UNPACKAGED
 //using Windows.Storage;
@@ -48,12 +47,17 @@ namespace SecureFolderFS.Uno
             EnsureEarlyApp();
         }
 
+        /// <summary>
+        /// Invoked when the application is launched normally by the end user.  Other entry points
+        /// will be used such as when the application is launched to open a specific file.
+        /// </summary>
+        /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
             MainWindow = new Window();
 #else
-        MainWindow = Microsoft.UI.Xaml.Window.Current;
+            MainWindow = Microsoft.UI.Xaml.Window.Current;
 #endif
 
 #if DEBUG
@@ -78,11 +82,12 @@ namespace SecureFolderFS.Uno
             var settingsFolder = new NativeFolder(Directory.CreateDirectory(settingsFolderPath));
 
             // Configure IoC
-            ServiceProvider = ConfigureServices(settingsFolder);
+            var serviceCollection = ConfigureServices(settingsFolder);
+            ServiceProvider = serviceCollection.BuildServiceProvider();
             Ioc.Default.ConfigureServices(ServiceProvider);
 
             // Activate MainWindow
-            MainWindow.Content = new MainWindowRootControl();
+            EnsureEarlyWindow(MainWindow);
             MainWindow.Activate();
         }
 
@@ -107,9 +112,14 @@ namespace SecureFolderFS.Uno
 #endif
         }
 
-        private IServiceProvider ConfigureServices(IModifiableFolder settingsFolder)
+        protected virtual void EnsureEarlyWindow(Window window)
         {
-            var serviceCollection = new ServiceCollection()
+            window.Content = new MainWindowRootControl();
+        }
+
+        protected virtual IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
+        {
+            return new ServiceCollection()
 
                 // Singleton services
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
@@ -152,8 +162,6 @@ namespace SecureFolderFS.Uno
 #endif
 
                 ; // Finish service initialization
-
-            return serviceCollection.BuildServiceProvider();
         }
 
         #region Exception Handlers
@@ -164,7 +172,7 @@ namespace SecureFolderFS.Uno
 
         private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) => LogException(e.Exception);
 
-        private static void LogException(Exception? ex)
+        protected virtual void LogException(Exception? ex)
         {
             var formattedException = ExceptionHelpers.FormatException(ex);
 

@@ -91,7 +91,7 @@
                 <ComboBox
                     VerticalAlignment="Center"
                     AutomationProperties.Name="{x:Bind ViewModel.BannerViewModel.SelectedItem, Mode=OneWay}"
-                    ItemsSource="{x:Bind ViewModel.BannerViewModel.FileSystemAdapters}"
+                    ItemsSource="{x:Bind ViewModel.BannerViewModel.FileSystemAdapters, Mode=OneWay}"
                     SelectedItem="{x:Bind ViewModel.BannerViewModel.SelectedItem, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:FileSystemItemViewModel">
