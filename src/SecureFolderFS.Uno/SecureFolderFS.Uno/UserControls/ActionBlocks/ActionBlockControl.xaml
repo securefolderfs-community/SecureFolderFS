@@ -7,6 +7,7 @@
     xmlns:local="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    x:Name="ActionBlock"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -16,14 +17,19 @@
             <Grid
                 Height="72"
                 Padding="16"
-                HorizontalAlignment="Stretch">
+                HorizontalAlignment="Stretch"
+                Background="{ThemeResource ExpanderHeaderBackground}"
+                BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
+                BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
+                CornerRadius="{ThemeResource ControlCornerRadius}">
                 <local:ActionBlockContentControl
-                    Title="{x:Bind Title, Mode=OneWay, FallbackValue={x:Null}}"
-                    ActionElement="{x:Bind ActionElement, Mode=OneWay}"
-                    AdditionalActionElement="{x:Bind AdditionalActionElement, Mode=OneWay}"
-                    CustomDescription="{x:Bind CustomDescription, Mode=OneWay}"
-                    Description="{x:Bind Description, Mode=OneWay, FallbackValue={x:Null}}"
-                    Icon="{x:Bind Icon, Mode=OneWay}" />
+                    Title="{Binding Title, Mode=OneWay, FallbackValue={x:Null}}"
+                    ActionElement="{Binding ActionElement, Mode=OneWay}"
+                    AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
+                    CustomDescription="{Binding CustomDescription, Mode=OneWay}"
+                    DataContext="{Binding ElementName=ActionBlock}"
+                    Description="{Binding Description, Mode=OneWay, FallbackValue={x:Null}}"
+                    Icon="{Binding Icon, Mode=OneWay}" />
             </Grid>
         </DataTemplate>
 
@@ -35,16 +41,20 @@
                 Padding="16"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                AutomationProperties.Name="{x:Bind Title, Mode=OneWay}"
-                Command="{x:Bind ClickCommand, Mode=OneWay}"
-                CornerRadius="{ThemeResource ControlCornerRadius}">
+                AutomationProperties.Name="{Binding Title, Mode=OneWay}"
+                Background="{ThemeResource ExpanderHeaderBackground}"
+                BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
+                BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
+                Command="{Binding ClickCommand, Mode=OneWay}"
+                CornerRadius="{ThemeResource ControlCornerRadius}"
+                DataContext="{Binding ElementName=ActionBlock}">
                 <local:ActionBlockContentControl
-                    Title="{x:Bind Title, Mode=OneWay, FallbackValue={x:Null}}"
-                    ActionElement="{x:Bind ActionElement, Mode=OneWay}"
-                    AdditionalActionElement="{x:Bind AdditionalActionElement, Mode=OneWay}"
-                    CustomDescription="{x:Bind CustomDescription, Mode=OneWay}"
-                    Description="{x:Bind Description, Mode=OneWay, FallbackValue={x:Null}}"
-                    Icon="{x:Bind Icon, Mode=OneWay}" />
+                    Title="{Binding Title, Mode=OneWay, FallbackValue={x:Null}}"
+                    ActionElement="{Binding ActionElement, Mode=OneWay}"
+                    AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
+                    CustomDescription="{Binding CustomDescription, Mode=OneWay}"
+                    Description="{Binding Description, Mode=OneWay, FallbackValue={x:Null}}"
+                    Icon="{Binding Icon, Mode=OneWay}" />
             </Button>
         </DataTemplate>
 
@@ -56,19 +66,20 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Center"
+                DataContext="{Binding ElementName=ActionBlock}"
                 Expanding="Expander_Expanding"
                 IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
                 <Expander.Header>
                     <local:ActionBlockContentControl
-                        Title="{x:Bind Title, Mode=OneWay, FallbackValue={x:Null}}"
+                        Title="{Binding Title, Mode=OneWay, FallbackValue={x:Null}}"
                         Height="72"
-                        ActionElement="{x:Bind ActionElement, Mode=OneWay}"
-                        AdditionalActionElement="{x:Bind AdditionalActionElement, Mode=OneWay}"
-                        CustomDescription="{x:Bind CustomDescription, Mode=OneWay}"
-                        Description="{x:Bind Description, Mode=OneWay, FallbackValue={x:Null}}"
-                        Icon="{x:Bind Icon, Mode=OneWay}" />
+                        ActionElement="{Binding ActionElement, Mode=OneWay}"
+                        AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
+                        CustomDescription="{Binding CustomDescription, Mode=OneWay}"
+                        Description="{Binding Description, Mode=OneWay, FallbackValue={x:Null}}"
+                        Icon="{Binding Icon, Mode=OneWay}" />
                 </Expander.Header>
-                <ContentPresenter HorizontalAlignment="Stretch" Content="{x:Bind ExpanderContent, Mode=OneWay}" />
+                <ContentControl HorizontalAlignment="Stretch" Content="{Binding ExpanderContent, Mode=OneWay}" />
             </Expander>
         </DataTemplate>
     </UserControl.Resources>
@@ -77,7 +88,7 @@
         x:Name="BlockContent"
         HorizontalContentAlignment="Stretch"
         VerticalContentAlignment="Stretch"
-        DataContext="{x:Bind}">
+        Content="{x:Bind BlockMode, Mode=OneWay}">
         <ContentControl.ContentTemplateSelector>
             <ts:ActionBlockModeTemplateSelector
                 ClickableTemplate="{StaticResource ButtonBlock}"

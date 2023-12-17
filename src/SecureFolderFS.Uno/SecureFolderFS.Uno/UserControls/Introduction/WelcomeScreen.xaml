@@ -13,12 +13,12 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <!--  Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppIcon.png"  -->
         <Image
             Width="56"
             Height="56"
             HorizontalAlignment="Center"
-            VerticalAlignment="Bottom" />
+            VerticalAlignment="Bottom"
+            Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppIcon.png" />
 
         <TextBlock
             Grid.Row="1"

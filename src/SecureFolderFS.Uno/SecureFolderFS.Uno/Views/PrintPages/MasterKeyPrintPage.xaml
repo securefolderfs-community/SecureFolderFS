@@ -28,14 +28,16 @@
                 Grid.Column="0"
                 Orientation="Horizontal"
                 Spacing="16">
-                <!--  Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppIcon.png"  -->
-                <Image Height="52" VerticalAlignment="Center" />
+                <Image
+                    Height="52"
+                    VerticalAlignment="Center"
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppIcon.png" />
 
-                <!--  Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.png"  -->
                 <Image
                     Height="29"
                     Margin="0,0,0,-3"
-                    VerticalAlignment="Center" />
+                    VerticalAlignment="Center"
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.png" />
 
             </StackPanel>
             <TextBlock

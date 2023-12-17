@@ -68,9 +68,9 @@
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
                     Title="{l:ResourceString Name=ViewVault}"
+                    BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=ViewVaultDescription}"
-                    BlockMode="Clickable">
+                    Description="{l:ResourceString Name=ViewVaultDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xEC50;" />
                     </ucab:ActionBlockControl.Icon>
@@ -82,9 +82,9 @@
                 <!--  Vault properties  -->
                 <ucab:ActionBlockControl
                     Title="{l:ResourceString Name=VaultProperties}"
+                    BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=VaultPropertiesDescription}"
-                    BlockMode="Clickable">
+                    Description="{l:ResourceString Name=VaultPropertiesDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </ucab:ActionBlockControl.Icon>
@@ -96,9 +96,9 @@
                 <!--  Lock vault  -->
                 <ucab:ActionBlockControl
                     Title="{l:ResourceString Name=LockVault}"
+                    BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=LockVaultDescription}"
-                    BlockMode="Clickable">
+                    Description="{l:ResourceString Name=LockVaultDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE72E;" />
                     </ucab:ActionBlockControl.Icon>

@@ -97,7 +97,7 @@
                 <FontIcon Glyph="&#xEC19;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ActionElement>
-                <ComboBox ItemsSource="{x:Bind ViewModel.AuthenticationOptions}" SelectedItem="{x:Bind ViewModel.CurrentViewModel, Mode=TwoWay}">
+                <ComboBox ItemsSource="{x:Bind ViewModel.AuthenticationOptions, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.CurrentViewModel, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="vm2:AuthenticationViewModel">
                             <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" />

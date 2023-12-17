@@ -30,11 +30,11 @@
         <!--  Banner  -->
         <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
-                <!--  Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.svg"  -->
                 <Image
                     Margin="0,0,0,-10"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Center" />
+                    VerticalAlignment="Center"
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.svg" />
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
                 <StackPanel
@@ -179,8 +179,7 @@
                 Title="{l:ResourceString Name=Changelog}"
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.OpenChangelogCommand, Mode=OneWay}"
-                Description="{l:ResourceString Name=ChangelogDescription}"
-                Visibility="Collapsed">
+                Description="{l:ResourceString Name=ChangelogDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE8FD;" />
                 </ucab:ActionBlockControl.Icon>
