@@ -76,7 +76,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         {
             var widgetsCollection = new WidgetsCollectionModel(vaultModel.Folder);
             var vaultViewModel = new VaultViewModel(vaultModel, widgetsCollection);
-
             var sidebarItem = new SidebarItemViewModel(vaultViewModel, _vaultCollectionModel);
 
             sidebarItem.LastAccessDate = vaultModel.LastAccessDate;

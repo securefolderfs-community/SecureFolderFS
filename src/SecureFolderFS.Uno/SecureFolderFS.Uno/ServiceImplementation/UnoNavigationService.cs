@@ -10,7 +10,7 @@ using SecureFolderFS.Uno.UserControls.Navigation;
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    internal sealed class WindowsNavigationService : BaseNavigationService
+    internal sealed class UnoNavigationService : BaseNavigationService
     {
         /// <inheritdoc/>
         protected override async Task<bool> BeginNavigationAsync(INavigationTarget? target, NavigationType navigationType)

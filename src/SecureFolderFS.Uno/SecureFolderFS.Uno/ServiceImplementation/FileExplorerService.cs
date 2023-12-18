@@ -49,7 +49,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             if (file is null)
                 return null;
 
-            return new WindowsStorageFile(file);
+            return new UnoStorageFile(file);
         }
 
         /// <inheritdoc/>
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             if (file is null)
                 return null;
 
-            return new WindowsStorageFile(file);
+            return new UnoStorageFile(file);
         }
 
         /// <inheritdoc/>
@@ -84,7 +84,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             if (folder is null)
                 return null;
 
-            return new WindowsStorageFolder(folder);
+            return new UnoStorageFolder(folder);
         }
 
         private static void InitializeObject(object obj)

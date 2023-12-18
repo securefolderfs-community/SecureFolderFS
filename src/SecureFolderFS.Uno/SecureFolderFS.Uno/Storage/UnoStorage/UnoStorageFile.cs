@@ -1,20 +1,20 @@
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.ExtendableStorage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace SecureFolderFS.Uno.Storage.WindowsStorage
 {
     /// <inheritdoc cref="IFile"/>
-    internal sealed class WindowsStorageFile : WindowsStorable<StorageFile>, ILocatableFile, IModifiableFile, IFileExtended, INestedFile
+    internal sealed class UnoStorageFile : UnoStorable<StorageFile>, ILocatableFile, IModifiableFile, IFileExtended, INestedFile
     {
-        public WindowsStorageFile(StorageFile storage)
+        public UnoStorageFile(StorageFile storage)
             : base(storage)
         {
         }
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Uno.Storage.WindowsStorage
         public override async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
             var parentFolder = await storage.GetParentAsync().AsTask(cancellationToken);
-            return new WindowsStorageFolder(parentFolder);
+            return new UnoStorageFolder(parentFolder);
         }
 
         private static FileAccessMode GetFileAccessMode(FileAccess access)

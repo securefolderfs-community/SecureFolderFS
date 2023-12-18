@@ -115,6 +115,8 @@ namespace SecureFolderFS.Sdk.AppModels
 
                 var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
                 Items.Add(vaultModel);
+
+                CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item));
             }
         }
 

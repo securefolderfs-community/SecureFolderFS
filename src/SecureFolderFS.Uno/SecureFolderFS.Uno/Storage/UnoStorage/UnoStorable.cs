@@ -1,14 +1,14 @@
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
+using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
+using Windows.Storage;
 
 namespace SecureFolderFS.Uno.Storage.WindowsStorage
 {
     /// <inheritdoc cref="IStorable"/>
-    internal abstract class WindowsStorable<TStorage> : ILocatableStorable, INestedStorable
+    internal abstract class UnoStorable<TStorage> : ILocatableStorable, INestedStorable
         where TStorage : class, IStorageItem
     {
         internal readonly TStorage storage;
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.Storage.WindowsStorage
         /// <inheritdoc/>
         public virtual string Id { get; }
 
-        protected WindowsStorable(TStorage storage)
+        protected UnoStorable(TStorage storage)
         {
             this.storage = storage;
             this.Id = storage.Path;

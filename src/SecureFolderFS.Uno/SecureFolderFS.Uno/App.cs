@@ -128,14 +128,17 @@ namespace SecureFolderFS.Uno
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
-                .AddSingleton<IStorageService, NativeStorageService>()
                 .AddSingleton<IApplicationService, ApplicationService>()
                 .AddSingleton<IFileExplorerService, FileExplorerService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
                 .AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
 
-                // Transient services
-                .AddTransient<INavigationService, WindowsNavigationService>()
+                // IStorageService
+#if WINDOWS
+                .AddSingleton<IStorageService, NativeStorageService>()
+#else
+                .AddSingleton<IStorageService, UnoStorageService>()
+#endif
 
                 // ILocalizationService
 #if UNPACKAGED
@@ -144,7 +147,7 @@ namespace SecureFolderFS.Uno
                 .AddSingleton<ILocalizationService, PackageLocalizationService>()
 #endif
 
-                // IIApService, IUpdateService
+                // IIapService, IUpdateService
 #if DEBUG || UNPACKAGED
                 .AddSingleton<IIapService, DebugIapService>()
                 .AddSingleton<IUpdateService, DebugUpdateService>()
@@ -159,6 +162,9 @@ namespace SecureFolderFS.Uno
 #else
                 .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
 #endif
+
+                // Transient services
+                .AddTransient<INavigationService, UnoNavigationService>()
 
                 ; // Finish service initialization
         }
