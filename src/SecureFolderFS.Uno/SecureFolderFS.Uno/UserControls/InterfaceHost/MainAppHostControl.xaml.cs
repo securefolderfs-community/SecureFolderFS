@@ -11,6 +11,7 @@ using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Utilities;
 using SecureFolderFS.UI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -56,7 +57,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             
             // Find existing target or create new
             var target = ViewModel.NavigationService.Targets.FirstOrDefault(x => (x as BaseVaultPageViewModel)?.VaultViewModel == vaultViewModel);
-            target ??= new VaultLoginPageViewModel(vaultViewModel, ViewModel.NavigationService);
+            if (target is null)
+            {
+                target = new VaultLoginPageViewModel(vaultViewModel, ViewModel.NavigationService);
+                if (target is IAsyncInitialize asyncInitialize)
+                    await asyncInitialize.InitAsync();
+            }
 
             // Navigate
             await ViewModel.NavigationService.NavigateAsync(target);
