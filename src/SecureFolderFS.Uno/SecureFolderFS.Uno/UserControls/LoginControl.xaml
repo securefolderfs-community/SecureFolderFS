@@ -25,7 +25,8 @@
                     x:Name="PasswordBoxControl"
                     Width="364"
                     PasswordSubmittedCommand="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    ShowInvalidPasswordMessage="{x:Bind IsPasswordInvalid, Mode=TwoWay}" />
+                    ShowInvalidPasswordMessage="{x:Bind IsPasswordInvalid, Mode=TwoWay}"
+                    UnsecurePassword="{x:Bind PrimaryPassword, Mode=TwoWay}" />
 
                 <!--  Continue  -->
                 <Button
@@ -35,7 +36,6 @@
                     Click="ContinueButton_Click"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Continue}"
-                    DataContext="{Binding ElementName=PasswordBoxControl}"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>

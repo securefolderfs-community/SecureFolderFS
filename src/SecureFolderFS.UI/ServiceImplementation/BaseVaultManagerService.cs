@@ -85,9 +85,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var virtualFileSystem = await mountable.MountAsync(VaultHelpers.GetMountOptions(fileSystemId), cancellationToken);
                 return new VaultLifetimeModel(virtualFileSystem, statisticsBridge, vaultOptions);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Make sure to dispose the unlock contract when failed
+                _ = ex;
                 unlockContract.Dispose();
 
                 throw;
