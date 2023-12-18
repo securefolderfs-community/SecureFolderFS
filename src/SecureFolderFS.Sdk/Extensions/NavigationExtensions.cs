@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Utilities;
 
 namespace SecureFolderFS.Sdk.Extensions
 {
@@ -13,13 +14,21 @@ namespace SecureFolderFS.Sdk.Extensions
             return (T?)navigationService.Targets.FirstOrDefault(x => x is T);
         }
 
-        public static async Task<bool> TryNavigateAsync<T>(this INavigationService navigationService, Func<T>? initializer = null)
+        public static async Task<bool> TryNavigateAsync<T>(this INavigationService navigationService, Func<T>? initializer = null, bool useInitialization = true)
             where T : class, INavigationTarget
         {
-            var target = navigationService.TryGetTarget<T>() ?? (initializer?.Invoke() ?? null);
+            var target = navigationService.TryGetTarget<T>();
+            var isNewTarget = target is null;
+
+            target ??= initializer?.Invoke() ?? null;
             if (target is null)
                 return false;
 
+            // Initialize if the target supports IAsyncInitialize and doesn't already exist
+            if (isNewTarget && useInitialization && target is IAsyncInitialize supportsAsyncInitialize)
+                _ = supportsAsyncInitialize.InitAsync();
+
+            // Navigate to the target
             return await navigationService.NavigateAsync(target);
         }
 

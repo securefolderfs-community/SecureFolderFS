@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 
         private async void VaultCollectionModel_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            await _hostNavigationService.TryNavigateAsync(() => new MainHostViewModel(_hostNavigationService, _vaultCollectionModel));
+            await _hostNavigationService.TryNavigateAsync(() => new MainHostViewModel(_hostNavigationService, _vaultCollectionModel), false);
         }
 
         [RelayCommand]

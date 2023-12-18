@@ -20,6 +20,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
     public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>, IRecipient<AddVaultMessage>
     {
+        private bool _isInitialized;
+
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 
         public MainAppHostControl()
@@ -37,11 +39,13 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         /// <inheritdoc/>
         public void Receive(AddVaultMessage message)
         {
+#if WINDOWS // TODO(u win)
             if (ViewModel?.SidebarViewModel.SidebarItems.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
                 && !SettingsService.AppSettings.WasBetaNotificationShown1)
             {
                 BetaTeachingTip.IsOpen = true;
             }
+#endif
         }
 
         private async Task NavigateToItem(VaultViewModel vaultViewModel)
@@ -60,10 +64,11 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async Task SetupNavigationAsync()
         {
-            if (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? false)
+            ViewModel?.NavigationService.SetupNavigation(Navigation);
+            if (!_isInitialized && ViewModel is not null)
             {
+                _isInitialized = true;
                 await ViewModel.InitAsync();
-                Sidebar.SelectedItem = ViewModel.SidebarViewModel.SelectedItem;
             }
         }
 
@@ -109,6 +114,11 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(MainHostViewModel), typeof(MainAppHostControl), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(ViewModel), typeof(MainHostViewModel), typeof(MainAppHostControl), new PropertyMetadata(null,
+                (s, e) =>
+                {
+                    if (s is MainAppHostControl sender)
+                        _ = sender.SetupNavigationAsync();
+                }));
     }
 }

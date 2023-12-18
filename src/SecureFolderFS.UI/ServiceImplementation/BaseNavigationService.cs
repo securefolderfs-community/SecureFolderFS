@@ -63,13 +63,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             // Add new target
             if (!Targets.Contains(target))
-            {
                 Targets.Add(target);
-
-                // Initialize if the target supports IAsyncInitialize
-                if (target is IAsyncInitialize asyncInitialize)
-                    _ = asyncInitialize.InitAsync();
-            }
 
             // Notify that navigation has occurred
             NavigationChanged?.Invoke(this, target);
