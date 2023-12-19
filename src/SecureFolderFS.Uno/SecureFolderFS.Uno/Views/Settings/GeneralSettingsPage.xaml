@@ -69,7 +69,7 @@
                     Message="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Message, Mode=OneWay}"
                     Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
                     Visibility="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsOpen, Mode=OneWay}">
-                    <anim:Implicit.ShowAnimations>
+                    <!--<anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             From="0,-15,0"
                             To="0"
@@ -88,7 +88,7 @@
                             From="0"
                             To="0,-15,0"
                             Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>
+                    </anim:Implicit.HideAnimations>-->
                 </InfoBar>
             </uc:BannerControl.AdditionalBottomContent>
         </uc:BannerControl>
@@ -147,7 +147,7 @@
                                 Visibility="Collapsed" />
                         </Grid>
                     </InfoBar.Content>
-                    <anim:Implicit.ShowAnimations>
+                    <!--<anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             From="0,-15,0"
                             To="0"
@@ -166,7 +166,7 @@
                             From="0"
                             To="0,-15,0"
                             Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>
+                    </anim:Implicit.HideAnimations>-->
                 </InfoBar>
             </StackPanel>
             <ucab:ActionBlockControl

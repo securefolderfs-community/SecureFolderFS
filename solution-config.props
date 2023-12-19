@@ -11,10 +11,10 @@
         -->
 		
 		
-        <OverrideTargetFrameworks>net8.0-windows10.0.19041.0</OverrideTargetFrameworks>
+        <!--<OverrideTargetFrameworks>net8.0-windows10.0.19041.0</OverrideTargetFrameworks>-->
         <!--<OverrideTargetFrameworks>net8.0</OverrideTargetFrameworks>-->
         <!--<OverrideTargetFrameworks>net8.0-ios</OverrideTargetFrameworks>-->
-        <!--<OverrideTargetFrameworks>net8.0-android</OverrideTargetFrameworks>-->
+        <OverrideTargetFrameworks>net8.0-android</OverrideTargetFrameworks>
         <!--<OverrideTargetFrameworks>net8.0-maccatalyst</OverrideTargetFrameworks>-->
 		
         <!--<MyAppTargetFrameworkOverride>net8.0-ios</MyAppTargetFrameworkOverride>-->

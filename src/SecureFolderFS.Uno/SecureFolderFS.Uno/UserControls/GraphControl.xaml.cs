@@ -1,10 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LiveChartsCore;
+using LiveChartsCore.Drawing;
+using LiveChartsCore.Kernel.Sketches;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SkiaSharp;
 using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -41,45 +48,45 @@ namespace SecureFolderFS.Uno.UserControls
             // TODO: Find the cause of the issue and fix it
             await Task.Delay(500);
 
-            //if (sender is not CartesianChart chart)
-            //    return;
+            if (sender is not CartesianChart chart)
+                return;
 
-            //chart.Series = new ISeries[]
-            //{
-            //    new LineSeries<GraphPoint>()
-            //    {
-            //        Values = Data,
-            //        Fill = new LinearGradientPaint(new SKColor[] {
-            //            new(ChartPrimaryColor.R, ChartPrimaryColor.G, ChartPrimaryColor.B, ChartPrimaryColor.A),
-            //            new(ChartSecondaryColor.R, ChartSecondaryColor.G, ChartSecondaryColor.B, ChartSecondaryColor.A) },
-            //            new(0.5f, 0f), new(0.5f, 1.0f), new[] { 0.2f, 1.3f }),
-            //        GeometrySize = 0d,
-            //        Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2),
-            //        //Mapping = (model, point, _) => { point.PrimaryValue = Convert.ToDouble(model.Value); point.SecondaryValue = model.Date.Ticks; },
-            //        LineSmoothness = 0d,
-            //        DataPadding = new(0.3f, 0),
-            //        AnimationsSpeed = TimeSpan.FromMilliseconds(150),
-            //        IsHoverable = false
-            //    }
-            //};
-            //chart.XAxes = new ICartesianAxis[]
-            //{
-            //    new Axis()
-            //    {
-            //        Labeler = x => string.Empty,
-            //        ShowSeparatorLines = false,
-            //    }
-            //};
-            //chart.YAxes = new ICartesianAxis[]
-            //{
-            //    new Axis()
-            //    {
-            //        ShowSeparatorLines = false,
-            //        Padding = new Padding(16, 0, 0, 0),
-            //        LabelsPaint = new SolidColorPaint(SKColors.Gray),
-            //        MinLimit = 0d
-            //    }
-            //};
+            chart.Series = new ISeries[]
+            {
+                new LineSeries<GraphPoint>()
+                {
+                    Values = Data,
+                    Fill = new LinearGradientPaint(new SKColor[] {
+                        new(ChartPrimaryColor.R, ChartPrimaryColor.G, ChartPrimaryColor.B, ChartPrimaryColor.A),
+                        new(ChartSecondaryColor.R, ChartSecondaryColor.G, ChartSecondaryColor.B, ChartSecondaryColor.A) },
+                        new(0.5f, 0f), new(0.5f, 1.0f), new[] { 0.2f, 1.3f }),
+                    GeometrySize = 0d,
+                    Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2),
+                    Mapping = (graphPoint, _) => new(graphPoint.Date.Ticks, graphPoint.Value),
+                    LineSmoothness = 0d,
+                    DataPadding = new(0.3f, 0),
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(150),
+                    IsHoverable = false
+                }
+            };
+            chart.XAxes = new ICartesianAxis[]
+            {
+                new Axis()
+                {
+                    Labeler = x => string.Empty,
+                    ShowSeparatorLines = false,
+                }
+            };
+            chart.YAxes = new ICartesianAxis[]
+            {
+                new Axis()
+                {
+                    ShowSeparatorLines = false,
+                    Padding = new Padding(16, 0, 0, 0),
+                    LabelsPaint = new SolidColorPaint(SKColors.Gray),
+                    MinLimit = 0d
+                }
+            };
 
             await Task.Delay(25);
             GraphLoaded = true;

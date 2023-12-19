@@ -39,7 +39,7 @@
             <Grid
                 Width="32"
                 HorizontalAlignment="Left"
-                Background="Transparent"
+                Background="Red"
                 Canvas.ZIndex="10"
                 PointerEntered="PaneButtonGrid_PointerEntered"
                 PointerExited="PaneButtonGrid_PointerExited">
@@ -52,7 +52,7 @@
                     Click="PaneShowButton_Click"
                     CornerRadius="0 6 6 0"
                     Visibility="Collapsed">
-                    <anim:Implicit.ShowAnimations>
+                    <!--<anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             EasingMode="EaseOut"
                             From="-8,0,0"
@@ -65,7 +65,7 @@
                             From="0"
                             To="-8,0,0"
                             Duration="0:0:0.6" />
-                    </anim:Implicit.HideAnimations>
+                    </anim:Implicit.HideAnimations>-->
                 </Button>
             </Grid>
 

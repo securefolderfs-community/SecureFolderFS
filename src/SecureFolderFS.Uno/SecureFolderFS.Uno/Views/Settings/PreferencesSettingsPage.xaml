@@ -33,7 +33,7 @@
                             NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000" />
                     </Grid>
                 </InfoBar.Content>
-                <anim:Implicit.ShowAnimations>
+                <!--<anim:Implicit.ShowAnimations>
                     <anim:TranslationAnimation
                         From="0,-15,0"
                         To="0"
@@ -52,7 +52,7 @@
                         From="0"
                         To="0,-15,0"
                         Duration="0:0:0.2" />
-                </anim:Implicit.HideAnimations>
+                </anim:Implicit.HideAnimations>-->
             </InfoBar>
         </DataTemplate>
         <DataTemplate x:Key="WebDavExperimentalInfoBarTemplate" x:DataType="uc2:WebDavInfoBar">
@@ -109,7 +109,7 @@
                     <ContentControl.ContentTemplateSelector>
                         <ts:FileSystemInfoBarTemplateSelector DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}" WebDavExperimentalInfoBarTemplate="{StaticResource WebDavExperimentalInfoBarTemplate}" />
                     </ContentControl.ContentTemplateSelector>
-                    <anim:Implicit.ShowAnimations>
+                    <!--<anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             From="0,-15,0"
                             To="0"
@@ -128,7 +128,7 @@
                             From="0"
                             To="0,-15,0"
                             Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>
+                    </anim:Implicit.HideAnimations>-->
                 </ContentControl>
             </uc:BannerControl.AdditionalBottomContent>
         </uc:BannerControl>

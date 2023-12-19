@@ -19,7 +19,7 @@
             Background="{ThemeResource BackgroundStrongTint}"
             Canvas.ZIndex="1"
             Visibility="{x:Bind OverlayContent, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-            <anim:Implicit.ShowAnimations>
+            <!--<anim:Implicit.ShowAnimations>
                 <anim:OpacityAnimation
                     From="0"
                     To="1"
@@ -30,7 +30,7 @@
                     From="1"
                     To="0"
                     Duration="0:0:0.2" />
-            </anim:Implicit.HideAnimations>
+            </anim:Implicit.HideAnimations>-->
         </Grid>
 
         <!--  Content  -->
