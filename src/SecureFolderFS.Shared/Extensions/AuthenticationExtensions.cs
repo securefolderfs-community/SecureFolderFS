@@ -9,7 +9,7 @@ namespace SecureFolderFS.Shared.Extensions
     public static class AuthenticationExtensions
     {
         public static async Task<IResult<IKey>> TryCreateAsync(this IAuthenticator authenticator,
-            string id, byte[] data, CancellationToken cancellationToken)
+            string id, byte[]? data, CancellationToken cancellationToken)
         {
             try
             {
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Shared.Extensions
         }
 
         public static async Task<IResult<IKey>> TrySignAsync(this IAuthenticator authenticator,
-            string id, byte[] data, CancellationToken cancellationToken)
+            string id, byte[]? data, CancellationToken cancellationToken)
         {
             try
             {

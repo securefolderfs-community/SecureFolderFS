@@ -38,7 +38,7 @@
     <ScrollViewer Margin="-12,0,-12,0">
         <StackPanel Margin="12,0,12,0" Spacing="8">
             <!--  Widgets  -->
-            <ListView x:Name="WidgetsList" ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets}">
+            <ListView x:Name="WidgetsList" ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
                 <!--  Remove Reveal Highlight Effect  -->
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">

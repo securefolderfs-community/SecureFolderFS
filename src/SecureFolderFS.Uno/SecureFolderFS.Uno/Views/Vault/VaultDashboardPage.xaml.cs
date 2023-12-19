@@ -1,11 +1,14 @@
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Extensions;
 
@@ -20,9 +23,11 @@ namespace SecureFolderFS.Uno.Views.Vault
     [INotifyPropertyChanged]
     public sealed partial class VaultDashboardPage : Page
     {
-        public VaultDashboardPageViewModel ViewModel
+        private bool _isLoaded;
+        
+        public VaultDashboardPageViewModel? ViewModel
         {
-            get => (VaultDashboardPageViewModel)DataContext;
+            get => DataContext.TryCast<VaultDashboardPageViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -31,26 +36,38 @@ namespace SecureFolderFS.Uno.Views.Vault
             InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultDashboardPageViewModel viewModel)
+            {
                 ViewModel = viewModel;
+                await LoadComponentsAsync();
+            }
 
             base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            // Remove the reference to the NavigationControl so the page can get properly garbage collected
-            ViewModel.DashboardNavigationService.ResetNavigation();
-            ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
+            if (ViewModel is not null)
+            {
+                // Remove the reference to the NavigationControl so the page can get properly garbage collected
+                ViewModel.DashboardNavigationService.ResetNavigation();
+                ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
+            }
+            
             Navigation.Dispose();
-
             base.OnNavigatingFrom(e);
         }
 
-        private async void Navigation_Loaded(object sender, RoutedEventArgs e)
+        private async Task LoadComponentsAsync()
         {
+            if (_isLoaded || ViewModel is null)
+                return;
+            
+            // Update _isLoaded flag
+            _isLoaded = true;
+            
             // Hook up navigation event
             ViewModel.DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
 
@@ -61,11 +78,19 @@ namespace SecureFolderFS.Uno.Views.Vault
                 INavigationTarget GetDefaultDashboardViewModel()
                 {
                     var controlsViewModel = new VaultControlsViewModel(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigationService, ViewModel.NavigationService);
-                    return new VaultOverviewPageViewModel(ViewModel.UnlockedVaultViewModel, controlsViewModel, ViewModel.DashboardNavigationService);
+                    var vaultOverviewViewModel = new VaultOverviewPageViewModel(ViewModel.UnlockedVaultViewModel, controlsViewModel, ViewModel.DashboardNavigationService);
+                    _ = vaultOverviewViewModel.InitAsync();
+
+                    return vaultOverviewViewModel;
                 }
 
                 await ViewModel.DashboardNavigationService.NavigateAsync(target);
             }
+        }
+
+        private async void Navigation_Loaded(object sender, RoutedEventArgs e)
+        {
+            await LoadComponentsAsync();
         }
 
         private async void DashboardNavigationService_NavigationChanged(object? sender, INavigationTarget? e)

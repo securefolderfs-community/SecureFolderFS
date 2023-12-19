@@ -37,6 +37,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private void Media_Loaded(object sender, RoutedEventArgs e)
         {
+#if WINDOWS
             var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "SecureFolderFS.UI")!;
             var stream = assembly.GetManifestResourceStream("SecureFolderFS.UI.Assets.AppAssets.Media.ExplanationVideoDark.mov");
             _disposable = stream;
@@ -48,12 +49,15 @@ namespace SecureFolderFS.Uno.Dialogs
             Media.MediaPlayer.IsLoopingEnabled = true;
             Media.MediaPlayer.AutoPlay = true;
             Media.MediaPlayer.Volume = 0.0d;
+#endif
         }
 
         private void ExplanationDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+#if WINDOWS
             _disposable?.Dispose();
             Media.MediaPlayer?.Dispose();
+#endif
         }
     }
 }

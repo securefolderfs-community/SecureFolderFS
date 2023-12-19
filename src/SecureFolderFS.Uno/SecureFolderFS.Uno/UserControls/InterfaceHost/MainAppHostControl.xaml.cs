@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
@@ -21,6 +22,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
     public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>, IRecipient<AddVaultMessage>
     {
+        private bool _isCompactMode;
         private bool _isInitialized;
 
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
@@ -112,6 +114,50 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             SettingsService.AppSettings.WasBetaNotificationShown1 = true;
             await SettingsService.AppSettings.TrySaveAsync();
+        }
+
+        private void Sidebar_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
+        {
+            var previous = Sidebar.IsPaneVisible;
+            Sidebar.IsPaneVisible = args.DisplayMode != NavigationViewDisplayMode.Minimal;
+            _isCompactMode = !Sidebar.IsPaneVisible;
+
+            if (Sidebar.IsPaneVisible && Sidebar.IsPaneVisible != previous)
+            {
+                Sidebar.IsPaneOpen = true;
+                Sidebar.PaneDisplayMode = NavigationViewPaneDisplayMode.Auto;
+            }
+        }
+
+        private async void Sidebar_PaneClosed(NavigationView sender, object args)
+        {
+            if (_isCompactMode)
+            {
+                Sidebar.IsPaneVisible = false;
+                PaneShowButton.Visibility = Visibility.Visible;
+
+                await Task.Delay(500);
+                PaneShowButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void PaneShowButton_Click(object sender, RoutedEventArgs e)
+        {
+            Sidebar.IsPaneVisible = true;
+            Sidebar.IsPaneOpen = true;
+            PaneShowButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void PaneButtonGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            if (_isCompactMode)
+                PaneShowButton.Visibility = Visibility.Visible;
+        }
+
+        private void PaneButtonGrid_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            if (_isCompactMode)
+                PaneShowButton.Visibility = Visibility.Collapsed;
         }
 
         public MainHostViewModel? ViewModel

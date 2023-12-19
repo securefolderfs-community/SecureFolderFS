@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     Title="How to use"
     Closing="ExplanationDialog_Closing"
     DefaultButton="Primary"
@@ -21,11 +22,11 @@
             Message="Click 'View vault' to view and manage your files. The vault must be unlocked before storing your files. Any items manually placed inside the 'content' folder or the vault folder will not be encrypted."
             Severity="Informational" />
 
-        <Border Margin="1" CornerRadius="2">
+        <win:Border Margin="1" CornerRadius="2">
             <MediaPlayerElement
                 x:Name="Media"
                 Height="280"
                 Loaded="Media_Loaded" />
-        </Border>
+        </win:Border>
     </StackPanel>
 </ContentDialog>

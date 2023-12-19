@@ -22,18 +22,53 @@
 
     <NavigationView
         x:Name="Sidebar"
+        DisplayModeChanged="Sidebar_DisplayModeChanged"
         ExpandedModeThresholdWidth="816"
         IsBackButtonVisible="Collapsed"
         IsPaneToggleButtonVisible="True"
         IsSettingsVisible="False"
         MenuItemsSource="{x:Bind ViewModel.SidebarViewModel.SidebarItems, Mode=OneWay}"
         OpenPaneLength="260"
+        PaneClosed="Sidebar_PaneClosed"
         PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|MyVaults'}"
         SelectedItem="{x:Bind ViewModel.SidebarViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionChanged="Sidebar_SelectionChanged">
 
-        <!--  Navigation Control  -->
-        <uc2:VaultNavigationControl x:Name="Navigation" />
+        <Grid>
+            <Grid
+                Width="32"
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                Canvas.ZIndex="10"
+                PointerEntered="PaneButtonGrid_PointerEntered"
+                PointerExited="PaneButtonGrid_PointerExited">
+
+                <!--  Pane Show button  -->
+                <Button
+                    x:Name="PaneShowButton"
+                    Height="128"
+                    Margin="-16,0,0,0"
+                    Click="PaneShowButton_Click"
+                    CornerRadius="0 6 6 0"
+                    Visibility="Collapsed">
+                    <!--<anim:Implicit.ShowAnimations>
+                        <anim:TranslationAnimation
+                            From="-4,0,0,0"
+                            To="0"
+                            Duration="0:0:0.6" />
+                    </anim:Implicit.ShowAnimations>
+                    <anim:Implicit.HideAnimations>
+                        <anim:TranslationAnimation
+                            From="0"
+                            To="-4,0,0,0"
+                            Duration="0:0:0.6" />
+                    </anim:Implicit.HideAnimations>-->
+                </Button>
+            </Grid>
+
+            <!--  Navigation Control  -->
+            <uc2:VaultNavigationControl x:Name="Navigation" />
+        </Grid>
 
         <NavigationView.AutoSuggestBox>
             <AutoSuggestBox
@@ -45,7 +80,6 @@
         </NavigationView.AutoSuggestBox>
         <NavigationView.PaneFooter>
             <Grid
-                Width="{Binding Path=OpenPaneLength, ElementName=Sidebar}"
                 Padding="20,0,20,12"
                 HorizontalAlignment="Stretch"
                 RowSpacing="16">
@@ -129,38 +163,31 @@
         </NavigationView.PaneFooter>
         <NavigationView.MenuItemTemplate>
             <DataTemplate x:DataType="vm:SidebarItemViewModel">
-                <Grid
+                <NavigationViewItem
                     Height="64"
                     AutomationProperties.Name="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
-                    ColumnSpacing="16"
                     ToolTipService.ToolTip="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xF540;" />
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Content>
+                        <StackPanel>
+                            <!--  Vault name  -->
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Text="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis" />
 
-                    <!--  Icon  -->
-                    <FontIcon Grid.Column="0" Glyph="&#xF540;" />
-
-                    <!--  Item Content  -->
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <!--  Vault name  -->
-                        <TextBlock
-                            FontWeight="SemiBold"
-                            Text="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis" />
-
-                        <!--  Last opened  -->
-                        <TextBlock
-                            x:Name="LastOpenedText"
-                            x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                            FontSize="12"
-                            Opacity="0.6"
-                            Text="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
-                    </StackPanel>
-
-                    <!--  Context Flyout  -->
-                    <Grid.ContextFlyout>
+                            <!--  Last opened  -->
+                            <TextBlock
+                                x:Name="LastOpenedText"
+                                x:Load="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                                FontSize="12"
+                                Opacity="0.6"
+                                Text="{x:Bind LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                        </StackPanel>
+                    </NavigationViewItem.Content>
+                    <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
                             <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
                             <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Name=ShowEncryptedVault}">
@@ -177,8 +204,8 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyout>
-                    </Grid.ContextFlyout>
-                </Grid>
+                    </NavigationViewItem.ContextFlyout>
+                </NavigationViewItem>
             </DataTemplate>
         </NavigationView.MenuItemTemplate>
     </NavigationView>

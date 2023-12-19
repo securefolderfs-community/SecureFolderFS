@@ -3,6 +3,7 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,9 +25,11 @@ namespace SecureFolderFS.UI.ViewModels
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var key = await SignAsync(config.Id, null, cancellationToken);
+            var key = await this.TrySignAsync(config.Id, null, cancellationToken);
+            if (!key.Successful || key.Value is null)
+                return;
 
-            StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(key));
+            StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(key.Value));
         }
     }
 }
