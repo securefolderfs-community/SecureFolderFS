@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Uno.Views.Settings.GeneralSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:anim="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -68,8 +69,7 @@
                     Message="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Message, Mode=OneWay}"
                     Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
                     Visibility="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsOpen, Mode=OneWay}">
-                    <!--  TODO(u)  -->
-                    <!--<anim:Implicit.ShowAnimations>
+                    <anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             From="0,-15,0"
                             To="0"
@@ -88,7 +88,7 @@
                             From="0"
                             To="0,-15,0"
                             Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>-->
+                    </anim:Implicit.HideAnimations>
                 </InfoBar>
             </uc:BannerControl.AdditionalBottomContent>
         </uc:BannerControl>
@@ -147,8 +147,7 @@
                                 Visibility="Collapsed" />
                         </Grid>
                     </InfoBar.Content>
-                    <!--  TODO(u)  -->
-                    <!--<anim:Implicit.ShowAnimations>
+                    <anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             From="0,-15,0"
                             To="0"
@@ -167,7 +166,7 @@
                             From="0"
                             To="0,-15,0"
                             Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>-->
+                    </anim:Implicit.HideAnimations>
                 </InfoBar>
             </StackPanel>
             <ucab:ActionBlockControl

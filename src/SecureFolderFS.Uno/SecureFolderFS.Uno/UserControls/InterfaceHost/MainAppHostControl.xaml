@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Uno.UserControls.InterfaceHost.MainAppHostControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:anim="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:animvis="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
@@ -51,18 +52,20 @@
                     Click="PaneShowButton_Click"
                     CornerRadius="0 6 6 0"
                     Visibility="Collapsed">
-                    <!--<anim:Implicit.ShowAnimations>
+                    <anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
-                            From="-4,0,0,0"
+                            EasingMode="EaseOut"
+                            From="-8,0,0"
                             To="0"
-                            Duration="0:0:0.6" />
+                            Duration="0:0:0.4" />
                     </anim:Implicit.ShowAnimations>
                     <anim:Implicit.HideAnimations>
                         <anim:TranslationAnimation
+                            EasingMode="EaseOut"
                             From="0"
-                            To="-4,0,0,0"
+                            To="-8,0,0"
                             Duration="0:0:0.6" />
-                    </anim:Implicit.HideAnimations>-->
+                    </anim:Implicit.HideAnimations>
                 </Button>
             </Grid>
 

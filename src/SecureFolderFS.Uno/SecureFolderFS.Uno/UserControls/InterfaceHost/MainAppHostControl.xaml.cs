@@ -136,7 +136,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 Sidebar.IsPaneVisible = false;
                 PaneShowButton.Visibility = Visibility.Visible;
 
-                await Task.Delay(500);
+                await Task.Delay(1000);
                 PaneShowButton.Visibility = Visibility.Collapsed;
             }
         }

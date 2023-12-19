@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Uno.Views.Settings.PreferencesSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:anim="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -32,9 +33,7 @@
                             NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000" />
                     </Grid>
                 </InfoBar.Content>
-
-                <!--  TODO(u)  -->
-                <!--<anim:Implicit.ShowAnimations>
+                <anim:Implicit.ShowAnimations>
                     <anim:TranslationAnimation
                         From="0,-15,0"
                         To="0"
@@ -53,7 +52,7 @@
                         From="0"
                         To="0,-15,0"
                         Duration="0:0:0.2" />
-                </anim:Implicit.HideAnimations>-->
+                </anim:Implicit.HideAnimations>
             </InfoBar>
         </DataTemplate>
         <DataTemplate x:Key="WebDavExperimentalInfoBarTemplate" x:DataType="uc2:WebDavInfoBar">
@@ -110,8 +109,7 @@
                     <ContentControl.ContentTemplateSelector>
                         <ts:FileSystemInfoBarTemplateSelector DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}" WebDavExperimentalInfoBarTemplate="{StaticResource WebDavExperimentalInfoBarTemplate}" />
                     </ContentControl.ContentTemplateSelector>
-                    <!--  TODO(u)  -->
-                    <!--<anim:Implicit.ShowAnimations>
+                    <anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             From="0,-15,0"
                             To="0"
@@ -130,7 +128,7 @@
                             From="0"
                             To="0,-15,0"
                             Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>-->
+                    </anim:Implicit.HideAnimations>
                 </ContentControl>
             </uc:BannerControl.AdditionalBottomContent>
         </uc:BannerControl>
