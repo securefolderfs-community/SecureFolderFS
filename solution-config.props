@@ -16,9 +16,5 @@
         <!--<OverrideTargetFrameworks>net8.0-ios</OverrideTargetFrameworks>-->
         <OverrideTargetFrameworks>net8.0-android</OverrideTargetFrameworks>
         <!--<OverrideTargetFrameworks>net8.0-maccatalyst</OverrideTargetFrameworks>-->
-		
-        <!--<MyAppTargetFrameworkOverride>net8.0-ios</MyAppTargetFrameworkOverride>-->
-        <!--<MyAppTargetFrameworkOverride>net8.0-maccatalyst</MyAppTargetFrameworkOverride>-->
-        <!--<MyAppTargetFrameworkOverride>net8.0-android</MyAppTargetFrameworkOverride>-->
     </PropertyGroup>
 </Project>

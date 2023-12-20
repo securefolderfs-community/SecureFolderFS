@@ -39,7 +39,7 @@
             <Grid
                 Width="32"
                 HorizontalAlignment="Left"
-                Background="Red"
+                Background="Transparent"
                 Canvas.ZIndex="10"
                 PointerEntered="PaneButtonGrid_PointerEntered"
                 PointerExited="PaneButtonGrid_PointerExited">

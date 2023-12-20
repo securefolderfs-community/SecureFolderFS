@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Uno.WinUI" />
     <PackageReference Include="Uno.Resizetizer" />

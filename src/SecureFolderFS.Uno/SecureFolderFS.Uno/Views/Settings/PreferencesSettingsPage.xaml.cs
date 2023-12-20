@@ -98,18 +98,6 @@ namespace SecureFolderFS.Uno.Views.Settings
             IsInfoBarOpen = FileSystemInfoBar?.IsOpen ?? false;
         }
 
-        private async Task<FileSystemItemViewModel?> GetSupportedAdapter(CancellationToken cancellationToken = default)
-        {
-            foreach (var item in ViewModel.BannerViewModel.FileSystemAdapters)
-            {
-                var isSupportedResult = await item.FileSystemInfoModel.GetStatusAsync(cancellationToken);
-                if (isSupportedResult.Successful)
-                    return item;
-            }
-
-            return ViewModel.BannerViewModel.FileSystemAdapters.FirstOrDefault();
-        }
-
         private void Root_Loaded(object sender, RoutedEventArgs e)
         {
             _ = AddTransitionsAsync();

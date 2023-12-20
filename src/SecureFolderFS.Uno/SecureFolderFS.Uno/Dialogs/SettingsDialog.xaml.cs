@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -52,6 +53,8 @@ namespace SecureFolderFS.Uno.Dialogs
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
             var target = GetTargetForTag(tag);
+            if (ViewModel.NavigationService.Targets.FirstOrDefault(x => target == x) is null && target is IAsyncInitialize asyncInitialize)
+                _ = asyncInitialize.InitAsync();
 
             await ViewModel.NavigationService.NavigateAsync(target);
         }
