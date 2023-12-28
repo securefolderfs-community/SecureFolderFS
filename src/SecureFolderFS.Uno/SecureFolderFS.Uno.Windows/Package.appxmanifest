@@ -7,18 +7,20 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="SecureFolderFS.Uno"
-    Publisher="O=szymo"
-    Version="1.0.0.0" />
+    Name="636fdcec-de3d-40c0-b25d-22edc942a779"
+    Publisher="CN=d2dyno"
+    Version="0.5.0.0" />
 
   <Properties>
-    <DisplayName>SecureFolderFS.Uno</DisplayName>
-    <PublisherDisplayName>SecureFolderFS.Uno</PublisherDisplayName>
+    <DisplayName>SecureFolderFS</DisplayName>
+    <PublisherDisplayName>d2dyno</PublisherDisplayName>
+    <Logo>Assets\PackageLogo.png</Logo>
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22000.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22000.0" />
+    <PackageDependency Name="Microsoft.VCLibs.140.00" MinVersion="14.0.30035.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
   </Dependencies>
 
   <Resources>
@@ -30,9 +32,10 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="SecureFolderFS.Uno"
-        Description="SecureFolderFS.Uno">
-        <uap:SplashScreen />
+        DisplayName="SecureFolderFS"
+        Description="SecureFolderFS lets you securely access your files. With strong AES encryption, you can be assured your files stay protected, and with advanced on-fly encryption/decryption you can continue to work uninterruptibly." Square150x150Logo="Assets\MediumTile.png" Square44x44Logo="Assets\AppIcon.png">
+        <uap:SplashScreen  Image="Assets\SplashScreen.png"/>
+        <uap:DefaultTile Square71x71Logo="Assets\SmallTile.png" Wide310x150Logo="Assets\WideTile.png" Square310x310Logo="Assets\LargeTile.png"/>
       </uap:VisualElements>
     </Application>
   </Applications>
