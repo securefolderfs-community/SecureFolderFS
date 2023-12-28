@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -33,8 +33,11 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="SecureFolderFS"
-        Description="SecureFolderFS lets you securely access your files. With strong AES encryption, you can be assured your files stay protected, and with advanced on-fly encryption/decryption you can continue to work uninterruptibly." Square150x150Logo="Assets\MediumTile.png" Square44x44Logo="Assets\AppIcon.png">
-        <uap:SplashScreen  Image="Assets\SplashScreen.png"/>
+        Description="SecureFolderFS lets you securely access your files. With strong AES encryption, you can be assured your files stay protected, and with advanced on-fly encryption/decryption you can continue to work uninterruptibly."
+        Square150x150Logo="Assets\MediumTile.png"
+        Square44x44Logo="Assets\AppIcon.png"
+        BackgroundColor="transparent">
+        <uap:SplashScreen Image="Assets\SplashScreen.png"/>
         <uap:DefaultTile Square71x71Logo="Assets\SmallTile.png" Wide310x150Logo="Assets\WideTile.png" Square310x310Logo="Assets\LargeTile.png"/>
       </uap:VisualElements>
     </Application>

@@ -1,3 +1,4 @@
+using System.IO;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
@@ -7,7 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
-using Uno.Resizetizer;
+using Windows.ApplicationModel;
 
 namespace SecureFolderFS.Uno
 {
@@ -25,23 +26,20 @@ namespace SecureFolderFS.Uno
         }
 
         /// <inheritdoc/>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
-        {
-            base.OnLaunched(args);
-            MainWindow.SetWindowIcon();
-        }
-
-        /// <inheritdoc/>
         protected override void EnsureEarlyWindow(Window window)
         {
             base.EnsureEarlyWindow(window);
 #if WINDOWS
-
             // Set backdrop
             window.SystemBackdrop = new MicaBackdrop();
-
+#endif
             // Set title
             window.AppWindow.Title = "SecureFolderFS";
+
+#if !UNPACKAGED
+            // Set icon
+            window.AppWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
+#endif
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
@@ -60,7 +58,6 @@ namespace SecureFolderFS.Uno
             
             // Hook up event for window closing
             window.AppWindow.Closing += AppWindow_Closing;
-#endif
         }
 
         private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
@@ -86,8 +83,6 @@ namespace SecureFolderFS.Uno
             {
 #if __WASM__
                 builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-#elif __IOS__ || __MACCATALYST__
-                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #elif NETFX_CORE
                 builder.AddDebug();
 #else

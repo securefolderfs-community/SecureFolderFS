@@ -39,10 +39,12 @@
             Orientation="Horizontal"
             Spacing="2">
             <Button
+                x:Name="CreateNewButton"
                 Height="28"
                 Padding="12,0"
                 Click="SegmentButton_Click"
                 Content="Create new"
+                Style="{ThemeResource AccentButtonStyle}"
                 Tag="CREATE" />
             <Button
                 Height="28"

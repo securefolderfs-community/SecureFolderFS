@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <EmbeddedResource Include="Assets\*" />
+        <None Remove="Assets\AppAssets\AppIcon.ico" />
         <None Remove="Assets\AppAssets\AppIcon.png" />
         <None Remove="Assets\AppAssets\AppTitle.png" />
         <None Remove="Assets\AppAssets\AppTitle.svg" />
@@ -19,6 +20,9 @@
         <None Remove="Assets\Licenses\Roslyn Analyzers LICENSE" />
         <None Remove="Assets\Licenses\Roslyn LICENSE" />
         <None Remove="Assets\Licenses\WinUI3Utilities LICENSE" />
+        <EmbeddedResource Include="Assets\AppAssets\AppIcon.ico">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
         <EmbeddedResource Include="Assets\AppAssets\AppIcon.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>

@@ -1,21 +1,37 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+
+    <!-- Publishing -->
+    <UseWinUI>True</UseWinUI>
+    <EnableMsixTooling>True</EnableMsixTooling>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <Platforms>x86;x64;arm64</Platforms>
     <TargetFramework>$(DotNetVersion)-windows10.0.19041.0</TargetFramework>
+    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>SecureFolderFS.Uno.Windows</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x86;x64;arm64</Platforms>
-    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <EnableMsixTooling>true</EnableMsixTooling>
 
-    <!-- Bundles the WinAppSDK binaries -->
-    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <ImplicitUsings>disable</ImplicitUsings>
+    <!-- Packaging -->
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>False</GenerateTestArtifacts>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+
+    <!-- Languages -->
+    <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA</AppxDefaultResourceQualifiers>
     <DefaultLanguage>en-US</DefaultLanguage>
 
-    <!-- <SelfContained>true</SelfContained> -->
+    <!-- Bundle WinAppSDK binaries in SelfContained -->
+    <SelfContained>True</SelfContained>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+
+    <!-- Other -->
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
   </PropertyGroup>
 
   <!-- Define UNPACKAGED constant -->
@@ -24,58 +40,58 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Images\**" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-16.png" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-24.png" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-256.png" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-32.png" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-48.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-16.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-24.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-256.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-32.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-48.png" />
-    <Content Remove="Assets\AppIcon.scale-100.png" />
-    <Content Remove="Assets\AppIcon.scale-125.png" />
-    <Content Remove="Assets\AppIcon.scale-150.png" />
-    <Content Remove="Assets\AppIcon.scale-200.png" />
-    <Content Remove="Assets\AppIcon.scale-400.png" />
-    <Content Remove="Assets\AppIcon.targetsize-16.png" />
-    <Content Remove="Assets\AppIcon.targetsize-24.png" />
-    <Content Remove="Assets\AppIcon.targetsize-256.png" />
-    <Content Remove="Assets\AppIcon.targetsize-32.png" />
-    <Content Remove="Assets\AppIcon.targetsize-48.png" />
-    <Content Remove="Assets\LargeTile.scale-100.png" />
-    <Content Remove="Assets\LargeTile.scale-125.png" />
-    <Content Remove="Assets\LargeTile.scale-150.png" />
-    <Content Remove="Assets\LargeTile.scale-200.png" />
-    <Content Remove="Assets\LargeTile.scale-400.png" />
-    <Content Remove="Assets\MediumTile.scale-100.png" />
-    <Content Remove="Assets\MediumTile.scale-125.png" />
-    <Content Remove="Assets\MediumTile.scale-150.png" />
-    <Content Remove="Assets\MediumTile.scale-200.png" />
-    <Content Remove="Assets\MediumTile.scale-400.png" />
-    <Content Remove="Assets\PackageLogo.scale-100.png" />
-    <Content Remove="Assets\PackageLogo.scale-125.png" />
-    <Content Remove="Assets\PackageLogo.scale-150.png" />
-    <Content Remove="Assets\PackageLogo.scale-200.png" />
-    <Content Remove="Assets\PackageLogo.scale-400.png" />
-    <Content Remove="Assets\SmallTile.scale-100.png" />
-    <Content Remove="Assets\SmallTile.scale-125.png" />
-    <Content Remove="Assets\SmallTile.scale-150.png" />
-    <Content Remove="Assets\SmallTile.scale-200.png" />
-    <Content Remove="Assets\SmallTile.scale-400.png" />
-    <Content Remove="Assets\SplashScreen.scale-100.png" />
-    <Content Remove="Assets\SplashScreen.scale-125.png" />
-    <Content Remove="Assets\SplashScreen.scale-150.png" />
-    <Content Remove="Assets\SplashScreen.scale-200.png" />
-    <Content Remove="Assets\WideTile.scale-100.png" />
-    <Content Remove="Assets\WideTile.scale-125.png" />
-    <Content Remove="Assets\WideTile.scale-150.png" />
-    <Content Remove="Assets\WideTile.scale-200.png" />
-    <Content Remove="Assets\WideTile.scale-400.png" />
-    <None Remove="Assets\SplashScreen.scale-400.png" />
-    <Manifest Include="$(ApplicationManifest)" />
+    <EmbeddedResource Include="Assets\LargeTile.scale-100.png" />
+    <EmbeddedResource Include="Assets\LargeTile.scale-125.png" />
+    <EmbeddedResource Include="Assets\LargeTile.scale-150.png" />
+    <EmbeddedResource Include="Assets\LargeTile.scale-200.png" />
+    <EmbeddedResource Include="Assets\LargeTile.scale-400.png" />
+    <EmbeddedResource Include="Assets\LockScreenLogo.scale-200.png" />
+    <EmbeddedResource Include="Assets\SmallTile.scale-100.png" />
+    <EmbeddedResource Include="Assets\SmallTile.scale-125.png" />
+    <EmbeddedResource Include="Assets\SmallTile.scale-150.png" />
+    <EmbeddedResource Include="Assets\SmallTile.scale-200.png" />
+    <EmbeddedResource Include="Assets\SmallTile.scale-400.png" />
+    <EmbeddedResource Include="Assets\SplashScreen.scale-100.png" />
+    <EmbeddedResource Include="Assets\SplashScreen.scale-125.png" />
+    <EmbeddedResource Include="Assets\SplashScreen.scale-150.png" />
+    <EmbeddedResource Include="Assets\SplashScreen.scale-200.png" />
+    <EmbeddedResource Include="Assets\SplashScreen.scale-400.png" />
+    <EmbeddedResource Include="Assets\Square150x150Logo.scale-100.png" />
+    <EmbeddedResource Include="Assets\Square150x150Logo.scale-125.png" />
+    <EmbeddedResource Include="Assets\Square150x150Logo.scale-150.png" />
+    <EmbeddedResource Include="Assets\Square150x150Logo.scale-200.png" />
+    <EmbeddedResource Include="Assets\Square150x150Logo.scale-400.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.scale-100.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.scale-125.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.scale-150.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.scale-200.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.scale-400.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-16.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-24.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-256.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-32.png" />
+    <EmbeddedResource Include="Assets\Square44x44Logo.targetsize-48.png" />
+    <EmbeddedResource Include="Assets\StoreLogo.backup.png" />
+    <EmbeddedResource Include="Assets\StoreLogo.scale-100.png" />
+    <EmbeddedResource Include="Assets\StoreLogo.scale-125.png" />
+    <EmbeddedResource Include="Assets\StoreLogo.scale-150.png" />
+    <EmbeddedResource Include="Assets\StoreLogo.scale-200.png" />
+    <EmbeddedResource Include="Assets\StoreLogo.scale-400.png" />
+    <EmbeddedResource Include="Assets\Wide310x150Logo.scale-100.png" />
+    <EmbeddedResource Include="Assets\Wide310x150Logo.scale-125.png" />
+    <EmbeddedResource Include="Assets\Wide310x150Logo.scale-150.png" />
+    <EmbeddedResource Include="Assets\Wide310x150Logo.scale-200.png" />
+    <EmbeddedResource Include="Assets\Wide310x150Logo.scale-400.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -86,6 +102,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
     <PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+    <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
   <ItemGroup>

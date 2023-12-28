@@ -15,7 +15,6 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Uno.WinUI" />
-    <PackageReference Include="Uno.Resizetizer" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
   </ItemGroup>
 

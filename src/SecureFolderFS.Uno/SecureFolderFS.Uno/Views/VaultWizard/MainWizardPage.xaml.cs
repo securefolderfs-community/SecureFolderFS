@@ -16,6 +16,8 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     [INotifyPropertyChanged]
     public sealed partial class MainWizardPage : Page
     {
+        private Button? _lastClickedButton;
+
         public MainWizardPageViewModel ViewModel
         {
             get => (MainWizardPageViewModel)DataContext;
@@ -38,11 +40,17 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
 
         private async void SegmentButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not Button { Tag: string tag })
+            if (sender is not Button { Tag: string tag } button)
                 return;
+
+            _lastClickedButton ??= CreateNewButton;
+            _lastClickedButton.Style = (Style?)App.Instance?.Resources["DefaultButtonStyle"];
 
             var creationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
             await ViewModel.UpdateSelectionAsync(creationType, default);
+
+            button.Style = (Style?)App.Instance?.Resources["AccentButtonStyle"];
+            _lastClickedButton = button;
         }
     }
 }
