@@ -41,7 +41,7 @@ namespace SecureFolderFS.WinUI.Views.VaultWizard
 
         private void ThemeHelper_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(IThemeHelper.CurrentTheme))
+            if (e.PropertyName != nameof(ThemeHelper.CurrentTheme))
                 return;
 
             CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);

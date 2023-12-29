@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.WinUI
+namespace SecureFolderFS.Uno.Windows
 {
     internal static class Constants
     {

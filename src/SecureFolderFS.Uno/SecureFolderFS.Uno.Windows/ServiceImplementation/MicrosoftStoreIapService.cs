@@ -1,11 +1,11 @@
-﻿using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
 using Windows.Services.Store;
 
-namespace SecureFolderFS.WinUI.ServiceImplementation
+namespace SecureFolderFS.Uno.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IIapService"/>
     internal sealed class MicrosoftStoreIapService : IIapService

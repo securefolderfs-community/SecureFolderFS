@@ -1,4 +1,4 @@
-﻿using Microsoft.AppCenter;
+using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using SecureFolderFS.Sdk.Services;
@@ -6,15 +6,15 @@ using SecureFolderFS.UI.Api;
 using System;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.WinUI.ServiceImplementation
+namespace SecureFolderFS.Uno.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="ITelemetryService"/>
     internal sealed class AppCenterTelemetryService : ITelemetryService
     {
         /// <inheritdoc/>
-        public async Task<bool> IsEnabledAsync()
+        public Task<bool> IsEnabledAsync()
         {
-            return await AppCenter.IsEnabledAsync();
+            return AppCenter.IsEnabledAsync();
         }
 
         /// <inheritdoc/>

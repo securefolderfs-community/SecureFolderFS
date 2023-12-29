@@ -1,18 +1,16 @@
-﻿using CommunityToolkit.WinUI;
+using System;
+using System.Threading.Tasks;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Printing;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utilities;
-using SecureFolderFS.WinUI.Views.PrintPages;
-using SecureFolderFS.WinUI.WindowViews;
-using System;
-using System.Threading.Tasks;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Uno.Views.PrintPages;
+using SecureFolderFS.Uno.Windows.Extensions;
 using Windows.Graphics.Printing;
-using WinUIEx;
 
-namespace SecureFolderFS.WinUI.ServiceImplementation
+namespace SecureFolderFS.Uno.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IPrinterService"/>
     internal sealed class WindowsPrinterService : IPrinterService
@@ -60,14 +58,14 @@ namespace SecureFolderFS.WinUI.ServiceImplementation
             _printDocument.GetPreviewPage += PrintDocument_GetPreviewPage;   // Creates a specific page preview
             _printDocument.AddPages += PrintDocument_AddPages;               // Provides all pages to be printed
             
-            _printManager = PrintManagerInterop.GetForWindow(MainWindow.Instance.GetWindowHandle());
+            _printManager = PrintManagerInterop.GetForWindow(App.Instance!.MainWindow.GetWindowHandle());
             _printManager.PrintTaskRequested += PrintManager_PrintTaskRequested;
         }
 
         public async Task PrintAsync(Page page)
         {
             _pageToPrint = page;
-            await PrintManagerInterop.ShowPrintUIForWindowAsync(MainWindow.Instance.GetWindowHandle());
+            await PrintManagerInterop.ShowPrintUIForWindowAsync(App.Instance!.MainWindow.GetWindowHandle());
             await _tcs.Task;
         }
 

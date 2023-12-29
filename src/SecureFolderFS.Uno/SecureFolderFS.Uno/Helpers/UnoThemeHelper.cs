@@ -9,15 +9,17 @@ using Windows.UI.ViewManagement;
 
 namespace SecureFolderFS.Uno.Helpers
 {
-    /// <inheritdoc cref="IThemeHelper"/>
-    internal sealed class UnoThemeHelper : ThemeHelper<UnoThemeHelper>, IThemeHelper<UnoThemeHelper>
+    /// <inheritdoc cref="ThemeHelper"/>
+    internal sealed class UnoThemeHelper : ThemeHelper
     {
         private AppWindow? _appWindow;
         private FrameworkElement? _rootContent;
         private readonly UISettings _uiSettings;
         private readonly DispatcherQueue _dispatcherQueue;
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the singleton instance of <see cref="UnoThemeHelper"/>.
+        /// </summary>
         public static UnoThemeHelper Instance { get; } = new();
 
         /// <summary>
@@ -54,6 +56,7 @@ namespace SecureFolderFS.Uno.Helpers
                     _rootContent.RequestedTheme = (ElementTheme)(uint)CurrentTheme;
             }
 
+#if WINDOWS
             if (_appWindow is not null && AppWindowTitleBar.IsCustomizationSupported())
             {
                 switch (CurrentTheme)
@@ -84,11 +87,13 @@ namespace SecureFolderFS.Uno.Helpers
                         break;
                 }
             }
+#endif
         }
 
-        public void RegisterWindowInstance(FrameworkElement? rootContent)
+        public void RegisterWindowInstance(FrameworkElement? rootContent, AppWindow? appWindow = null)
         {
             _rootContent = rootContent;
+            _appWindow = appWindow;
         }
 
         private void Settings_ColorValuesChanged(UISettings sender, object args)

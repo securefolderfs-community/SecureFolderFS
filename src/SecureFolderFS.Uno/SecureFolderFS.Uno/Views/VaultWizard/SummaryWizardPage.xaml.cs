@@ -49,7 +49,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         private void ThemeHelper_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
 #if WINDOWS
-            if (e.PropertyName != nameof(IThemeHelper.CurrentTheme))
+            if (e.PropertyName != nameof(ThemeHelper.CurrentTheme))
                 return;
 
             CheckVisualSource.SetColorProperty("Foreground", ((SolidColorBrush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"]).Color);

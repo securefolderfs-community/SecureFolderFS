@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Services.Store;
 
-namespace SecureFolderFS.WinUI.ServiceImplementation
+namespace SecureFolderFS.Uno.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IUpdateService"/>
     internal sealed class MicrosoftStoreUpdateService : IUpdateService

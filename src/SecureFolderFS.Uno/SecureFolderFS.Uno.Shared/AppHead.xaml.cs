@@ -7,7 +7,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
+using SecureFolderFS.Uno.Windows.Helpers;
 using Windows.ApplicationModel;
 
 namespace SecureFolderFS.Uno
@@ -15,6 +17,15 @@ namespace SecureFolderFS.Uno
     public sealed partial class AppHead : App
     {
         static AppHead() => InitializeLogging();
+
+        /// <inheritdoc/>
+        protected override BaseLifecycleHelper ApplicationLifecycle { get; } =
+#if WINDOWS
+            new WindowsLifecycleHelper()
+#else
+            null
+#endif
+            ;
 
         /// <summary>
         /// Initializes the singleton application object. This is the first line of authored code
@@ -29,17 +40,17 @@ namespace SecureFolderFS.Uno
         protected override void EnsureEarlyWindow(Window window)
         {
             base.EnsureEarlyWindow(window);
-#if WINDOWS
-            // Set backdrop
-            window.SystemBackdrop = new MicaBackdrop();
-#endif
+
             // Set title
             window.AppWindow.Title = "SecureFolderFS";
 
+#if WINDOWS
 #if !UNPACKAGED
             // Set icon
             window.AppWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
 #endif
+            // Set backdrop
+            window.SystemBackdrop = new MicaBackdrop();
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
@@ -50,7 +61,9 @@ namespace SecureFolderFS.Uno
                 window.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                 window.AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             }
-            else if (window.Content is MainWindowRootControl rootControl)
+            else
+#endif
+            if (window.Content is MainWindowRootControl rootControl)
             {
                 window.ExtendsContentIntoTitleBar = true;
                 window.SetTitleBar(rootControl.CustomTitleBar);

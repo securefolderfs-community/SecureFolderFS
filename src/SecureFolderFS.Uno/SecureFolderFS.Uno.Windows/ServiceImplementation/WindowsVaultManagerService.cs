@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
@@ -5,14 +9,8 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
-using SecureFolderFS.Uno.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Windows.Security.Credentials;
 
-namespace SecureFolderFS.Uno.ServiceImplementation
+namespace SecureFolderFS.Uno.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultManagerService"/>
     public sealed class WindowsVaultManagerService : BaseVaultManagerService

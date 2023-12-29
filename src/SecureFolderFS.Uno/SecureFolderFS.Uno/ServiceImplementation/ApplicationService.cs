@@ -11,7 +11,13 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class ApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
-        public override string Platform { get; } = "Uno";
+        public override string Platform { get; } =
+#if WINDOWS
+            "WinUI"
+#else
+            "Uno"
+#endif
+            ;
 
         /// <inheritdoc/>
         public override Version AppVersion
@@ -32,7 +38,9 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public override Task TryRestartAsync()
         {
-            //Microsoft.Windows.AppLifecycle.AppInstance.Restart("/RestartCalled");
+#if WINDOWS
+            Microsoft.Windows.AppLifecycle.AppInstance.Restart("/RestartCalled");
+#endif
             return Task.CompletedTask;
         }
     }

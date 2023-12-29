@@ -1,40 +1,24 @@
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.Storage.NativeStorage;
-using SecureFolderFS.Uno.ServiceImplementation;
+using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 
-#if !UNPACKAGED
-using Windows.Storage;
-#endif
-
-#if !DEBUG
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using SecureFolderFS.UI.Api;
-#endif
-
 namespace SecureFolderFS.Uno
 {
-    public class App : Application
+    public abstract class App : Application
     {
         public static App? Instance { get; private set; }
 
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public Window? MainWindow { get; private set; }
+
+        protected abstract BaseLifecycleHelper ApplicationLifecycle { get; }
 
         /// <summary>
         /// Initializes the singleton application object. This is the first line of authored code
@@ -43,7 +27,20 @@ namespace SecureFolderFS.Uno
         public App()
         {
             Instance = this;
-            EnsureEarlyApp();
+
+            // Configure exception handlers
+            UnhandledException += App_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+        }
+
+        /// <summary>
+        /// Configures provided <paramref name="window"/> instance for use.
+        /// </summary>
+        /// <param name="window">The window to configure.</param>
+        protected virtual void EnsureEarlyWindow(Window window)
+        {
+            window.Content = new MainWindowRootControl();
         }
 
         /// <summary>
@@ -51,7 +48,7 @@ namespace SecureFolderFS.Uno
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
             MainWindow = new Window();
@@ -71,18 +68,15 @@ namespace SecureFolderFS.Uno
                 return;
             }
 
-#if UNPACKAGED
-            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
-#else
-            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
-#endif
-
-            // Get settings folder
-            var settingsFolder = new NativeFolder(Directory.CreateDirectory(settingsFolderPath));
+            // Initialize application lifecycle
+            await ApplicationLifecycle.InitAsync();
 
             // Configure IoC
-            var serviceCollection = ConfigureServices(settingsFolder);
-            ServiceProvider = serviceCollection.BuildServiceProvider();
+            ServiceProvider = ApplicationLifecycle.ServiceCollection
+                .WithUnoServices()
+                .BuildServiceProvider();
+
+            // Register IoC
             Ioc.Default.ConfigureServices(ServiceProvider);
 
             // Activate MainWindow
@@ -90,104 +84,13 @@ namespace SecureFolderFS.Uno
             MainWindow.Activate();
         }
 
-        private void EnsureEarlyApp()
-        {
-            // Configure exception handlers
-            UnhandledException += App_UnhandledException;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-
-#if !DEBUG
-            try
-            {
-                // Start AppCenter
-                var appCenterKey = ApiKeys.GetAppCenterKey();
-                if (!string.IsNullOrEmpty(appCenterKey) || !AppCenter.Configured)
-                    AppCenter.Start(appCenterKey, typeof(Analytics), typeof(Crashes));
-            }
-            catch (Exception)
-            {
-            }
-#endif
-        }
-
-        protected virtual void EnsureEarlyWindow(Window window)
-        {
-            window.Content = new MainWindowRootControl();
-        }
-
-        protected virtual IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
-        {
-            return new ServiceCollection()
-
-                // Singleton services
-                .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
-                .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
-                .AddSingleton<IVaultService, VaultService>()
-                .AddSingleton<IOverlayService, UnoDialogService>()
-                //.AddSingleton<IPrinterService, WindowsPrinterService>()
-                .AddSingleton<IClipboardService, ClipboardService>()
-                .AddSingleton<IThreadingService, ThreadingService>()
-                .AddSingleton<IApplicationService, ApplicationService>()
-                .AddSingleton<IFileExplorerService, FileExplorerService>()
-                .AddSingleton<IChangelogService, GitHubChangelogService>()
-                .AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
-
-                // IStorageService
-#if WINDOWS
-                .AddSingleton<IStorageService, NativeStorageService>()
-#else
-                .AddSingleton<IStorageService, UnoStorageService>()
-#endif
-
-                // ILocalizationService
-#if UNPACKAGED
-                .AddSingleton<ILocalizationService, ResourceLocalizationService>()
-#else
-                .AddSingleton<ILocalizationService, PackageLocalizationService>()
-#endif
-
-                // IIapService, IUpdateService
-#if DEBUG || UNPACKAGED
-                .AddSingleton<IIapService, DebugIapService>()
-                .AddSingleton<IUpdateService, DebugUpdateService>()
-#else
-                .AddSingleton<IIapService, DebugIapService>() // .AddSingleton<IIapService, MicrosoftStoreIapService>() // TODO: Change in the future
-                .AddSingleton<IUpdateService, MicrosoftStoreUpdateService>()
-#endif
-
-                // ITelemetryService
-#if DEBUG
-                .AddSingleton<ITelemetryService, DebugTelemetryService>()
-#else
-                .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
-#endif
-
-                // Transient services
-                .AddTransient<INavigationService, UnoNavigationService>()
-
-                ; // Finish service initialization
-        }
-
         #region Exception Handlers
 
-        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e) => LogException(e.Exception);
+        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e) => ApplicationLifecycle.LogException(e.Exception);
 
-        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e) => LogException(e.ExceptionObject as Exception);
+        private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e) => ApplicationLifecycle.LogException(e.ExceptionObject as Exception);
 
-        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) => LogException(e.Exception);
-
-        protected virtual void LogException(Exception? ex)
-        {
-            var formattedException = ExceptionHelpers.FormatException(ex);
-
-            Debug.WriteLine(formattedException);
-            Debugger.Break(); // Please check "Output Window" for exception details (On Visual Studio, View -> Output Window or Ctr+Alt+O)
-
-#if !DEBUG
-            ExceptionHelpers.LogExceptionToFile(ApplicationData.Current.LocalFolder.Path, formattedException);
-#endif
-        }
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e) => ApplicationLifecycle.LogException(e.Exception);
 
         #endregion
     }

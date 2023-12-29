@@ -11,7 +11,7 @@ using Windows.Foundation.Metadata;
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
     /// <inheritdoc cref="IOverlayService"/>
-    internal sealed class UnoDialogService : BaseOverlayService
+    public sealed class UnoDialogService : BaseOverlayService
     {
         /// <inheritdoc/>
         protected override IOverlayControl GetOverlay(IView view)

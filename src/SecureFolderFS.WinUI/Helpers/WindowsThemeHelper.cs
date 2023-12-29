@@ -10,15 +10,14 @@ using Windows.UI.ViewManagement;
 
 namespace SecureFolderFS.WinUI.Helpers
 {
-    /// <inheritdoc cref="IThemeHelper"/>
-    internal sealed class WindowsThemeHelper : ThemeHelper<WindowsThemeHelper>, IThemeHelper<WindowsThemeHelper>
+    /// <inheritdoc cref="ThemeHelper"/>
+    internal sealed class WindowsThemeHelper : ThemeHelper
     {
         private AppWindow? _appWindow;
         private FrameworkElement? _rootContent;
         private readonly UISettings _uiSettings;
         private readonly DispatcherQueue _dispatcherQueue;
 
-        /// <inheritdoc/>
         public static WindowsThemeHelper Instance { get; } = new();
 
         /// <summary>

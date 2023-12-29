@@ -2,30 +2,43 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Enums;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.Helpers
 {
-    /// <inheritdoc cref="IThemeHelper"/>
-    public abstract class ThemeHelper<TImplementation> : ObservableObject, IThemeHelper
-        where TImplementation : IThemeHelper<TImplementation>
+    /// <summary>
+    /// Represents a helper class used for manipulating application themes.
+    /// </summary>
+    public abstract class ThemeHelper : ObservableObject, IAsyncInitialize, INotifyPropertyChanged
     {
         protected IAppSettings AppSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().AppSettings;
 
         private ThemeType _CurrentTheme;
+        /// <summary>
+        /// Gets the current theme used by the app.
+        /// </summary>
         public virtual ThemeType CurrentTheme
         {
             get => _CurrentTheme;
             protected set => SetProperty(ref _CurrentTheme, value);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Updates the UI to reflect the new changes, if necessary.
+        /// </summary>
         public abstract void UpdateTheme();
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Updates the application's theme to specified <paramref name="themeType"/>.
+        /// </summary>
+        /// <param name="themeType">The theme to set for the app.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         public Task SetThemeAsync(ThemeType themeType, CancellationToken cancellationToken = default)
         {
             CurrentTheme = themeType;

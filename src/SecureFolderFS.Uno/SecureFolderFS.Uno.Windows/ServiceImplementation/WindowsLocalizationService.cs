@@ -6,10 +6,10 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
 using Windows.Globalization;
 
-namespace SecureFolderFS.Uno.ServiceImplementation
+namespace SecureFolderFS.Uno.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="ILocalizationService"/>
-    internal sealed class PackageLocalizationService : ResourceLocalizationService
+    internal sealed class WindowsLocalizationService : ResourceLocalizationService
     {
         /// <inheritdoc/>
         public override Task SetCultureAsync(CultureInfo cultureInfo)
