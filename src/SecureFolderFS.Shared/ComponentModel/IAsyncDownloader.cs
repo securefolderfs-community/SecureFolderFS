@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Shared.Utilities
+namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Manages the download process of a resource.

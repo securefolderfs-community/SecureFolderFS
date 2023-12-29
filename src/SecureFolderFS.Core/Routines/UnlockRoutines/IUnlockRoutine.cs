@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Routines.UnlockRoutines
 {

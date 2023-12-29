@@ -4,7 +4,7 @@ using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.Storage.MutableStorage;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections;
 using System.Collections.Specialized;

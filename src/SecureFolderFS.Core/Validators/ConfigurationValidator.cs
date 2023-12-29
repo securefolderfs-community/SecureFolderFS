@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;

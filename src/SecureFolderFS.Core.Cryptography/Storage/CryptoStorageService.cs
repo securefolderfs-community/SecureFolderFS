@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Cryptography.Storage
 {

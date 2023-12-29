@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace SecureFolderFS.Shared.Utilities
+namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Represents an awaitable action.

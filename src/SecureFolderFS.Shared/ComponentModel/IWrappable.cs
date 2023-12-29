@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.Shared.Utilities
+﻿namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Allows an object represented by <typeparamref name="T"/> to be wrapped into <see cref="IWrapper{T}"/>.

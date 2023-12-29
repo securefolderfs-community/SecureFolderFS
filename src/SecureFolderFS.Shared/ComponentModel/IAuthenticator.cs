@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Shared.Utilities
+namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Represents an authentication interface that provides a method to authenticate entities asynchronously.

@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 

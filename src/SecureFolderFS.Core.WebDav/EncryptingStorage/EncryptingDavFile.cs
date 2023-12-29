@@ -4,7 +4,7 @@ using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.Storage;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.IO;
 using System.Threading;

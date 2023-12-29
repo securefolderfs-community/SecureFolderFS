@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.Shared.Utilities
+﻿namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Wraps and exposes <typeparamref name="T"/> implementation for access.

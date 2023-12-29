@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Shared.Utilities
+namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Provides data validation abstractions for <typeparamref name="T"/> data.

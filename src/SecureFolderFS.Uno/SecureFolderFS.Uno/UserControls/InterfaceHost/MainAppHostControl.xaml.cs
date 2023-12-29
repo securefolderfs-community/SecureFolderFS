@@ -12,7 +12,7 @@ using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,

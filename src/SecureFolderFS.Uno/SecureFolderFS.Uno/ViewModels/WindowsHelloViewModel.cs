@@ -2,7 +2,7 @@
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;

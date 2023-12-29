@@ -1,7 +1,7 @@
 using System;
 using Microsoft.UI.Dispatching;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {

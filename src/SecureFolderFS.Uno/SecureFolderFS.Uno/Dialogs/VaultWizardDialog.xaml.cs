@@ -9,7 +9,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Extensions;
 

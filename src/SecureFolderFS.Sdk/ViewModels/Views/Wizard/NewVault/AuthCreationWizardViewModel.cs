@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

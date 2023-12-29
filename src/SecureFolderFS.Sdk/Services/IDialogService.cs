@@ -1,5 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Models;
 using System.ComponentModel;
+using System.Threading.Tasks;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Services
 {

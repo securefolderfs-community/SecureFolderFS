@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 using System;
 using System.Collections.Generic;

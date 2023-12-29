@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Windows.Input;
 using Windows.System;

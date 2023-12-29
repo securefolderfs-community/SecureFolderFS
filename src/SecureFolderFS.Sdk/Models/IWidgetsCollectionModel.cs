@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Shared.Utilities;
+﻿using SecureFolderFS.Shared.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 

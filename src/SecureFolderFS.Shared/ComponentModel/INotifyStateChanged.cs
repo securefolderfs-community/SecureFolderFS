@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SecureFolderFS.Shared.Utilities
+namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Provides a contract for objects that need to notify subscribers when their state changes.

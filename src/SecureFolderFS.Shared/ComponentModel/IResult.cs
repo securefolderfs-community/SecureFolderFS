@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SecureFolderFS.Shared.Utilities
+namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Represents a result of an action.
