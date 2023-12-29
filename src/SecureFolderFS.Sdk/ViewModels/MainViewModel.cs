@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
-    [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IDialogService>, Inject<INavigationService>(Visibility = "public", Name = "HostNavigationService")]
+    [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IOverlayService>, Inject<INavigationService>(Visibility = "public", Name = "HostNavigationService")]
     public sealed partial class MainViewModel : ObservableObject, IAsyncInitialize
     {
         [ObservableProperty]
@@ -42,8 +42,8 @@ namespace SecureFolderFS.Sdk.ViewModels
             // Check if the user was introduced (OOBE)
             if (false && !SettingsService.AppSettings.IsIntroduced)
             {
-                var dialogService = Ioc.Default.GetRequiredService<IDialogService>();
-                var dialogResult = await dialogService.ShowDialogAsync(new AgreementDialogViewModel());
+                var dialogService = Ioc.Default.GetRequiredService<IOverlayService>();
+                var dialogResult = await OverlayService.ShowAsync(new AgreementDialogViewModel());
                 if (dialogResult is IResult<DialogOption> { Value: DialogOption.Primary } || dialogResult.Successful)
                 {
                     SettingsService.AppSettings.IsIntroduced = true;
@@ -77,7 +77,7 @@ namespace SecureFolderFS.Sdk.ViewModels
                     var changelogDialog = new ChangelogDialogViewModel(lastVersion);
                     _ = changelogDialog.InitAsync(cancellationToken);
 
-                    await DialogService.ShowDialogAsync(changelogDialog);
+                    await OverlayService.ShowAsync(changelogDialog);
                 }
             }
         }

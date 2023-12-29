@@ -124,7 +124,7 @@ namespace SecureFolderFS.Uno
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, VaultService>()
-                .AddSingleton<IDialogService, DialogService>()
+                .AddSingleton<IOverlayService, UnoDialogService>()
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()

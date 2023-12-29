@@ -4,13 +4,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Helpers;
+using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -18,7 +18,7 @@ using SecureFolderFS.Uno.Extensions;
 
 namespace SecureFolderFS.Uno.Dialogs
 {
-    public sealed partial class VaultWizardDialog : ContentDialog, IDialog<VaultWizardDialogViewModel>
+    public sealed partial class VaultWizardDialog : ContentDialog, IOverlayControl
     {
         private bool _hasNavigationAnimatedOnLoaded;
         private bool _isBackAnimationState;
@@ -37,6 +37,9 @@ namespace SecureFolderFS.Uno.Dialogs
 
         /// <inheritdoc/>
         public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
+
+        /// <inheritdoc/>
+        public void SetView(IView view) => ViewModel = (VaultWizardDialogViewModel)view;
 
         private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)
         {

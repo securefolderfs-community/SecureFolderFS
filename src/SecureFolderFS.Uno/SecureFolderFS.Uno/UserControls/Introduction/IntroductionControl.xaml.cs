@@ -1,28 +1,23 @@
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
-using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.Uno.UserControls.Introduction
 {
-    public sealed partial class IntroductionControl : UserControl, IDialog<IntroductionDialogViewModel>, IOverlayable
+    public sealed partial class IntroductionControl : UserControl, IOverlayControl
     {
-        /// <inheritdoc/>
         public IntroductionDialogViewModel ViewModel
         {
             get => (IntroductionDialogViewModel)DataContext;
             set => DataContext = value;
         }
-
-        /// <inheritdoc/>
-        public object OverlayContent => this;
 
         public IntroductionControl()
         {
@@ -30,10 +25,10 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         }
 
         /// <inheritdoc/>
-        public Task<IResult> ShowAsync()
-        {
-            return ViewModel.TaskCompletion.Task;
-        }
+        public Task<IResult> ShowAsync() => ViewModel.TaskCompletion.Task;
+
+        /// <inheritdoc/>
+        public void SetView(IView view) => ViewModel = (IntroductionDialogViewModel)view;
 
         /// <inheritdoc/>
         public void Hide()

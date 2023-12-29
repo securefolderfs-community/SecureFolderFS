@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -6,13 +6,14 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Threading.Tasks;
+using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,D
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.Uno.Dialogs
 {
-    public sealed partial class AgreementDialog : ContentDialog, IDialog<AgreementDialogViewModel>
+    public sealed partial class AgreementDialog : ContentDialog, IOverlayControl
     {
         private bool _agreed;
 
@@ -30,6 +31,9 @@ namespace SecureFolderFS.Uno.Dialogs
 
         /// <inheritdoc/>
         public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
+
+        /// <inheritdoc/>
+        public void SetView(IView view) => ViewModel = (AgreementDialogViewModel)view;
 
         private void AgreementDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
