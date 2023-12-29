@@ -39,45 +39,56 @@
     <DefineConstants>UNPACKAGED</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-16.png" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-24.png" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-256.png" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-32.png" />
-    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-48.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-16.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-24.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-256.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-32.png" />
-    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-48.png" />
-  </ItemGroup>
-  
-
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\AppIcon.altform-lightunplated_targetsize-16.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-lightunplated_targetsize-24.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-lightunplated_targetsize-256.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-lightunplated_targetsize-32.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-lightunplated_targetsize-48.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-unplated_targetsize-16.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-unplated_targetsize-24.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-unplated_targetsize-256.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-unplated_targetsize-32.png" />
-    <EmbeddedResource Include="Assets\AppIcon.altform-unplated_targetsize-48.png" />
-    <EmbeddedResource Include="Assets\LargeTile.scale-100.png" />
-    <EmbeddedResource Include="Assets\LargeTile.scale-125.png" />
-    <EmbeddedResource Include="Assets\LargeTile.scale-150.png" />
-    <EmbeddedResource Include="Assets\LargeTile.scale-200.png" />
-    <EmbeddedResource Include="Assets\LargeTile.scale-400.png" />
-    <EmbeddedResource Include="Assets\SmallTile.scale-100.png" />
-    <EmbeddedResource Include="Assets\SmallTile.scale-125.png" />
-    <EmbeddedResource Include="Assets\SmallTile.scale-150.png" />
-    <EmbeddedResource Include="Assets\SmallTile.scale-200.png" />
-    <EmbeddedResource Include="Assets\SmallTile.scale-400.png" />
-    <EmbeddedResource Include="Assets\SplashScreen.scale-100.png" />
-    <EmbeddedResource Include="Assets\SplashScreen.scale-125.png" />
-    <EmbeddedResource Include="Assets\SplashScreen.scale-150.png" />
-    <EmbeddedResource Include="Assets\SplashScreen.scale-200.png" />
-    <EmbeddedResource Include="Assets\SplashScreen.scale-400.png" />
+    <None Remove="Assets\AppIcon.altform-lightunplated_targetsize-16.png" />
+    <None Remove="Assets\AppIcon.altform-lightunplated_targetsize-24.png" />
+    <None Remove="Assets\AppIcon.altform-lightunplated_targetsize-256.png" />
+    <None Remove="Assets\AppIcon.altform-lightunplated_targetsize-32.png" />
+    <None Remove="Assets\AppIcon.altform-lightunplated_targetsize-48.png" />
+    <None Remove="Assets\AppIcon.altform-unplated_targetsize-16.png" />
+    <None Remove="Assets\AppIcon.altform-unplated_targetsize-24.png" />
+    <None Remove="Assets\AppIcon.altform-unplated_targetsize-256.png" />
+    <None Remove="Assets\AppIcon.altform-unplated_targetsize-32.png" />
+    <None Remove="Assets\AppIcon.altform-unplated_targetsize-48.png" />
+    <None Remove="Assets\AppIcon.scale-100.png" />
+    <None Remove="Assets\AppIcon.scale-125.png" />
+    <None Remove="Assets\AppIcon.scale-150.png" />
+    <None Remove="Assets\AppIcon.scale-200.png" />
+    <None Remove="Assets\AppIcon.scale-400.png" />
+    <None Remove="Assets\AppIcon.targetsize-16.png" />
+    <None Remove="Assets\AppIcon.targetsize-24.png" />
+    <None Remove="Assets\AppIcon.targetsize-256.png" />
+    <None Remove="Assets\AppIcon.targetsize-32.png" />
+    <None Remove="Assets\AppIcon.targetsize-48.png" />
+    <None Remove="Assets\LargeTile.scale-100.png" />
+    <None Remove="Assets\LargeTile.scale-125.png" />
+    <None Remove="Assets\LargeTile.scale-150.png" />
+    <None Remove="Assets\LargeTile.scale-200.png" />
+    <None Remove="Assets\LargeTile.scale-400.png" />
+    <None Remove="Assets\MediumTile.scale-100.png" />
+    <None Remove="Assets\MediumTile.scale-125.png" />
+    <None Remove="Assets\MediumTile.scale-150.png" />
+    <None Remove="Assets\MediumTile.scale-200.png" />
+    <None Remove="Assets\MediumTile.scale-400.png" />
+    <None Remove="Assets\PackageLogo.scale-100.png" />
+    <None Remove="Assets\PackageLogo.scale-125.png" />
+    <None Remove="Assets\PackageLogo.scale-150.png" />
+    <None Remove="Assets\PackageLogo.scale-200.png" />
+    <None Remove="Assets\PackageLogo.scale-400.png" />
+    <None Remove="Assets\SmallTile.scale-100.png" />
+    <None Remove="Assets\SmallTile.scale-125.png" />
+    <None Remove="Assets\SmallTile.scale-150.png" />
+    <None Remove="Assets\SmallTile.scale-200.png" />
+    <None Remove="Assets\SmallTile.scale-400.png" />
+    <None Remove="Assets\SplashScreen.scale-100.png" />
+    <None Remove="Assets\SplashScreen.scale-125.png" />
+    <None Remove="Assets\SplashScreen.scale-150.png" />
+    <None Remove="Assets\SplashScreen.scale-200.png" />
+    <None Remove="Assets\SplashScreen.scale-400.png" />
+    <None Remove="Assets\WideTile.scale-100.png" />
+    <None Remove="Assets\WideTile.scale-125.png" />
+    <None Remove="Assets\WideTile.scale-150.png" />
+    <None Remove="Assets\WideTile.scale-200.png" />
+    <None Remove="Assets\WideTile.scale-400.png" />
   </ItemGroup>
 
   <ItemGroup>
