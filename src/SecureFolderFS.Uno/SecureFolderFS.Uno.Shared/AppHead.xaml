@@ -11,8 +11,13 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///SecureFolderFS.Uno/AppResources.xaml" />
+
+                <!--  Other app resources  -->
+                <ResourceDictionary>
+                    <SolidColorBrush x:Key="WindowCaptionBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled" Color="Transparent" />
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </local:App.Resources>
-
 </local:App>

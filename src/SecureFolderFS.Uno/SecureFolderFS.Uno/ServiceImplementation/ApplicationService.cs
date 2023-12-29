@@ -1,7 +1,7 @@
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.UI.ServiceImplementation;
 using System;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.UI.ServiceImplementation;
 using Windows.ApplicationModel;
 using Windows.System;
 
