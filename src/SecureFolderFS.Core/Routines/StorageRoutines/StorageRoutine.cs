@@ -74,7 +74,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
             {
                 Constants.FileSystemId.DOKAN_ID => DokanyMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, options.HealthStatistics),
                 Constants.FileSystemId.FUSE_ID => FuseMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess),
-                Constants.FileSystemId.WEBDAV_ID => WebDavMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, new CryptoStorageService(_storageService)),
+                Constants.FileSystemId.WEBDAV_ID => WebDavMountable.CreateMountable(volumeName, contentFolder, _unlockContract.Security, directoryIdCache, pathConverter, streamsAccess, _storageService),
                 _ => throw new ArgumentOutOfRangeException(nameof(options))
             };
         }
