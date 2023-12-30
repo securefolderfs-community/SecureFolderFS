@@ -37,7 +37,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             // Small delay for Mica material to load
             await Task.Delay(1);
 #endif
-
             // Initialize the data in the background
             _ = ViewModel.InitAsync();
 

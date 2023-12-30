@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -18,9 +19,9 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     {
         private Button? _lastClickedButton;
 
-        public MainWizardPageViewModel ViewModel
+        public MainWizardPageViewModel? ViewModel
         {
-            get => (MainWizardPageViewModel)DataContext;
+            get => DataContext.TryCast<MainWizardPageViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -32,15 +33,17 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is MainWizardPageViewModel viewModel)
+            {
                 ViewModel = viewModel;
+                await ViewModel.UpdateSelectionAsync(NewVaultCreationType.CreateNew, default);
+            }
 
-            await ViewModel.UpdateSelectionAsync(NewVaultCreationType.CreateNew, default);
             base.OnNavigatedTo(e);
         }
 
         private async void SegmentButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not Button { Tag: string tag } button)
+            if (ViewModel is null || sender is not Button { Tag: string tag } button)
                 return;
 
             _lastClickedButton ??= CreateNewButton;

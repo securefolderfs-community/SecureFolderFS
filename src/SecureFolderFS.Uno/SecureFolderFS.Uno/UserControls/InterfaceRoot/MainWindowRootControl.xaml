@@ -41,13 +41,5 @@
                 <ts:InterfaceHostTemplateSelector MainAppHostDataTemplate="{StaticResource MainAppHostDataTemplate}" NoVaultsAppHostDataTemplate="{StaticResource NoVaultsAppHostDataTemplate}" />
             </uc3:RootNavigationControl.TemplateSelector>
         </uc3:RootNavigationControl>
-
-        <!--  Overlay  -->
-        <uc:OverlayControl
-            x:Name="Overlay"
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            x:FieldModifier="public"
-            Canvas.ZIndex="2" />
     </Grid>
 </UserControl>

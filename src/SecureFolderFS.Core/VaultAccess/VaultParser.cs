@@ -2,11 +2,11 @@ using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.VaultAccess
 {

@@ -9,7 +9,7 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
-using SecureFolderFS.Uno.Windows.ViewModels;
+using SecureFolderFS.Uno.ViewModels;
 using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.Windows.ServiceImplementation
