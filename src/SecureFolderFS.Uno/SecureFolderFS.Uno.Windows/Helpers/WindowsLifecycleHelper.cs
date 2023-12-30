@@ -20,6 +20,7 @@ using SecureFolderFS.UI.Api;
 
 namespace SecureFolderFS.Uno.Windows.Helpers
 {
+    /// <inheritdoc cref="BaseLifecycleHelper"/>
     internal sealed class WindowsLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>

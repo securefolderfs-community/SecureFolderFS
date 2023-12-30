@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
@@ -9,13 +6,11 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
-using SecureFolderFS.Uno.Windows.ViewModels;
-using Windows.Security.Credentials;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Skia.Gtk.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultManagerService"/>
-    public sealed class WindowsVaultManagerService : BaseVaultManagerService
+    internal sealed class SkiaVaultManagerService : BaseVaultManagerService
     {
         /// <inheritdoc/>
         public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAuthenticationAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -29,7 +24,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
                 var supported = item switch
                 {
                     Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => true,
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken),
+                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => false,
                     Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => true,
                     _ => false
                 };
@@ -43,7 +38,6 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
                 yield return item switch
                 {
                     Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder),
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => new WindowsHelloLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder),
                     Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => new KeyFileLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
@@ -56,12 +50,10 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
             // Password
             yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder);
 
-            // Windows Hello
-            if (await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken))
-                yield return new WindowsHelloCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder);
-            
             // Key File
             yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder);
+
+            await Task.CompletedTask;
         }
     }
 }

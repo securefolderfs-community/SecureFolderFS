@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Enums;
 using SecureFolderFS.Uno.Helpers;
 
@@ -21,9 +22,9 @@ namespace SecureFolderFS.Uno.Views.Settings
     {
         private bool _isFirstTime = true;
 
-        public GeneralSettingsViewModel ViewModel
+        public GeneralSettingsViewModel? ViewModel
         {
-            get => (GeneralSettingsViewModel)DataContext;
+            get => DataContext.TryCast<GeneralSettingsViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 

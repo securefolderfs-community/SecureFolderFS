@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;

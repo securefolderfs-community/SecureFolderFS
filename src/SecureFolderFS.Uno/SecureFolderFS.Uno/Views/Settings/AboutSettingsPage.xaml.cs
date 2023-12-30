@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -21,9 +22,9 @@ namespace SecureFolderFS.Uno.Views.Settings
     {
         private bool _isBeingCopied;
 
-        public AboutSettingsViewModel ViewModel
+        public AboutSettingsViewModel? ViewModel
         {
-            get => (AboutSettingsViewModel)DataContext;
+            get => DataContext.TryCast<AboutSettingsViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 

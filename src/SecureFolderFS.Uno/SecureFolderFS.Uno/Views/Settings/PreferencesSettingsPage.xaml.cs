@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,7 +8,6 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.UserControls.InfoBars;
@@ -27,7 +25,7 @@ namespace SecureFolderFS.Uno.Views.Settings
     {
         public PreferencesSettingsViewModel ViewModel
         {
-            get => (PreferencesSettingsViewModel)DataContext;
+            get => DataContext.TryCast<PreferencesSettingsViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 

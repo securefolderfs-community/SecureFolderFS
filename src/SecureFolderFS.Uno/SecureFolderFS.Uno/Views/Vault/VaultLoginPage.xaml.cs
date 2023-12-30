@@ -1,7 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,9 +15,9 @@ namespace SecureFolderFS.Uno.Views.Vault
     [INotifyPropertyChanged]
     public sealed partial class VaultLoginPage : Page
     {
-        public VaultLoginPageViewModel ViewModel
+        public VaultLoginPageViewModel? ViewModel
         {
-            get => (VaultLoginPageViewModel)DataContext;
+            get => DataContext.TryCast<VaultLoginPageViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 

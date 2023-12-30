@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Dialogs;
@@ -37,6 +39,24 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 #endif
 
             return overlay;
+        }
+
+        /// <inheritdoc/>
+        public override async Task<IResult> ShowAsync(IView view)
+        {
+            if (Overlays.IsEmpty())
+                return await base.ShowAsync(view);
+
+            var current = Overlays.Pop();
+            current.Hide();
+
+            var result = await base.ShowAsync(view);
+
+            Overlays.Push(current);
+            await current.ShowAsync();
+            Overlays.Pop();
+
+            return result;
         }
     }
 }

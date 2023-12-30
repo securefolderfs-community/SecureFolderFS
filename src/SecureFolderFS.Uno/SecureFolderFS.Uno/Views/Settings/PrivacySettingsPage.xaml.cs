@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
+using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,9 +15,9 @@ namespace SecureFolderFS.Uno.Views.Settings
     [INotifyPropertyChanged]
     public sealed partial class PrivacySettingsPage : Page
     {
-        public PrivacySettingsViewModel ViewModel
+        public PrivacySettingsViewModel? ViewModel
         {
-            get => (PrivacySettingsViewModel)DataContext;
+            get => DataContext.TryCast<PrivacySettingsViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 

@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;

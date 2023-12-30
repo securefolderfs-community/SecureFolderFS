@@ -1,16 +1,23 @@
-using System.IO;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
+
+#if HAS_UNO_SKIA
+using SecureFolderFS.Uno.Skia.Gtk.Helpers;
+#endif
+
+#if WINDOWS
 using SecureFolderFS.Uno.Windows.Helpers;
+using System.IO;
+using Microsoft.UI;
+using Microsoft.UI.Xaml.Media;
 using Windows.ApplicationModel;
+#endif
 
 namespace SecureFolderFS.Uno
 {
@@ -22,6 +29,8 @@ namespace SecureFolderFS.Uno
         protected override BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
             new WindowsLifecycleHelper()
+#elif HAS_UNO_SKIA
+            new SkiaLifecycleHelper()
 #else
             null
 #endif
@@ -41,9 +50,6 @@ namespace SecureFolderFS.Uno
         {
             base.EnsureEarlyWindow(window);
 
-            // Set title
-            window.AppWindow.Title = "SecureFolderFS";
-
 #if WINDOWS
 #if !UNPACKAGED
             // Set icon
@@ -51,6 +57,12 @@ namespace SecureFolderFS.Uno
 #endif
             // Set backdrop
             window.SystemBackdrop = new MicaBackdrop();
+
+            // Set title
+            window.AppWindow.Title = "SecureFolderFS";
+
+            // Hook up event for window closing
+            window.AppWindow.Closing += AppWindow_Closing;
 
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
@@ -61,16 +73,12 @@ namespace SecureFolderFS.Uno
                 window.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                 window.AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             }
-            else
-#endif
-            if (window.Content is MainWindowRootControl rootControl)
+            else if (window.Content is MainWindowRootControl rootControl)
             {
                 window.ExtendsContentIntoTitleBar = true;
                 window.SetTitleBar(rootControl.CustomTitleBar);
             }
-            
-            // Hook up event for window closing
-            window.AppWindow.Closing += AppWindow_Closing;
+#endif
         }
 
         private async void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)

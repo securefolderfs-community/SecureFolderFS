@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Helpers;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Uno.ViewModels
 {
