@@ -126,7 +126,7 @@
                                 <TextBlock
                                     FontSize="12"
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                    Text="{x:Bind ViewModel.AppVersion}" />
+                                    Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}" />
                             </StackPanel>
                         </StackPanel>
                     </Button>

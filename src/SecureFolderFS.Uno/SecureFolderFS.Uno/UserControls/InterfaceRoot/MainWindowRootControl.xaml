@@ -10,6 +10,7 @@
     xmlns:uc2="using:SecureFolderFS.Uno.UserControls.InterfaceHost"
     xmlns:uc3="using:SecureFolderFS.Uno.UserControls.Navigation"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Host"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     Loaded="MainWindowRootControl_Loaded"
     mc:Ignorable="d not_win">
 
@@ -30,11 +31,12 @@
         </Grid.RowDefinitions>
 
         <!--  Titlebar  -->
-        <uc:TitleBarControl
-            x:Name="CustomTitleBar"
-            Grid.Row="0"
-            x:FieldModifier="public"
-            Canvas.ZIndex="3" />
+        <win:Grid Grid.Row="0">
+            <uc:TitleBarControl
+                x:Name="CustomTitleBar"
+                x:FieldModifier="public"
+                Canvas.ZIndex="3" />
+        </win:Grid>
 
         <!--  Main Content  -->
         <uc3:RootNavigationControl x:Name="Navigation" Grid.Row="1">

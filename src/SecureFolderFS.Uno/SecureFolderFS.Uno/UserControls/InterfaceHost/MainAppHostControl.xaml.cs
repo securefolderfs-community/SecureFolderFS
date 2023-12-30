@@ -118,6 +118,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void Sidebar_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
         {
+#if WINDOWS
             var previous = Sidebar.IsPaneVisible;
             Sidebar.IsPaneVisible = args.DisplayMode != NavigationViewDisplayMode.Minimal;
             _isCompactMode = !Sidebar.IsPaneVisible;
@@ -137,10 +138,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             }
             else
                 PaneShowButton.Visibility = Visibility.Collapsed;
+#endif
         }
 
         private async void Sidebar_PaneClosed(NavigationView sender, object args)
         {
+#if WINDOWS
             if (_isCompactMode)
             {
                 Sidebar.IsPaneVisible = false;
@@ -148,25 +151,32 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 await Task.Delay(1000);
                 PaneShowButton.Visibility = Visibility.Collapsed;
             }
+#endif
         }
 
         private void PaneShowButton_Click(object sender, RoutedEventArgs e)
         {
+#if WINDOWS
             Sidebar.IsPaneVisible = true;
             Sidebar.IsPaneOpen = true;
             PaneShowButton.Visibility = Visibility.Collapsed;
+#endif
         }
 
         private void PaneButtonGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
+#if WINDOWS
             if (_isCompactMode)
                 PaneShowButton.Visibility = Visibility.Visible;
+#endif
         }
 
         private void PaneButtonGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
+#if WINDOWS
             if (_isCompactMode)
                 PaneShowButton.Visibility = Visibility.Collapsed;
+#endif
         }
 
         public MainHostViewModel? ViewModel
