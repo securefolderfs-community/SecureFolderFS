@@ -11,8 +11,8 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -96,7 +96,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel!.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(args.ChosenSuggestion));
             if (chosenItem is null)
                 return;
 
@@ -107,7 +107,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         private async void SidebarSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-                await ViewModel.SidebarViewModel.SearchViewModel.SubmitQuery(sender.Text);
+                await ViewModel!.SidebarViewModel.SearchViewModel.SubmitQuery(sender.Text);
         }
 
         private async void TeachingTip_CloseButtonClick(TeachingTip sender, object args)
@@ -118,7 +118,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void Sidebar_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
         {
-#if WINDOWS
             var previous = Sidebar.IsPaneVisible;
             Sidebar.IsPaneVisible = args.DisplayMode != NavigationViewDisplayMode.Minimal;
             _isCompactMode = !Sidebar.IsPaneVisible;
@@ -138,7 +137,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             }
             else
                 PaneShowButton.Visibility = Visibility.Collapsed;
-#endif
         }
 
         private async void Sidebar_PaneClosed(NavigationView sender, object args)
@@ -147,36 +145,28 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             {
                 Sidebar.IsPaneVisible = false;
                 PaneShowButton.Visibility = Visibility.Visible;
-#if WINDOWS
                 await Task.Delay(1000);
                 PaneShowButton.Visibility = Visibility.Collapsed;
-#endif
             }
         }
 
         private void PaneShowButton_Click(object sender, RoutedEventArgs e)
         {
-#if WINDOWS
             Sidebar.IsPaneVisible = true;
             Sidebar.IsPaneOpen = true;
             PaneShowButton.Visibility = Visibility.Collapsed;
-#endif
         }
 
         private void PaneButtonGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-#if WINDOWS
             if (_isCompactMode)
                 PaneShowButton.Visibility = Visibility.Visible;
-#endif
         }
 
         private void PaneButtonGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-#if WINDOWS
             if (_isCompactMode)
                 PaneShowButton.Visibility = Visibility.Collapsed;
-#endif
         }
 
         public MainHostViewModel? ViewModel

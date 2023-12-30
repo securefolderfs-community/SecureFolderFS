@@ -17,6 +17,15 @@ namespace SecureFolderFS.Uno.Skia.Gtk.Helpers
         }
 
         /// <inheritdoc/>
+        public override void LogException(Exception? ex)
+        {
+            if (ex.InnerException?.Message.Contains("The remote party") ?? false)
+                return;
+
+            base.LogException(ex);
+        }
+
+        /// <inheritdoc/>
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)

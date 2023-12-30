@@ -2,14 +2,12 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
 #if HAS_UNO_SKIA
 using SecureFolderFS.Uno.Skia.Gtk.Helpers;
-using Uno.UI.Xaml;
 #endif
 
 #if WINDOWS
@@ -17,6 +15,7 @@ using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using SecureFolderFS.Uno.Windows.Helpers;
 using System.IO;
 using Microsoft.UI;
+using Microsoft.UI.Xaml.Media;
 using Windows.ApplicationModel;
 #endif
 
@@ -50,11 +49,6 @@ namespace SecureFolderFS.Uno
         protected override void EnsureEarlyWindow(Window window)
         {
             base.EnsureEarlyWindow(window);
-
-#if HAS_UNO_SKIA
-            if (App.Instance?.Resources["ApplicationPageBackgroundThemeBrush"] is SolidColorBrush appBackgroundBrush)
-                window.SetBackground(appBackgroundBrush);
-#endif
 
 #if WINDOWS
 #if !UNPACKAGED
