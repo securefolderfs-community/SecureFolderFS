@@ -1,8 +1,10 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Collections;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
-using System;
-using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -15,9 +17,9 @@ namespace SecureFolderFS.Uno.Views.Vault
     [INotifyPropertyChanged]
     public sealed partial class VaultOverviewPage : Page, IDisposable
     {
-        public VaultOverviewPageViewModel ViewModel
+        public VaultOverviewPageViewModel? ViewModel
         {
-            get => (VaultOverviewPageViewModel)DataContext;
+            get => DataContext.TryCast<VaultOverviewPageViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -45,11 +47,9 @@ namespace SecureFolderFS.Uno.Views.Vault
         /// <inheritdoc/>
         public void Dispose()
         {
-            foreach (var item in WidgetsList.Items)
+            foreach (var item in (WidgetsList.ItemsSource as IEnumerable))
             {
-                var container = WidgetsList.ContainerFromItem(item) as ListViewItem;
-                if (container?.ContentTemplateRoot is IDisposable disposable)
-                    disposable.Dispose();
+                (item as IDisposable)?.Dispose();
             }
         }
     }

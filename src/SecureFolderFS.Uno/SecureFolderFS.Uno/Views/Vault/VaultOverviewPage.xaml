@@ -38,30 +38,20 @@
     <ScrollViewer Margin="-12,0,-12,0">
         <StackPanel Margin="12,0,12,0" Spacing="8">
             <!--  Widgets  -->
-            <ListView x:Name="WidgetsList" ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
-                <!--  Remove Reveal Highlight Effect  -->
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <!--  Remove reveal  -->
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListViewItem">
-                                    <ListViewItemPresenter
-                                        x:Name="Root"
-                                        HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch"
-                                        RevealBackground="{ThemeResource GridViewItemRevealBackground}"
-                                        RevealBorderBrush="{ThemeResource GridViewItemRevealBorderBrush}"
-                                        RevealBorderThickness="0" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplateSelector>
-                    <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
-                </ListView.ItemTemplateSelector>
-            </ListView>
+            <ItemsRepeater x:Name="WidgetsList" ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="vm:BaseWidgetViewModel">
+                        <ContentControl
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Content="{Binding}">
+                            <ContentControl.ContentTemplateSelector>
+                                <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+                            </ContentControl.ContentTemplateSelector>
+                        </ContentControl>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
 
             <!--  Vault options  -->
             <StackPanel Spacing="4">

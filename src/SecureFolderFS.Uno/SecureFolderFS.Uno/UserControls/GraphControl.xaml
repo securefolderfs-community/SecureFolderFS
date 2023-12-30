@@ -60,6 +60,7 @@
                 Grid.Row="2"
                 Margin="-12,8,-16,-12"
                 Padding="2"
+                x:Load="False"
                 IsHitTestVisible="False"
                 Loaded="Chart_Loaded" />
         </Grid>

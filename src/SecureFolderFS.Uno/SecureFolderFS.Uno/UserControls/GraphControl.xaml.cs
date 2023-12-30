@@ -34,7 +34,7 @@ namespace SecureFolderFS.Uno.UserControls
             try
             {
                 // Realize the chart and load it to view
-                //_ = FindName(nameof(Chart)); // TODO(u)
+                _ = FindName(nameof(Chart));
             }
             catch (Exception ex)
             {
