@@ -5,19 +5,13 @@ using SecureFolderFS.UI.ServiceImplementation;
 using Windows.ApplicationModel;
 using Windows.System;
 
-namespace SecureFolderFS.Uno.ServiceImplementation
+namespace SecureFolderFS.Uno.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IApplicationService"/>
-    internal sealed class ApplicationService : BaseApplicationService
+    internal sealed class WindowsApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
-        public override string Platform { get; } =
-#if WINDOWS
-            "WinUI"
-#else
-            "Uno"
-#endif
-            ;
+        public override string Platform { get; } = "WinUI";
 
         /// <inheritdoc/>
         public override Version AppVersion
@@ -38,9 +32,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public override Task TryRestartAsync()
         {
-#if WINDOWS
             Microsoft.Windows.AppLifecycle.AppInstance.Restart("/RestartCalled");
-#endif
             return Task.CompletedTask;
         }
     }

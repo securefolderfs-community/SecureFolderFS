@@ -4,6 +4,7 @@
     <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
     <TargetFramework>$(DotNetVersion)</TargetFramework>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Package.appxmanifest" />
