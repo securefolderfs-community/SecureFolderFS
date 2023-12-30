@@ -111,7 +111,6 @@
                             x:Name="AppLanguageComboBox"
                             AutomationProperties.Name="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
                             ItemsSource="{x:Bind ViewModel.Languages, Mode=OneWay}"
-                            SelectedIndex="0"
                             SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="vm:LanguageViewModel">

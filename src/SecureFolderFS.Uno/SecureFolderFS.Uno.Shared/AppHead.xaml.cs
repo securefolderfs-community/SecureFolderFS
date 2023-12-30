@@ -8,7 +8,6 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
 #if HAS_UNO_SKIA
-using Microsoft.UI;
 using SecureFolderFS.Uno.Skia.Gtk.Helpers;
 using Uno.UI.Xaml;
 #endif
@@ -54,7 +53,7 @@ namespace SecureFolderFS.Uno
 
 #if HAS_UNO_SKIA
             if (App.Instance?.Resources["ApplicationPageBackgroundThemeBrush"] is SolidColorBrush appBackgroundBrush)
-                window.SetBackground(new SolidColorBrush(Colors.Red));
+                window.SetBackground(appBackgroundBrush);
 #endif
 
 #if WINDOWS
