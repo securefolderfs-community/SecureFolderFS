@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NWebDav.Server", "lib\nwebd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NWebDav.Server.HttpListener", "lib\nwebdav\NWebDav.Server.HttpListener\NWebDav.Server.HttpListener.csproj", "{95DF07BC-96EC-425F-B3CE-F4D1522B9EA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.UI", "src\SecureFolderFS.UI\SecureFolderFS.UI.csproj", "{9C87813E-B60D-4E69-AC74-131EF59F0DAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.UI", "src\Platforms\SecureFolderFS.UI\SecureFolderFS.UI.csproj", "{9C87813E-B60D-4E69-AC74-131EF59F0DAF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.SourceGenerator", "src\SecureFolderFS.SourceGenerator\SecureFolderFS.SourceGenerator.csproj", "{279C01B3-86B8-4F9E-9D21-3C535E152F2F}"
 EndProject
@@ -45,15 +45,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Migrati
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{569EE399-94F3-47F1-A626-6A28E3C7D2B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno", "src\SecureFolderFS.Uno\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj", "{975DE5F9-5816-4030-8AE7-816F74FDD8C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno", "src\Platforms\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj", "{975DE5F9-5816-4030-8AE7-816F74FDD8C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno.Shared", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Shared\SecureFolderFS.Uno.Shared.csproj", "{031FB209-C085-4D75-B9D8-E84E74DDB370}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno.Shared", "src\Platforms\SecureFolderFS.Uno.Shared\SecureFolderFS.Uno.Shared.csproj", "{031FB209-C085-4D75-B9D8-E84E74DDB370}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno.Windows", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Windows\SecureFolderFS.Uno.Windows.csproj", "{623E7641-4017-45F5-BDEA-29AC8C5B2F2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno.Windows", "src\Platforms\SecureFolderFS.Uno.Windows\SecureFolderFS.Uno.Windows.csproj", "{623E7641-4017-45F5-BDEA-29AC8C5B2F2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno.Wasm", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Wasm\SecureFolderFS.Uno.Wasm.csproj", "{5EFC8E3F-467F-4A7E-810D-983E264E2A62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFolderFS.Uno.Wasm", "src\Platforms\SecureFolderFS.Uno.Wasm\SecureFolderFS.Uno.Wasm.csproj", "{5EFC8E3F-467F-4A7E-810D-983E264E2A62}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno.Skia.Gtk", "src\SecureFolderFS.Uno\SecureFolderFS.Uno.Skia.Gtk\SecureFolderFS.Uno.Skia.Gtk.csproj", "{88937B63-7F02-4B07-9B15-DDA5312744F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Uno.Skia.Gtk", "src\Platforms\SecureFolderFS.Uno.Skia.Gtk\SecureFolderFS.Uno.Skia.Gtk.csproj", "{88937B63-7F02-4B07-9B15-DDA5312744F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{6DDF68B5-BAC2-4DE8-A024-7C06801D89F4}"
 	ProjectSection(SolutionItems) = preProject
