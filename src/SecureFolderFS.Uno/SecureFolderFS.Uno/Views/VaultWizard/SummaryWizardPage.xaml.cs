@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Shared.Extensions;
 
 #if WINDOWS
 using System.Threading.Tasks;
@@ -24,9 +25,9 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     [INotifyPropertyChanged]
     public sealed partial class SummaryWizardPage : Page, IDisposable
     {
-        public SummaryWizardViewModel ViewModel
+        public SummaryWizardViewModel? ViewModel
         {
-            get => (SummaryWizardViewModel)DataContext;
+            get => DataContext.TryCast<SummaryWizardViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using System;
@@ -24,13 +24,13 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
         public static readonly DependencyProperty VaultHealthStateProperty =
             DependencyProperty.Register(nameof(VaultHealthState), typeof(VaultHealthState), typeof(HealthWidget), new PropertyMetadata(defaultValue: null));
 
-        public DateTime VaultHealthLastCheckedDate
+        public string HealthLastCheckedText
         {
-            get => (DateTime)GetValue(VaultHealthLastCheckedDateProperty);
-            set => SetValue(VaultHealthLastCheckedDateProperty, value);
+            get => (string)GetValue(HealthLastCheckedTextProperty);
+            set => SetValue(HealthLastCheckedTextProperty, value);
         }
-        public static readonly DependencyProperty VaultHealthLastCheckedDateProperty =
-            DependencyProperty.Register(nameof(VaultHealthLastCheckedDate), typeof(DateTime), typeof(HealthWidget), new PropertyMetadata(defaultValue: 0));
+        public static readonly DependencyProperty HealthLastCheckedTextProperty =
+            DependencyProperty.Register(nameof(HealthLastCheckedText), typeof(string), typeof(HealthWidget), new PropertyMetadata(null));
 
         public ICommand? StartScanningCommand
         {

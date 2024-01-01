@@ -16,18 +16,27 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class FileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public async Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
+        public Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
         {
-            await Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder).AsTask(cancellationToken);
+#if WINDOWS
+            return Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder).AsTask(cancellationToken);
+#endif
+            if (OperatingSystem.IsLinux())
+                System.Diagnostics.Process.Start("xdg-open", ApplicationData.Current.LocalFolder.Path);
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public async Task OpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public Task OpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            if (folder is not ILocatableFolder locatableFolder)
-                return;
+#if WINDOWS
+            return Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
+#endif
+            if (OperatingSystem.IsLinux())
+                System.Diagnostics.Process.Start("xdg-open", folder.Id);
 
-            await Launcher.LaunchFolderPathAsync(locatableFolder.Path).AsTask(cancellationToken);
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>

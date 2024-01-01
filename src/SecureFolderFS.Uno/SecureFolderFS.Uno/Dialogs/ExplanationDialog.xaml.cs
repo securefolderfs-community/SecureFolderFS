@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -8,8 +6,14 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
+
+#if WINDOWS
+using System.IO;
+using System.Linq;
 using Windows.Media.Core;
+#endif
 
 // To learn more about WinUI, the WinUI project structure,D
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,9 +25,9 @@ namespace SecureFolderFS.Uno.Dialogs
         private IDisposable? _disposable;
 
         /// <inheritdoc/>
-        public ExplanationDialogViewModel ViewModel
+        public ExplanationDialogViewModel? ViewModel
         {
-            get => (ExplanationDialogViewModel)DataContext;
+            get => DataContext.TryCast<ExplanationDialogViewModel>();
             set => DataContext = value;
         }
 

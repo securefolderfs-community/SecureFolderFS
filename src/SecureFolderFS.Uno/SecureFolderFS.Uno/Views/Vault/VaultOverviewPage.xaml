@@ -16,9 +16,9 @@
         <!--  Vault Health  -->
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:VaultHealthWidgetViewModel">
             <ucw:HealthWidget
+                HealthLastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
                 StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
-                VaultHealthLastCheckedDate="{x:Bind VaultHealthLastCheckedDate, Mode=OneWay}"
                 VaultHealthState="{x:Bind VaultHealthState, Mode=OneWay}" />
         </DataTemplate>
 

@@ -11,7 +11,7 @@
     Width="464"
     mc:Ignorable="d not_win">
 
-    <Grid RowSpacing="32" Margin="0 8 0 0">
+    <Grid Margin="0,8,0,0" RowSpacing="32">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
@@ -23,7 +23,7 @@
             Orientation="Vertical"
             Spacing="8">
             <Grid Width="32" Height="32">
-                <Ellipse Margin="0,-2,0,2" Fill="LimeGreen" />
+                <Ellipse Margin="0,-4,0,2" Fill="LimeGreen" />
                 <not_win:FontIcon FontSize="18" Glyph="&#xE73E;" />
                 <win:AnimatedVisualPlayer
                     x:Name="VisualPlayer"

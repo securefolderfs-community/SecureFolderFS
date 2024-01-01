@@ -17,7 +17,7 @@
 
         public static class Dialogs
         {
-            public const int EXPLANATION_DIALOG_TIME_TICKS = 14;
+            public const int EXPLANATION_DIALOG_TIME_TICKS = 8;
         }
 
         public static class Vault
