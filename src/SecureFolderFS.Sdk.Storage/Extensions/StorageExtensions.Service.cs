@@ -31,8 +31,9 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             {
                 return await storageService.GetFolderAsync(id, cancellationToken);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _ = ex;
                 return null;
             }
         }

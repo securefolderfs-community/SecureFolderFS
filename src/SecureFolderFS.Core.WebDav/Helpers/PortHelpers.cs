@@ -24,6 +24,9 @@ namespace SecureFolderFS.Core.WebDav.Helpers
 
         private static IEnumerable<int> GetUnavailablePorts()
         {
+            if (OperatingSystem.IsAndroid())
+                return Enumerable.Empty<int>(); // TODO(u android)
+            
             var properties = IPGlobalProperties.GetIPGlobalProperties();
             return properties.GetActiveTcpConnections().Select(x => x.LocalEndPoint.Port)
                 .Concat(properties.GetActiveTcpListeners().Select(x => x.Port))

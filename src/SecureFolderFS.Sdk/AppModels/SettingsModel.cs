@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;

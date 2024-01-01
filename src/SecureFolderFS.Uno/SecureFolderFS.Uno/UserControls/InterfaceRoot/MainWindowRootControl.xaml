@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.Uno.UserControls.InterfaceRoot.MainWindowRootControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:not_win="http://uno.ui/not_win"
+    xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
+    xmlns:uc2="using:SecureFolderFS.Uno.UserControls.InterfaceHost"
+    xmlns:uc3="using:SecureFolderFS.Uno.UserControls.Navigation"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Host"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    Loaded="MainWindowRootControl_Loaded"
+    mc:Ignorable="d not_win">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="MainAppHostDataTemplate" x:DataType="vm:MainHostViewModel">
+            <uc2:MainAppHostControl ViewModel="{x:Bind}" />
+        </DataTemplate>
+        <DataTemplate x:Key="NoVaultsAppHostDataTemplate" x:DataType="vm:EmptyHostViewModel">
+            <uc2:NoVaultsAppHostControl ViewModel="{x:Bind}" />
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <!--  Root  -->
+    <Grid not_win:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--  Titlebar  -->
+        <win:Grid Grid.Row="0">
+            <uc:TitleBarControl
+                x:Name="CustomTitleBar"
+                x:FieldModifier="public"
+                Canvas.ZIndex="3" />
+        </win:Grid>
+
+        <!--  Main Content  -->
+        <uc3:RootNavigationControl x:Name="Navigation" Grid.Row="1">
+            <uc3:RootNavigationControl.TemplateSelector>
+                <ts:InterfaceHostTemplateSelector MainAppHostDataTemplate="{StaticResource MainAppHostDataTemplate}" NoVaultsAppHostDataTemplate="{StaticResource NoVaultsAppHostDataTemplate}" />
+            </uc3:RootNavigationControl.TemplateSelector>
+        </uc3:RootNavigationControl>
+    </Grid>
+</UserControl>

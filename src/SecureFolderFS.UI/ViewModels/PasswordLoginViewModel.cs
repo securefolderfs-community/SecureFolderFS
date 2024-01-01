@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 
 namespace SecureFolderFS.UI.ViewModels

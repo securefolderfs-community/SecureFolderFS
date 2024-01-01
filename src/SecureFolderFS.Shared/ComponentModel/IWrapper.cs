@@ -1,0 +1,14 @@
+﻿namespace SecureFolderFS.Shared.ComponentModel
+{
+    /// <summary>
+    /// Wraps and exposes <typeparamref name="T"/> implementation for access.
+    /// </summary>
+    /// <typeparam name="T">The wrapped type.</typeparam>
+    public interface IWrapper<out T>
+    {
+        /// <summary>
+        /// Gets the inner member wrapped by the implementation.
+        /// </summary>
+        T Inner { get; }
+    }
+}

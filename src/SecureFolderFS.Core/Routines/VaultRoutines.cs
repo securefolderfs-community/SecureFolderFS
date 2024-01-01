@@ -6,7 +6,7 @@ using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;

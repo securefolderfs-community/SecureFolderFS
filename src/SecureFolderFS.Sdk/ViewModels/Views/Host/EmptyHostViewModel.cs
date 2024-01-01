@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
-    [Inject<IDialogService>, Inject<ISettingsService>]
+    [Inject<IOverlayService>, Inject<ISettingsService>]
     public sealed partial class EmptyHostViewModel : BasePageViewModel
     {
         private readonly INavigationService _hostNavigationService;
@@ -26,19 +26,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 
         private async void VaultCollectionModel_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            await _hostNavigationService.TryNavigateAsync(() => new MainHostViewModel(_hostNavigationService, _vaultCollectionModel));
+            await _hostNavigationService.TryNavigateAsync(() => new MainHostViewModel(_hostNavigationService, _vaultCollectionModel), false);
         }
 
         [RelayCommand]
         private async Task AddNewVaultAsync()
         {
-            await DialogService.ShowDialogAsync(new VaultWizardDialogViewModel(_vaultCollectionModel));
+            await OverlayService.ShowAsync(new VaultWizardDialogViewModel(_vaultCollectionModel));
         }
 
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {
-            await DialogService.ShowDialogAsync(SettingsDialogViewModel.Instance);
+            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
             await SettingsService.TrySaveAsync();
         }
 

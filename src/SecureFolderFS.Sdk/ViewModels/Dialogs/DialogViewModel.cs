@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Dialogs
 {
     /// <summary>
     /// Serves as the base dialog view model containing reusable code for every dialog.
     /// </summary>
-    public abstract partial class DialogViewModel : ObservableObject
+    public abstract partial class DialogViewModel : ObservableObject, IView
     {
         /// <summary>
         /// Gets or sets the title of the dialog.

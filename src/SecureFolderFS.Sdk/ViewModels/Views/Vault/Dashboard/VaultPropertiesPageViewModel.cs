@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 {
-    [Inject<IDialogService>]
+    [Inject<IOverlayService>]
     public sealed partial class VaultPropertiesPageViewModel : BaseDashboardPageViewModel
     {
         [ObservableProperty] private string? _ContentCipherName;
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         private async Task ChangePasswordAsync()
         {
             var viewModel = new PasswordChangeDialogViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
-            await DialogService.ShowDialogAsync(viewModel);
+            await OverlayService.ShowAsync(viewModel);
         }
 
         [RelayCommand]

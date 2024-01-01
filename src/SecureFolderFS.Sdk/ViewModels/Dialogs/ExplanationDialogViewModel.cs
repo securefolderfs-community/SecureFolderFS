@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,8 +32,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Dialogs
             {
                 _elapsedTicks++;
                 PrimaryButtonText = $"{Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS - _elapsedTicks}";
-                
+#if !DEBUG
                 if (_elapsedTicks >= Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS)
+#endif
                 {
                     PrimaryButtonText = "Close".ToLocalized();
                     PrimaryButtonEnabled = true;

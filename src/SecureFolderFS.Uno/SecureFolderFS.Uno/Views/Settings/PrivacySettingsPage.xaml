@@ -1,0 +1,75 @@
+﻿<Page
+    x:Class="SecureFolderFS.Uno.Views.Settings.PrivacySettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    mc:Ignorable="d">
+
+    <Grid RowSpacing="12">
+        <Grid.RowDefinitions>
+            <!--  Banner  -->
+            <RowDefinition Height="Auto" />
+            <!--  Other settings  -->
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--  Banner  -->
+        <!--<uc:BannerControl Grid.Row="0">
+            <uc:BannerControl.LeftSide>
+                <StackPanel
+            </uc:BannerControl.LeftSide>
+        </uc:BannerControl>-->
+
+        <!--  Other settings  -->
+        <StackPanel Grid.Row="1" Spacing="4">
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=DisableRecentAccess}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=DisableRecentAccessDescription}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE81C;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <ToggleSwitch
+                        MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=DisableRecentAccess}"
+                        IsEnabled="False"
+                        IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=AutoLock}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=AutoLockDescription}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE72E;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <ToggleSwitch
+                        MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=AutoLock}"
+                        IsEnabled="False"
+                        IsOn="{x:Bind ViewModel.AutoLockVaults, Mode=TwoWay}" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Name=Telemetry}"
+                BlockMode="Default"
+                Description="{l:ResourceString Name=TelemetryDescription}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE9D2;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <ToggleSwitch
+                        x:Name="EnableTelemetry"
+                        MinWidth="0"
+                        AutomationProperties.Name="{l:ResourceString Name=Telemetry}"
+                        IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+        </StackPanel>
+    </Grid>
+</Page>

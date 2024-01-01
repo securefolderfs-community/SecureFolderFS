@@ -1,0 +1,10 @@
+{
+	"profiles": {
+		"SecureFolderFS.Uno.Windows (Unpackaged)": {
+			"commandName": "Project"
+		},
+		"SecureFolderFS.Uno.Windows (Package)": {
+			"commandName": "MsixPackage"
+		}
+	}
+}

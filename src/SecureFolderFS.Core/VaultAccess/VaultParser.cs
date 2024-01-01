@@ -2,6 +2,7 @@ using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -20,14 +21,14 @@ namespace SecureFolderFS.Core.VaultAccess
         public static void CalculateConfigMac(VaultConfigurationDataModel configDataModel, SecretKey macKey, Span<byte> mac)
         {
             // Initialize HMAC
-            using var hmacSha256 = IncrementalHash.CreateHMAC(HashAlgorithmName.SHA256, macKey);
+            using var hmacSha256 = new HMACSHA256(macKey.Key);
 
             // Update HMAC
-            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));                                // Version
+            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));                              // Version
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));        // ContentCipherScheme
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));      // FileNameCipherScheme
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Id));                                                  // Id
-            hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                                          // AuthMethod
+            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                           // AuthMethod
 
             // Fill the hash to payload
             hmacSha256.GetCurrentHash(mac);

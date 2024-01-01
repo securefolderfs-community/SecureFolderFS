@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 using System;
 using System.Collections.Generic;
@@ -63,13 +63,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             // Add new target
             if (!Targets.Contains(target))
-            {
                 Targets.Add(target);
-
-                // Initialize if the target supports IAsyncInitialize
-                if (target is IAsyncInitialize asyncInitialize)
-                    _ = asyncInitialize.InitAsync();
-            }
 
             // Notify that navigation has occurred
             NavigationChanged?.Invoke(this, target);

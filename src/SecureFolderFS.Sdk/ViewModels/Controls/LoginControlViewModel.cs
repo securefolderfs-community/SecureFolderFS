@@ -2,14 +2,13 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -59,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 if (_enableMigration && validationResult.Exception is NotSupportedException)
                     CurrentViewModel = new MigrationViewModel(VaultService.LatestVaultVersion);
                 else
-                    CurrentViewModel = new ErrorViewModel("Cannot migrate vault.");
+                    CurrentViewModel = new ErrorViewModel(validationResult.GetMessage());
             }
         }
 

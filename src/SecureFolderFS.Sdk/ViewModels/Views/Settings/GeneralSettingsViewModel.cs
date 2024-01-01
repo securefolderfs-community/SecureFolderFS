@@ -53,9 +53,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         }
 
         [RelayCommand]
-        private async Task RestartAsync()
+        private Task RestartAsync()
         {
-            await ApplicationService.TryRestartAsync();
+            return ApplicationService.TryRestartAsync();
         }
 
         async partial void OnSelectedLanguageChanged(LanguageViewModel? value)

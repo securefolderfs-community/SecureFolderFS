@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -13,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 {
-    [Inject<IIapService>, Inject<IDialogService>, Inject<ISettingsService>]
+    [Inject<IIapService>, Inject<IOverlayService>, Inject<ISettingsService>]
     public sealed partial class SidebarFooterViewModel : ObservableObject
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
@@ -31,16 +30,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
             if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
             {
                 _ = PaymentDialogViewModel.Instance.InitAsync(cancellationToken);
-                await DialogService.ShowDialogAsync(PaymentDialogViewModel.Instance);
+                await OverlayService.ShowAsync(PaymentDialogViewModel.Instance);
             }
             else
-                await DialogService.ShowDialogAsync(new VaultWizardDialogViewModel(_vaultCollectionModel));
+                await OverlayService.ShowAsync(new VaultWizardDialogViewModel(_vaultCollectionModel));
         }
 
         [RelayCommand]
         private async Task OpenSettingsAsync(CancellationToken cancellationToken)
         {
-            await DialogService.ShowDialogAsync(SettingsDialogViewModel.Instance);
+            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
             await SettingsService.TrySaveAsync(cancellationToken);
         }
     }

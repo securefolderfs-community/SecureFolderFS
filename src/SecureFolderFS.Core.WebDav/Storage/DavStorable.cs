@@ -4,7 +4,7 @@ using SecureFolderFS.Core.WebDav.Storage.StorageProperties;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
 using SecureFolderFS.Sdk.Storage.StorageProperties;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

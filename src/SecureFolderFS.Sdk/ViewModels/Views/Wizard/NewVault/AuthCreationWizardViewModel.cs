@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -135,6 +135,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         {
             if (e is AuthenticationChangedEventArgs)
                 DialogViewModel.PrimaryButtonEnabled = true;
+
+            if (e is PasswordChangedEventArgs args)
+                DialogViewModel.PrimaryButtonEnabled = args.IsMatch;
         }
     }
 }

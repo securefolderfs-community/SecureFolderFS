@@ -23,9 +23,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         }
 
         /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await SidebarViewModel.InitAsync(cancellationToken);
+            return SidebarViewModel.InitAsync(cancellationToken);
         }
     }
 }

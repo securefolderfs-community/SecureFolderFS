@@ -1,0 +1,68 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.Uno.UserControls.GraphControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
+    x:Name="Graph"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+    </UserControl.Resources>
+
+    <Button
+        Height="232"
+        Padding="12,12,12,12"
+        HorizontalAlignment="Stretch"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        AutomationProperties.Name="{x:Bind GraphHeader, Mode=OneWay}"
+        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
+        Click="RootButton_Click"
+        Loaded="RootButton_Loaded">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!--  Header (small)  -->
+            <TextBlock
+                Grid.Row="0"
+                Opacity="0.8"
+                Text="{x:Bind GraphHeader, Mode=OneWay}"
+                Visibility="{x:Bind GraphLoaded, Mode=OneWay}" />
+
+            <!--  Subheader (big)  -->
+            <TextBlock
+                Grid.Row="1"
+                FontSize="24"
+                FontWeight="SemiBold"
+                Text="{x:Bind GraphSubheader, Mode=OneWay}"
+                Visibility="{x:Bind GraphLoaded, Mode=OneWay}" />
+
+            <!--  Load progress  -->
+            <ProgressRing
+                x:Name="LoadProgress"
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                x:Load="{x:Bind GraphLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
+
+            <!--  Chart  -->
+            <lvc:CartesianChart
+                x:Name="Chart"
+                Grid.Row="2"
+                Margin="-12,8,-16,-12"
+                Padding="2"
+                x:Load="False"
+                IsHitTestVisible="False"
+                Loaded="Chart_Loaded" />
+        </Grid>
+    </Button>
+</UserControl>

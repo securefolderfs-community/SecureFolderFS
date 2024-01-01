@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,12 +10,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
     public sealed partial class VaultHealthWidgetViewModel : BaseWidgetViewModel
     {
-        [ObservableProperty] private DateTime _VaultHealthLastCheckedDate;
+        [ObservableProperty] private string _LastCheckedText;
         [ObservableProperty] private VaultHealthState _VaultHealthState;
 
         public VaultHealthWidgetViewModel(IWidgetModel widgetModel)
             : base(widgetModel)
         {
+            LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
         }
 
         [RelayCommand]

@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "SecureFolderFSUno",
+  "display": "standalone",
+  "name": "SecureFolderFSUno",
+  "short_name": "SecureFolderFSUno",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

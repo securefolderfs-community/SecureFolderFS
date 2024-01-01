@@ -1,0 +1,22 @@
+<Project>
+    <PropertyGroup>
+        <!--
+        Uncomment the following line to enable single-target framework builds
+        in order to get faster performance when debugging for a single platform.
+
+        Once this file is modified, use the appropriate solution filter to avoid
+        NuGet restore issues.
+
+        Available target frameworks can be found in the project heads of your solution.
+        -->
+		
+		<!-- Windows -->
+        <OverrideTargetFrameworks>net8.0-windows10.0.19041.0</OverrideTargetFrameworks>
+		
+		<!-- Skia GTK -->
+        <!--<OverrideTargetFrameworks>net8.0</OverrideTargetFrameworks>-->
+
+        <!-- MacOS -->
+        <!--<OverrideTargetFrameworks>net8.0-maccatalyst</OverrideTargetFrameworks>-->
+    </PropertyGroup>
+</Project>

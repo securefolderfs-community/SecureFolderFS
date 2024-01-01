@@ -1,0 +1,102 @@
+﻿<Page
+    x:Class="SecureFolderFS.Uno.Views.Vault.VaultOverviewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    xmlns:ucw="using:SecureFolderFS.Uno.UserControls.Widgets"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
+    NavigationCacheMode="Disabled"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <!--  Vault Health  -->
+        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:VaultHealthWidgetViewModel">
+            <ucw:HealthWidget
+                HealthLastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
+                OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
+                StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
+                VaultHealthState="{x:Bind VaultHealthState, Mode=OneWay}" />
+        </DataTemplate>
+
+        <!--  Resource Graphs  -->
+        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
+            <ucw:GraphsWidget
+                ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}"
+                ReadGraphIsExtended="{x:Bind ReadGraphViewModel.IsExtended, Mode=TwoWay}"
+                ReadGraphSubheader="{x:Bind ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
+                WriteGraphData="{x:Bind WriteGraphViewModel.Data, Mode=OneWay}"
+                WriteGraphIsExtended="{x:Bind WriteGraphViewModel.IsExtended, Mode=TwoWay}"
+                WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
+        </DataTemplate>
+    </Page.Resources>
+
+    <!--  Margins are to align the scrollbar to prevent overlap with content  -->
+    <ScrollViewer Margin="-12,0,-12,0">
+        <StackPanel Margin="12,0,12,0" Spacing="8">
+            <!--  Widgets  -->
+            <ItemsRepeater x:Name="WidgetsList" ItemsSource="{x:Bind ViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="vm:BaseWidgetViewModel">
+                        <ContentControl
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Content="{Binding}">
+                            <ContentControl.ContentTemplateSelector>
+                                <ts:WidgetsTemplateSelector GraphsWidgetTemplate="{StaticResource GraphsWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+                            </ContentControl.ContentTemplateSelector>
+                        </ContentControl>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+
+            <!--  Vault options  -->
+            <StackPanel Spacing="4">
+                <!--  Open in File Explorer  -->
+                <ucab:ActionBlockControl
+                    Title="{l:ResourceString Name=ViewVault}"
+                    BlockMode="Clickable"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand, Mode=OneWay}"
+                    Description="{l:ResourceString Name=ViewVaultDescription}">
+                    <ucab:ActionBlockControl.Icon>
+                        <FontIcon Glyph="&#xEC50;" />
+                    </ucab:ActionBlockControl.Icon>
+                    <ucab:ActionBlockControl.ActionElement>
+                        <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                    </ucab:ActionBlockControl.ActionElement>
+                </ucab:ActionBlockControl>
+
+                <!--  Vault properties  -->
+                <ucab:ActionBlockControl
+                    Title="{l:ResourceString Name=VaultProperties}"
+                    BlockMode="Clickable"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand, Mode=OneWay}"
+                    Description="{l:ResourceString Name=VaultPropertiesDescription}">
+                    <ucab:ActionBlockControl.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </ucab:ActionBlockControl.Icon>
+                    <ucab:ActionBlockControl.ActionElement>
+                        <FontIcon FontSize="14" Glyph="&#xE76C;" />
+                    </ucab:ActionBlockControl.ActionElement>
+                </ucab:ActionBlockControl>
+
+                <!--  Lock vault  -->
+                <ucab:ActionBlockControl
+                    Title="{l:ResourceString Name=LockVault}"
+                    BlockMode="Clickable"
+                    ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand, Mode=OneWay}"
+                    Description="{l:ResourceString Name=LockVaultDescription}">
+                    <ucab:ActionBlockControl.Icon>
+                        <FontIcon Glyph="&#xE72E;" />
+                    </ucab:ActionBlockControl.Icon>
+                    <ucab:ActionBlockControl.ActionElement>
+                        <FontIcon FontSize="14" Glyph="&#xE7E8;" />
+                    </ucab:ActionBlockControl.ActionElement>
+                </ucab:ActionBlockControl>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

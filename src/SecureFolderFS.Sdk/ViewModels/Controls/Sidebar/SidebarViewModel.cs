@@ -5,7 +5,7 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -76,7 +76,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         {
             var widgetsCollection = new WidgetsCollectionModel(vaultModel.Folder);
             var vaultViewModel = new VaultViewModel(vaultModel, widgetsCollection);
-
             var sidebarItem = new SidebarItemViewModel(vaultViewModel, _vaultCollectionModel);
 
             sidebarItem.LastAccessDate = vaultModel.LastAccessDate;

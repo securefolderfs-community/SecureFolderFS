@@ -1,0 +1,75 @@
+<UserControl
+    x:Class="SecureFolderFS.Uno.UserControls.InstallationControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+    </UserControl.Resources>
+
+    <Grid ColumnSpacing="4">
+        <Grid.ColumnDefinitions>
+            <!--  Progress  -->
+            <ColumnDefinition />
+            <!--  Actions  -->
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Progress  -->
+        <StackPanel Grid.Column="0" Spacing="2">
+            <!--  Status text  -->
+            <TextBlock Text="{x:Bind StatusText, Mode=OneWay}" />
+
+            <!--  Progress bar  -->
+            <ProgressBar
+                IsIndeterminate="{x:Bind IsIndeterminate, Mode=OneWay}"
+                ShowPaused="{x:Bind IsPaused, Mode=OneWay}"
+                Value="{x:Bind Value, Mode=OneWay}" />
+        </StackPanel>
+
+        <!--  Actions  -->
+        <StackPanel
+            Grid.Column="1"
+            Orientation="Horizontal"
+            Spacing="4">
+            <!--  Pause/resume  -->
+            <Button
+                x:Name="PauseResumeButton"
+                Padding="0"
+                x:Load="{x:Bind PauseResumeCommand, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                Command="{x:Bind PauseResumeCommand, Mode=OneWay}"
+                ToolTipService.ToolTip="Pause">
+                <Grid>
+                    <!--  Resume operation  -->
+                    <FontIcon
+                        x:Name="ResumeGlyph"
+                        x:Load="{x:Bind IsPaused, Mode=OneWay}"
+                        FontSize="16"
+                        Glyph="&#xE768;" />
+
+                    <!--  Pause operation  -->
+                    <FontIcon
+                        x:Name="PauseGlyph"
+                        x:Load="{x:Bind IsPaused, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}"
+                        FontSize="16"
+                        Glyph="&#xE769;" />
+                </Grid>
+            </Button>
+
+            <!--  Cancel  -->
+            <Button
+                x:Name="CancelButton"
+                Padding="0"
+                x:Load="{x:Bind CancelButton, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                Command="{x:Bind CancelCommand, Mode=OneWay}"
+                ToolTipService.ToolTip="Cancel">
+                <FontIcon FontSize="16" Glyph="&#xE711;" />
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

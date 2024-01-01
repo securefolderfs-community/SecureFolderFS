@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using System;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    [Inject<IDialogService>, Inject<IClipboardService>, Inject<IApplicationService>, Inject<IFileExplorerService>]
+    [Inject<IOverlayService>, Inject<IClipboardService>, Inject<IApplicationService>, Inject<IFileExplorerService>]
     public sealed partial class AboutSettingsViewModel : BasePageViewModel
     {
         public string AppVersion { get; }
@@ -53,13 +52,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             var viewModel = new ChangelogDialogViewModel(ApplicationService.AppVersion);
             _ = viewModel.InitAsync();
 
-            await DialogService.ShowDialogAsync(viewModel);
+            await OverlayService.ShowAsync(viewModel);
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenLicensesAsync()
         {
-            return DialogService.ShowDialogAsync(new LicensesDialogViewModel());
+            return OverlayService.ShowAsync(new LicensesDialogViewModel());
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]

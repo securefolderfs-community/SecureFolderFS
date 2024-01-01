@@ -1,0 +1,8 @@
+<Project>
+	<Import Project="solution-config.props" Condition="exists('solution-config.props')" />
+
+	<!-- Override the TargetFrameworks list with the one specified in OverrideTargetFrameworks -->
+	<PropertyGroup Condition="'$(OverrideTargetFrameworks)'!=''">
+		<TargetFrameworks>$(OverrideTargetFrameworks)</TargetFrameworks>
+	</PropertyGroup>
+</Project>

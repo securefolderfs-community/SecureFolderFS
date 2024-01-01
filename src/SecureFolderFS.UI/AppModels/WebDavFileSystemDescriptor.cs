@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
-using SecureFolderFS.Shared.Utilities;
+using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

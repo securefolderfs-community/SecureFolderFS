@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<IDialogService>, Inject<ISettingsService>]
+    [Inject<IOverlayService>, Inject<ISettingsService>]
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
         [ObservableProperty] private string? _VaultName;
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             {
                 var explanationDialog = new ExplanationDialogViewModel();
                 await explanationDialog.InitAsync();
-                await DialogService.ShowDialogAsync(explanationDialog);
+                await OverlayService.ShowAsync(explanationDialog);
 
                 SettingsService.AppSettings.WasVaultFolderExplanationShown = true;
                 await SettingsService.AppSettings.TrySaveAsync();
