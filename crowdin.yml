@@ -1,3 +1,3 @@
 files:
-  - source: /src/SecureFolderFS.UI/Strings/en-US/*.resx
-    translation: /src/SecureFolderFS.UI/Strings/%locale%/%original_file_name%
+  - source: /src/Platforms/SecureFolderFS.UI/Strings/en-US/*.resx
+    translation: /src/Platforms/SecureFolderFS.UI/Strings/%locale%/%original_file_name%
