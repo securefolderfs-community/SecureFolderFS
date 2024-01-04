@@ -12,19 +12,19 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
+namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
     [Inject<IFileExplorerService>]
-    public sealed partial class SidebarItemViewModel : ObservableObject, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
+    public sealed partial class VaultListItemViewModel : ObservableObject, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
-
-        public VaultViewModel VaultViewModel { get; }
 
         [ObservableProperty] private bool _CanRemoveVault = true;
         [ObservableProperty] private DateTime? _LastAccessDate;
 
-        public SidebarItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
+        public VaultViewModel VaultViewModel { get; }
+
+        public VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = Ioc.Default;
             VaultViewModel = vaultViewModel;
@@ -55,16 +55,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
         }
 
         [RelayCommand]
-        private async Task RemoveVaultAsync(CancellationToken cancellationToken)
+        private Task RemoveVaultAsync(CancellationToken cancellationToken)
         {
             _vaultCollectionModel.Remove(VaultViewModel.VaultModel);
-            await _vaultCollectionModel.TrySaveAsync(cancellationToken);
+            return _vaultCollectionModel.TrySaveAsync(cancellationToken);
         }
 
         [RelayCommand]
-        private async Task RevealFolderAsync(CancellationToken cancellationToken)
+        private Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            await FileExplorerService.OpenInFileExplorerAsync(VaultViewModel.VaultModel.Folder, cancellationToken);
+            return FileExplorerService.OpenInFileExplorerAsync(VaultViewModel.VaultModel.Folder, cancellationToken);
         }
     }
 }

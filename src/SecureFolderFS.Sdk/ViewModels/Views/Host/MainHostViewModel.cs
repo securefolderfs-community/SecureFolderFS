@@ -2,7 +2,7 @@
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
+using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,19 +13,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
     {
         private readonly INavigationService _hostNavigationService;
 
-        public SidebarViewModel SidebarViewModel { get; }
+        public VaultListViewModel VaultListViewModel { get; }
 
         public MainHostViewModel(INavigationService hostNavigationService, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = Ioc.Default;
             _hostNavigationService = hostNavigationService;
-            SidebarViewModel = new(vaultCollectionModel);
+            VaultListViewModel = new(vaultCollectionModel);
         }
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return SidebarViewModel.InitAsync(cancellationToken);
+            return VaultListViewModel.InitAsync(cancellationToken);
         }
     }
 }

@@ -1,11 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -13,25 +17,23 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
+namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
-    [Inject<ISettingsService>]
-    public sealed partial class SidebarViewModel : ObservableObject, IAsyncInitialize
+    [Inject<ISettingsService>, Inject<IIapService>, Inject<IOverlayService>]
+    public sealed partial class VaultListViewModel : ObservableObject, IAsyncInitialize
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
-        [ObservableProperty] private SidebarItemViewModel? _SelectedItem;
-        [ObservableProperty] private SidebarSearchViewModel _SearchViewModel;
-        [ObservableProperty] private SidebarFooterViewModel _FooterViewModel;
-        [ObservableProperty] private ObservableCollection<SidebarItemViewModel> _SidebarItems;
+        [ObservableProperty] private VaultListItemViewModel? _SelectedItem;
+        [ObservableProperty] private VaultListSearchViewModel _SearchViewModel;
+        [ObservableProperty] private ObservableCollection<VaultListItemViewModel> _Items;
 
-        public SidebarViewModel(IVaultCollectionModel vaultCollectionModel)
+        public VaultListViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = Ioc.Default;
             _vaultCollectionModel = vaultCollectionModel;
-            _SidebarItems = new();
-            _SearchViewModel = new(SidebarItems);
-            _FooterViewModel = new(_vaultCollectionModel);
+            _Items = new();
+            _SearchViewModel = new(Items);
 
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
         }
@@ -50,57 +52,76 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Sidebar
 
                 case NotifyCollectionChangedAction.Reset:
                     SelectedItem = null;
-                    SidebarItems.Clear();
+                    Items.Clear();
                     break;
 
-                default:
-                    return;
+                default: return;
             }
         }
 
         /// <inheritdoc/>
         public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            SidebarItems.Clear();
+            Items.Clear();
             foreach (var item in _vaultCollectionModel)
                 AddVault(item);
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
-                SelectedItem = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
+                SelectedItem = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
 
-            SelectedItem ??= SidebarItems.FirstOrDefault();
+            SelectedItem ??= Items.FirstOrDefault();
             return Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        private async Task AddNewVaultAsync(CancellationToken cancellationToken)
+        {
+            var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFSPlus, cancellationToken);
+            if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
+            {
+                _ = PaymentDialogViewModel.Instance.InitAsync(cancellationToken);
+                await OverlayService.ShowAsync(PaymentDialogViewModel.Instance);
+            }
+            else
+                await OverlayService.ShowAsync(new VaultWizardDialogViewModel(_vaultCollectionModel));
+        }
+
+        [RelayCommand]
+        private async Task OpenSettingsAsync(CancellationToken cancellationToken)
+        {
+            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
+            await SettingsService.TrySaveAsync(cancellationToken);
         }
 
         private void AddVault(IVaultModel vaultModel)
         {
             var widgetsCollection = new WidgetsCollectionModel(vaultModel.Folder);
             var vaultViewModel = new VaultViewModel(vaultModel, widgetsCollection);
-            var sidebarItem = new SidebarItemViewModel(vaultViewModel, _vaultCollectionModel);
+            var sidebarItem = new VaultListItemViewModel(vaultViewModel, _vaultCollectionModel);
 
             sidebarItem.LastAccessDate = vaultModel.LastAccessDate;
-            SidebarItems.Add(sidebarItem);
+            Items.Add(sidebarItem);
         }
 
         private void RemoveVault(IVaultModel vaultModel)
         {
-            var itemToRemove = SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel == vaultModel);
+            var itemToRemove = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel == vaultModel);
             if (itemToRemove is null)
                 return;
 
             try
             {
-                SidebarItems.Remove(itemToRemove);
+                Items.Remove(itemToRemove);
             }
             catch (NullReferenceException)
             {
                 // TODO: This happens rarely but the vault is actually removed
             }
 
-            SelectedItem = SidebarItems.FirstOrDefault();
+            SelectedItem = Items.FirstOrDefault();
         }
 
-        partial void OnSelectedItemChanged(SidebarItemViewModel? value)
+        partial void OnSelectedItemChanged(VaultListItemViewModel? value)
         {
             if (SettingsService.UserSettings.ContinueOnLastVault)
                 SettingsService.AppSettings.LastVaultFolderId = value?.VaultViewModel.VaultModel.Folder.Id;

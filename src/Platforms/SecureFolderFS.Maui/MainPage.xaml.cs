@@ -1,25 +1,27 @@
-﻿namespace SecureFolderFS.Maui
+using System.Collections.ObjectModel;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
+
+namespace SecureFolderFS.Maui
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        public ObservableCollection<VaultListItemViewModel> Vaults { get; } = new ObservableCollection<VaultListItemViewModel>();
 
         public MainPage()
         {
+            BindingContext = this;
+            _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
+
             InitializeComponent();
+
+            Vaults.Add(new(new(new VaultModel(null, "TestVault", new()), null), null));
+            Vaults.Add(new(new(new VaultModel(null, "TestVault2"), null), null));
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
         {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            _ = e;
         }
     }
-
 }

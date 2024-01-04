@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+using MauiIcons.Material;
+using Microsoft.Extensions.Logging;
 
 namespace SecureFolderFS.Maui
 {
@@ -6,14 +7,14 @@ namespace SecureFolderFS.Maui
     {
         public static MauiApp CreateMauiApp()
         {
-            var builder = MauiApp.CreateBuilder();
-            builder
+            var builder = MauiApp.CreateBuilder()
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+                })
+                .UseMaterialMauiIcons();
 
 #if DEBUG
     		builder.Logging.AddDebug();

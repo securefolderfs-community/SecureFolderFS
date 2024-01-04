@@ -7,7 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
+using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         /// <inheritdoc/>
         public void Receive(RemoveVaultMessage message)
         {
-            if (ViewModel?.SidebarViewModel.SidebarItems.IsEmpty() ?? false)
+            if (ViewModel?.VaultListViewModel.Items.IsEmpty() ?? false)
                 Navigation?.ClearContent();
         }
 
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         public void Receive(AddVaultMessage message)
         {
 #if WINDOWS // TODO(u win)
-            if (ViewModel?.SidebarViewModel.SidebarItems.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
+            if (ViewModel?.VaultListViewModel.Items.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
                 && !SettingsService.AppSettings.WasBetaNotificationShown1)
             {
                 BetaTeachingTip.IsOpen = true;
@@ -90,13 +90,13 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
         private async void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (args.SelectedItem is SidebarItemViewModel itemViewModel) 
+            if (args.SelectedItem is VaultListItemViewModel itemViewModel) 
                 await NavigateToItem(itemViewModel.VaultViewModel);
         }
 
         private async void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel!.SidebarViewModel.SidebarItems.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.VaultName.Equals(args.ChosenSuggestion));
             if (chosenItem is null)
                 return;
 
@@ -107,7 +107,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         private async void SidebarSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-                await ViewModel!.SidebarViewModel.SearchViewModel.SubmitQuery(sender.Text);
+                await ViewModel!.VaultListViewModel.SearchViewModel.SubmitQueryAsync(sender.Text);
         }
 
         private async void TeachingTip_CloseButtonClick(TeachingTip sender, object args)
