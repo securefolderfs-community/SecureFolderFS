@@ -10,6 +10,6 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// <summary>
         /// Gets the title of this view.
         /// </summary>
-        string Title { get; }
+        string? Title { get; }
     }
 }

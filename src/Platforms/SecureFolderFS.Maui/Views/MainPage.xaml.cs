@@ -1,8 +1,11 @@
 using System.Collections.ObjectModel;
+using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
+using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 
-namespace SecureFolderFS.Maui
+namespace SecureFolderFS.Maui.Views
 {
     public partial class MainPage : ContentPage
     {
@@ -19,8 +22,10 @@ namespace SecureFolderFS.Maui
             Vaults.Add(new(new(new VaultModel(null, "TestVault2"), null), null));
         }
 
-        private void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
+        private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
         {
+            var vaultVM = new VaultViewModel(new VaultModel(null, "abc"), null);
+            await Shell.Current.GoToAsync("LoginPage", new VaultLoginPageViewModel(vaultVM, null).ViewModelParameter());
             _ = e;
         }
     }

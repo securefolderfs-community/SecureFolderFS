@@ -2,10 +2,9 @@
     x:Class="SecureFolderFS.Maui.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SecureFolderFS.Maui"
+    xmlns:vw="clr-namespace:SecureFolderFS.Maui.Views"
     Title="SecureFolderFS.Maui"
-    Shell.FlyoutBehavior="Disabled">
+    FlyoutBehavior="Disabled">
 
-    <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
-
+    <ShellContent ContentTemplate="{DataTemplate vw:MainPage}" Route="MainPage" />
 </Shell>

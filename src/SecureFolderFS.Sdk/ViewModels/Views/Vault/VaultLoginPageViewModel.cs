@@ -19,22 +19,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Inject<IOverlayService>, Inject<ISettingsService>]
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
-        [ObservableProperty] private string? _VaultName;
         [ObservableProperty] private LoginControlViewModel _LoginViewModel;
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
             : base(vaultViewModel, navigationService)
         {
             ServiceProvider = Ioc.Default;
-            VaultName = vaultViewModel.VaultModel.VaultName;
+            Title = vaultViewModel.VaultModel.VaultName;
             _LoginViewModel = new(vaultViewModel.VaultModel, true);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
 
         /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await LoginViewModel.InitAsync(cancellationToken);
+            return LoginViewModel.InitAsync(cancellationToken);
         }
 
         private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)

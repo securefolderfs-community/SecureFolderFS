@@ -10,8 +10,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views
     /// <summary>
     /// Represents a base view model for pages which allows for navigation.
     /// </summary>
-    public abstract class BasePageViewModel : ObservableObject, INavigationTarget, IAsyncInitialize
+    public abstract partial class BasePageViewModel : ObservableObject, INavigationTarget, IAsyncInitialize, IView
     {
+        /// <inheritdoc cref="IView.Title"/>
+        [ObservableProperty] private string? _Title;
+
         /// <inheritdoc/>
         public virtual void OnNavigatingTo(NavigationType navigationType)
         {
