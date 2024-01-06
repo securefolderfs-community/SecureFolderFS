@@ -7,7 +7,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dialogs
+namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
     public sealed partial class IntroductionDialogViewModel : DialogViewModel

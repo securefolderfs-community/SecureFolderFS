@@ -9,7 +9,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dialogs
+namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<INavigationService>(Visibility = "public")]
     public sealed partial class VaultWizardDialogViewModel : DialogViewModel, IDisposable

@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dialogs
+namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IApplicationService>]
     public sealed partial class LicensesDialogViewModel : DialogViewModel, IAsyncInitialize

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dialogs
+namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IApplicationService>, Inject<IChangelogService>]
     public sealed partial class ChangelogDialogViewModel : DialogViewModel, IAsyncInitialize

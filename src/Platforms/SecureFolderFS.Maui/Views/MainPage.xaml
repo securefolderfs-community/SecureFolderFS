@@ -3,6 +3,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
@@ -53,12 +55,15 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <OnPlatform x:TypeArguments="Button">
+        <OnPlatform x:TypeArguments="GraphicsView">
             <On Platform="Android">
-                <Button
-                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand, Mode=OneWay}"
-                    Text="Add vault"
-                    ZIndex="2" />
+                <mdc:FAB
+                    Margin="0,0,32,32"
+                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+                    HorizontalOptions="End"
+                    IconData="{Static mdci:Material.Add}"
+                    Style="{StaticResource SecondaryFABStyle}"
+                    VerticalOptions="End" />
             </On>
         </OnPlatform>
     </Grid>

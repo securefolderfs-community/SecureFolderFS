@@ -7,7 +7,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dialogs
+namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IVaultService>]
     public sealed partial class PasswordChangeDialogViewModel : DialogViewModel

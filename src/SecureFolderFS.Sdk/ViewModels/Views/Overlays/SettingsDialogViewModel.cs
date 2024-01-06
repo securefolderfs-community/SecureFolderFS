@@ -2,7 +2,7 @@
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 
-namespace SecureFolderFS.Sdk.ViewModels.Dialogs
+namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<INavigationService>(Visibility = "public")]
     public sealed partial class SettingsDialogViewModel : DialogViewModel

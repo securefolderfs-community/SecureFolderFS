@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 
@@ -31,9 +31,10 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public void SetView(IViewable viewable) => ViewModel = (IntroductionDialogViewModel)viewable;
 
         /// <inheritdoc/>
-        public void Hide()
+        public Task HideAsync()
         {
             ViewModel.TaskCompletion.SetResult(DialogExtensions.ResultFromDialogOption(DialogOption.Cancel));
+            return Task.CompletedTask;
         }
     }
 }

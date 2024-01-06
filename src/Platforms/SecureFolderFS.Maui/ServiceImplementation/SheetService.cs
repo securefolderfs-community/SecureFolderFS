@@ -1,6 +1,6 @@
 using SecureFolderFS.Maui.Sheets;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Utils;

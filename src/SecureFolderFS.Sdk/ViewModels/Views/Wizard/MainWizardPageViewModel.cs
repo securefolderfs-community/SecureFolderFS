@@ -3,7 +3,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
