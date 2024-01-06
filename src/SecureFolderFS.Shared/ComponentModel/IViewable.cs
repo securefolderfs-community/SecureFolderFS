@@ -3,9 +3,9 @@
 namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
-    /// Represents a generic view.
+    /// Represents a generic viewable display.
     /// </summary>
-    public interface IView : INotifyPropertyChanged
+    public interface IViewable : INotifyPropertyChanged
     {
         /// <summary>
         /// Gets the title of this view.

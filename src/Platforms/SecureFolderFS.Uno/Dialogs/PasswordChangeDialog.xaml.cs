@@ -16,7 +16,6 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class PasswordChangeDialog : ContentDialog, IOverlayControl
     {
-        /// <inheritdoc/>
         public PasswordChangeDialogViewModel ViewModel
         {
             get => (PasswordChangeDialogViewModel)DataContext;
@@ -32,7 +31,14 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (PasswordChangeDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (PasswordChangeDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
 
         private async void PasswordChangeDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {

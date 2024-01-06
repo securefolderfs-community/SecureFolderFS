@@ -15,7 +15,6 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class LicensesDialog : ContentDialog, IOverlayControl
     {
-        /// <inheritdoc/>
         public LicensesDialogViewModel ViewModel
         {
             get => (LicensesDialogViewModel)DataContext;
@@ -31,7 +30,14 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (LicensesDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (LicensesDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {

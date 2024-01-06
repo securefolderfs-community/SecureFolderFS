@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 using System.Collections.Generic;
@@ -12,10 +12,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         protected Stack<IOverlayControl> Overlays { get; } = new();
 
         /// <inheritdoc/>
-        public virtual async Task<IResult> ShowAsync(IView view)
+        public virtual async Task<IResult> ShowAsync(IViewable viewable)
         {
-            var overlay = GetOverlay(view);
-            overlay.SetView(view);
+            var overlay = GetOverlay(viewable);
+            overlay.SetView(viewable);
             Overlays.Push(overlay);
 
             // Show overlay
@@ -25,6 +25,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
             return result;
         }
 
-        protected abstract IOverlayControl GetOverlay(IView view);
+        protected abstract IOverlayControl GetOverlay(IViewable viewable);
     }
 }

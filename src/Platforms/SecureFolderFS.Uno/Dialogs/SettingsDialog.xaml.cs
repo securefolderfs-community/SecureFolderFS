@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
@@ -36,7 +35,14 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (SettingsDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (SettingsDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
 
         private INavigationTarget GetTargetForTag(int tag)
         {

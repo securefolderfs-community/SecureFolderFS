@@ -14,9 +14,8 @@
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid>
         <ListView
-            Grid.Row="0"
             ItemTapped="ListView_ItemTapped"
             ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
             SelectionMode="None">
@@ -54,9 +53,13 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <Button
-            Grid.Row="1"
-            Clicked="AddButton_Clicked"
-            Text="Add vault" />
+        <OnPlatform x:TypeArguments="Button">
+            <On Platform="Android">
+                <Button
+                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand, Mode=OneWay}"
+                    Text="Add vault"
+                    ZIndex="2" />
+            </On>
+        </OnPlatform>
     </Grid>
 </ContentPage>

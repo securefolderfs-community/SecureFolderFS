@@ -18,7 +18,6 @@ namespace SecureFolderFS.Uno.Dialogs
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
-        /// <inheritdoc/>
         public ChangelogDialogViewModel ViewModel
         {
             get => (ChangelogDialogViewModel)DataContext;
@@ -34,7 +33,14 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ResultFromDialogOption();
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (ChangelogDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (ChangelogDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
 
         //private async void MarkdownTextBlock_LinkClicked(object? sender, LinkClickedEventArgs e)
         //{

@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
@@ -23,10 +24,9 @@ namespace SecureFolderFS.Uno.Dialogs
         private bool _hasNavigationAnimatedOnLoaded;
         private bool _isBackAnimationState;
 
-        /// <inheritdoc/>
-        public VaultWizardDialogViewModel ViewModel
+        public VaultWizardDialogViewModel? ViewModel
         {
-            get => (VaultWizardDialogViewModel)DataContext;
+            get => DataContext.TryCast<VaultWizardDialogViewModel>();
             set => DataContext = value;
         }
 
@@ -39,7 +39,14 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (VaultWizardDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (VaultWizardDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
 
         private async Task CompleteAnimationAsync(BaseWizardPageViewModel? viewModel)
         {

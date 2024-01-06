@@ -1,5 +1,7 @@
+using CommunityToolkit.Maui;
 using MauiIcons.Material;
 using Microsoft.Extensions.Logging;
+using The49.Maui.BottomSheet;
 
 namespace SecureFolderFS.Maui
 {
@@ -14,7 +16,11 @@ namespace SecureFolderFS.Maui
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
-                .UseMaterialMauiIcons();
+
+                // Plugins
+                .UseMaterialMauiIcons()
+                .UseMauiCommunityToolkit()
+                .UseBottomSheet();
 
 #if DEBUG
     		builder.Logging.AddDebug();

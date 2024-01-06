@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public Task<IResult> ShowAsync() => ViewModel.TaskCompletion.Task;
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (IntroductionDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (IntroductionDialogViewModel)viewable;
 
         /// <inheritdoc/>
         public void Hide()

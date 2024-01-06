@@ -1,0 +1,25 @@
+﻿<t49:BottomSheet
+    x:Class="SecureFolderFS.Maui.Sheets.VaultWizardSheet"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:t49="https://schemas.the49.com/dotnet/2023/maui"
+    HasBackdrop="True">
+
+    <t49:BottomSheet.Detents>
+        <OnPlatform x:TypeArguments="t49:Detent">
+            <On Platform="Android">
+                <t49:RatioDetent Ratio="0.80" />
+            </On>
+            <On Platform="iOS">
+                <t49:FullscreenDetent />
+            </On>
+        </OnPlatform>
+    </t49:BottomSheet.Detents>
+
+    <VerticalStackLayout>
+        <Label
+            HorizontalOptions="Center"
+            Text="Welcome to .NET MAUI!s"
+            VerticalOptions="Center" />
+    </VerticalStackLayout>
+</t49:BottomSheet>

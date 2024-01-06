@@ -5,7 +5,7 @@ namespace SecureFolderFS.Maui
 {
     public partial class AppShell : Shell
     {
-        public MainViewModel MainViewModel { get; } = new MainViewModel();
+        public MainViewModel MainViewModel { get; } = new();
 
         public AppShell()
         {
@@ -13,11 +13,6 @@ namespace SecureFolderFS.Maui
 
             // Register routes
             Routing.RegisterRoute("LoginPage", typeof(LoginPage));
-        }
-
-        private void AppShell_Loaded(object? sender, EventArgs e)
-        {
-            _ = MainViewModel.InitAsync();
         }
     }
 }

@@ -9,14 +9,14 @@ namespace SecureFolderFS.Sdk.Services
     public interface IOverlayService
     {
         /// <summary>
-        /// Shows the provided <paramref name="view"/> as an overlay.
+        /// Shows the provided <paramref name="viewable"/> as an overlay.
         /// If an overlay is already shown, a new one will be presented on top of the existing one.
         /// </summary>
-        /// <param name="view">The view to present.</param>
+        /// <param name="viewable">The view to present.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation.</returns>
         /// <remarks>
         /// The return value may contain additional information about the chosen option.
         /// </remarks>
-        Task<IResult> ShowAsync(IView view);
+        Task<IResult> ShowAsync(IViewable viewable);
     }
 }

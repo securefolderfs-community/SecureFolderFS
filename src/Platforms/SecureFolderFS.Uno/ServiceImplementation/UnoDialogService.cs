@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Dialogs;
@@ -21,9 +22,9 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         private bool _isCurrentRemoved;
 
         /// <inheritdoc/>
-        protected override IOverlayControl GetOverlay(IView view)
+        protected override IOverlayControl GetOverlay(IViewable viewable)
         {
-            IOverlayControl overlay = view switch
+            IOverlayControl overlay = viewable switch
             {
                 ChangelogDialogViewModel => new ChangelogDialog(),
                 LicensesDialogViewModel => new LicensesDialog(),
@@ -35,7 +36,9 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 // Unused
                 PaymentDialogViewModel => new PaymentDialog(),
                 AgreementDialogViewModel => new AgreementDialog(),
-                IntroductionDialogViewModel => new IntroductionControl()
+                IntroductionDialogViewModel => new IntroductionControl(),
+
+                _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };
 
 #if WINDOWS
@@ -47,16 +50,16 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public override async Task<IResult> ShowAsync(IView view)
+        public override async Task<IResult> ShowAsync(IViewable viewable)
         {
             if (Overlays.IsEmpty())
-                return await base.ShowAsync(view);
+                return await base.ShowAsync(viewable);
 
             var current = Overlays.Pop();
-            current.Hide();
+            await current.HideAsync();
             _isCurrentRemoved = true;
 
-            var overlay = GetOverlay(view);
+            var overlay = GetOverlay(viewable);
             var result = await ShowOverlayAsync(overlay);
             if (!_isCurrentRemoved && !Overlays.IsEmpty())
                 Overlays.Pop();
@@ -68,11 +71,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
             return result;
 
-            Task<IResult> ShowOverlayAsync(IOverlayControl overlay)
+            Task<IResult> ShowOverlayAsync(IOverlayControl overlayControl)
             {
-                overlay.SetView(view);
-                Overlays.Push(overlay);
-                return overlay.ShowAsync();
+                overlayControl.SetView(viewable);
+                Overlays.Push(overlayControl);
+                return overlayControl.ShowAsync();
             }
         }
     }
