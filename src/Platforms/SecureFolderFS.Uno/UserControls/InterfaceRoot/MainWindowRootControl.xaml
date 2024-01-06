@@ -35,7 +35,7 @@
             <uc:TitleBarControl
                 x:Name="CustomTitleBar"
                 x:FieldModifier="public"
-                Canvas.ZIndex="3" />
+                Canvas.ZIndex="10" />
         </win:Grid>
 
         <!--  Main Content  -->

@@ -67,7 +67,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 }
 
                 default:
-                case NavigationType.Detached:
+                case NavigationType.Chained:
                 {
                     if (target is null)
                         return false;

@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
@@ -51,10 +51,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
             CurrentTarget?.OnNavigatingFrom();
 
             // Notify the new target that it's been navigated to
-            target.OnNavigatingTo(NavigationType.Detached);
+            target.OnNavigatingTo(NavigationType.Chained);
 
             // Start actual navigation
-            var navigationResult = await BeginNavigationAsync(target, NavigationType.Detached);
+            var navigationResult = await BeginNavigationAsync(target, NavigationType.Chained);
             if (!navigationResult)
                 return false;
 

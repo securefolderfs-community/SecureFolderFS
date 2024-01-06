@@ -1,15 +1,16 @@
-using System.Collections.ObjectModel;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Maui.Views
 {
     public partial class MainPage : ContentPage
     {
-        public ObservableCollection<VaultListItemViewModel> Vaults { get; } = new ObservableCollection<VaultListItemViewModel>();
+        public MainHostViewModel ViewModel { get; } = new(Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
 
         public MainPage()
         {
@@ -17,16 +18,22 @@ namespace SecureFolderFS.Maui.Views
             _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
 
             InitializeComponent();
-
-            Vaults.Add(new(new(new VaultModel(null, "TestVault", new()), null), null));
-            Vaults.Add(new(new(new VaultModel(null, "TestVault2"), null), null));
         }
 
         private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
         {
-            var vaultVM = new VaultViewModel(new VaultModel(null, "abc"), null);
-            await Shell.Current.GoToAsync("LoginPage", new VaultLoginPageViewModel(vaultVM, null).ViewModelParameter());
-            _ = e;
+            if (e.Item is not VaultListItemViewModel itemViewModel)
+                return;
+
+            await Shell.Current.GoToAsync("LoginPage", new VaultLoginPageViewModel(itemViewModel.VaultViewModel, null).ViewModelParameter());
+        }
+
+        private void AddButton_Clicked(object? sender, EventArgs e)
+        {
+            var vaultViewModel = new VaultViewModel(new VaultModel(null, "TestVaultName"), null);
+            var sidebarItem = new VaultListItemViewModel(vaultViewModel, Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
+
+            ViewModel.VaultListViewModel.Items.Add(sidebarItem);
         }
     }
 }

@@ -11,14 +11,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
     [Inject<INavigationService>(Visibility = "public")]
     public sealed partial class MainHostViewModel : BasePageViewModel
     {
-        private readonly INavigationService _hostNavigationService;
-
         public VaultListViewModel VaultListViewModel { get; }
 
-        public MainHostViewModel(INavigationService hostNavigationService, IVaultCollectionModel vaultCollectionModel)
+        public MainHostViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = Ioc.Default;
-            _hostNavigationService = hostNavigationService;
             VaultListViewModel = new(vaultCollectionModel);
         }
 

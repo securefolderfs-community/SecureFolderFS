@@ -14,19 +14,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
     [Inject<IOverlayService>, Inject<ISettingsService>]
     public sealed partial class EmptyHostViewModel : BasePageViewModel
     {
-        private readonly INavigationService _hostNavigationService;
+        private readonly INavigationService _rootNavigationService;
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
-        public EmptyHostViewModel(INavigationService hostNavigationService, IVaultCollectionModel vaultCollectionModel)
+        public EmptyHostViewModel(INavigationService rootNavigationService, IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = Ioc.Default;
-            _hostNavigationService = hostNavigationService;
+            _rootNavigationService = rootNavigationService;
             _vaultCollectionModel = vaultCollectionModel;
         }
 
         private async void VaultCollectionModel_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            await _hostNavigationService.TryNavigateAsync(() => new MainHostViewModel(_hostNavigationService, _vaultCollectionModel), false);
+            await _rootNavigationService.TryNavigateAsync(() => new MainHostViewModel(_vaultCollectionModel), false);
         }
 
         [RelayCommand]
