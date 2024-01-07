@@ -8,9 +8,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
 {
     public sealed partial class SummaryWizardViewModel : BaseWizardViewModel
     {
-        [ObservableProperty] private string _VaultName;
+        [ObservableProperty] private string? _VaultName;
 
-        public SummaryWizardViewModel(string vaultName)
+        public SummaryWizardViewModel(string? vaultName)
         {
             VaultName = vaultName;
         }

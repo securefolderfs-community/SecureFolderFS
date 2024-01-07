@@ -2,11 +2,11 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard2;
 
 namespace SecureFolderFS.Maui.Views.Wizard
 {
-    public partial class LocationWizardViewControl : ContentView
+    public partial class SummaryWizardViewControl : ContentView
     {
-        public LocationWizardViewModel ViewModel { get; set; }
+        public SummaryWizardViewModel ViewModel { get; }
 
-        public LocationWizardViewControl(LocationWizardViewModel viewModel)
+        public SummaryWizardViewControl(SummaryWizardViewModel viewModel)
         {
             ViewModel = viewModel;
             BindingContext = this;

@@ -77,6 +77,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\Wizard\MainWizardViewControl.xaml.cs">
+	    <DependentUpon>MainWizardViewControl.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Sheets\VaultWizardSheet.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -86,7 +92,10 @@
 	  <MauiXaml Update="Views\Wizard\LocationWizardViewControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Wizard\SelectionWizardViewControl.xaml">
+	  <MauiXaml Update="Views\Wizard\MainWizardViewControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Wizard\SummaryWizardViewControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

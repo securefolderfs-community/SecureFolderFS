@@ -1,15 +1,15 @@
 ﻿<ContentView
-    x:Class="SecureFolderFS.Maui.Views.Wizard.LocationWizardViewControl"
+    x:Class="SecureFolderFS.Maui.Views.Wizard.SummaryWizardViewControl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Wizard"
-    x:DataType="local:LocationWizardViewControl">
+    x:DataType="local:SummaryWizardViewControl">
 
-    <VerticalStackLayout VerticalOptions="Center">
+    <VerticalStackLayout HorizontalOptions="Center">
         <Label
             HorizontalOptions="Center"
-            Text="Choose vault folder"
+            Text="Vault has been added!"
             VerticalOptions="Center" />
-        <Button Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}" Text="Browse" />
+        <Label Text="{Binding ViewModel.VaultName, Mode=OneWay}" />
     </VerticalStackLayout>
 </ContentView>

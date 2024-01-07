@@ -1,6 +1,5 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
-using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI.Helpers;
@@ -36,7 +35,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
                     //.AddSingleton<IPrinterService, WindowsPrinterService>()
                     //.AddSingleton<IApplicationService, SkiaApplicationService>()
                     //.AddSingleton<IVaultManagerService, SkiaVaultManagerService>()
-                    .AddSingleton<IOverlayService, SheetService>()
                     .AddSingleton<ITelemetryService, DebugTelemetryService>()
                     .AddSingleton<IIapService, DebugIapService>()
                     .AddSingleton<IUpdateService, DebugUpdateService>()

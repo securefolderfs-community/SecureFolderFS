@@ -57,7 +57,7 @@ namespace SecureFolderFS.Maui.Sheets
             {
                 Presenter.Content = ViewModel?.CurrentView switch
                 {
-                    MainWizardViewModel => new SelectionWizardViewControl(ViewModel),
+                    MainWizardViewModel => new MainWizardViewControl(ViewModel),
                     LocationWizardViewModel viewModel => new LocationWizardViewControl(viewModel),
                     _ => throw new ArgumentOutOfRangeException(nameof(ViewModel.CurrentView)),
                 };
@@ -70,8 +70,15 @@ namespace SecureFolderFS.Maui.Sheets
         {
             Presenter.Content = e.Origin switch
             {
-                // From selection -> location
-                MainWizardViewModel viewModel => new LocationWizardViewControl(new(viewModel.CreationType, ViewModel!.VaultCollectionModel))
+                // Main -> Location
+                MainWizardViewModel viewModel => new LocationWizardViewControl(new(viewModel.CreationType, ViewModel!.VaultCollectionModel)),
+
+                // Location -> Credentials
+                // Credentials -> Recovery
+                // Recovery -> Summary
+
+                // Location -> Summary
+                LocationWizardViewModel { CreationType: NewVaultCreationType.AddExisting } viewModel => new SummaryWizardViewControl(new(viewModel.SelectedFolder?.Name))
             };
         }
     }

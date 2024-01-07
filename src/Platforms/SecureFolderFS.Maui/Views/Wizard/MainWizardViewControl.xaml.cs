@@ -4,16 +4,17 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard2;
 
 namespace SecureFolderFS.Maui.Views.Wizard
 {
-    public partial class SelectionWizardViewControl : ContentView
+    public partial class MainWizardViewControl : ContentView
     {
         private readonly WizardOverlayViewModel _overlayViewModel;
 
         public MainWizardViewModel? ViewModel { get; set; }
 
-        public SelectionWizardViewControl(WizardOverlayViewModel viewModel)
+        public MainWizardViewControl(WizardOverlayViewModel viewModel)
         {
             _overlayViewModel = viewModel;
             ViewModel = viewModel.CurrentView as MainWizardViewModel;
+            BindingContext = this;
 
             InitializeComponent();
         }

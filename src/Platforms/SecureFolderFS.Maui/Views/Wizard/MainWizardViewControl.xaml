@@ -1,12 +1,9 @@
 ﻿<ContentView
-    x:Class="SecureFolderFS.Maui.Views.Wizard.SelectionWizardViewControl"
+    x:Class="SecureFolderFS.Maui.Views.Wizard.MainWizardViewControl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <VerticalStackLayout
-        Padding="16"
-        Spacing="32"
-        VerticalOptions="Center">
+    <VerticalStackLayout Spacing="32" VerticalOptions="Center">
         <Label
             FontSize="22"
             HorizontalOptions="Center"

@@ -39,6 +39,8 @@
         </HorizontalStackLayout>-->
         <ContentPresenter
             x:Name="Presenter"
+            Grid.Row="1"
+            Padding="16"
             HorizontalOptions="Fill"
             VerticalOptions="Fill" />
     </Grid>
