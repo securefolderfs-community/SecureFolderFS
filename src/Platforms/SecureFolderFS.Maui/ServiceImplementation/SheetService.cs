@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         {
             return viewable switch
             {
-                VaultWizardDialogViewModel => new VaultWizardSheet(),
+                WizardOverlayViewModel => new VaultWizardSheet(),
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };
         }

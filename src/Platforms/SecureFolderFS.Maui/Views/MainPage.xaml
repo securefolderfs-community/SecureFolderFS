@@ -62,7 +62,6 @@
                     Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
                     HorizontalOptions="End"
                     IconData="{Static mdci:Material.Add}"
-                    Style="{StaticResource SecondaryFABStyle}"
                     VerticalOptions="End" />
             </On>
         </OnPlatform>

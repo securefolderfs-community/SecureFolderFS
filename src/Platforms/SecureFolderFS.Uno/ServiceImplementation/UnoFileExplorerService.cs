@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Services;
@@ -8,18 +9,17 @@ using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Uno.Storage.WindowsStorage;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.System;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
     /// <inheritdoc cref="IFileExplorerService"/>
-    internal sealed class FileExplorerService : IFileExplorerService
+    internal sealed class UnoFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
         public Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
         {
 #if WINDOWS
-            return Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder).AsTask(cancellationToken);
+            return Windows.System.Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder).AsTask(cancellationToken);
 #endif
             if (OperatingSystem.IsLinux())
                 System.Diagnostics.Process.Start("xdg-open", ApplicationData.Current.LocalFolder.Path);
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         public Task OpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
 #if WINDOWS
-            return Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
+            return Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
 #endif
             if (OperatingSystem.IsLinux())
                 System.Diagnostics.Process.Start("xdg-open", folder.Id);
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile?> SaveFileAsync(string suggestedName, IDictionary<string, string>? filter, CancellationToken cancellationToken = default)
+        public async Task<bool> SaveFileAsync(string suggestedName, Stream dataStream, IDictionary<string, string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileSavePicker();
             InitializeObject(filePicker);
@@ -56,9 +56,13 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
             var file = await filePicker.PickSaveFileAsync().AsTask(cancellationToken);
             if (file is null)
-                return null;
+                return false;
 
-            return new UnoStorageFile(file);
+            var winrtStream = await file.OpenAsync(FileAccessMode.ReadWrite, StorageOpenOptions.AllowOnlyReaders).AsTask(cancellationToken);
+            await using var stream = winrtStream.AsStream();
+            await dataStream.CopyToAsync(stream, cancellationToken);
+
+            return true;
         }
 
         /// <inheritdoc/>
@@ -98,6 +102,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
         private static void InitializeObject(object obj)
         {
+            _ = obj;
 #if WINDOWS
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Instance?.MainWindow);
             WinRT.Interop.InitializeWithWindow.Initialize(obj, hwnd);

@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public override async Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
-            eventDispatch?.NoForwarding();
+            eventDispatch?.PreventForwarding();
             if (CurrentViewModel?.VaultFolder is null)
                 return;
 

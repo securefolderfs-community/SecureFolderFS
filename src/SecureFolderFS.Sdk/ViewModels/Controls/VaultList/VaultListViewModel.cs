@@ -83,7 +83,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 await OverlayService.ShowAsync(PaymentDialogViewModel.Instance);
             }
             else
-                await OverlayService.ShowAsync(new VaultWizardDialogViewModel(_vaultCollectionModel));
+                await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
         }
 
         [RelayCommand]

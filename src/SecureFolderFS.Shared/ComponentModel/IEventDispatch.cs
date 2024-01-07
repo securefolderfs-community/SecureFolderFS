@@ -8,6 +8,6 @@
         /// <summary>
         /// Prevents forwarding of the event.
         /// </summary>
-        void NoForwarding();
+        void PreventForwarding();
     }
 }

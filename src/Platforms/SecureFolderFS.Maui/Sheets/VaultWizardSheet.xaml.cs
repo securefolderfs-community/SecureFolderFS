@@ -1,4 +1,9 @@
+using System.ComponentModel;
+using SecureFolderFS.Maui.Views.Wizard;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard2;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
@@ -10,7 +15,7 @@ namespace SecureFolderFS.Maui.Sheets
     {
         private readonly TaskCompletionSource<IResult> _tcs;
 
-        public VaultWizardDialogViewModel? ViewModel { get; set; }
+        public WizardOverlayViewModel? ViewModel { get; set; }
 
         public VaultWizardSheet()
         {
@@ -26,7 +31,12 @@ namespace SecureFolderFS.Maui.Sheets
         }
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (VaultWizardDialogViewModel)viewable;
+        public void SetView(IViewable viewable)
+        {
+            ViewModel = (WizardOverlayViewModel)viewable;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            ViewModel.NavigationRequested += ViewModel_NavigationRequested;
+        }
 
         /// <inheritdoc/>
         public Task HideAsync() => DismissAsync();
@@ -34,6 +44,35 @@ namespace SecureFolderFS.Maui.Sheets
         private void VaultWizardSheet_Dismissed(object? sender, DismissOrigin e)
         {
             _tcs.SetResult(CommonResult.Success);
+        }
+
+        private void VaultWizardSheet_Loaded(object? sender, EventArgs e)
+        {
+            ViewModel!.CurrentView = new MainWizardViewModel();
+        }
+
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(WizardOverlayViewModel.CurrentView))
+            {
+                Presenter.Content = ViewModel?.CurrentView switch
+                {
+                    MainWizardViewModel => new SelectionWizardViewControl(ViewModel),
+                    LocationWizardViewModel viewModel => new LocationWizardViewControl(viewModel),
+                    _ => throw new ArgumentOutOfRangeException(nameof(ViewModel.CurrentView)),
+                };
+
+                ViewModel?.CurrentView?.OnNavigatingTo(NavigationType.Chained);
+            }
+        }
+
+        private void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
+        {
+            Presenter.Content = e.Origin switch
+            {
+                // From selection -> location
+                MainWizardViewModel viewModel => new LocationWizardViewControl(new(viewModel.CreationType, ViewModel!.VaultCollectionModel))
+            };
         }
     }
 }

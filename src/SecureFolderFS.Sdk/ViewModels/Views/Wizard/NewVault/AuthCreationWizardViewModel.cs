@@ -78,7 +78,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         /// <inheritdoc/>
         public override async Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
-            eventDispatch?.NoForwarding();
+            eventDispatch?.PreventForwarding();
 
             ArgumentNullException.ThrowIfNull(ContentCipher);
             ArgumentNullException.ThrowIfNull(FileNameCipher);
