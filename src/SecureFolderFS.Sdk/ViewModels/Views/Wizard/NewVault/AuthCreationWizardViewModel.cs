@@ -111,7 +111,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
             }
         }
 
-        public override void OnNavigatingFrom()
+        public override void OnDisappearing()
         {
             if (CurrentViewModel is not null)
                 CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;

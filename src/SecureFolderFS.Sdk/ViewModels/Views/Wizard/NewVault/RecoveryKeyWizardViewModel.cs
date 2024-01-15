@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault
         }
 
         /// <inheritdoc/>
-        public override void OnNavigatingFrom()
+        public override void OnDisappearing()
         {
             _superSecret.Dispose();
             MasterKey = null;

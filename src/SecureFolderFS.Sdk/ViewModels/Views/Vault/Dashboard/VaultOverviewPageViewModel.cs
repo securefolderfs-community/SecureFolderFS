@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         }
 
         /// <inheritdoc/>
-        public override void OnNavigatingFrom()
+        public override void OnDisappearing()
         {
             WidgetsViewModel.Dispose();
         }

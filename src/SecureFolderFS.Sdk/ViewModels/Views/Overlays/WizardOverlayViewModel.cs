@@ -46,7 +46,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         partial void OnCurrentViewChanging(BaseWizardViewModel? oldValue, BaseWizardViewModel? newValue)
         {
-            oldValue?.OnNavigatingFrom();
+            oldValue?.OnDisappearing();
         }
     }
 }

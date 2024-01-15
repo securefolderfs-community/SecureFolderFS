@@ -1,11 +1,11 @@
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.UI.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Utils;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -25,48 +25,48 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public INavigationControl? NavigationControl { get; set; }
 
         /// <inheritdoc/>
-        public INavigationTarget? CurrentTarget { get; protected set; }
+        public IViewDesignation? CurrentView { get; protected set; }
 
         /// <inheritdoc/>
-        public ICollection<INavigationTarget> Targets { get; protected set; }
+        public ICollection<IViewDesignation> Views { get; protected set; }
 
         /// <inheritdoc/>
         public virtual bool IsInitialized => NavigationControl is not null;
 
         /// <inheritdoc/>
-        public event EventHandler<INavigationTarget?>? NavigationChanged;
+        public event EventHandler<IViewDesignation?>? NavigationChanged;
 
         protected BaseNavigationService()
         {
-            Targets = new List<INavigationTarget>();
+            Views = new List<IViewDesignation>();
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> NavigateAsync(INavigationTarget target)
+        public virtual async Task<bool> NavigateAsync(IViewDesignation view)
         {
             if (!IsInitialized)
                 return false;
 
             // Notify the current target that it's being navigated from
-            CurrentTarget?.OnNavigatingFrom();
+            CurrentView?.OnDisappearing();
 
             // Notify the new target that it's been navigated to
-            target.OnNavigatingTo(NavigationType.Chained);
+            view.OnAppearing();
 
             // Start actual navigation
-            var navigationResult = await BeginNavigationAsync(target, NavigationType.Chained);
+            var navigationResult = await BeginNavigationAsync(view, NavigationType.Chained);
             if (!navigationResult)
                 return false;
 
             // Update current target
-            CurrentTarget = target;
+            CurrentView = view;
 
             // Add new target
-            if (!Targets.Contains(target))
-                Targets.Add(target);
+            if (!Views.Contains(view))
+                Views.Add(view);
 
             // Notify that navigation has occurred
-            NavigationChanged?.Invoke(this, target);
+            NavigationChanged?.Invoke(this, view);
 
             return true;
         }
@@ -78,13 +78,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 return false;
 
             // Notify the current target that it's being navigated from
-            CurrentTarget?.OnNavigatingFrom();
+            CurrentView?.OnDisappearing();
 
             var navigationResult = await BeginNavigationAsync(null, NavigationType.Backward);
             if (navigationResult)
             {
                 // Notify that navigation has occurred
-                NavigationChanged?.Invoke(this, CurrentTarget);
+                NavigationChanged?.Invoke(this, CurrentView);
             }
 
             return navigationResult;
@@ -97,13 +97,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 return false;
 
             // Notify the current target that it's being navigated from
-            CurrentTarget?.OnNavigatingFrom();
+            CurrentView?.OnDisappearing();
 
             var navigationResult = await BeginNavigationAsync(null, NavigationType.Forward);
             if (navigationResult)
             {
                 // Notify that navigation has occurred
-                NavigationChanged?.Invoke(this, CurrentTarget);
+                NavigationChanged?.Invoke(this, CurrentView);
             }
 
             return navigationResult;
@@ -117,20 +117,20 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <remarks>
         /// Parameter <paramref name="target"/> may be null when the parameter <paramref name="navigationType"/>
         /// is set to <see cref="NavigationType.Backward"/> or <see cref="NavigationType.Forward"/>.
-        /// In such case, it is the implementor's responsibility to update the <see cref="CurrentTarget"/> property
-        /// and notify the <see cref="INavigationTarget"/> that it's being navigated to.
+        /// In such case, it is the implementor's responsibility to update the <see cref="CurrentView"/> property
+        /// and notify the <see cref="IViewDesignation"/> that it's being navigated to.
         /// </remarks>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
-        protected abstract Task<bool> BeginNavigationAsync(INavigationTarget? target, NavigationType navigationType);
+        protected abstract Task<bool> BeginNavigationAsync(IViewDesignation? target, NavigationType navigationType);
 
         /// <inheritdoc/>
         public virtual void Dispose()
         {
-            CurrentTarget = null;
+            CurrentView = null;
             NavigationControl?.Dispose();
 
-            Targets.DisposeElements();
-            Targets.Clear();
+            Views.DisposeElements();
+            Views.Clear();
         }
     }
 }

@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
@@ -103,7 +102,7 @@ namespace SecureFolderFS.Uno.Dialogs
             GoBack.Visibility = canGoBack && Navigation.ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void NavigationService_NavigationChanged(object? sender, INavigationTarget? e)
+        private async void NavigationService_NavigationChanged(object? sender, IViewDesignation? e)
         {
             await CompleteAnimationAsync(e as BaseWizardPageViewModel);
         }

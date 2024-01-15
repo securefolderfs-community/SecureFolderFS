@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private Task PrimaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
-            if (NavigationService.CurrentTarget is BaseWizardPageViewModel wizardPageViewModel)
+            if (NavigationService.CurrentView is BaseWizardPageViewModel wizardPageViewModel)
                 return wizardPageViewModel.PrimaryButtonClickAsync(eventDispatch, cancellationToken);
 
             return Task.CompletedTask;
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private Task SecondaryButtonClickAsync(IEventDispatch? eventDispatch, CancellationToken cancellationToken)
         {
-            if (NavigationService.CurrentTarget is BaseWizardPageViewModel wizardPageViewModel)
+            if (NavigationService.CurrentView is BaseWizardPageViewModel wizardPageViewModel)
                 return wizardPageViewModel.SecondaryButtonClickAsync(eventDispatch, cancellationToken);
 
             return Task.CompletedTask;

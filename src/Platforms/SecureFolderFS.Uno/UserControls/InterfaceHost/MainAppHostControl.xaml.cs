@@ -58,7 +58,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 return;
             
             // Find existing target or create new
-            var target = ViewModel.NavigationService.Targets.FirstOrDefault(x => (x as BaseVaultPageViewModel)?.VaultViewModel == vaultViewModel);
+            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultPageViewModel)?.VaultViewModel == vaultViewModel);
             if (target is null)
             {
                 target = new VaultLoginPageViewModel(vaultViewModel, ViewModel.NavigationService);

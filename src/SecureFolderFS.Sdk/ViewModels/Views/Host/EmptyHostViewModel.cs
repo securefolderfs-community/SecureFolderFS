@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -43,13 +42,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         }
 
         /// <inheritdoc/>
-        public override void OnNavigatingTo(NavigationType navigationType)
+        public override void OnAppearing()
         {
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
         }
 
         /// <inheritdoc/>
-        public override void OnNavigatingFrom()
+        public override void OnDisappearing()
         {
             _vaultCollectionModel.CollectionChanged -= VaultCollectionModel_CollectionChanged;
         }

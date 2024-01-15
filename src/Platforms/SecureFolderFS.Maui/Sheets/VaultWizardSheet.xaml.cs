@@ -62,7 +62,7 @@ namespace SecureFolderFS.Maui.Sheets
                     _ => throw new ArgumentOutOfRangeException(nameof(ViewModel.CurrentView)),
                 };
 
-                ViewModel?.CurrentView?.OnNavigatingTo(NavigationType.Chained);
+                ViewModel?.CurrentView?.OnAppearing();
             }
         }
 
