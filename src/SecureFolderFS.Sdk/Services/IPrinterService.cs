@@ -20,6 +20,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="superSecret">The master key secret to print.</param>
         /// <param name="vaultName">The name of the vault.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task PrintMasterKeyAsync(IDisposable superSecret, string vaultName);
+        Task PrintMasterKeyAsync(IDisposable? superSecret, string vaultName);
     }
 }

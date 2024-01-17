@@ -30,7 +30,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 ChangelogDialogViewModel => new ChangelogDialog(),
                 LicensesDialogViewModel => new LicensesDialog(),
                 SettingsDialogViewModel => new SettingsDialog(),
-                VaultWizardDialogViewModel => new VaultWizardDialog(),
+                WizardOverlayViewModel => new VaultWizardDialog(),
                 PasswordChangeDialogViewModel => new PasswordChangeDialog(),
                 ExplanationDialogViewModel => new ExplanationDialog(),
 

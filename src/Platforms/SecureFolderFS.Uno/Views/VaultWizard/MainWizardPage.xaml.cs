@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard2;
 using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -17,11 +17,15 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     [INotifyPropertyChanged]
     public sealed partial class MainWizardPage : Page
     {
+        private readonly LocationWizardViewModel _createNewViewModel = new(NewVaultCreationType.CreateNew);
+        private readonly LocationWizardViewModel _addExistingViewModel = new(NewVaultCreationType.AddExisting);
         private Button? _lastClickedButton;
 
-        public MainWizardPageViewModel? ViewModel
+        [ObservableProperty] private LocationWizardViewModel? _CurrentViewModel;
+
+        public MainWizardViewModel? ViewModel
         {
-            get => DataContext.TryCast<MainWizardPageViewModel>();
+            get => DataContext.TryCast<MainWizardViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -32,10 +36,12 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is MainWizardPageViewModel viewModel)
+            if (e.Parameter is MainWizardViewModel viewModel)
             {
                 ViewModel = viewModel;
-                await ViewModel.UpdateSelectionAsync(NewVaultCreationType.CreateNew, default);
+                ViewModel.CreationType = NewVaultCreationType.CreateNew; // Default value for the view
+                CurrentViewModel = _createNewViewModel;
+                await CurrentViewModel.UpdateStatusAsync();
             }
 
             base.OnNavigatedTo(e);
@@ -46,12 +52,16 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             if (ViewModel is null || sender is not Button { Tag: string tag } button)
                 return;
 
+            // Apply styles
             _lastClickedButton ??= CreateNewButton;
             _lastClickedButton.Style = (Style?)App.Instance?.Resources["DefaultButtonStyle"];
 
-            var creationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
-            await ViewModel.UpdateSelectionAsync(creationType, default);
+            // Change type
+            ViewModel.CreationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
+            CurrentViewModel = ViewModel.CreationType == NewVaultCreationType.CreateNew ? _createNewViewModel : _addExistingViewModel;
+            await CurrentViewModel.UpdateStatusAsync();
 
+            // Apply styles
             button.Style = (Style?)App.Instance?.Resources["AccentButtonStyle"];
             _lastClickedButton = button;
         }

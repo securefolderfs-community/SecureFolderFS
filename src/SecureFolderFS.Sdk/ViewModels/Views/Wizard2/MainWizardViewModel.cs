@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using System.Threading;
@@ -13,6 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
 
         public MainWizardViewModel()
         {
+            Title = "AddNewVault".ToLocalized();
             CanContinue = true;
             CanCancel = true;
         }

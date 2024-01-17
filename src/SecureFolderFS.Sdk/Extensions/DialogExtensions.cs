@@ -6,7 +6,7 @@ namespace SecureFolderFS.Sdk.Extensions
 {
     public static class DialogExtensions
     {
-        public static IResult ResultFromDialogOption(this DialogOption dialogOption)
+        public static IResult ParseDialogOption(this DialogOption dialogOption)
         {
             return dialogOption switch
             {

@@ -19,6 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
     {
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _SelectedLocation;
+        [ObservableProperty] private ViewSeverityType _Severity;
 
         public NewVaultCreationType CreationType { get; }
 
@@ -27,9 +28,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
         public LocationWizardViewModel(NewVaultCreationType creationType)
         {
             ServiceProvider = Ioc.Default;
-            CreationType = creationType;
+            // TODO: Add title
             CanContinue = false;
             CanCancel = true;
+            CreationType = creationType;
         }
 
         /// <inheritdoc/>
@@ -54,11 +56,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
             CanContinue = await UpdateStatusAsync(cancellationToken);
         }
 
-        private async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken)
+        public async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken = default)
         {
             if (SelectedFolder is null)
             {
-                //SelectionInfoBar.Severity = InfoBarSeverityType.Information;
+                Severity = ViewSeverityType.Default;
                 Message = "Select a folder to continue";
                 SelectedLocation = "No vault selected";
                 return false;
@@ -72,17 +74,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
                     if (validationResult.Exception is NotSupportedException)
                     {
                         // Allow unsupported vaults to be migrated
-                        //SelectionInfoBar.Severity = InfoBarSeverityType.Warning;
+                        Severity = ViewSeverityType.Warning;
                         Message = "Selected vault may not be supported";
                         return true;
                     }
 
-                    //SelectionInfoBar.Severity = InfoBarSeverityType.Error;
+                    Severity = ViewSeverityType.Error;
                     Message = "Vault folder is invalid";
                     return false;
                 }
 
-                //SelectionInfoBar.Severity = InfoBarSeverityType.Success;
+                Severity = ViewSeverityType.Success;
                 Message = "Found a valid vault folder";
                 return true;
             }
@@ -92,12 +94,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
                 if (validationResult.Successful || validationResult.Exception is NotSupportedException)
                 {
                     // Check if a valid (or unsupported) vault exists at a specified path
-                    //SelectionInfoBar.Severity = InfoBarSeverityType.Warning;
+                    Severity = ViewSeverityType.Warning;
                     Message = "The selected vault will be overwritten";
                     return true;
                 }
 
-                //SelectionInfoBar.Severity = InfoBarSeverityType.Success;
+                Severity = ViewSeverityType.Success;
                 Message = "A new vault will be created in selected folder";
                 return true;
             }

@@ -21,9 +21,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
 
         public SummaryWizardViewModel(IFolder folder, IVaultCollectionModel vaultCollectionModel)
         {
+            Title = "Summary".ToLocalized();
+            CanContinue = true;
+            CanCancel = false;
+            VaultName = folder.Name;
             _folder = folder;
             _vaultCollectionModel = vaultCollectionModel;
-            VaultName = folder.Name;
         }
 
         /// <inheritdoc/>

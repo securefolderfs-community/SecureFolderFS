@@ -42,7 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             {
                 InfoBarViewModel.IsOpen = true;
                 InfoBarViewModel.Message = "Updates are not supported for the sideloaded version.";
-                InfoBarViewModel.Severity = InfoBarSeverityType.Warning;
+                InfoBarViewModel.Severity = ViewSeverityType.Warning;
             }
         }
 
@@ -67,7 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             InfoBarViewModel.Title = "Error".ToLocalized();
             InfoBarViewModel.CanBeClosed = true;
             InfoBarViewModel.Message = GetMessageForUpdateState(args.UpdateState);
-            InfoBarViewModel.Severity = InfoBarSeverityType.Error;
+            InfoBarViewModel.Severity = ViewSeverityType.Error;
         }
 
         [RelayCommand]
@@ -90,7 +90,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
                 InfoBarViewModel.Title = "Error".ToLocalized();
                 InfoBarViewModel.CanBeClosed = true;
                 InfoBarViewModel.Message = result.GetMessage();
-                InfoBarViewModel.Severity = InfoBarSeverityType.Error;
+                InfoBarViewModel.Severity = ViewSeverityType.Error;
             }
         }
 

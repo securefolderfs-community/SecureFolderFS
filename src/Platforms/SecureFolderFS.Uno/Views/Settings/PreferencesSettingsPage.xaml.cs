@@ -69,7 +69,7 @@ namespace SecureFolderFS.Uno.Views.Settings
             {
                 FileSystemInfoBar = new WebDavInfoBar();
                 FileSystemInfoBar.IsOpen = true;
-                FileSystemInfoBar.Severity = InfoBarSeverityType.Warning;
+                FileSystemInfoBar.Severity = ViewSeverityType.Warning;
                 FileSystemInfoBar.CanBeClosed = false;
             }
             else if (adapterResult.Successful && FileSystemInfoBar is not null)
@@ -88,7 +88,7 @@ namespace SecureFolderFS.Uno.Views.Settings
 
                 await Task.Delay(800, cancellationToken);
                 FileSystemInfoBar.IsOpen = true;
-                FileSystemInfoBar.Severity = InfoBarSeverityType.Error;
+                FileSystemInfoBar.Severity = ViewSeverityType.Error;
                 FileSystemInfoBar.CanBeClosed = false;
                 FileSystemInfoBar.Message = adapterResult.GetMessage("Invalid state.");
             }

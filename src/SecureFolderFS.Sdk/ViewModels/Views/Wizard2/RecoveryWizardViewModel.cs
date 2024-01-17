@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.ComponentModel;
@@ -15,18 +16,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
     [Inject<IPrinterService>, Inject<IThreadingService>]
     public sealed partial class RecoveryWizardViewModel : BaseWizardViewModel
     {
-        private readonly IFolder _folder;
-        private readonly IDisposable _superSecret;
+        private readonly IDisposable? _superSecret;
 
         [ObservableProperty] private string? _MasterKey;
 
-        public RecoveryWizardViewModel(IFolder folder, IDisposable superSecret)
+        public IFolder Folder { get; }
+
+        public RecoveryWizardViewModel(IFolder folder, IResult? additionalData)
         {
             ServiceProvider = Ioc.Default;
+            Title = "VaultRecovery".ToLocalized();
             CanContinue = true;
             CanCancel = false;
-            _folder = folder;
-            _superSecret = superSecret;
+            Folder = folder;
+            _superSecret = additionalData is IResult<IDisposable?> result ? result.Value : null;
         }
 
         /// <inheritdoc/>
@@ -54,14 +57,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
             await ThreadingService.ChangeThreadAsync();
 
             if (await PrinterService.IsSupportedAsync())
-                await PrinterService.PrintMasterKeyAsync(_superSecret, _folder.Name);
+                await PrinterService.PrintMasterKeyAsync(_superSecret, Folder.Name);
         }
 
 
         [RelayCommand]
         private void RevealMasterKey()
         {
-            MasterKey ??= _superSecret.ToString();
+            MasterKey ??= _superSecret?.ToString() ?? "No masterkey to show";
         }
     }
 }

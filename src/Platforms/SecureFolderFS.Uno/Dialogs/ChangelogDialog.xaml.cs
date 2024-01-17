@@ -30,7 +30,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ResultFromDialogOption();
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (ChangelogDialogViewModel)viewable;

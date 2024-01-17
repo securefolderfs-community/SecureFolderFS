@@ -33,7 +33,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel.TaskCompletion.SetResult(DialogExtensions.ResultFromDialogOption(DialogOption.Cancel));
+            ViewModel.TaskCompletion.SetResult(DialogOption.Cancel.ParseDialogOption());
             return Task.CompletedTask;
         }
     }

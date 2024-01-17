@@ -1,8 +1,8 @@
 ﻿namespace SecureFolderFS.Sdk.Enums
 {
-    public enum InfoBarSeverityType
+    public enum ViewSeverityType
     {
-        Information = 0,
+        Default = 0,
         Success = 1,
         Warning = 2,
         Error = 3

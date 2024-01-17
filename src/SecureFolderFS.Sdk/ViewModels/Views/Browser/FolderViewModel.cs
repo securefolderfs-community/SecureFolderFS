@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
-    public sealed class FolderViewModel : StorageItemViewModel
+    public class FolderViewModel : StorageItemViewModel
     {
         /// <summary>
         /// Gets the folder associated with this view model.

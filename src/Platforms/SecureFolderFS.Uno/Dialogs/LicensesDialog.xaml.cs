@@ -27,7 +27,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (LicensesDialogViewModel)viewable;

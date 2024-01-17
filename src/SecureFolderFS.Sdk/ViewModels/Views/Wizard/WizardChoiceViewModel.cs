@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         {
             if (VaultFolder is null)
             {
-                SelectionInfoBar.Severity = InfoBarSeverityType.Information;
+                SelectionInfoBar.Severity = ViewSeverityType.Default;
                 SelectionInfoBar.Message = "Select a folder to continue";
                 SelectedLocation = "No vault selected";
                 return false;
@@ -62,17 +62,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     if (validationResult.Exception is NotSupportedException)
                     {
                         // Allow unsupported vaults to be migrated
-                        SelectionInfoBar.Severity = InfoBarSeverityType.Warning;
+                        SelectionInfoBar.Severity = ViewSeverityType.Warning;
                         SelectionInfoBar.Message = "Selected vault may not be supported";
                         return true;
                     }
 
-                    SelectionInfoBar.Severity = InfoBarSeverityType.Error;
+                    SelectionInfoBar.Severity = ViewSeverityType.Error;
                     SelectionInfoBar.Message = "Vault folder is invalid";
                     return false;
                 }
 
-                SelectionInfoBar.Severity = InfoBarSeverityType.Success;
+                SelectionInfoBar.Severity = ViewSeverityType.Success;
                 SelectionInfoBar.Message = "Found a valid vault folder";
                 return true;
             }
@@ -82,12 +82,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 if (validationResult.Successful || validationResult.Exception is NotSupportedException)
                 {
                     // Check if a valid (or unsupported) vault exists at a specified path
-                    SelectionInfoBar.Severity = InfoBarSeverityType.Warning;
+                    SelectionInfoBar.Severity = ViewSeverityType.Warning;
                     SelectionInfoBar.Message = "The selected vault will be overwritten";
                     return true;
                 }
 
-                SelectionInfoBar.Severity = InfoBarSeverityType.Success;
+                SelectionInfoBar.Severity = ViewSeverityType.Success;
                 SelectionInfoBar.Message = "A new vault will be created in selected folder";
                 return true;
             }

@@ -6,7 +6,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     /// <summary>
     /// Serves as the base dialog view model containing reusable code for every dialog.
     /// </summary>
-    public abstract partial class DialogViewModel : ObservableObject, IViewable
+    public abstract partial class DialogViewModel : ObservableObject, IViewDesignation
     {
         /// <summary>
         /// Gets or sets the title of the dialog.
@@ -37,5 +37,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// Gets or sets the text of close button. If value is null, the button is hidden.
         /// </summary>
         [ObservableProperty] private string? _CloseButtonText;
+
+        /// <inheritdoc/>
+        public virtual void OnAppearing()
+        {
+        }
+
+        /// <inheritdoc/>
+        public virtual void OnDisappearing()
+        {
+        }
     }
 }

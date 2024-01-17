@@ -71,7 +71,7 @@
                 AutomationProperties.Name="{l:ResourceString Name=Back}"
                 Background="Transparent"
                 BorderThickness="0"
-                Command="{x:Bind ViewModel.GoBackCommand, Mode=OneWay}">
+                Click="GoBack_Click">
                 <AnimatedIcon>
                     <AnimatedIcon.Source>
                         <animvis:AnimatedBackVisualSource />
@@ -84,7 +84,8 @@
             <TextBlock
                 x:Name="TitleText"
                 FontSize="22"
-                FontWeight="SemiBold">
+                FontWeight="SemiBold"
+                Text="{x:Bind ViewModel.Title, Mode=OneWay}">
                 <TextBlock.RenderTransform>
                     <TranslateTransform />
                 </TextBlock.RenderTransform>

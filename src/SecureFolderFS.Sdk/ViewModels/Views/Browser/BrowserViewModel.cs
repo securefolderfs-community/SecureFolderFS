@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Storage.DirectStorage;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.Storage.NestedStorage;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Inject<IOverlayService>]
-    public sealed partial class BrowserViewModel : ObservableObject
+    public partial class BrowserViewModel : ObservableObject
     {
         [ObservableProperty] private IViewable? _CurrentView;
 
@@ -25,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         }
 
         [RelayCommand]
-        private async Task NewFolderAsync(CancellationToken cancellationToken)
+        protected virtual async Task NewFolderAsync(CancellationToken cancellationToken)
         {
             if (CurrentView is not FolderViewModel { Folder: IModifiableFolder modifiableFolder } folderViewModel)
                 return;
@@ -34,35 +35,54 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             _ = modifiableFolder;
             var result = await OverlayService.ShowAsync(null);
             if (result is IResult<IFolder> { Successful: true, Value: not null } folderResult)
-            {
                 folderViewModel.Items.Add(new FolderViewModel(folderResult.Value));
-            }
         }
 
         [RelayCommand]
-        private async Task CopyAsync(IEnumerable items, CancellationToken cancellationToken)
+        protected virtual async Task CopyAsync(IEnumerable items, CancellationToken cancellationToken)
         {
             // TODO: Add CopyOverlayViewModel
             var result = await OverlayService.ShowAsync(null);
             if (result is IResult<IFolder> { Successful: true, Value: IDirectCopy directCopy })
             {
                 foreach (INestedStorable item in items)
-                    await directCopy.CreateCopyOfAsync(item, false, cancellationToken);
+                    await directCopy.CreateCopyOfAsync(item, default, cancellationToken);
             }
         }
 
         [RelayCommand]
-        private async Task MoveAsync(IEnumerable items, CancellationToken cancellationToken)
+        protected virtual async Task MoveAsync(IEnumerable items, CancellationToken cancellationToken)
         {
-            if (CurrentView is not FolderViewModel { Folder: IModifiableFolder modifiableFolder })
+            if (CurrentView is not FolderViewModel { Folder: IModifiableFolder modifiableFolder } folderViewModel)
                 return;
 
             // TODO: Add MoveOverlayViewModel
             var result = await OverlayService.ShowAsync(null);
-            if (result is IResult<IFolder> { Successful: true, Value: IDirectMove directMove })
+            if (result is not IResult<IFolder> { Successful: true, Value: IDirectMove directMove })
+                return;
+
+            foreach (INestedStorable item in items)
             {
-                foreach (INestedStorable item in items)
-                    await directMove.MoveFromAsync(item, modifiableFolder, false, cancellationToken);
+                await directMove.MoveFromAsync(item, modifiableFolder, default, cancellationToken);
+                folderViewModel.Items.RemoveMatch(x => x.Inner.Id == item.Id);
+            }
+        }
+
+        [RelayCommand]
+        protected virtual async Task DeleteAsync(IEnumerable items, CancellationToken cancellationToken)
+        {
+            if (CurrentView is not FolderViewModel { Folder: IModifiableFolder modifiableFolder } folderViewModel)
+                return;
+
+            // TODO: Add DeletionOverlayViewModel
+            var result = await OverlayService.ShowAsync(null);
+            if (!result.Successful)
+                return;
+
+            foreach (INestedStorable item in items)
+            {
+                await modifiableFolder.DeleteAsync(item, default, cancellationToken);
+                folderViewModel.Items.RemoveMatch(x => x.Inner.Id == item.Id);
             }
         }
     }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
-    public sealed class FileViewModel : StorageItemViewModel
+    public class FileViewModel : StorageItemViewModel
     {
         /// <inheritdoc/>
         public override IStorable Inner => File;
