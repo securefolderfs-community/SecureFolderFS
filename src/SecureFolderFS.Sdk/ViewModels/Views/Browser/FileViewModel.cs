@@ -7,6 +7,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     public sealed class FileViewModel : StorageItemViewModel
     {
+        /// <inheritdoc/>
+        public override IStorable Inner => File;
+
+        /// <summary>
+        /// Gets the file associated with this view model.
+        /// </summary>
         public IFile File { get; }
 
         public FileViewModel(IFile file)

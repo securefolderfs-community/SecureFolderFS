@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.ComponentModel;
@@ -19,8 +17,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
     [Inject<IFileExplorerService>, Inject<IVaultService>]
     public sealed partial class LocationWizardViewModel : BaseWizardViewModel
     {
-        private readonly IVaultCollectionModel _vaultCollectionModel;
-
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _SelectedLocation;
 
@@ -28,32 +24,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
 
         public IFolder? SelectedFolder { get; private set; }
 
-        public LocationWizardViewModel(NewVaultCreationType creationType, IVaultCollectionModel vaultCollectionModel)
+        public LocationWizardViewModel(NewVaultCreationType creationType)
         {
             ServiceProvider = Ioc.Default;
             CreationType = creationType;
-            _vaultCollectionModel = vaultCollectionModel;
             CanContinue = false;
             CanCancel = true;
         }
 
         /// <inheritdoc/>
-        public override async Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
+        public override Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             if (SelectedFolder is null)
-                return CommonResult.Failure(null);
+                return Task.FromResult<IResult>(CommonResult.Failure(null));
 
-            if (CreationType == NewVaultCreationType.AddExisting)
-            {
-                // Add the newly created vault
-                var vaultModel = new VaultModel(SelectedFolder);
-                _vaultCollectionModel.Add(vaultModel);
-
-                // Try to save the new vault
-                await _vaultCollectionModel.TrySaveAsync(cancellationToken);
-            }
-
-            return CommonResult.Success;
+            return Task.FromResult<IResult>(CommonResult.Success);
         }
 
         /// <inheritdoc/>

@@ -1,6 +1,6 @@
-﻿using System;
-using SecureFolderFS.Sdk.Storage;
+﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Enums;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,9 +9,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     public sealed class FolderViewModel : StorageItemViewModel
     {
+        /// <summary>
+        /// Gets the folder associated with this view model.
+        /// </summary>
         public IFolder Folder { get; }
 
+        /// <summary>
+        /// Gets the items in this folder.
+        /// </summary>
         public ObservableCollection<StorageItemViewModel> Items { get; }
+
+        /// <inheritdoc/>
+        public override IStorable Inner => Folder;
 
         public FolderViewModel(IFolder folder)
         {

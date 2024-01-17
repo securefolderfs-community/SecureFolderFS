@@ -8,7 +8,7 @@ using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Dialogs;
 using SecureFolderFS.Uno.UserControls.Introduction;
-
+using System.Collections.Generic;
 
 #if WINDOWS
 using Microsoft.UI.Xaml.Controls;
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     /// <inheritdoc cref="IOverlayService"/>
     public sealed class UnoDialogService : BaseOverlayService
     {
-        private bool _isCurrentRemoved;
+        private readonly Stack<IOverlayControl> _overlays = new();
 
         /// <inheritdoc/>
         protected override IOverlayControl GetOverlay(IViewable viewable)
@@ -53,30 +53,32 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public override async Task<IResult> ShowAsync(IViewable viewable)
         {
-            if (Overlays.IsEmpty())
-                return await base.ShowAsync(viewable);
-
-            var current = Overlays.Pop();
-            await current.HideAsync();
-            _isCurrentRemoved = true;
-
-            var overlay = GetOverlay(viewable);
-            var result = await ShowOverlayAsync(overlay);
-            if (!_isCurrentRemoved && !Overlays.IsEmpty())
-                Overlays.Pop();
-
-            Overlays.Push(current);
-            await current.ShowAsync();
-            Overlays.Pop();
-            _isCurrentRemoved = false;
-
-            return result;
-
-            Task<IResult> ShowOverlayAsync(IOverlayControl overlayControl)
+            if (_overlays.IsEmpty())
             {
-                overlayControl.SetView(viewable);
-                Overlays.Push(overlayControl);
-                return overlayControl.ShowAsync();
+                var overlay = GetOverlay(viewable);
+                overlay.SetView(viewable);
+
+                _overlays.Push(overlay);
+                var result = await overlay.ShowAsync();
+                _overlays.Pop();
+
+                return result;
+            }
+            else
+            {
+                var current = _overlays.Pop();
+                await current.HideAsync();
+
+                var overlay = GetOverlay(viewable);
+                overlay.SetView(viewable);
+
+                _overlays.Push(overlay);
+                var result = await overlay.ShowAsync();
+
+                _overlays.Pop();
+                await current.ShowAsync();
+
+                return result;
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Shared.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views
     /// <summary>
     /// Represents a base view model for pages which allows for navigation.
     /// </summary>
+    [Obsolete("Use IViewDesignation instead.")]
     public abstract partial class BasePageViewModel : ObservableObject, IViewDesignation, IAsyncInitialize
     {
         /// <inheritdoc cref="IViewable.Title"/>

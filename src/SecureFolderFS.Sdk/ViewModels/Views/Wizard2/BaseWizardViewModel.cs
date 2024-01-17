@@ -5,10 +5,22 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
 {
-    public abstract partial class BaseWizardViewModel : BasePageViewModel
+    public abstract partial class BaseWizardViewModel : ObservableObject, IViewDesignation
     {
+        /// <inheritdoc cref="IViewable.Title"/>
+        [ObservableProperty] private string? _Title;
         [ObservableProperty] private bool _CanCancel;
         [ObservableProperty] private bool _CanContinue;
+
+        /// <inheritdoc/>
+        public virtual void OnAppearing()
+        {
+        }
+
+        /// <inheritdoc/>
+        public virtual void OnDisappearing()
+        {
+        }
 
         public abstract Task<IResult> TryContinueAsync(CancellationToken cancellationToken);
 
