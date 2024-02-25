@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
-    public class FolderViewModel : StorageItemViewModel
+    public class FolderViewModel : BrowserItemViewModel
     {
         /// <summary>
         /// Gets the folder associated with this view model.
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <summary>
         /// Gets the items in this folder.
         /// </summary>
-        public ObservableCollection<StorageItemViewModel> Items { get; }
+        public ObservableCollection<BrowserItemViewModel> Items { get; }
 
         /// <inheritdoc/>
         public override IStorable Inner => Folder;

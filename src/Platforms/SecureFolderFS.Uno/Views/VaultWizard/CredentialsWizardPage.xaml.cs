@@ -2,7 +2,7 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -16,9 +16,9 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     [INotifyPropertyChanged]
     public sealed partial class CredentialsWizardPage : Page
     {
-        public AuthCreationWizardViewModel? ViewModel
+        public CredentialsWizardViewModel? ViewModel
         {
-            get => DataContext.TryCast<AuthCreationWizardViewModel>();
+            get => DataContext.TryCast<CredentialsWizardViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is AuthCreationWizardViewModel viewModel)
+            if (e.Parameter is CredentialsWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

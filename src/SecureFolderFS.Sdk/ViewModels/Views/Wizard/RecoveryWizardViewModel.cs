@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.ComponentModel;
@@ -11,11 +12,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
+namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IPrinterService>, Inject<IThreadingService>]
     public sealed partial class RecoveryWizardViewModel : BaseWizardViewModel
     {
+        private readonly string? _vaultId;
         private readonly IDisposable? _superSecret;
 
         [ObservableProperty] private string? _MasterKey;
@@ -29,7 +31,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
             CanContinue = true;
             CanCancel = false;
             Folder = folder;
-            _superSecret = additionalData is IResult<IDisposable?> result ? result.Value : null;
+
+            if (additionalData is CredentialsResult result)
+            {
+                _superSecret = result.Value;
+                _vaultId = result.VaultId;
+            }
         }
 
         /// <inheritdoc/>
@@ -41,13 +48,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
         /// <inheritdoc/>
         public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IResult>(CommonResult.Success);
+            return Task.FromResult<IResult>(CommonResult.Failure(null));
         }
 
         /// <inheritdoc/>
         public override void OnDisappearing()
         {
-            _superSecret.Dispose();
+            _superSecret?.Dispose();
             MasterKey = null;
         }
 
@@ -57,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
             await ThreadingService.ChangeThreadAsync();
 
             if (await PrinterService.IsSupportedAsync())
-                await PrinterService.PrintMasterKeyAsync(_superSecret, Folder.Name);
+                await PrinterService.PrintMasterKeyAsync(Folder.Name, _vaultId, _superSecret);
         }
 
 

@@ -7,7 +7,7 @@
     xmlns:tuc="using:CommunityToolkit.WinUI.Controls"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Wizard2"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Views.Wizard"
     Width="464"
     mc:Ignorable="d">
 

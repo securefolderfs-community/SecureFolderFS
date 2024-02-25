@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
-    /// A model used for target-to-target navigation of <see cref="IViewDesignation"/>s.
+    /// A service used for target-to-target navigation of <see cref="IViewDesignation"/>s.
     /// </summary>
     public interface INavigationService : IDisposable
     {

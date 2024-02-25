@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
-    public abstract partial class StorageItemViewModel : ObservableObject, IWrapper<IStorable>, IViewable, IAsyncInitialize
+    public abstract partial class BrowserItemViewModel : ObservableObject, IWrapper<IStorable>, IViewable, IAsyncInitialize
     {
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private IImage? _Thumbnail;

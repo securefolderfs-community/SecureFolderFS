@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool IsIntroduced { get; set; }
 
         /// <summary>
-        /// Gets or sets the id associated with vault folder.
+        /// Gets or sets the ID associated with vault folder.
         /// </summary>
         string? LastVaultFolderId { get; set; }
 

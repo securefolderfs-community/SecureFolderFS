@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -15,9 +15,9 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     [INotifyPropertyChanged]
     public sealed partial class RecoveryWizardPage : Page
     {
-        public RecoveryKeyWizardViewModel? ViewModel
+        public RecoveryWizardViewModel? ViewModel
         {
-            get => DataContext.TryCast<RecoveryKeyWizardViewModel>();
+            get => DataContext.TryCast<RecoveryWizardViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is RecoveryKeyWizardViewModel viewModel)
+            if (e.Parameter is RecoveryWizardViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

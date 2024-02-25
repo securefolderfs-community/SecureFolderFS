@@ -3,7 +3,7 @@ using SecureFolderFS.Maui.Views.Wizard;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard2;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;

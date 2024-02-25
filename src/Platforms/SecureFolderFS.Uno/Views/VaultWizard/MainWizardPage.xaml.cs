@@ -1,9 +1,10 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard2;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -41,10 +42,33 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
                 ViewModel = viewModel;
                 ViewModel.CreationType = NewVaultCreationType.CreateNew; // Default value for the view
                 CurrentViewModel = _createNewViewModel;
-                await CurrentViewModel.UpdateStatusAsync();
+                ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
             }
 
             base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if (CurrentViewModel is not null)
+                CurrentViewModel.PropertyChanged -= CurrentViewModel_PropertyChanged;
+
+            base.OnNavigatingFrom(e);
+        }
+
+        partial void OnCurrentViewModelChanged(LocationWizardViewModel? oldValue, LocationWizardViewModel? newValue)
+        {
+            if (oldValue is not null)
+                oldValue.PropertyChanged -= CurrentViewModel_PropertyChanged;
+
+            if (newValue is not null)
+                newValue.PropertyChanged += CurrentViewModel_PropertyChanged;
+        }
+
+        private void CurrentViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (ViewModel is not null && CurrentViewModel is not null && e.PropertyName == nameof(LocationWizardViewModel.CanContinue))
+                ViewModel.CanContinue = CurrentViewModel.CanContinue;
         }
 
         private async void SegmentButton_Click(object sender, RoutedEventArgs e)
@@ -59,7 +83,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             // Change type
             ViewModel.CreationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
             CurrentViewModel = ViewModel.CreationType == NewVaultCreationType.CreateNew ? _createNewViewModel : _addExistingViewModel;
-            await CurrentViewModel.UpdateStatusAsync();
+            ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
 
             // Apply styles
             button.Style = (Style?)App.Instance?.Resources["AccentButtonStyle"];

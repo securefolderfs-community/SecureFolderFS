@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard2;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Uno.Views.VaultWizard;
 
 namespace SecureFolderFS.Uno.UserControls.Navigation

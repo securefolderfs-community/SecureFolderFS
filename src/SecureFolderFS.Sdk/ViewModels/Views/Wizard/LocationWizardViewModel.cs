@@ -12,7 +12,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
+namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IFileExplorerService>, Inject<IVaultService>]
     public sealed partial class LocationWizardViewModel : BaseWizardViewModel

@@ -17,9 +17,10 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Prints a formatted document containing vault's master key.
         /// </summary>
-        /// <param name="superSecret">The master key secret to print.</param>
         /// <param name="vaultName">The name of the vault.</param>
+        /// <param name="vaultId">The unique ID of the vault.</param>
+        /// <param name="superSecret">The master key secret to print.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task PrintMasterKeyAsync(IDisposable? superSecret, string vaultName);
+        Task PrintMasterKeyAsync(string vaultName, string? vaultId, IDisposable? superSecret);
     }
 }

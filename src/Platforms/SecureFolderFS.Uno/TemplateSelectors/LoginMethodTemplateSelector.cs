@@ -7,7 +7,7 @@ using SecureFolderFS.Uno.ViewModels;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
-    internal sealed class LoginMethodTemplateSelector : GenericTemplateSelector<ObservableObject>
+    internal sealed class LoginMethodTemplateSelector : BaseTemplateSelector<ObservableObject>
     {
         public DataTemplate? PasswordTemplate { get; set; }
 

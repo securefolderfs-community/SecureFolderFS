@@ -15,6 +15,7 @@
     IsPrimaryButtonEnabled="{x:Bind ViewModel.PrimaryButtonEnabled, Mode=OneWay}"
     Loaded="VaultWizardDialog_Loaded"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    PrimaryButtonText="{l:ResourceString Name=Continue}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
     SecondaryButtonText="{l:ResourceString Name=Cancel}"

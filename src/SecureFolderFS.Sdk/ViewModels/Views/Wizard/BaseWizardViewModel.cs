@@ -3,7 +3,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
+namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     public abstract partial class BaseWizardViewModel : ObservableObject, IViewDesignation
     {

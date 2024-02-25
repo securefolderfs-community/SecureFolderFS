@@ -3,7 +3,7 @@ using SecureFolderFS.Uno.Enums;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
-    internal sealed class ActionBlockModeTemplateSelector : GenericTemplateSelector<ActionBlockMode>
+    internal sealed class ActionBlockModeTemplateSelector : BaseTemplateSelector<ActionBlockMode>
     {
         public DataTemplate? DefaultTemplate { get; set; }
 

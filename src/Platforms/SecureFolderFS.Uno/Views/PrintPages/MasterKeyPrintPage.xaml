@@ -15,6 +15,8 @@
             <!--  Header  -->
             <RowDefinition Height="Auto" />
             <!--  Content  -->
+            <RowDefinition Height="Auto" />
+            <!--  Caution  -->
             <RowDefinition />
         </Grid.RowDefinitions>
 
@@ -40,12 +42,14 @@
                     Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.png" />
 
             </StackPanel>
+
+            <!--  MasterKey document version  -->
             <TextBlock
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Foreground="Gray"
-                Text="V1" />
+                Text="M1" />
         </Grid>
 
         <!--  Content  -->
@@ -56,22 +60,67 @@
                 FontSize="22"
                 FontWeight="Medium"
                 Foreground="#202020"
-                Text="Master key" />
+                Text="MASTER KEY FOR VAULT TEXT" />
 
-            <Grid
-                MinHeight="64"
-                Padding="8"
-                Background="#DFDFDF"
-                CornerRadius="4">
+            <StackPanel Spacing="2">
+                <Border
+                    MinHeight="64"
+                    Padding="8"
+                    Background="#DFDFDF"
+                    CornerRadius="4">
+                    <TextBlock
+                        x:Name="MasterKeyText"
+                        x:FieldModifier="public"
+                        FontFamily="Consolas"
+                        FontSize="16"
+                        Foreground="Black"
+                        Text="MASTER KEY TEXT"
+                        TextWrapping="Wrap" />
+                </Border>
+                <Grid>
+                    <TextBlock
+                        x:Name="VaultGuidText"
+                        x:FieldModifier="public"
+                        FontSize="12"
+                        Foreground="Gray"
+                        Text="GUID TEXT" />
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        FontSize="12"
+                        Foreground="Gray"
+                        Text="Secret. Do not share" />
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+
+        <!--  Caution  -->
+        <StackPanel Grid.Row="2" Margin="0,16,0,0">
+            <!--  Warning bar  -->
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <Rectangle
+                    Width="3"
+                    Height="32"
+                    Margin="0,0,8,0"
+                    Fill="#DFDFDF" />
+                <FontIcon
+                    FontSize="24"
+                    FontWeight="SemiBold"
+                    Foreground="#DAA520"
+                    Glyph="&#xE7BA;" />
                 <TextBlock
-                    x:Name="MasterKeyText"
-                    x:FieldModifier="public"
-                    FontFamily="Consolas"
+                    VerticalAlignment="Center"
                     FontSize="16"
-                    Foreground="Black"
-                    Text="REPORT A BUG IF YOU SEE THIS TEXT"
-                    TextWrapping="Wrap" />
-            </Grid>
+                    FontWeight="SemiBold"
+                    Foreground="#DAA520"
+                    Text="Warning!" />
+            </StackPanel>
+
+            <!--  Info  -->
+            <TextBlock
+                FontSize="14"
+                Foreground="Black"
+                Text="This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your password."
+                TextWrapping="WrapWholeWords" />
         </StackPanel>
     </Grid>
 </Page>

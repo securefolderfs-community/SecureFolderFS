@@ -6,7 +6,7 @@ using SecureFolderFS.Shared.Helpers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard2
+namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     public sealed partial class MainWizardViewModel : BaseWizardViewModel
     {

@@ -1,4 +1,4 @@
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard2;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 
 namespace SecureFolderFS.Maui.Views.Wizard
 {
