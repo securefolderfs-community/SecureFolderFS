@@ -55,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             {
                 using var key = CurrentViewModel.RetrieveKey();
                 if (key is null)
-                    return CommonResult.Failure(null);
+                    return Result.Failure(null);
 
                 var vaultOptions = new VaultOptions()
                 {
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IResult>(CommonResult.Failure(null));
+            return Task.FromResult<IResult>(Result.Failure(null));
         }
 
         /// <inheritdoc/>

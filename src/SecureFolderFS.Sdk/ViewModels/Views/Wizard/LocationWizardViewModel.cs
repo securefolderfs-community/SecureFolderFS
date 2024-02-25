@@ -38,15 +38,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public override Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
             if (SelectedFolder is null)
-                return Task.FromResult<IResult>(CommonResult.Failure(null));
+                return Task.FromResult<IResult>(Result.Failure(null));
 
-            return Task.FromResult<IResult>(CommonResult.Success);
+            return Task.FromResult<IResult>(Result.Success);
         }
 
         /// <inheritdoc/>
         public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IResult>(CommonResult.Success);
+            return Task.FromResult<IResult>(Result.Success);
         }
 
         [RelayCommand]

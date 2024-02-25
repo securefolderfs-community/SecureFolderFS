@@ -10,8 +10,8 @@ namespace SecureFolderFS.Sdk.Extensions
         {
             return dialogOption switch
             {
-                DialogOption.Cancel => CommonResult<DialogOption>.Failure(dialogOption),
-                _ => CommonResult<DialogOption>.Success(dialogOption)
+                DialogOption.Cancel => Result<DialogOption>.Failure(dialogOption),
+                _ => Result<DialogOption>.Success(dialogOption)
             };
         }
     }

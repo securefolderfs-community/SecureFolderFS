@@ -22,13 +22,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override Task<IResult> TryContinueAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IResult>(CommonResult.Success);
+            return Task.FromResult<IResult>(Result.Success);
         }
 
         /// <inheritdoc/>
         public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IResult>(CommonResult.Success);
+            return Task.FromResult<IResult>(Result.Success);
         }
     }
 }

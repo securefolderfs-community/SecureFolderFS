@@ -32,7 +32,7 @@ namespace SecureFolderFS.Uno.ViewModels
             var auth = await vaultReader.ReadAuthenticationAsync(cancellationToken);
             if (auth?.Challenge is null)
             {
-                SetError(CommonResult.Failure(new ArgumentNullException(nameof(auth))));
+                SetError(Result.Failure(new ArgumentNullException(nameof(auth))));
                 return;
             }
 

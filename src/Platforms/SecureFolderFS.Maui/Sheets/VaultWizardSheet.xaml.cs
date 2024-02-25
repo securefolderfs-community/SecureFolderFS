@@ -43,7 +43,7 @@ namespace SecureFolderFS.Maui.Sheets
 
         private void VaultWizardSheet_Dismissed(object? sender, DismissOrigin e)
         {
-            _tcs.SetResult(CommonResult.Success);
+            _tcs.SetResult(Result.Success);
         }
 
         private void VaultWizardSheet_Loaded(object? sender, EventArgs e)

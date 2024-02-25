@@ -117,11 +117,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 var file = await GetFileAsync(folder, fileName, cancellationToken);
-                return CommonResult<IFile?>.Success(file);
+                return Result<IFile?>.Success(file);
             }
             catch (Exception ex)
             {
-                return CommonResult<IFile?>.Failure(ex);
+                return Result<IFile?>.Failure(ex);
             }
         }
 
@@ -132,11 +132,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 var folder2 = await GetFolderAsync(folder, folderName, cancellationToken);
-                return CommonResult<IFolder?>.Success(folder2);
+                return Result<IFolder?>.Success(folder2);
             }
             catch (Exception ex)
             {
-                return CommonResult<IFolder?>.Failure(ex);
+                return Result<IFolder?>.Failure(ex);
             }
         }
 
@@ -147,11 +147,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 var file = await folder.CreateFileAsync(desiredName, overwrite, cancellationToken);
-                return CommonResult<IFile?>.Success(file);
+                return Result<IFile?>.Success(file);
             }
             catch (Exception ex)
             {
-                return CommonResult<IFile?>.Failure(ex);
+                return Result<IFile?>.Failure(ex);
             }
         }
 
@@ -162,11 +162,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 var folder2 = await folder.CreateFolderAsync(desiredName, overwrite, cancellationToken);
-                return CommonResult<IFolder?>.Success(folder2);
+                return Result<IFolder?>.Success(folder2);
             }
             catch (Exception ex)
             {
-                return CommonResult<IFolder?>.Failure(ex);
+                return Result<IFolder?>.Failure(ex);
             }
         }
 

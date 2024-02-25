@@ -45,7 +45,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 return;
 
             var result = await CurrentViewModel.TryCancelAsync(cancellationToken);
-            if (result.Successful)
+            if (!result.Successful)
                 eventDispatch?.PreventForwarding();
         }
 
