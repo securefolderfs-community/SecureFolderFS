@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 using SecureFolderFS.UI.ValueConverters;
 using System;
 
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Uno.ValueConverters
         /// <inheritdoc/>
         public object? ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return TryConvert(value, targetType, parameter);
+            return TryConvertBack(value, targetType, parameter);
         }
     }
 }

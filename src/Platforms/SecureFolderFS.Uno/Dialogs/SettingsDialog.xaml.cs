@@ -5,9 +5,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Helpers;
@@ -33,19 +32,26 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (SettingsDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (SettingsDialogViewModel)viewable;
 
-        private INavigationTarget GetTargetForTag(int tag)
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
+
+        private IViewDesignation GetViewForTag(int tag)
         {
             return tag switch
             {
-                0 => ViewModel?.NavigationService.TryGetTarget<GeneralSettingsViewModel>() ?? new(),
-                1 => ViewModel?.NavigationService.TryGetTarget<PreferencesSettingsViewModel>() ?? new(),
-                2 => ViewModel?.NavigationService.TryGetTarget<PrivacySettingsViewModel>() ?? new(),
-                3 => ViewModel?.NavigationService.TryGetTarget<AboutSettingsViewModel>() ?? new(),
+                0 => ViewModel?.NavigationService.TryGetView<GeneralSettingsViewModel>() ?? new(),
+                1 => ViewModel?.NavigationService.TryGetView<PreferencesSettingsViewModel>() ?? new(),
+                2 => ViewModel?.NavigationService.TryGetView<PrivacySettingsViewModel>() ?? new(),
+                3 => ViewModel?.NavigationService.TryGetView<AboutSettingsViewModel>() ?? new(),
                 _ => new GeneralSettingsViewModel()
             };
         }
@@ -56,8 +62,8 @@ namespace SecureFolderFS.Uno.Dialogs
                 return;
 
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
-            var target = GetTargetForTag(tag);
-            if (ViewModel.NavigationService.Targets.FirstOrDefault(x => target == x) is null && target is IAsyncInitialize asyncInitialize)
+            var target = GetViewForTag(tag);
+            if (ViewModel.NavigationService.Views.FirstOrDefault(x => target == x) is null && target is IAsyncInitialize asyncInitialize)
                 _ = asyncInitialize.InitAsync();
 
             await ViewModel.NavigationService.NavigateAsync(target);
@@ -73,7 +79,7 @@ namespace SecureFolderFS.Uno.Dialogs
             if (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true)
                 return;
 
-            var target = GetTargetForTag(0);
+            var target = GetViewForTag(0);
             await ViewModel.NavigationService.NavigateAsync(target);
         }
 

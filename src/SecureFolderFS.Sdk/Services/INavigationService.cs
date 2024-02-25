@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Enums;
+﻿using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
-    /// A model used for target-to-target navigation of <see cref="INavigationTarget"/>s.
+    /// A service used for target-to-target navigation of <see cref="IViewDesignation"/>s.
     /// </summary>
     public interface INavigationService : IDisposable
     {
         /// <summary>
         /// An event that is fired when navigation occurs.
         /// </summary>
-        event EventHandler<INavigationTarget?>? NavigationChanged;
+        event EventHandler<IViewDesignation?>? NavigationChanged;
 
         /// <summary>
         /// Gets the value that determines whether this service is initialized and can handle navigation.
@@ -23,19 +23,19 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets the currently navigated-to target.
         /// </summary>
-        INavigationTarget? CurrentTarget { get; }
+        IViewDesignation? CurrentView { get; }
 
         /// <summary>
         /// Gets the collection of all previously navigated-to targets.
         /// </summary>
-        ICollection<INavigationTarget> Targets { get; }
+        ICollection<IViewDesignation> Views { get; }
 
         /// <summary>
-        /// Navigates to a given <paramref name="target"/> and updates existing <see cref="CurrentTarget"/>.
+        /// Navigates to a given <paramref name="view"/> and updates existing <see cref="CurrentView"/>.
         /// </summary>
-        /// <param name="target">The target to navigate to.</param>
+        /// <param name="view">The target to navigate to.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
-        Task<bool> NavigateAsync(INavigationTarget target);
+        Task<bool> NavigateAsync(IViewDesignation view);
 
         /// <summary>
         /// Tries to navigate to the previous target, if possible.
@@ -48,22 +48,5 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the navigation target was present, returns true; otherwise false.</returns>
         Task<bool> GoForwardAsync();
-    }
-
-    /// <summary>
-    /// Represents a target which can be navigated to.
-    /// </summary>
-    public interface INavigationTarget
-    {
-        /// <summary>
-        /// Notifies the implementation that the target is being navigated to.
-        /// </summary>
-        /// <param name="navigationType">Informs how the navigation was triggered.</param>
-        void OnNavigatingTo(NavigationType navigationType);
-
-        /// <summary>
-        /// Notifies the implementation that the target is being navigated from.
-        /// </summary>
-        void OnNavigatingFrom();
     }
 }

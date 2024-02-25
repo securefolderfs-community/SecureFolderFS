@@ -8,50 +8,50 @@ namespace SecureFolderFS.Sdk.Extensions
 {
     public static class NavigationExtensions
     {
-        public static T? TryGetTarget<T>(this INavigationService navigationService)
-            where T : class, INavigationTarget
+        public static T? TryGetView<T>(this INavigationService navigationService)
+            where T : class, IViewDesignation
         {
-            return (T?)navigationService.Targets.FirstOrDefault(x => x is T);
+            return (T?)navigationService.Views.FirstOrDefault(x => x is T);
         }
 
         public static async Task<bool> TryNavigateAsync<T>(this INavigationService navigationService, Func<T>? initializer = null, bool useInitialization = true)
-            where T : class, INavigationTarget
+            where T : class, IViewDesignation
         {
-            var target = navigationService.TryGetTarget<T>();
-            var isNewTarget = target is null;
+            var view = navigationService.TryGetView<T>();
+            var isNewView = view is null;
 
-            target ??= initializer?.Invoke() ?? null;
-            if (target is null)
+            view ??= initializer?.Invoke() ?? null;
+            if (view is null)
                 return false;
 
             // Initialize if the target supports IAsyncInitialize and doesn't already exist
-            if (isNewTarget && useInitialization && target is IAsyncInitialize supportsAsyncInitialize)
+            if (isNewView && useInitialization && view is IAsyncInitialize supportsAsyncInitialize)
                 _ = supportsAsyncInitialize.InitAsync();
 
             // Navigate to the target
-            return await navigationService.NavigateAsync(target);
+            return await navigationService.NavigateAsync(view);
         }
 
-        public static async Task<bool> TryNavigateAndForgetAsync(this INavigationService navigationService, INavigationTarget target)
+        public static async Task<bool> TryNavigateAndForgetAsync(this INavigationService navigationService, IViewDesignation view)
         {
             var navigated = false;
-            INavigationTarget? currentTarget = null;
+            IViewDesignation? currentView = null;
 
             try
             {
-                if (navigationService.CurrentTarget is not null)
+                if (navigationService.CurrentView is not null)
                 {
-                    navigationService.Targets.Remove(navigationService.CurrentTarget);
-                    currentTarget = navigationService.CurrentTarget;
+                    navigationService.Views.Remove(navigationService.CurrentView);
+                    currentView = navigationService.CurrentView;
                 }
 
-                navigated = await navigationService.NavigateAsync(target);
+                navigated = await navigationService.NavigateAsync(view);
                 return navigated;
             }
             finally
             {
                 if (navigated)
-                    (currentTarget as IDisposable)?.Dispose();
+                    (currentView as IDisposable)?.Dispose();
             }
         }
     }

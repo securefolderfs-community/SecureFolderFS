@@ -13,11 +13,11 @@ namespace SecureFolderFS.Shared.Extensions
             try
             {
                 await validator.ValidateAsync(value, cancellationToken);
-                return CommonResult.Success;
+                return Result.Success;
             }
             catch (Exception ex)
             {
-                return CommonResult.Failure(ex);
+                return Result.Failure(ex);
             }
         }
     }

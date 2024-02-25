@@ -12,7 +12,7 @@ namespace SecureFolderFS.Uno.Extensions
                 .AddSingleton<IOverlayService, UnoDialogService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
-                .AddSingleton<IFileExplorerService, FileExplorerService>()
+                .AddSingleton<IFileExplorerService, UnoFileExplorerService>()
                 .AddTransient<INavigationService, UnoNavigationService>()
                 ;
         }

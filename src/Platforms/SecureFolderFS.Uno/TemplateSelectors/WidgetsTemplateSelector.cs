@@ -1,9 +1,9 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
-    internal sealed class WidgetsTemplateSelector : GenericTemplateSelector<BaseWidgetViewModel>
+    internal sealed class WidgetsTemplateSelector : BaseTemplateSelector<BaseWidgetViewModel>
     {
         public DataTemplate? HealthWidgetTemplate { get; set; }
 

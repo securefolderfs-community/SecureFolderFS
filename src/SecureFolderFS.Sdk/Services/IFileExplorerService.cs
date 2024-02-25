@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,10 +31,11 @@ namespace SecureFolderFS.Sdk.Services
         /// Awaits the user input and saves single file from the file explorer dialog.
         /// </summary>
         /// <param name="suggestedName">The name that will be suggested when saving the file.</param>
+        /// <param name="dataStream">The data stream to use as the content of the saved file.</param>
         /// <param name="filter">The filter to apply when saving files.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been saved, returns <see cref="ILocatableFile"/>; otherwise null.</returns>
-        Task<ILocatableFile?> SaveFileAsync(string suggestedName, IDictionary<string, string>? filter, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
+        Task<bool> SaveFileAsync(string suggestedName, Stream dataStream, IDictionary<string, string>? filter, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Awaits the user input and picks single file from the file explorer dialog.

@@ -1,10 +1,18 @@
-﻿<Project ToolsVersion="15.0">
+<Project ToolsVersion="15.0">
   <ItemGroup>
-	<PackageVersion Include="Octokit" Version="6.0.0" />
+    <PackageVersion Include="IconPacks.Material" Version="1.0.8765.1-build" />
+    <PackageVersion Include="Material.Components.Maui" Version="0.2.1-preview" />
+    <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="2.1.0" />
+    <PackageVersion Include="CommunityToolkit.Maui" Version="7.0.1" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    <PackageVersion Include="Octokit" Version="6.0.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
     <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc2" />
     <PackageVersion Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
     <PackageVersion Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
+    <PackageVersion Include="The49.Maui.BottomSheet" Version="1.0.4" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Animations" Version="7.1.200" />
     <PackageVersion Include="LiveCharts" Version="0.9.7" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />

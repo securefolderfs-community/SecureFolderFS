@@ -9,6 +9,17 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class CollectionExtensions
     {
+        public static bool RemoveMatch<T>(this IList<T> list, Func<T, bool> predicate)
+        {
+            foreach (var item in list)
+            {
+                if (predicate(item))
+                    return list.Remove(item);
+            }
+
+            return false;
+        }
+
         public static bool IsEmpty<T>(this IEnumerable<T>? enumerable)
         {
             if (enumerable is null)

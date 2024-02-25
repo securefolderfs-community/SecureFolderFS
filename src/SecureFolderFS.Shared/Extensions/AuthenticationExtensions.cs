@@ -14,11 +14,11 @@ namespace SecureFolderFS.Shared.Extensions
             try
             {
                 var key = await authenticator.CreateAsync(id, data, cancellationToken);
-                return CommonResult<IKey>.Success(key);
+                return Result<IKey>.Success(key);
             }
             catch (Exception ex)
             {
-                return CommonResult<IKey>.Failure(ex);
+                return Result<IKey>.Failure(ex);
             }
         }
 
@@ -28,11 +28,11 @@ namespace SecureFolderFS.Shared.Extensions
             try
             {
                 var key = await authenticator.SignAsync(id, data, cancellationToken);
-                return CommonResult<IKey>.Success(key);
+                return Result<IKey>.Success(key);
             }
             catch (Exception ex)
             {
-                return CommonResult<IKey>.Failure(ex);
+                return Result<IKey>.Failure(ex);
             }
         }
     }

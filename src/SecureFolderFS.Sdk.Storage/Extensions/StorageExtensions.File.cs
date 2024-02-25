@@ -57,11 +57,11 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
         {
             try
             {
-                return CommonResult<Stream?>.Success(await file.OpenStreamAsync(access, cancellationToken));
+                return Result<Stream?>.Success(await file.OpenStreamAsync(access, cancellationToken));
             }
             catch (Exception ex)
             {
-                return CommonResult<Stream?>.Failure(ex);
+                return Result<Stream?>.Failure(ex);
             }
         }
 
@@ -72,14 +72,14 @@ namespace SecureFolderFS.Sdk.Storage.Extensions
             try
             {
                 if (file is IFileExtended fileExtended)
-                    return CommonResult<Stream?>.Success(await fileExtended.OpenStreamAsync(access, share, cancellationToken));
+                    return Result<Stream?>.Success(await fileExtended.OpenStreamAsync(access, share, cancellationToken));
 
                 // TODO: Check if the file inherits from ILockableStorable and ensure a disposable handle to it via Stream bridge
-                return CommonResult<Stream?>.Success(await file.OpenStreamAsync(access, cancellationToken));
+                return Result<Stream?>.Success(await file.OpenStreamAsync(access, cancellationToken));
             }
             catch (Exception ex)
             {
-                return CommonResult<Stream?>.Failure(ex);
+                return Result<Stream?>.Failure(ex);
             }
         }
 

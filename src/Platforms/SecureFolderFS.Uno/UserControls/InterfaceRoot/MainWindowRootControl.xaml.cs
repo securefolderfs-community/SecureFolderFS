@@ -1,7 +1,12 @@
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
+using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Helpers;
 
@@ -12,6 +17,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 {
     public sealed partial class MainWindowRootControl : UserControl
     {
+        private INavigationService RootNavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
+
         public MainViewModel ViewModel
         {
             get => (MainViewModel)DataContext;
@@ -21,13 +28,12 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
         public MainWindowRootControl()
         {
             InitializeComponent();
-
             ViewModel = new();
         }
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.HostNavigationService.SetupNavigation(Navigation);
+            RootNavigationService.SetupNavigation(Navigation);
             _ = EnsureRootAsync();
         }
 
@@ -37,14 +43,22 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             // Small delay for Mica material to load
             await Task.Delay(1);
 #endif
-            // Initialize the data in the background
-            _ = ViewModel.InitAsync();
-
-            // First register the ThemeHelper
+            // Initialize ThemeHelper for theming
             UnoThemeHelper.Instance.RegisterWindowInstance(App.Instance?.MainWindow?.Content as FrameworkElement);
-
-            // Then, initialize it to refresh the theme and UI
             await UnoThemeHelper.Instance.InitAsync();
+
+            // Initialize the root view model
+            await ViewModel.InitAsync();
+            if (!ViewModel.VaultCollectionModel.IsEmpty()) // Has vaults
+            {
+                // Show main app screen
+                await RootNavigationService.TryNavigateAsync(() => new MainHostViewModel(ViewModel.VaultCollectionModel), false);
+            }
+            else // Doesn't have vaults
+            {
+                // Show no vaults screen
+                await RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(RootNavigationService, ViewModel.VaultCollectionModel), false);
+            }
         }
     }
 }

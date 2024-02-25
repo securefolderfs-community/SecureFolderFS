@@ -35,14 +35,6 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
             return true;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TTarget"></typeparam>
-        /// <typeparam name="TTransition"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="transition"></param>
-        /// <returns></returns>
         protected abstract Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTransition : class;
 
         /// <inheritdoc/>

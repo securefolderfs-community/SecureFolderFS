@@ -1,0 +1,17 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.Views.Wizard.MainWizardViewControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <VerticalStackLayout Spacing="32" VerticalOptions="Center">
+        <Label
+            FontSize="22"
+            HorizontalOptions="Center"
+            Text="Add new vault" />
+
+        <VerticalStackLayout Spacing="4">
+            <Button Clicked="Existing_Clicked" Text="Add existing" />
+            <Button Clicked="New_Clicked" Text="Create new" />
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+</ContentView>

@@ -6,16 +6,11 @@ namespace SecureFolderFS.Sdk.EventArguments
     /// <summary>
     /// Event arguments for vault unlocked events.
     /// </summary>
-    public sealed class VaultUnlockedEventArgs : EventArgs
+    public sealed class VaultUnlockedEventArgs(IVaultLifecycle vaultLifecycle) : EventArgs
     {
         /// <summary>
         /// Gets the <see cref="IVaultLifecycle"/> of the unlocked vault.
         /// </summary>
-        public IVaultLifecycle VaultLifecycle { get; }
-
-        public VaultUnlockedEventArgs(IVaultLifecycle vaultLifecycle)
-        {
-            VaultLifecycle = vaultLifecycle;
-        }
+        public IVaultLifecycle VaultLifecycle { get; } = vaultLifecycle;
     }
 }

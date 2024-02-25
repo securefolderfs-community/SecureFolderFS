@@ -4,10 +4,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
+
 
 #if WINDOWS
 using System.IO;
@@ -22,9 +23,8 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class ExplanationDialog : ContentDialog, IOverlayControl
     {
-        private IDisposable? _disposable;
+        private IDisposable? _streamDisposable;
 
-        /// <inheritdoc/>
         public ExplanationDialogViewModel? ViewModel
         {
             get => DataContext.TryCast<ExplanationDialogViewModel>();
@@ -37,17 +37,24 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (ExplanationDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (ExplanationDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
 
         private void Media_Loaded(object sender, RoutedEventArgs e)
         {
 #if WINDOWS
             var assembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "SecureFolderFS.UI")!;
             var stream = assembly.GetManifestResourceStream("SecureFolderFS.UI.Assets.AppAssets.Media.ExplanationVideoDark.mov");
-            _disposable = stream;
+            _streamDisposable = stream;
 
             if (stream is null)
                 return;
@@ -62,7 +69,7 @@ namespace SecureFolderFS.Uno.Dialogs
         private void ExplanationDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
 #if WINDOWS
-            _disposable?.Dispose();
+            _streamDisposable?.Dispose();
             Media.MediaPlayer?.Dispose();
 #endif
         }

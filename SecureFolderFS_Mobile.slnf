@@ -1,0 +1,23 @@
+{
+  "solution": {
+    "path": "SecureFolderFS.sln",
+    "projects": [
+      "lib\\Tmds.Fuse\\src\\Tmds.Fuse\\Tmds.Fuse.csproj",
+      "lib\\nwebdav\\NWebDav.Server.HttpListener\\NWebDav.Server.HttpListener.csproj",
+      "lib\\nwebdav\\NWebDav.Server\\NWebDav.Server.csproj",
+      "src\\Platforms\\SecureFolderFS.Maui\\SecureFolderFS.Maui.csproj",
+      "src\\Platforms\\SecureFolderFS.UI\\SecureFolderFS.UI.csproj",
+      "src\\SecureFolderFS.Core.Cryptography\\SecureFolderFS.Core.Cryptography.csproj",
+      "src\\SecureFolderFS.Core.Dokany\\SecureFolderFS.Core.Dokany.csproj",
+      "src\\SecureFolderFS.Core.FUSE\\SecureFolderFS.Core.FUSE.csproj",
+      "src\\SecureFolderFS.Core.FileSystem\\SecureFolderFS.Core.FileSystem.csproj",
+      "src\\SecureFolderFS.Core.Migration\\SecureFolderFS.Core.Migration.csproj",
+      "src\\SecureFolderFS.Core.WebDav\\SecureFolderFS.Core.WebDav.csproj",
+      "src\\SecureFolderFS.Core\\SecureFolderFS.Core.csproj",
+      "src\\SecureFolderFS.Sdk.Storage\\SecureFolderFS.Sdk.Storage.csproj",
+      "src\\SecureFolderFS.Sdk\\SecureFolderFS.Sdk.csproj",
+      "src\\SecureFolderFS.Shared\\SecureFolderFS.Shared.csproj",
+      "src\\SecureFolderFS.SourceGenerator\\SecureFolderFS.SourceGenerator.csproj"
+    ]
+  }
+}

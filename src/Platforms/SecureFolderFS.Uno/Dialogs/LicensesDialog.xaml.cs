@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 
@@ -15,7 +15,6 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class LicensesDialog : ContentDialog, IOverlayControl
     {
-        /// <inheritdoc/>
         public LicensesDialogViewModel ViewModel
         {
             get => (LicensesDialogViewModel)DataContext;
@@ -28,10 +27,17 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (LicensesDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (LicensesDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {

@@ -31,9 +31,9 @@
                         HorizontalAlignment="Center"
                         FontSize="26"
                         FontWeight="SemiBold"
-                        Text="{x:Bind ViewModel.VaultName, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.Title, Mode=OneWay}"
                         TextTrimming="CharacterEllipsis"
-                        ToolTipService.ToolTip="{x:Bind ViewModel.VaultName, Mode=OneWay}" />
+                        ToolTipService.ToolTip="{x:Bind ViewModel.Title, Mode=OneWay}" />
                     <TextBlock
                         HorizontalAlignment="Center"
                         FontSize="14"

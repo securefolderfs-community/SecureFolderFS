@@ -2,7 +2,7 @@
 {
     public enum NewVaultCreationType
     {
-        AddExisting = 0,
-        CreateNew = 1
+        CreateNew = 0,
+        AddExisting = 1
     }
 }

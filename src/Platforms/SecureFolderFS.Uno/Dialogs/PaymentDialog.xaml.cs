@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 
@@ -14,7 +14,6 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class PaymentDialog : ContentDialog, IOverlayControl
     {
-        /// <inheritdoc/>
         public PaymentDialogViewModel ViewModel
         {
             get => (PaymentDialogViewModel)DataContext;
@@ -27,9 +26,16 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => DialogExtensions.ResultFromDialogOption((DialogOption)await base.ShowAsync());
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (PaymentDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (PaymentDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
     }
 }

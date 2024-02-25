@@ -6,12 +6,12 @@ namespace SecureFolderFS.Sdk.Extensions
 {
     public static class DialogExtensions
     {
-        public static IResult ResultFromDialogOption(this DialogOption dialogOption)
+        public static IResult ParseDialogOption(this DialogOption dialogOption)
         {
             return dialogOption switch
             {
-                DialogOption.Cancel => CommonResult<DialogOption>.Failure(dialogOption),
-                _ => CommonResult<DialogOption>.Success(dialogOption)
+                DialogOption.Cancel => Result<DialogOption>.Failure(dialogOption),
+                _ => Result<DialogOption>.Success(dialogOption)
             };
         }
     }

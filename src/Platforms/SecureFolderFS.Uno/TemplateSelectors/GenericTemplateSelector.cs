@@ -4,10 +4,10 @@ using Microsoft.UI.Xaml.Controls;
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
     /// <summary>
-    /// Template selector wrapper for <see cref="DataTemplateSelector"/> with generics support.
+    /// A generic template selector wrapper for <see cref="DataTemplateSelector"/>.
     /// </summary>
     /// <typeparam name="TItem">The type of item.</typeparam>
-    internal abstract class GenericTemplateSelector<TItem> : DataTemplateSelector
+    internal abstract class BaseTemplateSelector<TItem> : DataTemplateSelector
     {
         /// <inheritdoc/>
         protected sealed override DataTemplate? SelectTemplateCore(object item)

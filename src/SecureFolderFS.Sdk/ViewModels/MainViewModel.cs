@@ -3,24 +3,21 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
-using SecureFolderFS.Sdk.ViewModels.Views.Host;
-using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System;
-using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
-    [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IOverlayService>, Inject<INavigationService>(Visibility = "public", Name = "HostNavigationService")]
+    [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IOverlayService>]
     public sealed partial class MainViewModel : ObservableObject, IAsyncInitialize
     {
-        [ObservableProperty]
-        private INotifyPropertyChanged? _AppContentViewModel;
+        public IVaultCollectionModel VaultCollectionModel { get; } = new VaultCollectionModel();
 
         public MainViewModel()
         {
@@ -30,10 +27,8 @@ namespace SecureFolderFS.Sdk.ViewModels
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var vaultCollectionModel = new VaultCollectionModel();
-
             // Initialize
-            await Task.WhenAll(SettingsService.TryLoadAsync(cancellationToken), vaultCollectionModel.TryLoadAsync(cancellationToken));
+            await Task.WhenAll(SettingsService.TryLoadAsync(cancellationToken), VaultCollectionModel.TryLoadAsync(cancellationToken));
 
             // Disable telemetry, if the user opted-out
             if (!SettingsService.UserSettings.IsTelemetryEnabled)
@@ -49,18 +44,6 @@ namespace SecureFolderFS.Sdk.ViewModels
                     SettingsService.AppSettings.IsIntroduced = true;
                     await SettingsService.SaveAsync(cancellationToken);
                 }
-            }
-
-            // Load main screen
-            if (!vaultCollectionModel.IsEmpty()) // Has vaults
-            {
-                // Show main app screen
-                await HostNavigationService.TryNavigateAsync(() => new MainHostViewModel(HostNavigationService, vaultCollectionModel), false);
-            }
-            else // Doesn't have vaults
-            {
-                // Show no vaults screen
-                await HostNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(HostNavigationService, vaultCollectionModel), false);
             }
 
             // Check if the changelog is available

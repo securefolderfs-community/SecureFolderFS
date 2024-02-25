@@ -1,0 +1,15 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.Views.Wizard.LocationWizardViewControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Wizard"
+    x:DataType="local:LocationWizardViewControl">
+
+    <VerticalStackLayout VerticalOptions="Center">
+        <Label
+            HorizontalOptions="Center"
+            Text="Choose vault folder"
+            VerticalOptions="Center" />
+        <Button Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}" Text="Browse" />
+    </VerticalStackLayout>
+</ContentView>
