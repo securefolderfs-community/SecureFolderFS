@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:SecureFolderFS.Uno.Views.PrintPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -119,7 +118,7 @@
             <TextBlock
                 FontSize="14"
                 Foreground="Black"
-                Text="This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your password."
+                Text="This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your credentials."
                 TextWrapping="WrapWholeWords" />
         </StackPanel>
     </Grid>

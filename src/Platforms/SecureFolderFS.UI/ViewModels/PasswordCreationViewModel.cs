@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Storage;
 using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.UI.ViewModels
 {
@@ -11,6 +11,9 @@ namespace SecureFolderFS.UI.ViewModels
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
+
+        /// <inheritdoc/>
+        public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
         public PasswordCreationViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)

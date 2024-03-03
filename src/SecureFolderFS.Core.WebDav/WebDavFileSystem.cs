@@ -71,7 +71,7 @@ namespace SecureFolderFS.Core.WebDav
             //        var windowClosed = false;
             //        try
             //        {
-            //            // Hook up closing event
+            //            // Attach closing event
             //            ie.WindowClosing += Window_Closing;
 
             //            // Try quit first
@@ -94,7 +94,7 @@ namespace SecureFolderFS.Core.WebDav
             //        }
             //        finally
             //        {
-            //            // Unhook to avoid leaking memory
+            //            // Detach to avoid leaking memory
             //            ie.WindowClosing -= Window_Closing;
             //        }
 

@@ -60,7 +60,7 @@ namespace SecureFolderFS.Uno
             // Set title
             window.AppWindow.Title = "SecureFolderFS";
 
-            // Hook up event for window closing
+            // Attach event for window closing
             window.AppWindow.Closing += AppWindow_Closing;
 
             if (AppWindowTitleBar.IsCustomizationSupported())

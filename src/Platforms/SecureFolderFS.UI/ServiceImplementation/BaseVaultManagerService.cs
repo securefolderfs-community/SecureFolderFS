@@ -1,4 +1,9 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
@@ -8,13 +13,9 @@ using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.Extensions;
 using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -22,11 +23,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public abstract class BaseVaultManagerService : IVaultManagerService
     {
         /// <inheritdoc/>
-        public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IEnumerable<IDisposable> passkey, VaultOptions vaultOptions,
+        public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions,
             CancellationToken cancellationToken = default)
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
-            using var passkeySecret = VaultHelpers.ParseSecretKey(passkey);
+            using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
             var options = VaultHelpers.ParseOptions(vaultOptions);
 
             var superSecret = await creationRoutine
@@ -45,11 +46,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IVaultLifecycle> UnlockAsync(IVaultModel vaultModel, IEnumerable<IDisposable> passkey, CancellationToken cancellationToken = default)
+        public async Task<IVaultLifecycle> UnlockAsync(IVaultModel vaultModel, IKey passkey, CancellationToken cancellationToken = default)
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
             using var unlockRoutine = routines.UnlockVault();
-            using var passkeySecret = VaultHelpers.ParseSecretKey(passkey);
+            using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
 
             await unlockRoutine.InitAsync(cancellationToken);
 

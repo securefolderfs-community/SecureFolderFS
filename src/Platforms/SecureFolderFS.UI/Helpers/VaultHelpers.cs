@@ -1,4 +1,9 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.FileSystem.AppModels;
@@ -6,12 +11,7 @@ using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using SecureFolderFS.Shared.ComponentModel;
 using static SecureFolderFS.Core.Constants;
 
 namespace SecureFolderFS.UI.Helpers
@@ -48,9 +48,9 @@ namespace SecureFolderFS.UI.Helpers
         {
             return fileSystemId switch
             {
-                Core.Constants.FileSystemId.DOKAN_ID => new DokanyMountOptions(),
-                Core.Constants.FileSystemId.FUSE_ID => new FuseMountOptions(),
-                Core.Constants.FileSystemId.WEBDAV_ID => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
+                Core.Constants.FileSystemId.FS_DOKAN => new DokanyMountOptions(),
+                Core.Constants.FileSystemId.FS_FUSE => new FuseMountOptions(),
+                Core.Constants.FileSystemId.FS_WEBDAV => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
                 _ => throw new ArgumentOutOfRangeException(nameof(fileSystemId))
             };
         }
@@ -66,26 +66,13 @@ namespace SecureFolderFS.UI.Helpers
             };
         }
 
-        public static SecretKey ParseSecretKey(IEnumerable<IDisposable> passkey)
+        public static SecretKey ParsePasskeySecret(IKey passkey)
         {
-            var length = 0;
-            var data = passkey.Select(x => x switch
-            {
-                IEnumerable<byte> sequence => sequence.ToArray(),
-                _ => null
-            }).Where(x =>
-            {
-                length += x?.Length ?? 0;
-                return x is not null;
-            }).ToImmutableList(); // Enumerating early is important here since 'length' variable is used before the foreach statement
+            var keyArray = passkey.ToArray();
+            var secretKey = new SecureKey(keyArray.Length);
 
-            var indexInKey = 0;
-            var secretKey = new SecureKey(length);
-            foreach (var item in data)
-            {
-                item!.CopyTo(secretKey.Key.AsSpan(indexInKey));
-                indexInKey += item!.Length;
-            }
+            keyArray.CopyTo(secretKey.Key, 0);
+            Array.Clear(keyArray);
 
             return secretKey;
         }

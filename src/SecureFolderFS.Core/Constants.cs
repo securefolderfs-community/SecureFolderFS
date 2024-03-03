@@ -1,4 +1,6 @@
-﻿namespace SecureFolderFS.Core
+﻿using System;
+
+namespace SecureFolderFS.Core
 {
     public static class Constants
     {
@@ -23,9 +25,11 @@
                 public const string AUTH_WINDOWS_HELLO = "WindowsHello";
                 public const string AUTH_HARDWARE_KEY = "HardwareKey";
                 public const string AUTH_APPLE_FACEID = "AppleFaceID";
+                public const string AUTH_APPLE_TOUCHID = "AppleTouchID";
                 public const string AUTH_ANDROID_BIOMETRIC = "AndroidBiometric";
             }
 
+            [Obsolete]
             public static class Specializations
             {
                 public const string SPEC_STANDARD = "Standard";
@@ -55,9 +59,9 @@
 
         public static class FileSystemId
         {
-            public const string DOKAN_ID = "DOKANY";
-            public const string FUSE_ID = "FUSE";
-            public const string WEBDAV_ID = "WEBDAV";
+            public const string FS_DOKAN = "DOKANY";
+            public const string FS_FUSE = "FUSE";
+            public const string FS_WEBDAV = "WEBDAV";
         }
     }
 }

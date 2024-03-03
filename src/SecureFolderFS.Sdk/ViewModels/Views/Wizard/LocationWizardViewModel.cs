@@ -9,6 +9,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,50 +59,63 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public async Task<bool> UpdateStatusAsync(CancellationToken cancellationToken = default)
         {
-            if (SelectedFolder is null)
+            try
             {
-                Severity = ViewSeverityType.Default;
-                Message = "Select a folder to continue";
-                SelectedLocation = "No vault selected";
-                return false;
-            }
-
-            if (CreationType == NewVaultCreationType.AddExisting)
-            {
-                var validationResult = await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
-                if (!validationResult.Successful)
+                if (SelectedFolder is null)
                 {
-                    if (validationResult.Exception is NotSupportedException)
-                    {
-                        // Allow unsupported vaults to be migrated
-                        Severity = ViewSeverityType.Warning;
-                        Message = "Selected vault may not be supported";
-                        return true;
-                    }
-
-                    Severity = ViewSeverityType.Error;
-                    Message = "Vault folder is invalid";
+                    Severity = ViewSeverityType.Default;
+                    Message = "Select a folder to continue";
                     return false;
                 }
 
-                Severity = ViewSeverityType.Success;
-                Message = "Found a valid vault folder";
-                return true;
-            }
-            else
-            {
-                var validationResult = await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
-                if (validationResult.Successful || validationResult.Exception is NotSupportedException)
+                if (CreationType == NewVaultCreationType.AddExisting)
                 {
-                    // Check if a valid (or unsupported) vault exists at a specified path
-                    Severity = ViewSeverityType.Warning;
-                    Message = "The selected vault will be overwritten";
+                    var validationResult =
+                        await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
+                    if (!validationResult.Successful)
+                    {
+                        if (validationResult.Exception is NotSupportedException)
+                        {
+                            // Allow unsupported vaults to be migrated
+                            Severity = ViewSeverityType.Warning;
+                            Message = "Selected vault may not be supported";
+                            return true;
+                        }
+
+                        Severity = ViewSeverityType.Error;
+                        Message = "Vault folder is invalid";
+                        return false;
+                    }
+
+                    Severity = ViewSeverityType.Success;
+                    Message = "Found a valid vault folder";
                     return true;
                 }
+                else
+                {
+                    var validationResult =
+                        await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
+                    if (validationResult.Successful || validationResult.Exception is NotSupportedException)
+                    {
+                        // Check if a valid (or unsupported) vault exists at a specified path
+                        Severity = ViewSeverityType.Warning;
+                        Message = "The selected vault will be overwritten";
+                        return true;
+                    }
 
-                Severity = ViewSeverityType.Success;
-                Message = "A new vault will be created in selected folder";
-                return true;
+                    Severity = ViewSeverityType.Success;
+                    Message = "A new vault will be created in selected folder";
+                    return true;
+                }
+            }
+            finally
+            {
+                if (SelectedFolder is null)
+                    SelectedLocation = "No vault selected";
+                else
+                {
+                    SelectedLocation = $"..{Path.DirectorySeparatorChar}{Path.GetFileName(Path.GetDirectoryName(SelectedFolder.Id))}{Path.DirectorySeparatorChar}{SelectedFolder.Name}";
+                }
             }
         }
     }

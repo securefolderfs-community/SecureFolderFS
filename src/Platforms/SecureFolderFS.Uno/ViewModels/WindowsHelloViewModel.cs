@@ -1,12 +1,13 @@
+using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
-using System;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.ViewModels
@@ -14,21 +15,12 @@ namespace SecureFolderFS.Uno.ViewModels
     /// <inheritdoc cref="AuthenticationViewModel"/>
     public abstract class WindowsHelloViewModel : AuthenticationViewModel
     {
-        private IKey? _key;
-
-        /// <inheritdoc/>
-        public override event EventHandler<EventArgs>? StateChanged;
+        protected const int KEY_LENGTH = 128;
 
         protected WindowsHelloViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
         {
             DisplayName = "Windows Hello";
-        }
-
-        /// <inheritdoc/>
-        public override IKey? RetrieveKey()
-        {
-            return _key;
         }
 
         /// <inheritdoc/>
@@ -40,52 +32,55 @@ namespace SecureFolderFS.Uno.ViewModels
         /// <inheritdoc/>
         public override async Task<IKey> CreateAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(data);
+
             var result = await KeyCredentialManager.RequestCreateAsync(id, KeyCredentialCreationOption.ReplaceExisting).AsTask(cancellationToken);
-            if (result.Status == KeyCredentialStatus.Success)
-            {
-                _key?.Dispose();
-                _key = await CreateSignatureAsync(result.Credential, data, cancellationToken);
-                StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(_key));
-
-                return _key;
-            }
-
-            throw new InvalidOperationException("Failed to create the credential.");
+            if (result.Status != KeyCredentialStatus.Success)
+                throw new InvalidOperationException("Failed to create the credential.");
+            
+            return await CreateSignatureAsync(result.Credential, data, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public override async Task<IKey> SignAsync(string id, byte[] data, CancellationToken cancellationToken = default)
+        public override async Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
+            ArgumentNullException.ThrowIfNull(data);
+
             var result = await KeyCredentialManager.OpenAsync(id).AsTask(cancellationToken);
-            if (result.Status == KeyCredentialStatus.Success)
-            {
-                _key?.Dispose();
-                _key = await CreateSignatureAsync(result.Credential, data, cancellationToken);
-                StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(_key));
-
-                return _key;
-            }
-
-            throw new InvalidOperationException("Failed to open the credential.");
+            if (result.Status != KeyCredentialStatus.Success)
+                throw new InvalidOperationException("Failed to open the credential.");
+            
+            return await CreateSignatureAsync(result.Credential, data, cancellationToken);
         }
 
-        private static async Task<IKey> CreateSignatureAsync(KeyCredential credential, byte[] data, CancellationToken cancellationToken)
+        protected static SecretKey GenerateChallenge(string vaultId)
+        {
+            using var challenge = new SecureKey(KEY_LENGTH + vaultId.Length);
+            using var secureRandom = RandomNumberGenerator.Create();
+
+            // Fill the first 128 bytes with secure random data
+            secureRandom.GetNonZeroBytes(challenge.Key.AsSpan(0, vaultId.Length));
+
+            // Fill the remaining bytes with the ID
+            // By using ASCII encoding we get 1:1 byte to char ratio which allows us
+            // to use the length of the string ID as part of the SecretKey length above
+            Encoding.ASCII.GetBytes(vaultId, challenge.Key.AsSpan(KEY_LENGTH));
+
+            // Return a copy of the challenge since the original version is being disposed of
+            return challenge.CreateCopy();
+        }
+
+        protected static async Task<SecretKey> CreateSignatureAsync(KeyCredential credential, byte[] data, CancellationToken cancellationToken)
         {
             var buffer = data.AsBuffer();
             var signed = await credential.RequestSignAsync(buffer).AsTask(cancellationToken);
             if (signed.Status != KeyCredentialStatus.Success)
                 throw new InvalidOperationException("Failed to sign the data.");
-
+            
             var secretKey = new SecureKey((int)signed.Result.Length);
             signed.Result.CopyTo(secretKey.Key);
 
             return secretKey;
-        }
-
-        /// <inheritdoc/>
-        public override void Dispose()
-        {
-            _key?.Dispose();
         }
     }
 }

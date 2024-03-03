@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.Models;
@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         /// <inheritdoc/>
         public string PreferredFileSystemId
         {
-            get => GetSetting(static () => Core.Constants.FileSystemId.WEBDAV_ID);
+            get => GetSetting(static () => Core.Constants.FileSystemId.FS_WEBDAV);
             set => SetSetting(value);
         }
 

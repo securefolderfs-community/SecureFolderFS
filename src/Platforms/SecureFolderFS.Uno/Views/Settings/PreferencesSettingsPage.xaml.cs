@@ -65,7 +65,7 @@ namespace SecureFolderFS.Uno.Views.Settings
                 return;
 
             var adapterResult = await fileSystemAdapter.GetStatusAsync(cancellationToken);
-            if (fileSystemAdapter.Id == Core.Constants.FileSystemId.WEBDAV_ID)
+            if (fileSystemAdapter.Id == Core.Constants.FileSystemId.FS_WEBDAV)
             {
                 FileSystemInfoBar = new WebDavInfoBar();
                 FileSystemInfoBar.IsOpen = true;
@@ -80,7 +80,7 @@ namespace SecureFolderFS.Uno.Views.Settings
             {
                 FileSystemInfoBar = fileSystemAdapter.Id switch
                 {
-                    Core.Constants.FileSystemId.DOKAN_ID => new DokanyInfoBar(),
+                    Core.Constants.FileSystemId.FS_DOKAN => new DokanyInfoBar(),
                     _ => null
                 };
                 if (FileSystemInfoBar is null)

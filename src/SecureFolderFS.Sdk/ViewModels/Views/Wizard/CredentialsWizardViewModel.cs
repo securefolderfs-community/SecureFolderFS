@@ -22,6 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
     [Inject<IVaultService>, Inject<IVaultManagerService>]
     public sealed partial class CredentialsWizardViewModel : BaseWizardViewModel
     {
+        private readonly KeyChain _credentials;
         private readonly string _vaultId;
 
         [ObservableProperty] private CipherViewModel? _ContentCipher;
@@ -40,6 +41,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             CanContinue = false;
             CanCancel = true;
             Folder = folder;
+            _credentials = new();
             _vaultId = Guid.NewGuid().ToString();
         }
 
@@ -53,10 +55,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             // Make sure to also dispose the data within the current view model whether the navigation is successful or not
             using (CurrentViewModel)
             {
-                using var key = CurrentViewModel.RetrieveKey();
-                if (key is null)
-                    return Result.Failure(null);
-
                 var vaultOptions = new VaultOptions()
                 {
                     ContentCipherId = ContentCipher.Id,
@@ -68,7 +66,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 // Create the vault
                 var superSecret = await VaultManagerService.CreateVaultAsync(
                     Folder,
-                    new[] { key },
+                    _credentials,
                     vaultOptions,
                     cancellationToken);
 
@@ -99,8 +97,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
             // Set default authentication option
             CurrentViewModel = AuthenticationOptions.FirstOrDefault();
-            if (CurrentViewModel is not null)
-                CurrentViewModel.StateChanged += CurrentViewModel_StateChanged;
 
             static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherViewModel> destination)
             {
@@ -115,8 +111,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override void OnDisappearing()
         {
+            _credentials.Dispose();
+            CurrentViewModel?.Dispose();
+
             if (CurrentViewModel is not null)
+            {
+                CurrentViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
                 CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;
+            }
         }
 
         partial void OnCurrentViewModelChanged(AuthenticationViewModel? oldValue, AuthenticationViewModel? newValue)
@@ -125,19 +127,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             oldValue?.Dispose();
 
             if (oldValue is not null)
+            {
                 oldValue.StateChanged -= CurrentViewModel_StateChanged;
+                oldValue.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
+            }
 
             if (newValue is not null)
+            {
                 newValue.StateChanged += CurrentViewModel_StateChanged;
+                newValue.CredentialsProvided += CurrentViewModel_CredentialsProvided;
+            }
 
             CanContinue = false;
         }
 
+        private void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
+        {
+            _credentials.Push(e.Authentication);
+            CanContinue = true;
+        }
+
         private void CurrentViewModel_StateChanged(object? sender, EventArgs e)
         {
-            if (e is AuthenticationChangedEventArgs)
-                CanContinue = true;
-
             if (e is PasswordChangedEventArgs args)
                 CanContinue = args.IsMatch;
         }

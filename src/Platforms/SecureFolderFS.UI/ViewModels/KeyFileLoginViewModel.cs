@@ -1,19 +1,19 @@
-﻿using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ViewModels
 {
     public sealed partial class KeyFileLoginViewModel : KeyFileViewModel
     {
         /// <inheritdoc/>
-        public override event EventHandler<EventArgs>? StateChanged;
+        public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
         public KeyFileLoginViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
@@ -29,7 +29,7 @@ namespace SecureFolderFS.UI.ViewModels
             if (!key.Successful || key.Value is null)
                 return;
 
-            StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(key.Value));
+            CredentialsProvided?.Invoke(this, new(key.Value));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(';');
+            var authenticationMethods = config.AuthenticationMethod.Split(';'); // TODO: Move to Constants
 
             foreach (var item in authenticationMethods)
             {

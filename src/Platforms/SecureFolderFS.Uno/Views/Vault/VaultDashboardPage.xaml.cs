@@ -67,7 +67,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             // Update _isLoaded flag
             _isLoaded = true;
             
-            // Hook up navigation event
+            // Attach navigation event
             ViewModel.DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
 
             // Initialize navigation

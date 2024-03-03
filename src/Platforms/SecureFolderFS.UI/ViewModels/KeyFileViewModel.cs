@@ -19,7 +19,6 @@ namespace SecureFolderFS.UI.ViewModels
     public abstract class KeyFileViewModel : AuthenticationViewModel
     {
         private const int KEY_LENGTH = 128;
-        private IKey? _key;
 
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
@@ -30,12 +29,6 @@ namespace SecureFolderFS.UI.ViewModels
             : base(id, vaultFolder)
         {
             DisplayName = "Key File";
-        }
-
-        /// <inheritdoc/>
-        public override IKey? RetrieveKey()
-        {
-            return _key;
         }
 
         /// <inheritdoc/>
@@ -74,9 +67,7 @@ namespace SecureFolderFS.UI.ViewModels
                 throw new OperationCanceledException("The user did not save a file.");
 
             // Create a copy of the secret key because we need to dispose the original
-            _key?.Dispose();
-            _key = secretKey.CreateCopy();
-            return _key;
+            return secretKey.CreateCopy();
         }
 
         /// <inheritdoc/>
@@ -97,15 +88,7 @@ namespace SecureFolderFS.UI.ViewModels
                 throw new DataException("The key data was too short.");
 
             // Create a copy of the secret key because we need to dispose the original
-            _key?.Dispose();
-            _key = secretKey.CreateCopy();
-            return _key;
-        }
-
-        /// <inheritdoc/>
-        public override void Dispose()
-        {
-            _key?.Dispose();
+            return secretKey.CreateCopy();
         }
     }
 }

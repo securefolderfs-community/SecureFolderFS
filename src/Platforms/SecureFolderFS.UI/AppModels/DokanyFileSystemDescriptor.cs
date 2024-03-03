@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Core.Dokany;
+using SecureFolderFS.Core.Dokany;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
@@ -16,7 +16,7 @@ namespace SecureFolderFS.UI.AppModels
         public string Name { get; } = "Dokany";
 
         /// <inheritdoc/>
-        public string Id { get; } = Core.Constants.FileSystemId.DOKAN_ID;
+        public string Id { get; } = Core.Constants.FileSystemId.FS_DOKAN;
 
         /// <inheritdoc/>
         public Task<IResult> GetStatusAsync(CancellationToken cancellationToken = default)

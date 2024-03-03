@@ -16,7 +16,7 @@ namespace SecureFolderFS.UI.AppModels
         public string Name { get; } = "FUSE";
 
         /// <inheritdoc/>
-        public string Id { get; } = Core.Constants.FileSystemId.FUSE_ID;
+        public string Id { get; } = Core.Constants.FileSystemId.FS_FUSE;
 
         /// <inheritdoc/>
         public Task<IResult> GetStatusAsync(CancellationToken cancellationToken = default)

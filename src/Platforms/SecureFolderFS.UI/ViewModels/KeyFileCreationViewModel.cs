@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Storage;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.UI.ViewModels
 {
@@ -12,7 +12,7 @@ namespace SecureFolderFS.UI.ViewModels
         private readonly string _vaultId;
 
         /// <inheritdoc/>
-        public override event EventHandler<EventArgs>? StateChanged;
+        public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
         public KeyFileCreationViewModel(string vaultId, string id, IFolder vaultFolder)
             : base(id, vaultFolder)
@@ -24,7 +24,7 @@ namespace SecureFolderFS.UI.ViewModels
         private async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var key = await CreateAsync(_vaultId, null, cancellationToken);
-            StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(key));
+            CredentialsProvided?.Invoke(this, new(key));
         }
     }
 }

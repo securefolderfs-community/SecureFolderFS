@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
@@ -7,31 +8,25 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    public abstract partial class AuthenticationViewModel : ReportableViewModel, IAuthenticator, IDisposable
+    public abstract partial class AuthenticationViewModel(string id, IFolder vaultFolder)
+        : ReportableViewModel, IAuthenticator, IDisposable
     {
         [ObservableProperty] private string? _DisplayName;
 
-        public string Id { get; }
+        public string Id { get; } = id;
 
-        public IFolder VaultFolder { get; }
+        public IFolder VaultFolder { get; } = vaultFolder;
 
-        protected AuthenticationViewModel(string id, IFolder vaultFolder)
-        {
-            Id = id;
-            VaultFolder = vaultFolder;
-        }
+        /// <summary>
+        /// Occurs when credentials have been provided by the user.
+        /// </summary>
+        public abstract event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
         /// <inheritdoc/>
         public override void SetError(IResult? result)
         {
             _ = result;
         }
-
-        /// <summary>
-        /// Retrieves the authentication key, if available.
-        /// </summary>
-        /// <returns>If the authentication was performed, returns a new <see cref="IKey"/> instance; otherwise null.</returns>
-        public abstract IKey? RetrieveKey();
 
         /// <inheritdoc/>
         public abstract Task RevokeAsync(string id, CancellationToken cancellationToken = default);
@@ -40,9 +35,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public abstract Task<IKey> CreateAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract Task<IKey> SignAsync(string id, byte[] data, CancellationToken cancellationToken = default);
+        public abstract Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract void Dispose();
+        public virtual void Dispose()
+        {
+        }
     }
 }
