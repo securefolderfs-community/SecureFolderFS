@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Core.FileSystem;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
-using SecureFolderFS.Sdk.Storage;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Dokany

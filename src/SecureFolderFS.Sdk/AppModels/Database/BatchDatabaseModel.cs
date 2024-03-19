@@ -1,7 +1,7 @@
-﻿using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Extensions;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -97,7 +97,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                             continue;
 
                         // Open file stream and deserialize
-                        await using var dataStream = await dataFile.TryOpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+                        await using var dataStream = await dataFile.OpenReadAsync(cancellationToken);
                         var deserialized = await serializer.DeserializeAsync(dataStream, originalType, cancellationToken);
 
                         // Set settings cache
@@ -142,7 +142,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         // Data file part
 
                         // Open file stream and serialize
-                        await using var dataStream = await dataFile.OpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
+                        await using var dataStream = await dataFile.OpenReadWriteAsync(cancellationToken);
                         await using var serializedDataStream = await serializer.SerializeAsync(item.Value.Data, item.Value.Type, cancellationToken);
 
                         // Overwrite existing content
@@ -159,7 +159,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                         var typeBuffer = Encoding.UTF8.GetBytes(item.Value.Type.FullName ?? string.Empty);
 
                         // Open file stream
-                        await using var typeStream = await typeFile.OpenStreamAsync(FileAccess.ReadWrite, FileShare.None, cancellationToken);
+                        await using var typeStream = await typeFile.OpenReadWriteAsync(cancellationToken);
 
                         // Reset the stream
                         typeStream.Position = 0L;

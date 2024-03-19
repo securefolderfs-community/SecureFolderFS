@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
 using SecureFolderFS.Sdk.ViewModels.Vault;
@@ -31,8 +30,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (SettingsService.UserSettings.OpenFolderOnUnlock && UnlockedVaultViewModel.VaultLifeTimeModel.RootFolder is ILocatableFolder rootFolder)
-                _ = FileExplorerService.OpenInFileExplorerAsync(rootFolder, cancellationToken);
+            if (SettingsService.UserSettings.OpenFolderOnUnlock)
+                _ = FileExplorerService.OpenInFileExplorerAsync(UnlockedVaultViewModel.VaultLifeTimeModel.RootFolder, cancellationToken);
 
             await WidgetsViewModel.InitAsync(cancellationToken);
         }

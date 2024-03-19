@@ -1,43 +1,53 @@
-﻿using System;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Core.Cryptography.Storage
 {
-    /// <inheritdoc cref="IStorageService"/>
-    public class CryptoStorageService : IStorageService, IWrappable<IFile>, IWrappable<IFolder>
+    /// <inheritdoc cref="IGetItemRecursive"/>
+    public class CryptoStorageService : IGetItemRecursive, IWrappable<IFile>, IWrappable<IFolder>
     {
-        protected readonly IStorageService storageService;
+        protected readonly IGetItemRecursive storageRoot;
 
-        public CryptoStorageService(IStorageService storageService)
+        public CryptoStorageService(IGetItemRecursive storageRoot)
         {
-            this.storageService = storageService;
+            this.storageRoot = storageRoot;
         }
 
+        public string Id => throw new NotImplementedException();
+
+        public string Name => throw new NotImplementedException();
+
+
         /// <inheritdoc/>
-        public virtual Task<IFile> GetFileAsync(string id, CancellationToken cancellationToken = default)
+        public Task<IStorableChild> GetItemRecursiveAsync(string id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public virtual Task<IFolder> GetFolderAsync(string id, CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await Task.CompletedTask;
+            yield break;
         }
 
         /// <inheritdoc/>
         public virtual IWrapper<IFile> Wrap(IFile file)
         {
-            return new CryptoFile(file);
+            return null;
+            //return new CryptoFile(file);
         }
 
         /// <inheritdoc/>
         public virtual IWrapper<IFolder> Wrap(IFolder folder)
         {
-            return new CryptoFolder(folder);
+            return null;
+            //return new CryptoFolder(folder);
         }
     }
 }

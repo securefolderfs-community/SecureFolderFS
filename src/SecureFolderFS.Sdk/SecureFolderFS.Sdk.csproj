@@ -12,10 +12,10 @@
     <PackageReference Include="ByteSize" Version="2.1.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="OwlCore.Storage" Version="0.10.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\SecureFolderFS.SourceGenerator\SecureFolderFS.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>

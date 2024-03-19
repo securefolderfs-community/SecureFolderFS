@@ -14,11 +14,10 @@ using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Core.WebDav;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 
 namespace SecureFolderFS.Core.Routines.StorageRoutines
 {
@@ -27,7 +26,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
     {
         private readonly IFolder _vaultFolder;
         private UnlockContract? _unlockContract;
-        private IStorageService? _storageService;
+        private IGetItemRecursive? _storageRoot;
 
         public StorageRoutine(IFolder vaultFolder)
         {
@@ -46,18 +45,18 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
 
         // TODO: Maybe add a way of specifying the content folder here as well?
         /// <inheritdoc/>
-        public IStorageRoutine SetStorageService(IStorageService storageService)
+        public IStorageRoutine SetStorageService(IGetItemRecursive storageRoot)
         {
-            _storageService = storageService;
+            _storageRoot = storageRoot;
             return this;
         }
 
         /// <inheritdoc/>
-        public async Task<IStorageService> CreateStorageAsync(CancellationToken cancellationToken)
+        public async Task<IGetItemRecursive> CreateStorageRootAsync(CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(_storageService);
+            ArgumentNullException.ThrowIfNull(_storageRoot);
 
-            return new CryptoStorageService(_storageService);
+            return new CryptoStorageService(_storageRoot);
         }
 
         /// <inheritdoc/>

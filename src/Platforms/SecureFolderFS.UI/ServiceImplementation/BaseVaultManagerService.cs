@@ -4,14 +4,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using OwlCore.Storage;
 using SecureFolderFS.Core.Models;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.AppModels;
@@ -37,7 +36,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             if (vaultFolder is IModifiableFolder modifiableFolder)
             {
-                var readmeFile = await modifiableFolder.TryCreateFileAsync(Constants.Vault.VAULT_README_FILENAME, false, cancellationToken);
+                var readmeFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_README_FILENAME, false, cancellationToken);
                 if (readmeFile is not null)
                     await readmeFile.WriteAllTextAsync(Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
             }

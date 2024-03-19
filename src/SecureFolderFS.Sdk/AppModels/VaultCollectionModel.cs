@@ -6,8 +6,6 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;

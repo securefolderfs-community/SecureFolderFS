@@ -1,10 +1,7 @@
-﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Sdk.Storage.MutableStorage;
-using SecureFolderFS.Shared.Extensions;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -63,7 +60,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
                 _ = _databaseFile ?? throw new InvalidOperationException("The database file was not properly initialized.");
 
-                await using var stream = await _databaseFile!.OpenStreamAsync(FileAccess.Read, FileShare.Read, cancellationToken);
+                await using var stream = await _databaseFile!.OpenReadAsync(cancellationToken);
                 var settings = await serializer.DeserializeAsync<Stream, IDictionary>(stream, cancellationToken);
 
                 // Reset the cache
@@ -99,7 +96,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
                 _ = _databaseFile ?? throw new InvalidOperationException("The database file was not properly initialized.");
 
-                await using var dataStream = await _databaseFile.OpenStreamAsync(FileAccess.ReadWrite, FileShare.Read, cancellationToken);
+                await using var dataStream = await _databaseFile.OpenReadWriteAsync(cancellationToken);
                 await using var settingsStream = await serializer.SerializeAsync<Stream, IDictionary>(settingsCache, cancellationToken);
 
                 // Overwrite existing content

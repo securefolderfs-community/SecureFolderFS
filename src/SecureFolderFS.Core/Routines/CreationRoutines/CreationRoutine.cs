@@ -1,8 +1,7 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,7 @@
 ﻿using DokanNet;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.OpenHandles;
@@ -10,7 +12,6 @@ using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Statistics;
-using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.Storage.LocatableStorage;
@@ -18,7 +19,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Directories;
 
 namespace SecureFolderFS.Core.Dokany
 {
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Core.Dokany
                 throw new DirectoryNotFoundException("No available free mount points for vault file system");
 
             _dokanyWrapper.StartFileSystem(mountPath);
-            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SimpleFolder(mountPath)); // TODO: For now SimpleDokanyFolder until cloud storage is implemented
+            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SystemFolder(mountPath)); // TODO: For now SimpleDokanyFolder until cloud storage is implemented
 
             return Task.FromResult<IVirtualFileSystem>(dokanyFileSystem);
         }

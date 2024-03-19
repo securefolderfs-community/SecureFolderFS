@@ -6,7 +6,6 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
@@ -33,10 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            if (_unlockedVaultViewModel.VaultLifeTimeModel.RootFolder is not ILocatableFolder rootFolder)
-                return;
-
-            await FileExplorerService.OpenInFileExplorerAsync(rootFolder, cancellationToken);
+            await FileExplorerService.OpenInFileExplorerAsync(_unlockedVaultViewModel.VaultLifeTimeModel.RootFolder, cancellationToken);
         }
 
         [RelayCommand]

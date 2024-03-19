@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Sdk.AppModels;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using System;

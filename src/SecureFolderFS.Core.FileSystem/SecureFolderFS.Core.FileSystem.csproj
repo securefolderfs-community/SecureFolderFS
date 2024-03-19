@@ -8,7 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj" />
+    <PackageReference Include="OwlCore.Storage" Version="0.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
   </ItemGroup>
 

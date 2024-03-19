@@ -1,5 +1,5 @@
-﻿using SecureFolderFS.Core.FileSystem.Enums;
-using SecureFolderFS.Sdk.Storage;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Enums;
 using System;
 using System.Threading.Tasks;
 

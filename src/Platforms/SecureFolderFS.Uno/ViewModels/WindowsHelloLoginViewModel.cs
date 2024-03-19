@@ -48,12 +48,13 @@ namespace SecureFolderFS.Uno.ViewModels
 
                 // Compile new challenge in preparation
                 // TODO: When doing the signing operation, check payload MAC
-                using var newChallenge = GenerateChallenge(config.Id);
-                using var newSignedChallenge = await CreateSignatureAsync(result.Credential, newChallenge.Key, cancellationToken);
+                // TODO: Do something to avoid triggering the Windows Hello dialog twice
+                //using var newChallenge = GenerateChallenge(config.Id);
+                //using var newSignedChallenge = await CreateSignatureAsync(result.Credential, newChallenge.Key, cancellationToken);
 
                 // Report that credentials were provided and new provision needs to be applied
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key));
-                StateChanged?.Invoke(this, new CredentialsProvisionChangedEventArgs(newChallenge.CreateCopy(), newSignedChallenge.CreateCopy()));
+                //StateChanged?.Invoke(this, new CredentialsProvisionChangedEventArgs(newChallenge.CreateCopy(), newSignedChallenge.CreateCopy()));
             }
             catch (InvalidOperationException iopex)
             {
