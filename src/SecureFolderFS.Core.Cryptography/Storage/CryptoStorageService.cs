@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage.System.IO;
 
 namespace SecureFolderFS.Core.Cryptography.Storage
 {
@@ -26,6 +27,7 @@ namespace SecureFolderFS.Core.Cryptography.Storage
         /// <inheritdoc/>
         public Task<IStorableChild> GetItemRecursiveAsync(string id, CancellationToken cancellationToken = default)
         {
+            SystemFolder
             throw new NotImplementedException();
         }
 

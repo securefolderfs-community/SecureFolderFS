@@ -96,7 +96,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
                 pathConverter = new CiphertextPathConverter(vaultRootPath, fileNameAccess, directoryIdCache);
             }
             else
-                pathConverter = new CleartextPathConverter();
+                pathConverter = new CleartextPathConverter(vaultRootPath);
 
             var cryptFileManager = new OpenCryptFileManager(_unlockContract.Security, options.ChunkCachingStrategy, options.FileSystemStatistics);
             var streamsAccess = new FileStreamAccess(_unlockContract.Security, cryptFileManager);

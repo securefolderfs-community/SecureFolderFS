@@ -9,6 +9,14 @@ namespace SecureFolderFS.Core.Paths
         // Paths are not encrypted so we use the same path for every return value (ciphertext == cleartext)
 
         /// <inheritdoc/>
+        public string CiphertextRootPath { get; }
+
+        public CleartextPathConverter(string vaultRootPath)
+        {
+            CiphertextRootPath = vaultRootPath;
+        }
+
+        /// <inheritdoc/>
         public string? ToCiphertext(string cleartextPath)
         {
             return cleartextPath;
