@@ -1,15 +1,14 @@
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System.Text;
+using OwlCore.Storage;
 using Tmds.Fuse;
 using Tmds.Linux;
 using MountOptions = SecureFolderFS.Core.FileSystem.AppModels.MountOptions;
@@ -76,19 +75,16 @@ namespace SecureFolderFS.Core.FUSE
                 Directory.CreateDirectory(mountPoint);
 
             _fuseWrapper.StartFileSystem(mountPoint, fuseMountOptions);
-            var fuseFileSystem = new FuseFileSystem(_fuseWrapper, new SimpleFolder(mountPoint));
+            var fuseFileSystem = new FuseFileSystem(_fuseWrapper, new SystemFolder(mountPoint));
 
             return Task.FromResult<IVirtualFileSystem>(fuseFileSystem);
         }
 
         public static IMountableFileSystem CreateMountable(string vaultName, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
         {
-            if (contentFolder is not ILocatableFolder locatableContentFolder)
-                throw new ArgumentException("The vault content folder is not locatable.");
-
             var fuseCallbacks = new OnDeviceFuse(pathConverter, new(streamsAccess))
             {
-                LocatableContentFolder = locatableContentFolder,
+                LocatableContentFolder = contentFolder,
                 Security = security,
                 DirectoryIdAccess = directoryIdCache
             };

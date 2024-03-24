@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sdk", "Sdk", "{086CDAC6-273
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.Cryptography", "src\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj", "{E9A65D92-A183-4A99-B840-C237833E10F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Sdk.Storage", "src\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj", "{9C1735AF-65EA-4F26-8021-E4333B075F43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Storage", "src\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj", "{9C1735AF-65EA-4F26-8021-E4333B075F43}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFolderFS.Core.WebDav", "src\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj", "{D3F757F7-8E51-41DD-9079-893677750CB1}"
 EndProject

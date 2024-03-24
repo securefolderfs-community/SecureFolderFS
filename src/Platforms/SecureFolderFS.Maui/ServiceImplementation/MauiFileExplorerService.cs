@@ -1,7 +1,7 @@
 using CommunityToolkit.Maui.Storage;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.UI.Storage.NativeStorage;
 
 namespace SecureFolderFS.Maui.ServiceImplementation
@@ -30,25 +30,25 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = FilePicker.Default;
             var result = await filePicker.PickAsync();
             if (result is null)
                 return null;
 
-            return new NativeFile(new FileInfo(result.FullPath));
+            return new SystemFile(new FileInfo(result.FullPath));
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
         {
             var folderPicker = FolderPicker.Default;
             var result = await folderPicker.PickAsync(cancellationToken);
             if (!result.IsSuccessful)
                 return null;
 
-            return new NativeFolder(new DirectoryInfo(result.Folder.Path));
+            return new SystemFolder(new DirectoryInfo(result.Folder.Path));
         }
     }
 }

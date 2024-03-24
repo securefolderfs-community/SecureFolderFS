@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.Dokany.AppModels;
@@ -9,7 +10,6 @@ using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Statistics;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         private DriveInfo? _vaultDriveInfo;
         private int _vaultDriveInfoTries;
         
-        public required ILocatableFolder LocatableContentFolder { get; init; }
+        public required IFolder LocatableContentFolder { get; init; }
 
         public required Security Security { get; init; }
 
@@ -320,7 +320,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 _vaultDriveInfoTries++;
                 _vaultDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => 
                     di.IsReady &&
-                    di.RootDirectory.Name.Equals(Path.GetPathRoot(LocatableContentFolder.Path), StringComparison.OrdinalIgnoreCase));
+                    di.RootDirectory.Name.Equals(Path.GetPathRoot(LocatableContentFolder.Id), StringComparison.OrdinalIgnoreCase));
             }
 
             freeBytesAvailable = _vaultDriveInfo?.TotalFreeSpace ?? 0L;
@@ -800,7 +800,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         protected override string? GetCiphertextPath(string cleartextName)
         {
-            var path = PathHelpers.PathFromVaultRoot(cleartextName, LocatableContentFolder.Path);
+            var path = PathHelpers.PathFromVaultRoot(cleartextName, LocatableContentFolder.Id);
             return pathConverter.ToCiphertext(path);
         }
     }

@@ -36,7 +36,7 @@ namespace SecureFolderFS.Uno.ViewModels
             try
             {
                 // Ask for credentials
-                var result = await KeyCredentialManager.OpenAsync(config.Id).AsTask(cancellationToken);
+                var result = await KeyCredentialManager.OpenAsync(config.Uid).AsTask(cancellationToken);
                 if (result.Status != KeyCredentialStatus.Success)
                 {
                     SetError(Result.Failure(new InvalidOperationException("Failed to open the credential.")));

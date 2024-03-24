@@ -12,7 +12,7 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Gets the unlocked root folder of the vault.
         /// </summary>
-        IFolder RootFolder { get; }
+        IFolder StorageRoot { get; }
 
         /// <summary>
         /// Gets the <see cref="IVaultStatisticsModel"/> which reports file system operations of the unlocked vault.

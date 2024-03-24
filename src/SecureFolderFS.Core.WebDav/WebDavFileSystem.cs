@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Core.FileSystem;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
-using SecureFolderFS.Sdk.Storage;
 using System;
 using System.Threading.Tasks;
 
@@ -12,16 +12,15 @@ namespace SecureFolderFS.Core.WebDav
         private readonly WebDavWrapper _webDavWrapper;
 
         /// <inheritdoc/>
-        public IFolder RootFolder { get; }
+        public IFolder StorageRoot { get; }
 
         /// <inheritdoc/>
         public bool IsOperational { get; private set; }
 
-        public WebDavFileSystem(IFolder rootFolder, WebDavWrapper webDavWrapper)
+        public WebDavFileSystem(IFolder storageRoot, WebDavWrapper webDavWrapper)
         {
             _webDavWrapper = webDavWrapper;
-
-            RootFolder = rootFolder;
+            StorageRoot = storageRoot;
             IsOperational = true;
         }
 
@@ -36,7 +35,7 @@ namespace SecureFolderFS.Core.WebDav
                 if (closeResult && OperatingSystem.IsWindows()) // Closed successfully
                 {
                     // Close all file explorer windows
-                    await CloseExplorerShellAsync(RootFolder.Id);
+                    await CloseExplorerShellAsync(StorageRoot.Id);
                 }
             }
 

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using OwlCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.Storage.StorageProperties
+namespace SecureFolderFS.Storage.StorageProperties
 {
     /// <summary>
     /// Exposes access to basic storage object properties.

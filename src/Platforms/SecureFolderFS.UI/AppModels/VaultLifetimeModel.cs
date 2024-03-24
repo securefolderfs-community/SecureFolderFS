@@ -1,9 +1,9 @@
-﻿using SecureFolderFS.Core.FileSystem;
+using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Storage;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.AppModels
 {
@@ -13,7 +13,7 @@ namespace SecureFolderFS.UI.AppModels
         private readonly IVirtualFileSystem _virtualFileSystem;
 
         /// <inheritdoc/>
-        public IFolder RootFolder { get; }
+        public IFolder StorageRoot { get; }
 
         /// <inheritdoc/>
         public IVaultStatisticsModel VaultStatisticsModel { get; }
@@ -24,7 +24,7 @@ namespace SecureFolderFS.UI.AppModels
         public VaultLifetimeModel(IVirtualFileSystem virtualFileSystem, IVaultStatisticsModel vaultStatisticsModel, VaultOptions vaultOptions)
         {
             _virtualFileSystem = virtualFileSystem;
-            RootFolder = virtualFileSystem.RootFolder;
+            StorageRoot = virtualFileSystem.StorageRoot;
             VaultStatisticsModel = vaultStatisticsModel;
             VaultOptions = vaultOptions;
         }

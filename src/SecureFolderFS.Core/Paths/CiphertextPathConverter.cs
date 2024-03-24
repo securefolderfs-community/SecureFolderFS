@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.Paths
         public string? GetCleartextFileName(string ciphertextFilePath)
         {
             // Construct DirectoryID path for the parent directory of ciphertextFilePath
-            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, _vaultRootPath);
+            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, CiphertextRootPath);
             if (directoryIdPath is null)
                 return null;
 
@@ -72,7 +72,7 @@ namespace SecureFolderFS.Core.Paths
         public string? GetCiphertextFileName(string cleartextFilePath)
         {
             // Construct DirectoryID path for the parent directory of cleartextFilePath
-            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, _vaultRootPath);
+            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, CiphertextRootPath);
             if (directoryIdPath is null)
                 return null;
 

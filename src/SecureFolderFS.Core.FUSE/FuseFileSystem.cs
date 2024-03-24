@@ -1,6 +1,6 @@
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
-using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Core.FUSE
 {
@@ -9,15 +9,15 @@ namespace SecureFolderFS.Core.FUSE
         private readonly FuseWrapper _fuseWrapper;
 
         /// <inheritdoc/>
-        public IFolder RootFolder { get; }
+        public IFolder StorageRoot { get; }
 
         /// <inheritdoc/>
         public bool IsOperational { get; private set; }
 
-        public FuseFileSystem(FuseWrapper fuseWrapper, IFolder rootFolder)
+        public FuseFileSystem(FuseWrapper fuseWrapper, IFolder storageRoot)
         {
             _fuseWrapper = fuseWrapper;
-            RootFolder = rootFolder;
+            StorageRoot = storageRoot;
             IsOperational = true;
         }
 

@@ -1,7 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 
-namespace SecureFolderFS.Sdk.Storage
+namespace SecureFolderFS.Sdk.Services
 {
     /// <summary>
     /// Provides an abstract storage layer for accessing the file system.

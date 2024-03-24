@@ -1,11 +1,13 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Helpers;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.Extensions
+namespace SecureFolderFS.Storage.Extensions
 {
     public static partial class StorageExtensions
     {
@@ -56,6 +58,20 @@ namespace SecureFolderFS.Sdk.Extensions
             using var streamReader = new StreamReader(fileStream, encoding ?? Encoding.UTF8);
 
             return await streamReader.ReadToEndAsync(cancellationToken);
+        }
+
+        /// <returns>Value is <see cref="IResult"/> depending on whether the stream was successfully opened on the file.</returns>
+        /// <inheritdoc cref="IFile.OpenStreamAsync"/>
+        public static async Task<IResult<Stream?>> OpenStreamWithResultAsync(this IFile file, FileAccess access, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return Result<Stream?>.Success(await file.OpenStreamAsync(access, cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return Result<Stream?>.Failure(ex);
+            }
         }
     }
 }

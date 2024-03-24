@@ -1,7 +1,8 @@
-﻿using System.Threading;
+﻿using OwlCore.Storage;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.Storage.StorageProperties
+namespace SecureFolderFS.Storage.StorageProperties
 {
     /// <summary>
     /// Represents a storage object property that can be modified.

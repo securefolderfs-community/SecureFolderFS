@@ -11,15 +11,15 @@ namespace SecureFolderFS.Core.Dokany
         private readonly DokanyWrapper _dokanyWrapper;
 
         /// <inheritdoc/>
-        public IFolder RootFolder { get; }
+        public IFolder StorageRoot { get; }
 
         /// <inheritdoc/>
         public bool IsOperational { get; private set; }
 
-        public DokanyFileSystem(DokanyWrapper dokanyWrapper, IFolder rootFolder)
+        public DokanyFileSystem(DokanyWrapper dokanyWrapper, IFolder storageRoot)
         {
             _dokanyWrapper = dokanyWrapper;
-            RootFolder = rootFolder;
+            StorageRoot = storageRoot;
             IsOperational = true;
         }
 

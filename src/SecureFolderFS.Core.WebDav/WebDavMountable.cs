@@ -1,6 +1,7 @@
 ﻿using NWebDav.Server;
 using NWebDav.Server.Dispatching;
 using NWebDav.Server.Stores;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem;
@@ -10,7 +11,6 @@ using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.AppModels;
-using SecureFolderFS.Core.WebDav.EncryptingStorage;
 using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Core.WebDav.Enums;
 using SecureFolderFS.Core.WebDav.Helpers;
@@ -84,7 +84,7 @@ namespace SecureFolderFS.Core.WebDav
             // TODO Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
 
-            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder(remotePath), webDavWrapper));
+            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SystemFolder(remotePath), webDavWrapper));
         }
 
         public static IMountableFileSystem CreateMountable(string volumeName, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess, IStorageService storageService)

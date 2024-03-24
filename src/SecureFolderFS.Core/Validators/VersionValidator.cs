@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -35,6 +35,7 @@ namespace SecureFolderFS.Core.Validators
 
             _ = versionDataModel.Version switch
             {
+                // (V1 or Vn) except LATEST_VERSION are not supported
                 (V1 or V1) and not LATEST_VERSION => throw new NotSupportedException($"Vault version {versionDataModel.Version} is not supported."),
                 _ => 0
             };

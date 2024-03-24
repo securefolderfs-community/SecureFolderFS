@@ -1,9 +1,8 @@
-﻿using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Sdk.Storage.NestedStorage;
+﻿using OwlCore.Storage;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.Storage.DirectStorage
+namespace SecureFolderFS.Storage.DirectStorage
 {
     /// <summary>
     /// Provides direct copy operation of storage objects.
@@ -13,6 +12,6 @@ namespace SecureFolderFS.Sdk.Storage.DirectStorage
         /// <summary>
         /// Creates a copy of the provided storable item in this folder.
         /// </summary>
-        Task<INestedStorable> CreateCopyOfAsync(INestedStorable itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default);
+        Task<IStorableChild> CreateCopyOfAsync(IStorableChild itemToCopy, bool overwrite = default, CancellationToken cancellationToken = default);
     }
 }

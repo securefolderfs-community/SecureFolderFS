@@ -25,7 +25,7 @@ namespace SecureFolderFS.UI.ViewModels
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var key = await this.TrySignAsync(config.Id, null, cancellationToken);
+            var key = await this.TrySignAsync(config.Uid, null, cancellationToken);
             if (!key.Successful || key.Value is null)
                 return;
 

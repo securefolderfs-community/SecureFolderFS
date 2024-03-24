@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);$(DotNetVersion)-windows10.0.19041</TargetFrameworks>
     <TargetFrameworks>$(TargetFrameworks);$(DotNetVersion);$(DotNetVersion)-android;$(DotNetVersion)-ios;$(DotNetVersion)-maccatalyst</TargetFrameworks>
@@ -162,7 +162,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
-    <ProjectReference Include="..\..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj" />
+    <ProjectReference Include="..\..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Storage.csproj" />
     <ProjectReference Include="..\..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
     <ProjectReference Include="..\..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
