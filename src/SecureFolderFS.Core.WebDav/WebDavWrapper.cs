@@ -12,7 +12,6 @@ namespace SecureFolderFS.Core.WebDav
 {
     internal sealed class WebDavWrapper
     {
-        private Task? _fileSystemTask;
         private readonly HttpListener _httpListener;
         private readonly IPrincipal? _serverPrincipal;
         private readonly IRequestDispatcher _requestDispatcher;
@@ -30,12 +29,14 @@ namespace SecureFolderFS.Core.WebDav
 
         public void StartFileSystem()
         {
-            _httpListener.Start();
-            _fileSystemTask = EnsureFileSystemAsync();
+            var ts = new ThreadStart(async () => await EnsureFileSystemAsync());
+            var bgThread = new Thread(ts);
+            bgThread.Start();
         }
 
         private async Task EnsureFileSystemAsync()
         {
+            _httpListener.Start();
             while (!_fileSystemCts.IsCancellationRequested && (await _httpListener.GetContextAsync() is var httpListenerContext))
             {
                 if (httpListenerContext.Request.IsAuthenticated)
@@ -51,7 +52,6 @@ namespace SecureFolderFS.Core.WebDav
             _ = closeMethod; // TODO: Implement close method
             _fileSystemCts.Cancel();
             _httpListener.Close();
-            _fileSystemTask?.Dispose();
 
             if (_mountPath is not null)
                 DriveMappingHelper.DisconnectNetworkDrive(_mountPath, true);

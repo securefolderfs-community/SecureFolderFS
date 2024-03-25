@@ -21,7 +21,6 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Diagnostics;
 using System.Net;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -79,13 +78,12 @@ namespace SecureFolderFS.Core.WebDav
                 }
             }
 
-            IPrincipal? serverPrincipal = null;
-            var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher, mountPath);
+            var webDavWrapper = new WebDavWrapper(httpListener, _requestDispatcher, mountPath);
+            webDavWrapper.StartFileSystem();
 
             // TODO Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
-
-            webDavWrapper.StartFileSystem();
+            
             return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options.FileSystemStatistics);
         }
 
