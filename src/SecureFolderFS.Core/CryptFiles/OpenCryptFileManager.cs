@@ -1,7 +1,6 @@
 ﻿using SecureFolderFS.Core.Buffers;
 using SecureFolderFS.Core.Chunks;
 using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Enums;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.CryptFiles;
 using SecureFolderFS.Core.FileSystem.Statistics;
@@ -16,13 +15,13 @@ namespace SecureFolderFS.Core.CryptFiles
     internal sealed class OpenCryptFileManager : BaseCryptFileManager
     {
         private readonly Security _security;
-        private readonly ChunkCachingStrategy _chunkCachingStrategy;
-        private readonly IFileSystemStatistics? _fileSystemStatistics;
+        private readonly bool _enableChunkCache;
+        private readonly IFileSystemStatistics _fileSystemStatistics;
 
-        public OpenCryptFileManager(Security security, ChunkCachingStrategy chunkCachingStrategy, IFileSystemStatistics? fileSystemStatistics)
+        public OpenCryptFileManager(Security security, bool enableChunkCache, IFileSystemStatistics fileSystemStatistics)
         {
             _security = security;
-            _chunkCachingStrategy = chunkCachingStrategy;
+            _enableChunkCache = enableChunkCache;
             _fileSystemStatistics = fileSystemStatistics;
         }
 
@@ -43,12 +42,9 @@ namespace SecureFolderFS.Core.CryptFiles
             var chunkReader = new ChunkReader(_security, headerBuffer, streamsManager, _fileSystemStatistics);
             var chunkWriter = new ChunkWriter(_security, headerBuffer, streamsManager, _fileSystemStatistics);
 
-            return _chunkCachingStrategy switch
-            {
-                ChunkCachingStrategy.RandomAccessMemoryCache => new CachingChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _fileSystemStatistics),
-                ChunkCachingStrategy.NoCache => new InstantChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _fileSystemStatistics),
-                _ => throw new ArgumentOutOfRangeException(nameof(_chunkCachingStrategy))
-            };
+            return _enableChunkCache
+                ? new CachingChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _fileSystemStatistics)
+                : new InstantChunkAccess(chunkReader, chunkWriter, _security.ContentCrypt, _fileSystemStatistics);
         }
 
         private void NotifyClosed(string ciphertextPath)

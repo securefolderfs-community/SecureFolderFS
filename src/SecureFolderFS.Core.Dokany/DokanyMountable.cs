@@ -1,4 +1,5 @@
 ﻿using DokanNet;
+using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Directories;
@@ -11,10 +12,8 @@ using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
 using System.Threading;
@@ -25,10 +24,12 @@ namespace SecureFolderFS.Core.Dokany
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class DokanyMountable : IMountableFileSystem, IAvailabilityChecker
     {
+        private readonly FileSystemOptions _options;
         private readonly DokanyWrapper _dokanyWrapper;
 
-        private DokanyMountable(BaseDokanyCallbacks baseDokanyCallbacks)
+        private DokanyMountable(FileSystemOptions options, BaseDokanyCallbacks baseDokanyCallbacks)
         {
+            _options = options;
             _dokanyWrapper = new(baseDokanyCallbacks);
         }
 
@@ -69,46 +70,40 @@ namespace SecureFolderFS.Core.Dokany
         }
 
         /// <inheritdoc/>
-        public Task<IVirtualFileSystem> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public Task<IVFSRootFolder> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
             if (mountOptions is not DokanyMountOptions dokanyMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(DokanyMountOptions)}.");
 
             var mountPath = dokanyMountOptions.MountPath ?? PathHelpers.GetFreeWindowsMountPath();
             if (mountPath is null)
-                throw new DirectoryNotFoundException("No available free mount points for vault file system");
+                throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 
             _dokanyWrapper.StartFileSystem(mountPath);
-            var dokanyFileSystem = new DokanyFileSystem(_dokanyWrapper, new SystemFolder(mountPath)); // TODO: For now SimpleDokanyFolder until cloud storage is implemented
-
-            return Task.FromResult<IVirtualFileSystem>(dokanyFileSystem);
+            return Task.FromResult<IVFSRootFolder>(new DokanyRootFolder(_dokanyWrapper, new SystemFolder(mountPath), _options.FileSystemStatistics));
         }
 
-        public static IMountableFileSystem CreateMountable(string volumeName, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess, IFileSystemHealthStatistics? fileSystemHealthStatistics)
+        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
         {
-            // TODO: Select correct dokany callbacks (on-device, cloud). Perhaps add a flag to this class to indicate what type of FS to mount
-            if (contentFolder is not ILocatableFolder locatableContentFolder)
-                throw new ArgumentException("The vault content folder is not locatable.");
-
             var volumeModel = new DokanyVolumeModel()
             {
                 FileSystemName = Constants.FileSystem.FILESYSTEM_NAME,
                 MaximumComponentLength = Constants.FileSystem.MAX_COMPONENT_LENGTH,
-                VolumeName = volumeName,
+                VolumeName = options.VolumeName,
                 FileSystemFeatures = FileSystemFeatures.CasePreservedNames
                                      | FileSystemFeatures.CaseSensitiveSearch
                                      | FileSystemFeatures.PersistentAcls
                                      | FileSystemFeatures.SupportsRemoteStorage
                                      | FileSystemFeatures.UnicodeOnDisk
             };
-            var dokanyCallbacks = new OnDeviceDokany(pathConverter, new DokanyHandlesManager(streamsAccess), volumeModel, fileSystemHealthStatistics)
+            var dokanyCallbacks = new OnDeviceDokany(pathConverter, new DokanyHandlesManager(streamsAccess), volumeModel, options.HealthStatistics)
             {
-                LocatableContentFolder = locatableContentFolder,
+                ContentFolder = contentFolder,
                 DirectoryIdAccess = directoryIdCache,
                 Security = security
             };
 
-            return new DokanyMountable(dokanyCallbacks);
+            return new DokanyMountable(options, dokanyCallbacks);
         }
     }
 }

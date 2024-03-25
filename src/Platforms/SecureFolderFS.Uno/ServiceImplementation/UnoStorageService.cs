@@ -1,8 +1,10 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Uno.Storage.WindowsStorage;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
+using SecureFolderFS.Sdk.Services;
 using Windows.Storage;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
@@ -11,30 +13,27 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoStorageService : IStorageService
     {
         /// <inheritdoc/>
-        public async Task<IFile> GetFileAsync(string id, CancellationToken cancellationToken = default)
+        public Task<IFolder> GetAppFolderAsync(CancellationToken cancellationToken = default)
         {
-            id = FormatPath(id);
-
-            var file = await StorageFile.GetFileFromPathAsync(id).AsTask(cancellationToken);
-            return new UnoStorageFile(file);
+            return Task.FromResult<IFolder>(new SystemFolder(ApplicationData.Current.LocalFolder.Path));
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder> GetFolderAsync(string id, CancellationToken cancellationToken = default)
+        public Task<IStorable> GetBookmarkAsync(string id, CancellationToken cancellationToken = default)
         {
-            id = FormatPath(id);
-
-            var folder = await StorageFolder.GetFolderFromPathAsync(id).AsTask(cancellationToken);
-            return new UnoStorageFolder(folder);
-        }
-
-        private static string FormatPath(string path)
-        {
-#if ANDROID
-            path = path.Replace("/tree/primary:", "/storage/emulated/0/");
-#endif
+            if (IsFile(id))
+                return Task.FromResult<IStorable>(new SystemFile(id));
             
-            return path;
+            if (IsFolder(id))
+                return Task.FromResult<IStorable>(new SystemFolder(id));
+
+            throw new ArgumentException("The path is not a file nor a folder.", nameof(id));
+
+            static bool IsFolder(string path)
+                => Directory.Exists(path);
+
+            static bool IsFile(string path)
+                => Path.GetFileName(path) is { } str && str != string.Empty && File.Exists(path);
         }
     }
 }

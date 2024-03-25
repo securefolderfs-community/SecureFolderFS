@@ -2,10 +2,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.UI.ViewModels

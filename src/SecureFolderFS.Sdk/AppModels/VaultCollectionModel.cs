@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -107,14 +109,22 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (item.Id is null)
                     continue;
 
-                var folder = await StorageService.TryGetFolderAsync(item.Id, cancellationToken);
-                if (folder is null)
+                try
+                {
+                    var storable = await StorageService.GetBookmarkAsync(item.Id, cancellationToken);
+                    if (storable is not IFolder folder)
+                        continue;
+
+                    var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
+                    Items.Add(vaultModel);
+
+                    CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item));
+                }
+                catch (Exception ex)
+                {
+                    _ = ex;
                     continue;
-
-                var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
-                Items.Add(vaultModel);
-
-                CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item));
+                }
             }
         }
 

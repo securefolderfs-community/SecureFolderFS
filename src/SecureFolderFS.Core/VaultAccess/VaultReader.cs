@@ -2,6 +2,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
@@ -34,8 +35,8 @@ namespace SecureFolderFS.Core.VaultAccess
         public async Task<VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)
         {
             // Get configuration file
-            if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) is not IFile configFile);
-                throw new FileNotFoundException("The keystore file was not found.");
+            if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) is not IFile configFile)
+                throw new FileNotFoundException("The configuration file was not found.");
 
             return await ReadDataAsync<VaultConfigurationDataModel>(configFile, cancellationToken);
         }
@@ -45,8 +46,8 @@ namespace SecureFolderFS.Core.VaultAccess
             try
             {
                 // Try to get authentication file
-                var authFile = await _vaultFolder.TryGetFileAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, cancellationToken);
-                return authFile is null ? null : await ReadDataAsync<VaultAuthenticationDataModel?>(authFile, cancellationToken);
+                var authFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, cancellationToken);
+                return await ReadDataAsync<VaultAuthenticationDataModel?>(authFile, cancellationToken);
             }
             catch (Exception)
             {

@@ -1,55 +1,44 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav
 {
-    /// <inheritdoc cref="IVirtualFileSystem"/>
-    internal sealed class WebDavFileSystem : IVirtualFileSystem
+    /// <inheritdoc cref="IVFSRootFolder"/>
+    internal sealed class WebDavRootFolder : WrappedFileSystemFolder
     {
         private readonly WebDavWrapper _webDavWrapper;
+        private bool _disposed;
 
         /// <inheritdoc/>
-        public IFolder StorageRoot { get; }
+        public override string FileSystemName { get; } = "WebDav";
 
-        /// <inheritdoc/>
-        public bool IsOperational { get; private set; }
-
-        public WebDavFileSystem(IFolder storageRoot, WebDavWrapper webDavWrapper)
+        public WebDavRootFolder(WebDavWrapper webDavWrapper, IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
+            : base(storageRoot, readWriteStatistics)
         {
             _webDavWrapper = webDavWrapper;
-            StorageRoot = storageRoot;
-            IsOperational = true;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> CloseAsync(FileSystemCloseMethod closeMethod)
+        public override async ValueTask DisposeAsync()
         {
-            if (IsOperational)
+            if (_disposed)
+                return;
+
+            _disposed = await Task.Run(() => _webDavWrapper.CloseFileSystem(FileSystemCloseMethod.CloseForcefully));
+            if (_disposed && OperatingSystem.IsWindows()) // Closed successfully
             {
-                var closeResult = await Task.Run(() => _webDavWrapper.CloseFileSystem(closeMethod));
-                IsOperational = !closeResult;
-
-                if (closeResult && OperatingSystem.IsWindows()) // Closed successfully
-                {
-                    // Close all file explorer windows
-                    await CloseExplorerShellAsync(StorageRoot.Id);
-                }
+                // Close all file explorer windows
+                await CloseExplorerShellAsync(Inner.Id);
             }
-
-            return !IsOperational;
-        }
-
-        /// <inheritdoc/>
-        public async ValueTask DisposeAsync()
-        {
-            _ = await CloseAsync(FileSystemCloseMethod.CloseForcefully);
         }
 
         private static Task CloseExplorerShellAsync(string path)
         {
+            _ = path;
             return Task.CompletedTask;
             //try
             //{

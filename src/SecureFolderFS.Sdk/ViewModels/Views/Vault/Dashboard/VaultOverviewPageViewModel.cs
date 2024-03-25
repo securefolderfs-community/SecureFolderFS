@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {
             ServiceProvider = Ioc.Default;
-            WidgetsViewModel = new(unlockedVaultViewModel.VaultLifeTimeModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);
+            WidgetsViewModel = new(unlockedVaultViewModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);
             VaultControlsViewModel = vaultControlsViewModel;
         }
 
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             if (SettingsService.UserSettings.OpenFolderOnUnlock)
-                _ = FileExplorerService.OpenInFileExplorerAsync(UnlockedVaultViewModel.VaultLifeTimeModel.StorageRoot, cancellationToken);
+                _ = FileExplorerService.TryOpenInFileExplorerAsync(UnlockedVaultViewModel.StorageRoot, cancellationToken);
 
             await WidgetsViewModel.InitAsync(cancellationToken);
         }

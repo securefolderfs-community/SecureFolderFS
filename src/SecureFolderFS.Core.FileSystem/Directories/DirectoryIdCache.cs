@@ -1,8 +1,9 @@
-﻿using System;
+﻿using SecureFolderFS.Core.FileSystem.Statistics;
+using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using SecureFolderFS.Core.FileSystem.Statistics;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.Directories
 {
@@ -13,9 +14,9 @@ namespace SecureFolderFS.Core.Directories
     {
         private readonly object _lock = new();
         private readonly Dictionary<string, BufferHolder> _cache;
-        private readonly IFileSystemStatistics? _statistics;
+        private readonly IFileSystemStatistics _statistics;
 
-        public DirectoryIdCache(IFileSystemStatistics? statistics)
+        public DirectoryIdCache(IFileSystemStatistics statistics)
         {
             _statistics = statistics;
             _cache = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_DIRECTORYID);
@@ -42,14 +43,14 @@ namespace SecureFolderFS.Core.Directories
                 if (!_cache.TryGetValue(ciphertextPath, out var directoryIdBuffer))
                 {
                     // Cache miss, update stats
-                    _statistics?.NotifyDirectoryIdCacheMiss();
+                    _statistics.DirectoryIdCache?.Report(CacheAccessType.CacheMiss);
 
                     return false;
                 }
 
                 // Cache hit, update stats
-                _statistics?.NotifyDirectoryIdAccess();
-                _statistics?.NotifyDirectoryIdCacheHit();
+                _statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
+                _statistics.DirectoryIdCache?.Report(CacheAccessType.CacheHit);
 
                 directoryIdBuffer.Buffer.CopyTo(directoryId);
 

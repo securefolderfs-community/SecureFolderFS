@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IVaultService>, Inject<IVaultManagerService>]
+    [Inject<IVaultService>, Inject<IVaultManagerService>, Inject<IVaultStorageService>]
     public sealed partial class LoginControlViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly bool _enableMigration;
@@ -67,8 +67,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             try
             {
-                var vaultLifecycle = await VaultManagerService.UnlockAsync(_vaultModel, _keyChain, cancellationToken);
-                VaultUnlocked?.Invoke(this, new(vaultLifecycle));
+                var unlockContract = await VaultManagerService.UnlockAsync(_vaultModel.Folder, _keyChain, cancellationToken);
+                var storageRoot = await VaultStorageService.CreateFileSystemAsync(_vaultModel, unlockContract, cancellationToken);
+
+                VaultUnlocked?.Invoke(this, new(storageRoot, _vaultModel));
             }
             catch (Exception ex)
             {

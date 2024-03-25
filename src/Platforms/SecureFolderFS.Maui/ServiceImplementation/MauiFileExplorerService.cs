@@ -2,22 +2,16 @@ using CommunityToolkit.Maui.Storage;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.UI.Storage.NativeStorage;
 
 namespace SecureFolderFS.Maui.ServiceImplementation
 {
     internal sealed class MauiFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
+        public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public Task OpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
+            // TODO: Try to implement opening in mobile file explorer
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>

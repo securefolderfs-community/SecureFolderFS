@@ -11,6 +11,7 @@ namespace SecureFolderFS.Maui.Extensions
                     .AddSingleton<IOverlayService, SheetService>()
                     //.AddSingleton<IClipboardService, ClipboardService>()
                     //.AddSingleton<IThreadingService, ThreadingService>()
+                    .AddSingleton<IStorageService, MauiStorageService>()
                     .AddSingleton<IFileExplorerService, MauiFileExplorerService>()
                     //.AddTransient<INavigationService, UnoNavigationService>()
                 ;

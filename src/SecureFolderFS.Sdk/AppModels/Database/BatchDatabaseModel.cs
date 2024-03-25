@@ -1,7 +1,7 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         private IModifiableFolder? _databaseFolder;
 
         /// <summary>
-        /// Gets or sets a value that determines whether or not to flush settings that are unchanged in memory.
+        /// Gets or sets a value that determines whether to flush settings that are unchanged in memory.
         /// Setting to true is recommended if you don't expect others to modify the settings files.
         /// </summary>
         public bool FlushOnlyChangedValues { get; set; }

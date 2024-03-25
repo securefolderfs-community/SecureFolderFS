@@ -10,19 +10,18 @@ namespace SecureFolderFS.Sdk.Services
     public interface IStorageService
     {
         /// <summary>
-        /// Gets the file with associated <paramref name="id"/>.
+        /// Gets the application folder.
         /// </summary>
-        /// <param name="id">The unique ID of the file to retrieve.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If file is found and access is granted, returns <see cref="IFile"/>; otherwise throws an exception.</returns>
-        Task<IFile> GetFileAsync(string id, CancellationToken cancellationToken = default);
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IFolder> GetAppFolderAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets the folder with associated <paramref name="id"/>.
+        /// Gets the item with associated bookmark <paramref name="id"/>.
         /// </summary>
-        /// <param name="id">The unique ID of the folder to retrieve.</param>
+        /// <param name="id">The unique bookmark ID of the item to retrieve.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If folder is found and access is granted, returns <see cref="IFolder"/>; otherwise throws an exception.</returns>
-        Task<IFolder> GetFolderAsync(string id, CancellationToken cancellationToken = default);
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the item associated with the bookmark ID is found, returns <see cref="IStorable"/>.</returns>
+        Task<IStorable> GetBookmarkAsync(string id, CancellationToken cancellationToken = default);
     }
 }

@@ -13,9 +13,9 @@ namespace SecureFolderFS.Core.Chunks
         protected readonly IChunkReader chunkReader;
         protected readonly IChunkWriter chunkWriter;
         protected readonly IContentCrypt contentCrypt;
-        protected readonly IFileSystemStatistics? fileSystemStatistics;
+        protected readonly IFileSystemStatistics fileSystemStatistics;
 
-        public InstantChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics? fileSystemStatistics)
+        public InstantChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics fileSystemStatistics)
         {
             this.chunkReader = chunkReader;
             this.chunkWriter = chunkWriter;

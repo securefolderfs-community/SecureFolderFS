@@ -28,10 +28,10 @@ namespace SecureFolderFS.Core.WebDav
             _mountPath = mountPath;
         }
 
-        public void StartFileSystem()
+        public async Task StartFileSystem()
         {
             _httpListener.Start();
-            _fileSystemTask = EnsureFileSystemAsync();
+            await EnsureFileSystemAsync();
         }
 
         private async Task EnsureFileSystemAsync()
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.WebDav
                     Debugger.Break();
 
                 var context = new HttpContext(httpListenerContext);
-                await _requestDispatcher.DispatchRequestAsync(context); // TODO(wd): _fileSystemCts.Token
+                await _requestDispatcher.DispatchRequestAsync(context, _fileSystemCts.Token);
             }
         }
 

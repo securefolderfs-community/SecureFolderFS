@@ -64,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 };
 
                 // Create the vault
-                var superSecret = await VaultManagerService.CreateVaultAsync(
+                var superSecret = await VaultManagerService.CreateAsync(
                     Folder,
                     _credentials,
                     vaultOptions,

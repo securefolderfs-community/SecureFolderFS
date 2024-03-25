@@ -1,10 +1,12 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
+using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.UI;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.Storage.NativeStorage;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Helpers
 {
@@ -18,7 +20,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
 
             // Initialize settings
             var settingsFolderPath = Path.Combine(FileSystem.Current.AppDataDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
-            var settingsFolder = new NativeFolder(Directory.CreateDirectory(settingsFolderPath));
+            var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
         }
 
@@ -59,7 +61,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
                     if (await Permissions.RequestAsync<TPermission>() != PermissionStatus.Granted)
                     {
                         await Toast.Make("Storage permissions are required for SecureFolderFS", ToastDuration.Long).Show();
-                        Application.Current?.Quit();
+                        Constants.Application.Current?.Quit();
                     }
 
                     return;
@@ -67,7 +69,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
                 case PermissionStatus.Disabled:
                 case PermissionStatus.Restricted:
                     await Toast.Make("Storage permissions are required for SecureFolderFS", ToastDuration.Long).Show();
-                    Application.Current?.Quit();
+                    Constants.Application.Current?.Quit();
                     return;
 
                 case PermissionStatus.Granted:
