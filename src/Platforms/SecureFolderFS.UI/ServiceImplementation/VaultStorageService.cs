@@ -34,9 +34,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                         FileSystemStatistics = statisticsModel
                     }, cancellationToken);
 
-                var mt = await mountable.MountAsync(VaultHelpers.GetMountOptions(fileSystemId), cancellationToken);
-                _ = mt;
-                return mt;
+                return await mountable.MountAsync(VaultHelpers.GetMountOptions(fileSystemId), cancellationToken);
             }
             catch (Exception ex)
             {

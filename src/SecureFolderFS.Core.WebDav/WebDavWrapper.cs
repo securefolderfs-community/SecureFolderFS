@@ -28,10 +28,10 @@ namespace SecureFolderFS.Core.WebDav
             _mountPath = mountPath;
         }
 
-        public async Task StartFileSystem()
+        public void StartFileSystem()
         {
             _httpListener.Start();
-            await EnsureFileSystemAsync();
+            _fileSystemTask = EnsureFileSystemAsync();
         }
 
         private async Task EnsureFileSystemAsync()
@@ -49,9 +49,9 @@ namespace SecureFolderFS.Core.WebDav
         public bool CloseFileSystem(FileSystemCloseMethod closeMethod)
         {
             _ = closeMethod; // TODO: Implement close method
-            _ = _fileSystemTask;
             _fileSystemCts.Cancel();
             _httpListener.Close();
+            _fileSystemTask?.Dispose();
 
             if (_mountPath is not null)
                 DriveMappingHelper.DisconnectNetworkDrive(_mountPath, true);
