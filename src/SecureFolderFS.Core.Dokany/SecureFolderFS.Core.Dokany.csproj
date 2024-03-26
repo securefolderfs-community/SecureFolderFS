@@ -15,7 +15,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj" />
-    <ProjectReference Include="..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Storage.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
   </ItemGroup>
 

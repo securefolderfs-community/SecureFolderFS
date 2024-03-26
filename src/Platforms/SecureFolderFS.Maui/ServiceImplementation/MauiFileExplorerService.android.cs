@@ -1,15 +1,18 @@
 using System.Web;
-using Android.App;
-using Android.Content;
-using Android.Provider;
-using AndroidX.Activity;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
+
+#if ANDROID
 using AndroidUri = Android.Net.Uri;
+using Android.App;
+using Android.Content;
+using Android.Provider;
+using AndroidX.Activity;
+#endif
 
 namespace SecureFolderFS.Maui.ServiceImplementation
 {
@@ -40,11 +43,14 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         /// <inheritdoc/>
         public partial async Task<IFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
         {
-            //var folderPicker = FolderPicker.Default;
-            //var result = await folderPicker.PickAsync(cancellationToken);
-            //if (!result.IsSuccessful)
-            //    return null;
+            var folderPicker = FolderPicker.Default;
+            var result = await folderPicker.PickAsync(cancellationToken);
+            if (!result.IsSuccessful)
+                return null;
 
+            AddAndroidBookmark(result.Folder.Path);
+
+            return new SystemFolder(new DirectoryInfo(result.Folder.Path));
 #if ANDROID
 
             Folder? folder = null;
@@ -64,13 +70,16 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             var initialFolderUri = AndroidUri.Parse("content://com.android.externalstorage.documents/document/primary%3A" + HttpUtility.UrlEncode(initialPath));
             var intent = new Intent(Intent.ActionOpenDocumentTree);
             intent.PutExtra(DocumentsContract.ExtraInitialUri, initialFolderUri);
+            intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+            intent.AddFlags(ActivityFlags.GrantWriteUriPermission);
 
             //IntermediateActivity
 
             // RequestCodeFolderPicker 0x000007D0
-            await MainActivity.Instance.StartAsync(intent, 0x000007D0, onResult: OnResult).WaitAsync(cancellationToken);
+            await MainActivity.Instance.StartAsync(intent, 0x000007D0, onResult: OnResult);
+            //MainActivity.Instance.StartActivityForResult(intent, 0x000007D0);
 
-            return new SystemFolder(folder.Path) ?? throw new FolderPickerException("Unable to get folder.");
+            return new SystemFolder(folder?.Path) ?? throw new FolderPickerException("Unable to get folder.");
 
             void OnResult(Intent resultIntent)
             {
@@ -79,70 +88,11 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             }
 #endif
 
-            //AddAndroidBookmark(result.Folder.Path);
-
-            //return new SystemFolder(new DirectoryInfo(result.Folder.Path));
         }
-
-
-        //private async Task<List<AndroidUri>> StartActivity(Activity activity, Intent? pickerIntent, bool singleResult)
-        //{
-        //    var resultList = new List<AndroidUri>(1);
-        //    var tcs = new TaskCompletionSource<Intent?>();
-        //    var currentRequestCode = PlatformSupport.GetNextRequestCode();
-
-        //    if (!(activity is IActivityResultHandler mainActivity))
-        //    {
-        //        throw new InvalidOperationException("Main activity must implement IActivityResultHandler interface.");
-        //    }
-
-        //    mainActivity.ActivityResult += OnActivityResult;
-        //    activity.StartActivityForResult(pickerIntent, currentRequestCode);
-
-        //    var result = await tcs.Task;
-
-        //    if (result != null)
-        //    {
-        //        // ClipData first to avoid issue with multiple files selection.
-        //        if (!singleResult && result.ClipData is { } clipData)
-        //        {
-        //            for (var i = 0; i < clipData.ItemCount; i++)
-        //            {
-        //                var uri = clipData.GetItemAt(i)?.Uri;
-        //                if (uri != null)
-        //                {
-        //                    resultList.Add(uri);
-        //                }
-        //            }
-        //        }
-        //        else if (result.Data is { } uri)
-        //        {
-        //            resultList.Add(uri);
-        //        }
-        //    }
-
-        //    if (result?.HasExtra("error") == true)
-        //    {
-        //        throw new Exception(result.GetStringExtra("error"));
-        //    }
-
-        //    return resultList;
-
-        //    void OnActivityResult(int requestCode, Result resultCode, Intent data)
-        //    {
-        //        if (currentRequestCode != requestCode)
-        //        {
-        //            return;
-        //        }
-
-        //        mainActivity.ActivityResult -= OnActivityResult;
-
-        //        _ = tcs.TrySetResult(resultCode == Result.Ok ? data : null);
-        //    }
-        //}
 
         private static void AddAndroidBookmark(string id)
         {
+#if ANDROID
             var activity = Platform.CurrentActivity;
             if (activity is not null && AndroidUri.Parse(id) is { } uri)
             {
@@ -150,6 +100,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                     ActivityFlags.GrantWriteUriPermission |
                     ActivityFlags.GrantReadUriPermission);
             }
+#endif
         }
     }
 }

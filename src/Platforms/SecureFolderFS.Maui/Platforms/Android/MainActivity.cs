@@ -1,22 +1,25 @@
+using System;
 using System.Collections.Concurrent;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Octokit;
 
 namespace SecureFolderFS.Maui
 {
     [Activity(Theme = "@style/Maui.SplashTheme", Exported = true, MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
     {
+        private const string ID_GUID = "guid";
+        private const string ID_LAUNCHED = "launched_state";
+
+        private volatile bool _currentLaunched;
+        private volatile string? _currentGuid;
+
         public static MainActivity? Instance { get; private set; }
 
         private static readonly ConcurrentDictionary<string, MainActivityIntermediateTask> ActivityPendingTasks = new();
-
-        private bool _launched;
-        private Intent? _actualIntent;
-        private string? _guid;
-        private int _requestCode;
 
         protected override void OnPostCreate(Bundle? savedInstanceState)
         {
@@ -34,41 +37,18 @@ namespace SecureFolderFS.Maui
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            Instance = this;
+            Instance ??= this;
 
             var extras = savedInstanceState ?? Intent?.Extras;
-
-            // read the values
-            _launched = extras?.GetBoolean("launched", false) ?? false;
-
-
-#pragma warning disable 618 // TODO: one day use the API 33+ version: https://developer.android.com/reference/android/os/Bundle#getParcelable(java.lang.String,%20java.lang.Class%3CT%3E)
-#pragma warning disable CA1422 // Validate platform compatibility
-#pragma warning disable CA1416 // Validate platform compatibility
-            _actualIntent = extras?.GetParcelable("actual_intent") as Intent;
-#pragma warning restore CA1422 // Validate platform compatibility
-#pragma warning restore CA1416 // Validate platform compatibility
-#pragma warning restore 618
-
-
-            _guid = extras?.GetString("guid");
-            _requestCode = extras?.GetInt("request_code", -1) ?? -1;
-
-            if (GetIntermediateTask(_guid) is MainActivityIntermediateTask task)
-            {
-                task.OnCreate?.Invoke(_actualIntent!);
-            }
+            _currentLaunched = extras?.GetBoolean(ID_LAUNCHED, false) ?? false;
+            _currentGuid = extras?.GetString(ID_GUID);
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
-            // make sure we mark this activity as launched
-            outState.PutBoolean("launched", true);
-
-            // save the values
-            outState.PutParcelable("actual_intent", _actualIntent);
-            outState.PutString("guid", _guid);
-            outState.PutInt("request_code", _requestCode);
+            _ = outState;
+            outState.PutBoolean(ID_LAUNCHED, true);
+            outState.PutString(ID_GUID, _currentGuid);
 
             base.OnSaveInstanceState(outState);
         }
@@ -77,22 +57,21 @@ namespace SecureFolderFS.Maui
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
+            //if (data is null)
+            //    return;
 
-            // we have a valid GUID, so handle the task
-            if (GetIntermediateTask(_guid, true) is MainActivityIntermediateTask task)
+            //var extras = data.Extras;
+            //var guid = extras.GetString("guid");
+            if (GetIntermediateTask(_currentGuid, true) is { } task)
             {
                 if (resultCode == Result.Canceled)
-                {
                     task.TaskCompletionSource.TrySetCanceled();
-                }
                 else
                 {
                     try
                     {
-                        data ??= new Intent();
-
+                        data ??= new();
                         task.OnResult?.Invoke(data);
-
                         task.TaskCompletionSource.TrySetResult(data);
                     }
                     catch (Exception ex)
@@ -112,18 +91,14 @@ namespace SecureFolderFS.Maui
             var data = new MainActivityIntermediateTask(onCreate, onResult);
             ActivityPendingTasks[data.Id] = data;
 
-            // create the intermediate intent, and add the real intent to it
-            var intermediateIntent = new Intent(this, typeof(MainActivity));
-            intermediateIntent.PutExtra("actual_intent", intent);
-            intermediateIntent.PutExtra("guid", data.Id);
-            intermediateIntent.PutExtra("request_code", requestCode);
+            intent.PutExtra("guid", data.Id);
+            intent.SetClass(this, typeof(MainActivity)); // TODO: this causes crash in OnPostCreate
 
             // start the intermediate activity
-            StartActivityForResult(intermediateIntent, requestCode);
+            StartActivityForResult(intent, requestCode);
 
             return data.TaskCompletionSource.Task;
         }
-
 
         private static MainActivityIntermediateTask? GetIntermediateTask(string? guid, bool remove = false)
         {
