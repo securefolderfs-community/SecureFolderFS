@@ -19,7 +19,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IStorable> GetBookmarkAsync(string id, CancellationToken cancellationToken = default)
+        public Task<IStorable> GetFromBookmarkAsync(string id, CancellationToken cancellationToken = default)
         {
             if (IsFile(id))
                 return Task.FromResult<IStorable>(new SystemFile(id));
@@ -34,6 +34,12 @@ namespace SecureFolderFS.Uno.ServiceImplementation
 
             static bool IsFile(string path)
                 => Path.GetFileName(path) is { } str && str != string.Empty && File.Exists(path);
+        }
+
+        /// <inheritdoc/>
+        public Task RemoveBookmark(string id, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
         }
     }
 }

@@ -48,21 +48,21 @@ namespace SecureFolderFS.Maui.Sheets
 
         private void VaultWizardSheet_Loaded(object? sender, EventArgs e)
         {
-            ViewModel!.CurrentView = new MainWizardViewModel();
+            ViewModel!.CurrentViewModel = new MainWizardViewModel();
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(WizardOverlayViewModel.CurrentView))
+            if (e.PropertyName == nameof(WizardOverlayViewModel.CurrentViewModel))
             {
-                Presenter.Content = ViewModel?.CurrentView switch
+                Presenter.Content = ViewModel?.CurrentViewModel switch
                 {
                     MainWizardViewModel => new MainWizardViewControl(ViewModel),
                     LocationWizardViewModel viewModel => new LocationWizardViewControl(viewModel),
-                    _ => throw new ArgumentOutOfRangeException(nameof(ViewModel.CurrentView)),
+                    _ => throw new ArgumentOutOfRangeException(nameof(ViewModel.CurrentViewModel)),
                 };
 
-                ViewModel?.CurrentView?.OnAppearing();
+                ViewModel?.CurrentViewModel?.OnAppearing();
             }
         }
 
@@ -71,14 +71,14 @@ namespace SecureFolderFS.Maui.Sheets
             Presenter.Content = e.Origin switch
             {
                 // Main -> Location
-                MainWizardViewModel viewModel => new LocationWizardViewControl(new(viewModel.CreationType, ViewModel!.VaultCollectionModel)),
+                MainWizardViewModel viewModel => new LocationWizardViewControl(new(viewModel.CreationType)),
 
                 // Location -> Credentials
                 // Credentials -> Recovery
                 // Recovery -> Summary
 
                 // Location -> Summary
-                LocationWizardViewModel { CreationType: NewVaultCreationType.AddExisting } viewModel => new SummaryWizardViewControl(new(viewModel.SelectedFolder?.Name))
+                LocationWizardViewModel { CreationType: NewVaultCreationType.AddExisting } viewModel => new SummaryWizardViewControl(new(viewModel.SelectedFolder!, ViewModel!.VaultCollectionModel))
             };
         }
     }

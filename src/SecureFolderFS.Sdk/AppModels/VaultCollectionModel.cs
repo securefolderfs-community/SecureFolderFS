@@ -111,7 +111,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
                 try
                 {
-                    var storable = await StorageService.GetBookmarkAsync(item.Id, cancellationToken);
+                    var storable = await StorageService.GetFromBookmarkAsync(item.Id, cancellationToken);
                     if (storable is not IFolder folder)
                         continue;
 

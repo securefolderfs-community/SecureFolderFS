@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui.Views.Wizard
         public MainWizardViewControl(WizardOverlayViewModel viewModel)
         {
             _overlayViewModel = viewModel;
-            ViewModel = viewModel.CurrentView as MainWizardViewModel;
+            ViewModel = viewModel.CurrentViewModel as MainWizardViewModel;
             BindingContext = this;
 
             InitializeComponent();
