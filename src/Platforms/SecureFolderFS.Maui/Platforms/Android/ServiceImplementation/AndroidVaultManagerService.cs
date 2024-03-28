@@ -7,10 +7,10 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
 
-namespace SecureFolderFS.Uno.Skia.Gtk.ServiceImplementation
+namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultManagerService"/>
-    internal sealed class SkiaVaultManagerService : BaseVaultManagerService
+    internal sealed class AndroidVaultManagerService : BaseVaultManagerService
     {
         /// <inheritdoc/>
         public override async IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)

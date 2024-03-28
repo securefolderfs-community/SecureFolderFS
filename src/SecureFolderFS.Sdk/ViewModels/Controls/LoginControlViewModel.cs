@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Get the authentication method enumerator for this vault
-            _enumerator = VaultManagerService.GetLoginAuthenticationAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
+            _enumerator = VaultManagerService.GetAvailableSecurityAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)

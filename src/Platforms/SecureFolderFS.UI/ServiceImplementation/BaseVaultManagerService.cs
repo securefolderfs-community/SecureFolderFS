@@ -54,11 +54,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 .FinalizeAsync(cancellationToken);
         }
 
-        // TODO: Create a separate method that will determine the authentication method and return the correct auth method in the impl
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetLoginAuthenticationAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAuthenticationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetAllSecurityAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
     }
 }

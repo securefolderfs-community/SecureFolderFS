@@ -18,7 +18,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
     public sealed class WindowsVaultManagerService : BaseVaultManagerService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAuthenticationAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
@@ -51,7 +51,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAuthenticationAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async IAsyncEnumerable<AuthenticationViewModel> GetAllSecurityAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
             yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder);

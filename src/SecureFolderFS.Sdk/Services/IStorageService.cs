@@ -27,9 +27,9 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Removes application access from bookmarked file system resource.
         /// </summary>
-        /// <param name="id">The unique bookmark ID of the item to remove.</param>
+        /// <param name="storable">The <see cref="IStorable"/> instance that was bookmarked to remove.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task RemoveBookmark(string id, CancellationToken cancellationToken = default);
+        Task RemoveBookmark(IStorable storable, CancellationToken cancellationToken = default);
     }
 }

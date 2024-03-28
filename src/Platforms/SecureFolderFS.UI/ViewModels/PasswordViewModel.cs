@@ -10,9 +10,12 @@ using SecureFolderFS.Shared.Helpers;
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
-    public abstract partial class PasswordViewModel : AuthenticationViewModel
+    public abstract partial class PasswordViewModel : AuthenticationViewModel, IWrapper<IKey>
     {
         [ObservableProperty] private string? _PrimaryPassword;
+
+        /// <inheritdoc/>
+        public virtual IKey Inner => new DisposablePassword(PrimaryPassword ?? string.Empty);
 
         protected PasswordViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)

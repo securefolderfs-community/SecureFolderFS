@@ -3,13 +3,13 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 
 namespace SecureFolderFS.Maui.Views.Wizard
 {
-    public partial class LocationWizardViewControl : ContentView
+    public partial class CredentialsWizardViewControl : ContentView
     {
-        public LocationWizardViewModel ViewModel { get; }
+        public CredentialsWizardViewModel ViewModel { get; }
 
         public WizardOverlayViewModel OverlayViewModel { get; }
 
-        public LocationWizardViewControl(LocationWizardViewModel viewModel, WizardOverlayViewModel overlayViewModel)
+        public CredentialsWizardViewControl(CredentialsWizardViewModel viewModel, WizardOverlayViewModel overlayViewModel)
         {
             ViewModel = viewModel;
             OverlayViewModel = overlayViewModel;

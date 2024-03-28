@@ -20,16 +20,23 @@ namespace SecureFolderFS.Maui.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task RemoveBookmark(string id, CancellationToken cancellationToken = default)
+        public Task RemoveBookmark(IStorable storable, CancellationToken cancellationToken = default)
         {
 #if ANDROID
-            var activity = Platform.CurrentActivity;
-            if (activity is not null && Android.Net.Uri.Parse(id) is var uri)
+            try
             {
-                activity.ContentResolver?.ReleasePersistableUriPermission(uri,
-                    Android.Content.ActivityFlags.GrantWriteUriPermission |
-                    Android.Content.ActivityFlags.GrantReadUriPermission);
+                var activity = Platform.CurrentActivity;
+                if (activity is null)
+                    return Task.CompletedTask;
+
+                if (Android.Net.Uri.Parse(storable.Id) is var uri) // TODO: Extract actual URI instead of parsing the ID
+                {
+                    activity.ContentResolver?.ReleasePersistableUriPermission(uri,
+                        Android.Content.ActivityFlags.GrantWriteUriPermission |
+                        Android.Content.ActivityFlags.GrantReadUriPermission);
+                }
             }
+            catch (Exception) { }
 #endif
 
             return Task.CompletedTask;

@@ -37,7 +37,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task RemoveBookmark(string id, CancellationToken cancellationToken = default)
+        public Task RemoveBookmark(IStorable storable, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }

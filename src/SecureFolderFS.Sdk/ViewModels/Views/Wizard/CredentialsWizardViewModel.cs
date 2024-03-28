@@ -63,6 +63,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     VaultId = _vaultId
                 };
 
+                // In case the authentication was not reported, try to extract it manually, if possible
+                if (_credentials.Count == 0 && CurrentViewModel is IWrapper<IKey> keyWrapper)
+                    _credentials.Push(keyWrapper.Inner);
+
                 // Create the vault
                 var superSecret = await VaultManagerService.CreateAsync(
                     Folder,
@@ -92,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
             // Get authentication options
-            await foreach (var item in VaultManagerService.GetCreationAuthenticationAsync(Folder, _vaultId))
+            await foreach (var item in VaultManagerService.GetAllSecurityAsync(Folder, _vaultId))
                 AuthenticationOptions.Add(item);
 
             // Set default authentication option

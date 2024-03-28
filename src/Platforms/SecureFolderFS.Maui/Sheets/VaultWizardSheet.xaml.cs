@@ -1,4 +1,4 @@
-using System.ComponentModel;
+using OwlCore.Storage;
 using SecureFolderFS.Maui.Views.Wizard;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
@@ -34,7 +34,6 @@ namespace SecureFolderFS.Maui.Sheets
         public void SetView(IViewable viewable)
         {
             ViewModel = (WizardOverlayViewModel)viewable;
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.NavigationRequested += ViewModel_NavigationRequested;
         }
 
@@ -43,43 +42,59 @@ namespace SecureFolderFS.Maui.Sheets
 
         private void VaultWizardSheet_Dismissed(object? sender, DismissOrigin e)
         {
+            if (ViewModel is not null)
+                ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
+
             _tcs.SetResult(Result.Success);
         }
 
         private void VaultWizardSheet_Loaded(object? sender, EventArgs e)
         {
-            ViewModel!.CurrentViewModel = new MainWizardViewModel();
-        }
+            if (ViewModel is null)
+                return;
 
-        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(WizardOverlayViewModel.CurrentViewModel))
-            {
-                Presenter.Content = ViewModel?.CurrentViewModel switch
-                {
-                    MainWizardViewModel => new MainWizardViewControl(ViewModel),
-                    LocationWizardViewModel viewModel => new LocationWizardViewControl(viewModel),
-                    _ => throw new ArgumentOutOfRangeException(nameof(ViewModel.CurrentViewModel)),
-                };
-
-                ViewModel?.CurrentViewModel?.OnAppearing();
-            }
+            var mainWizardViewModel = new MainWizardViewModel();
+            ViewModel.CurrentViewModel = mainWizardViewModel;
+            ViewModel.CurrentViewModel.OnAppearing();
+            Presenter.Content = new MainWizardViewControl(mainWizardViewModel, ViewModel);
         }
 
         private void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            Presenter.Content = e.Origin switch
+            if (ViewModel is null)
+                return;
+
+            BaseWizardViewModel? nextViewModel = e.Origin switch
             {
                 // Main -> Location
-                MainWizardViewModel viewModel => new LocationWizardViewControl(new(viewModel.CreationType)),
+                MainWizardViewModel viewModel => new LocationWizardViewModel(viewModel.CreationType),
 
                 // Location -> Credentials
+                LocationWizardViewModel { CreationType: NewVaultCreationType.CreateNew, SelectedFolder: IModifiableFolder modifiableFolder } => new CredentialsWizardViewModel(modifiableFolder),
+
                 // Credentials -> Recovery
+                // TODO
+
                 // Recovery -> Summary
+                // TODO
 
                 // Location -> Summary
-                LocationWizardViewModel { CreationType: NewVaultCreationType.AddExisting } viewModel => new SummaryWizardViewControl(new(viewModel.SelectedFolder!, ViewModel!.VaultCollectionModel))
+                LocationWizardViewModel { CreationType: NewVaultCreationType.AddExisting, SelectedFolder: { } folder } => new SummaryWizardViewModel(folder, ViewModel.VaultCollectionModel),
+
+                // TODO: Show error view model
+                _ => null
             };
+
+            Presenter.Content = nextViewModel switch
+            {
+                MainWizardViewModel viewModel => new MainWizardViewControl(viewModel, ViewModel),
+                LocationWizardViewModel viewModel => new LocationWizardViewControl(viewModel, ViewModel),
+                CredentialsWizardViewModel viewModel => new CredentialsWizardViewControl(viewModel, ViewModel),
+                _ => null
+            };
+                
+            ViewModel.CurrentViewModel = nextViewModel;
+            ViewModel.CurrentViewModel?.OnAppearing();
         }
     }
 }

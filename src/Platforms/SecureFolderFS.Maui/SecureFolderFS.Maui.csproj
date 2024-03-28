@@ -81,10 +81,16 @@
 	  <Compile Update="Views\Wizard\MainWizardViewControl.xaml.cs">
 	    <DependentUpon>MainWizardViewControl.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\Wizard\CredentialsWizardViewControl.xaml.cs">
+	    <DependentUpon>CredentialsWizardViewControl.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Update="Sheets\VaultWizardSheet.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\ContentPresentation.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Vault\LoginPage.xaml">
@@ -96,9 +102,16 @@
 	  <MauiXaml Update="Views\Wizard\MainWizardViewControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Wizard\CredentialsWizardViewControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Wizard\SummaryWizardViewControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Platforms\Android\Storage\" />
 	</ItemGroup>
 
 </Project>
