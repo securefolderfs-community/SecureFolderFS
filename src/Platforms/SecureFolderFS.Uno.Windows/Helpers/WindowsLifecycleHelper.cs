@@ -3,11 +3,11 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.Storage.NativeStorage;
 using SecureFolderFS.Uno.Windows.ServiceImplementation;
 using Windows.Storage;
 
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Uno.Windows.Helpers
             var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
 #endif
 
-            var settingsFolder = new NativeFolder(Directory.CreateDirectory(settingsFolderPath));
+            var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
             return Task.CompletedTask;

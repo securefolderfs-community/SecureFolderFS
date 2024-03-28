@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.EventArguments
     public sealed class VaultChangedEventArgs : EventArgs
     {
         /// <summary>
-        /// Gets the value that determines whether or not the vault contents have changed.
+        /// Gets the value that determines whether the vault contents have changed.
         /// If the value is true, the validity of the vault should be reevaluated; otherwise the state of vault contents has not been changed.
         /// </summary>
         public bool ContentsChanged { get; }

@@ -36,7 +36,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
                 return DefaultCulture;
 
             // By getting the identifier from PrimaryLanguageOverride we then check against ManifestLanguages,
-            // to determine whether or not that specified language exists. Instead of checking if ManifestLanguages
+            // to determine whether that specified language exists. Instead of checking if ManifestLanguages
             // contains the specified languageString, we instead need to check whether that languageString starts with
             // an item from ManifestLanguages. This is due to the fact, that ManifestLanguages sometimes loses information
             // about the 'country' identifier whilst languageString may not (in case AppLanguage was chosen)

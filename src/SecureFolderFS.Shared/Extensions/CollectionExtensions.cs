@@ -40,17 +40,6 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static async Task<IReadOnlyList<T>> ToListAsync<T>(this IAsyncEnumerable<T> asyncEnumerable, CancellationToken cancellationToken = default)
-        {
-            var list = new List<T>();
-            await foreach (var item in asyncEnumerable.WithCancellation(cancellationToken))
-            {
-                list.Add(item);
-            }
-
-            return list;
-        }
-
         public static void AddWithMaxCapacity<T>(this IList<T> list, T item, int maxCapacity)
         {
             if (list.Count >= maxCapacity)

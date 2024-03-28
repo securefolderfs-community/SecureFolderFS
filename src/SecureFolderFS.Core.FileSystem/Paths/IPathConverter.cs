@@ -8,6 +8,11 @@
         // TODO: Use ReadOnlySpan<char> for all methods
 
         /// <summary>
+        /// Gets the ciphertext root where files are stored.
+        /// </summary>
+        string CiphertextRootPath { get; }
+
+        /// <summary>
         /// Converts <paramref name="cleartextPath"/> into ciphertext.
         /// </summary>
         /// <param name="cleartextPath">The relative cleartext path to convert from.</param>

@@ -1,9 +1,9 @@
-﻿using SecureFolderFS.Sdk.AppModels;
+using System;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.Settings;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using System;
 
 namespace SecureFolderFS.UI.ServiceImplementation.Settings
 {

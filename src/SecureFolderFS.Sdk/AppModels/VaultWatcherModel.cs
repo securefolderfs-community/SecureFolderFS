@@ -1,11 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LockableStorage;
-using SecureFolderFS.Sdk.Storage.MutableStorage;
 using System;
 using System.Collections.Specialized;
 using System.IO;
@@ -51,15 +49,6 @@ namespace SecureFolderFS.Sdk.AppModels
             {
                 _ = ex;
             }
-        }
-
-        /// <inheritdoc/>
-        public async Task<IDisposable?> LockFolderAsync(CancellationToken cancellationToken = default)
-        {
-            if (VaultFolder is ILockableStorable lockableStorable)
-                return await lockableStorable.ObtainLockAsync(cancellationToken);
-
-            return null;
         }
 
         private void FolderWatcher_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

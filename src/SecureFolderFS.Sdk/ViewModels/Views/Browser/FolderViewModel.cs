@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Enums;
+﻿using OwlCore.Storage;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -32,7 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await foreach (var item in Folder.GetItemsAsync(StorableKind.All, cancellationToken))
+            await foreach (var item in Folder.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 Items.Add(item switch
                 {

@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
@@ -63,8 +63,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     VaultId = _vaultId
                 };
 
+                // In case the authentication was not reported, try to extract it manually, if possible
+                if (_credentials.Count == 0 && CurrentViewModel is IWrapper<IKey> keyWrapper)
+                    _credentials.Push(keyWrapper.Inner);
+
                 // Create the vault
-                var superSecret = await VaultManagerService.CreateVaultAsync(
+                var superSecret = await VaultManagerService.CreateAsync(
                     Folder,
                     _credentials,
                     vaultOptions,
@@ -92,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
             // Get authentication options
-            await foreach (var item in VaultManagerService.GetCreationAuthenticationAsync(Folder, _vaultId))
+            await foreach (var item in VaultManagerService.GetAllSecurityAsync(Folder, _vaultId))
                 AuthenticationOptions.Add(item);
 
             // Set default authentication option

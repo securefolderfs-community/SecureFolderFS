@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    [Inject<IOverlayService>, Inject<IClipboardService>, Inject<IApplicationService>, Inject<IFileExplorerService>]
+    [Inject<IOverlayService>, Inject<IClipboardService>, Inject<IApplicationService>, Inject<IFileExplorerService>, Inject<IStorageService>]
     public sealed partial class AboutSettingsViewModel : BasePageViewModel
     {
         public string AppVersion { get; }
@@ -62,9 +62,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenLogLocationAsync()
+        private async Task OpenLogLocationAsync(CancellationToken cancellationToken)
         {
-            return FileExplorerService.OpenAppFolderAsync();
+            var appFolder = await StorageService.GetAppFolderAsync(cancellationToken);
+            await FileExplorerService.TryOpenInFileExplorerAsync(appFolder, cancellationToken);
         }
     }
 }

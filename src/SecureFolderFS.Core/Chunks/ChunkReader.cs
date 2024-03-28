@@ -17,9 +17,9 @@ namespace SecureFolderFS.Core.Chunks
         private readonly Security _security;
         private readonly BufferHolder _fileHeader;
         private readonly IStreamsManager _streamsManager;
-        private readonly IFileSystemStatistics? _fileSystemStatistics;
+        private readonly IFileSystemStatistics _fileSystemStatistics;
 
-        public ChunkReader(Security security, BufferHolder fileHeader, IStreamsManager streamsManager, IFileSystemStatistics? fileSystemStatistics)
+        public ChunkReader(Security security, BufferHolder fileHeader, IStreamsManager streamsManager, IFileSystemStatistics fileSystemStatistics)
         {
             _security = security;
             _fileHeader = fileHeader;
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Core.Chunks
                 if (read == FileSystem.Constants.FILE_EOF)
                     return 0;
 
-                _fileSystemStatistics?.NotifyBytesRead(read);
+                _fileSystemStatistics.BytesRead?.Report(read);
 
                 // Get reserved part for ciphertext chunk
                 var chunkReservedSize = Math.Min(read, _security.ContentCrypt.ChunkFirstReservedSize);
@@ -74,7 +74,7 @@ namespace SecureFolderFS.Core.Chunks
                     _fileHeader,
                     cleartextChunk);
 
-                _fileSystemStatistics?.NotifyBytesDecrypted(read);
+                _fileSystemStatistics.BytesDecrypted?.Report(read);
 
                 // Check if the chunk is authentic
                 if (!result)

@@ -1,46 +1,41 @@
-﻿namespace SecureFolderFS.Core.FileSystem.Statistics
+﻿using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
+
+namespace SecureFolderFS.Core.FileSystem.Statistics
 {
-    public interface IFileSystemStatistics
+    public interface IFileSystemStatistics : IReadWriteStatistics
     {
-        #region IO
+        #region Cryptography
 
-        void NotifyBytesRead(long amount);
+        /// <summary>
+        /// Gets the <see cref="IProgress{T}"/> that reports the number of bytes encrypted.
+        /// </summary>
+        IProgress<long>? BytesEncrypted { get; set; }
 
-        void NotifyBytesWritten(long amount);
-
-        void NotifyBytesEncrypted(long amount);
-
-        void NotifyBytesDecrypted(long amount);
-
-        #endregion
-
-        #region Chunks
-
-        void NotifyChunkCacheMiss();
-
-        void NotifyChunkCacheHit();
-
-        void NotifyChunkAccess();
+        /// <summary>
+        /// Gets the <see cref="IProgress{T}"/> that reports the number of bytes decrypted.
+        /// </summary>
+        IProgress<long>? BytesDecrypted { get; set; }
 
         #endregion
 
-        #region DirectoryId
+        #region Caching
 
-        void NotifyDirectoryIdCacheMiss();
+        /// <summary>
+        /// Gets the <see cref="IProgress{T}"/> that reports on cache state of chunks.
+        /// </summary>
+        IProgress<CacheAccessType>? ChunkCache { get; set; }
 
-        void NotifyDirectoryIdCacheHit();
+        /// <summary>
+        /// Gets the <see cref="IProgress{T}"/> that reports on cache state of file names.
+        /// </summary>
+        IProgress<CacheAccessType>? FileNameCache { get; set; }
 
-        void NotifyDirectoryIdAccess();
-
-        #endregion
-
-        #region FileName
-
-        void NotifyFileNameCacheMiss();
-
-        void NotifyFileNameCacheHit();
-
-        void NotifyFileNameAccess();
+        /// <summary>
+        /// Gets the <see cref="IProgress{T}"/> that reports on cache state of directory IDs.
+        /// </summary>
+        IProgress<CacheAccessType>? DirectoryIdCache { get; set; }
 
         #endregion
     }

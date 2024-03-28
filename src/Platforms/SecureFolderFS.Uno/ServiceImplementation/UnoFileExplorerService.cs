@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
-using SecureFolderFS.Uno.Storage.WindowsStorage;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 
@@ -16,19 +15,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
-        public Task OpenAppFolderAsync(CancellationToken cancellationToken = default)
-        {
-#if WINDOWS
-            return Windows.System.Launcher.LaunchFolderAsync(ApplicationData.Current.LocalFolder).AsTask(cancellationToken);
-#endif
-            if (OperatingSystem.IsLinux())
-                System.Diagnostics.Process.Start("xdg-open", ApplicationData.Current.LocalFolder.Path);
-
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task OpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
+        public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
 #if WINDOWS
             return Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
@@ -43,7 +30,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         public async Task<bool> SaveFileAsync(string suggestedName, Stream dataStream, IDictionary<string, string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileSavePicker();
-            InitializeObject(filePicker);
+            WinRT_InitializeObject(filePicker);
 
             filePicker.SuggestedFileName = suggestedName;
             if (filter is not null)
@@ -66,10 +53,10 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
-            InitializeObject(filePicker);
+            WinRT_InitializeObject(filePicker);
 
             if (filter is not null)
             {
@@ -83,24 +70,26 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             if (file is null)
                 return null;
 
-            return new UnoStorageFile(file);
+            //return new WindowsStorageFile(file);
+            return new SystemFile(file.Path);
         }
 
         /// <inheritdoc/>
-        public async Task<ILocatableFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
-            InitializeObject(folderPicker);
+            WinRT_InitializeObject(folderPicker);
 
             folderPicker.FileTypeFilter.Add("*");
             var folder = await folderPicker.PickSingleFolderAsync().AsTask(cancellationToken);
             if (folder is null)
                 return null;
 
-            return new UnoStorageFolder(folder);
+            //return new WindowsStorageFolder(folder);
+            return new SystemFolder(folder.Path);
         }
 
-        private static void InitializeObject(object obj)
+        private static void WinRT_InitializeObject(object obj)
         {
             _ = obj;
 #if WINDOWS

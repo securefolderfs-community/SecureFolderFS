@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.DataModels
         /// </summary>
         [JsonPropertyName(Associations.ASSOC_VAULT_ID)]
         [DefaultValue("")]
-        public required string Id { get; init; } = string.Empty;
+        public required string Uid { get; init; } = string.Empty;
 
         /// <summary>
         /// Gets the HMAC-SHA256 hash of the payload.

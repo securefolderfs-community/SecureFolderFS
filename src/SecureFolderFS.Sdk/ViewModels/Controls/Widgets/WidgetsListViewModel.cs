@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -12,13 +14,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IWidgetsCollectionModel _widgetsContextModel;
-        private readonly IVaultLifecycle _vaultLifeTimeModel;
+        private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
 
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
-        public WidgetsListViewModel(IVaultLifecycle vaultLifeTimeModel, IWidgetsCollectionModel widgetsContextModel)
+        public WidgetsListViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetsCollectionModel widgetsContextModel)
         {
-            _vaultLifeTimeModel = vaultLifeTimeModel;
+            _unlockedVaultViewModel = unlockedVaultViewModel;
             _widgetsContextModel = widgetsContextModel;
             Widgets = new();
         }
@@ -34,13 +36,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             foreach (var item in _widgetsContextModel.GetWidgets())
             {
                 var widgetViewModel = GetWidgetForModel(item);
-                _ = widgetViewModel.InitAsync(cancellationToken);
+                if (widgetViewModel is null)
+                    continue;
 
+                _ = widgetViewModel.InitAsync(cancellationToken);
                 Widgets.Add(widgetViewModel);
             }
         }
 
-        private BaseWidgetViewModel GetWidgetForModel(IWidgetModel widgetModel)
+        private BaseWidgetViewModel? GetWidgetForModel(IWidgetModel widgetModel)
         {
             switch (widgetModel.WidgetId)
             {
@@ -48,10 +52,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                     return new VaultHealthWidgetViewModel(widgetModel);
 
                 case Constants.Widgets.GRAPHS_WIDGET_ID:
-                    return new GraphsWidgetViewModel(_vaultLifeTimeModel.VaultStatisticsModel, widgetModel);
+                {
+                    return _unlockedVaultViewModel.StorageRoot is IVFSRootFolder { ReadWriteStatistics: { } statistics }
+                        ? new GraphsWidgetViewModel(statistics, widgetModel)
+                        : null;
+                }
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(widgetModel.WidgetId));
+                    return null;
             }
         }
 
@@ -59,9 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         public void Dispose()
         {
             foreach (var item in Widgets)
-            {
                 item.Dispose();
-            }
         }
     }
 }

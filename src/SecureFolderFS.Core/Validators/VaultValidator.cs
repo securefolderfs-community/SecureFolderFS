@@ -1,6 +1,6 @@
-﻿using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,10 +21,11 @@ namespace SecureFolderFS.Core.Validators
         public async Task ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
         {
             // Get configuration file
-            var configFile = await value.GetFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
-            await using var configStream = await configFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
+            if (await value.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) is not IFile configFile)
+                throw new InvalidOperationException("The provided name does not point to a file.");
 
             // Validate version
+            await using var configStream = await configFile.OpenStreamAsync(FileAccess.Read, cancellationToken);
             var versionValidator = new VersionValidator(_serializer);
             await versionValidator.ValidateAsync(configStream, cancellationToken);
         }

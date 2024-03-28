@@ -1,10 +1,10 @@
+using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FUSE.OpenHandles;
 using SecureFolderFS.Core.FUSE.UnsafeNative;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Tmds.Fuse;
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 {
     internal sealed class OnDeviceFuse : BaseFuseCallbacks
     {
-        public required ILocatableFolder LocatableContentFolder { get; init; }
+        public required IFolder LocatableContentFolder { get; init; }
 
         public required Security Security { get; init; }
 
@@ -618,7 +618,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         {
             fixed (byte *cleartextNamePtr = cleartextName)
             {
-                var path = PathHelpers.PathFromVaultRoot(Encoding.UTF8.GetString(cleartextNamePtr, cleartextName.Length), LocatableContentFolder.Path);
+                var path = PathHelpers.PathFromVaultRoot(Encoding.UTF8.GetString(cleartextNamePtr, cleartextName.Length), LocatableContentFolder.Id);
                 return pathConverter.ToCiphertext(path);
             }
         }

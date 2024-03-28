@@ -52,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await VaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now);
 
             // Create view models
-            var unlockedVaultViewModel = new UnlockedVaultViewModel(VaultViewModel, e.VaultLifecycle);
+            var unlockedVaultViewModel = new UnlockedVaultViewModel(VaultViewModel, e.StorageRoot);
             var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, NavigationService);
 
             // Notify that the vault has been unlocked

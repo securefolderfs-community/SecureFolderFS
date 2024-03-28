@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
+using OwlCore.Storage;
 
 namespace SecureFolderFS.Sdk.ViewModels.Vault
 {
@@ -14,14 +14,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Vault
         public VaultViewModel VaultViewModel { get; }
 
         /// <summary>
-        /// Gets the unlocked vault model that manages the life time of the vault.
+        /// Gets the unlocked root folder of the vault.
         /// </summary>
-        public IVaultLifecycle VaultLifeTimeModel { get; }
+        public IFolder StorageRoot { get; }
 
-        public UnlockedVaultViewModel(VaultViewModel vaultViewModel, IVaultLifecycle vaultLifeTimeModel)
+        public UnlockedVaultViewModel(VaultViewModel vaultViewModel, IFolder storageRoot)
         {
             VaultViewModel = vaultViewModel;
-            VaultLifeTimeModel = vaultLifeTimeModel;
+            StorageRoot = storageRoot;
         }
     }
 }

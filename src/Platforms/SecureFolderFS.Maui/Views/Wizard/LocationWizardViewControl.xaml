@@ -5,11 +5,19 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Wizard"
     x:DataType="local:LocationWizardViewControl">
 
-    <VerticalStackLayout VerticalOptions="Center">
+    <VerticalStackLayout Spacing="8" VerticalOptions="Center">
         <Label
             HorizontalOptions="Center"
             Text="Choose vault folder"
             VerticalOptions="Center" />
+
+        <Label HorizontalOptions="Center" Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
+        <Label HorizontalOptions="Center" Text="{Binding ViewModel.Message, Mode=OneWay}" />
+
         <Button Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}" Text="Browse" />
+        <Button
+            Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+            IsEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
+            Text="Continue" />
     </VerticalStackLayout>
 </ContentView>

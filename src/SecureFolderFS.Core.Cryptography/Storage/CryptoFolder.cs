@@ -1,10 +1,8 @@
-﻿using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Enums;
-using SecureFolderFS.Sdk.Storage.ExtendableStorage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Sdk.Storage.NestedStorage;
-using SecureFolderFS.Shared.ComponentModel;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.Directories;
+using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FileSystem.Streams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,43 +12,97 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Cryptography.Storage
 {
-    public class CryptoFolder : CryptoStorable<IFolder>, IFolderExtended, IModifiableFolder, INestedFolder, IWrappable<IFolder>
+    // TODO(ns): Add move and copy support
+    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IModifiableFolder, IGetItem, IGetItemRecursive, IGetFirstByName
     {
-        public CryptoFolder(IFolder inner)
-            : base(inner)
+        public CryptoFolder(IFolder inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache)
+            : base(inner, streamsAccess, pathConverter, directoryIdCache)
         {
         }
 
-        #region IModifiableFolder
+        /// <inheritdoc/>
+        public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (var item in Inner.GetItemsAsync(type, cancellationToken))
+            {
+                if (PathHelpers.IsCoreFile(item.Name))
+                    continue;
+
+                yield return item switch
+                {
+                    IFile file => (IStorableChild)Wrap(file),
+                    IFolder folder => (IStorableChild)Wrap(folder),
+                    _ => throw new InvalidOperationException("The enumerated item was neither a file nor a folder.")
+                };
+            }
+        }
 
         /// <inheritdoc/>
-        public virtual Task DeleteAsync(INestedStorable item, bool permanently = default, CancellationToken cancellationToken = default)
+        public async Task<IStorableChild> GetItemRecursiveAsync(string id, CancellationToken cancellationToken = default)
+        {
+            if (!id.Contains(Id))
+                throw new FileNotFoundException("The provided Id does not belong to an item in this folder.");
+
+            var ciphertextId = EncryptPath(id);
+            return await Inner.GetItemRecursiveAsync(ciphertextId, cancellationToken) switch
+            {
+                IChildFile file => (IStorableChild)Wrap(file),
+                IChildFolder folder => (IStorableChild)Wrap(folder),
+                _ => throw new InvalidCastException("Could not match the item to neither a file nor a folder.")
+            };
+        }
+
+        /// <inheritdoc/>
+        public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            var encryptedName = EncryptName(name);
+            return await Inner.GetFirstByNameAsync(encryptedName, cancellationToken) switch
+            {
+                IChildFile file => (IStorableChild)Wrap(file),
+                IChildFolder folder => (IStorableChild)Wrap(folder),
+                _ => throw new InvalidCastException("Could not match the item to neither a file nor a folder.")
+            };
+        }
+
+        /// <inheritdoc/>
+        public async Task<IStorableChild> GetItemAsync(string id, CancellationToken cancellationToken = default)
+        {
+            if (!id.Contains(Id))
+                throw new FileNotFoundException("The provided Id does not belong to an item in this folder.");
+
+            var ciphertextId = EncryptPath(id);
+            return await Inner.GetItemAsync(ciphertextId, cancellationToken) switch
+            {
+                IChildFile file => (IStorableChild)Wrap(file),
+                IChildFolder folder => (IStorableChild)Wrap(folder),
+                _ => throw new InvalidCastException("Could not match the item to neither a file nor a folder.")
+            };
+        }
+
+        /// <inheritdoc/>
+        public Task<IFolderWatcher> GetFolderWatcherAsync(CancellationToken cancellationToken = default)
+        {
+            // TODO(ns): Implement FolderWatcher for CryptoFolder
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            return modifiableFolder.DeleteAsync(item, permanently, cancellationToken);
+            // TODO: Invalidate cache on success
+            return modifiableFolder.DeleteAsync(item, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public virtual async Task<INestedFile> CreateFileAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
+        public async Task<IChildFolder> CreateFolderAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var encryptedName = EncryptName(desiredName);
-            var file = await modifiableFolder.CreateFileAsync(encryptedName, overwrite, cancellationToken);
-
-            return (INestedFile)Wrap(file);
-        }
-
-        /// <inheritdoc/>
-        public virtual async Task<INestedFolder> CreateFolderAsync(string desiredName, bool overwrite = default, CancellationToken cancellationToken = default)
-        {
-            if (Inner is not IModifiableFolder modifiableFolder)
-                throw new NotSupportedException("Modifying folder contents is not supported.");
-
-            var encryptedName = EncryptName(desiredName);
+            var encryptedName = EncryptName(name);
             var folder = await modifiableFolder.CreateFolderAsync(encryptedName, overwrite, cancellationToken);
             if (folder is not IModifiableFolder createdModifiableFolder)
                 throw new ArgumentException("The created folder is not modifiable.");
@@ -66,50 +118,19 @@ namespace SecureFolderFS.Core.Cryptography.Storage
             // Set DirectoryID to known IDs
             directoryIdCache.SetDirectoryId(dirIdFile.Id, Guid.NewGuid().ToByteArray());
 
-            return (INestedFolder)Wrap(folder);
-        }
-
-        #endregion
-
-        /// <inheritdoc/>
-        public virtual async IAsyncEnumerable<INestedStorable> GetItemsAsync(StorableKind kind = StorableKind.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            await foreach (var item in Inner.GetItemsAsync(kind, cancellationToken))
-            {
-                if (PathHelpers.IsCoreFile(item.Name))
-                    continue;
-
-                yield return item switch
-                {
-                    IFile file => (INestedStorable)Wrap(file),
-                    IFolder folder => (INestedStorable)Wrap(folder),
-                    _ => throw new InvalidOperationException("The enumerated item was neither a file nor a folder.")
-                };
-            }
+            return (IChildFolder)Wrap(folder);
         }
 
         /// <inheritdoc/>
-        public virtual async Task<INestedFile> GetFileAsync(string fileName, CancellationToken cancellationToken = default)
+        public async Task<IChildFile> CreateFileAsync(string name, bool overwrite = false, CancellationToken cancellationToken = default)
         {
-            if (Inner is not IFolderExtended folderExtended)
-                throw new NotSupportedException("Retrieving individual files is not supported.");
+            if (Inner is not IModifiableFolder modifiableFolder)
+                throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var encryptedName = EncryptName(fileName);
-            var file = await folderExtended.GetFileAsync(encryptedName, cancellationToken);
+            var encryptedName = EncryptName(name);
+            var file = await modifiableFolder.CreateFileAsync(encryptedName, overwrite, cancellationToken);
 
-            return (INestedFile)Wrap(file);
-        }
-
-        /// <inheritdoc/>
-        public virtual async Task<INestedFolder> GetFolderAsync(string folderName, CancellationToken cancellationToken = default)
-        {
-            if (Inner is not IFolderExtended folderExtended)
-                throw new NotSupportedException("Retrieving individual folders is not supported.");
-
-            var encryptedName = EncryptName(folderName);
-            var folder = await folderExtended.GetFolderAsync(encryptedName, cancellationToken);
-
-            return (INestedFolder)Wrap(folder);
+            return (IChildFile)Wrap(file);
         }
     }
 }

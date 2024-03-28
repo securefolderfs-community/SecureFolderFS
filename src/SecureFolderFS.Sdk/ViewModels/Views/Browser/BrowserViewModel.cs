@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.DirectStorage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Sdk.Storage.NestedStorage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System.Collections;
@@ -43,10 +40,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         {
             // TODO: Add CopyOverlayViewModel
             var result = await OverlayService.ShowAsync(null);
-            if (result is IResult<IFolder> { Successful: true, Value: IDirectCopy directCopy })
+            if (result is not IResult<IFolder> { Successful: true, Value: ICreateCopyOf folderCreateCopyOf /*IDirectCopy directCopy*/ })
+                return;
+
+            foreach (IStorableChild item in items)
             {
-                foreach (INestedStorable item in items)
-                    await directCopy.CreateCopyOfAsync(item, default, cancellationToken);
+                // TODO(ns)
+                //folderCreateCopyOf.CreateCopyOfAsync(item, default, cancellationToken);
             }
         }
 
@@ -58,13 +58,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
             // TODO: Add MoveOverlayViewModel
             var result = await OverlayService.ShowAsync(null);
-            if (result is not IResult<IFolder> { Successful: true, Value: IDirectMove directMove })
+            if (result is not IResult<IFolder> { Successful: true, Value: IMoveFrom folderMoveFrom })
                 return;
 
-            foreach (INestedStorable item in items)
+            foreach (IStorableChild item in items)
             {
-                await directMove.MoveFromAsync(item, modifiableFolder, default, cancellationToken);
-                folderViewModel.Items.RemoveMatch(x => x.Inner.Id == item.Id);
+                // TODO(ns)
+                //await folderMoveFrom.MoveFromAsync(item, modifiableFolder, default, cancellationToken);
+                //folderViewModel.Items.RemoveMatch(x => x.Inner.Id == item.Id);
             }
         }
 
@@ -79,9 +80,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             if (!result.Successful)
                 return;
 
-            foreach (INestedStorable item in items)
+            foreach (IStorableChild item in items)
             {
-                await modifiableFolder.DeleteAsync(item, default, cancellationToken);
+                await modifiableFolder.DeleteAsync(item, cancellationToken);
                 folderViewModel.Items.RemoveMatch(x => x.Inner.Id == item.Id);
             }
         }

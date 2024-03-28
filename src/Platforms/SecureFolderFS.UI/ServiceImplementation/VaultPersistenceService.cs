@@ -1,9 +1,9 @@
-﻿using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.VaultPersistence;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.UI.ServiceImplementation.VaultPersistence;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.VaultPersistence;
+using SecureFolderFS.UI.ServiceImplementation.VaultPersistence;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {

@@ -10,6 +10,7 @@ namespace SecureFolderFS.Uno.Extensions
         {
             return serviceCollection
                 .AddSingleton<IOverlayService, UnoDialogService>()
+                .AddSingleton<IStorageService, UnoStorageService>()
                 .AddSingleton<IClipboardService, ClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<IFileExplorerService, UnoFileExplorerService>()
