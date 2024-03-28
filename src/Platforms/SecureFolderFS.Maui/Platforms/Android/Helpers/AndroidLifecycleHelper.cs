@@ -35,6 +35,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             return base.ConfigureServices(settingsFolder)
                     //.AddSingleton<IPrinterService, WindowsPrinterService>()
                     //.AddSingleton<IApplicationService, SkiaApplicationService>()
+                    .AddSingleton<IStorageService, AndroidStorageService>()
                     .AddSingleton<IFileExplorerService, AndroidFileExplorerService>()
                     .AddSingleton<IVaultManagerService, AndroidVaultManagerService>()
                     .AddSingleton<ITelemetryService, DebugTelemetryService>()

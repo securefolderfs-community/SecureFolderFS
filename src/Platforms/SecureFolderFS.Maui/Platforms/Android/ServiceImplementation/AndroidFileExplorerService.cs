@@ -2,12 +2,11 @@ using System.Web;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Storage;
 using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
 using Android.App;
 using Android.Content;
 using Android.Provider;
-
+using SecureFolderFS.Maui.Platforms.Android.Storage;
 using AndroidUri = Android.Net.Uri;
 using AOSEnvironment = Android.OS.Environment;
 
@@ -35,12 +34,19 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         /// <inheritdoc/>
         public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
         {
-            var filePicker = FilePicker.Default;
-            var result = await filePicker.PickAsync();
-            if (result is null)
+            var intent = new Intent(Intent.ActionOpenDocument)
+                .AddCategory(Intent.CategoryOpenable)
+                .PutExtra(Intent.ExtraAllowMultiple, false)
+                .SetType("*/*");
+
+            var pickerIntent = Intent.CreateChooser(intent, "Select file");
+
+            // FilePicker 0x2AF9
+            var result = await StartActivityAsync(pickerIntent, 0x2AF9);
+            if (result is null || MainActivity.Instance is null)
                 return null;
 
-            return new SystemFile(new FileInfo(result.FullPath));
+            return new AndroidFile(result, MainActivity.Instance);
         }
 
         /// <inheritdoc/>
@@ -59,12 +65,11 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 
             // RequestCodeFolderPicker 0x000007D0
             var result = await StartActivityAsync(intent, 0x000007D0);
-            if (result is null || result.ToPhysicalPath() is not { } path)
+            if (result is null || MainActivity.Instance is null)
                 return null;
 
             AddAndroidBookmark(result);
-
-            return new SystemFolder(path);
+            return new AndroidFolder(result, MainActivity.Instance);
         }
 
         private async Task<AndroidUri?> StartActivityAsync(Intent? pickerIntent, int requestCode)

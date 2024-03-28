@@ -1,10 +1,10 @@
+using OwlCore.Storage;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
 
 namespace SecureFolderFS.Core.VaultAccess
 {
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Core.VaultAccess
             await using var dataStream = await file.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
 
             // Clear contents if opened from existing file
-            dataStream.SetLength(0L);
+            dataStream.TrySetLength(0L);
 
             await using var serializedData = await _serializer.SerializeAsync(data, cancellationToken);
             await serializedData.CopyToAsync(dataStream, cancellationToken);

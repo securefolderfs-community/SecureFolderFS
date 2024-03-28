@@ -110,8 +110,4 @@
 	  </MauiXaml>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Platforms\Android\Storage\" />
-	</ItemGroup>
-
 </Project>
