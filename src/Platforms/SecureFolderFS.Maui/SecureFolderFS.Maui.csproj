@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
@@ -69,6 +68,8 @@
 		<PackageReference Include="Microsoft.Maui.Controls" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+		<PackageReference Include="Microsoft.Maui.Core" />
+		<PackageReference Include="Microsoft.Maui.Essentials" />
 		<PackageReference Include="The49.Maui.BottomSheet" />
 	</ItemGroup>
 
@@ -77,13 +78,28 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="UserControls\LoginControl.xaml.cs">
+	    <DependentUpon>LoginControl.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\Wizard\MainWizardViewControl.xaml.cs">
 	    <DependentUpon>MainWizardViewControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Wizard\CredentialsWizardViewControl.xaml.cs">
+	    <DependentUpon>CredentialsWizardViewControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Wizard\RecoveryWizardViewControl.xaml.cs">
+	    <DependentUpon>RecoveryWizardViewControl.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Update="Sheets\VaultWizardSheet.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="UserControls\LoginControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="UserControls\ContentPresentation.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Vault\LoginPage.xaml">
@@ -93,6 +109,12 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Wizard\MainWizardViewControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Wizard\CredentialsWizardViewControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Wizard\RecoveryWizardViewControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Wizard\SummaryWizardViewControl.xaml">

@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.FileNames;
+using SecureFolderFS.Core.FileSystem.Statistics;
+using SecureFolderFS.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace SecureFolderFS.Core.FileNames
                 if (!_cleartextNames.TryGetValue(new(directoryId.ToArray(), stringCiphertext), out cleartextName!))
                 {
                     // Not found in cache
-                    fileSystemStatistics?.NotifyFileNameCacheMiss();
+                    fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
 
                     // Get new cleartext name
                     var newCleartextName = base.GetCleartextName(ciphertextName, directoryId);
@@ -45,8 +46,8 @@ namespace SecureFolderFS.Core.FileNames
                 }
             }
 
-            fileSystemStatistics?.NotifyFileNameAccess();
-            fileSystemStatistics?.NotifyFileNameCacheHit();
+            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
+            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheHit);
 
             // Return existing cleartext name
             return cleartextName;
@@ -63,7 +64,7 @@ namespace SecureFolderFS.Core.FileNames
                 if (!_ciphertextNames.TryGetValue(new(directoryId.ToArray(), stringCleartext), out ciphertextName!))
                 {
                     // Not found in cache
-                    fileSystemStatistics?.NotifyFileNameCacheMiss();
+                    fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
 
                     // Get new ciphertext name
                     var newCiphertextName = base.GetCiphertextName(cleartextName, directoryId);
@@ -77,8 +78,8 @@ namespace SecureFolderFS.Core.FileNames
                 }
             }
 
-            fileSystemStatistics?.NotifyFileNameAccess();
-            fileSystemStatistics?.NotifyFileNameCacheHit();
+            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
+            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheHit);
 
             // Return existing ciphertext name
             return ciphertextName;

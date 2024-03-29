@@ -22,8 +22,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 {
     public sealed partial class MainAppHostControl : UserControl, IRecipient<RemoveVaultMessage>, IRecipient<AddVaultMessage>
     {
-        private bool _isCompactMode;
         private bool _isInitialized;
+        private bool _isCompactMode; // WINDOWS only
 
         private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
 

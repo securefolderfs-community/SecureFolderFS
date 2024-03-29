@@ -12,6 +12,8 @@ namespace SecureFolderFS.Shared.Helpers
     {
         private readonly Stack<IKey> _keys;
 
+        public int Count => _keys.Count;
+
         public KeyChain()
         {
             _keys = new();

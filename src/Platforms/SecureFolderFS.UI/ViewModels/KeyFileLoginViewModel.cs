@@ -2,10 +2,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Storage;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.UI.ViewModels
@@ -25,7 +25,7 @@ namespace SecureFolderFS.UI.ViewModels
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var key = await this.TrySignAsync(config.Id, null, cancellationToken);
+            var key = await this.TrySignAsync(config.Uid, null, cancellationToken);
             if (!key.Successful || key.Value is null)
                 return;
 

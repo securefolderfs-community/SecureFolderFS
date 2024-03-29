@@ -1,11 +1,11 @@
-﻿using SecureFolderFS.Sdk.AppModels;
+using System.Collections.Generic;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.Shared.Helpers;
-using System.Collections.Generic;
 
 namespace SecureFolderFS.UI.ServiceImplementation.VaultPersistence
 {

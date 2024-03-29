@@ -22,14 +22,14 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         protected readonly IPathConverter pathConverter;
         protected readonly BaseHandlesManager handlesManager;
         protected readonly DokanyVolumeModel volumeModel;
-        protected readonly IFileSystemHealthStatistics? fileSystemHealthStatistics;
+        protected readonly IHealthStatistics? healthStatistics;
 
-        protected BaseDokanyCallbacks(IPathConverter pathConverter, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel, IFileSystemHealthStatistics? fileSystemHealthStatistics)
+        protected BaseDokanyCallbacks(IPathConverter pathConverter, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel, IHealthStatistics? healthStatistics)
         {
             this.pathConverter = pathConverter;
             this.handlesManager = handlesManager;
             this.volumeModel = volumeModel;
-            this.fileSystemHealthStatistics = fileSystemHealthStatistics;
+            this.healthStatistics = healthStatistics;
         }
 
         #region Unused

@@ -1,9 +1,9 @@
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.Models;
-using SecureFolderFS.Sdk.Storage;
 
 namespace SecureFolderFS.Core.Routines.StorageRoutines
 {
@@ -12,9 +12,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
     {
         IStorageRoutine SetUnlockContract(IDisposable unlockContract);
 
-        IStorageRoutine SetStorageService(IStorageService storageService);
-
-        Task<IStorageService> CreateStorageAsync(CancellationToken cancellationToken);
+        Task<IFolder> CreateStorageRootAsync(FileSystemOptions options, CancellationToken cancellationToken);
 
         Task<IMountableFileSystem> CreateMountableAsync(FileSystemOptions options, CancellationToken cancellationToken);
     }

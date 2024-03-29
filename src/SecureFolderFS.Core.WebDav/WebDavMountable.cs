@@ -1,7 +1,11 @@
 ﻿using NWebDav.Server;
 using NWebDav.Server.Dispatching;
+using NWebDav.Server.Storage;
 using NWebDav.Server.Stores;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.Cryptography.Storage;
 using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
@@ -10,16 +14,13 @@ using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.AppModels;
-using SecureFolderFS.Core.WebDav.EncryptingStorage;
 using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Core.WebDav.Enums;
 using SecureFolderFS.Core.WebDav.Helpers;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Diagnostics;
 using System.Net;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,13 +29,13 @@ namespace SecureFolderFS.Core.WebDav
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class WebDavMountable : IMountableFileSystem, IAvailabilityChecker
     {      
+        private readonly FileSystemOptions _options;
         private readonly IRequestDispatcher _requestDispatcher;
-        private readonly string _volumeName;
 
-        private WebDavMountable(IRequestDispatcher requestDispatcher, string volumeName)
+        private WebDavMountable(FileSystemOptions options, IRequestDispatcher requestDispatcher)
         {
+            _options = options;
             _requestDispatcher = requestDispatcher;
-            _volumeName = volumeName;
         }
 
         /// <inheritdoc/>
@@ -44,7 +45,7 @@ namespace SecureFolderFS.Core.WebDav
         }
 
         /// <inheritdoc/>
-        public Task<IVirtualFileSystem> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public async Task<IVFSRootFolder> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
             if (mountOptions is not WebDavMountOptions webDavMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
@@ -63,7 +64,7 @@ namespace SecureFolderFS.Core.WebDav
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            var remotePath = $"\\\\localhost@{port}\\{_volumeName}\\";
+            var remotePath = $"\\\\localhost@{port}\\{_options.VolumeName}\\";
 
             string? mountPath = null;
             if (OperatingSystem.IsWindows())
@@ -77,25 +78,25 @@ namespace SecureFolderFS.Core.WebDav
                 }
             }
 
-            IPrincipal? serverPrincipal = null;
-            var webDavWrapper = new WebDavWrapper(httpListener, serverPrincipal, _requestDispatcher, mountPath);
+            var webDavWrapper = new WebDavWrapper(httpListener, _requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();
 
             // TODO Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
-
-            return Task.FromResult<IVirtualFileSystem>(new WebDavFileSystem(new SimpleWebDavFolder(remotePath), webDavWrapper));
+            
+            return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options.FileSystemStatistics);
         }
 
-        public static IMountableFileSystem CreateMountable(string volumeName, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess, IStorageService storageService)
+        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
         {
-            if (contentFolder is not ILocatableFolder locatableContentFolder)
-                throw new ArgumentException($"{nameof(contentFolder)} does not implement {nameof(ILocatableFolder)}.");
+            var cryptoFolder = new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
+            var davFolder = new DavFolder(cryptoFolder);
 
-            var davStorageService = new EncryptingDavStorageService(locatableContentFolder, storageService, streamsAccess, pathConverter, directoryIdCache, volumeName);
-            var dispatcher = new WebDavDispatcher(new RootDiskStore(volumeName, new EncryptingDiskStore(locatableContentFolder.Path, streamsAccess, pathConverter, directoryIdCache, security)), davStorageService, new RequestHandlerProvider(), null);
+            // TODO: Remove the following line once the new DavStorage is fully implemented.
+            var encryptingDiskStore = new EncryptingDiskStore(contentFolder.Id, streamsAccess, pathConverter, directoryIdCache, security);
 
-            return new WebDavMountable(dispatcher, volumeName);
+            var dispatcher = new WebDavDispatcher(new RootDiskStore(options.VolumeName, encryptingDiskStore), davFolder, new RequestHandlerProvider(), null);
+            return new WebDavMountable(options, dispatcher);
         }
     }
 }

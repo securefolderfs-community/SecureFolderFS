@@ -1,7 +1,8 @@
 ﻿using SecureFolderFS.Core.Buffers;
 using SecureFolderFS.Core.Cryptography.ContentCrypt;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Chunks;
+using SecureFolderFS.Core.FileSystem.Statistics;
+using SecureFolderFS.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace SecureFolderFS.Core.Chunks
     {
         private readonly Dictionary<long, ChunkBuffer> _chunkCache;
 
-        public CachingChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics? fileSystemStatistics)
+        public CachingChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics fileSystemStatistics)
             : base(chunkReader, chunkWriter, contentCrypt, fileSystemStatistics)
         {
             _chunkCache = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNK);
@@ -113,8 +114,8 @@ namespace SecureFolderFS.Core.Chunks
                 if (!_chunkCache.TryGetValue(chunkNumber, out var cleartextChunk))
                 {
                     // Cache miss, update stats
-                    fileSystemStatistics?.NotifyChunkAccess();
-                    fileSystemStatistics?.NotifyChunkCacheMiss();
+                    fileSystemStatistics.ChunkCache?.Report(CacheAccessType.CacheAccess);
+                    fileSystemStatistics.ChunkCache?.Report(CacheAccessType.CacheMiss);
 
                     // Read chunk
                     var buffer = new byte[contentCrypt.ChunkCleartextSize];
@@ -129,8 +130,8 @@ namespace SecureFolderFS.Core.Chunks
                 else
                 {
                     // Cache hit, update stats
-                    fileSystemStatistics?.NotifyChunkAccess();
-                    fileSystemStatistics?.NotifyChunkCacheHit();
+                    fileSystemStatistics.ChunkCache?.Report(CacheAccessType.CacheAccess);
+                    fileSystemStatistics.ChunkCache?.Report(CacheAccessType.CacheHit);
                 }
 
                 return cleartextChunk;

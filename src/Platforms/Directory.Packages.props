@@ -7,12 +7,15 @@
     <PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Maui.Core" Version="$(MauiVersion)" />
+    <PackageVersion Include="Microsoft.Maui.Essentials" Version="$(MauiVersion)" />
     <PackageVersion Include="Octokit" Version="6.0.0" />
     <PackageVersion Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
     <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc2" />
     <PackageVersion Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
     <PackageVersion Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
-    <PackageVersion Include="The49.Maui.BottomSheet" Version="1.0.4" />
+    <PackageVersion Include="OwlCore.Storage.Uwp" Version="0.2.0" />
+    <PackageVersion Include="The49.Maui.BottomSheet" Version="8.0.3" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Animations" Version="7.1.200" />
     <PackageVersion Include="LiveCharts" Version="0.9.7" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />

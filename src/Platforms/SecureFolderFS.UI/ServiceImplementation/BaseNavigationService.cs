@@ -10,25 +10,16 @@ using SecureFolderFS.UI.Utils;
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    public interface INavigationControlContract
+    public abstract class BaseNavigationService : INavigationService, INavigationControlContract
     {
-        /// <summary>
-        /// Sets the control used for navigation.
-        /// </summary>
-        public INavigationControl? NavigationControl { set; }
-    }
-
-    /// <inheritdoc cref="INavigationService"/>
-    public abstract class BaseNavigationService : INavigationControlContract, INavigationService
-    {
-        /// <inheritdoc/>
-        public INavigationControl? NavigationControl { get; set; }
-
         /// <inheritdoc/>
         public IViewDesignation? CurrentView { get; protected set; }
 
         /// <inheritdoc/>
         public ICollection<IViewDesignation> Views { get; protected set; }
+
+        /// <inheritdoc/>
+        public INavigationControl? NavigationControl { get; set; }
 
         /// <inheritdoc/>
         public virtual bool IsInitialized => NavigationControl is not null;

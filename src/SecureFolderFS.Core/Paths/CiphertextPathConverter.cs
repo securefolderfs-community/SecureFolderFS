@@ -11,15 +11,17 @@ namespace SecureFolderFS.Core.Paths
     /// <inheritdoc cref="IPathConverter"/>
     internal sealed class CiphertextPathConverter : IPathConverter
     {
-        private readonly string _vaultRootPath;
         private readonly IFileNameAccess _fileNameAccess;
         private readonly DirectoryIdCache _directoryIdCache;
 
+        /// <inheritdoc/>
+        public string CiphertextRootPath { get; }
+
         public CiphertextPathConverter(string vaultRootPath, IFileNameAccess fileNameAccess, DirectoryIdCache directoryIdCache)
         {
-            _vaultRootPath = vaultRootPath;
             _fileNameAccess = fileNameAccess;
             _directoryIdCache = directoryIdCache;
+            CiphertextRootPath = vaultRootPath;
         }
 
         /// <inheritdoc/>
@@ -39,7 +41,7 @@ namespace SecureFolderFS.Core.Paths
         public string? GetCleartextFileName(string ciphertextFilePath)
         {
             // Construct DirectoryID path for the parent directory of ciphertextFilePath
-            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, _vaultRootPath);
+            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, CiphertextRootPath);
             if (directoryIdPath is null)
                 return null;
 
@@ -70,7 +72,7 @@ namespace SecureFolderFS.Core.Paths
         public string? GetCiphertextFileName(string cleartextFilePath)
         {
             // Construct DirectoryID path for the parent directory of cleartextFilePath
-            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, _vaultRootPath);
+            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, CiphertextRootPath);
             if (directoryIdPath is null)
                 return null;
 
@@ -99,8 +101,8 @@ namespace SecureFolderFS.Core.Paths
         // TODO: Refactor
         private string? ConstructPath(string rawPath, bool convertToCiphertext)
         {
-            var onlyPathAfterContent = rawPath.Substring(_vaultRootPath.Length, rawPath.Length - _vaultRootPath.Length);
-            var correctPath = PathHelpers.EnsureTrailingPathSeparator(_vaultRootPath);
+            var onlyPathAfterContent = rawPath.Substring(CiphertextRootPath.Length, rawPath.Length - CiphertextRootPath.Length);
+            var correctPath = PathHelpers.EnsureTrailingPathSeparator(CiphertextRootPath);
             var path = correctPath;
 
             foreach (var item in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))

@@ -6,14 +6,14 @@ namespace SecureFolderFS.Maui.Views.Wizard
 {
     public partial class MainWizardViewControl : ContentView
     {
-        private readonly WizardOverlayViewModel _overlayViewModel;
+        public MainWizardViewModel ViewModel { get; }
 
-        public MainWizardViewModel? ViewModel { get; set; }
+        public WizardOverlayViewModel OverlayViewModel { get; }
 
-        public MainWizardViewControl(WizardOverlayViewModel viewModel)
+        public MainWizardViewControl(MainWizardViewModel viewModel, WizardOverlayViewModel overlayViewModel)
         {
-            _overlayViewModel = viewModel;
-            ViewModel = viewModel.CurrentView as MainWizardViewModel;
+            ViewModel = viewModel;
+            OverlayViewModel = overlayViewModel;
             BindingContext = this;
 
             InitializeComponent();
@@ -21,18 +21,14 @@ namespace SecureFolderFS.Maui.Views.Wizard
 
         private async void Existing_Clicked(object? sender, EventArgs e)
         {
-            if (ViewModel is not null)
-                ViewModel.CreationType = NewVaultCreationType.AddExisting;
-
-            await _overlayViewModel.ContinuationCommand.ExecuteAsync(null);
+            ViewModel.CreationType = NewVaultCreationType.AddExisting;
+            await OverlayViewModel.ContinuationCommand.ExecuteAsync(null);
         }
 
         private async void New_Clicked(object? sender, EventArgs e)
         {
-            if (ViewModel is not null)
-                ViewModel.CreationType = NewVaultCreationType.CreateNew;
-
-            await _overlayViewModel.ContinuationCommand.ExecuteAsync(null);
+            ViewModel.CreationType = NewVaultCreationType.CreateNew;
+            await OverlayViewModel.ContinuationCommand.ExecuteAsync(null);
         }
     }
 }

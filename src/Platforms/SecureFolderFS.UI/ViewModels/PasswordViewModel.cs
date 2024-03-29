@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Storage;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
@@ -10,9 +10,12 @@ using SecureFolderFS.Shared.Helpers;
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
-    public abstract partial class PasswordViewModel : AuthenticationViewModel
+    public abstract partial class PasswordViewModel : AuthenticationViewModel, IWrapper<IKey>
     {
         [ObservableProperty] private string? _PrimaryPassword;
+
+        /// <inheritdoc/>
+        public virtual IKey Inner => new DisposablePassword(PrimaryPassword ?? string.Empty);
 
         protected PasswordViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
