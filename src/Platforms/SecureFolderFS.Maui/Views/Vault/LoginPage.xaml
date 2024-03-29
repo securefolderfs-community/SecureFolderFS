@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
 
@@ -23,9 +24,6 @@
         </VerticalStackLayout>
 
         <!--  Login  -->
-        <Entry
-            IsPassword="True"
-            Placeholder="Password"
-            WidthRequest="236" />
+        <uc:LoginControl x:Name="Login" LoginTypeViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" />
     </VerticalStackLayout>
 </ContentPage>

@@ -8,7 +8,7 @@ using SecureFolderFS.UI.Utils;
 namespace SecureFolderFS.Maui.ServiceImplementation
 {
     /// <inheritdoc cref="IOverlayService"/>
-    internal sealed class SheetService : BaseOverlayService
+    internal sealed class MauiSheetService : BaseOverlayService
     {
         /// <inheritdoc/>
         protected override IOverlayControl GetOverlay(IViewable viewable)

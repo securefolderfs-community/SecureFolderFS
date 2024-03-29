@@ -147,7 +147,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
                         // Overwrite existing content
                         dataStream.Position = 0L;
-                        dataStream.SetLength(0L);
+                        dataStream.TrySetLength(0L);
 
                         // Copy contents
                         serializedDataStream.Position = 0L;
@@ -163,7 +163,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
 
                         // Reset the stream
                         typeStream.Position = 0L;
-                        typeStream.SetLength(0L);
+                        typeStream.TrySetLength(0L);
 
                         // Write contents
                         await typeStream.WriteAsync(typeBuffer, cancellationToken);

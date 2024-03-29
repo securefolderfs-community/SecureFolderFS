@@ -78,11 +78,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="UserControls\LoginControl.xaml.cs">
+	    <DependentUpon>LoginControl.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\Wizard\MainWizardViewControl.xaml.cs">
 	    <DependentUpon>MainWizardViewControl.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\Wizard\CredentialsWizardViewControl.xaml.cs">
 	    <DependentUpon>CredentialsWizardViewControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Wizard\RecoveryWizardViewControl.xaml.cs">
+	    <DependentUpon>RecoveryWizardViewControl.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -90,7 +96,10 @@
 	  <MauiXaml Update="Sheets\VaultWizardSheet.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\ContentPresentation.xaml">
+	  <MauiXaml Update="UserControls\LoginControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="UserControls\ContentPresentation.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Vault\LoginPage.xaml">
@@ -103,6 +112,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Wizard\CredentialsWizardViewControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Wizard\RecoveryWizardViewControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Wizard\SummaryWizardViewControl.xaml">

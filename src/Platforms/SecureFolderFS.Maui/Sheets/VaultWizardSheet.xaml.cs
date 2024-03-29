@@ -73,10 +73,10 @@ namespace SecureFolderFS.Maui.Sheets
                 LocationWizardViewModel { CreationType: NewVaultCreationType.CreateNew, SelectedFolder: IModifiableFolder modifiableFolder } => new CredentialsWizardViewModel(modifiableFolder),
 
                 // Credentials -> Recovery
-                // TODO
+                CredentialsWizardViewModel { Folder: { } folder } => new RecoveryWizardViewModel(folder, e.Result),
 
                 // Recovery -> Summary
-                // TODO
+                RecoveryWizardViewModel { Folder: { } folder } => new SummaryWizardViewModel(folder, ViewModel.VaultCollectionModel),
 
                 // Location -> Summary
                 LocationWizardViewModel { CreationType: NewVaultCreationType.AddExisting, SelectedFolder: { } folder } => new SummaryWizardViewModel(folder, ViewModel.VaultCollectionModel),
@@ -90,6 +90,8 @@ namespace SecureFolderFS.Maui.Sheets
                 MainWizardViewModel viewModel => new MainWizardViewControl(viewModel, ViewModel),
                 LocationWizardViewModel viewModel => new LocationWizardViewControl(viewModel, ViewModel),
                 CredentialsWizardViewModel viewModel => new CredentialsWizardViewControl(viewModel, ViewModel),
+                RecoveryWizardViewModel viewModel => new RecoveryWizardViewControl(viewModel, ViewModel),
+                SummaryWizardViewModel viewModel => new SummaryWizardViewControl(viewModel),
                 _ => null
             };
                 

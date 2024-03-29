@@ -1,10 +1,10 @@
-using SecureFolderFS.Maui.Extensions;
-using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Views
 {
@@ -22,18 +22,20 @@ namespace SecureFolderFS.Maui.Views
 
         private async void ListView_ItemTapped(object? sender, ItemTappedEventArgs e)
         {
+            ViewModel.NavigationService.SetupNavigation(ShellNavigationControl.Instance);
             if (e.Item is not VaultListItemViewModel itemViewModel)
                 return;
 
-            await Shell.Current.GoToAsync("LoginPage", new VaultLoginPageViewModel(itemViewModel.VaultViewModel, null).ViewModelParameter());
-        }
+            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultPageViewModel)?.VaultViewModel == itemViewModel.VaultViewModel);
+            if (target is null)
+            {
+                target = new VaultLoginPageViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
+                if (target is IAsyncInitialize asyncInitialize)
+                    await asyncInitialize.InitAsync();
+            }
 
-        private void AddButton_Clicked(object? sender, EventArgs e)
-        {
-            var vaultViewModel = new VaultViewModel(new VaultModel(null, "TestVaultName"), null);
-            var sidebarItem = new VaultListItemViewModel(vaultViewModel, Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
-
-            ViewModel.VaultListViewModel.Items.Add(sidebarItem);
+            // Navigate
+            await ViewModel.NavigationService.NavigateAsync(target);
         }
     }
 }

@@ -5,8 +5,6 @@ namespace SecureFolderFS.Maui.Views.Vault
 {
     public partial class LoginPage : ContentPage, IQueryAttributable
     {
-        public VaultLoginPageViewModel? ViewModel { get; set; }
-
         public LoginPage()
         {
             BindingContext = this;
@@ -18,6 +16,15 @@ namespace SecureFolderFS.Maui.Views.Vault
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             ViewModel = query.ViewModelParameter<VaultLoginPageViewModel>();
+            OnPropertyChanged(nameof(ViewModel));
         }
+
+        public VaultLoginPageViewModel? ViewModel
+        {
+            get => (VaultLoginPageViewModel?)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+        public static readonly BindableProperty ViewModelProperty =
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultLoginPageViewModel), typeof(LoginPage), null);
     }
 }

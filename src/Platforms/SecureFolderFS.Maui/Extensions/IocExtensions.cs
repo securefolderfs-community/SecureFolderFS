@@ -8,10 +8,10 @@ namespace SecureFolderFS.Maui.Extensions
         public static IServiceCollection WithMauiServices(this IServiceCollection serviceCollection)
         {
             return serviceCollection
-                    .AddSingleton<IOverlayService, SheetService>()
+                    .AddSingleton<IOverlayService, MauiSheetService>()
+                    .AddTransient<INavigationService, MauiNavigationService>()
                     //.AddSingleton<IClipboardService, ClipboardService>()
                     //.AddSingleton<IThreadingService, ThreadingService>()
-                    //.AddTransient<INavigationService, UnoNavigationService>()
                 ;
         }
     }

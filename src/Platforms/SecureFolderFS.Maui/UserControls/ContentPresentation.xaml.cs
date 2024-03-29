@@ -1,9 +1,10 @@
-namespace SecureFolderFS.Maui.Views
+namespace SecureFolderFS.Maui.UserControls
 {
     public partial class ContentPresentation : ContentView
     {
         public ContentPresentation()
         {
+            BindingContext = this;
             InitializeComponent();
         }
 

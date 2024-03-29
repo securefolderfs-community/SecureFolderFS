@@ -9,7 +9,7 @@ using AndroidUri = Android.Net.Uri;
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
     /// <inheritdoc cref="IFolder"/>
-    internal sealed class AndroidFolder : AndroidStorable, IModifiableFolder, IChildFolder // TODO: Implement: IGetFirstByName, IGetItem
+    internal sealed class AndroidFolder : AndroidStorable, IModifiableFolder, IChildFolder, IGetFirstByName // TODO: Implement: IGetFirstByName, IGetItem
     {
         /// <inheritdoc/>
         protected override DocumentFile? Document { get; }
@@ -136,6 +136,20 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 throw new UnauthorizedAccessException("Could not create a file.");
 
             return Task.FromResult<IChildFile>(new AndroidFile(newFile.Uri, activity, this, permissionRoot));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            var file = Document?.FindFile(name);
+            if (file is not null)
+                return new AndroidFile(file.Uri, activity, this);
+            
+            var target = await GetItemsAsync(cancellationToken: cancellationToken).FirstOrDefaultAsync(x => name.Equals(x.Name, StringComparison.Ordinal), cancellationToken);
+            if (target is null)
+                throw new DirectoryNotFoundException($"No storage item with the name '{name}' could be found.");
+
+            return target;
         }
     }
 }

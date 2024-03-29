@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
-    xmlns:local="using:SecureFolderFS.Uno.Views.VaultWizard"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     mc:Ignorable="d">

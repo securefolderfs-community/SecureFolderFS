@@ -1,5 +1,6 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.IO;
@@ -38,8 +39,8 @@ namespace SecureFolderFS.Storage.Extensions
             await using var fileStream = await file.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
 
             // Reset the stream
-            fileStream.SetLength(0L);
-            fileStream.Seek(0L, SeekOrigin.Begin);
+            fileStream.TrySetLength(0L);
+            fileStream.TrySeek(0L, SeekOrigin.Begin);
 
             await using var streamWriter = new StreamWriter(fileStream, encoding ?? Encoding.UTF8);
             await streamWriter.WriteAsync(text.AsMemory(), cancellationToken);
