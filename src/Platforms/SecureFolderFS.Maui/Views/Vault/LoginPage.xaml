@@ -24,6 +24,6 @@
         </VerticalStackLayout>
 
         <!--  Login  -->
-        <uc:LoginControl x:Name="Login" LoginTypeViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" />
+        <uc:LoginControl LoginTypeViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" />
     </VerticalStackLayout>
 </ContentPage>

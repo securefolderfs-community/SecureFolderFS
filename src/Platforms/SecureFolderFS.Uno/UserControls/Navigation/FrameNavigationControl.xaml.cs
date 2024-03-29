@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
 
@@ -29,6 +30,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         /// <inheritdoc/>
         public virtual Task<bool> NavigateAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default)
             where TTransition : class
+            where TTarget : IViewDesignation
         {
             if (target is null)
             {
