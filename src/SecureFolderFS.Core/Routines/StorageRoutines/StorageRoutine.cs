@@ -14,10 +14,6 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
     {
         private UnlockContract? _unlockContract;
 
-        public StorageRoutine()
-        {
-        }
-
         /// <inheritdoc/>
         public IStorageRoutine SetUnlockContract(IDisposable unlockContract)
         {

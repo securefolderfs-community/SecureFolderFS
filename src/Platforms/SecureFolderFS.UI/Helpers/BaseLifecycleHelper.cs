@@ -48,7 +48,6 @@ namespace SecureFolderFS.UI.Helpers
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultService, BaseVaultService>()
-                .AddSingleton<IVaultStorageService, VaultStorageService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
 
                 ; // Finish service initialization
