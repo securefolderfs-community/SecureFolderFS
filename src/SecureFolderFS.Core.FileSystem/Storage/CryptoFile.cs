@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Cryptography.Storage
+namespace SecureFolderFS.Core.FileSystem.Storage
 {
     public class CryptoFile : CryptoStorable<IFile>, IChildFile
     {

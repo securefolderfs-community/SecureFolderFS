@@ -3,8 +3,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography.Storage;
 using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
@@ -62,7 +62,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
                 var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
                 var statisticsModel = new ConsolidatedStatisticsModel();
-                var (directoryIdCache, pathConverter, streamsAccess) = routines.BuildStorage()
+                var (directoryIdCache, _, pathConverter, streamsAccess) = routines.BuildStorage()
                     .SetUnlockContract(unlockContract)
                     .CreateStorageComponents(contentFolder, new()
                 {

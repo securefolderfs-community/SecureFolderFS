@@ -96,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
             // Get authentication options
-            await foreach (var item in VaultManagerService.GetAllSecurityAsync(Folder, _vaultId))
+            await foreach (var item in VaultService.GetAllSecurityAsync(Folder, _vaultId))
                 AuthenticationOptions.Add(item);
 
             // Set default authentication option

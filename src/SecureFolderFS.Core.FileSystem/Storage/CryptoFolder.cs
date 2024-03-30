@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Cryptography.Storage
+namespace SecureFolderFS.Core.FileSystem.Storage
 {
     // TODO(ns): Add move and copy support
     public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IModifiableFolder, IGetItem, IGetItemRecursive, IGetFirstByName

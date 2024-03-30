@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Cryptography.Storage
+namespace SecureFolderFS.Core.FileSystem.Storage
 {
     public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild, IWrappable<IFile>, IWrappable<IFolder>
         where TCapability : IStorable

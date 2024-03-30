@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
 
             var directoryIdCache = new DirectoryIdCache(options.FileSystemStatistics);
             var streamsAccess = FileStreamAccess.CreateNew(_unlockContract.Security, options.EnableChunkCache, options.FileSystemStatistics);
-            var pathConverter = _unlockContract.ConfigurationDataModel.FileNameCipherId == Cryptography.Constants.CipherId.NONE
+            var pathConverter = _unlockContract.ConfigurationDataModel.FileNameCipherId != Cryptography.Constants.CipherId.NONE
                 ? CiphertextPathConverter.CreateNew(_unlockContract.Security, contentRoot.Id, directoryIdCache, options.EnableFileNameCache, options.FileSystemStatistics)
                 : CleartextPathConverter.CreateNew(contentRoot.Id);
 
