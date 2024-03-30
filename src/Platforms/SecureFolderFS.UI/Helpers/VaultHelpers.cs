@@ -5,10 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Core.Dokany.AppModels;
-using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FUSE.AppModels;
-using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
@@ -42,17 +38,6 @@ namespace SecureFolderFS.UI.Helpers
                 throw new NotSupportedException("No supported adapters found.");
 
             return lastBestId;
-        }
-
-        public static MountOptions GetMountOptions(string fileSystemId)
-        {
-            return fileSystemId switch
-            {
-                Core.Constants.FileSystemId.FS_DOKAN => new DokanyMountOptions(),
-                Core.Constants.FileSystemId.FS_FUSE => new FuseMountOptions(),
-                Core.Constants.FileSystemId.FS_WEBDAV => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
-                _ => throw new ArgumentOutOfRangeException(nameof(fileSystemId))
-            };
         }
 
         public static IDictionary<string, string?> ParseOptions(VaultOptions vaultOptions)

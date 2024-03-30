@@ -17,7 +17,32 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual Task<IFolder> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
+                var storageRoutine = routines.BuildStorage();
+
+                var statisticsModel = new ConsolidatedStatisticsModel();
+                var storageRoot = await storageRoutine
+                    .SetUnlockContract(unlockContract)
+                    .CreateStorageRootAsync(new FileSystemOptions()
+                    {
+                        VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
+                        FileSystemId = string.Empty,
+                        HealthStatistics = statisticsModel,
+                        FileSystemStatistics = statisticsModel
+                    }, cancellationToken);
+
+                return storageRoot;
+            }
+            catch (Exception ex)
+            {
+                // Make sure to dispose the unlock contract when failed
+                unlockContract.Dispose();
+
+                _ = ex;
+                throw;
+            }
         }
 
         /// <inheritdoc/>

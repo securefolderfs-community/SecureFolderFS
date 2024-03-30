@@ -1,16 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Core.Dokany;
+using SecureFolderFS.Core.Dokany.AppModels;
+using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.WebDav;
+using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ViewModels;
-using SecureFolderFS.Uno.ViewModels;
-using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.Windows.ServiceImplementation
 {
@@ -18,50 +21,47 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
     public sealed class WindowsVaultManagerService : BaseVaultManagerService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
         {
-            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
-            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(';'); // TODO: Move to Constants
-
-            foreach (var item in authenticationMethods)
+            try
             {
-                var supported = item switch
+                var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
+                var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
+                var statisticsModel = new ConsolidatedStatisticsModel();
+                var options = new FileSystemOptions()
                 {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => true,
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken),
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => true,
-                    _ => false
+                    VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
+                    FileSystemId = await VaultHelpers.GetBestFileSystemAsync(cancellationToken),
+                    HealthStatistics = statisticsModel,
+                    FileSystemStatistics = statisticsModel
+                };
+                var (directoryIdCache, security, pathConverter, streamsAccess) = routines.BuildStorage()
+                    .SetUnlockContract(unlockContract)
+                    .CreateStorageComponents(contentFolder, options);
+
+                var mountable = options.FileSystemId switch
+                {
+                    Core.Constants.FileSystemId.FS_DOKAN => DokanyMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    Core.Constants.FileSystemId.FS_WEBDAV => WebDavMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
                 };
 
-                if (!supported)
-                    throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.");
-            }
+                return await mountable.MountAsync(options.FileSystemId switch
+                    {
+                        Core.Constants.FileSystemId.FS_DOKAN => new DokanyMountOptions(),
+                        Core.Constants.FileSystemId.FS_WEBDAV => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
+                        _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
 
-            foreach (var item in authenticationMethods)
+                    }, cancellationToken);
+            }
+            catch (Exception ex)
             {
-                yield return item switch
-                {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder),
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => new WindowsHelloLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder),
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => new KeyFileLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder),
-                    _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
-                };
+                // Make sure to dispose the unlock contract when failed
+                unlockContract.Dispose();
+
+                _ = ex;
+                throw;
             }
-        }
-
-        /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetAllSecurityAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            // Password
-            yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder);
-
-            // Windows Hello
-            if (await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken))
-                yield return new WindowsHelloCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder);
-            
-            // Key File
-            yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder);
         }
     }
 }

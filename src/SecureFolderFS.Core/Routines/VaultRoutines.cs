@@ -46,7 +46,7 @@ namespace SecureFolderFS.Core.Routines
         public IStorageRoutine BuildStorage()
         {
             CheckVaultValidation();
-            return new StorageRoutine(_vaultFolder);
+            return new StorageRoutine();
         }
 
         public ICredentialsRoutine ChangeCredentials()

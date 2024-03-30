@@ -1,23 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.UI.AppModels;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultService"/>
-    public sealed class VaultService : IVaultService
+    public abstract class BaseVaultService : IVaultService
     {
         /// <inheritdoc/>
-        public IAsyncValidator<IFolder> VaultValidator { get; } = new VaultValidator(StreamSerializer.Instance);
+        public int LatestVaultVersion { get; } = Core.Constants.Vault.Versions.LATEST_VERSION;
 
         /// <inheritdoc/>
-        public int LatestVaultVersion { get; } = Core.Constants.Vault.Versions.LATEST_VERSION;
+        public IAsyncValidator<IFolder> VaultValidator { get; } = new VaultValidator(StreamSerializer.Instance);
 
         /// <inheritdoc/>
         public bool IsNameReserved(string? name)
@@ -29,12 +30,13 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public IEnumerable<IFileSystemInfoModel> GetFileSystems()
-        {
-            yield return new DokanyFileSystemDescriptor();
-            yield return new FuseFileSystemDescriptor();
-            yield return new WebDavFileSystemDescriptor();
-        }
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+
+        /// <inheritdoc/>
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetAllSecurityAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
+
+        /// <inheritdoc/>
+        public abstract IEnumerable<IFileSystemInfoModel> GetFileSystems();
 
         /// <inheritdoc/>
         public IEnumerable<string> GetContentCiphers()

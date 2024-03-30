@@ -1,13 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography.Storage;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Helpers;
@@ -48,16 +49,42 @@ namespace SecureFolderFS.UI.ServiceImplementation
             using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
 
             await unlockRoutine.InitAsync(cancellationToken);
-
             return await unlockRoutine
                 .SetCredentials(passkeySecret)
                 .FinalizeAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+        public virtual async Task<IFolder> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
+                var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
+                var statisticsModel = new ConsolidatedStatisticsModel();
+                var (directoryIdCache, pathConverter, streamsAccess) = routines.BuildStorage()
+                    .SetUnlockContract(unlockContract)
+                    .CreateStorageComponents(contentFolder, new()
+                {
+                    VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
+                    FileSystemId = string.Empty,
+                    HealthStatistics = statisticsModel,
+                    FileSystemStatistics = statisticsModel
+                });
+
+                return new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
+            }
+            catch (Exception ex)
+            {
+                // Make sure to dispose the unlock contract when failed
+                unlockContract.Dispose();
+
+                _ = ex;
+                throw;
+            }
+        }
 
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetAllSecurityAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
+        public abstract Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
     }
 }
