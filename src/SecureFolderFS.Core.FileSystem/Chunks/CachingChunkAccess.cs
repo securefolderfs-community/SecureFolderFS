@@ -1,20 +1,19 @@
-﻿using SecureFolderFS.Core.Buffers;
-using SecureFolderFS.Core.Cryptography.ContentCrypt;
-using SecureFolderFS.Core.FileSystem.Chunks;
+﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
+using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SecureFolderFS.Core.Chunks
+namespace SecureFolderFS.Core.FileSystem.Chunks
 {
     /// <inheritdoc cref="IChunkAccess"/>
-    internal sealed class CachingChunkAccess : InstantChunkAccess
+    internal sealed class CachingChunkAccess : ChunkAccess
     {
         private readonly Dictionary<long, ChunkBuffer> _chunkCache;
 
-        public CachingChunkAccess(IChunkReader chunkReader, IChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics fileSystemStatistics)
+        public CachingChunkAccess(ChunkReader chunkReader, ChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics fileSystemStatistics)
             : base(chunkReader, chunkWriter, contentCrypt, fileSystemStatistics)
         {
             _chunkCache = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CHUNK);

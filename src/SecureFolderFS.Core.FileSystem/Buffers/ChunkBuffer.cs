@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Shared.Helpers;
 
-namespace SecureFolderFS.Core.Buffers
+namespace SecureFolderFS.Core.FileSystem.Buffers
 {
     /// <inheritdoc cref="BufferHolder"/>
     internal sealed class ChunkBuffer : BufferHolder

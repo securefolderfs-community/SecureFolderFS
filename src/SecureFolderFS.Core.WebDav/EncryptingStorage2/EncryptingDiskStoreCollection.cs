@@ -1,22 +1,22 @@
-﻿using System;
+﻿using NWebDav.Server;
+using NWebDav.Server.Enums;
+using NWebDav.Server.Http;
+using NWebDav.Server.Locking;
+using NWebDav.Server.Props;
+using NWebDav.Server.Stores;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FileSystem.Streams;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using NWebDav.Server.Enums;
-using NWebDav.Server.Http;
-using NWebDav.Server.Locking;
-using NWebDav.Server.Props;
 using System.Xml.Linq;
-using NWebDav.Server;
-using NWebDav.Server.Stores;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
-using SecureFolderFS.Core.Directories;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {

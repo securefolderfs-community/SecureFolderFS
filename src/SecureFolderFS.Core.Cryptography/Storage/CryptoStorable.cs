@@ -1,5 +1,5 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.Directories;
+using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.ComponentModel;
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Core.Cryptography.Storage
                 throw new NotSupportedException("Retrieving the parent folder is not supported.");
 
             // Make sure we don't go outside the root
-            if (storableChild.Id == pathConverter.CiphertextRootPath || !pathConverter.CiphertextRootPath.Contains(storableChild.Id))
+            if (storableChild.Id == pathConverter.ContentRootPath || !pathConverter.ContentRootPath.Contains(storableChild.Id))
                 return null;
 
             var parent = await storableChild.GetParentAsync(cancellationToken);

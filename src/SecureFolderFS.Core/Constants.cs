@@ -14,7 +14,6 @@ namespace SecureFolderFS.Core
                 public const string VAULT_CONFIGURATION_FILENAME = "sfconfig.cfg";
                 public const string VAULT_AUTHENTICATION_FILENAME = "sfauth.cfg";
                 public const string VAULT_KEYSTORE_FILENAME = "keystore.cfg";
-                public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
             }
 
             public static class AuthenticationMethods

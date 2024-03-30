@@ -1,7 +1,6 @@
-﻿using SecureFolderFS.Core.Buffers;
-using SecureFolderFS.Core.Cryptography;
+﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
-using SecureFolderFS.Core.FileSystem.CryptFiles;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Shared.Extensions;
@@ -9,27 +8,31 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SecureFolderFS.Core.CryptFiles
+namespace SecureFolderFS.Core.FileSystem.CryptFiles
 {
-    /// <inheritdoc cref="ICryptFile"/>
-    internal sealed class OpenCryptFile : ICryptFile
+    /// <summary>
+    /// Represents an encrypting file opened on a file system.
+    /// </summary>
+    internal sealed class OpenCryptFile : IDisposable
     {
         private readonly Security _security;
         private readonly HeaderBuffer _headerBuffer;
-        private readonly IChunkAccess _chunkAccess;
-        private readonly IStreamsManager _streamsManager;
+        private readonly ChunkAccess _chunkAccess;
+        private readonly StreamsManager _streamsManager;
         private readonly Action<string> _notifyClosed;
         private readonly Dictionary<Stream, long> _openedStreams;
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the unique ID of the file.
+        /// </summary>
         public string Id { get; }
 
         public OpenCryptFile(
             string id,
             Security security,
             HeaderBuffer headerBuffer,
-            IChunkAccess chunkAccess,
-            IStreamsManager streamsManager,
+            ChunkAccess chunkAccess,
+            StreamsManager streamsManager,
             Action<string> notifyClosed)
         {
             Id = id;
@@ -41,7 +44,11 @@ namespace SecureFolderFS.Core.CryptFiles
             _openedStreams = new();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Opens a new <see cref="CleartextStream"/> on top of <paramref name="ciphertextStream"/>.
+        /// </summary>
+        /// <param name="ciphertextStream">The ciphertext stream to be wrapped by encrypting stream.</param>
+        /// <returns>A new instance of <see cref="CleartextStream"/>.</returns>
         public CleartextStream OpenStream(Stream ciphertextStream)
         {
             // Register ciphertext stream
@@ -54,7 +61,7 @@ namespace SecureFolderFS.Core.CryptFiles
             _streamsManager.AddStream(ciphertextStream);
             
             // Open the cleartext stream
-            return new CleartextFileStream(ciphertextStream, _security, _chunkAccess, _headerBuffer, NotifyClosed);
+            return new CleartextStream(ciphertextStream, _security, _chunkAccess, _headerBuffer, NotifyClosed);
         }
 
         private void NotifyClosed(Stream ciphertextStream)

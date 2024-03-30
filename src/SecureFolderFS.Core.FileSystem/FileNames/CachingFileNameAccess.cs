@@ -1,12 +1,11 @@
 ﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.FileNames;
 using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SecureFolderFS.Core.FileNames
+namespace SecureFolderFS.Core.FileSystem.FileNames
 {
     /// <inheritdoc cref="IFileNameAccess"/>
     internal sealed class CachingFileNameAccess : FileNameAccess

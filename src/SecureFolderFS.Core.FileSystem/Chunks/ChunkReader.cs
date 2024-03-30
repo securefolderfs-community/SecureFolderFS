@@ -1,5 +1,4 @@
 ﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
@@ -9,17 +8,19 @@ using System;
 using System.Buffers;
 using System.Diagnostics;
 
-namespace SecureFolderFS.Core.Chunks
+namespace SecureFolderFS.Core.FileSystem.Chunks
 {
-    /// <inheritdoc cref="IChunkReader"/>
-    internal sealed class ChunkReader : IChunkReader
+    /// <summary>
+    /// Provides read access to chunks.
+    /// </summary>
+    internal sealed class ChunkReader : IDisposable
     {
         private readonly Security _security;
         private readonly BufferHolder _fileHeader;
-        private readonly IStreamsManager _streamsManager;
+        private readonly StreamsManager _streamsManager;
         private readonly IFileSystemStatistics _fileSystemStatistics;
 
-        public ChunkReader(Security security, BufferHolder fileHeader, IStreamsManager streamsManager, IFileSystemStatistics fileSystemStatistics)
+        public ChunkReader(Security security, BufferHolder fileHeader, StreamsManager streamsManager, IFileSystemStatistics fileSystemStatistics)
         {
             _security = security;
             _fileHeader = fileHeader;
@@ -27,7 +28,12 @@ namespace SecureFolderFS.Core.Chunks
             _fileSystemStatistics = fileSystemStatistics;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Reads chunk at specified <paramref name="chunkNumber"/> into <paramref name="cleartextChunk"/>.
+        /// </summary>
+        /// <param name="chunkNumber">The chunk number to read at.</param>
+        /// <param name="cleartextChunk">The cleartext chunk to write to.</param>
+        /// <returns>The amount of cleartext bytes or -1 if integrity error occurred.</returns>
         public int ReadChunk(long chunkNumber, Span<byte> cleartextChunk)
         {
             // Calculate sizes

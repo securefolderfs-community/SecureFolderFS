@@ -1,23 +1,24 @@
-﻿using SecureFolderFS.Core.Buffers;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Statistics;
-using SecureFolderFS.Core.FileSystem.Chunks;
+﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Exceptions;
+using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
 using System;
 using System.Buffers;
 
-namespace SecureFolderFS.Core.Chunks
+namespace SecureFolderFS.Core.FileSystem.Chunks
 {
-    /// <inheritdoc cref="IChunkWriter"/>
-    internal sealed class ChunkWriter : IChunkWriter
+    /// <summary>
+    /// Provides write access to chunks.
+    /// </summary>
+    internal sealed class ChunkWriter : IDisposable
     {
         private readonly Security _security;
         private readonly HeaderBuffer _fileHeader;
-        private readonly IStreamsManager _streamsManager;
+        private readonly StreamsManager _streamsManager;
         private readonly IFileSystemStatistics _fileSystemStatistics;
 
-        public ChunkWriter(Security security, HeaderBuffer fileHeader, IStreamsManager streamsManager, IFileSystemStatistics fileSystemStatistics)
+        public ChunkWriter(Security security, HeaderBuffer fileHeader, StreamsManager streamsManager, IFileSystemStatistics fileSystemStatistics)
         {
             _security = security;
             _fileHeader = fileHeader;
@@ -25,7 +26,11 @@ namespace SecureFolderFS.Core.Chunks
             _fileSystemStatistics = fileSystemStatistics;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Writes <paramref name="cleartextChunk"/> into chunk at specified <paramref name="chunkNumber"/>.
+        /// </summary>
+        /// <param name="chunkNumber">The chunk number to write to.</param>
+        /// <param name="cleartextChunk">The cleartext chunk to read from.</param>
         public void WriteChunk(long chunkNumber, ReadOnlySpan<byte> cleartextChunk)
         {
             // Calculate size of ciphertext

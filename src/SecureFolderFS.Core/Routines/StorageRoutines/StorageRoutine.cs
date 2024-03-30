@@ -1,18 +1,11 @@
 using OwlCore.Storage;
-using SecureFolderFS.Core.CryptFiles;
 using SecureFolderFS.Core.Cryptography.Storage;
-using SecureFolderFS.Core.Directories;
-using SecureFolderFS.Core.Dokany;
-using SecureFolderFS.Core.FileNames;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
-using SecureFolderFS.Core.FUSE;
-using SecureFolderFS.Core.Paths;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
-using SecureFolderFS.Core.Streams;
-using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Storage.Extensions;
 using System;
 using System.Threading;
@@ -74,20 +67,10 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
             ArgumentNullException.ThrowIfNull(_unlockContract);
 
             var directoryIdCache = new DirectoryIdCache(options.FileSystemStatistics);
-            IPathConverter pathConverter;
-            if (_unlockContract.ConfigurationDataModel.FileNameCipherId != Cryptography.Constants.CipherId.NONE)
-            {
-                var fileNameAccess = options.EnableFileNameCache
-                    ? new FileNameAccess(_unlockContract.Security, options.FileSystemStatistics)
-                    : new CachingFileNameAccess(_unlockContract.Security, options.FileSystemStatistics);
-
-                pathConverter = new CiphertextPathConverter(vaultRootPath, fileNameAccess, directoryIdCache);
-            }
-            else
-                pathConverter = new CleartextPathConverter(vaultRootPath);
-
-            var cryptFileManager = new OpenCryptFileManager(_unlockContract.Security, options.EnableChunkCache, options.FileSystemStatistics);
-            var streamsAccess = new FileStreamAccess(_unlockContract.Security, cryptFileManager);
+            var streamsAccess = FileStreamAccess.CreateNew(_unlockContract.Security, options.EnableChunkCache, options.FileSystemStatistics);
+            var pathConverter = _unlockContract.ConfigurationDataModel.FileNameCipherId == Cryptography.Constants.CipherId.NONE
+                ? CiphertextPathConverter.CreateNew(_unlockContract.Security, vaultRootPath, directoryIdCache, options.EnableFileNameCache, options.FileSystemStatistics)
+                : CleartextPathConverter.CreateNew(vaultRootPath);
 
             return (directoryIdCache, pathConverter, streamsAccess);
         }

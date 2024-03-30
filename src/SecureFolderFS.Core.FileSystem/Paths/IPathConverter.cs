@@ -1,4 +1,8 @@
-﻿namespace SecureFolderFS.Core.FileSystem.Paths
+﻿using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem.Statistics;
+
+namespace SecureFolderFS.Core.FileSystem.Paths
 {
     /// <summary>
     /// Manages and converts paths between their ciphertext and cleartext forms.
@@ -10,7 +14,7 @@
         /// <summary>
         /// Gets the ciphertext root where files are stored.
         /// </summary>
-        string CiphertextRootPath { get; }
+        string ContentRootPath { get; }
 
         /// <summary>
         /// Converts <paramref name="cleartextPath"/> into ciphertext.

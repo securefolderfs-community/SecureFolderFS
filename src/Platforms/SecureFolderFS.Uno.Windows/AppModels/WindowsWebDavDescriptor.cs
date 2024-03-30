@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.UI.AppModels
 {
     /// <inheritdoc cref="IFileSystemInfoModel"/>
-    internal sealed class WebDavFileSystemDescriptor : IFileSystemInfoModel
+    internal sealed class WindowsWebDavDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
         public string Name { get; } = "WebDav";

@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.Routines
 
         public ICreationRoutine CreateVault()
         {
-            // Only in the case of creation, the validity is not checked
+            // Only in the case of creation the validation is not triggered
             return new CreationRoutine(_vaultFolder, VaultWriter);
         }
 

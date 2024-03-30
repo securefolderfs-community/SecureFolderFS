@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.UI.AppModels
 {
     /// <inheritdoc cref="IFileSystemInfoModel"/>
-    internal sealed class DokanyFileSystemDescriptor : IFileSystemInfoModel
+    internal sealed class WindowsDokanyDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
         public string Name { get; } = "Dokany";

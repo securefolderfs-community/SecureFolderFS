@@ -1,5 +1,5 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.Directories;
+using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using System.IO;

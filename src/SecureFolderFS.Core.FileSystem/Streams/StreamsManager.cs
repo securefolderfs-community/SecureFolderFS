@@ -1,13 +1,16 @@
 ﻿using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SecureFolderFS.Core.Streams
+namespace SecureFolderFS.Core.FileSystem.Streams
 {
-    /// <inheritdoc cref="IStreamsManager"/>
-    internal sealed class StreamsManager : IStreamsManager
+    /// <summary>
+    /// Manages instances of <see cref="Stream"/>.
+    /// </summary>
+    internal sealed class StreamsManager : IDisposable
     {
         private bool _disposed;
         private readonly List<Stream> _readOnlyStreams;
@@ -19,7 +22,13 @@ namespace SecureFolderFS.Core.Streams
             _readWriteStreams = new();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Adds <paramref name="stream"/> to the list of available read-only and read-write streams.
+        /// </summary>
+        /// <remarks>
+        /// The stream may be added to both read-only and read-write lists based on <see cref="Stream.CanWrite"/> property.
+        /// </remarks>
+        /// <param name="stream">The stream to add.</param>
         public void AddStream(Stream stream)
         {
             if (_disposed)
@@ -35,7 +44,13 @@ namespace SecureFolderFS.Core.Streams
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Removes <paramref name="stream"/> from the list of available read-only and read-write streams.
+        /// </summary>
+        /// <remarks>
+        /// The stream may be removed from both read-only and read-write lists based on <see cref="Stream.CanWrite"/> property.
+        /// </remarks>
+        /// <param name="stream">The stream to remove.</param>
         public void RemoveStream(Stream stream)
         {
             if (_disposed)
@@ -50,7 +65,10 @@ namespace SecureFolderFS.Core.Streams
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets a read-only stream instance from the list.
+        /// </summary>
+        /// <returns>An instance of <see cref="Stream"/>. The value may be null when no streams are available.</returns>
         public Stream? GetReadOnlyStream()
         {
             if (_disposed)
@@ -62,7 +80,10 @@ namespace SecureFolderFS.Core.Streams
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets a read-write stream instance from the list.
+        /// </summary>
+        /// <returns>An instance of <see cref="Stream"/>. The value may be null when no streams are available.</returns>
         public Stream? GetReadWriteStream()
         {
             if (_disposed)

@@ -3,14 +3,11 @@ using SecureFolderFS.Core.FUSE;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Shared.ComponentModel;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.AppModels
 {
     /// <inheritdoc cref="IFileSystemInfoModel"/>
-    internal sealed class FuseFileSystemDescriptor : IFileSystemInfoModel
+    internal sealed class SkiaFuseDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
         public string Name { get; } = "FUSE";
@@ -27,8 +24,8 @@ namespace SecureFolderFS.UI.AppModels
                 // TODO: Use translation strings
                 var message = result switch
                 {
-                    FileSystemAvailabilityType.ModuleNotAvailable or
-                    FileSystemAvailabilityType.CoreNotAvailable => "libfuse3 has not been detected. Please install libfuse3 to continue using SecureFolderFS.",
+                    (FileSystemAvailabilityType.ModuleNotAvailable or
+                    FileSystemAvailabilityType.CoreNotAvailable) => "libfuse3 has not been detected. Please install libfuse3 to continue using SecureFolderFS.",
                     _ => "SecureFolderFS cannot work with the installed libfuse version. Please install libfuse3."
                 };
 
