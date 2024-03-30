@@ -42,6 +42,7 @@ namespace SecureFolderFS.Uno.Skia.Gtk.Helpers
         {
             return base.ConfigureServices(settingsFolder)
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
+                .AddSingleton<IVaultService, SkiaVaultService>()
                 .AddSingleton<IApplicationService, SkiaApplicationService>()
                 .AddSingleton<IVaultManagerService, SkiaVaultManagerService>()
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()

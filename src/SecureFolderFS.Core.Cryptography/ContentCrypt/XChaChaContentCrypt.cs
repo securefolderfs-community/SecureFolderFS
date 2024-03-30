@@ -30,7 +30,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
             // Big Endian chunk number and file header nonce
             Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];
-            CryptHelpers.FillAssociatedData(associatedData, header.GetHeaderNonce(), chunkNumber);
+            CryptHelpers.FillAssociatedDataBe(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Encrypt
             XChaCha20Poly1305.Encrypt(
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         {
             // Big Endian chunk number and file header nonce
             Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];
-            CryptHelpers.FillAssociatedData(associatedData, header.GetHeaderNonce(), chunkNumber);
+            CryptHelpers.FillAssociatedDataBe(associatedData, header.GetHeaderNonce(), chunkNumber);
 
             // Decrypt
             return XChaCha20Poly1305.Decrypt(

@@ -1,6 +1,6 @@
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Directories;
+using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FUSE.OpenHandles;

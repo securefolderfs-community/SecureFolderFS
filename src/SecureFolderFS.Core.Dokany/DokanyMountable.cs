@@ -2,13 +2,13 @@
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;

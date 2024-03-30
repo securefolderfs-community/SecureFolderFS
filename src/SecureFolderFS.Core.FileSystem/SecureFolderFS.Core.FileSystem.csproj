@@ -5,6 +5,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
   </ItemGroup>
 
 </Project>

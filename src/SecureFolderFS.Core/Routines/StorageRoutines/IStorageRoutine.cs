@@ -1,9 +1,10 @@
 using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FileSystem.Streams;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Routines.StorageRoutines
 {
@@ -11,9 +12,7 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
     public interface IStorageRoutine
     {
         IStorageRoutine SetUnlockContract(IDisposable unlockContract);
-
-        Task<IFolder> CreateStorageRootAsync(FileSystemOptions options, CancellationToken cancellationToken);
-
-        Task<IMountableFileSystem> CreateMountableAsync(FileSystemOptions options, CancellationToken cancellationToken);
+        
+        (DirectoryIdCache, Security, IPathConverter, IStreamsAccess) CreateStorageComponents(IFolder contentRoot, FileSystemOptions options);
     }
 }

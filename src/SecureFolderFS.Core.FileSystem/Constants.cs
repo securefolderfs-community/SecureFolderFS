@@ -9,6 +9,11 @@
         public const ulong INVALID_HANDLE = 0UL;
         public const bool OPT_IN_FOR_OPTIONAL_DEBUG_TRACING = true;
 
+        public static class Names
+        {
+            public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
+        }
+
         public static class Caching
         {
             public const int RECOMMENDED_SIZE_CHUNK = 6;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using SecureFolderFS.Core.Streams;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
@@ -11,6 +12,6 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// <param name="id">The unique ID of the file.</param>
         /// <param name="ciphertextStream">The ciphertext stream to wrap by the cleartext stream.</param>
         /// <returns>If successful, returns a new instance of <see cref="CleartextStream"/>.</returns>
-        CleartextStream OpenCleartextStream(string id, Stream ciphertextStream);
+        Stream OpenCleartextStream(string id, Stream ciphertextStream);
     }
 }

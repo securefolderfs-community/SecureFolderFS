@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             //await RequestPermissionsAsync<Permissions.StorageWrite>();
 
             // Initialize settings
-            var settingsFolderPath = Path.Combine(FileSystem.Current.AppDataDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
         }

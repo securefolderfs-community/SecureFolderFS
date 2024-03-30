@@ -56,6 +56,7 @@ namespace SecureFolderFS.Uno.Windows.Helpers
         {
             return base.ConfigureServices(settingsFolder)
                 .AddSingleton<IPrinterService, WindowsPrinterService>()
+                .AddSingleton<IVaultService, WindowsVaultService>()
                 .AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
                 .AddSingleton<IApplicationService, WindowsApplicationService>()
 

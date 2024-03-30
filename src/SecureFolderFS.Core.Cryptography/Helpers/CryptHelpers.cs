@@ -6,7 +6,7 @@ namespace SecureFolderFS.Core.Cryptography.Helpers
 {
     public static class CryptHelpers
     {
-        internal static void FillAssociatedData(Span<byte> associatedData, ReadOnlySpan<byte> headerNonce, long chunkNumber)
+        internal static void FillAssociatedDataBe(Span<byte> associatedData, ReadOnlySpan<byte> headerNonce, long chunkNumber)
         {
             // Set first 8B of chunk number to associatedData
             Unsafe.As<byte, long>(ref associatedData[0]) = chunkNumber;

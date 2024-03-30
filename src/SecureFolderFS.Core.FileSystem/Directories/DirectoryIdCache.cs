@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SecureFolderFS.Core.Directories
+namespace SecureFolderFS.Core.FileSystem.Directories
 {
     /// <summary>
     /// Provides a cache for DirectoryIDs found on the encrypting file system.
@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.Directories
         public DirectoryIdCache(IFileSystemStatistics statistics)
         {
             _statistics = statistics;
-            _cache = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_DIRECTORYID);
+            _cache = new(Constants.Caching.RECOMMENDED_SIZE_DIRECTORYID);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.Directories
         public bool GetDirectoryId(string ciphertextPath, Span<byte> directoryId)
         {
             // Check if directoryId is of correct length
-            if (directoryId.Length != FileSystem.Constants.DIRECTORY_ID_SIZE)
+            if (directoryId.Length != Constants.DIRECTORY_ID_SIZE)
                 throw new ArgumentException($"The size of {nameof(directoryId)} was too small.");
 
             // Check if the ciphertext path is empty

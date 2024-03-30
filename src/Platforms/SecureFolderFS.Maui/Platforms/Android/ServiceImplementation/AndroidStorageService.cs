@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         /// <inheritdoc/>
         public Task<IFolder> GetAppFolderAsync(CancellationToken cancellationToken = default)
         {
-            return Task.FromResult<IFolder>(new SystemFolder(FileSystem.Current.AppDataDirectory));
+            return Task.FromResult<IFolder>(new SystemFolder(Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory));
         }
 
         /// <inheritdoc/>
