@@ -6,8 +6,7 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
-    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views;assembly=SecureFolderFS.Sdk"
-    x:DataType="local:LoginControl">
+    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views;assembly=SecureFolderFS.Sdk">
 
     <ContentView.Resources>
         <!--  Password Template  -->
@@ -35,7 +34,7 @@
         </DataTemplate>
     </ContentView.Resources>
 
-    <Grid>
+    <Grid x:Name="RootGrid" x:DataType="local:LoginControl">
         <local:ContentPresentation ViewContent="{Binding LoginTypeViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
                 <ts:LoginMethodTemplateSelector ErrorTemplate="{StaticResource ErrorTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />

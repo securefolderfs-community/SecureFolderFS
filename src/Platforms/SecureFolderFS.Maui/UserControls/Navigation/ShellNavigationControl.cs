@@ -22,6 +22,7 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
             var url = target switch
             {
                 VaultLoginPageViewModel => "LoginPage",
+                VaultDashboardPageViewModel => "DashboardPage",
                 _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 

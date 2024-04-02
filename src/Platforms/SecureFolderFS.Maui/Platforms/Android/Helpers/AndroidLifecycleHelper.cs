@@ -2,6 +2,7 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
+using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Platforms.Android.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.Helpers;
@@ -35,13 +36,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             return base.ConfigureServices(settingsFolder)
                     //.AddSingleton<IPrinterService, WindowsPrinterService>()
                     //.AddSingleton<IApplicationService, SkiaApplicationService>()
+                    .AddSingleton<IVaultService, AndroidVaultService>()
+                    .AddSingleton<IVaultManagerService, AndroidVaultManagerService>()
                     .AddSingleton<IStorageService, AndroidStorageService>()
                     .AddSingleton<IFileExplorerService, AndroidFileExplorerService>()
-                    .AddSingleton<IVaultManagerService, AndroidVaultManagerService>()
                     .AddSingleton<ITelemetryService, DebugTelemetryService>()
                     .AddSingleton<IIapService, DebugIapService>()
                     .AddSingleton<IUpdateService, DebugUpdateService>()
                     .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                
+                    .WithMauiServices(settingsFolder)
                 ;
         }
 

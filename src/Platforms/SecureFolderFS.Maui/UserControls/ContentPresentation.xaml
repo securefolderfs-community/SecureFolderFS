@@ -1,13 +1,10 @@
 ﻿<ContentView
     x:Class="SecureFolderFS.Maui.UserControls.ContentPresentation"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
-    x:DataType="local:ContentPresentation">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentView
         x:Name="MainContent"
-        ControlTemplate="{Binding CurrentTemplate, Mode=OneWay}"
         HorizontalOptions="Fill"
         VerticalOptions="Fill" />
 </ContentView>

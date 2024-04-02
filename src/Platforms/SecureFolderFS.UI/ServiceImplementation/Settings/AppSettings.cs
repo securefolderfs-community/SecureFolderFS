@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Services.Settings;
 namespace SecureFolderFS.UI.ServiceImplementation.Settings
 {
     /// <inheritdoc cref="IAppSettings"/>
-    public sealed class AppSettings : SettingsModel, IAppSettings
+    public class AppSettings : SettingsModel, IAppSettings
     {
         /// <inheritdoc/>
         protected override IDatabaseModel<string> SettingsDatabase { get; }
@@ -19,56 +19,56 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
-        public bool WasBetaNotificationShown1
+        public virtual bool WasBetaNotificationShown1
         {
             get => GetSetting(() => false);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public bool WasVaultFolderExplanationShown
+        public virtual bool ShouldShowVaultTutorial
+        {
+            get => GetSetting(() => true, "WasVaultFolderExplanationShown");
+            set => SetSetting(value, "WasVaultFolderExplanationShown");
+        }
+
+        /// <inheritdoc/>
+        public virtual bool IsIntroduced
         {
             get => GetSetting(() => false);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public bool IsIntroduced
-        {
-            get => GetSetting(() => false);
-            set => SetSetting(value);
-        }
-
-        /// <inheritdoc/>
-        public string? LastVaultFolderId
+        public virtual string? LastVaultFolderId
         {
             get => GetSetting<string?>();
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public string? ApplicationTheme
+        public virtual string? ApplicationTheme
         {
             get => GetSetting<string?>();
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public string? LastVersion
+        public virtual string? LastVersion
         {
             get => GetSetting<string?>();
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public string? AppLanguage
+        public virtual string? AppLanguage
         {
             get => GetSetting<string?>();
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public DateTime UpdateLastChecked
+        public virtual DateTime UpdateLastChecked
         {
             get => GetSetting<DateTime>(() => new());
             set => SetSetting(value);

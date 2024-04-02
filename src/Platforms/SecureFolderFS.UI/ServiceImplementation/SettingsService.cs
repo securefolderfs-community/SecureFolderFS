@@ -1,9 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
-using SecureFolderFS.UI.ServiceImplementation.Settings;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -16,10 +14,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public IUserSettings UserSettings { get; }
 
-        public SettingsService(IModifiableFolder settingsFolder)
+        public SettingsService(IAppSettings appSettings, IUserSettings userSettings)
         {
-            AppSettings = new AppSettings(settingsFolder);
-            UserSettings = new UserSettings(settingsFolder);
+            AppSettings = appSettings;
+            UserSettings = userSettings;
         }
 
         /// <inheritdoc/>

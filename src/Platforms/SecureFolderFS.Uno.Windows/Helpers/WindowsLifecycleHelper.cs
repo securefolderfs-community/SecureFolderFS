@@ -10,6 +10,7 @@ using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.Uno.Windows.ServiceImplementation;
 using Windows.Storage;
+using SecureFolderFS.Uno.Extensions;
 
 #if !DEBUG
 using Microsoft.AppCenter;
@@ -82,6 +83,8 @@ namespace SecureFolderFS.Uno.Windows.Helpers
 #else
                 .AddSingleton<ILocalizationService, WindowsLocalizationService>()
 #endif
+                
+                .WithUnoServices(settingsFolder)
                 ;
         }
 

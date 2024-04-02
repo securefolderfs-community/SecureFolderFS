@@ -15,7 +15,7 @@ namespace SecureFolderFS.UI.ViewModels
         [ObservableProperty] private string? _PrimaryPassword;
 
         /// <inheritdoc/>
-        public virtual IKey Inner => new DisposablePassword(PrimaryPassword ?? string.Empty);
+        public virtual IKey Inner => TryGetPasswordAsKey() ?? new DisposablePassword(string.Empty);
 
         protected PasswordViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)

@@ -25,7 +25,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 var supported = item switch
                 {
                     Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => true,
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => false,
                     Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => true,
                     _ => false
                 };

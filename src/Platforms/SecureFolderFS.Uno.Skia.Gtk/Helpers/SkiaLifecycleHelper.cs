@@ -4,6 +4,7 @@ using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
+using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Skia.Gtk.ServiceImplementation;
 using Windows.Storage;
 
@@ -49,6 +50,9 @@ namespace SecureFolderFS.Uno.Skia.Gtk.Helpers
                 .AddSingleton<IIapService, DebugIapService>()
                 .AddSingleton<IUpdateService, DebugUpdateService>()
                 .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                
+                .WithUnoServices(settingsFolder)
+                
                 ;
         }
     }

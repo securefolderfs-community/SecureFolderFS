@@ -38,13 +38,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            if (!SettingsService.AppSettings.WasVaultFolderExplanationShown)
+            if (SettingsService.AppSettings.ShouldShowVaultTutorial)
             {
                 var explanationDialog = new ExplanationDialogViewModel();
                 await explanationDialog.InitAsync();
                 await OverlayService.ShowAsync(explanationDialog);
 
-                SettingsService.AppSettings.WasVaultFolderExplanationShown = true;
+                SettingsService.AppSettings.ShouldShowVaultTutorial = false;
                 await SettingsService.AppSettings.TrySaveAsync();
             }
 

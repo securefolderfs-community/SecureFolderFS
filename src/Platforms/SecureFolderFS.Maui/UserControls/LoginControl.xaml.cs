@@ -6,13 +6,13 @@ namespace SecureFolderFS.Maui.UserControls
     {
         public LoginControl()
         {
-            BindingContext = this;
             InitializeComponent();
+            RootGrid.BindingContext = this;
         }
 
-        public INotifyPropertyChanged? LoginTypeViewModel
+        public INotifyPropertyChanged LoginTypeViewModel
         {
-            get => (INotifyPropertyChanged?)GetValue(LoginTypeViewModelProperty);
+            get => (INotifyPropertyChanged)GetValue(LoginTypeViewModelProperty);
             set => SetValue(LoginTypeViewModelProperty, value);
         }
         public static readonly BindableProperty LoginTypeViewModelProperty =
