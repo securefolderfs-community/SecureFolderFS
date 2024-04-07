@@ -13,7 +13,7 @@ namespace SecureFolderFS.Maui
 
             // Register routes
             Routing.RegisterRoute("LoginPage", typeof(LoginPage));
-            // Routing.RegisterRoute("DashboardPage", typeof(DashboardPage)); // TODO
+            Routing.RegisterRoute("DashboardPage", typeof(DashboardPage));
         }
     }
 }

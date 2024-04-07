@@ -1,11 +1,11 @@
 using SecureFolderFS.Maui.Extensions;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 
 namespace SecureFolderFS.Maui.Views.Vault
 {
-    public partial class LoginPage : ContentPage, IQueryAttributable
+    public partial class OverviewPage : ContentPage, IQueryAttributable
     {
-        public LoginPage()
+        public OverviewPage()
         {
             BindingContext = this;
             _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
@@ -15,16 +15,16 @@ namespace SecureFolderFS.Maui.Views.Vault
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            ViewModel = query.ToViewModel<VaultLoginPageViewModel>()!;
+            ViewModel = query.ToViewModel<VaultOverviewPageViewModel>()!;
             OnPropertyChanged(nameof(ViewModel));
         }
 
-        public VaultLoginPageViewModel ViewModel
+        public VaultOverviewPageViewModel ViewModel
         {
-            get => (VaultLoginPageViewModel)GetValue(ViewModelProperty);
+            get => (VaultOverviewPageViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultLoginPageViewModel), typeof(LoginPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultOverviewPageViewModel), typeof(OverviewPage), null);
     }
 }

@@ -4,7 +4,7 @@ namespace SecureFolderFS.Maui.Extensions
 {
     internal static class NavigationExtensions
     {
-        public static IDictionary<string, object> ViewModelParameter(this INotifyPropertyChanged viewModel)
+        public static IDictionary<string, object> ToViewModelParameter(this INotifyPropertyChanged viewModel)
         {
             return new Dictionary<string, object>()
             {
@@ -12,7 +12,7 @@ namespace SecureFolderFS.Maui.Extensions
             };
         }
 
-        public static TViewModel? ViewModelParameter<TViewModel>(this IDictionary<string, object> query)
+        public static TViewModel? ToViewModel<TViewModel>(this IDictionary<string, object> query)
             where TViewModel : class, INotifyPropertyChanged
         {
             if (query.TryGetValue("ViewModel", out var viewModel) && viewModel is TViewModel typedViewModel)

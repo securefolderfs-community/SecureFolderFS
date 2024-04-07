@@ -6,7 +6,7 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="using:SecureFolderFS.Uno.UserControls.Navigation"
+    xmlns:nv="using:SecureFolderFS.Uno.UserControls.Navigation"
     Closing="SettingsDialog_Closing"
     Opened="SettingsDialog_Opened"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
@@ -75,7 +75,7 @@
 
             <!--  Display frame  -->
             <ScrollViewer Width="644">
-                <uc:SettingsNavigationControl x:Name="Navigation" Margin="16,16,16,8" />
+                <nv:SettingsNavigationControl x:Name="Navigation" Margin="16,16,16,8" />
             </ScrollViewer>
         </NavigationView>
 

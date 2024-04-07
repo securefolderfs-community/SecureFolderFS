@@ -74,6 +74,8 @@ namespace SecureFolderFS.Uno.Views.Vault
             if (ViewModel.DashboardNavigationService.SetupNavigation(Navigation, true))
             {
                 var target = ViewModel.DashboardNavigationService.CurrentView ?? GetDefaultDashboardViewModel(); // Get current target or initialize default
+                await ViewModel.DashboardNavigationService.NavigateAsync(target);
+
                 IViewDesignation GetDefaultDashboardViewModel()
                 {
                     var controlsViewModel = new VaultControlsViewModel(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigationService, ViewModel.NavigationService);
@@ -82,8 +84,6 @@ namespace SecureFolderFS.Uno.Views.Vault
 
                     return vaultOverviewViewModel;
                 }
-
-                await ViewModel.DashboardNavigationService.NavigateAsync(target);
             }
         }
 

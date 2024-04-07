@@ -26,7 +26,7 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
                 _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 
-            await Shell.Current.GoToAsync(url, target.ViewModelParameter());
+            await Shell.Current.GoToAsync(url, target.ToViewModelParameter());
             return true;
         }
 

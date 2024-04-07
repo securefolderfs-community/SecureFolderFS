@@ -1,0 +1,17 @@
+﻿<ContentPage
+    x:Class="SecureFolderFS.Maui.Views.Vault.OverviewPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:DashboardPage">
+
+
+    <VerticalStackLayout
+        HorizontalOptions="Center"
+        Spacing="32"
+        VerticalOptions="Center">
+
+        <Label Text="This is overview page" />
+    </VerticalStackLayout>
+</ContentPage>

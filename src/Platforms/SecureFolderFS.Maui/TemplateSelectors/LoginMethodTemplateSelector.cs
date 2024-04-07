@@ -9,6 +9,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 
         public DataTemplate? ErrorTemplate { get; set; }
 
+        /// <inheritdoc/>
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
             return item switch
