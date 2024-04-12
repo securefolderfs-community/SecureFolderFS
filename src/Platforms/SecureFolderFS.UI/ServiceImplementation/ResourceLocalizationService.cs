@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
 using System;
@@ -23,7 +23,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             /* "cz-CZ", */ "da-DK", "de-DE", "en-US", 
             "es-ES", /* "fr-FR", */ /* "it-IT", */ "pl-PL",
-            /* "ru-RU", */ "uk-UA"
+            /* "ru-RU", */ "uk-UA", "pt-PT", "ms-MY",
+            "id-ID"
         };
 
         protected IAppSettings AppSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().AppSettings;

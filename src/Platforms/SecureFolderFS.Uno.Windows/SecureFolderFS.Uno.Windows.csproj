@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 
     <!-- Publishing -->
@@ -21,7 +21,7 @@
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 
     <!-- Languages -->
-    <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA</AppxDefaultResourceQualifiers>
+    <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID</AppxDefaultResourceQualifiers>
     <DefaultLanguage>en-US</DefaultLanguage>
 
     <!-- Bundle WinAppSDK binaries in SelfContained -->

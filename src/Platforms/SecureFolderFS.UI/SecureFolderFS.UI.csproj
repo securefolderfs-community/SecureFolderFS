@@ -167,6 +167,18 @@
       <EmbeddedResource Update="Strings\de-DE\Resources.resx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+      <EmbeddedResource Update="Strings\id-ID\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <SubType>Designer</SubType>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\ms-MY\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <SubType>Designer</SubType>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Strings\pt-PT\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <SubType>Designer</SubType>
+      </EmbeddedResource>
       <EmbeddedResource Update="Strings\en-US\Resources.resx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
