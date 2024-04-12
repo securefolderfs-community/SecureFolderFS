@@ -4,8 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,13 +17,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         [ObservableProperty] private string? _ContentCipherName;
         [ObservableProperty] private string? _FileNameCipherName;
 
-        /// <inheritdoc/>
-        public override string PageName { get; } = "Properties";
-
         public VaultPropertiesPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService)
             : base(unlockedVaultViewModel, dashboardNavigationService)
         {
             ServiceProvider = Ioc.Default;
+            Title = "Properties".ToLocalized();
 
             // TODO: Maybe add a method into one of the vault services to get the details about a vault
             ContentCipherName = "TODO";

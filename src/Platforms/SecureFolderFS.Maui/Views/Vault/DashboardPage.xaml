@@ -12,7 +12,10 @@
 
     <ContentPage.Resources>
         <DataTemplate x:Key="OverviewTemplate" x:DataType="vm:VaultOverviewPageViewModel">
-            <vw:OverviewPage ViewModel="{Binding}" />
+            <!--  Grid is needed here since ContentPresentation casts to View  -->
+            <Grid>
+                <vw:OverviewPage ViewModel="{Binding}" />
+            </Grid>
         </DataTemplate>
     </ContentPage.Resources>
 

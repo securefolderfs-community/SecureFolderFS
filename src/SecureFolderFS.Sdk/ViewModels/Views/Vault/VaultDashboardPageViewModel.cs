@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private void DashboardNavigationService_NavigationChanged(object? sender, IViewDesignation? e)
         {
-            Title = (DashboardNavigationService.CurrentView as BaseDashboardPageViewModel)?.PageName;
+            Title = DashboardNavigationService.CurrentView?.Title;
         }
 
         /// <inheritdoc/>
