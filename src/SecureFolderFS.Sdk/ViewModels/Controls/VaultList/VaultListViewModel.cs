@@ -95,10 +95,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
         private void AddVault(IVaultModel vaultModel)
         {
-            var widgetsCollection = new WidgetsCollectionModel(vaultModel.Folder);
             var listItem = new VaultListItemViewModel(vaultModel, _vaultCollectionModel);
-
-            listItem.LastAccessDate = vaultModel.LastAccessDate;
             Items.Add(listItem);
         }
 

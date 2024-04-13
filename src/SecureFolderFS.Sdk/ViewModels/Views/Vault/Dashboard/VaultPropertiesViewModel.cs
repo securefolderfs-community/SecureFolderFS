@@ -6,8 +6,6 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Shared.EventArguments;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,9 +16,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
     {
         [ObservableProperty] private string? _ContentCipherName;
         [ObservableProperty] private string? _FileNameCipherName;
-
-        /// <inheritdoc/>
-        public override event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
         public VaultPropertiesViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
             : base(unlockedVaultViewModel)

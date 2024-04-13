@@ -22,6 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         {
         }
 
+        // TODO: Needs docs
         public abstract Task<IResult> TryContinueAsync(CancellationToken cancellationToken);
 
         public abstract Task<IResult> TryCancelAsync(CancellationToken cancellationToken);

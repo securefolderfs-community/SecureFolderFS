@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -18,18 +19,21 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
-    public sealed partial class VaultLoginViewModel : BaseVaultViewModel
+    public sealed partial class VaultLoginViewModel : BaseVaultViewModel, INavigatable
     {
         [ObservableProperty] private LoginControlViewModel _LoginViewModel;
 
-        /// <inheritdoc/>
-        public override event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
+        public INavigator VaultNavigator { get; }
 
-        public VaultLoginViewModel(IVaultModel vaultModel)
+        /// <inheritdoc/>
+        public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
+
+        public VaultLoginViewModel(IVaultModel vaultModel, INavigator vaultNavigator)
             : base(vaultModel)
         {
             ServiceProvider = Ioc.Default;
             Title = vaultModel.VaultName;
+            VaultNavigator = vaultNavigator;
             _LoginViewModel = new(vaultModel, true);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }

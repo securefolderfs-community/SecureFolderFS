@@ -26,6 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         public VaultListItemViewModel(IVaultModel vaultModel, IVaultCollectionModel vaultCollectionModel)
         {
             _vaultCollectionModel = vaultCollectionModel;
+            LastAccessDate = vaultModel.LastAccessDate;
             VaultModel = vaultModel;
             ServiceProvider = Ioc.Default;
 

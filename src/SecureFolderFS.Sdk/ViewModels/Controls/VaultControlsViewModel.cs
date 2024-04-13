@@ -17,13 +17,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Inject<IFileExplorerService>]
     public sealed partial class VaultControlsViewModel : ObservableObject
     {
-        private readonly INavigator _navigator;
+        private readonly INavigator _vaultNavigator;
+        private readonly INavigator _dashboardNavigator;
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private VaultPropertiesViewModel? _propertiesViewModel;
 
-        public VaultControlsViewModel(INavigator navigator, UnlockedVaultViewModel unlockedVaultViewModel)
+        public VaultControlsViewModel(INavigator vaultNavigator, INavigator dashboardNavigator, UnlockedVaultViewModel unlockedVaultViewModel)
         {
-            _navigator = navigator;
+            _vaultNavigator = vaultNavigator;
+            _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
             ServiceProvider = Ioc.Default;
         }
@@ -41,11 +43,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             await _unlockedVaultViewModel.DisposeAsync();
 
             // Prepare login page
-            var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultModel);
+            var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultModel, _vaultNavigator);
             _ = loginPageViewModel.InitAsync();
 
             // Navigate away
-            await _navigator.NavigateAsync(loginPageViewModel);
+            await _vaultNavigator.NavigateAsync(loginPageViewModel);
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultModel));
         }
 
@@ -53,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async Task OpenPropertiesAsync()
         {
             _propertiesViewModel ??= new(_unlockedVaultViewModel);
-            await _navigator.NavigateAsync(_propertiesViewModel);
+            await _dashboardNavigator.NavigateAsync(_propertiesViewModel);
         }
     }
 }

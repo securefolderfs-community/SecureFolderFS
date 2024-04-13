@@ -2,13 +2,11 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.EventArguments;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,13 +15,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
     [Inject<INavigationService>(Visibility = "public", Name = "DashboardNavigationService")]
     public sealed partial class VaultDashboardViewModel : BaseDashboardViewModel, IRecipient<VaultLockedMessage>
     {
-        /// <inheritdoc/>
-        public override event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
+        public INavigator VaultNavigator { get; }
 
-        public VaultDashboardViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
+        public VaultDashboardViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator vaultNavigator)
             : base(unlockedVaultViewModel)
         {
             ServiceProvider = Ioc.Default;
+            VaultNavigator = vaultNavigator;
             DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
 
             WeakReferenceMessenger.Default.Register(this);
@@ -44,9 +42,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         }
 
         [RelayCommand]
-        private void GoBack()
+        private async Task GoBackAsync()
         {
-            NavigationRequested?.Invoke(this, new BackNavigationRequestedEventArgs(this));
+            await DashboardNavigationService.TryNavigateAsync<VaultOverviewViewModel>();
+
+            // TODO(n): Use GoBackAsync so the navigation is unified when more nested views are implemented
+            // The current problem is that GoBackAsync does not update CurrentView
+            // which the UI relies on when completing the animation
+            //await DashboardNavigationService.GoBackAsync();
         }
 
         private void DashboardNavigationService_NavigationChanged(object? sender, IViewDesignation? e)

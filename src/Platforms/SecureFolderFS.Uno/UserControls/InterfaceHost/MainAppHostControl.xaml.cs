@@ -5,16 +5,12 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
@@ -64,12 +60,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultModel.Equals(vaultModel) ?? false);
             if (target is null)
             {
-                var vaultLoginViewModel = new VaultLoginViewModel(vaultModel);
-                vaultLoginViewModel.NavigationRequested += VaultLoginViewModel_NavigationRequested;
-
-                target = new VaultLoginViewModel(vaultModel);
-                if (target is IAsyncInitialize asyncInitialize)
-                    await asyncInitialize.InitAsync();
+                var vaultLoginViewModel = new VaultLoginViewModel(vaultModel, ViewModel.NavigationService);
+                _ = vaultLoginViewModel.InitAsync();
+                target = vaultLoginViewModel;
             }
 
             // Navigate
@@ -86,23 +79,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             {
                 _isInitialized = true;
                 await ViewModel.InitAsync();
-            }
-        }
-
-        private async void VaultLoginViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
-        {
-            if (ViewModel is null)
-                return;
-
-            if (sender is BaseVaultViewModel viewModel)
-                viewModel.NavigationRequested -= VaultLoginViewModel_NavigationRequested;
-
-            if (e is UnlockNavigationRequestedEventArgs args)
-            {
-                var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel);
-                _ = dashboardViewModel.InitAsync();
-
-                await ViewModel.NavigationService.NavigateAsync(dashboardViewModel);
             }
         }
 

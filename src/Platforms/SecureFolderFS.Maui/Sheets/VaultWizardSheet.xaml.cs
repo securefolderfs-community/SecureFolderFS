@@ -95,9 +95,8 @@ namespace SecureFolderFS.Maui.Sheets
                 SummaryWizardViewModel viewModel => new SummaryWizardViewControl(viewModel),
                 _ => null
             };
-                
+
             ViewModel.CurrentViewModel = nextViewModel;
-            ViewModel.CurrentViewModel?.OnAppearing();
         }
     }
 }

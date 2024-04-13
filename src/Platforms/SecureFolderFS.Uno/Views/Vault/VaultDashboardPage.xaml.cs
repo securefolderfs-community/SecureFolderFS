@@ -79,7 +79,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                 {
                     var vaultOverviewViewModel = new VaultOverviewViewModel(
                         ViewModel.UnlockedVaultViewModel,
-                        new(ViewModel.DashboardNavigationService, ViewModel.UnlockedVaultViewModel),
+                        new(ViewModel.VaultNavigator, ViewModel.DashboardNavigationService, ViewModel.UnlockedVaultViewModel),
                         new(ViewModel.UnlockedVaultViewModel, new WidgetsCollectionModel(ViewModel.VaultModel.Folder)));
 
                     _ = vaultOverviewViewModel.InitAsync();
@@ -95,12 +95,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         private async void DashboardNavigationService_NavigationChanged(object? sender, IViewDesignation? e)
         {
-            var canGoBack = e switch
-            {
-                VaultOverviewViewModel => false,
-                _ => true
-            };
-
+            var canGoBack = e is not VaultOverviewViewModel;
             if (canGoBack)
             {
                 GoBack.Visibility = Visibility.Visible;
