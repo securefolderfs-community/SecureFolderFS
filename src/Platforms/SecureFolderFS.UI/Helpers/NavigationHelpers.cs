@@ -1,4 +1,5 @@
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Utils;
 
 namespace SecureFolderFS.UI.Helpers
@@ -13,16 +14,14 @@ namespace SecureFolderFS.UI.Helpers
 
         public static bool SetupNavigation(this INavigationService navigationService, INavigationControl navigationControl, bool overrideNavigation = false)
         {
-            if (!overrideNavigation && navigationService.IsInitialized)
+            if (navigationService is not BaseNavigationService baseNavigationService)
+                return false;
+
+            if (!overrideNavigation && baseNavigationService.IsInitialized)
                 return true;
 
-            if (navigationService is INavigationControlContract navigationControlContract)
-            {
-                navigationControlContract.NavigationControl = navigationControl;
-                return navigationService.IsInitialized;
-            }
-
-            return false;
+            baseNavigationService.NavigationControl = navigationControl;
+            return baseNavigationService.IsInitialized;
         }
     }
 }

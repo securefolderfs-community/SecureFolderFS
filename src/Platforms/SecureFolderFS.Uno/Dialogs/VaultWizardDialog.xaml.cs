@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.Utils;
@@ -130,7 +131,7 @@ namespace SecureFolderFS.Uno.Dialogs
                 // Main (if new selected) => Credentials
                 MainWizardViewModel { CreationType: NewVaultCreationType.CreateNew } => new CredentialsWizardViewModel((IModifiableFolder)(Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!),
                 // Credentials => Recovery
-                CredentialsWizardViewModel viewModel => new RecoveryWizardViewModel(viewModel.Folder, e.Result),
+                CredentialsWizardViewModel viewModel => new RecoveryWizardViewModel(viewModel.Folder, (e as WizardNavigationRequestedEventArgs)?.Result),
                 // Recovery => Summary
                 RecoveryWizardViewModel viewModel => new SummaryWizardViewModel(viewModel.Folder, ViewModel!.VaultCollectionModel),
 

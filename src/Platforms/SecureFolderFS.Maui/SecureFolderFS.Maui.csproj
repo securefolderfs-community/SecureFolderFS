@@ -87,9 +87,6 @@
 	  <Compile Update="Views\Vault\OverviewPage.xaml.cs">
 	    <DependentUpon>OverviewPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Vault\DashboardPage.xaml.cs">
-	    <DependentUpon>DashboardPage.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="Views\Wizard\MainWizardViewControl.xaml.cs">
 	    <DependentUpon>MainWizardViewControl.xaml</DependentUpon>
 	  </Compile>
@@ -115,9 +112,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Vault\OverviewPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Vault\DashboardPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Vault\LoginPage.xaml">

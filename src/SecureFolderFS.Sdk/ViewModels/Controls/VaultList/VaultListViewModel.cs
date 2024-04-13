@@ -67,7 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 AddVault(item);
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
-                SelectedItem = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
+                SelectedItem = Items.FirstOrDefault(x => x.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
 
             SelectedItem ??= Items.FirstOrDefault();
             return Task.CompletedTask;
@@ -96,8 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private void AddVault(IVaultModel vaultModel)
         {
             var widgetsCollection = new WidgetsCollectionModel(vaultModel.Folder);
-            var vaultViewModel = new VaultViewModel(vaultModel, widgetsCollection);
-            var listItem = new VaultListItemViewModel(vaultViewModel, _vaultCollectionModel);
+            var listItem = new VaultListItemViewModel(vaultModel, _vaultCollectionModel);
 
             listItem.LastAccessDate = vaultModel.LastAccessDate;
             Items.Add(listItem);
@@ -105,7 +104,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
         private void RemoveVault(IVaultModel vaultModel)
         {
-            var itemToRemove = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel == vaultModel);
+            var itemToRemove = Items.FirstOrDefault(x => x.VaultModel == vaultModel);
             if (itemToRemove is null)
                 return;
 
@@ -124,7 +123,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)
         {
             if (SettingsService.UserSettings.ContinueOnLastVault)
-                SettingsService.AppSettings.LastVaultFolderId = value?.VaultViewModel.VaultModel.Folder.Id;
+                SettingsService.AppSettings.LastVaultFolderId = value?.VaultModel.Folder.Id;
         }
     }
 }

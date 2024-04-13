@@ -3,8 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -24,9 +23,9 @@ namespace SecureFolderFS.Uno.Views.Vault
     {
         private bool _isLoaded;
         
-        public VaultDashboardPageViewModel? ViewModel
+        public VaultDashboardViewModel? ViewModel
         {
-            get => DataContext.TryCast<VaultDashboardPageViewModel>();
+            get => DataContext.TryCast<VaultDashboardViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -37,7 +36,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultDashboardPageViewModel viewModel)
+            if (e.Parameter is VaultDashboardViewModel viewModel)
             {
                 ViewModel = viewModel;
                 await LoadComponentsAsync();
@@ -78,10 +77,12 @@ namespace SecureFolderFS.Uno.Views.Vault
 
                 IViewDesignation GetDefaultDashboardViewModel()
                 {
-                    var controlsViewModel = new VaultControlsViewModel(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigationService, ViewModel.NavigationService);
-                    var vaultOverviewViewModel = new VaultOverviewPageViewModel(ViewModel.UnlockedVaultViewModel, controlsViewModel, ViewModel.DashboardNavigationService);
-                    _ = vaultOverviewViewModel.InitAsync();
+                    var vaultOverviewViewModel = new VaultOverviewViewModel(
+                        ViewModel.UnlockedVaultViewModel,
+                        new(ViewModel.DashboardNavigationService, ViewModel.UnlockedVaultViewModel),
+                        new(ViewModel.UnlockedVaultViewModel, new WidgetsCollectionModel(ViewModel.VaultModel.Folder)));
 
+                    _ = vaultOverviewViewModel.InitAsync();
                     return vaultOverviewViewModel;
                 }
             }
@@ -96,7 +97,7 @@ namespace SecureFolderFS.Uno.Views.Vault
         {
             var canGoBack = e switch
             {
-                VaultOverviewPageViewModel => false,
+                VaultOverviewViewModel => false,
                 _ => true
             };
 

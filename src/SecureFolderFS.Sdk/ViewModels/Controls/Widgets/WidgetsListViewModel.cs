@@ -13,15 +13,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
-        private readonly IWidgetsCollectionModel _widgetsContextModel;
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
+
+        public IWidgetsCollectionModel WidgetsCollectionModel { get; }
 
         public ObservableCollection<BaseWidgetViewModel> Widgets { get; }
 
-        public WidgetsListViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetsCollectionModel widgetsContextModel)
+        public WidgetsListViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetsCollectionModel widgetsCollectionModel)
         {
             _unlockedVaultViewModel = unlockedVaultViewModel;
-            _widgetsContextModel = widgetsContextModel;
+            WidgetsCollectionModel = widgetsCollectionModel;
             Widgets = new();
         }
 
@@ -29,11 +30,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Load widgets for vault
-            if (!await _widgetsContextModel.TryLoadAsync(cancellationToken))
+            if (!await WidgetsCollectionModel.TryLoadAsync(cancellationToken))
                 return;
 
             // Add widgets
-            foreach (var item in _widgetsContextModel.GetWidgets())
+            foreach (var item in WidgetsCollectionModel.GetWidgets())
             {
                 var widgetViewModel = GetWidgetForModel(item);
                 if (widgetViewModel is null)

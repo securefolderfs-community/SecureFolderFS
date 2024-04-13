@@ -3,12 +3,13 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Threading;
@@ -17,16 +18,19 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
-    public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel
+    public sealed partial class VaultLoginViewModel : BaseVaultViewModel
     {
         [ObservableProperty] private LoginControlViewModel _LoginViewModel;
 
-        public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
-            : base(vaultViewModel, navigationService)
+        /// <inheritdoc/>
+        public override event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
+
+        public VaultLoginViewModel(IVaultModel vaultModel)
+            : base(vaultModel)
         {
             ServiceProvider = Ioc.Default;
-            Title = vaultViewModel.VaultModel.VaultName;
-            _LoginViewModel = new(vaultViewModel.VaultModel, true);
+            Title = vaultModel.VaultName;
+            _LoginViewModel = new(vaultModel, true);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
 
@@ -38,6 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
+            // Show vault tutorial
             if (SettingsService.AppSettings.ShouldShowVaultTutorial)
             {
                 var explanationDialog = new ExplanationDialogViewModel();
@@ -49,18 +54,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             }
 
             // Update last access date
-            await VaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now);
-
-            // Create view models
-            var unlockedVaultViewModel = new UnlockedVaultViewModel(VaultViewModel, e.StorageRoot);
-            var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, NavigationService);
+            await VaultModel.SetLastAccessDateAsync(DateTime.Now);
 
             // Notify that the vault has been unlocked
-            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultViewModel.VaultModel));
+            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
+
+            // Navigate away
+            var unlockedVaultViewModel = new UnlockedVaultViewModel(e.StorageRoot, VaultModel);
+            NavigationRequested?.Invoke(this, new UnlockNavigationRequestedEventArgs(unlockedVaultViewModel, this));
 
             // Dispose the current instance and navigate
             Dispose();
-            await NavigationService.TryNavigateAndForgetAsync(dashboardPage);
         }
 
         /// <inheritdoc/>

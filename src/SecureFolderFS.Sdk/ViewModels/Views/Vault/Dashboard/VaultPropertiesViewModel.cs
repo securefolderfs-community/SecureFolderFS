@@ -6,19 +6,24 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared.EventArguments;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 {
     [Inject<IOverlayService>]
-    public sealed partial class VaultPropertiesPageViewModel : BaseDashboardPageViewModel
+    public sealed partial class VaultPropertiesViewModel : BaseDashboardViewModel
     {
         [ObservableProperty] private string? _ContentCipherName;
         [ObservableProperty] private string? _FileNameCipherName;
 
-        public VaultPropertiesPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService dashboardNavigationService)
-            : base(unlockedVaultViewModel, dashboardNavigationService)
+        /// <inheritdoc/>
+        public override event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
+
+        public VaultPropertiesViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
+            : base(unlockedVaultViewModel)
         {
             ServiceProvider = Ioc.Default;
             Title = "Properties".ToLocalized();
@@ -43,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         [RelayCommand]
         private async Task ChangePasswordAsync()
         {
-            var viewModel = new PasswordChangeDialogViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
+            var viewModel = new PasswordChangeDialogViewModel(UnlockedVaultViewModel.VaultModel);
             await OverlayService.ShowAsync(viewModel);
         }
 

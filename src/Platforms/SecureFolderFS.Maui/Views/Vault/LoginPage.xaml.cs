@@ -15,16 +15,16 @@ namespace SecureFolderFS.Maui.Views.Vault
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            ViewModel = query.ToViewModel<VaultLoginPageViewModel>()!;
+            ViewModel = query.ToViewModel<VaultLoginViewModel>()!;
             OnPropertyChanged(nameof(ViewModel));
         }
 
-        public VaultLoginPageViewModel ViewModel
+        public VaultLoginViewModel ViewModel
         {
-            get => (VaultLoginPageViewModel)GetValue(ViewModelProperty);
+            get => (VaultLoginViewModel)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultLoginPageViewModel), typeof(LoginPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultLoginViewModel), typeof(LoginPage), null);
     }
 }

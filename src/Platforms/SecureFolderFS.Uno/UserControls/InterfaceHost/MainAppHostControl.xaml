@@ -168,8 +168,8 @@
             <DataTemplate x:DataType="vm:VaultListItemViewModel">
                 <NavigationViewItem
                     Height="64"
-                    AutomationProperties.Name="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
-                    ToolTipService.ToolTip="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
+                    AutomationProperties.Name="{x:Bind VaultModel.VaultName, Mode=OneWay}"
+                    ToolTipService.ToolTip="{x:Bind VaultModel.VaultName, Mode=OneWay}">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xF540;" />
                     </NavigationViewItem.Icon>
@@ -178,7 +178,7 @@
                             <!--  Vault name  -->
                             <TextBlock
                                 FontWeight="SemiBold"
-                                Text="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                                Text="{x:Bind VaultModel.VaultName, Mode=OneWay}"
                                 TextTrimming="CharacterEllipsis" />
 
                             <!--  Last opened  -->

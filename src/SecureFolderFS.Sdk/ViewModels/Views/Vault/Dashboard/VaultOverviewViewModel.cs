@@ -1,28 +1,33 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Shared.EventArguments;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
 {
     [Inject<ISettingsService>, Inject<IFileExplorerService>]
-    public sealed partial class VaultOverviewPageViewModel : BaseDashboardPageViewModel
+    public sealed partial class VaultOverviewViewModel : BaseDashboardViewModel
     {
-        public WidgetsListViewModel WidgetsViewModel { get; }
+        [ObservableProperty] private WidgetsListViewModel _WidgetsViewModel;
+        [ObservableProperty] private VaultControlsViewModel _VaultControlsViewModel;
 
-        public VaultControlsViewModel VaultControlsViewModel { get; }
+        /// <inheritdoc/>
+        public override event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
-        public VaultOverviewPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, VaultControlsViewModel vaultControlsViewModel, INavigationService dashboardNavigationService)
-            : base(unlockedVaultViewModel, dashboardNavigationService)
+        public VaultOverviewViewModel(UnlockedVaultViewModel unlockedVaultViewModel, VaultControlsViewModel vaultControlsViewModel, WidgetsListViewModel widgetsViewModel)
+            : base(unlockedVaultViewModel)
         {
             ServiceProvider = Ioc.Default;
-            WidgetsViewModel = new(unlockedVaultViewModel, unlockedVaultViewModel.VaultViewModel.WidgetsContextModel);
+            WidgetsViewModel = widgetsViewModel;
             VaultControlsViewModel = vaultControlsViewModel;
-            Title = UnlockedVaultViewModel.VaultViewModel.VaultModel.VaultName;
+            Title = UnlockedVaultViewModel.VaultModel.VaultName;
         }
 
         /// <inheritdoc/>
@@ -35,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         }
 
         /// <inheritdoc/>
-        public override void OnDisappearing()
+        public override void Dispose()
         {
             WidgetsViewModel.Dispose();
         }

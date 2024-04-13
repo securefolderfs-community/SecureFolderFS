@@ -37,6 +37,12 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
+        public bool Equals(IVaultModel? other)
+        {
+            return Folder.Id == other?.Folder.Id;
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> SetLastAccessDateAsync(DateTime? value, CancellationToken cancellationToken = default)
         {
             var result = await UpdateConfigurationAsync(x => x.LastAccessDate = value, cancellationToken);

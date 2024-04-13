@@ -1,5 +1,6 @@
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 
@@ -21,8 +22,9 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
         {
             var url = target switch
             {
-                VaultLoginPageViewModel => "LoginPage",
-                VaultDashboardPageViewModel => "DashboardPage",
+                VaultLoginViewModel => "LoginPage",
+                VaultOverviewViewModel => "OverviewPage",
+                VaultPropertiesViewModel => "PropertiesPage",
                 _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 

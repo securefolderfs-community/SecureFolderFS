@@ -13,8 +13,8 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         {
             return item switch
             {
-                VaultOverviewPageViewModel => OverviewTemplate,
-                VaultPropertiesPageViewModel => PropertiesTemplate,
+                VaultOverviewViewModel => OverviewTemplate,
+                VaultPropertiesViewModel => PropertiesTemplate,
             } ?? throw new ArgumentException("Invalid view model type specified.", nameof(item));
         }
     }

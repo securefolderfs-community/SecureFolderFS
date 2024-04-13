@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.EventArguments;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -11,13 +12,14 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
-    public sealed partial class WizardOverlayViewModel(IVaultCollectionModel vaultCollectionModel) : DialogViewModel
+    public sealed partial class WizardOverlayViewModel(IVaultCollectionModel vaultCollectionModel) : DialogViewModel, INavigatable
     {
         [ObservableProperty] private BaseWizardViewModel? _CurrentViewModel;
 
-        public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
-
         public IVaultCollectionModel VaultCollectionModel { get; } = vaultCollectionModel;
+
+        /// <inheritdoc />
+        public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
         /// <inheritdoc />
         public override void OnDisappearing()
@@ -35,7 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             eventDispatch?.PreventForwarding();
             var result = await CurrentViewModel.TryContinueAsync(cancellationToken);
             if (result.Successful)
-                NavigationRequested?.Invoke(this, new(result, CurrentViewModel));
+                NavigationRequested?.Invoke(this, new WizardNavigationRequestedEventArgs(result, CurrentViewModel));
         }
 
         [RelayCommand]

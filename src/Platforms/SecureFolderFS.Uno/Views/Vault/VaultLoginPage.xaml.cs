@@ -15,9 +15,9 @@ namespace SecureFolderFS.Uno.Views.Vault
     [INotifyPropertyChanged]
     public sealed partial class VaultLoginPage : Page
     {
-        public VaultLoginPageViewModel? ViewModel
+        public VaultLoginViewModel? ViewModel
         {
-            get => DataContext.TryCast<VaultLoginPageViewModel>();
+            get => DataContext.TryCast<VaultLoginViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultLoginPageViewModel viewModel)
+            if (e.Parameter is VaultLoginViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

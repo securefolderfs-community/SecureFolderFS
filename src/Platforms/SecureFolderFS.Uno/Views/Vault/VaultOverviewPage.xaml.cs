@@ -17,9 +17,9 @@ namespace SecureFolderFS.Uno.Views.Vault
     [INotifyPropertyChanged]
     public sealed partial class VaultOverviewPage : Page, IDisposable
     {
-        public VaultOverviewPageViewModel? ViewModel
+        public VaultOverviewViewModel? ViewModel
         {
-            get => DataContext.TryCast<VaultOverviewPageViewModel>();
+            get => DataContext.TryCast<VaultOverviewViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Uno.Views.Vault
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultOverviewPageViewModel viewModel)
+            if (e.Parameter is VaultOverviewViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

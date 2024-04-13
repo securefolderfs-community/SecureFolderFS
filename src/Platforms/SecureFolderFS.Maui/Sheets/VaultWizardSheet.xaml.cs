@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
 using The49.Maui.BottomSheet;
@@ -73,7 +74,7 @@ namespace SecureFolderFS.Maui.Sheets
                 LocationWizardViewModel { CreationType: NewVaultCreationType.CreateNew, SelectedFolder: IModifiableFolder modifiableFolder } => new CredentialsWizardViewModel(modifiableFolder),
 
                 // Credentials -> Recovery
-                CredentialsWizardViewModel { Folder: { } folder } => new RecoveryWizardViewModel(folder, e.Result),
+                CredentialsWizardViewModel { Folder: { } folder } => new RecoveryWizardViewModel(folder, (e as WizardNavigationRequestedEventArgs)?.Result),
 
                 // Recovery -> Summary
                 RecoveryWizardViewModel { Folder: { } folder } => new SummaryWizardViewModel(folder, ViewModel.VaultCollectionModel),
