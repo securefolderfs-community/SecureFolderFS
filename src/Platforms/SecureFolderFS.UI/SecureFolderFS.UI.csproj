@@ -167,6 +167,10 @@
       <EmbeddedResource Update="Strings\de-DE\Resources.resx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+      <EmbeddedResource Update="Strings\hi-IN\Resources.resx">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <SubType>Designer</SubType>
+      </EmbeddedResource>
       <EmbeddedResource Update="Strings\id-ID\Resources.resx">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <SubType>Designer</SubType>

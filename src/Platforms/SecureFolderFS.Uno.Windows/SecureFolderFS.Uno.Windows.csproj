@@ -21,7 +21,7 @@
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 
     <!-- Languages -->
-    <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID</AppxDefaultResourceQualifiers>
+    <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID;hi-IN</AppxDefaultResourceQualifiers>
     <DefaultLanguage>en-US</DefaultLanguage>
 
     <!-- Bundle WinAppSDK binaries in SelfContained -->
