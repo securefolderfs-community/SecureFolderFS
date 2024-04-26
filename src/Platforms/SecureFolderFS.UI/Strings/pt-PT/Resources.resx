@@ -118,353 +118,353 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExistingVault" xml:space="preserve">
-    <value>Add existing vault</value>
+    <value>Adicionar cofre existente</value>
   </data>
   <data name="AddExistingVaultDescription" xml:space="preserve">
-    <value>Select an existing vault from your device</value>
+    <value>Selecionar um cofre existente do seu dispositivo</value>
   </data>
   <data name="AddNewVault" xml:space="preserve">
-    <value>Add new vault</value>
+    <value>Adicionar novo cofre</value>
   </data>
   <data name="Authenticate" xml:space="preserve">
-    <value>Authenticate</value>
+    <value>Autenticar</value>
   </data>
   <data name="AuthenticateUsing" xml:space="preserve">
-    <value>Authenticate using {0}</value>
+    <value>Autenticar-se usando o {0}</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
-    <value>Automatically lock vaults</value>
+    <value>Trancar cofres automaticamente</value>
   </data>
   <data name="AutoLockDescription" xml:space="preserve">
-    <value>Lock all vaults when device is locked</value>
+    <value>Trancar todos os cofres ao bloquear o dispositivo</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Start with system</value>
+    <value>Iniciar com o Sistema</value>
   </data>
   <data name="AutoStartDescription" xml:space="preserve">
-    <value>Launch SecureFolderFS on system startup</value>
+    <value>Iniciar o SecureFolderFS na inicialização do sistema</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Voltar</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
   </data>
   <data name="Changelog" xml:space="preserve">
-    <value>Release notes</value>
+    <value>Notas da versão</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Excelente!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
-    <value>View latest release notes for this version</value>
+    <value>Visualizar as mudanças mais recentes para esta versão</value>
   </data>
   <data name="ChangelogError" xml:space="preserve">
-    <value>An issue occurred while loading the changelog.</value>
+    <value>Um problema ocorreu enquanto carregávamos as notas da versão.</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Change password</value>
+    <value>Alterar senha</value>
   </data>
   <data name="ChangePasswordDescription" xml:space="preserve">
-    <value>Change the password used to unlock this vault</value>
+    <value>Alterar a senha usada para desbloquear este cofre</value>
   </data>
   <data name="CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>Procurar atualizações</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>Fechar</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Confirmar</value>
   </data>
   <data name="Continue" xml:space="preserve">
-    <value>Continue</value>
+    <value>Continuar</value>
   </data>
   <data name="Copied" xml:space="preserve">
-    <value>Copied</value>
+    <value>Copiado</value>
   </data>
   <data name="CopyAppVersion" xml:space="preserve">
-    <value>Copy app version</value>
+    <value>Copiar versão do aplicativo</value>
   </data>
   <data name="CopySystemVersion" xml:space="preserve">
-    <value>Copy OS version</value>
+    <value>Copiar versão do sistema operacional</value>
   </data>
   <data name="CopyVersion" xml:space="preserve">
-    <value>Copy version</value>
+    <value>Copiar versão</value>
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
-    <value>Select which version to copy to clipboard</value>
+    <value>Selecionar a versão para copiar para a área de transferência</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
-    <value>Create new vault</value>
+    <value>Criar novo cofre</value>
   </data>
   <data name="CreateNewVaultDescription" xml:space="preserve">
-    <value>Create new SecureFolderFS vault</value>
+    <value>Criar novo cofre do SecureFolderFS</value>
   </data>
   <data name="CurrentPassword" xml:space="preserve">
-    <value>Current password</value>
+    <value>Senha atual</value>
   </data>
   <data name="DataEncryption" xml:space="preserve">
-    <value>Data encryption</value>
+    <value>Criptografia de dados</value>
   </data>
   <data name="DisableRecentAccess" xml:space="preserve">
-    <value>Disable recently accessed list</value>
+    <value>Desativar lista de acessados recentemente</value>
   </data>
   <data name="DisableRecentAccessDescription" xml:space="preserve">
-    <value>Temporarily disable recent files list when unlocking vaults</value>
+    <value>Desativar temporariamente a lista de arquivos recentes ao desbloquear cofres</value>
   </data>
   <data name="Downloading" xml:space="preserve">
-    <value>Downloading {0}%</value>
+    <value>Baixando {0}%</value>
   </data>
   <data name="Encryption" xml:space="preserve">
-    <value>Encryption</value>
+    <value>Criptografia</value>
   </data>
   <data name="EnterPassword" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Digite a senha</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Erro</value>
   </data>
   <data name="ExportSettings" xml:space="preserve">
-    <value>Export settings</value>
+    <value>Exportar configurações</value>
   </data>
   <data name="FileNameEncryption" xml:space="preserve">
-    <value>File name encryption</value>
+    <value>Criptografia do nome do arquivo</value>
   </data>
   <data name="FileSystemProvider" xml:space="preserve">
-    <value>File system provider</value>
+    <value>Provedor do sistema de arquivos</value>
   </data>
   <data name="FileSystemProviderDescription" xml:space="preserve">
-    <value>Choose the preferred virtual file system type</value>
+    <value>Escolha o tipo preferido de sistema de arquivos virtual</value>
   </data>
   <data name="HealthAttention" xml:space="preserve">
-    <value>Needs attention</value>
+    <value>Requer atenção</value>
   </data>
   <data name="HealthNoProblems" xml:space="preserve">
-    <value>No problems found</value>
+    <value>Nenhum problema encontrado</value>
   </data>
   <data name="HealthProblems" xml:space="preserve">
-    <value>Problems found</value>
+    <value>Problemas encontrados</value>
   </data>
   <data name="ImportSettings" xml:space="preserve">
-    <value>Import settings</value>
+    <value>Importar configurações</value>
   </data>
   <data name="Installing" xml:space="preserve">
-    <value>Installing...</value>
+    <value>Instalando...</value>
   </data>
   <data name="InvalidPassword" xml:space="preserve">
-    <value>Invalid password</value>
+    <value>Senha inválida</value>
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
-    <value>The provided password is incorrect.</value>
+    <value>A senha informada está incorreta.</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Idioma</value>
   </data>
   <data name="LanguageDescription" xml:space="preserve">
-    <value>Select the display language</value>
+    <value>Selecione o idioma de exibição</value>
   </data>
   <data name="LastChecked" xml:space="preserve">
-    <value>Last checked: {0}</value>
+    <value>Última verificação: {0}</value>
   </data>
   <data name="LatestVersionInstalled" xml:space="preserve">
-    <value>Latest version installed</value>
+    <value>Versão mais recente instalada</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>License</value>
+    <value>Licença</value>
   </data>
   <data name="Licenses" xml:space="preserve">
-    <value>Licenses</value>
+    <value>Licenças</value>
   </data>
   <data name="LockVault" xml:space="preserve">
-    <value>Lock vault</value>
+    <value>Bloquear cofre</value>
   </data>
   <data name="LockVaultDescription" xml:space="preserve">
-    <value>Securely lock this vault and close the dashboard</value>
+    <value>Bloqueie este cofre de forma segura e feche o painel</value>
   </data>
   <data name="ManageSettings" xml:space="preserve">
-    <value>Manage settings</value>
+    <value>Gerenciar configurações</value>
   </data>
   <data name="MasterKeyDescription" xml:space="preserve">
-    <value>This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+    <value>Esta é a chave mestra que você pode usar para recuperar o acesso a este cofre. Perdê-la irá impedir que você redefina a sua senha.</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
-    <value>My vaults</value>
+    <value>Meus cofres</value>
   </data>
   <data name="NewPassword" xml:space="preserve">
-    <value>New password</value>
+    <value>Nova senha</value>
   </data>
   <data name="NewVault" xml:space="preserve">
-    <value>New vault</value>
+    <value>Novo cofre</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>Sem criptografia</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
-    <value>No folder selected</value>
+    <value>Nenhuma pasta selecionada</value>
   </data>
   <data name="NoVaultsMessage" xml:space="preserve">
-    <value>You haven't added any vaults yet. Create a new one or add existing to begin!</value>
+    <value>Você ainda não adicionou nenhum cofre. Crie um novo ou adicione um já existente para começar!</value>
   </data>
   <data name="OpenLogLocation" xml:space="preserve">
-    <value>Open log location</value>
+    <value>Abrir local dos registros</value>
   </data>
   <data name="OpenLogLocationDescription" xml:space="preserve">
-    <value>Launches file explorer where log file is located</value>
+    <value>Abre o gerenciador de arquivos aonde os arquivos de registro estão localizados</value>
   </data>
   <data name="OpenVaultFolder" xml:space="preserve">
-    <value>Open vault folder</value>
+    <value>Abrir pasta do cofre</value>
   </data>
   <data name="OpenVaultFolderDescription" xml:space="preserve">
-    <value>Automatically open folder when vault is unlocked</value>
+    <value>Abrir pasta automaticamente quando o cofre for desbloqueado</value>
   </data>
   <data name="Password" xml:space="preserve">
-    <value>Password</value>
+    <value>Senha</value>
   </data>
   <data name="Print" xml:space="preserve">
-    <value>Print</value>
+    <value>Imprimir</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
-    <value>Privacy policy</value>
+    <value>Política de Privacidade</value>
   </data>
   <data name="PrivacyPolicyDescription" xml:space="preserve">
-    <value>View the privacy policy statement</value>
+    <value>Ver declaração da política de privacidade</value>
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
-    <value>Read speeds</value>
+    <value>Velocidades de leitura</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
-    <value>Remove vault from the list</value>
+    <value>Remover o cofre da lista</value>
   </data>
   <data name="RepeatPassword" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>Repita a senha</value>
   </data>
   <data name="RestartRequired" xml:space="preserve">
-    <value>Restart required</value>
+    <value>Reinicialização necessária</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
-    <value>Continue where you left off</value>
+    <value>Continuar de onde você parou</value>
   </data>
   <data name="RestoreLastSessionDescription" xml:space="preserve">
-    <value>Start on previously selected vault</value>
+    <value>Iniciar no cofre selecionado anteriormente</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>Tentar novamente</value>
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Reveal master key</value>
+    <value>Revelar chave mestra</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Pesquisar</value>
   </data>
   <data name="SelectVaultPath" xml:space="preserve">
-    <value>Select vault path</value>
+    <value>Selecionar caminho do cofre</value>
   </data>
   <data name="SetPassword" xml:space="preserve">
-    <value>Set password</value>
+    <value>Definir senha</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Configurações</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
-    <value>About</value>
+    <value>Sobre</value>
   </data>
   <data name="SettingsGeneral" xml:space="preserve">
-    <value>General</value>
+    <value>Geral</value>
   </data>
   <data name="SettingsPreferences" xml:space="preserve">
-    <value>Preferences</value>
+    <value>Preferências</value>
   </data>
   <data name="SettingsPrivacy" xml:space="preserve">
-    <value>Privacy</value>
+    <value>Privacidade</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show encrypted vault in File Explorer</value>
+    <value>Mostrar cofre criptografado no Gerenciador de Arquivos</value>
   </data>
   <data name="Social" xml:space="preserve">
-    <value>Social</value>
+    <value>Redes sociais</value>
   </data>
   <data name="SocialDescription" xml:space="preserve">
-    <value>Ask, suggest, and discuss SecureFolderFS</value>
+    <value>Pergunte, sugira e discuta sobre o SecureFolderFS</value>
   </data>
   <data name="Summary" xml:space="preserve">
-    <value>Summary</value>
+    <value>Sumário</value>
   </data>
   <data name="Telemetry" xml:space="preserve">
-    <value>Enable telemetry</value>
+    <value>Ativar telemetria</value>
   </data>
   <data name="TelemetryDescription" xml:space="preserve">
-    <value>Collect anonymous crash reports and usage data</value>
+    <value>Coletar relatórios de erro e dados de uso anônimos</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
   </data>
   <data name="ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>Escuro</value>
   </data>
   <data name="ThemeDescription" xml:space="preserve">
-    <value>Choose application theme</value>
+    <value>Escolher tema do aplicativo</value>
   </data>
   <data name="ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>Claro</value>
   </data>
   <data name="ThemeSystemDefault" xml:space="preserve">
-    <value>System default</value>
+    <value>Padrão do sistema</value>
   </data>
   <data name="ThirdPartyLicenses" xml:space="preserve">
-    <value>Third party licenses</value>
+    <value>Licenças de terceiros</value>
   </data>
   <data name="ThirdPartyLicensesDescription" xml:space="preserve">
-    <value>View third-party libraries used by SecureFolderFS</value>
+    <value>Ver bibliotecas de terceiros usadas pelo SecureFolderFS</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Unlock</value>
+    <value>Desbloquear</value>
   </data>
   <data name="VaultAdded" xml:space="preserve">
-    <value>Vault has been added</value>
+    <value>O cofre foi adicionado</value>
   </data>
   <data name="VaultInformation" xml:space="preserve">
-    <value>Vault information</value>
+    <value>Informação do Cofre</value>
   </data>
   <data name="VaultLocked" xml:space="preserve">
-    <value>Vault is locked</value>
+    <value>O cofre está bloqueado</value>
   </data>
   <data name="VaultProperties" xml:space="preserve">
-    <value>Vault properties</value>
+    <value>Propriedades do Cofre</value>
   </data>
   <data name="VaultPropertiesDescription" xml:space="preserve">
-    <value>View information about this vault</value>
+    <value>Visualizar informações sobre este cofre</value>
   </data>
   <data name="VaultRecovery" xml:space="preserve">
-    <value>Vault recovery</value>
+    <value>Recuperação do cofre</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Versão</value>
   </data>
   <data name="ViewOnGitHub" xml:space="preserve">
-    <value>View on GitHub</value>
+    <value>Ver no GitHub</value>
   </data>
   <data name="ViewRepository" xml:space="preserve">
-    <value>View repository</value>
+    <value>Visualizar repositório</value>
   </data>
   <data name="ViewVault" xml:space="preserve">
-    <value>View vault</value>
+    <value>Ver cofre</value>
   </data>
   <data name="ViewVaultDescription" xml:space="preserve">
-    <value>Show this vault in File Explorer</value>
+    <value>Mostrar este cofre no Gerenciador de Arquivos</value>
   </data>
   <data name="Website" xml:space="preserve">
-    <value>Website</value>
+    <value>Site da Web</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Welcome to SecureFolderFS</value>
+    <value>Bem-vindo ao SecureFolderFS</value>
   </data>
   <data name="WhatsNew" xml:space="preserve">
-    <value>What's new</value>
+    <value>Novidades</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
-    <value>Write speeds</value>
+    <value>Velocidades de escrita</value>
   </data>
 </root>
