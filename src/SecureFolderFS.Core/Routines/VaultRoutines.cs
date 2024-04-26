@@ -1,12 +1,12 @@
-﻿using SecureFolderFS.Core.Routines.CreationRoutines;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.Routines.CreationRoutines;
 using SecureFolderFS.Core.Routines.CredentialsRoutines;
 using SecureFolderFS.Core.Routines.StorageRoutines;
 using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Core.Routines
 
         public ICreationRoutine CreateVault()
         {
-            // Only in the case of creation, the validity is not checked
+            // Only in the case of creation the validation is not triggered
             return new CreationRoutine(_vaultFolder, VaultWriter);
         }
 
@@ -46,7 +46,7 @@ namespace SecureFolderFS.Core.Routines
         public IStorageRoutine BuildStorage()
         {
             CheckVaultValidation();
-            return new StorageRoutine(_vaultFolder);
+            return new StorageRoutine();
         }
 
         public ICredentialsRoutine ChangeCredentials()

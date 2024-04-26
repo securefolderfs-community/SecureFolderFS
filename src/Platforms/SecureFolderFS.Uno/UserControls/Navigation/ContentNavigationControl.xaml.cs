@@ -1,8 +1,9 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.UI.Utils;
 using System;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,7 +21,9 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTransition : class
+        public virtual async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default)
+            where TTransition : class
+            where TTarget : IViewDesignation
         {
             // Get the transition finalizer which will be used to end the transition
             var transitionFinalizer = await ApplyTransitionAsync(target, transition);
@@ -35,14 +38,6 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
             return true;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TTarget"></typeparam>
-        /// <typeparam name="TTransition"></typeparam>
-        /// <param name="target"></param>
-        /// <param name="transition"></param>
-        /// <returns></returns>
         protected abstract Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTransition : class;
 
         /// <inheritdoc/>

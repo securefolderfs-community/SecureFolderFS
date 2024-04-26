@@ -1,5 +1,5 @@
 ﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Controls.Sidebar;
+using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -11,9 +11,9 @@ namespace SecureFolderFS.Sdk.AppModels
     /// <inheritdoc cref="ISearchModel"/>
     internal sealed class SidebarSearchModel : ISearchModel
     {
-        private readonly IEnumerable<SidebarItemViewModel> _items;
+        private readonly IEnumerable<VaultListItemViewModel> _items;
 
-        public SidebarSearchModel(IEnumerable<SidebarItemViewModel> items)
+        public SidebarSearchModel(IEnumerable<VaultListItemViewModel> items)
         {
             _items = items;
         }

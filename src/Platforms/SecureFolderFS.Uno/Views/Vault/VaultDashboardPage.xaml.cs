@@ -3,11 +3,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Extensions;
@@ -68,14 +67,14 @@ namespace SecureFolderFS.Uno.Views.Vault
             // Update _isLoaded flag
             _isLoaded = true;
             
-            // Hook up navigation event
+            // Attach navigation event
             ViewModel.DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
 
             // Initialize navigation
             if (ViewModel.DashboardNavigationService.SetupNavigation(Navigation, true))
             {
-                var target = ViewModel.DashboardNavigationService.CurrentTarget ?? GetDefaultDashboardViewModel(); // Get current target or initialize default
-                INavigationTarget GetDefaultDashboardViewModel()
+                var target = ViewModel.DashboardNavigationService.CurrentView ?? GetDefaultDashboardViewModel(); // Get current target or initialize default
+                IViewDesignation GetDefaultDashboardViewModel()
                 {
                     var controlsViewModel = new VaultControlsViewModel(ViewModel.UnlockedVaultViewModel, ViewModel.DashboardNavigationService, ViewModel.NavigationService);
                     var vaultOverviewViewModel = new VaultOverviewPageViewModel(ViewModel.UnlockedVaultViewModel, controlsViewModel, ViewModel.DashboardNavigationService);
@@ -93,7 +92,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             await LoadComponentsAsync();
         }
 
-        private async void DashboardNavigationService_NavigationChanged(object? sender, INavigationTarget? e)
+        private async void DashboardNavigationService_NavigationChanged(object? sender, IViewDesignation? e)
         {
             var canGoBack = e switch
             {

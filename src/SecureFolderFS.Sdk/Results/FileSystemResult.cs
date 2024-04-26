@@ -5,7 +5,7 @@ using System;
 namespace SecureFolderFS.Sdk.Results
 {
     /// <inheritdoc cref="IResult"/>
-    public sealed class FileSystemResult : CommonResult
+    public sealed class FileSystemResult : Result
     {
         /// <summary>
         /// Gets the value that determines whether the device can support a given file system.

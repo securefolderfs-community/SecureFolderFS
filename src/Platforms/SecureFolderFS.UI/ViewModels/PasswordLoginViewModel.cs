@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Shared.ComponentModel;
 using System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.UI.ViewModels
 {
@@ -13,6 +13,9 @@ namespace SecureFolderFS.UI.ViewModels
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
+
+        /// <inheritdoc/>
+        public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
         public PasswordLoginViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
@@ -28,11 +31,11 @@ namespace SecureFolderFS.UI.ViewModels
         [RelayCommand]
         private void ProvideCredentials()
         {
-            var key = RetrieveKey();
+            var key = TryGetPasswordAsKey();
             if (key is null)
                 return;
 
-            StateChanged?.Invoke(this, new AuthenticationChangedEventArgs(key));
+            CredentialsProvided?.Invoke(this, new(key));
         }
     }
 }

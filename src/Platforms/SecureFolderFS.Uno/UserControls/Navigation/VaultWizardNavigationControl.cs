@@ -1,9 +1,8 @@
-using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
-using SecureFolderFS.Sdk.ViewModels.Views.Wizard.NewVault;
-using SecureFolderFS.Uno.Views.VaultWizard;
 using System;
 using System.Collections.Generic;
+using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
+using SecureFolderFS.Uno.Views.VaultWizard;
 
 namespace SecureFolderFS.Uno.UserControls.Navigation
 {
@@ -13,9 +12,9 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         /// <inheritdoc/>
         public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            { typeof(MainWizardPageViewModel), typeof(MainWizardPage) },
-            { typeof(AuthCreationWizardViewModel), typeof(AuthCreationWizardPage) },
-            { typeof(RecoveryKeyWizardViewModel), typeof(RecoveryKeyWizardPage) },
+            { typeof(MainWizardViewModel), typeof(MainWizardPage) },
+            { typeof(CredentialsWizardViewModel), typeof(CredentialsWizardPage) },
+            { typeof(RecoveryWizardViewModel), typeof(RecoveryWizardPage) },
             { typeof(SummaryWizardViewModel), typeof(SummaryWizardPage) }
         };
 

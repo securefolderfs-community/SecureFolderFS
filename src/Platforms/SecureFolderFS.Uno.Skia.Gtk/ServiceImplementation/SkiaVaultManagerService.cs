@@ -1,11 +1,16 @@
-using System.Runtime.CompilerServices;
-using SecureFolderFS.Core.VaultAccess;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FUSE;
+using SecureFolderFS.Core.FUSE.AppModels;
+using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.WebDav;
+using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ViewModels;
 
 namespace SecureFolderFS.Uno.Skia.Gtk.ServiceImplementation
 {
@@ -13,47 +18,47 @@ namespace SecureFolderFS.Uno.Skia.Gtk.ServiceImplementation
     internal sealed class SkiaVaultManagerService : BaseVaultManagerService
     {
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAuthenticationAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
         {
-            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
-            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(';');
-
-            foreach (var item in authenticationMethods)
+            try
             {
-                var supported = item switch
+                var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
+                var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
+                var statisticsModel = new ConsolidatedStatisticsModel();
+                var options = new FileSystemOptions()
                 {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => true,
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => false,
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => true,
-                    _ => false
+                    VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
+                    FileSystemId = await VaultHelpers.GetBestFileSystemAsync(cancellationToken),
+                    HealthStatistics = statisticsModel,
+                    FileSystemStatistics = statisticsModel
+                };
+                var (directoryIdCache, security, pathConverter, streamsAccess) = routines.BuildStorage()
+                    .SetUnlockContract(unlockContract)
+                    .CreateStorageComponents(contentFolder, options);
+
+                var mountable = options.FileSystemId switch
+                {
+                    Core.Constants.FileSystemId.FS_FUSE => FuseMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    Core.Constants.FileSystemId.FS_WEBDAV => WebDavMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
                 };
 
-                if (!supported)
-                    throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.");
-            }
-
-            foreach (var item in authenticationMethods)
-            {
-                yield return item switch
+                return await mountable.MountAsync(options.FileSystemId switch
                 {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder),
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => new KeyFileLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder),
-                    _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
-                };
+                    Core.Constants.FileSystemId.FS_FUSE => new FuseMountOptions(),
+                    Core.Constants.FileSystemId.FS_WEBDAV => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
+                    _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
+
+                }, cancellationToken);
             }
-        }
+            catch (Exception ex)
+            {
+                // Make sure to dispose the unlock contract when failed
+                unlockContract.Dispose();
 
-        /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAuthenticationAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            // Password
-            yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder);
-
-            // Key File
-            yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder);
-
-            await Task.CompletedTask;
+                _ = ex;
+                throw;
+            }
         }
     }
 }

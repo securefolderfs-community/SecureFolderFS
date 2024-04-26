@@ -94,7 +94,7 @@
                 VerticalAlignment="Center"
                 FontSize="26"
                 FontWeight="SemiBold"
-                Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}">
+                Text="{x:Bind ViewModel.Title, Mode=OneWay}">
                 <TextBlock.RenderTransform>
                     <TranslateTransform />
                 </TextBlock.RenderTransform>

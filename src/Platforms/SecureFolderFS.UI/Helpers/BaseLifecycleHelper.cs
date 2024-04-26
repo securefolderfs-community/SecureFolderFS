@@ -1,15 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.Storage.NativeStorage;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.UI.Helpers
 {
@@ -21,7 +20,7 @@ namespace SecureFolderFS.UI.Helpers
         public virtual Task InitAsync(CancellationToken cancellationToken = default)
         {
             var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
-            var settingsFolder = new NativeFolder(Directory.CreateDirectory(settingsFolderPath));
+            var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
             return Task.CompletedTask;
@@ -46,11 +45,8 @@ namespace SecureFolderFS.UI.Helpers
             return ServiceCollection
 
                 // Singleton services
-                .AddSingleton<ISettingsService, SettingsService>(_ => new(settingsFolder))
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
-                .AddSingleton<IVaultService, VaultService>()
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
-                .AddSingleton<IStorageService, NativeStorageService>()
 
                 ; // Finish service initialization
         }

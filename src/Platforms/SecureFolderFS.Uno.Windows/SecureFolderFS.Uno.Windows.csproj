@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 
     <!-- Publishing -->
@@ -21,7 +21,7 @@
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 
     <!-- Languages -->
-    <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA</AppxDefaultResourceQualifiers>
+    <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID;hi-IN</AppxDefaultResourceQualifiers>
     <DefaultLanguage>en-US</DefaultLanguage>
 
     <!-- Bundle WinAppSDK binaries in SelfContained -->
@@ -103,6 +103,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\SecureFolderFS.Core.Dokany\SecureFolderFS.Core.Dokany.csproj" />
+    <ProjectReference Include="..\..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj" />
   </ItemGroup>
 

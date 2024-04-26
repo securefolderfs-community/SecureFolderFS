@@ -43,7 +43,7 @@
         <!--  Key File Template  -->
         <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm3:KeyFileLoginViewModel">
             <StackPanel Spacing="24">
-                <!--  Logo  -->
+                <!--  Icon  -->
                 <FontIcon
                     HorizontalAlignment="Center"
                     FontSize="24"
@@ -68,7 +68,7 @@
         <!--  Windows Hello Template  -->
         <DataTemplate x:Key="WindowsHelloTemplate" x:DataType="vm4:WindowsHelloLoginViewModel">
             <StackPanel Spacing="24">
-                <!--  Logo  -->
+                <!--  Icon  -->
                 <FontIcon
                     HorizontalAlignment="Center"
                     FontSize="24"

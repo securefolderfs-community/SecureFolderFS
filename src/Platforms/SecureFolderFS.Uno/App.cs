@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 
@@ -24,7 +23,7 @@ namespace SecureFolderFS.Uno
         /// Initializes the singleton application object. This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
-        public App()
+        protected App()
         {
             Instance = this;
 
@@ -72,9 +71,7 @@ namespace SecureFolderFS.Uno
             await ApplicationLifecycle.InitAsync();
 
             // Configure IoC
-            ServiceProvider = ApplicationLifecycle.ServiceCollection
-                .WithUnoServices()
-                .BuildServiceProvider();
+            ServiceProvider = ApplicationLifecycle.ServiceCollection.BuildServiceProvider();
 
             // Register IoC
             Ioc.Default.ConfigureServices(ServiceProvider);

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using SecureFolderFS.Core.FileSystem.Statistics;
+using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Shared.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using SecureFolderFS.Core.FileSystem.Statistics;
-using SecureFolderFS.Shared.Helpers;
 
-namespace SecureFolderFS.Core.Directories
+namespace SecureFolderFS.Core.FileSystem.Directories
 {
     /// <summary>
     /// Provides a cache for DirectoryIDs found on the encrypting file system.
@@ -13,12 +14,12 @@ namespace SecureFolderFS.Core.Directories
     {
         private readonly object _lock = new();
         private readonly Dictionary<string, BufferHolder> _cache;
-        private readonly IFileSystemStatistics? _statistics;
+        private readonly IFileSystemStatistics _statistics;
 
-        public DirectoryIdCache(IFileSystemStatistics? statistics)
+        public DirectoryIdCache(IFileSystemStatistics statistics)
         {
             _statistics = statistics;
-            _cache = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_DIRECTORYID);
+            _cache = new(Constants.Caching.RECOMMENDED_SIZE_DIRECTORYID);
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace SecureFolderFS.Core.Directories
         public bool GetDirectoryId(string ciphertextPath, Span<byte> directoryId)
         {
             // Check if directoryId is of correct length
-            if (directoryId.Length != FileSystem.Constants.DIRECTORY_ID_SIZE)
+            if (directoryId.Length != Constants.DIRECTORY_ID_SIZE)
                 throw new ArgumentException($"The size of {nameof(directoryId)} was too small.");
 
             // Check if the ciphertext path is empty
@@ -42,14 +43,14 @@ namespace SecureFolderFS.Core.Directories
                 if (!_cache.TryGetValue(ciphertextPath, out var directoryIdBuffer))
                 {
                     // Cache miss, update stats
-                    _statistics?.NotifyDirectoryIdCacheMiss();
+                    _statistics.DirectoryIdCache?.Report(CacheAccessType.CacheMiss);
 
                     return false;
                 }
 
                 // Cache hit, update stats
-                _statistics?.NotifyDirectoryIdAccess();
-                _statistics?.NotifyDirectoryIdCacheHit();
+                _statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
+                _statistics.DirectoryIdCache?.Report(CacheAccessType.CacheHit);
 
                 directoryIdBuffer.Buffer.CopyTo(directoryId);
 

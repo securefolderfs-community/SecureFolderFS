@@ -1,9 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.Storage.NativeStorage;
+using SecureFolderFS.Uno.Extensions;
 using SecureFolderFS.Uno.Skia.Gtk.ServiceImplementation;
 using Windows.Storage;
 
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Uno.Skia.Gtk.Helpers
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
             var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
-            var settingsFolder = new NativeFolder(Directory.CreateDirectory(settingsFolderPath));
+            var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
             return Task.CompletedTask;
@@ -42,12 +43,16 @@ namespace SecureFolderFS.Uno.Skia.Gtk.Helpers
         {
             return base.ConfigureServices(settingsFolder)
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
+                .AddSingleton<IVaultService, SkiaVaultService>()
                 .AddSingleton<IApplicationService, SkiaApplicationService>()
                 .AddSingleton<IVaultManagerService, SkiaVaultManagerService>()
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
                 .AddSingleton<IIapService, DebugIapService>()
                 .AddSingleton<IUpdateService, DebugUpdateService>()
                 .AddSingleton<ILocalizationService, ResourceLocalizationService>()
+                
+                .WithUnoServices(settingsFolder)
+                
                 ;
         }
     }

@@ -6,10 +6,10 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,19 +33,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            if (_unlockedVaultViewModel.VaultLifeTimeModel.RootFolder is not ILocatableFolder rootFolder)
-                return;
-
-            await FileExplorerService.OpenInFileExplorerAsync(rootFolder, cancellationToken);
+            await FileExplorerService.TryOpenInFileExplorerAsync(_unlockedVaultViewModel.StorageRoot, cancellationToken);
         }
 
         [RelayCommand]
         private async Task LockVaultAsync()
         {
             // Lock vault
-            await _unlockedVaultViewModel.VaultLifeTimeModel.DisposeAsync();
+            if (_unlockedVaultViewModel.StorageRoot is IAsyncDisposable asyncDisposable)
+                await asyncDisposable.DisposeAsync();
 
-            // Initialize login page
+            // Prepare login page
             var loginPageViewModel = new VaultLoginPageViewModel(_unlockedVaultViewModel.VaultViewModel, _navigationService);
             _ = loginPageViewModel.InitAsync();
 

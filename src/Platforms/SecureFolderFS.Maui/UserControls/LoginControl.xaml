@@ -1,0 +1,44 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.LoginControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
+    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views;assembly=SecureFolderFS.Sdk">
+
+    <ContentView.Resources>
+        <!--  Password Template  -->
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
+            <VerticalStackLayout Spacing="24">
+                <Entry IsPassword="True" Text="{Binding PrimaryPassword, Mode=TwoWay}" />
+                <Button Command="{Binding ProvideCredentialsCommand, Mode=OneWay}" Text="{l:ResourceString Name=Continue}" />
+            </VerticalStackLayout>
+        </DataTemplate>
+
+        <!--  Error Template  -->
+        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
+            <VerticalStackLayout Spacing="4">
+                <Label
+                    FontSize="17"
+                    HorizontalOptions="Center"
+                    Text="Vault could not be loaded" />
+                <Label
+                    FontSize="12"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Opacity="0.8"
+                    Text="{Binding ErrorMessage, Mode=OneWay}" />
+            </VerticalStackLayout>
+        </DataTemplate>
+    </ContentView.Resources>
+
+    <Grid x:Name="RootGrid" x:DataType="local:LoginControl">
+        <local:ContentPresentation ViewContent="{Binding LoginTypeViewModel, Mode=OneWay}">
+            <local:ContentPresentation.TemplateSelector>
+                <ts:LoginMethodTemplateSelector ErrorTemplate="{StaticResource ErrorTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
+            </local:ContentPresentation.TemplateSelector>
+        </local:ContentPresentation>
+    </Grid>
+</ContentView>

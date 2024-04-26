@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -17,11 +18,15 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     [INotifyPropertyChanged]
     public sealed partial class MainWizardPage : Page
     {
+        private readonly LocationWizardViewModel _createNewViewModel = new(NewVaultCreationType.CreateNew);
+        private readonly LocationWizardViewModel _addExistingViewModel = new(NewVaultCreationType.AddExisting);
         private Button? _lastClickedButton;
 
-        public MainWizardPageViewModel? ViewModel
+        [ObservableProperty] private LocationWizardViewModel? _CurrentViewModel;
+
+        public MainWizardViewModel? ViewModel
         {
-            get => DataContext.TryCast<MainWizardPageViewModel>();
+            get => DataContext.TryCast<MainWizardViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -32,13 +37,38 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is MainWizardPageViewModel viewModel)
+            if (e.Parameter is MainWizardViewModel viewModel)
             {
                 ViewModel = viewModel;
-                await ViewModel.UpdateSelectionAsync(NewVaultCreationType.CreateNew, default);
+                ViewModel.CreationType = NewVaultCreationType.CreateNew; // Default value for the view
+                CurrentViewModel = _createNewViewModel;
+                ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
             }
 
             base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if (CurrentViewModel is not null)
+                CurrentViewModel.PropertyChanged -= CurrentViewModel_PropertyChanged;
+
+            base.OnNavigatingFrom(e);
+        }
+
+        partial void OnCurrentViewModelChanged(LocationWizardViewModel? oldValue, LocationWizardViewModel? newValue)
+        {
+            if (oldValue is not null)
+                oldValue.PropertyChanged -= CurrentViewModel_PropertyChanged;
+
+            if (newValue is not null)
+                newValue.PropertyChanged += CurrentViewModel_PropertyChanged;
+        }
+
+        private void CurrentViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (ViewModel is not null && CurrentViewModel is not null && e.PropertyName == nameof(LocationWizardViewModel.CanContinue))
+                ViewModel.CanContinue = CurrentViewModel.CanContinue;
         }
 
         private async void SegmentButton_Click(object sender, RoutedEventArgs e)
@@ -46,12 +76,16 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             if (ViewModel is null || sender is not Button { Tag: string tag } button)
                 return;
 
+            // Apply styles
             _lastClickedButton ??= CreateNewButton;
             _lastClickedButton.Style = (Style?)App.Instance?.Resources["DefaultButtonStyle"];
 
-            var creationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
-            await ViewModel.UpdateSelectionAsync(creationType, default);
+            // Change type
+            ViewModel.CreationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
+            CurrentViewModel = ViewModel.CreationType == NewVaultCreationType.CreateNew ? _createNewViewModel : _addExistingViewModel;
+            ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
 
+            // Apply styles
             button.Style = (Style?)App.Instance?.Resources["AccentButtonStyle"];
             _lastClickedButton = button;
         }

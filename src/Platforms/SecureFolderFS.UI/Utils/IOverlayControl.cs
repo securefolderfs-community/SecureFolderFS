@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.Utils
@@ -21,11 +21,12 @@ namespace SecureFolderFS.UI.Utils
         /// Sets the view associated with the overlay.
         /// </summary>
         /// <param name="view"></param>
-        void SetView(IView view);
+        void SetView(IViewable viewable);
 
         /// <summary>
         /// Hides the overlay if possible.
         /// </summary>
-        void Hide();
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        Task HideAsync();
     }
 }

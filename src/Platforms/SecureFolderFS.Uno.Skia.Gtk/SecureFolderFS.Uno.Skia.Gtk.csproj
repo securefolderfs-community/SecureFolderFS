@@ -20,6 +20,8 @@
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
+    <ProjectReference Include="..\..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Uno\SecureFolderFS.Uno.csproj" />
   </ItemGroup>
   <Import Project="..\SecureFolderFS.Uno.Shared\base.props" />

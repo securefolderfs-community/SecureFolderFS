@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Utils;
 

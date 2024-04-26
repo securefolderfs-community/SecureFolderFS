@@ -103,9 +103,9 @@
     <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
     <None Remove="Views\Settings\PreferencesSettingsPage.xaml" />
     <None Remove="Views\Settings\PrivacySettingsPage.xaml" />
-    <None Remove="Views\VaultWizard\AuthCreationWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\CredentialsWizardPage.xaml" />
     <None Remove="Views\VaultWizard\MainWizardPage.xaml" />
-    <None Remove="Views\VaultWizard\RecoveryKeyWizardPage.xaml" />
+    <None Remove="Views\VaultWizard\RecoveryWizardPage.xaml" />
     <None Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
     <None Remove="Views\Vault\VaultDashboardPage.xaml" />
     <None Remove="Views\Vault\VaultLoginPage.xaml" />
@@ -150,9 +150,9 @@
     <UpToDateCheckInput Remove="Views\Settings\GeneralSettingsPage.xaml" />
     <UpToDateCheckInput Remove="Views\Settings\PreferencesSettingsPage.xaml" />
     <UpToDateCheckInput Remove="Views\Settings\PrivacySettingsPage.xaml" />
-    <UpToDateCheckInput Remove="Views\VaultWizard\AuthCreationWizardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\VaultWizard\CredentialsWizardPage.xaml" />
     <UpToDateCheckInput Remove="Views\VaultWizard\MainWizardPage.xaml" />
-    <UpToDateCheckInput Remove="Views\VaultWizard\RecoveryKeyWizardPage.xaml" />
+    <UpToDateCheckInput Remove="Views\VaultWizard\RecoveryWizardPage.xaml" />
     <UpToDateCheckInput Remove="Views\VaultWizard\SummaryWizardPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultDashboardPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
@@ -162,7 +162,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
-    <ProjectReference Include="..\..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj" />
     <ProjectReference Include="..\..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
     <ProjectReference Include="..\..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
     <ProjectReference Include="..\SecureFolderFS.UI\SecureFolderFS.UI.csproj" />
@@ -297,13 +296,13 @@
     <Page Update="Views\Settings\PrivacySettingsPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Views\VaultWizard\AuthCreationWizardPage.xaml">
+    <Page Update="Views\VaultWizard\CredentialsWizardPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\VaultWizard\MainWizardPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Views\VaultWizard\RecoveryKeyWizardPage.xaml">
+    <Page Update="Views\VaultWizard\RecoveryWizardPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\VaultWizard\SummaryWizardPage.xaml">

@@ -4,7 +4,7 @@ using SecureFolderFS.UI.UserControls.InfoBars;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
-    internal sealed class FileSystemInfoBarTemplateSelector : GenericTemplateSelector<InfoBarViewModel>
+    internal sealed class FileSystemInfoBarTemplateSelector : BaseTemplateSelector<InfoBarViewModel>
     {
         public DataTemplate? DokanyUnavailableInfoBarTemplate { get; set; }
 

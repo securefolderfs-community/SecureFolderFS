@@ -32,9 +32,9 @@ namespace SecureFolderFS.Uno.UserControls
             button.IsEnabled = true;
         }
 
-        public INotifyPropertyChanged LoginTypeViewModel
+        public INotifyPropertyChanged? LoginTypeViewModel
         {
-            get => (INotifyPropertyChanged)GetValue(LoginTypeViewModelProperty);
+            get => (INotifyPropertyChanged?)GetValue(LoginTypeViewModelProperty);
             set => SetValue(LoginTypeViewModelProperty, value);
         }
         public static readonly DependencyProperty LoginTypeViewModelProperty =

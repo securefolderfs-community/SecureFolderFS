@@ -1,8 +1,8 @@
 # Privacy Policy
 
-###### Effective date: February 23, 2023
+###### Effective date: February 25th, 2024
 
-This Privacy Policy ("Policy") for SecureFolderFS ("we", "us", or "our") describes how and why we collect, store, use, and disclose information about users ("you", "your") when you use our services ("Services"), and our desktop application (the "Application", "SecureFolderFS"). By using our Services, you acknowledge and consent to the practices described in this Policy.
+This Privacy Policy ("Policy") for SecureFolderFS ("we", "us", or "our") describes how and why we collect, store, use, and disclose information about users ("you", "your") when you use our services ("Services") which include our desktop and mobile applications (the "Application", "SecureFolderFS"). By using our Services, you acknowledge and consent to the practices described in this Policy.
 
 ## Table of Contents
 

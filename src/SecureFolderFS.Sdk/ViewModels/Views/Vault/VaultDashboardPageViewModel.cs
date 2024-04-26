@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.Shared.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
@@ -15,8 +16,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     public sealed partial class VaultDashboardPageViewModel : BaseVaultPageViewModel, IRecipient<VaultLockedMessage>
     {
         public UnlockedVaultViewModel UnlockedVaultViewModel { get; }
-
-        public string? PageTitle => (DashboardNavigationService.CurrentTarget as BaseDashboardPageViewModel)?.PageName;
 
         public VaultDashboardPageViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService navigationService)
             : base(unlockedVaultViewModel.VaultViewModel, navigationService)
@@ -28,9 +27,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             WeakReferenceMessenger.Default.Register(this);
         }
 
-        private void DashboardNavigationService_NavigationChanged(object? sender, INavigationTarget? e)
+        private void DashboardNavigationService_NavigationChanged(object? sender, IViewDesignation? e)
         {
-            OnPropertyChanged(nameof(PageTitle));
+            Title = (DashboardNavigationService.CurrentView as BaseDashboardPageViewModel)?.PageName;
         }
 
         /// <inheritdoc/>

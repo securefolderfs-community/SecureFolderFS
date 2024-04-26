@@ -50,7 +50,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 progressValue += 25d;
             }
 
-            return CommonResult.Success;
+            return Result.Success;
         }
     }
 }

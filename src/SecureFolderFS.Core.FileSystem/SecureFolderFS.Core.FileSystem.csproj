@@ -5,11 +5,17 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SecureFolderFS.Sdk.Storage\SecureFolderFS.Sdk.Storage.csproj" />
+    <PackageReference Include="OwlCore.Storage" Version="0.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
   </ItemGroup>
 
 </Project>

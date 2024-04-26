@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Sdk.Models;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.Models;
 using System;
 
 namespace SecureFolderFS.Sdk.EventArguments
@@ -6,16 +7,16 @@ namespace SecureFolderFS.Sdk.EventArguments
     /// <summary>
     /// Event arguments for vault unlocked events.
     /// </summary>
-    public sealed class VaultUnlockedEventArgs : EventArgs
+    public sealed class VaultUnlockedEventArgs(IFolder storageRoot, IVaultModel vaultModel) : EventArgs
     {
         /// <summary>
-        /// Gets the <see cref="IVaultLifecycle"/> of the unlocked vault.
+        /// Gets the <see cref="IFolder"/> that represents the storage root of the unlocked vault.
         /// </summary>
-        public IVaultLifecycle VaultLifecycle { get; }
+        public IFolder StorageRoot { get; } = storageRoot;
 
-        public VaultUnlockedEventArgs(IVaultLifecycle vaultLifecycle)
-        {
-            VaultLifecycle = vaultLifecycle;
-        }
+        /// <summary>
+        /// Gets the <see cref="IVaultModel"/> of the unlocked vault.
+        /// </summary>
+        public IVaultModel VaultModel { get; } = vaultModel;
     }
 }

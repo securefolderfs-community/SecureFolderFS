@@ -1,10 +1,11 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.UI.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,6 +30,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         /// <inheritdoc/>
         public virtual Task<bool> NavigateAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default)
             where TTransition : class
+            where TTarget : IViewDesignation
         {
             if (target is null)
             {
@@ -45,6 +47,14 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         }
 
         /// <summary>
+        /// Resets the current content of the <see cref="ContentFrame"/>.
+        /// </summary>
+        public virtual void ClearContent()
+        {
+            ContentFrame.Content = null;
+        }
+
+        /// <summary>
         /// Navigates a frame to specified <paramref name="pageType"/>.
         /// </summary>
         /// <param name="pageType">The type of page to navigate to.</param>
@@ -56,6 +66,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         /// <inheritdoc/>
         public virtual void Dispose()
         {
+            ClearContent();
             (ContentFrame.Content as IDisposable)?.Dispose();
         }
     }

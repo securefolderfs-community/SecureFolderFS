@@ -13,14 +13,14 @@
 
     <Page.Resources>
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
-        <DataTemplate x:Key="VaultTemplate" x:DataType="vm:WizardChoiceViewModel">
+        <DataTemplate x:Key="VaultTemplate" x:DataType="vm:LocationWizardViewModel">
             <StackPanel Spacing="4">
                 <InfoBar
                     IsClosable="False"
                     IsOpen="True"
-                    Message="{x:Bind SelectionInfoBar.Message, Mode=OneWay}"
-                    Severity="{x:Bind SelectionInfoBar.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
-                <uc:VaultFolderSelectionControl Message="{x:Bind SelectedLocation, Mode=OneWay}" OpenCommand="{x:Bind OpenFolderCommand, Mode=OneWay}" />
+                    Message="{x:Bind Message, Mode=OneWay}"
+                    Severity="{x:Bind Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
+                <uc:VaultFolderSelectionControl Message="{x:Bind SelectedLocation, Mode=OneWay}" OpenCommand="{x:Bind SelectLocationCommand, Mode=OneWay}" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
@@ -56,7 +56,7 @@
 
         <ContentControl
             HorizontalContentAlignment="Stretch"
-            Content="{x:Bind ViewModel.CurrentViewModel, Mode=OneWay}"
+            Content="{x:Bind CurrentViewModel, Mode=OneWay}"
             ContentTemplate="{StaticResource VaultTemplate}">
             <ContentControl.ContentTransitions>
                 <TransitionCollection>

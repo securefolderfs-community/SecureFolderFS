@@ -1,14 +1,13 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
+using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Core.Routines.CreationRoutines
 {
@@ -61,7 +60,7 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
                 ContentCipherId = options.Get(Constants.Associations.ASSOC_CONTENT_CIPHER_ID) ?? Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305,
                 FileNameCipherId = options.Get(Constants.Associations.ASSOC_FILENAME_CIPHER_ID) ?? Core.Cryptography.Constants.CipherId.AES_SIV,
                 AuthenticationMethod = options.Get(Constants.Associations.ASSOC_AUTHENTICATION) ?? throw new InvalidOperationException("Cannot create vault without specifying the authentication method."),
-                Id = options.Get(Constants.Associations.ASSOC_VAULT_ID) ?? Guid.NewGuid().ToString(),
+                Uid = options.Get(Constants.Associations.ASSOC_VAULT_ID) ?? Guid.NewGuid().ToString(),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
 

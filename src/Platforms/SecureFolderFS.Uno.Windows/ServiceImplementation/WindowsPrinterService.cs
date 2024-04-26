@@ -23,7 +23,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task PrintMasterKeyAsync(IDisposable superSecret, string vaultName)
+        public async Task PrintMasterKeyAsync(string vaultName, string? vaultId, IDisposable? superSecret)
         {
             if (!await IsSupportedAsync())
                 throw new NotSupportedException("Printing is not supported.");
@@ -33,7 +33,8 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
             // Setup master key print page
             var printPage = new MasterKeyPrintPage();
             printPage.MasterKeyVaultNameText.Text = $"Master key for '{vaultName}'";
-            printPage.MasterKeyText.Text = superSecret.ToString();
+            printPage.VaultGuidText.Text = vaultId ?? "No Vault ID to show";
+            printPage.MasterKeyText.Text = superSecret?.ToString() ?? "No Master key to show";
 
             await printer.PrintAsync(printPage);
         }

@@ -1,20 +1,17 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Core.Models;
+using System;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.Routines;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.UI.AppModels;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -22,11 +19,11 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public abstract class BaseVaultManagerService : IVaultManagerService
     {
         /// <inheritdoc/>
-        public async Task<IDisposable> CreateVaultAsync(IFolder vaultFolder, IEnumerable<IDisposable> passkey, VaultOptions vaultOptions,
+        public async Task<IDisposable> CreateAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions,
             CancellationToken cancellationToken = default)
         {
             using var creationRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).CreateVault();
-            using var passkeySecret = VaultHelpers.ParseSecretKey(passkey);
+            using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
             var options = VaultHelpers.ParseOptions(vaultOptions);
 
             var superSecret = await creationRoutine
@@ -36,7 +33,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             if (vaultFolder is IModifiableFolder modifiableFolder)
             {
-                var readmeFile = await modifiableFolder.TryCreateFileAsync(Constants.Vault.VAULT_README_FILENAME, false, cancellationToken);
+                var readmeFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_README_FILENAME, false, cancellationToken);
                 if (readmeFile is not null)
                     await readmeFile.WriteAllTextAsync(Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
             }
@@ -45,61 +42,49 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IVaultLifecycle> UnlockAsync(IVaultModel vaultModel, IEnumerable<IDisposable> passkey, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKey passkey, CancellationToken cancellationToken = default)
         {
-            var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
+            var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             using var unlockRoutine = routines.UnlockVault();
-            using var passkeySecret = VaultHelpers.ParseSecretKey(passkey);
+            using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
 
             await unlockRoutine.InitAsync(cancellationToken);
-
-            var unlockContract = await unlockRoutine
+            return await unlockRoutine
                 .SetCredentials(passkeySecret)
                 .FinalizeAsync(cancellationToken);
+        }
 
+        /// <inheritdoc/>
+        public virtual async Task<IFolder> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
+        {
             try
             {
-                var storageRoutine = routines.BuildStorage();
-                var fileSystemId = await VaultHelpers.GetBestFileSystemAsync(cancellationToken);
-
-                var storageService = Ioc.Default.GetRequiredService<IStorageService>();
-                var statisticsBridge = new FileSystemStatisticsToVaultStatisticsModelBridge();
-
-                var mountable = await storageRoutine
+                var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
+                var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
+                var statisticsModel = new ConsolidatedStatisticsModel();
+                var (directoryIdCache, _, pathConverter, streamsAccess) = routines.BuildStorage()
                     .SetUnlockContract(unlockContract)
-                    .SetStorageService(storageService)
-                    .CreateMountableAsync(new FileSystemOptions()
-                    {
-                        FileSystemId = fileSystemId,
-                        FileSystemStatistics = statisticsBridge,
-                        VolumeName = vaultModel.VaultName // TODO: Format name to exclude illegal characters
-                    }, cancellationToken);
-
-                var vaultOptions = new VaultOptions()
+                    .CreateStorageComponents(contentFolder, new()
                 {
-                    ContentCipherId = "TODO",
-                    FileNameCipherId = "TODO",
-                    AuthenticationMethod = "TODO",
-                };
+                    VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
+                    FileSystemId = string.Empty,
+                    HealthStatistics = statisticsModel,
+                    FileSystemStatistics = statisticsModel
+                });
 
-                var virtualFileSystem = await mountable.MountAsync(VaultHelpers.GetMountOptions(fileSystemId), cancellationToken);
-                return new VaultLifetimeModel(virtualFileSystem, statisticsBridge, vaultOptions);
+                return new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
             }
             catch (Exception ex)
             {
                 // Make sure to dispose the unlock contract when failed
-                _ = ex;
                 unlockContract.Dispose();
 
+                _ = ex;
                 throw;
             }
         }
 
-        // TODO: Create a separate method that will determine the authentication method and return the correct auth method in the impl
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetLoginAuthenticationAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
-
-        /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAuthenticationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
+        public abstract Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
     }
 }

@@ -9,6 +9,17 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class CollectionExtensions
     {
+        public static bool RemoveMatch<T>(this IList<T> list, Func<T, bool> predicate)
+        {
+            foreach (var item in list)
+            {
+                if (predicate(item))
+                    return list.Remove(item);
+            }
+
+            return false;
+        }
+
         public static bool IsEmpty<T>(this IEnumerable<T>? enumerable)
         {
             if (enumerable is null)
@@ -27,17 +38,6 @@ namespace SecureFolderFS.Shared.Extensions
                 if (item is IDisposable disposable)
                     disposable.Dispose();
             }
-        }
-
-        public static async Task<IReadOnlyList<T>> ToListAsync<T>(this IAsyncEnumerable<T> asyncEnumerable, CancellationToken cancellationToken = default)
-        {
-            var list = new List<T>();
-            await foreach (var item in asyncEnumerable.WithCancellation(cancellationToken))
-            {
-                list.Add(item);
-            }
-
-            return list;
         }
 
         public static void AddWithMaxCapacity<T>(this IList<T> list, T item, int maxCapacity)

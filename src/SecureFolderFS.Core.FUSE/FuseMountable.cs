@@ -1,14 +1,15 @@
+using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.Directories;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.LocatableStorage;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Text;
 using Tmds.Fuse;
 using Tmds.Linux;
@@ -21,13 +22,13 @@ namespace SecureFolderFS.Core.FUSE
     {
         private static readonly string MountDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), nameof(SecureFolderFS), "mount");
 
+        private readonly FileSystemOptions _options;
         private readonly FuseWrapper _fuseWrapper;
-        private readonly string _vaultName;
 
-        private FuseMountable(OnDeviceFuse fuseCallbacks, string vaultName)
+        private FuseMountable(FileSystemOptions options, OnDeviceFuse fuseCallbacks)
         {
+            _options = options;    
             _fuseWrapper = new(fuseCallbacks);
-            _vaultName = vaultName;
         }
 
         /// <inheritdoc/>
@@ -44,7 +45,7 @@ namespace SecureFolderFS.Core.FUSE
         }
 
         /// <inheritdoc/>
-        public Task<IVirtualFileSystem> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public Task<IVFSRootFolder> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
             if (!Directory.Exists(MountDirectory))
                 Directory.CreateDirectory(MountDirectory);
@@ -70,30 +71,25 @@ namespace SecureFolderFS.Core.FUSE
                 throw new ArgumentException("A filesystem is already mounted in the specified path.");
 
             if (mountPoint == null)
-                mountPoint = GetFreeMountPoint(_vaultName);
+                mountPoint = GetFreeMountPoint(_options.VolumeName);
 
             if (!Directory.Exists(mountPoint))
                 Directory.CreateDirectory(mountPoint);
 
             _fuseWrapper.StartFileSystem(mountPoint, fuseMountOptions);
-            var fuseFileSystem = new FuseFileSystem(_fuseWrapper, new SimpleFolder(mountPoint));
-
-            return Task.FromResult<IVirtualFileSystem>(fuseFileSystem);
+            return Task.FromResult<IVFSRootFolder>(new FuseRootFolder(_fuseWrapper, new SystemFolder(mountPoint), _options.FileSystemStatistics));
         }
 
-        public static IMountableFileSystem CreateMountable(string vaultName, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
         {
-            if (contentFolder is not ILocatableFolder locatableContentFolder)
-                throw new ArgumentException("The vault content folder is not locatable.");
-
             var fuseCallbacks = new OnDeviceFuse(pathConverter, new(streamsAccess))
             {
-                LocatableContentFolder = locatableContentFolder,
+                LocatableContentFolder = contentFolder,
                 Security = security,
                 DirectoryIdAccess = directoryIdCache
             };
 
-            return new FuseMountable(fuseCallbacks, vaultName);
+            return new FuseMountable(options, fuseCallbacks);
         }
 
         /// <returns>Whether a filesystem is mounted in the specified directory.</returns>

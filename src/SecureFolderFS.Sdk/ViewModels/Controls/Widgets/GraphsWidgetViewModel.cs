@@ -1,6 +1,7 @@
 ﻿using ByteSizeLib;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
     public sealed class GraphsWidgetViewModel : BaseWidgetViewModel
     {
-        private readonly IVaultStatisticsModel _vaultStatisticsModel;
+        private readonly IReadWriteStatistics _readWriteStatistics;
         private readonly PeriodicTimer _periodicTimer;
         private readonly List<long> _readRates;
         private readonly List<long> _writeRates;
@@ -23,12 +24,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         public GraphControlViewModel WriteGraphViewModel { get; }
 
-        public GraphsWidgetViewModel(IVaultStatisticsModel vaultStatisticsModel, IWidgetModel widgetModel)
+        public GraphsWidgetViewModel(IReadWriteStatistics readWriteStatistics, IWidgetModel widgetModel)
             : base(widgetModel)
         {
             ReadGraphViewModel = new();
             WriteGraphViewModel = new();
-            _vaultStatisticsModel = vaultStatisticsModel;
+            _readWriteStatistics = readWriteStatistics;
 
             _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Graphs.GRAPH_UPDATE_INTERVAL_MS));
             _readRates = new() { 0 };
@@ -60,8 +61,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
         private void InitializeCallbacks()
         {
-            _vaultStatisticsModel.NotifyForBytesRead(x => _currentReadAmount += x);
-            _vaultStatisticsModel.NotifyForBytesWritten(x => _currentWriteAmount += x);
+            _readWriteStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
+            _readWriteStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
         }
 
         private void CalculateStatistics()
@@ -73,7 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 
             // Update graph for read
             var readPoint = ReadGraphViewModel.Data[0];
-            readPoint.Value = read; // TODO(r)
+            readPoint.Value = read;
             readPoint.Date = now;
             ReadGraphViewModel.UpdateLastPoint();
 
@@ -103,7 +104,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _vaultStatisticsModel.Dispose();
+            _readWriteStatistics.BytesRead = null;
+            _readWriteStatistics.BytesWritten = null;
             _periodicTimer.Dispose();
         }
     }

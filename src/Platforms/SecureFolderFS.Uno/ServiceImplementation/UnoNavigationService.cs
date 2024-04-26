@@ -3,17 +3,19 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
+using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.UserControls.Navigation;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    public sealed class UnoNavigationService : BaseNavigationService
+    public sealed class UnoNavigationService : BaseNavigationService, INavigationControlContract
     {
         /// <inheritdoc/>
-        protected override async Task<bool> BeginNavigationAsync(INavigationTarget? target, NavigationType navigationType)
+        protected override async Task<bool> BeginNavigationAsync(IViewDesignation? view, NavigationType navigationType)
         {
             if (NavigationControl is null)
                 return false;
@@ -36,9 +38,9 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                         return false;
 
                     var targetType = frameNavigation.TypeBinding.GetByKeyOrValue(contentType);
-                    var backTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
+                    var backTarget = Views.FirstOrDefault(x => x.GetType() == targetType);
                     if (backTarget is not null)
-                        CurrentTarget = backTarget;
+                        CurrentView = backTarget;
 
                     return true;
                 }
@@ -59,20 +61,20 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                         return false;
 
                     var targetType = frameNavigation.TypeBinding.GetByKeyOrValue(contentType);
-                    var forwardTarget = Targets.FirstOrDefault(x => x.GetType() == targetType);
+                    var forwardTarget = Views.FirstOrDefault(x => x.GetType() == targetType);
                     if (forwardTarget is not null)
-                        CurrentTarget = forwardTarget;
+                        CurrentView = forwardTarget;
 
                     return true;
                 }
 
                 default:
-                case NavigationType.Detached:
+                case NavigationType.Chained:
                 {
-                    if (target is null)
+                    if (view is null)
                         return false;
 
-                    return await NavigationControl.NavigateAsync(target, (NavigationTransitionInfo?)null);
+                    return await NavigationControl.NavigateAsync(view, (NavigationTransitionInfo?)null);
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.Services.Settings
         /// <summary>
         /// Gets or sets the value that determines whether the explanation of vault folder was shown.
         /// </summary>
-        bool WasVaultFolderExplanationShown { get; set; }
+        bool ShouldShowVaultTutorial { get; set; }
 
         /// <summary>
         /// Gets or sets the value that determines whether Out of Box Experience was shown.
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool IsIntroduced { get; set; }
 
         /// <summary>
-        /// Gets or sets the id associated with vault folder.
+        /// Gets or sets the ID associated with vault folder.
         /// </summary>
         string? LastVaultFolderId { get; set; }
 

@@ -6,9 +6,9 @@
     public enum NavigationType
     {
         /// <summary>
-        /// Navigation is not aligned with the navigation timeline.
+        /// Navigation is performed to an arbitrary target which may or may not preserve the navigation timeline.
         /// </summary>
-        Detached = 0,
+        Chained = 0,
 
         /// <summary>
         /// Navigating backward.

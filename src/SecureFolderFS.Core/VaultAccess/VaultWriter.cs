@@ -1,9 +1,7 @@
+using OwlCore.Storage;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Sdk.Storage;
-using SecureFolderFS.Sdk.Storage.Extensions;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +25,7 @@ namespace SecureFolderFS.Core.VaultAccess
             var keystoreFile = keystoreDataModel is null ? null : _vaultFolder switch
             {
                 IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, true, cancellationToken),
-                _ => await _vaultFolder.GetFileAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken)
+                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken) as IFile
             };
 
             await WriteDataAsync(keystoreFile, keystoreDataModel, cancellationToken);
@@ -38,7 +36,7 @@ namespace SecureFolderFS.Core.VaultAccess
             var configFile = configDataModel is null ? null : _vaultFolder switch
             {
                 IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, true, cancellationToken),
-                _ => await _vaultFolder.GetFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken)
+                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) as IFile
             };
 
             await WriteDataAsync(configFile, configDataModel, cancellationToken);
@@ -49,7 +47,7 @@ namespace SecureFolderFS.Core.VaultAccess
             var authFile = authDataModel is null ? null : _vaultFolder switch
             {
                 IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, true, cancellationToken),
-                _ => await _vaultFolder.GetFileAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, cancellationToken)
+                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, cancellationToken) as IFile
             };
 
             await WriteDataAsync(authFile, authDataModel, cancellationToken);
@@ -64,7 +62,7 @@ namespace SecureFolderFS.Core.VaultAccess
             await using var dataStream = await file.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
 
             // Clear contents if opened from existing file
-            dataStream.SetLength(0L);
+            dataStream.TrySetLength(0L);
 
             await using var serializedData = await _serializer.SerializeAsync(data, cancellationToken);
             await serializedData.CopyToAsync(dataStream, cancellationToken);

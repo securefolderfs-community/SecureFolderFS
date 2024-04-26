@@ -28,13 +28,12 @@ namespace SecureFolderFS.Uno
         /// <inheritdoc/>
         protected override BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
-            new WindowsLifecycleHelper()
+            new WindowsLifecycleHelper();
 #elif HAS_UNO_SKIA
-            new SkiaLifecycleHelper()
+            new SkiaLifecycleHelper();
 #else
-            null
+            null;
 #endif
-            ;
 
         /// <summary>
         /// Initializes the singleton application object. This is the first line of authored code
@@ -61,7 +60,7 @@ namespace SecureFolderFS.Uno
             // Set title
             window.AppWindow.Title = "SecureFolderFS";
 
-            // Hook up event for window closing
+            // Attach event for window closing
             window.AppWindow.Closing += AppWindow_Closing;
 
             if (AppWindowTitleBar.IsCustomizationSupported())

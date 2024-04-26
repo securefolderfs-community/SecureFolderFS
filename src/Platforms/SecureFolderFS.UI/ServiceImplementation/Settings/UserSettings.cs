@@ -1,16 +1,16 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using System.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
-using SecureFolderFS.Sdk.Storage.ModifiableStorage;
-using System.ComponentModel;
 
 namespace SecureFolderFS.UI.ServiceImplementation.Settings
 {
     /// <inheritdoc cref="IUserSettings"/>
-    public sealed class UserSettings : SettingsModel, IUserSettings
+    public class UserSettings : SettingsModel, IUserSettings
     {
         private ITelemetryService TelemetryService { get; } = Ioc.Default.GetRequiredService<ITelemetryService>();
 
@@ -26,28 +26,28 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         #region Preferences
 
         /// <inheritdoc/>
-        public string PreferredFileSystemId
+        public virtual string PreferredFileSystemId
         {
-            get => GetSetting(static () => Core.Constants.FileSystemId.WEBDAV_ID);
+            get => GetSetting(static () => Core.Constants.FileSystemId.FS_WEBDAV);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public bool StartOnSystemStartup
-        {
-            get => GetSetting(static () => false);
-            set => SetSetting(value);
-        }
-
-        /// <inheritdoc/>
-        public bool ContinueOnLastVault
+        public virtual bool StartOnSystemStartup
         {
             get => GetSetting(static () => false);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public bool OpenFolderOnUnlock
+        public virtual bool ContinueOnLastVault
+        {
+            get => GetSetting(static () => false);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public virtual bool OpenFolderOnUnlock
         {
             get => GetSetting(static () => true);
             set => SetSetting(value);
@@ -58,14 +58,14 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         #region Privacy
 
         /// <inheritdoc/>
-        public bool AutoLockVaults
+        public virtual bool AutoLockVaults
         {
             get => GetSetting(() => false);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public bool IsTelemetryEnabled
+        public virtual bool IsTelemetryEnabled
         {
             get => GetSetting(() => true);
             set => SetSetting(value);
@@ -73,7 +73,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
 
         #endregion
 
-        private void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        protected virtual void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             var eventName = e.PropertyName switch
             {

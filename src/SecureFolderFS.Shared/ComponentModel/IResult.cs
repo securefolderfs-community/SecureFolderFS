@@ -31,7 +31,7 @@ namespace SecureFolderFS.Shared.ComponentModel
     }
 
     /// <inheritdoc cref="IResult"/>
-    public interface IResultWithMessage : IResult
+    public interface  IResultWithMessage : IResult
     {
         /// <summary>
         /// Gets the message describing result of the action.

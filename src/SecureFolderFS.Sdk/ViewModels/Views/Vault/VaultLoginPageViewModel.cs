@@ -7,8 +7,8 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
 using SecureFolderFS.Sdk.ViewModels.Vault;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Threading;
@@ -19,33 +19,32 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Inject<IOverlayService>, Inject<ISettingsService>]
     public sealed partial class VaultLoginPageViewModel : BaseVaultPageViewModel
     {
-        [ObservableProperty] private string? _VaultName;
         [ObservableProperty] private LoginControlViewModel _LoginViewModel;
 
         public VaultLoginPageViewModel(VaultViewModel vaultViewModel, INavigationService navigationService)
             : base(vaultViewModel, navigationService)
         {
             ServiceProvider = Ioc.Default;
-            VaultName = vaultViewModel.VaultModel.VaultName;
+            Title = vaultViewModel.VaultModel.VaultName;
             _LoginViewModel = new(vaultViewModel.VaultModel, true);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
 
         /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await LoginViewModel.InitAsync(cancellationToken);
+            return LoginViewModel.InitAsync(cancellationToken);
         }
 
         private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            if (!SettingsService.AppSettings.WasVaultFolderExplanationShown)
+            if (SettingsService.AppSettings.ShouldShowVaultTutorial)
             {
                 var explanationDialog = new ExplanationDialogViewModel();
                 await explanationDialog.InitAsync();
                 await OverlayService.ShowAsync(explanationDialog);
 
-                SettingsService.AppSettings.WasVaultFolderExplanationShown = true;
+                SettingsService.AppSettings.ShouldShowVaultTutorial = false;
                 await SettingsService.AppSettings.TrySaveAsync();
             }
 
@@ -53,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await VaultViewModel.VaultModel.SetLastAccessDateAsync(DateTime.Now);
 
             // Create view models
-            var unlockedVaultViewModel = new UnlockedVaultViewModel(VaultViewModel, e.VaultLifecycle);
+            var unlockedVaultViewModel = new UnlockedVaultViewModel(VaultViewModel, e.StorageRoot);
             var dashboardPage = new VaultDashboardPageViewModel(unlockedVaultViewModel, NavigationService);
 
             // Notify that the vault has been unlocked

@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Dialogs;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 
@@ -18,7 +18,6 @@ namespace SecureFolderFS.Uno.Dialogs
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
-        /// <inheritdoc/>
         public ChangelogDialogViewModel ViewModel
         {
             get => (ChangelogDialogViewModel)DataContext;
@@ -31,10 +30,17 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ResultFromDialogOption();
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
-        public void SetView(IView view) => ViewModel = (ChangelogDialogViewModel)view;
+        public void SetView(IViewable viewable) => ViewModel = (ChangelogDialogViewModel)viewable;
+
+        /// <inheritdoc/>
+        public Task HideAsync()
+        {
+            Hide();
+            return Task.CompletedTask;
+        }
 
         //private async void MarkdownTextBlock_LinkClicked(object? sender, LinkClickedEventArgs e)
         //{

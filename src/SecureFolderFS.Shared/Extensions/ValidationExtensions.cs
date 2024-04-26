@@ -8,16 +8,16 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class ValidationExtensions
     {
-        public static async Task<IResult> TryValidateAsync<T>(this IAsyncValidator<T> validator, T value, CancellationToken cancellationToken)
+        public static async Task<IResult> TryValidateAsync<T>(this IAsyncValidator<T> validator, T value, CancellationToken cancellationToken = default)
         {
             try
             {
                 await validator.ValidateAsync(value, cancellationToken);
-                return CommonResult.Success;
+                return Result.Success;
             }
             catch (Exception ex)
             {
-                return CommonResult.Failure(ex);
+                return Result.Failure(ex);
             }
         }
     }

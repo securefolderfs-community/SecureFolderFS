@@ -14,7 +14,7 @@ namespace SecureFolderFS.UI.Helpers
         }
 
         /// <inheritdoc/>
-        public void NoForwarding()
+        public void PreventForwarding()
         {
             _flagCallback();
         }

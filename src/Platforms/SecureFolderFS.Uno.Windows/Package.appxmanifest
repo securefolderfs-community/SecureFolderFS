@@ -30,6 +30,10 @@
     <Resource Language="es-ES"/>
     <Resource Language="da-DK"/>
     <Resource Language="uk-UA"/>
+    <Resource Language="pt-PT"/>
+    <Resource Language="ms-MY"/>
+    <Resource Language="id-ID"/>
+    <Resource Language="hi-IN"/>
   </Resources>
 
   <Applications>
