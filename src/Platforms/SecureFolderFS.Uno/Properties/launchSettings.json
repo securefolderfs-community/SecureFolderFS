@@ -25,7 +25,11 @@
       "commandName": "WSL2",
       "commandLineArgs": "{ProjectDir}/bin/Debug/net8.0-desktop/SecureFolderFS.Uno.dll",
       "distributionName": "",
-      "compatibleTargetFramework": "desktop"
+      "compatibleTargetFramework": "desktop",
+      "environmentVariables": {
+        "DISPLAY": ":0",
+        "GDK_GL": "gles" // Use this line when running under WSL on Windows 11
+      }
     }
   }
 }

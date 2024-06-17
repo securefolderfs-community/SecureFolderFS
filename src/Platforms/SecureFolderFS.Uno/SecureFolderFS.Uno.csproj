@@ -17,6 +17,7 @@
 
     <!-- Application Properties -->
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
+    <AssemblyVersion>0.5.0.0</AssemblyVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>    
     <!-- TODO: Set correct app identifier -->
@@ -53,6 +54,7 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
 
   <!-- Project References -->
