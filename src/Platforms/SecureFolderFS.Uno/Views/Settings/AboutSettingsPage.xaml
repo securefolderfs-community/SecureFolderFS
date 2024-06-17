@@ -31,7 +31,7 @@
         <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
                 <Image
-                    Margin="0,0,0,-10"
+                    Width="230"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.svg" />
