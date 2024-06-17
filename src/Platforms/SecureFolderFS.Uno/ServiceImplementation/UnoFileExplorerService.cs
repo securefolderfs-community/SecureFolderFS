@@ -18,7 +18,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
 #if WINDOWS
-            return Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
+            return global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
 #endif
             if (OperatingSystem.IsLinux())
                 System.Diagnostics.Process.Start("xdg-open", folder.Id);

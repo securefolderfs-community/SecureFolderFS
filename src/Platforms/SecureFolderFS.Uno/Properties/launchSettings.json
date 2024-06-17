@@ -1,0 +1,31 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:8080",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    // Note: In order to select this profile, you'll need to comment the `Packaged` profile below until this is fixed: https://aka.platform.uno/wasdk-maui-debug-profile-issue
+    "SecureFolderFS (WASDK Unpackaged)": {
+      "commandName": "Project",
+      "compatibleTargetFramework": "windows"
+    },
+    "SecureFolderFS (WASDK Packaged)": {
+      "commandName": "MsixPackage",
+      "compatibleTargetFramework": "windows"
+    },
+    "SecureFolderFS (Desktop)": {
+      "commandName": "Project",
+      "compatibleTargetFramework": "desktop"
+    },
+    "SecureFolderFS (Desktop WSL2)": {
+      "commandName": "WSL2",
+      "commandLineArgs": "{ProjectDir}/bin/Debug/net8.0-desktop/SecureFolderFS.Uno.dll",
+      "distributionName": "",
+      "compatibleTargetFramework": "desktop"
+    }
+  }
+}
