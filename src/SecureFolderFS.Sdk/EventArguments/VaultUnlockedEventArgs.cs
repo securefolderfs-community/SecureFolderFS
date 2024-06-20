@@ -7,12 +7,12 @@ namespace SecureFolderFS.Sdk.EventArguments
     /// <summary>
     /// Event arguments for vault unlocked events.
     /// </summary>
-    public sealed class VaultUnlockedEventArgs(IFolder storageRoot, IVaultModel vaultModel) : EventArgs
+    public sealed class VaultUnlockedEventArgs(IDisposable unlockContract, IVaultModel vaultModel) : EventArgs
     {
         /// <summary>
-        /// Gets the <see cref="IFolder"/> that represents the storage root of the unlocked vault.
+        /// Gets the <see cref="IDisposable"/> that represents the contract of the unlocked vault.
         /// </summary>
-        public IFolder StorageRoot { get; } = storageRoot;
+        public IDisposable UnlockContract { get; } = unlockContract;
 
         /// <summary>
         /// Gets the <see cref="IVaultModel"/> of the unlocked vault.

@@ -5,8 +5,7 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
@@ -68,9 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             try
             {
                 var unlockContract = await VaultManagerService.UnlockAsync(_vaultModel.Folder, _keyChain, cancellationToken);
-                var storageRoot = await VaultManagerService.CreateFileSystemAsync(_vaultModel, unlockContract, cancellationToken);
-
-                VaultUnlocked?.Invoke(this, new(storageRoot, _vaultModel));
+                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel));
             }
             catch (Exception ex)
             {
@@ -150,10 +147,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <inheritdoc/>
         public void Dispose()
         {
-            _ = _enumerator?.DisposeAsync().ConfigureAwait(false);
-            _keyChain.Dispose();
+            _vaultWatcherModel.StateChanged -= VaultWatcherModel_StateChanged;
+
             if (CurrentViewModel is not null)
                 CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;
+
+            if (CurrentViewModel is AuthenticationViewModel authenticationViewModel)
+                authenticationViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
+
+            _keyChain.Dispose();
+            _ = _enumerator?.DisposeAsync().ConfigureAwait(false);
         }
     }
 }

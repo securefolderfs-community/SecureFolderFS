@@ -3,8 +3,9 @@ using Microsoft.UI.Xaml.Data;
 
 namespace SecureFolderFS.Uno.ValueConverters
 {
-    internal sealed class BooleanInvertConverter : IValueConverter
+    internal sealed class BoolInvertConverter : IValueConverter
     {
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is not bool boolVal)
@@ -16,6 +17,7 @@ namespace SecureFolderFS.Uno.ValueConverters
             return !boolVal;
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();

@@ -7,7 +7,6 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
@@ -18,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<IOverlayService>, Inject<ISettingsService>]
+    [Inject<IOverlayService>, Inject<ISettingsService>, Inject<IVaultManagerService>]
     public sealed partial class VaultLoginViewModel : BaseVaultViewModel, INavigatable
     {
         [ObservableProperty] private LoginControlViewModel _LoginViewModel;
@@ -46,29 +45,37 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            // Show vault tutorial
-            if (SettingsService.AppSettings.ShouldShowVaultTutorial)
+            try
             {
-                var explanationDialog = new ExplanationDialogViewModel();
-                await explanationDialog.InitAsync();
-                await OverlayService.ShowAsync(explanationDialog);
+                // Create the storage layer
+                var storageRoot = await VaultManagerService.CreateFileSystemAsync(VaultModel, e.UnlockContract, default);
 
-                SettingsService.AppSettings.ShouldShowVaultTutorial = false;
-                await SettingsService.AppSettings.TrySaveAsync();
+                // Update last access date
+                await VaultModel.SetLastAccessDateAsync(DateTime.Now);
+
+                // Notify that the vault has been unlocked
+                WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
+
+                // Navigate away
+                var unlockedVaultViewModel = new UnlockedVaultViewModel(storageRoot, VaultModel);
+                NavigationRequested?.Invoke(this, new UnlockNavigationRequestedEventArgs(unlockedVaultViewModel, this));
+
+                // Show vault tutorial
+                if (SettingsService.AppSettings.ShouldShowVaultTutorial)
+                {
+                    var explanationOverlay = new ExplanationOverlayViewModel();
+                    await explanationOverlay.InitAsync();
+                    await OverlayService.ShowAsync(explanationOverlay);
+
+                    SettingsService.AppSettings.ShouldShowVaultTutorial = false;
+                    await SettingsService.AppSettings.TrySaveAsync();
+                }
             }
-
-            // Update last access date
-            await VaultModel.SetLastAccessDateAsync(DateTime.Now);
-
-            // Notify that the vault has been unlocked
-            WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
-
-            // Navigate away
-            var unlockedVaultViewModel = new UnlockedVaultViewModel(e.StorageRoot, VaultModel);
-            NavigationRequested?.Invoke(this, new UnlockNavigationRequestedEventArgs(unlockedVaultViewModel, this));
-
-            // Dispose the current instance and navigate
-            Dispose();
+            finally
+            {
+                // Clean up the current instance
+                Dispose();
+            }
         }
 
         /// <inheritdoc/>

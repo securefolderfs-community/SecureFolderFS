@@ -5,7 +5,7 @@ using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Vault
+namespace SecureFolderFS.Sdk.ViewModels
 {
     /// <summary>
     /// Represents the view model of an unlocked vault.

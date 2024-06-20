@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,

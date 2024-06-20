@@ -4,7 +4,7 @@ using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Sdk.Extensions
 {
-    public static class DialogExtensions
+    public static class OverlayExtensions
     {
         public static IResult ParseDialogOption(this DialogOption dialogOption)
         {

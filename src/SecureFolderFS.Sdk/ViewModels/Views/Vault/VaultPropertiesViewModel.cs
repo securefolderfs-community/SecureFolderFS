@@ -4,12 +4,11 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>]
     public sealed partial class VaultPropertiesViewModel : BaseDashboardViewModel
@@ -51,6 +50,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
         private async Task ChangeAuthenticationAsync()
         {
             // The dialog would have to have a common control for providing credentials which would be shared between the dialog and login screen
+        }
+
+        [RelayCommand]
+        private async Task ViewRecoveryAsync(CancellationToken cancellationToken)
+        {
+            var recoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultModel);
+            _ = recoveryOverlay.InitAsync(cancellationToken);
+
+            await OverlayService.ShowAsync(recoveryOverlay);
         }
     }
 }

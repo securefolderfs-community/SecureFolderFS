@@ -3,13 +3,19 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     [Inject<ITelemetryService>, Inject<ISettingsService>]
-    public sealed partial class PrivacySettingsViewModel : BasePageViewModel
+    public sealed partial class PrivacySettingsViewModel : BaseSettingsViewModel
     {
-        private IUserSettings UserSettings => SettingsService.UserSettings;
+        public PrivacySettingsViewModel()
+        {
+            ServiceProvider = Ioc.Default;
+            UserSettings.PropertyChanged += UserSettings_PropertyChanged;
+        }
 
         public bool AutoLockVaults
         {
@@ -23,10 +29,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             set => UserSettings.IsTelemetryEnabled = value;
         }
 
-        public PrivacySettingsViewModel()
+        /// <inheritdoc/>
+        public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            ServiceProvider = Ioc.Default;
-            UserSettings.PropertyChanged += UserSettings_PropertyChanged;
+            return Task.CompletedTask;
         }
 
         private async void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)

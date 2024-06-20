@@ -47,7 +47,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             }
 
             // Check if the changelog is available
-            if (Version.TryParse(SettingsService.AppSettings.LastVersion, out var lastVersion) && false) // TODO: Removed due to markdown being unavailable
+            if (Version.TryParse(SettingsService.AppSettings.LastVersion, out var lastVersion))
             {
                 var currentVersion = ApplicationService.AppVersion;
                 if (lastVersion < currentVersion)
@@ -57,10 +57,10 @@ namespace SecureFolderFS.Sdk.ViewModels
                     _ = SettingsService.AppSettings.SaveAsync(cancellationToken);
 
                     // Initialize the changelog dialog
-                    var changelogDialog = new ChangelogDialogViewModel(lastVersion);
-                    _ = changelogDialog.InitAsync(cancellationToken);
+                    var changelogOverlay = new ChangelogOverlayViewModel(lastVersion);
+                    _ = changelogOverlay.InitAsync(cancellationToken);
 
-                    await OverlayService.ShowAsync(changelogDialog);
+                    await OverlayService.ShowAsync(changelogOverlay);
                 }
             }
         }

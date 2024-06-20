@@ -23,7 +23,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task PrintMasterKeyAsync(string vaultName, string? vaultId, IDisposable? superSecret)
+        public async Task PrintMasterKeyAsync(string vaultName, string? vaultId, string? masterKey)
         {
             if (!await IsSupportedAsync())
                 throw new NotSupportedException("Printing is not supported.");
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
             var printPage = new MasterKeyPrintPage();
             printPage.MasterKeyVaultNameText.Text = $"Master key for '{vaultName}'";
             printPage.VaultGuidText.Text = vaultId ?? "No Vault ID to show";
-            printPage.MasterKeyText.Text = superSecret?.ToString() ?? "No Master key to show";
+            printPage.MasterKeyText.Text = masterKey ?? "No Master key to show";
 
             await printer.PrintAsync(printPage);
         }
@@ -59,14 +59,14 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
             _printDocument.GetPreviewPage += PrintDocument_GetPreviewPage;   // Creates a specific page preview
             _printDocument.AddPages += PrintDocument_AddPages;               // Provides all pages to be printed
             
-            _printManager = PrintManagerInterop.GetForWindow(App.Instance!.MainWindow.GetWindowHandle());
+            _printManager = PrintManagerInterop.GetForWindow(App.Instance!.MainWindow!.GetWindowHandle());
             _printManager.PrintTaskRequested += PrintManager_PrintTaskRequested;
         }
 
         public async Task PrintAsync(Page page)
         {
             _pageToPrint = page;
-            await PrintManagerInterop.ShowPrintUIForWindowAsync(App.Instance!.MainWindow.GetWindowHandle());
+            await PrintManagerInterop.ShowPrintUIForWindowAsync(App.Instance!.MainWindow!.GetWindowHandle());
             await _tcs.Task;
         }
 
@@ -126,16 +126,11 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
     /// <summary>
     /// Event arguments for printer status change events.
     /// </summary>
-    file sealed class PrinterStatusChangedEventArgs : EventArgs
+    file sealed class PrinterStatusChangedEventArgs(IResult status) : EventArgs
     {
         /// <summary>
         /// Gets the status result of the printer.
         /// </summary>
-        public IResult Status { get; }
-
-        public PrinterStatusChangedEventArgs(IResult status)
-        {
-            Status = status;
-        }
+        public IResult Status { get; } = status;
     }
 }

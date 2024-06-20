@@ -39,7 +39,11 @@ namespace SecureFolderFS.Maui.Sheets
         }
 
         /// <inheritdoc/>
-        public Task HideAsync() => DismissAsync();
+        public Task HideAsync()
+        {
+            ViewModel?.OnDisappearing();
+            return DismissAsync();
+        }
 
         private void VaultWizardSheet_Dismissed(object? sender, DismissOrigin e)
         {
@@ -74,10 +78,10 @@ namespace SecureFolderFS.Maui.Sheets
                 LocationWizardViewModel { CreationType: NewVaultCreationType.CreateNew, SelectedFolder: IModifiableFolder modifiableFolder } => new CredentialsWizardViewModel(modifiableFolder),
 
                 // Credentials -> Recovery
-                CredentialsWizardViewModel { Folder: { } folder } => new RecoveryWizardViewModel(folder, (e as WizardNavigationRequestedEventArgs)?.Result),
+                CredentialsWizardViewModel credentials => new RecoveryWizardViewModel(credentials.Folder, (e as WizardNavigationRequestedEventArgs)?.Result),
 
                 // Recovery -> Summary
-                RecoveryWizardViewModel { Folder: { } folder } => new SummaryWizardViewModel(folder, ViewModel.VaultCollectionModel),
+                RecoveryWizardViewModel recovery => new SummaryWizardViewModel(recovery.Folder, ViewModel.VaultCollectionModel),
 
                 // Location -> Summary
                 LocationWizardViewModel { CreationType: NewVaultCreationType.AddExisting, SelectedFolder: { } folder } => new SummaryWizardViewModel(folder, ViewModel.VaultCollectionModel),

@@ -4,7 +4,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
     public sealed partial class MigrationViewModel : ReportableViewModel
     {

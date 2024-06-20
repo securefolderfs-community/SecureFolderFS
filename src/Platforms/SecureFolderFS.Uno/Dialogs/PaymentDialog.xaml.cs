@@ -34,6 +34,7 @@ namespace SecureFolderFS.Uno.Dialogs
         /// <inheritdoc/>
         public Task HideAsync()
         {
+            ViewModel?.OnDisappearing();
             Hide();
             return Task.CompletedTask;
         }

@@ -1,12 +1,14 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.UI.ViewModels
 {
+    /// <inheritdoc cref="PasswordLoginViewModel"/>
     public sealed partial class PasswordLoginViewModel : PasswordViewModel
     {
         [ObservableProperty] private bool _IsPasswordInvalid;
@@ -28,14 +30,14 @@ namespace SecureFolderFS.UI.ViewModels
             IsPasswordInvalid = !result?.Successful ?? false;
         }
 
-        [RelayCommand]
-        private void ProvideCredentials()
+        /// <inheritdoc/>
+        protected override Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var key = TryGetPasswordAsKey();
-            if (key is null)
-                return;
+            if (key is not null)
+                CredentialsProvided?.Invoke(this, new(key));
 
-            CredentialsProvided?.Invoke(this, new(key));
+            return Task.CompletedTask;
         }
     }
 }

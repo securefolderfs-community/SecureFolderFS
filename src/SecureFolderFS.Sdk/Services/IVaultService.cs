@@ -1,9 +1,10 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -51,7 +52,11 @@ namespace SecureFolderFS.Sdk.Services
         /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs  of filename ciphers.</returns>
         IEnumerable<string> GetFileNameCiphers();
 
-        IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, CancellationToken cancellationToken = default); // TODO: Add vaultId parameter here as well?
+        // TODO: Needs docs
+
+        Task<string> GetVaultIdAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+
+        IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
         IAsyncEnumerable<AuthenticationViewModel> GetAllSecurityAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
     }

@@ -1,4 +1,4 @@
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 
 namespace SecureFolderFS.Maui.TemplateSelectors
 {

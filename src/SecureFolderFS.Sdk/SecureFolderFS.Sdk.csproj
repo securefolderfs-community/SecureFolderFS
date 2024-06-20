@@ -21,4 +21,8 @@
     <ProjectReference Include="..\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\Views\Recovery\" />
+  </ItemGroup>
+
 </Project>

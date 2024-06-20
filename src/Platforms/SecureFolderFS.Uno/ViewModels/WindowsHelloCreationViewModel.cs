@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
@@ -11,27 +10,21 @@ using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Uno.ViewModels
 {
-    public sealed partial class WindowsHelloCreationViewModel : WindowsHelloViewModel
+    /// <inheritdoc cref="WindowsHelloViewModel"/>
+    public sealed class WindowsHelloCreationViewModel(string vaultId, string id, IFolder vaultFolder)
+        : WindowsHelloViewModel(id, vaultFolder)
     {
-        private readonly string _vaultId;
-
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public WindowsHelloCreationViewModel(string vaultId, string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
-        {
-            _vaultId = vaultId;
-        }
-
-        [RelayCommand]
-        private async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
-            using var challenge = GenerateChallenge(_vaultId);
+            using var challenge = GenerateChallenge(vaultId);
 
             // Write authentication data to the vault
             await vaultWriter.WriteAuthenticationAsync(new()
@@ -42,7 +35,7 @@ namespace SecureFolderFS.Uno.ViewModels
 
             try
             {
-                var key = await this.TryCreateAsync(_vaultId, challenge.Key, cancellationToken);
+                var key = await this.TryCreateAsync(vaultId, challenge.Key, cancellationToken);
                 if (key is { Successful: true, Value: not null })
                     CredentialsProvided?.Invoke(this, new(key.Value));
             }

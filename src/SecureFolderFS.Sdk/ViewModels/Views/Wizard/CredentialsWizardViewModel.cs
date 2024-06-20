@@ -7,7 +7,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using System;

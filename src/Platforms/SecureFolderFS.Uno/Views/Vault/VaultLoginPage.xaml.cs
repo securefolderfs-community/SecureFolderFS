@@ -5,7 +5,6 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 

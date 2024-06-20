@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
-    public sealed partial class WizardOverlayViewModel(IVaultCollectionModel vaultCollectionModel) : DialogViewModel, INavigatable
+    public sealed partial class WizardOverlayViewModel(IVaultCollectionModel vaultCollectionModel) : OverlayViewModel, INavigatable
     {
         [ObservableProperty] private BaseWizardViewModel? _CurrentViewModel;
 

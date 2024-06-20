@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
-    public sealed class ExplanationDialogViewModel : DialogViewModel, IAsyncInitialize
+    public sealed class ExplanationOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
         private readonly PeriodicTimer _periodicTimer;
         private int _elapsedTicks;
 
-        public ExplanationDialogViewModel()
+        public ExplanationOverlayViewModel()
         {
             _periodicTimer = new(TimeSpan.FromSeconds(1));
             PrimaryButtonText = Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS.ToString();
@@ -22,7 +22,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
-
             return Task.CompletedTask;
         }
 
@@ -32,7 +31,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             {
                 _elapsedTicks++;
                 PrimaryButtonText = $"{Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS - _elapsedTicks}";
-#if !DEBUG
+
+#if !DEBUG // Skip waiting if debugging
                 if (_elapsedTicks >= Constants.Dialogs.EXPLANATION_DIALOG_TIME_TICKS)
 #endif
                 {

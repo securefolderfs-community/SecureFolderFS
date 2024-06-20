@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IVaultService>]
-    public sealed partial class PasswordChangeDialogViewModel : DialogViewModel
+    public sealed partial class PasswordChangeDialogViewModel : OverlayViewModel
     {
         private readonly IVaultModel _vaultModel;
 

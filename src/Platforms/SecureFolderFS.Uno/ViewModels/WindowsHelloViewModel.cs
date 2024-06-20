@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using Windows.Security.Credentials;
 

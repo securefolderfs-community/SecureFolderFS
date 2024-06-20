@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
-    public sealed partial class IntroductionDialogViewModel : DialogViewModel
+    public sealed partial class IntroductionDialogViewModel : OverlayViewModel
     {
         private readonly int _maxAmount;
 
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {
-            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
+            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync();
         }
 

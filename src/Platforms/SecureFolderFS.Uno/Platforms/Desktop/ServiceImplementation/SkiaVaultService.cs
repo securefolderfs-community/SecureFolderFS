@@ -8,7 +8,7 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
 using SecureFolderFS.Uno.SkiaGtk.AppModels;

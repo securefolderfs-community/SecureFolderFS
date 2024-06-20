@@ -1,13 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -76,7 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [RelayCommand]
         private async Task AddNewVaultAsync(CancellationToken cancellationToken)
         {
-            var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFSPlus, cancellationToken);
+            var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
             if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
             {
                 _ = PaymentDialogViewModel.Instance.InitAsync(cancellationToken);
@@ -89,7 +87,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         [RelayCommand]
         private async Task OpenSettingsAsync(CancellationToken cancellationToken)
         {
-            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
+            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync(cancellationToken);
         }
 

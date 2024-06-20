@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
-    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views;assembly=SecureFolderFS.Sdk">
+    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk">
 
     <ContentView.Resources>
         <!--  Password Template  -->

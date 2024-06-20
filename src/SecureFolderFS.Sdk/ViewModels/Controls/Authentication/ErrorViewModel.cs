@@ -3,7 +3,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
     public sealed partial class ErrorViewModel : ReportableViewModel
     {

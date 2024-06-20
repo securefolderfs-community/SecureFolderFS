@@ -1,6 +1,8 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using System;
@@ -10,58 +12,64 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     [Inject<IOverlayService>, Inject<IClipboardService>, Inject<IApplicationService>, Inject<IFileExplorerService>, Inject<IStorageService>]
-    public sealed partial class AboutSettingsViewModel : BasePageViewModel
+    public sealed partial class AboutSettingsViewModel : BaseSettingsViewModel
     {
-        public string AppVersion { get; }
+        [ObservableProperty] private string _AppVersion;
 
         public AboutSettingsViewModel()
         {
             ServiceProvider = Ioc.Default;
+            Title = "SettingsAbout".ToLocalized();
             AppVersion = $"{ApplicationService.AppVersion} ({ApplicationService.Platform})";
         }
 
-        [RelayCommand(AllowConcurrentExecutions = true)]
+        /// <inheritdoc/>
+        public override Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        private Task OpenGitHubRepositoryAsync()
+        {
+            return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS"));
+        }
+
+        [RelayCommand]
+        private Task OpenPrivacyPolicyAsync()
+        {
+            return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md"));
+        }
+
+        [RelayCommand]
+        private Task OpenLicensesAsync()
+        {
+            return OverlayService.ShowAsync(new LicensesOverlayViewModel());
+        }
+
+        [RelayCommand]
         private async Task CopyAppVersionAsync(CancellationToken cancellationToken)
         {
             if (await ClipboardService.IsSupportedAsync())
                 await ClipboardService.SetTextAsync(AppVersion, cancellationToken);
         }
 
-        [RelayCommand(AllowConcurrentExecutions = true)]
+        [RelayCommand]
         private async Task CopySystemVersionAsync(CancellationToken cancellationToken)
         {
             if (await ClipboardService.IsSupportedAsync())
                 await ClipboardService.SetTextAsync(ApplicationService.GetSystemVersion(), cancellationToken);
         }
 
-        [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenGitHubRepositoryAsync()
-        {
-            return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS"));
-        }
-
-        [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenPrivacyPolicyAsync()
-        {
-            return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md"));
-        }
-
-        [RelayCommand(AllowConcurrentExecutions = true)]
+        [RelayCommand]
         private async Task OpenChangelogAsync()
         {
-            var viewModel = new ChangelogDialogViewModel(ApplicationService.AppVersion);
-            _ = viewModel.InitAsync();
-
-            await OverlayService.ShowAsync(viewModel);
+            var changelogOverlay = new ChangelogOverlayViewModel(ApplicationService.AppVersion);
+            _ = changelogOverlay.InitAsync();
+            await OverlayService.ShowAsync(changelogOverlay);
         }
 
-        [RelayCommand(AllowConcurrentExecutions = true)]
-        private Task OpenLicensesAsync()
-        {
-            return OverlayService.ShowAsync(new LicensesDialogViewModel());
-        }
-
-        [RelayCommand(AllowConcurrentExecutions = true)]
+        [RelayCommand]
         private async Task OpenLogLocationAsync(CancellationToken cancellationToken)
         {
             var appFolder = await StorageService.GetAppFolderAsync(cancellationToken);

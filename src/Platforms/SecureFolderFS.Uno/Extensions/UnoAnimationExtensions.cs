@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Uno.Extensions
 {
-    internal static class AnimationExtensions
+    internal static class UnoAnimationExtensions
     {
         public static Task BeginAsync(this Storyboard storyboard)
         {

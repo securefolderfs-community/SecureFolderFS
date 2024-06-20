@@ -6,7 +6,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     /// <summary>
     /// Serves as the base dialog view model containing reusable code for every dialog.
     /// </summary>
-    public abstract partial class DialogViewModel : ObservableObject, IViewDesignation
+    public abstract partial class OverlayViewModel : ObservableObject, IViewDesignation
     {
         /// <summary>
         /// Gets or sets the title of the dialog.

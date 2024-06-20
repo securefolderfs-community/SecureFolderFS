@@ -1,7 +1,6 @@
-﻿using SecureFolderFS.Sdk.ViewModels.Vault;
-using SecureFolderFS.Shared.ComponentModel;
+﻿using SecureFolderFS.Shared.ComponentModel;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     /// <inheritdoc cref="IViewDesignation"/>
     public abstract class BaseDashboardViewModel(UnlockedVaultViewModel unlockedVaultViewModel)

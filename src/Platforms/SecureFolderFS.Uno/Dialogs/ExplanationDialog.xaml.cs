@@ -25,9 +25,9 @@ namespace SecureFolderFS.Uno.Dialogs
     {
         private IDisposable? _streamDisposable;
 
-        public ExplanationDialogViewModel? ViewModel
+        public ExplanationOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<ExplanationDialogViewModel>();
+            get => DataContext.TryCast<ExplanationOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -40,11 +40,12 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (ExplanationDialogViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (ExplanationOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()
         {
+            ViewModel?.OnDisappearing();
             Hide();
             return Task.CompletedTask;
         }

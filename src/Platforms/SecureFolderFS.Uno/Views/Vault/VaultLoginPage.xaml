@@ -42,7 +42,7 @@
                 </StackPanel>
 
                 <!--  Login  -->
-                <uc:LoginControl LoginTypeViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" />
+                <uc:LoginControl LoginTypeViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
             </StackPanel>
         </Grid>
     </ScrollViewer>

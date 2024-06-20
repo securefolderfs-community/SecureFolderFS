@@ -16,7 +16,7 @@
 
     <UserControl.Resources>
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
-        <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </UserControl.Resources>
@@ -119,7 +119,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    x:Load="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}"
+                    x:Load="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                     AutomationProperties.Name="{l:ResourceString Name=NewVault}"
                     Command="{x:Bind ViewModel.VaultListViewModel.AddNewVaultCommand, Mode=OneWay}"
                     Style="{ThemeResource AccentButtonStyle}">

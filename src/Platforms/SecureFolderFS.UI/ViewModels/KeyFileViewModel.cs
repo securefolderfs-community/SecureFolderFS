@@ -10,7 +10,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.UI.ViewModels

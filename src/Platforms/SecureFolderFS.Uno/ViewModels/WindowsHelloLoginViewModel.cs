@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
@@ -11,7 +10,8 @@ using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.ViewModels
 {
-    public sealed partial class WindowsHelloLoginViewModel(string id, IFolder vaultFolder)
+    /// <inheritdoc cref="WindowsHelloViewModel"/>
+    public sealed class WindowsHelloLoginViewModel(string id, IFolder vaultFolder)
         : WindowsHelloViewModel(id, vaultFolder)
     {
         /// <inheritdoc/>
@@ -20,8 +20,8 @@ namespace SecureFolderFS.Uno.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        [RelayCommand]
-        private async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);

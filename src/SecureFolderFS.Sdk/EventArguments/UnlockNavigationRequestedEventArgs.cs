@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.ViewModels.Vault;
+﻿using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 

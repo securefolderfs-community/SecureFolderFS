@@ -4,11 +4,10 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<ISettingsService>, Inject<IFileExplorerService>]
     public sealed partial class VaultOverviewViewModel : BaseDashboardViewModel

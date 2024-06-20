@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
@@ -10,7 +9,8 @@ using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.UI.ViewModels
 {
-    public sealed partial class KeyFileLoginViewModel : KeyFileViewModel
+    /// <inheritdoc cref="KeyFileViewModel"/>
+    public sealed class KeyFileLoginViewModel : KeyFileViewModel
     {
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
@@ -20,8 +20,8 @@ namespace SecureFolderFS.UI.ViewModels
         {
         }
 
-        [RelayCommand]
-        private async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);

@@ -7,7 +7,7 @@ using SecureFolderFS.Uno.ServiceImplementation;
 
 namespace SecureFolderFS.Uno.Extensions
 {
-    public static class IocExtensions
+    internal static class UnoIocExtensions
     {
         public static IServiceCollection WithUnoServices(this IServiceCollection serviceCollection, IModifiableFolder settingsFolder)
         {

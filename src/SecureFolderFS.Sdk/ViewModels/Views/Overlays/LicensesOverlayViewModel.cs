@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IApplicationService>]
-    public sealed partial class LicensesDialogViewModel : DialogViewModel, IAsyncInitialize
+    public sealed partial class LicensesOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
         public ObservableCollection<LicenseViewModel> Licenses { get; }
 
-        public LicensesDialogViewModel()
+        public LicensesOverlayViewModel()
         {
             ServiceProvider = Ioc.Default;
             Licenses = new();

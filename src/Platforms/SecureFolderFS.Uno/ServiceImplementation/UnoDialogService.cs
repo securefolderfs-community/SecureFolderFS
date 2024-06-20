@@ -23,12 +23,13 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         {
             IOverlayControl overlay = viewable switch
             {
-                ChangelogDialogViewModel => new ChangelogDialog(),
-                LicensesDialogViewModel => new LicensesDialog(),
-                SettingsDialogViewModel => new SettingsDialog(),
+                ChangelogOverlayViewModel => new ChangelogDialog(),
+                LicensesOverlayViewModel => new LicensesDialog(),
+                SettingsOverlayViewModel => new SettingsDialog(),
                 WizardOverlayViewModel => new VaultWizardDialog(),
                 PasswordChangeDialogViewModel => new PasswordChangeDialog(),
-                ExplanationDialogViewModel => new ExplanationDialog(),
+                ExplanationOverlayViewModel => new ExplanationDialog(),
+                PreviewRecoveryOverlayViewModel => new PreviewRecoveryDialog(),
 
                 // Unused
                 PaymentDialogViewModel => new PaymentDialog(),

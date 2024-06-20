@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IApplicationService>, Inject<IChangelogService>]
-    public sealed partial class ChangelogDialogViewModel : DialogViewModel, IAsyncInitialize
+    public sealed partial class ChangelogOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
         private readonly Version _changelogSince;
 
         [ObservableProperty] private string? _UpdateText;
         [ObservableProperty] private string? _ErrorText;
 
-        public ChangelogDialogViewModel(Version changelogSince)
+        public ChangelogOverlayViewModel(Version changelogSince)
         {
             ServiceProvider = Ioc.Default;
             _changelogSince = changelogSince;

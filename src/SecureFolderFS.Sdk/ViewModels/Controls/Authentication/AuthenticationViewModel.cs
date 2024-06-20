@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.ComponentModel;
@@ -6,7 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
     public abstract partial class AuthenticationViewModel(string id, IFolder vaultFolder)
         : ReportableViewModel, IAuthenticator, IDisposable
@@ -36,6 +37,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         /// <inheritdoc/>
         public abstract Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default);
+
+        [RelayCommand]
+        protected abstract Task ProvideCredentialsAsync(CancellationToken cancellationToken);
 
         /// <inheritdoc/>
         public virtual void Dispose()

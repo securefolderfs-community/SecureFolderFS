@@ -29,7 +29,7 @@ namespace SecureFolderFS.Core.VaultAccess
             if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken) is not IFile keystoreFile)
                 throw new FileNotFoundException("The keystore file was not found.");
 
-            return await ReadDataAsync<VaultKeystoreDataModel>(keystoreFile, cancellationToken);
+            return await ReadDataAsync<VaultKeystoreDataModel>(keystoreFile, _serializer, cancellationToken);
         }
 
         public async Task<VaultConfigurationDataModel> ReadConfigurationAsync(CancellationToken cancellationToken)
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.VaultAccess
             if (await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken) is not IFile configFile)
                 throw new FileNotFoundException("The configuration file was not found.");
 
-            return await ReadDataAsync<VaultConfigurationDataModel>(configFile, cancellationToken);
+            return await ReadDataAsync<VaultConfigurationDataModel>(configFile, _serializer, cancellationToken);
         }
 
         public async Task<VaultAuthenticationDataModel?> ReadAuthenticationAsync(CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ namespace SecureFolderFS.Core.VaultAccess
             {
                 // Try to get authentication file
                 var authFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, cancellationToken);
-                return await ReadDataAsync<VaultAuthenticationDataModel?>(authFile, cancellationToken);
+                return await ReadDataAsync<VaultAuthenticationDataModel?>(authFile, _serializer, cancellationToken);
             }
             catch (Exception)
             {
@@ -55,12 +55,12 @@ namespace SecureFolderFS.Core.VaultAccess
             }
         }
 
-        private async Task<TData> ReadDataAsync<TData>(IFile file, CancellationToken cancellationToken)
+        private static async Task<TData> ReadDataAsync<TData>(IFile file, IAsyncSerializer<Stream> serializer, CancellationToken cancellationToken)
         {
             // Open a stream to the data file
             await using var dataStream = await file.OpenStreamAsync(FileAccess.Read, cancellationToken);
 
-            var data = await _serializer.DeserializeAsync<Stream, TData?>(dataStream, cancellationToken);
+            var data = await serializer.DeserializeAsync<Stream, TData?>(dataStream, cancellationToken);
             _ = data ?? throw new SerializationException($"Data could not be deserialized into {typeof(TData).Name}.");
 
             return data;

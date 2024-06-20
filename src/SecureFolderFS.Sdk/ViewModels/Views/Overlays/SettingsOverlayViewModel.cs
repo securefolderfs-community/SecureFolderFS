@@ -5,11 +5,11 @@ using SecureFolderFS.Sdk.Services;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<INavigationService>(Visibility = "public")]
-    public sealed partial class SettingsDialogViewModel : DialogViewModel
+    public sealed partial class SettingsOverlayViewModel : OverlayViewModel
     {
-        public static SettingsDialogViewModel Instance { get; } = new();
+        public static SettingsOverlayViewModel Instance { get; } = new();
 
-        private SettingsDialogViewModel()
+        private SettingsOverlayViewModel()
         {
             ServiceProvider = Ioc.Default;
         }

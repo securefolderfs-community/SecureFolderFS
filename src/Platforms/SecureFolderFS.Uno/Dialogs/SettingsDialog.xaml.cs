@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.ComponentModel;
@@ -20,9 +19,9 @@ namespace SecureFolderFS.Uno.Dialogs
     public sealed partial class SettingsDialog : ContentDialog, IOverlayControl
     {
         /// <inheritdoc/>
-        public SettingsDialogViewModel? ViewModel
+        public SettingsOverlayViewModel? ViewModel
         {
-            get => (SettingsDialogViewModel?)DataContext;
+            get => (SettingsOverlayViewModel?)DataContext;
             set => DataContext = value;
         }
 
@@ -35,11 +34,12 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (SettingsDialogViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (SettingsOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()
         {
+            ViewModel?.OnDisappearing();
             Hide();
             return Task.CompletedTask;
         }

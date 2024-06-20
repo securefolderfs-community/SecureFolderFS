@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Validators;
+using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.UI.ServiceImplementation
@@ -50,6 +52,15 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             yield return Core.Cryptography.Constants.CipherId.AES_SIV;
             yield return Core.Cryptography.Constants.CipherId.NONE;
+        }
+
+        /// <inheritdoc/>
+        public async Task<string> GetVaultIdAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
+        {
+            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
+            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+
+            return config.Uid;
         }
     }
 }

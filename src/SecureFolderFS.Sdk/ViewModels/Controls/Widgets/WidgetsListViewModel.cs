@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;

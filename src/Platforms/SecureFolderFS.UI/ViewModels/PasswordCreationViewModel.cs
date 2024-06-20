@@ -1,10 +1,13 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.EventArguments;
 
 namespace SecureFolderFS.UI.ViewModels
 {
+    /// <inheritdoc cref="PasswordViewModel"/>
     public sealed partial class PasswordCreationViewModel : PasswordViewModel
     {
         [ObservableProperty] private string? _SecondaryPassword;
@@ -30,6 +33,13 @@ namespace SecureFolderFS.UI.ViewModels
         {
             if (PrimaryPassword == SecondaryPassword)
                 StateChanged?.Invoke(this, new PasswordChangedEventArgs(PrimaryPassword == SecondaryPassword));
+        }
+
+        /// <inheritdoc/>
+        protected override Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        {
+            // TODO: Maybe opt-in to something similar like in PasswordLoginViewModel, where CredentialsProvided is also used?
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
