@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<IOverlayService>]
+    [Inject<IOverlayService>, Inject<IVaultService>]
     public sealed partial class VaultPropertiesViewModel : BaseDashboardViewModel
     {
         [ObservableProperty] private string? _ContentCipherName;
@@ -20,23 +20,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             : base(unlockedVaultViewModel)
         {
             ServiceProvider = Ioc.Default;
-            Title = "Properties".ToLocalized();
-
-            // TODO: Maybe add a method into one of the vault services to get the details about a vault
-            ContentCipherName = "TODO";
-            FileNameCipherName = "TODO";
-
-            //var contentCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultOptions.ContentCipherId;
-            //var fileNameCipherId = unlockedVaultViewModel.VaultLifeTimeModel.VaultOptions.FileNameCipherId;
-
-            //ContentCipherName = contentCipherId == string.Empty ? "NoEncryption".ToLocalized() : (contentCipherId ?? "Unknown");
-            //FileNameCipherName = fileNameCipherId == string.Empty ? "NoEncryption".ToLocalized() : (fileNameCipherId ?? "Unknown");
+            Title = "VaultProperties".ToLocalized();
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            var vaultOptions = await VaultService.GetVaultOptionsAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken);
+            ContentCipherName = string.IsNullOrEmpty(vaultOptions.ContentCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
+            FileNameCipherName = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown");
         }
 
         [RelayCommand]

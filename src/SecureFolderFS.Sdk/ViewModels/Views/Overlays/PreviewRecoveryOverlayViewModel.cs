@@ -6,12 +6,10 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -23,7 +21,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [ObservableProperty] private LoginControlViewModel _LoginViewModel;
         [ObservableProperty] private RecoveryPreviewControlViewModel _RecoveryViewModel;
         [ObservableProperty] private INotifyPropertyChanged? _CurrentViewModel;
-        [ObservableProperty] private ICommand? _ContinueCommand;
 
         public PreviewRecoveryOverlayViewModel(IVaultModel vaultModel)
         {
@@ -38,7 +35,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             CloseButtonText = "Close".ToLocalized();
 
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
-            LoginViewModel.PropertyChanged += LoginViewModel_PropertyChanged;
         }
 
         /// <inheritdoc/>
@@ -54,22 +50,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             RecoveryViewModel.MasterKey = null;
         }
 
-        private async void LoginViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(LoginControlViewModel.CurrentViewModel)
-                && LoginViewModel.CurrentViewModel is AuthenticationViewModel authenticationViewModel)
-            {
-                ContinueCommand = authenticationViewModel.ProvideCredentialsCommand;
-            }
-        }
-
         private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            var vaultId = await VaultService.GetVaultIdAsync(_vaultModel.Folder);
+            var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultModel.Folder);
             using (e.UnlockContract)
             {
                 // Prepare the recovery view
-                RecoveryViewModel.VaultId = vaultId;
+                RecoveryViewModel.VaultId = vaultOptions.VaultId;
                 RecoveryViewModel.VaultName = _vaultModel.VaultName;
                 RecoveryViewModel.MasterKey = e.UnlockContract.ToString();
 

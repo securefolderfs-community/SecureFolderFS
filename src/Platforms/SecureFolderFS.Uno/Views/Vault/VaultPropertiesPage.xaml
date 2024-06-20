@@ -29,8 +29,14 @@
                         <TextBlock Text="{l:ResourceString Name=FileNameEncryption}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Spacing="4">
-                        <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.ContentCipherName, Mode=OneWay}" />
-                        <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.FileNameCipherName, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.8"
+                            Text="{x:Bind ViewModel.ContentCipherName, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.8"
+                            Text="{x:Bind ViewModel.FileNameCipherName, Mode=OneWay}" />
                     </StackPanel>
                 </Grid>
             </ucab:ActionBlockControl.ExpanderContent>

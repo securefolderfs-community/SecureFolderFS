@@ -50,9 +50,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand]
-        private async Task OpenPropertiesAsync()
+        private async Task OpenPropertiesAsync(CancellationToken cancellationToken)
         {
-            _propertiesViewModel ??= new(_unlockedVaultViewModel);
+            if (_propertiesViewModel is null)
+            {
+                _propertiesViewModel = new(_unlockedVaultViewModel);
+                await _propertiesViewModel.InitAsync(cancellationToken);
+            }
+
             await _dashboardNavigator.NavigateAsync(_propertiesViewModel);
         }
     }

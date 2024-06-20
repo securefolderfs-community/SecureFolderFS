@@ -55,12 +55,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<string> GetVaultIdAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
+        public async Task<VaultOptions> GetVaultOptionsAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
 
-            return config.Uid;
+            return new()
+            {
+                AuthenticationMethod = config.AuthenticationMethod,
+                ContentCipherId = config.ContentCipherId,
+                FileNameCipherId = config.FileNameCipherId,
+                VaultId = config.Uid
+            };
         }
     }
 }

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -25,6 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private IAsyncEnumerator<AuthenticationViewModel>? _enumerator;
 
+        [ObservableProperty] private ICommand? _ProvideCredentialsCommand;
         [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
 
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
@@ -141,7 +143,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 newValue.StateChanged += CurrentViewModel_StateChanged;
 
             if (newValue is AuthenticationViewModel newViewModel)
+            {
                 newViewModel.CredentialsProvided += CurrentViewModel_CredentialsProvided;
+                ProvideCredentialsCommand = newViewModel.ProvideCredentialsCommand;
+            }
+            else
+                ProvideCredentialsCommand = null;
         }
 
         /// <inheritdoc/>

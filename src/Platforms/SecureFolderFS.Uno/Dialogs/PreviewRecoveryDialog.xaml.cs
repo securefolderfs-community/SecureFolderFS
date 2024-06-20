@@ -50,7 +50,7 @@ namespace SecureFolderFS.Uno.Dialogs
                 return;
 
             args.Cancel = true;
-            ViewModel.ContinueCommand?.Execute(null);
+            ViewModel.LoginViewModel.ProvideCredentialsCommand?.Execute(null);
         }
 
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)

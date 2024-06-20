@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
@@ -52,9 +53,15 @@ namespace SecureFolderFS.Sdk.Services
         /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs  of filename ciphers.</returns>
         IEnumerable<string> GetFileNameCiphers();
 
-        // TODO: Needs docs
+        /// <summary>
+        /// Gets an instance of <see cref="VaultOptions"/> that contains information about the vault.
+        /// </summary>
+        /// <param name="vaultFolder">The folder of the vault.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="VaultOptions"/> of the additional vault information.</returns>
+        Task<VaultOptions> GetVaultOptionsAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
-        Task<string> GetVaultIdAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+        // TODO: Needs docs
 
         IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
