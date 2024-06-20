@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.UI.AppModels
+namespace SecureFolderFS.Uno.Windows.AppModels
 {
     /// <inheritdoc cref="IFileSystemInfoModel"/>
     internal sealed class WindowsDokanyDescriptor : IFileSystemInfoModel

@@ -87,7 +87,7 @@
         <ucab:ActionBlockControl
             Title="View recovery codes"
             BlockMode="Clickable"
-            ClickCommand="{x:Bind ViewModel.ViewRecoveryCommand}"
+            ClickCommand="{x:Bind ViewModel.ViewRecoveryCommand, Mode=OneWay}"
             Description="Access recovery codes for this vault in case you forget your credentials">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE777;" />

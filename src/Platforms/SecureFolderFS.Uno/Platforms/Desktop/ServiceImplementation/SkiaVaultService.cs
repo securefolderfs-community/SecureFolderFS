@@ -11,6 +11,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.SkiaGtk.AppModels;
 
 namespace SecureFolderFS.Uno.SkiaGtk.ServiceImplementation
@@ -22,6 +23,7 @@ namespace SecureFolderFS.Uno.SkiaGtk.ServiceImplementation
         public override IEnumerable<IFileSystemInfoModel> GetFileSystems()
         {
             yield return new SkiaFuseDescriptor();
+            yield return new WebDavDescriptor();
         }
 
         /// <inheritdoc/>

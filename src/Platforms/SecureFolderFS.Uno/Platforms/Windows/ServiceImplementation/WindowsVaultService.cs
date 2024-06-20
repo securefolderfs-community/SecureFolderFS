@@ -7,10 +7,11 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
-using SecureFolderFS.UI.AppModels;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.Uno.AppModels;
 using SecureFolderFS.Uno.ViewModels;
+using SecureFolderFS.Uno.Windows.AppModels;
 using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.Windows.ServiceImplementation
@@ -21,7 +22,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
         public override IEnumerable<IFileSystemInfoModel> GetFileSystems()
         {
             yield return new WindowsDokanyDescriptor();
-            yield return new WindowsWebDavDescriptor();
+            yield return new WebDavDescriptor();
         }
 
         /// <inheritdoc/>

@@ -25,7 +25,7 @@
             <uc:LoginControl LoginTypeViewModel="{x:Bind CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="False" />
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
-            <uc:RecoveryPreviewControl ExportCommand="{x:Bind ExportCommand}" MasterKey="{x:Bind MasterKey, Mode=OneWay}" />
+            <uc:RecoveryPreviewControl ExportCommand="{x:Bind ExportCommand, Mode=OneWay}" MasterKey="{x:Bind MasterKey, Mode=OneWay}" />
         </DataTemplate>
     </ContentDialog.Resources>
 

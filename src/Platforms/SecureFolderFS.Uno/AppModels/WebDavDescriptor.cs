@@ -1,16 +1,17 @@
+#if HAS_UNO_SKIA || WINDOWS
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Shared.ComponentModel;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace SecureFolderFS.UI.AppModels
+namespace SecureFolderFS.Uno.AppModels
 {
     /// <inheritdoc cref="IFileSystemInfoModel"/>
-    internal sealed class WindowsWebDavDescriptor : IFileSystemInfoModel
+    public sealed class WebDavDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
         public string Name { get; } = "WebDav";
@@ -29,3 +30,4 @@ namespace SecureFolderFS.UI.AppModels
         }
     }
 }
+#endif
