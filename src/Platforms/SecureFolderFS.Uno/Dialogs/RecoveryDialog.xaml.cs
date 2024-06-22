@@ -1,12 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
+using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -15,6 +14,8 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class RecoveryDialog : ContentDialog, IOverlayControl
     {
+        private bool _primaryClicked;
+
         public RecoveryOverlayViewModel? ViewModel
         {
             get => DataContext.TryCast<RecoveryOverlayViewModel>();
@@ -27,7 +28,11 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseOverlayOption();
+        public new async Task<IResult> ShowAsync()
+        {
+            var result = await base.ShowAsync();
+            return _primaryClicked ? ContentDialogResult.Primary.ParseOverlayOption() : result.ParseOverlayOption();
+        }
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
@@ -48,7 +53,16 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel is null)
                 return;
 
+#if HAS_UNO_SKIA
+            args.Cancel = true;
+            if (await ViewModel.RecoverAsync(default))
+            {
+                _primaryClicked = true;
+                Hide();
+            }
+#else
             args.Cancel = !await ViewModel.RecoverAsync(default);
+#endif
         }
     }
 }

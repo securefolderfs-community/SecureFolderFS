@@ -1,12 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
+using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,7 +34,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel?.TaskCompletion.SetResult(DialogOption.Cancel.ParseOverlayOption());
+            ViewModel?.TaskCompletion.SetResult(ContentDialogResult.None.ParseOverlayOption());
             return Task.CompletedTask;
         }
     }

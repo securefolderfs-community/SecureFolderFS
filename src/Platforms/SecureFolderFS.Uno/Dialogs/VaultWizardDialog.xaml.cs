@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Media.Animation;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
@@ -40,7 +39,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseOverlayOption();
+        public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
