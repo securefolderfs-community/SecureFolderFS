@@ -4,12 +4,14 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared.ComponentModel;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IApplicationService>]
+    [Bindable(true)]
     public sealed partial class LicensesOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
         public ObservableCollection<LicenseViewModel> Licenses { get; }

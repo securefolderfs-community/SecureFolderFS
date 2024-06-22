@@ -6,15 +6,17 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
     [Inject<IUpdateService>, Inject<ISettingsService>]
+    [Bindable(true)]
     public sealed partial class UpdateBannerViewModel : ObservableObject, IAsyncInitialize, IProgress<double>
     {
         [ObservableProperty] private InfoBarViewModel _InfoBarViewModel = new();

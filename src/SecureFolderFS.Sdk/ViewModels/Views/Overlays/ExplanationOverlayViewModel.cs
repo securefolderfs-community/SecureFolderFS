@@ -1,11 +1,13 @@
 ﻿using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
+    [Bindable(true)]
     public sealed class ExplanationOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
         private readonly PeriodicTimer _periodicTimer;

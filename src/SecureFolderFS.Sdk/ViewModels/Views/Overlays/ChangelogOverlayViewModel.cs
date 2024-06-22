@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
+using System.ComponentModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IApplicationService>, Inject<IChangelogService>]
+    [Bindable(true)]
     public sealed partial class ChangelogOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
         private readonly Version _changelogSince;

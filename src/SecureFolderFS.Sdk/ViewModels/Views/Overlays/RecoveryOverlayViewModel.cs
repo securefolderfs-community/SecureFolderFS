@@ -5,12 +5,14 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IVaultManagerService>, Inject<IClipboardService>]
+    [Bindable(true)]
     public sealed partial class RecoveryOverlayViewModel : OverlayViewModel, IDisposable
     {
         private readonly IFolder _vaultFolder;

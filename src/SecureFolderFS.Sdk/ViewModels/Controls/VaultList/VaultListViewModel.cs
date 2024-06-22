@@ -11,6 +11,7 @@ using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
     [Inject<ISettingsService>, Inject<IIapService>, Inject<IOverlayService>]
+    [Bindable(true)]
     public sealed partial class VaultListViewModel : ObservableObject, IAsyncInitialize
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;

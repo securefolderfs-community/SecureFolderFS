@@ -6,12 +6,14 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     [Inject<IOverlayService>, Inject<IClipboardService>, Inject<IApplicationService>, Inject<IFileExplorerService>, Inject<IStorageService>]
+    [Bindable(true)]
     public sealed partial class AboutSettingsViewModel : BaseSettingsViewModel
     {
         [ObservableProperty] private string _AppVersion;

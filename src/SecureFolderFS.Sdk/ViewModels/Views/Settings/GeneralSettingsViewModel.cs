@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     [Inject<ILocalizationService>, Inject<IApplicationService>]
+    [Bindable(true)]
     public sealed partial class GeneralSettingsViewModel : BaseSettingsViewModel
     {
         private readonly CultureInfo _currentCulture;

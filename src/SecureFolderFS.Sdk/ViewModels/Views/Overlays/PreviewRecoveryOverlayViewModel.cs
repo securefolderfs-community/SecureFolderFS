@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IVaultService>]
+    [Bindable(true)]
     public sealed partial class PreviewRecoveryOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
         private readonly IVaultModel _vaultModel;

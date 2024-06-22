@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -10,6 +11,7 @@ using SecureFolderFS.Shared.Extensions;
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="KeyFileViewModel"/>
+    [Bindable(true)]
     public sealed class KeyFileLoginViewModel : KeyFileViewModel
     {
         /// <inheritdoc/>

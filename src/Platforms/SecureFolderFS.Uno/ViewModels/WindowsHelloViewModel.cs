@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
 using System.Text;
@@ -13,6 +14,7 @@ using Windows.Security.Credentials;
 namespace SecureFolderFS.Uno.ViewModels
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
+    [Bindable(true)]
     public abstract class WindowsHelloViewModel : AuthenticationViewModel
     {
         protected const int KEY_LENGTH = 128;

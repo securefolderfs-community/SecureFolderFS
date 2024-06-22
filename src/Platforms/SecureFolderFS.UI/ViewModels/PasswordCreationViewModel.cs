@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,6 +9,7 @@ using SecureFolderFS.Sdk.EventArguments;
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="PasswordViewModel"/>
+    [Bindable(true)]
     public sealed partial class PasswordCreationViewModel : PasswordViewModel
     {
         [ObservableProperty] private string? _SecondaryPassword;

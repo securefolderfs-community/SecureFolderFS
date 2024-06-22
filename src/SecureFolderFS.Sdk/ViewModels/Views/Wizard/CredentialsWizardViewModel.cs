@@ -13,6 +13,7 @@ using SecureFolderFS.Shared.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IVaultService>, Inject<IVaultManagerService>]
+    [Bindable(true)]
     public sealed partial class CredentialsWizardViewModel : BaseWizardViewModel
     {
         private readonly KeyChain _credentials;

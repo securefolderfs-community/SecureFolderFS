@@ -1,19 +1,17 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    public sealed class LicenseViewModel : ObservableObject
+    [Bindable(true)]
+    public sealed partial class LicenseViewModel : ObservableObject
     {
-        public required string PackageName { get; init; }
-
-        public required string LicenseName { get; init; }
-
-        public required string LicenseContent { get; init; }
-
-        public required Uri? ProjectWebsiteUri { get; init; }
-
-        public required IEnumerable<Uri> LicenseUris { get; init; }
+        [ObservableProperty] private string? _PackageName;
+        [ObservableProperty] private string? _LicenseName;
+        [ObservableProperty] private string? _LicenseContent;
+        [ObservableProperty] private Uri? _ProjectWebsiteUri;
+        [ObservableProperty] private IEnumerable<Uri>? _LicenseUris;
     }
 }

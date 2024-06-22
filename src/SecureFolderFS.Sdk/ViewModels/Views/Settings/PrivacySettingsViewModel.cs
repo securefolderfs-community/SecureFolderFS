@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     [Inject<ITelemetryService>, Inject<ISettingsService>]
+    [Bindable(true)]
     public sealed partial class PrivacySettingsViewModel : BaseSettingsViewModel
     {
         public PrivacySettingsViewModel()

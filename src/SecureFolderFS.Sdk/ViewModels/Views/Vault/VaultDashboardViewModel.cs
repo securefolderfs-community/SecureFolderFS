@@ -6,12 +6,14 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<INavigationService>(Visibility = "public", Name = "DashboardNavigationService")]
+    [Bindable(true)]
     public sealed partial class VaultDashboardViewModel : BaseDashboardViewModel, IRecipient<VaultLockedMessage>
     {
         public INavigator VaultNavigator { get; }

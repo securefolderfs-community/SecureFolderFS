@@ -6,11 +6,13 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
+    [Bindable(true)]
     public sealed partial class SummaryWizardViewModel : BaseWizardViewModel
     {
         private readonly IFolder _folder;

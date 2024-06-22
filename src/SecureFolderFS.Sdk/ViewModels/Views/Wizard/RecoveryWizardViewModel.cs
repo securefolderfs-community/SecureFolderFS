@@ -9,12 +9,14 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IPrinterService>, Inject<IThreadingService>]
+    [Bindable(true)]
     public sealed partial class RecoveryWizardViewModel : BaseWizardViewModel
     {
         private readonly string? _vaultId;

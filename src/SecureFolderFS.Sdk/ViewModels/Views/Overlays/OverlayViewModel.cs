@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Shared.ComponentModel;
+using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     /// <summary>
     /// Serves as the base dialog view model containing reusable code for every dialog.
     /// </summary>
+    [Bindable(true)]
     public abstract partial class OverlayViewModel : ObservableObject, IViewDesignation
     {
         /// <summary>

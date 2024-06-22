@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,6 +11,7 @@ using SecureFolderFS.Shared.Helpers;
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
+    [Bindable(true)]
     public abstract partial class PasswordViewModel : AuthenticationViewModel, IWrapper<IKey>
     {
         [ObservableProperty] private string? _PrimaryPassword;

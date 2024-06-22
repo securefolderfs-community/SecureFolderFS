@@ -8,11 +8,13 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
+    [Bindable(true)]
     public sealed partial class EmptyHostViewModel : ObservableObject, IViewDesignation
     {
         private readonly INavigationService _rootNavigationService;

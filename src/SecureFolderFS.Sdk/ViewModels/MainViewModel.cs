@@ -9,12 +9,14 @@ using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
     [Inject<ISettingsService>, Inject<ITelemetryService>, Inject<IApplicationService>, Inject<IOverlayService>]
+    [Bindable(true)]
     public sealed partial class MainViewModel : ObservableObject, IAsyncInitialize
     {
         public IVaultCollectionModel VaultCollectionModel { get; } = new VaultCollectionModel();

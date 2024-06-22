@@ -5,12 +5,14 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<IVaultService>]
+    [Bindable(true)]
     public sealed partial class VaultPropertiesViewModel : BaseDashboardViewModel
     {
         [ObservableProperty] private string? _ContentCipherName;

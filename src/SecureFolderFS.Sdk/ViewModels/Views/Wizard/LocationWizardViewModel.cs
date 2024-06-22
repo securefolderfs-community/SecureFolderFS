@@ -9,6 +9,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IFileExplorerService>, Inject<IVaultService>]
+    [Bindable(true)]
     public sealed partial class LocationWizardViewModel : BaseWizardViewModel
     {
         [ObservableProperty] private string? _Message;

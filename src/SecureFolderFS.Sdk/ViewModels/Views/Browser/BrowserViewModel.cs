@@ -7,12 +7,14 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System.Collections;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Inject<IOverlayService>]
+    [Bindable(true)]
     public partial class BrowserViewModel : ObservableObject
     {
         [ObservableProperty] private IViewable? _CurrentView;

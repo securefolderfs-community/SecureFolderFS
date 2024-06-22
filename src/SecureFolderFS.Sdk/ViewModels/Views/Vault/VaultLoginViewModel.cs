@@ -14,12 +14,14 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<ISettingsService>, Inject<IVaultManagerService>]
+    [Bindable(true)]
     public sealed partial class VaultLoginViewModel : BaseVaultViewModel, INavigatable
     {
         [ObservableProperty] private LoginControlViewModel _LoginViewModel;

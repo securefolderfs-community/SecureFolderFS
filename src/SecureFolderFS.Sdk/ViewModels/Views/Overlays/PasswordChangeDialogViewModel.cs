@@ -4,12 +4,14 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IVaultService>]
+    [Bindable(true)]
     public sealed partial class PasswordChangeDialogViewModel : OverlayViewModel
     {
         private readonly IVaultModel _vaultModel;

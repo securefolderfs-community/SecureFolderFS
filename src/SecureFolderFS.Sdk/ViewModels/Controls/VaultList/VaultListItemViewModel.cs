@@ -8,12 +8,14 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Extensions;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
     [Inject<IFileExplorerService>]
+    [Bindable(true)]
     public sealed partial class VaultListItemViewModel : ObservableObject, IRecipient<VaultUnlockedMessage>, IRecipient<VaultLockedMessage>
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;

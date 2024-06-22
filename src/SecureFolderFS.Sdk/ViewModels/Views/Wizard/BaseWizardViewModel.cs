@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Shared.ComponentModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
+    [Bindable(true)]
     public abstract partial class BaseWizardViewModel : ObservableObject, IViewDesignation
     {
         /// <inheritdoc cref="IViewable.Title"/>

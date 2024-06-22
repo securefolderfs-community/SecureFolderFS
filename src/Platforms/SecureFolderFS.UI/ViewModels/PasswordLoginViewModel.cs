@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,6 +10,7 @@ using SecureFolderFS.Shared.ComponentModel;
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="PasswordLoginViewModel"/>
+    [Bindable(true)]
     public sealed partial class PasswordLoginViewModel : PasswordViewModel
     {
         [ObservableProperty] private bool _IsPasswordInvalid;

@@ -11,6 +11,7 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -18,6 +19,7 @@ using System.Windows.Input;
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IVaultService>, Inject<IVaultManagerService>]
+    [Bindable(true)]
     public sealed partial class LoginControlViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly bool _enableMigration;

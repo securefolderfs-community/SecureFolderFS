@@ -5,11 +5,13 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
+    [Bindable(true)]
     public sealed class WidgetsListViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;

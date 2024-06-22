@@ -8,12 +8,14 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IFileExplorerService>]
+    [Bindable(true)]
     public sealed partial class VaultControlsViewModel : ObservableObject
     {
         private readonly INavigator _vaultNavigator;

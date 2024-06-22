@@ -1,10 +1,12 @@
 ﻿using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
+    [Bindable(true)]
     public sealed class PreferencesSettingsViewModel : BaseSettingsViewModel
     {
         public FileSystemBannerViewModel BannerViewModel { get; }

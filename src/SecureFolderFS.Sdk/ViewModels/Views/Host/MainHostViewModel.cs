@@ -5,12 +5,14 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Shared.ComponentModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
     [Inject<INavigationService>(Visibility = "public")]
+    [Bindable(true)]
     public sealed partial class MainHostViewModel : ObservableObject, IViewDesignation, IAsyncInitialize
     {
         [ObservableProperty] private string? _Title;

@@ -2,10 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
+    [Bindable(true)]
     public sealed partial class MigrationViewModel : ReportableViewModel
     {
         [ObservableProperty] private string? _CurrentVersion;

@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
+using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
-    public abstract partial class ReportableViewModel : ObservableObject, INotifyStateChanged
+    [Bindable(true)]
+    public abstract class ReportableViewModel : ObservableObject, INotifyStateChanged
     {
         /// <inheritdoc/>
         public abstract event EventHandler<EventArgs>? StateChanged;

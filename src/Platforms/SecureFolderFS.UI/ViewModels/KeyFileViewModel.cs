@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Security.Cryptography;
@@ -16,6 +17,7 @@ using SecureFolderFS.Shared.ComponentModel;
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
+    [Bindable(true)]
     public abstract class KeyFileViewModel : AuthenticationViewModel
     {
         private const int KEY_LENGTH = 128;

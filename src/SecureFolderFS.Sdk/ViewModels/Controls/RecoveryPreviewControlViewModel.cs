@@ -4,12 +4,14 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IPrinterService>, Inject<IThreadingService>]
+    [Bindable(true)]
     public sealed partial class RecoveryPreviewControlViewModel : ObservableObject
     {
         [ObservableProperty] private string? _VaultId;

@@ -3,12 +3,14 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IIapService>]
+    [Bindable(true)]
     public sealed partial class PaymentDialogViewModel : OverlayViewModel, IAsyncInitialize
     {
         public static PaymentDialogViewModel Instance { get; } = new();
