@@ -4,10 +4,9 @@ using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
-using SecureFolderFS.Core.Routines.UnlockRoutines;
 using System;
 
-namespace SecureFolderFS.Core.Routines.StorageRoutines
+namespace SecureFolderFS.Core.Routines.Operational
 {
     /// <inheritdoc cref="IStorageRoutine"/>
     internal sealed class StorageRoutine : IStorageRoutine
@@ -15,13 +14,12 @@ namespace SecureFolderFS.Core.Routines.StorageRoutines
         private UnlockContract? _unlockContract;
 
         /// <inheritdoc/>
-        public IStorageRoutine SetUnlockContract(IDisposable unlockContract)
+        public void SetUnlockContract(IDisposable unlockContract)
         {
             if (unlockContract is not UnlockContract contract)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
             _unlockContract = contract;
-            return this;
         }
 
         /// <inheritdoc/>

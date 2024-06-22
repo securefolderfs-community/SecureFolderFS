@@ -4,15 +4,12 @@ using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
-using System;
 
-namespace SecureFolderFS.Core.Routines.StorageRoutines
+namespace SecureFolderFS.Core.Routines
 {
     // TODO: Needs docs
-    public interface IStorageRoutine
+    public interface IStorageRoutine : IContractRoutine
     {
-        IStorageRoutine SetUnlockContract(IDisposable unlockContract);
-        
         (DirectoryIdCache, Security, IPathConverter, IStreamsAccess) CreateStorageComponents(IFolder contentRoot, FileSystemOptions options);
     }
 }

@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:nv="using:SecureFolderFS.Uno.UserControls.Navigation"
     Closing="SettingsDialog_Closing"
-    Opened="SettingsDialog_Opened"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">

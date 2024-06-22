@@ -1,38 +1,42 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.VaultAccess;
 using System;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Routines.CredentialsRoutines
+namespace SecureFolderFS.Core.Routines.Operational
 {
-    /// <inheritdoc cref="ICredentialsRoutine"/>
-    internal sealed class CredentialsRoutine : ICredentialsRoutine
+    /// <inheritdoc cref="IModifyCredentialsRoutine"/>
+    internal sealed class ModifyCredentialsRoutine : IModifyCredentialsRoutine
     {
         private readonly VaultWriter _vaultWriter;
         private VaultKeystoreDataModel? _keystoreDataModel;
         private UnlockContract? _unlockContract;
 
-        public CredentialsRoutine(VaultWriter vaultWriter)
+        public ModifyCredentialsRoutine(VaultWriter vaultWriter)
         {
             _vaultWriter = vaultWriter;
         }
 
         /// <inheritdoc/>
-        public ICredentialsRoutine SetUnlockContract(IDisposable unlockContract)
+        public Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public void SetUnlockContract(IDisposable unlockContract)
         {
             if (unlockContract is not UnlockContract contract)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
             _unlockContract = contract;
-            return this;
         }
 
         /// <inheritdoc/>
-        public ICredentialsRoutine SetCredentials(SecretKey passkey)
+        public void SetCredentials(SecretKey passkey)
         {
             ArgumentNullException.ThrowIfNull(_unlockContract);
 
@@ -46,17 +50,18 @@ namespace SecureFolderFS.Core.Routines.CredentialsRoutines
 
             // Generate keystore
             _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt);
-
-            return this;
         }
 
         /// <inheritdoc/>
-        public async Task FinalizeAsync(CancellationToken cancellationToken)
+        public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
 
             // Write only the keystore
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
+
+            // TODO: Return UnlockContract
+            return null!;
         }
 
         /// <inheritdoc/>

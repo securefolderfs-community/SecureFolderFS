@@ -322,6 +322,9 @@
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="Print" xml:space="preserve">
     <value>Print</value>
   </data>
@@ -333,6 +336,12 @@
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
     <value>Read speeds</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Recover</value>
+  </data>
+  <data name="RecoverAccess" xml:space="preserve">
+    <value>Recover access</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Remove vault from the list</value>

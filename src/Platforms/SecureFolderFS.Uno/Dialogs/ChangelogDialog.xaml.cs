@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,D
@@ -18,9 +19,9 @@ namespace SecureFolderFS.Uno.Dialogs
     {
         private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
 
-        public ChangelogOverlayViewModel ViewModel
+        public ChangelogOverlayViewModel? ViewModel
         {
-            get => (ChangelogOverlayViewModel)DataContext;
+            get => DataContext.TryCast<ChangelogOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -30,7 +31,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (ChangelogOverlayViewModel)viewable;
@@ -38,7 +39,6 @@ namespace SecureFolderFS.Uno.Dialogs
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel?.OnDisappearing();
             Hide();
             return Task.CompletedTask;
         }

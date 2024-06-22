@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -16,9 +17,9 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class PasswordChangeDialog : ContentDialog, IOverlayControl
     {
-        public PasswordChangeDialogViewModel ViewModel
+        public PasswordChangeDialogViewModel? ViewModel
         {
-            get => (PasswordChangeDialogViewModel)DataContext;
+            get => DataContext.TryCast<PasswordChangeDialogViewModel>();
             set => DataContext = value;
         }
 
@@ -28,7 +29,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (PasswordChangeDialogViewModel)viewable;
@@ -36,7 +37,6 @@ namespace SecureFolderFS.Uno.Dialogs
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel?.OnDisappearing();
             Hide();
             return Task.CompletedTask;
         }
@@ -57,7 +57,8 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private void Password_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            ViewModel.PrimaryButtonEnabled = !string.IsNullOrWhiteSpace(FirstPassword.PasswordInput.Password) && FirstPassword.Equals(SecondPassword);
+            if (ViewModel is not null)
+                ViewModel.PrimaryButtonEnabled = !string.IsNullOrWhiteSpace(FirstPassword.PasswordInput.Password) && FirstPassword.Equals(SecondPassword);
         }
     }
 }

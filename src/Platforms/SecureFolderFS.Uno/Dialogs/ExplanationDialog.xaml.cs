@@ -37,7 +37,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (ExplanationOverlayViewModel)viewable;
@@ -45,7 +45,6 @@ namespace SecureFolderFS.Uno.Dialogs
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel?.OnDisappearing();
             Hide();
             return Task.CompletedTask;
         }

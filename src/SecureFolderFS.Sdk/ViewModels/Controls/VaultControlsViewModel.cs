@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -45,7 +46,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             _ = loginPageViewModel.InitAsync();
 
             // Navigate away
-            await _vaultNavigator.NavigateAsync(loginPageViewModel);
+            if (_vaultNavigator is INavigationService navigationService)
+                await navigationService.TryNavigateAndForgetAsync(loginPageViewModel);
+            else
+                await _vaultNavigator.NavigateAsync(loginPageViewModel);
+
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultModel));
         }
 

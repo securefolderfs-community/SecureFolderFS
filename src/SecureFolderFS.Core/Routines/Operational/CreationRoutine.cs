@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Routines.CreationRoutines
+namespace SecureFolderFS.Core.Routines.Operational
 {
     /// <inheritdoc cref="ICreationRoutine"/>
     internal sealed class CreationRoutine : ICreationRoutine
@@ -28,9 +28,15 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
         }
 
         /// <inheritdoc/>
-        public ICreationRoutine SetCredentials(SecretKey passkey)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // Allocate keys
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public void SetCredentials(SecretKey passkey)
+        {
+            // Allocate shallow keys which will be later disposed of
             using var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
             using var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
             var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
@@ -47,24 +53,20 @@ namespace SecureFolderFS.Core.Routines.CreationRoutines
             // Create key copies for later use
             _macKey = macKey.CreateCopy();
             _encKey = encKey.CreateCopy();
-
-            return this;
         }
 
         /// <inheritdoc/>
-        public ICreationRoutine SetOptions(IDictionary<string, string?> options)
+        public void SetOptions(IDictionary<string, string?> options)
         {
             _configDataModel = new()
             {
                 Version = Constants.Vault.Versions.LATEST_VERSION,
-                ContentCipherId = options.Get(Constants.Associations.ASSOC_CONTENT_CIPHER_ID) ?? Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305,
-                FileNameCipherId = options.Get(Constants.Associations.ASSOC_FILENAME_CIPHER_ID) ?? Core.Cryptography.Constants.CipherId.AES_SIV,
+                ContentCipherId = options.Get(Constants.Associations.ASSOC_CONTENT_CIPHER_ID) ?? Cryptography.Constants.CipherId.XCHACHA20_POLY1305,
+                FileNameCipherId = options.Get(Constants.Associations.ASSOC_FILENAME_CIPHER_ID) ?? Cryptography.Constants.CipherId.AES_SIV,
                 AuthenticationMethod = options.Get(Constants.Associations.ASSOC_AUTHENTICATION) ?? throw new InvalidOperationException("Cannot create vault without specifying the authentication method."),
                 Uid = options.Get(Constants.Associations.ASSOC_VAULT_ID) ?? Guid.NewGuid().ToString(),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
-
-            return this;
         }
 
         /// <inheritdoc/>

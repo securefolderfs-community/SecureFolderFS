@@ -7,14 +7,14 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Routines.UnlockRoutines
+namespace SecureFolderFS.Core.Routines.Operational
 {
-    /// <inheritdoc cref="IUnlockRoutine"/>
-    internal sealed class UnlockRoutine : IUnlockRoutine
+    /// <inheritdoc cref="ICredentialsRoutine"/>
+    internal sealed class UnlockRoutine : ICredentialsRoutine
     {
         private readonly VaultReader _vaultReader;
-        private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private SecretKey? _encKey;
         private SecretKey? _macKey;
 
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
         }
 
         /// <inheritdoc/>
-        public IUnlockRoutine SetCredentials(SecretKey passkey)
+        public void SetCredentials(SecretKey passkey)
         {
             ArgumentNullException.ThrowIfNull(_configDataModel);
             ArgumentNullException.ThrowIfNull(_keystoreDataModel);
@@ -40,8 +40,6 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             var (encKey, macKey) = VaultParser.DeriveKeystore(passkey, _keystoreDataModel);
             _encKey = encKey;
             _macKey = macKey;
-
-            return this;
         }
 
         /// <inheritdoc/>
@@ -95,7 +93,7 @@ namespace SecureFolderFS.Core.Routines.UnlockRoutines
             KeystoreDataModel = keystoreDataModel;
             Security = Security.CreateNew(_encKey, _macKey, ConfigurationDataModel.ContentCipherId, ConfigurationDataModel.FileNameCipherId);
         }
-        
+
         /// <inheritdoc/>
         public override string ToString()
         {

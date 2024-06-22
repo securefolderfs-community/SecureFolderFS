@@ -42,7 +42,27 @@
                 </StackPanel>
 
                 <!--  Login  -->
-                <uc:LoginControl LoginTypeViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+                <StackPanel Spacing="8">
+                    <uc:LoginControl LoginTypeViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+                    <HyperlinkButton
+                        Padding="4,2"
+                        HorizontalAlignment="Center"
+                        Click="LoginOptions_Click"
+                        Content="Login options">
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout>
+                                <StackPanel Spacing="4">
+                                    <CheckBox Content="Unlock as read-only" IsEnabled="False" />
+                                    <CheckBox Content="Save credentials" IsEnabled="False" />
+                                    <Button
+                                        HorizontalAlignment="Stretch"
+                                        Command="{x:Bind ViewModel.RecoverAccessCommand, Mode=OneWay}"
+                                        Content="{l:ResourceString Name=RecoverAccess}" />
+                                </StackPanel>
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+                    </HyperlinkButton>
+                </StackPanel>
             </StackPanel>
         </Grid>
     </ScrollViewer>

@@ -30,6 +30,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 PasswordChangeDialogViewModel => new PasswordChangeDialog(),
                 ExplanationOverlayViewModel => new ExplanationDialog(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryDialog(),
+                RecoveryOverlayViewModel => new RecoveryDialog(),
 
                 // Unused
                 PaymentDialogViewModel => new PaymentDialog(),

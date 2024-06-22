@@ -21,5 +21,12 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task SetTextAsync(string text, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets the text that is contained within the clipboard data.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="string"/> that represents the clipboard data.</returns>
+        Task<string?> GetTextAsync(CancellationToken cancellationToken);
     }
 }

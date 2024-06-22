@@ -197,6 +197,7 @@
     <None Remove="Dialogs\PasswordChangeDialog.xaml" />
     <None Remove="Dialogs\PaymentDialog.xaml" />
     <None Remove="Dialogs\PreviewRecoveryDialog.xaml" />
+    <None Remove="Dialogs\RecoveryDialog.xaml" />
     <None Remove="Dialogs\SettingsDialog.xaml" />
     <None Remove="Dialogs\VaultWizardDialog.xaml" />
     <None Remove="Package.appxmanifest" />
@@ -261,6 +262,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\PaymentDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\RecoveryDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -452,5 +457,9 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="UserControls\RecoveryPreviewControl.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
   </ItemGroup>
 </Project>

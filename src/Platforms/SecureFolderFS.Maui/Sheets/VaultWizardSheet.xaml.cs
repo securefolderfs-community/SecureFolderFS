@@ -41,7 +41,6 @@ namespace SecureFolderFS.Maui.Sheets
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel?.OnDisappearing();
             return DismissAsync();
         }
 

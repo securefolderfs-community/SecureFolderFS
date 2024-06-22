@@ -8,22 +8,20 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
 
-// To learn more about WinUI, the WinUI project structure,D
+// To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SecureFolderFS.Uno.Dialogs
 {
-    public sealed partial class AgreementDialog : ContentDialog, IOverlayControl
+    public sealed partial class RecoveryDialog : ContentDialog, IOverlayControl
     {
-        private bool _agreed;
-
-        public AgreementDialogViewModel? ViewModel
+        public RecoveryOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<AgreementDialogViewModel>();
+            get => DataContext.TryCast<RecoveryOverlayViewModel>();
             set => DataContext = value;
         }
 
-        public AgreementDialog()
+        public RecoveryDialog()
         {
             InitializeComponent();
         }
@@ -32,7 +30,11 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (AgreementDialogViewModel)viewable;
+        public void SetView(IViewable viewable)
+        {
+            ViewModel = (RecoveryOverlayViewModel)viewable;
+            ViewModel.OnAppearing();
+        }
 
         /// <inheritdoc/>
         public Task HideAsync()
@@ -41,14 +43,12 @@ namespace SecureFolderFS.Uno.Dialogs
             return Task.CompletedTask;
         }
 
-        private void AgreementDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void RecoveryDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            _agreed = true;
-        }
+            if (ViewModel is null)
+                return;
 
-        private void AgreementDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
-        {
-            args.Cancel = !_agreed;
+            args.Cancel = !await ViewModel.RecoverAsync(default);
         }
     }
 }

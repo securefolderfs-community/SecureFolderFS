@@ -19,9 +19,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
     {
         private INavigationService RootNavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
 
-        public MainViewModel ViewModel
+        public MainViewModel? ViewModel
         {
-            get => (MainViewModel)DataContext;
+            get => DataContext.TryCast<MainViewModel>();
             set => DataContext = value;
         }
 
@@ -46,6 +46,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             // Initialize ThemeHelper for theming
             UnoThemeHelper.Instance.RegisterWindowInstance(App.Instance?.MainWindow?.Content as FrameworkElement);
             await UnoThemeHelper.Instance.InitAsync();
+
+            if (ViewModel is null)
+                return;
 
             // Initialize the root view model
             await ViewModel.InitAsync();

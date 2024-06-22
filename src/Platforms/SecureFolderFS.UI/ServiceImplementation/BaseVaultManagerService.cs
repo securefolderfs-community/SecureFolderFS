@@ -3,9 +3,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Storage;
-using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.Routines.Operational;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -26,19 +27,17 @@ namespace SecureFolderFS.UI.ServiceImplementation
             using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
             var options = VaultHelpers.ParseOptions(vaultOptions);
 
-            var superSecret = await creationRoutine
-                .SetCredentials(passkeySecret)
-                .SetOptions(options)
-                .FinalizeAsync(cancellationToken);
+            await creationRoutine.InitAsync(cancellationToken);
+            creationRoutine.SetCredentials(passkeySecret);
+            creationRoutine.SetOptions(options);
 
             if (vaultFolder is IModifiableFolder modifiableFolder)
             {
                 var readmeFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_README_FILENAME, false, cancellationToken);
-                if (readmeFile is not null)
-                    await readmeFile.WriteAllTextAsync(Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
+                await readmeFile.WriteAllTextAsync(Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
             }
 
-            return superSecret;
+            return await creationRoutine.FinalizeAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -49,9 +48,27 @@ namespace SecureFolderFS.UI.ServiceImplementation
             using var passkeySecret = VaultHelpers.ParsePasskeySecret(passkey);
 
             await unlockRoutine.InitAsync(cancellationToken);
-            return await unlockRoutine
-                .SetCredentials(passkeySecret)
-                .FinalizeAsync(cancellationToken);
+            unlockRoutine.SetCredentials(passkeySecret);
+            return await unlockRoutine.FinalizeAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedMasterKey, CancellationToken cancellationToken = default)
+        {
+            var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
+            var recoveryRoutine = routines.RecoverVault();
+            var keySplit = encodedMasterKey.Split(Core.Constants.KEY_TEXT_SEPARATOR);
+            var masterKey = new SecureKey(Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH + Core.Cryptography.Constants.KeyChains.MACKEY_LENGTH);
+
+            if (!Convert.TryFromBase64String(keySplit[0], masterKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH), out _))
+                throw new FormatException();
+
+            if (!Convert.TryFromBase64String(keySplit[1], masterKey.Key.AsSpan(Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH), out _))
+                throw new FormatException();
+
+            await recoveryRoutine.InitAsync(cancellationToken);
+            recoveryRoutine.SetCredentials(masterKey);
+            return await recoveryRoutine.FinalizeAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -62,9 +79,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
                 var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
                 var statisticsModel = new ConsolidatedStatisticsModel();
-                var (directoryIdCache, _, pathConverter, streamsAccess) = routines.BuildStorage()
-                    .SetUnlockContract(unlockContract)
-                    .CreateStorageComponents(contentFolder, new()
+                var storageRoutine = routines.BuildStorage();
+
+                storageRoutine.SetUnlockContract(unlockContract);
+                var (directoryIdCache, _, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, new()
                 {
                     VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
                     FileSystemId = string.Empty,

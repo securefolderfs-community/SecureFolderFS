@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -15,9 +16,9 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class LicensesDialog : ContentDialog, IOverlayControl
     {
-        public LicensesOverlayViewModel ViewModel
+        public LicensesOverlayViewModel? ViewModel
         {
-            get => (LicensesOverlayViewModel)DataContext;
+            get => DataContext.TryCast<LicensesOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -27,7 +28,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (LicensesOverlayViewModel)viewable;
@@ -35,7 +36,6 @@ namespace SecureFolderFS.Uno.Dialogs
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel?.OnDisappearing();
             Hide();
             return Task.CompletedTask;
         }
@@ -47,7 +47,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private void Licenses_Loaded(object sender, RoutedEventArgs e)
         {
-            _ = ViewModel.InitAsync();
+            _ = ViewModel?.InitAsync();
         }
     }
 }

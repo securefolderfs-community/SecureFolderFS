@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
 
 // To learn more about WinUI, the WinUI project structure,D
@@ -14,9 +15,9 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class PaymentDialog : ContentDialog, IOverlayControl
     {
-        public PaymentDialogViewModel ViewModel
+        public PaymentDialogViewModel? ViewModel
         {
-            get => (PaymentDialogViewModel)DataContext;
+            get => DataContext.TryCast<PaymentDialogViewModel>();
             set => DataContext = value;
         }
 
@@ -26,7 +27,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (PaymentDialogViewModel)viewable;
@@ -34,7 +35,6 @@ namespace SecureFolderFS.Uno.Dialogs
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel?.OnDisappearing();
             Hide();
             return Task.CompletedTask;
         }

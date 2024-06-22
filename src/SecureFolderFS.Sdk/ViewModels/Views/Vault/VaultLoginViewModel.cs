@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -43,12 +45,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             return LoginViewModel.InitAsync(cancellationToken);
         }
 
-        private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
+        [RelayCommand]
+        private async Task RecoverAccessAsync(CancellationToken cancellationToken)
+        {
+            var recoveryOverlay = new RecoveryOverlayViewModel(VaultModel.Folder);
+            var result = await OverlayService.ShowAsync(recoveryOverlay);
+            if (!result.Positive())
+                return;
+
+            if (recoveryOverlay.UnlockContract is null)
+                return;
+
+            await UnlockAsync(recoveryOverlay.UnlockContract);
+        }
+
+        private async Task UnlockAsync(IDisposable unlockContract)
         {
             try
             {
                 // Create the storage layer
-                var storageRoot = await VaultManagerService.CreateFileSystemAsync(VaultModel, e.UnlockContract, default);
+                var storageRoot = await VaultManagerService.CreateFileSystemAsync(VaultModel, unlockContract, default);
 
                 // Update last access date
                 await VaultModel.SetLastAccessDateAsync(DateTime.Now);
@@ -76,6 +92,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
                 // Clean up the current instance
                 Dispose();
             }
+        }
+
+        private async void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
+        {
+            await UnlockAsync(e.UnlockContract);
         }
 
         /// <inheritdoc/>

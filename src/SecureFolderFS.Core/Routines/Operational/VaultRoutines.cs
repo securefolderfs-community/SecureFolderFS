@@ -1,8 +1,4 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.Routines.CreationRoutines;
-using SecureFolderFS.Core.Routines.CredentialsRoutines;
-using SecureFolderFS.Core.Routines.StorageRoutines;
-using SecureFolderFS.Core.Routines.UnlockRoutines;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Shared.ComponentModel;
@@ -11,7 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Routines
+namespace SecureFolderFS.Core.Routines.Operational
 {
     // TODO: Needs docs
     public sealed class VaultRoutines
@@ -37,10 +33,16 @@ namespace SecureFolderFS.Core.Routines
             return new CreationRoutine(_vaultFolder, VaultWriter);
         }
 
-        public IUnlockRoutine UnlockVault()
+        public ICredentialsRoutine UnlockVault()
         {
             CheckVaultValidation();
             return new UnlockRoutine(VaultReader);
+        }
+
+        public ICredentialsRoutine RecoverVault()
+        {
+            CheckVaultValidation();
+            return new RecoverRoutine(VaultReader);
         }
 
         public IStorageRoutine BuildStorage()
@@ -49,10 +51,10 @@ namespace SecureFolderFS.Core.Routines
             return new StorageRoutine();
         }
 
-        public ICredentialsRoutine ChangeCredentials()
+        public IModifyCredentialsRoutine ModifyCredentials()
         {
             CheckVaultValidation();
-            return new CredentialsRoutine(VaultWriter);
+            return new ModifyCredentialsRoutine(VaultWriter);
         }
 
         private void CheckVaultValidation()

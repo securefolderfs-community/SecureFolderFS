@@ -6,7 +6,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.Dokany;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.Routines.Operational;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
@@ -29,6 +29,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
                 var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
                 var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
                 var statisticsModel = new ConsolidatedStatisticsModel();
+                var storageRoutine = routines.BuildStorage();
                 var options = new FileSystemOptions()
                 {
                     VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
@@ -36,10 +37,9 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
                     HealthStatistics = statisticsModel,
                     FileSystemStatistics = statisticsModel
                 };
-                var (directoryIdCache, security, pathConverter, streamsAccess) = routines.BuildStorage()
-                    .SetUnlockContract(unlockContract)
-                    .CreateStorageComponents(contentFolder, options);
 
+                storageRoutine.SetUnlockContract(unlockContract);
+                var (directoryIdCache, security, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
                 var mountable = options.FileSystemId switch
                 {
                     Core.Constants.FileSystemId.FS_DOKAN => DokanyMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
@@ -48,12 +48,12 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
                 };
 
                 return await mountable.MountAsync(options.FileSystemId switch
-                    {
-                        Core.Constants.FileSystemId.FS_DOKAN => new DokanyMountOptions(),
-                        Core.Constants.FileSystemId.FS_WEBDAV => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
-                        _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
+                {
+                    Core.Constants.FileSystemId.FS_DOKAN => new DokanyMountOptions(),
+                    Core.Constants.FileSystemId.FS_WEBDAV => new WebDavMountOptions() { Domain = "localhost", PreferredPort = 4949 },
+                    _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
 
-                    }, cancellationToken);
+                }, cancellationToken);
             }
             catch (Exception ex)
             {
