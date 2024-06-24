@@ -13,15 +13,15 @@ using SecureFolderFS.Uno.Extensions;
 
 namespace SecureFolderFS.Uno.Dialogs
 {
-    public sealed partial class PreviewRecoveryDialog : ContentDialog, IOverlayControl
+    public sealed partial class CredentialsDialog : ContentDialog, IOverlayControl
     {
-        public PreviewRecoveryOverlayViewModel? ViewModel
+        public CredentialsOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<PreviewRecoveryOverlayViewModel>();
+            get => DataContext.TryCast<CredentialsOverlayViewModel>();
             set => DataContext = value;
         }
 
-        public PreviewRecoveryDialog()
+        public CredentialsDialog()
         {
             InitializeComponent();
         }
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Uno.Dialogs
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            ViewModel = (PreviewRecoveryOverlayViewModel)viewable;
+            ViewModel = (CredentialsOverlayViewModel)viewable;
             ViewModel.OnAppearing();
         }
 

@@ -32,10 +32,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetAvailableSecurityAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetAllSecurityAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
         public abstract IEnumerable<IFileSystemInfoModel> GetFileSystems();
@@ -62,7 +62,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             return new()
             {
-                AuthenticationMethod = config.AuthenticationMethod,
+                AuthenticationMethod = config.AuthenticationMethod.Split(Core.Constants.Vault.AuthenticationMethods.SEPARATOR),
                 ContentCipherId = config.ContentCipherId,
                 FileNameCipherId = config.FileNameCipherId,
                 VaultId = config.Uid

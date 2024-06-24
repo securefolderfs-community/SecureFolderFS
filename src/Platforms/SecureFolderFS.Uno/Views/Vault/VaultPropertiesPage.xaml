@@ -18,13 +18,14 @@
                 <FontIcon Glyph="&#xE946;" />
             </ucab:ActionBlockControl.Icon>
             <ucab:ActionBlockControl.ExpanderContent>
-                <Grid Padding="32,0,32,0" ColumnSpacing="32">
+                <Grid Padding="32,0,32,0" ColumnSpacing="48">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="Security" />
                         <TextBlock Text="{l:ResourceString Name=DataEncryption}" />
                         <TextBlock Text="{l:ResourceString Name=FileNameEncryption}" />
                     </StackPanel>
@@ -32,56 +33,38 @@
                         <TextBlock
                             IsTextSelectionEnabled="True"
                             Opacity="0.8"
-                            Text="{x:Bind ViewModel.ContentCipherName, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.SecurityText, Mode=OneWay}" />
                         <TextBlock
                             IsTextSelectionEnabled="True"
                             Opacity="0.8"
-                            Text="{x:Bind ViewModel.FileNameCipherName, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.ContentCipherText, Mode=OneWay}" />
+                        <TextBlock
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.8"
+                            Text="{x:Bind ViewModel.FileNameCipherText, Mode=OneWay}" />
                     </StackPanel>
                 </Grid>
             </ucab:ActionBlockControl.ExpanderContent>
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl
-            Title="Two-factor authentication"
-            BlockMode="Expandable"
-            Description="Setup or change two-factor authentication"
-            IsExpanded="True"
-            Visibility="Visible">
-            <ucab:ActionBlockControl.Icon>
-                <FontIcon Glyph="&#xEC19;" />
-            </ucab:ActionBlockControl.Icon>
-            <ucab:ActionBlockControl.ActionElement>
-                <Button Command="{x:Bind ViewModel.ChangeAuthenticationCommand, Mode=OneWay}" Content="Change" />
-            </ucab:ActionBlockControl.ActionElement>
-            <ucab:ActionBlockControl.ExpanderContent>
-                <Grid>
-                    <TextBlock Text="Windows Hello authentication has been set up for this vault." />
-                </Grid>
-            </ucab:ActionBlockControl.ExpanderContent>
-        </ucab:ActionBlockControl>
-
-        <ucab:ActionBlockControl
-            Title="{l:ResourceString Name=ChangePassword}"
+            Title="Change credentials"
             BlockMode="Clickable"
-            ClickCommand="{x:Bind ViewModel.ChangePasswordCommand, Mode=OneWay}"
-            Description="{l:ResourceString Name=ChangePasswordDescription}">
+            ClickCommand="{x:Bind ViewModel.ChangeFirstAuthenticationCommand, Mode=OneWay}"
+            Description="Change how you log into this vault">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE8D7;" />
             </ucab:ActionBlockControl.Icon>
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl
-            x:Name="AuthControl"
             Title="Two-factor authentication"
-            x:Load="False"
+            BlockMode="Clickable"
+            ClickCommand="{x:Bind ViewModel.ChangeSecondAuthenticationCommand, Mode=OneWay}"
             Description="Setup or change two-factor authentication">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xEC19;" />
             </ucab:ActionBlockControl.Icon>
-            <ucab:ActionBlockControl.ActionElement>
-                <Button Content="Setup" />
-            </ucab:ActionBlockControl.ActionElement>
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl

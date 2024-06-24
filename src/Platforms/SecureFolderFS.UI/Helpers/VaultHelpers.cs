@@ -8,7 +8,7 @@ using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
-using static SecureFolderFS.Core.Constants;
+using static SecureFolderFS.Core.Constants.Vault;
 
 namespace SecureFolderFS.UI.Helpers
 {
@@ -46,7 +46,7 @@ namespace SecureFolderFS.UI.Helpers
             {
                 { Associations.ASSOC_CONTENT_CIPHER_ID, vaultOptions.ContentCipherId },
                 { Associations.ASSOC_FILENAME_CIPHER_ID, vaultOptions.FileNameCipherId },
-                { Associations.ASSOC_AUTHENTICATION, vaultOptions.AuthenticationMethod },
+                { Associations.ASSOC_AUTHENTICATION, string.Join(AuthenticationMethods.SEPARATOR, vaultOptions.AuthenticationMethod) },
                 { Associations.ASSOC_VAULT_ID, vaultOptions.VaultId }
             };
         }

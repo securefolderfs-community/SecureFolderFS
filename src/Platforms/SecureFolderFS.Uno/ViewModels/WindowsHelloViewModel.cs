@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using Windows.Security.Credentials;
@@ -19,10 +21,13 @@ namespace SecureFolderFS.Uno.ViewModels
     {
         protected const int KEY_LENGTH = 128;
 
+        /// <inheritdoc/>
+        public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
+
         protected WindowsHelloViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
         {
-            DisplayName = "Windows Hello";
+            DisplayName = "WindowsHello".ToLocalized();
         }
 
         /// <inheritdoc/>

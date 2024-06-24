@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IVaultService>, Inject<IVaultManagerService>]
     [Bindable(true)]
-    public sealed partial class LoginControlViewModel : ObservableObject, IAsyncInitialize, IDisposable
+    public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly bool _enableMigration;
         private readonly IVaultModel _vaultModel;
@@ -33,7 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
 
-        public LoginControlViewModel(IVaultModel vaultModel, bool enableMigration)
+        public LoginViewModel(IVaultModel vaultModel, bool enableMigration)
         {
             ServiceProvider = Ioc.Default;
             _enableMigration = enableMigration;
@@ -47,7 +47,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Get the authentication method enumerator for this vault
-            _enumerator = VaultService.GetAvailableSecurityAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
+            _enumerator = VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)

@@ -61,10 +61,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
             var masterKey = new SecureKey(Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH + Core.Cryptography.Constants.KeyChains.MACKEY_LENGTH);
 
             if (!Convert.TryFromBase64String(keySplit[0], masterKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH), out _))
-                throw new FormatException();
+                throw new FormatException("The master key (1) was not in correct format.");
 
             if (!Convert.TryFromBase64String(keySplit[1], masterKey.Key.AsSpan(Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH), out _))
-                throw new FormatException();
+                throw new FormatException("The master key (2) was not in correct format.");
 
             await recoveryRoutine.InitAsync(cancellationToken);
             recoveryRoutine.SetCredentials(masterKey);

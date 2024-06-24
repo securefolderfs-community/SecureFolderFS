@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -11,6 +12,7 @@ using SecureFolderFS.Shared.Helpers;
 namespace SecureFolderFS.Uno.ViewModels
 {
     /// <inheritdoc cref="WindowsHelloViewModel"/>
+    [Bindable(true)]
     public sealed class WindowsHelloCreationViewModel(string vaultId, string id, IFolder vaultFolder)
         : WindowsHelloViewModel(id, vaultFolder)
     {

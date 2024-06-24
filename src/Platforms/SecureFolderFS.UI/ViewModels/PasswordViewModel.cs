@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
@@ -19,10 +21,13 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public virtual IKey Inner => TryGetPasswordAsKey() ?? new DisposablePassword(string.Empty);
 
+        /// <inheritdoc/>
+        public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
+
         protected PasswordViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
         {
-            DisplayName = "Password";
+            DisplayName = "Password".ToLocalized();
         }
 
         partial void OnPrimaryPasswordChanged(string? value)

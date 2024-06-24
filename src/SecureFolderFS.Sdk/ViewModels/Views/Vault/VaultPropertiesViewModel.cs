@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,8 +16,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultPropertiesViewModel : BaseDashboardViewModel
     {
-        [ObservableProperty] private string? _ContentCipherName;
-        [ObservableProperty] private string? _FileNameCipherName;
+        [ObservableProperty] private string? _ContentCipherText;
+        [ObservableProperty] private string? _FileNameCipherText;
+        [ObservableProperty] private string? _SecurityText;
 
         public VaultPropertiesViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
             : base(unlockedVaultViewModel)
@@ -29,30 +31,43 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             var vaultOptions = await VaultService.GetVaultOptionsAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken);
-            ContentCipherName = string.IsNullOrEmpty(vaultOptions.ContentCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
-            FileNameCipherName = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown");
+            ContentCipherText = string.IsNullOrEmpty(vaultOptions.ContentCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
+            FileNameCipherText = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown");
+
+            await UpdateSecurityTextAsync(cancellationToken);
         }
 
         [RelayCommand]
-        private async Task ChangePasswordAsync()
+        private async Task ChangeFirstAuthenticationAsync(CancellationToken cancellationToken)
         {
-            var viewModel = new PasswordChangeDialogViewModel(UnlockedVaultViewModel.VaultModel);
-            await OverlayService.ShowAsync(viewModel);
+            // TODO: Somehow configure to change for the first auth
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel);
+            await OverlayService.ShowAsync(credentialsOverlay);
+            await UpdateSecurityTextAsync(cancellationToken);
         }
 
         [RelayCommand]
-        private async Task ChangeAuthenticationAsync()
+        private async Task ChangeSecondAuthenticationAsync(CancellationToken cancellationToken)
         {
-            // The dialog would have to have a common control for providing credentials which would be shared between the dialog and login screen
+            // TODO: Somehow configure to change for the second auth
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel);
+            await OverlayService.ShowAsync(credentialsOverlay);
+            await UpdateSecurityTextAsync(cancellationToken);
         }
 
         [RelayCommand]
         private async Task ViewRecoveryAsync(CancellationToken cancellationToken)
         {
-            var recoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultModel);
-            _ = recoveryOverlay.InitAsync(cancellationToken);
+            using var previewRecoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultModel);
 
-            await OverlayService.ShowAsync(recoveryOverlay);
+            await previewRecoveryOverlay.InitAsync(cancellationToken);
+            await OverlayService.ShowAsync(previewRecoveryOverlay);
+        }
+
+        private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
+        {
+            var items = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken).ToListAsync(cancellationToken);
+            SecurityText = string.Join(" + ", items.Select(x => x.DisplayName));
         }
     }
 }

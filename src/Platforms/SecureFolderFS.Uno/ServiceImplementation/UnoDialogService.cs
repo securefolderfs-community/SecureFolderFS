@@ -27,7 +27,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 LicensesOverlayViewModel => new LicensesDialog(),
                 SettingsOverlayViewModel => new SettingsDialog(),
                 WizardOverlayViewModel => new VaultWizardDialog(),
-                PasswordChangeDialogViewModel => new PasswordChangeDialog(),
+                CredentialsOverlayViewModel => new CredentialsDialog(),
                 ExplanationOverlayViewModel => new ExplanationDialog(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryDialog(),
                 RecoveryOverlayViewModel => new RecoveryDialog(),

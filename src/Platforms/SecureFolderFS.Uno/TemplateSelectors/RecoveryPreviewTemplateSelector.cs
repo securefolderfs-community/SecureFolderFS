@@ -15,7 +15,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
         {
             return item switch
             {
-                LoginControlViewModel => LoginTemplate,
+                LoginViewModel => LoginTemplate,
                 RecoveryPreviewControlViewModel => RecoveryTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };

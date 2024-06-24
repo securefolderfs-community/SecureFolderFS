@@ -61,7 +61,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 {
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
-                    AuthenticationMethod = CurrentViewModel.Id,
+                    AuthenticationMethod = [ CurrentViewModel.Id ],
                     VaultId = _vaultId
                 };
 
@@ -98,7 +98,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
             // Get authentication options
-            await foreach (var item in VaultService.GetAllSecurityAsync(Folder, _vaultId))
+            await foreach (var item in VaultService.GetCreationAsync(Folder, _vaultId))
                 AuthenticationOptions.Add(item);
 
             // Set default authentication option

@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultLoginViewModel : BaseVaultViewModel, INavigatable
     {
-        [ObservableProperty] private LoginControlViewModel _LoginViewModel;
+        [ObservableProperty] private LoginViewModel _LoginViewModel;
 
         public INavigator VaultNavigator { get; }
 

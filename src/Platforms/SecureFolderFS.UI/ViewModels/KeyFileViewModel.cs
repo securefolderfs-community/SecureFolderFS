@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
@@ -25,12 +27,15 @@ namespace SecureFolderFS.UI.ViewModels
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         /// <inheritdoc/>
+        public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
+
+        /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
         protected KeyFileViewModel(string id, IFolder vaultFolder)
             : base(id, vaultFolder)
         {
-            DisplayName = "Key File";
+            DisplayName = "KeyFile".ToLocalized();
         }
 
         /// <inheritdoc/>

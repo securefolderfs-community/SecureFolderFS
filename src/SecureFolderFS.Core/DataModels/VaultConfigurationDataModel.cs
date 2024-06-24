@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
-using static SecureFolderFS.Core.Constants;
+using static SecureFolderFS.Core.Constants.Vault;
 
 namespace SecureFolderFS.Core.DataModels
 {
