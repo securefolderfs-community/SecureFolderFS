@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.ComponentModel;
@@ -12,14 +11,17 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
     [Bindable(true)]
-    public abstract partial class AuthenticationViewModel(string id, IFolder vaultFolder)
+    public abstract partial class AuthenticationViewModel(string id)
         : ReportableViewModel, IAuthenticator, IDisposable
     {
         [ObservableProperty] private string? _DisplayName;
+        [ObservableProperty] private string? _Description;
+        [ObservableProperty] private IImage? _Icon;
 
+        /// <summary>
+        /// Gets the unique ID of this authentication method.
+        /// </summary>
         public string Id { get; } = id;
-
-        public IFolder VaultFolder { get; } = vaultFolder;
 
         /// <summary>
         /// Gets or sets the stage (step) availability of the given authentication type.

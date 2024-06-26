@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
@@ -24,8 +23,8 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
 
-        protected PasswordViewModel(string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        protected PasswordViewModel(string id)
+            : base(id)
         {
             DisplayName = "Password".ToLocalized();
         }

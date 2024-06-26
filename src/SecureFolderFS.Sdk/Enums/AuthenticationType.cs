@@ -8,16 +8,16 @@
         /// <summary>
         /// The authentication method may only be used as the first stage.
         /// </summary>
-        FirstStageOnly = 0,
+        FirstStageOnly = 1,
 
         /// <summary>
-        /// The authentication method may only be used as the second stage.
+        /// The authentication method may only be used as another stage.
         /// </summary>
-        SecondStageOnly = 1,
+        LatterStageOnly = 2,
 
         /// <summary>
         /// The authentication method can be used in any stage.
         /// </summary>
-        Both = 2
+        Any = FirstStageOnly | LatterStageOnly
     }
 }

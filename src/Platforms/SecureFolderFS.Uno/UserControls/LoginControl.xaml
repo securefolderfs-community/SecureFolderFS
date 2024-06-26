@@ -159,26 +159,24 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid>
-        <ContentControl
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            HorizontalContentAlignment="Center"
-            Content="{x:Bind LoginTypeViewModel, Mode=OneWay}"
-            IsTabStop="False">
-            <ContentControl.ContentTemplateSelector>
-                <ts:LoginMethodTemplateSelector
-                    ErrorTemplate="{StaticResource ErrorTemplate}"
-                    KeyFileTemplate="{StaticResource KeyFileTemplate}"
-                    MigrationTemplate="{StaticResource MigrationTemplate}"
-                    PasswordTemplate="{StaticResource PasswordTemplate}"
-                    WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />
-            </ContentControl.ContentTemplateSelector>
-            <ContentControl.ContentTransitions>
-                <TransitionCollection>
-                    <ContentThemeTransition />
-                </TransitionCollection>
-            </ContentControl.ContentTransitions>
-        </ContentControl>
-    </Grid>
+    <ContentControl
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        HorizontalContentAlignment="Center"
+        Content="{x:Bind CurrentViewModel, Mode=OneWay}"
+        IsTabStop="False">
+        <ContentControl.ContentTemplateSelector>
+            <ts:LoginMethodTemplateSelector
+                ErrorTemplate="{StaticResource ErrorTemplate}"
+                KeyFileTemplate="{StaticResource KeyFileTemplate}"
+                MigrationTemplate="{StaticResource MigrationTemplate}"
+                PasswordTemplate="{StaticResource PasswordTemplate}"
+                WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />
+        </ContentControl.ContentTemplateSelector>
+        <ContentControl.ContentTransitions>
+            <TransitionCollection>
+                <ContentThemeTransition />
+            </TransitionCollection>
+        </ContentControl.ContentTransitions>
+    </ContentControl>
 </UserControl>

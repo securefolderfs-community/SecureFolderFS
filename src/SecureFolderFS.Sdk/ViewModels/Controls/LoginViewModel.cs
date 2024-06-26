@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
@@ -63,6 +64,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     CurrentViewModel = new MigrationViewModel(VaultService.LatestVaultVersion);
                 else
                     CurrentViewModel = new ErrorViewModel(validationResult.GetMessage());
+            }
+        }
+
+        [RelayCommand]
+        private async Task RecoverAccessAsync(string? masterKey, CancellationToken cancellationToken)
+        {
+            if (masterKey is null)
+                return;
+
+            try
+            {
+                var unlockContract = await VaultManagerService.RecoverAsync(_vaultModel.Folder, masterKey, cancellationToken);
+                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel));
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
             }
         }
 

@@ -14,8 +14,10 @@ namespace SecureFolderFS.Uno.ViewModels
     /// <inheritdoc cref="WindowsHelloViewModel"/>
     [Bindable(true)]
     public sealed class WindowsHelloCreationViewModel(string vaultId, string id, IFolder vaultFolder)
-        : WindowsHelloViewModel(id, vaultFolder)
+        : WindowsHelloViewModel(id)
     {
+        private readonly IFolder _vaultFolder = vaultFolder;
+
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
@@ -25,7 +27,7 @@ namespace SecureFolderFS.Uno.ViewModels
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
+            var vaultWriter = new VaultWriter(_vaultFolder, StreamSerializer.Instance);
             using var challenge = GenerateChallenge(vaultId);
 
             // Write authentication data to the vault

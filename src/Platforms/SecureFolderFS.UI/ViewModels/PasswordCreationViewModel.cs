@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.EventArguments;
 
 namespace SecureFolderFS.UI.ViewModels
@@ -20,8 +19,8 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public PasswordCreationViewModel(string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        public PasswordCreationViewModel(string id)
+            : base(id)
         {
         }
 

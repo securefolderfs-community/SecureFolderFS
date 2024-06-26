@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -24,8 +23,8 @@ namespace SecureFolderFS.Uno.ViewModels
         /// <inheritdoc/>
         public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
 
-        protected WindowsHelloViewModel(string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        protected WindowsHelloViewModel(string id)
+            : base(id)
         {
             DisplayName = "WindowsHello".ToLocalized();
         }

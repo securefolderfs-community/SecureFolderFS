@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.EventArguments;
 
 namespace SecureFolderFS.UI.ViewModels
@@ -16,8 +15,8 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public KeyFileCreationViewModel(string vaultId, string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        public KeyFileCreationViewModel(string vaultId, string id)
+            : base(id)
         {
             _vaultId = vaultId;
         }

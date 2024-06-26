@@ -42,6 +42,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             // TODO: Somehow configure to change for the first auth
             using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel);
+            await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
         }
@@ -51,6 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             // TODO: Somehow configure to change for the second auth
             using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel);
+            await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
         }
@@ -66,7 +68,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
         {
-            var items = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken).ToListAsync(cancellationToken);
+            var items = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken);
             SecurityText = string.Join(" + ", items.Select(x => x.DisplayName));
         }
     }

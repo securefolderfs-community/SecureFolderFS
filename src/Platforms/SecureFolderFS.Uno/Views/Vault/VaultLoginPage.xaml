@@ -43,7 +43,7 @@
 
                 <!--  Login  -->
                 <StackPanel Spacing="8">
-                    <uc:LoginControl LoginTypeViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+                    <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
                     <HyperlinkButton
                         Padding="4,2"
                         HorizontalAlignment="Center"
@@ -56,7 +56,7 @@
                                     <CheckBox Content="Save credentials" IsEnabled="False" />
                                     <Button
                                         HorizontalAlignment="Stretch"
-                                        Command="{x:Bind ViewModel.RecoverAccessCommand, Mode=OneWay}"
+                                        Command="{x:Bind ViewModel.BeginRecoveryCommand, Mode=OneWay}"
                                         Content="{l:ResourceString Name=RecoverAccess}" />
                                 </StackPanel>
                             </Flyout>

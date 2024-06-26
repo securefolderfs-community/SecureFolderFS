@@ -4,11 +4,11 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
-    internal sealed class RecoveryPreviewTemplateSelector : BaseTemplateSelector<INotifyPropertyChanged>
+    internal sealed class CredentialsTemplateSelector : BaseTemplateSelector<INotifyPropertyChanged>
     {
         public DataTemplate? LoginTemplate { get; set; }
 
-        public DataTemplate? RecoveryTemplate { get; set; }
+        public DataTemplate? SelectionTemplate { get; set; }
 
         /// <inheritdoc/>
         protected override DataTemplate? SelectTemplateCore(INotifyPropertyChanged? item, DependencyObject container)
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
             return item switch
             {
                 LoginViewModel => LoginTemplate,
-                RecoveryPreviewControlViewModel => RecoveryTemplate,
+                CredentialsViewModel => SelectionTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

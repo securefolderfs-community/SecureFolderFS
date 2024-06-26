@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
@@ -56,6 +58,11 @@ namespace SecureFolderFS.Uno.Dialogs
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             ViewModel?.OnDisappearing();
+        }
+
+        private void RecoverLink_Click(object sender, RoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
     }
 }

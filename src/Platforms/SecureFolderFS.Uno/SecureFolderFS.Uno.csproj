@@ -203,6 +203,7 @@
     <None Remove="Package.appxmanifest" />
     <None Remove="ResourceDictionaries\ColorResources.xaml" />
     <None Remove="ResourceDictionaries\ImageResources.xaml" />
+    <None Remove="ResourceDictionaries\TextResources.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <None Remove="UserControls\BannerControl.xaml" />
@@ -221,6 +222,7 @@
     <None Remove="UserControls\OverlayControl.xaml" />
     <None Remove="UserControls\PasswordControl.xaml" />
     <None Remove="UserControls\RecoveryPreviewControl.xaml" />
+    <None Remove="UserControls\RegisterControl.xaml" />
     <None Remove="UserControls\TitleBarControl.xaml" />
     <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
@@ -278,6 +280,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\VaultWizardDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ResourceDictionaries\TextResources.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -464,5 +470,13 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Dialogs\CredentialsDialog.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="UserControls\RegisterControl.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="ResourceDictionaries\TextResources.xaml" />
   </ItemGroup>
 </Project>

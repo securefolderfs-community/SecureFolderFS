@@ -50,7 +50,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
             {
                 yield return item switch
                 {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder),
+                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD),
                     Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => new WindowsHelloLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder),
                     Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => new KeyFileLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
@@ -63,14 +63,14 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
-            yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder);
+            yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD);
 
             // Windows Hello
             if (await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken))
                 yield return new WindowsHelloCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder);
 
             // Key File
-            yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder);
+            yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE);
         }
     }
 }

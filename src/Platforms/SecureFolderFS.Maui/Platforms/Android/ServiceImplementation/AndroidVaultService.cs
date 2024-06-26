@@ -37,7 +37,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             {
                 yield return item switch
                 {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder),
+                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD),
                     Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => new KeyFileLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
@@ -48,10 +48,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
-            yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD, vaultFolder);
+            yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD);
 
             // Key File
-            yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder);
+            yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE);
 
             await Task.CompletedTask;
         }

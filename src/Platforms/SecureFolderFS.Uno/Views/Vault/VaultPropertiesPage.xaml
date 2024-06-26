@@ -51,7 +51,7 @@
             Title="Change credentials"
             BlockMode="Clickable"
             ClickCommand="{x:Bind ViewModel.ChangeFirstAuthenticationCommand, Mode=OneWay}"
-            Description="Change how you log into this vault">
+            Description="Change how you log in into this vault">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE8D7;" />
             </ucab:ActionBlockControl.Icon>

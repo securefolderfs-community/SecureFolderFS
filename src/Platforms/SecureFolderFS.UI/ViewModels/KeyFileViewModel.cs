@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -32,8 +31,8 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        protected KeyFileViewModel(string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        protected KeyFileViewModel(string id)
+            : base(id)
         {
             DisplayName = "KeyFile".ToLocalized();
         }

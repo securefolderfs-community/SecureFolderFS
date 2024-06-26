@@ -34,7 +34,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             CurrentViewModel = _loginViewModel;
             Title = "Authenticate".ToLocalized();
             PrimaryButtonText = "Continue".ToLocalized();
-            CloseButtonText = "Close".ToLocalized();
 
             _loginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }

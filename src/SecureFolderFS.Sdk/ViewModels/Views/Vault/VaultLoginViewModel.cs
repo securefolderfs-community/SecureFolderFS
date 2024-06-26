@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         }
 
         [RelayCommand]
-        private async Task RecoverAccessAsync(CancellationToken cancellationToken)
+        private async Task BeginRecoveryAsync(CancellationToken cancellationToken)
         {
             var recoveryOverlay = new RecoveryOverlayViewModel(VaultModel.Folder);
             var result = await OverlayService.ShowAsync(recoveryOverlay);

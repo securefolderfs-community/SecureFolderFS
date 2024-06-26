@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
@@ -11,7 +12,7 @@
     Title="{x:Bind ViewModel.Title, Mode=OneWay}"
     HorizontalAlignment="Stretch"
     HorizontalContentAlignment="Stretch"
-    CloseButtonText="{x:Bind ViewModel.CloseButtonText, Mode=OneWay}"
+    CloseButtonText="{l:ResourceString Name=Close}"
     Closing="ContentDialog_Closing"
     DefaultButton="Primary"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
@@ -22,7 +23,7 @@
 
     <ContentDialog.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
-            <uc:LoginControl LoginTypeViewModel="{x:Bind CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="False" />
+            <uc:LoginControl CurrentViewModel="{x:Bind CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="False" />
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
             <uc:RecoveryPreviewControl ExportCommand="{x:Bind ExportCommand, Mode=OneWay}" MasterKey="{x:Bind MasterKey, Mode=OneWay}" />
