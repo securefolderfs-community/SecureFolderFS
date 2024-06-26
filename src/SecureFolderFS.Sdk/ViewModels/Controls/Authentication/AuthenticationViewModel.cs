@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
     {
         [ObservableProperty] private string? _DisplayName;
         [ObservableProperty] private string? _Description;
-        [ObservableProperty] private IImage? _Icon;
+        [ObservableProperty] private string? _Icon;
 
         /// <summary>
         /// Gets the unique ID of this authentication method.

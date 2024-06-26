@@ -27,6 +27,7 @@ namespace SecureFolderFS.UI.ViewModels
             : base(id)
         {
             DisplayName = "Password".ToLocalized();
+            Icon = "\uE8AC";
         }
 
         partial void OnPrimaryPasswordChanged(string? value)

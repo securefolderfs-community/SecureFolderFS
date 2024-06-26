@@ -258,6 +258,9 @@
   <data name="InvalidPasswordMessage" xml:space="preserve">
     <value>The provided password is incorrect.</value>
   </data>
+  <data name="KeyFile" xml:space="preserve">
+    <value>Key file</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>
@@ -472,6 +475,9 @@
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>What's new</value>
+  </data>
+  <data name="WindowsHello" xml:space="preserve">
+    <value>Windows Hello</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
     <value>Write speeds</value>

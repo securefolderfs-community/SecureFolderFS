@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
@@ -12,6 +13,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -20,16 +22,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     public sealed partial class CredentialsViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IFolder _vaultFolder;
+        private readonly AuthenticationType _allowedStage;
 
         [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
-        [ObservableProperty] private AuthenticationViewModel? _OriginalViewModel;
+        [ObservableProperty] private AuthenticationViewModel? _SelectedViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
 
-        public CredentialsViewModel(IFolder vaultFolder)
+        public CredentialsViewModel(IFolder vaultFolder, AuthenticationViewModel currentViewModel)
+            : this(vaultFolder, currentViewModel.Availability)
+        {
+            CurrentViewModel = currentViewModel;
+        }
+
+        public CredentialsViewModel(IFolder vaultFolder, AuthenticationType allowedStage)
         {
             ServiceProvider = Ioc.Default;
-            AuthenticationOptions = new();
             _vaultFolder = vaultFolder;
+            _allowedStage = allowedStage;
+            AuthenticationOptions = new();
         }
 
         /// <inheritdoc/>
@@ -39,13 +49,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
             await foreach (var item in VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId!, cancellationToken))
             {
+                // Don't add authentication methods to list which are already in use
+                if (vaultOptions.AuthenticationMethod.Contains(item.Id))
+                    continue;
+
+                // Don't add authentication methods which are not allowed in the _allowedStage
+                if (!item.Availability.HasFlag(_allowedStage))
+                    continue;
+
                 AuthenticationOptions.Add(item);
-                if (item.Id == vaultOptions.AuthenticationMethod[0]) // TODO: Based on <something> decide which index to use. In this case index 0 is equivalent to first-stage auth
-                    OriginalViewModel = item;
             }
 
             // Set default authentication option
-            CurrentViewModel = AuthenticationOptions.FirstOrDefault();
+            SelectedViewModel = AuthenticationOptions.FirstOrDefault();
+        }
+
+        [RelayCommand]
+        private async Task RemoveCredentialsAsync(CancellationToken cancellationToken)
+        {
+
         }
 
         /// <inheritdoc/>

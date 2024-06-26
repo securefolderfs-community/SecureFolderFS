@@ -2,8 +2,10 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using System.ComponentModel;
 using System.Linq;
@@ -40,8 +42,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ChangeFirstAuthenticationAsync(CancellationToken cancellationToken)
         {
-            // TODO: Somehow configure to change for the first auth
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel);
+            var item = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken).FirstOrDefaultAsync(cancellationToken);
+            if (item is null)
+                return;
+
+            var credentialsViewModel = new CredentialsViewModel(UnlockedVaultViewModel.VaultModel.Folder, item);
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel, credentialsViewModel);
+
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
@@ -50,8 +57,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ChangeSecondAuthenticationAsync(CancellationToken cancellationToken)
         {
-            // TODO: Somehow configure to change for the second auth
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel);
+            var item = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken).ElementAtOrDefaultAsync(1, cancellationToken);
+            var credentialsViewModel = item is not null
+                ? new CredentialsViewModel(UnlockedVaultViewModel.VaultModel.Folder, item)
+                : new CredentialsViewModel(UnlockedVaultViewModel.VaultModel.Folder, AuthenticationType.ProceedingStageOnly);
+
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel, credentialsViewModel);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);

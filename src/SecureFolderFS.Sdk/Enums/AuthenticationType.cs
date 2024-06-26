@@ -1,23 +1,26 @@
-﻿namespace SecureFolderFS.Sdk.Enums
+﻿using System;
+
+namespace SecureFolderFS.Sdk.Enums
 {
     /// <summary>
     /// Determines which stage a given authentication method can be applied to.
     /// </summary>
-    public enum AuthenticationType
+    [Flags]
+    public enum AuthenticationType : uint
     {
         /// <summary>
         /// The authentication method may only be used as the first stage.
         /// </summary>
-        FirstStageOnly = 1,
+        FirstStageOnly = 1u,
 
         /// <summary>
         /// The authentication method may only be used as another stage.
         /// </summary>
-        LatterStageOnly = 2,
+        ProceedingStageOnly = 2u,
 
         /// <summary>
         /// The authentication method can be used in any stage.
         /// </summary>
-        Any = FirstStageOnly | LatterStageOnly
+        Any = FirstStageOnly | ProceedingStageOnly
     }
 }

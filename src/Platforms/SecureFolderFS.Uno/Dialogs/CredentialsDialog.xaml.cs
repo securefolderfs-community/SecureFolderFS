@@ -51,7 +51,7 @@ namespace SecureFolderFS.Uno.Dialogs
                 return;
 
             args.Cancel = true;
-            if (ViewModel.CurrentViewModel is LoginViewModel loginViewModel)
+            if (ViewModel.SelectedViewModel is LoginViewModel loginViewModel)
                 loginViewModel.ProvideCredentialsCommand?.Execute(null);
         }
 

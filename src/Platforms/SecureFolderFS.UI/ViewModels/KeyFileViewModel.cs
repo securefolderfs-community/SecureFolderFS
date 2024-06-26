@@ -26,7 +26,7 @@ namespace SecureFolderFS.UI.ViewModels
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         /// <inheritdoc/>
-        public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
+        public sealed override AuthenticationType Availability { get; } = AuthenticationType.Any;
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
@@ -35,6 +35,7 @@ namespace SecureFolderFS.UI.ViewModels
             : base(id)
         {
             DisplayName = "KeyFile".ToLocalized();
+            Icon = "\uE8D7";
         }
 
         /// <inheritdoc/>

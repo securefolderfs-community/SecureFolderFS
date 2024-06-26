@@ -3,6 +3,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.ComponentModel;
@@ -14,19 +15,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Bindable(true)]
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
-        private readonly IVaultModel _vaultModel;
         private readonly LoginViewModel _loginViewModel;
         private readonly CredentialsViewModel _credentialsViewModel;
 
-        [ObservableProperty] private INotifyPropertyChanged? _CurrentViewModel;
+        [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
 
-        public CredentialsOverlayViewModel(IVaultModel vaultModel)
+        public CredentialsOverlayViewModel(IVaultModel vaultModel, CredentialsViewModel credentialsViewModel)
         {
-            _vaultModel = vaultModel;
             _loginViewModel = new(vaultModel, false);
-            _credentialsViewModel = new(vaultModel.Folder);
+            _credentialsViewModel = credentialsViewModel;
 
-            CurrentViewModel = _loginViewModel;
+            SelectedViewModel = _loginViewModel;
             Title = "Authenticate".ToLocalized();
             PrimaryButtonText = "Continue".ToLocalized();
 
@@ -42,8 +41,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            CurrentViewModel = _credentialsViewModel;
             Title = "Select authentication option";
+            PrimaryButtonText = null;
+            SelectedViewModel = _credentialsViewModel;
             _ = e;
         }
 

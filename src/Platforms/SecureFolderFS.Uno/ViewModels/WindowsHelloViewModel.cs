@@ -21,12 +21,13 @@ namespace SecureFolderFS.Uno.ViewModels
         protected const int KEY_LENGTH = 128;
 
         /// <inheritdoc/>
-        public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
+        public sealed override AuthenticationType Availability { get; } = AuthenticationType.Any;
 
         protected WindowsHelloViewModel(string id)
             : base(id)
         {
             DisplayName = "WindowsHello".ToLocalized();
+            Icon = "\uEB68";
         }
 
         /// <inheritdoc/>
