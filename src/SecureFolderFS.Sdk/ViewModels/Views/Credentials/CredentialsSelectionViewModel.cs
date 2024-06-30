@@ -15,26 +15,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.Enums;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls
+namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
     [Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class CredentialsViewModel : ObservableObject, IAsyncInitialize, IDisposable
+    public sealed partial class CredentialsSelectionViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IFolder _vaultFolder;
         private readonly AuthenticationType _allowedStage;
 
         [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
-        [ObservableProperty] private AuthenticationViewModel? _SelectedViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
 
-        public CredentialsViewModel(IFolder vaultFolder, AuthenticationViewModel currentViewModel)
+        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationViewModel currentViewModel)
             : this(vaultFolder, currentViewModel.Availability)
         {
             CurrentViewModel = currentViewModel;
         }
 
-        public CredentialsViewModel(IFolder vaultFolder, AuthenticationType allowedStage)
+        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationType allowedStage)
         {
             ServiceProvider = Ioc.Default;
             _vaultFolder = vaultFolder;
@@ -59,9 +58,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
                 AuthenticationOptions.Add(item);
             }
-
-            // Set default authentication option
-            SelectedViewModel = AuthenticationOptions.FirstOrDefault();
         }
 
         [RelayCommand]

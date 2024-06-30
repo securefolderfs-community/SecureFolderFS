@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
             return item switch
             {
                 LoginViewModel => LoginTemplate,
-                CredentialsViewModel => SelectionTemplate,
+                CredentialsSelectionViewModel => SelectionTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

@@ -3,7 +3,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.ComponentModel;
@@ -16,14 +16,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
         private readonly LoginViewModel _loginViewModel;
-        private readonly CredentialsViewModel _credentialsViewModel;
+        private readonly CredentialsSelectionViewModel _selectionViewModel;
 
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
 
-        public CredentialsOverlayViewModel(IVaultModel vaultModel, CredentialsViewModel credentialsViewModel)
+        public CredentialsOverlayViewModel(IVaultModel vaultModel, CredentialsSelectionViewModel selectionViewModel)
         {
             _loginViewModel = new(vaultModel, false);
-            _credentialsViewModel = credentialsViewModel;
+            _selectionViewModel = selectionViewModel;
 
             SelectedViewModel = _loginViewModel;
             Title = "Authenticate".ToLocalized();
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await _credentialsViewModel.InitAsync(cancellationToken);
+            await _selectionViewModel.InitAsync(cancellationToken);
             await _loginViewModel.InitAsync(cancellationToken);
         }
 
@@ -43,14 +43,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             Title = "Select authentication option";
             PrimaryButtonText = null;
-            SelectedViewModel = _credentialsViewModel;
+            SelectedViewModel = _selectionViewModel;
             _ = e;
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _credentialsViewModel.Dispose();
+            _selectionViewModel.Dispose();
             _loginViewModel.Dispose();
         }
     }
