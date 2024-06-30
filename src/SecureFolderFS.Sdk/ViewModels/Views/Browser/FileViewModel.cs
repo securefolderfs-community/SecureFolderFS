@@ -1,10 +1,12 @@
 ﻿using OwlCore.Storage;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
+    [Bindable(true)]
     public class FileViewModel : BrowserItemViewModel
     {
         /// <inheritdoc/>

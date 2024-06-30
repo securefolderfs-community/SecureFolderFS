@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
     /// <summary>
     /// A base class for all widget view models.
     /// </summary>
+    [Bindable(true)]
     public abstract class BaseWidgetViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         public IWidgetModel WidgetModel { get; }

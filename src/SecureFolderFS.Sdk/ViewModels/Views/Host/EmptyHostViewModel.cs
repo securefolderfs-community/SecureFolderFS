@@ -1,20 +1,26 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
-    public sealed partial class EmptyHostViewModel : BasePageViewModel
+    [Bindable(true)]
+    public sealed partial class EmptyHostViewModel : ObservableObject, IViewDesignation
     {
         private readonly INavigationService _rootNavigationService;
         private readonly IVaultCollectionModel _vaultCollectionModel;
+
+        [ObservableProperty] private string? _Title;
 
         public EmptyHostViewModel(INavigationService rootNavigationService, IVaultCollectionModel vaultCollectionModel)
         {
@@ -37,18 +43,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {
-            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
+            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync();
         }
 
         /// <inheritdoc/>
-        public override void OnAppearing()
+        public void OnAppearing()
         {
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
         }
 
         /// <inheritdoc/>
-        public override void OnDisappearing()
+        public void OnDisappearing()
         {
             _vaultCollectionModel.CollectionChanged -= VaultCollectionModel_CollectionChanged;
         }

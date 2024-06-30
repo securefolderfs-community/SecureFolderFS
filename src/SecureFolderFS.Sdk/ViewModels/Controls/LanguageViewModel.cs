@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -8,6 +9,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     /// <summary>
     /// Represents a language view model.
     /// </summary>
+    [Bindable(true)]
     public sealed class LanguageViewModel : ObservableObject
     {
         /// <summary>

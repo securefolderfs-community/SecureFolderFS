@@ -56,6 +56,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public bool RemoveWidget(string widgetId)
         {
+            // Get widgets
             var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
             
             var itemToRemove = widgets?.FirstOrDefault(x => x.WidgetId == widgetId);

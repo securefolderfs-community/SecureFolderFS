@@ -2,6 +2,7 @@
 {
     public enum IapProductType
     {
-        SecureFolderFSPlus = 0
+        SecureFolderFS_Standard = 0,
+        SecureFolderFS_PlusSubscription = 1,
     }
 }

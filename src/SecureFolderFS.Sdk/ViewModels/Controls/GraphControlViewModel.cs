@@ -2,11 +2,13 @@
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
+    [Bindable(true)]
     public sealed partial class GraphControlViewModel : ObservableObject, IProgress<double>, IAsyncInitialize
     {
         [ObservableProperty] private ObservableCollection<GraphPoint> _Data;

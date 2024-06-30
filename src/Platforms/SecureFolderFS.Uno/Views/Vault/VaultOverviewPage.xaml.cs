@@ -3,7 +3,7 @@ using System.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -17,9 +17,9 @@ namespace SecureFolderFS.Uno.Views.Vault
     [INotifyPropertyChanged]
     public sealed partial class VaultOverviewPage : Page, IDisposable
     {
-        public VaultOverviewPageViewModel? ViewModel
+        public VaultOverviewViewModel? ViewModel
         {
-            get => DataContext.TryCast<VaultOverviewPageViewModel>();
+            get => DataContext.TryCast<VaultOverviewViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Uno.Views.Vault
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultOverviewPageViewModel viewModel)
+            if (e.Parameter is VaultOverviewViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);

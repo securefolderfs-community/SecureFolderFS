@@ -28,8 +28,8 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         /// <inheritdoc/>
         public virtual bool ShouldShowVaultTutorial
         {
-            get => GetSetting(() => true, "WasVaultFolderExplanationShown");
-            set => SetSetting(value, "WasVaultFolderExplanationShown");
+            get => GetSetting(() => true);
+            set => SetSetting(value);
         }
 
         /// <inheritdoc/>

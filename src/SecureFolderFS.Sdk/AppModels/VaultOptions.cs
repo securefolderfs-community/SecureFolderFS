@@ -8,7 +8,7 @@
         /// <summary>
         /// Gets the information about the authentication method used for this vault.
         /// </summary>
-        public required string AuthenticationMethod { get; init; }
+        public required string[] AuthenticationMethod { get; init; }
 
         /// <summary>
         /// Gets the ID of the cipher that is used for content encryption.

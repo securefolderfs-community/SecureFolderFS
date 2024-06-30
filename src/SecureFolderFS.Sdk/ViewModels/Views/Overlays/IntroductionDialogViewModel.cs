@@ -5,12 +5,14 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
-    public sealed partial class IntroductionDialogViewModel : DialogViewModel
+    [Bindable(true)]
+    public sealed partial class IntroductionDialogViewModel : OverlayViewModel
     {
         private readonly int _maxAmount;
 
@@ -30,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {
-            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
+            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync();
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Security.Cryptography;
@@ -7,15 +8,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
+    [Bindable(true)]
     public abstract class KeyFileViewModel : AuthenticationViewModel
     {
         private const int KEY_LENGTH = 128;
@@ -23,12 +26,16 @@ namespace SecureFolderFS.UI.ViewModels
         private IFileExplorerService FileExplorerService { get; } = Ioc.Default.GetRequiredService<IFileExplorerService>();
 
         /// <inheritdoc/>
+        public sealed override AuthenticationType Availability { get; } = AuthenticationType.Any;
+
+        /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        protected KeyFileViewModel(string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        protected KeyFileViewModel(string id)
+            : base(id)
         {
-            DisplayName = "Key File";
+            DisplayName = "KeyFile".ToLocalized();
+            Icon = "\uE8D7";
         }
 
         /// <inheritdoc/>

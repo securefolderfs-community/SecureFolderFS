@@ -51,7 +51,7 @@ namespace SecureFolderFS.Sdk.AppModels
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
             VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.Id, item.VaultName, item.LastAccessDate));
 
-            // Update widgets
+            // Add default widgets for vault
             VaultWidgets.SetForVault(item.Folder.Id, new List<WidgetDataModel>()
             {
                 new(Constants.Widgets.HEALTH_WIDGET_ID),
@@ -73,7 +73,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultConfigurations.SavedVaults is not null)
                 VaultConfigurations.SavedVaults.RemoveAt(index);
 
-            // Remove widgets data for that vault
+            // Remove widget data for that vault
             VaultWidgets.SetForVault(removedItem.Folder.Id, null);
 
             // Remove from cache

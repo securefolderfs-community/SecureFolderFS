@@ -11,7 +11,7 @@
         <VerticalStackLayout Spacing="4">
             <Label FontAttributes="Bold" Text="Master Key:" />
             <Border Padding="4" BackgroundColor="Gainsboro">
-                <Label Text="{Binding ViewModel.MasterKey, Mode=OneWay}" />
+                <Label Text="{Binding ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}" />
             </Border>
         </VerticalStackLayout>
         <Button Command="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}" Text="Continue" />

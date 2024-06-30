@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tuc="using:CommunityToolkit.WinUI.Controls"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
@@ -31,8 +32,8 @@
             HorizontalAlignment="Center"
             SelectedIndex="0"
             SelectionChanged="Segmented_SelectionChanged">
-            <tuc:SegmentedItem Content="Add existing" Tag="EXISTING" />
-            <tuc:SegmentedItem Content="Create new" Tag="CREATE" />
+            <tuc:SegmentedItem Content="{l:ResourceString Name=AddExisting}" Tag="EXISTING" />
+            <tuc:SegmentedItem Content="{l:ResourceString Name=CreateNew}" Tag="CREATE" />
         </tuc:Segmented>-->
         <StackPanel
             HorizontalAlignment="Center"
@@ -43,14 +44,14 @@
                 Height="28"
                 Padding="12,0"
                 Click="SegmentButton_Click"
-                Content="Create new"
+                Content="{l:ResourceString Name=CreateNew}"
                 Style="{ThemeResource AccentButtonStyle}"
                 Tag="CREATE" />
             <Button
                 Height="28"
                 Padding="12,0"
                 Click="SegmentButton_Click"
-                Content="Add existing"
+                Content="{l:ResourceString Name=AddExisting}"
                 Tag="EXISTING" />
         </StackPanel>
 

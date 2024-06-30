@@ -1,8 +1,8 @@
 using SecureFolderFS.Maui.UserControls.Navigation;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
-using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
@@ -12,8 +12,11 @@ namespace SecureFolderFS.Maui.Views
     {
         public MainHostViewModel ViewModel { get; } = new(Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
 
+        public static MainPage? Instance { get; private set; }
+
         public MainPage()
         {
+            Instance = this;
             BindingContext = this;
             _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
 
@@ -26,16 +29,22 @@ namespace SecureFolderFS.Maui.Views
             if (e.Item is not VaultListItemViewModel itemViewModel)
                 return;
 
-            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultPageViewModel)?.VaultViewModel == itemViewModel.VaultViewModel);
+            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultModel.Equals(itemViewModel.VaultModel) ?? false);
             if (target is null)
             {
-                target = new VaultLoginPageViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);
-                if (target is IAsyncInitialize asyncInitialize)
-                    await asyncInitialize.InitAsync();
+                var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultModel, ViewModel.NavigationService);
+                _ = vaultLoginViewModel.InitAsync();
+                target = vaultLoginViewModel;
             }
 
             // Navigate
             await ViewModel.NavigationService.NavigateAsync(target);
+        }
+
+        private void MainPage_Loaded(object? sender, EventArgs e)
+        {
+            // Need to set Title here because MainPage is instantiated before services are configured
+            Title = "MyVaults".ToLocalized();
         }
     }
 }

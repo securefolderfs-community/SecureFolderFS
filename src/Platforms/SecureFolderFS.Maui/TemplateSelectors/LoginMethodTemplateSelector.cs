@@ -1,4 +1,4 @@
-using SecureFolderFS.Sdk.ViewModels.Views;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ViewModels;
 
 namespace SecureFolderFS.Maui.TemplateSelectors
@@ -9,6 +9,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
 
         public DataTemplate? ErrorTemplate { get; set; }
 
+        /// <inheritdoc/>
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
             return item switch

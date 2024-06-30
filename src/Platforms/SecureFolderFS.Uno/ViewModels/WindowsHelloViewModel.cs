@@ -1,26 +1,33 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.ViewModels
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
+    [Bindable(true)]
     public abstract class WindowsHelloViewModel : AuthenticationViewModel
     {
         protected const int KEY_LENGTH = 128;
 
-        protected WindowsHelloViewModel(string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        /// <inheritdoc/>
+        public sealed override AuthenticationType Availability { get; } = AuthenticationType.Any;
+
+        protected WindowsHelloViewModel(string id)
+            : base(id)
         {
-            DisplayName = "Windows Hello";
+            DisplayName = "WindowsHello".ToLocalized();
+            Icon = "\uEB68";
         }
 
         /// <inheritdoc/>

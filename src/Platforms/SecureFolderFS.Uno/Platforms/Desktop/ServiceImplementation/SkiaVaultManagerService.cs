@@ -5,7 +5,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FUSE;
 using SecureFolderFS.Core.FUSE.AppModels;
-using SecureFolderFS.Core.Routines;
+using SecureFolderFS.Core.Routines.Operational;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Sdk.AppModels;
@@ -28,6 +28,7 @@ namespace SecureFolderFS.Uno.SkiaGtk.ServiceImplementation
                 var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
                 var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
                 var statisticsModel = new ConsolidatedStatisticsModel();
+                var storageRoutine = routines.BuildStorage();
                 var options = new FileSystemOptions()
                 {
                     VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
@@ -35,10 +36,9 @@ namespace SecureFolderFS.Uno.SkiaGtk.ServiceImplementation
                     HealthStatistics = statisticsModel,
                     FileSystemStatistics = statisticsModel
                 };
-                var (directoryIdCache, security, pathConverter, streamsAccess) = routines.BuildStorage()
-                    .SetUnlockContract(unlockContract)
-                    .CreateStorageComponents(contentFolder, options);
 
+                storageRoutine.SetUnlockContract(unlockContract);
+                var (directoryIdCache, security, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
                 var mountable = options.FileSystemId switch
                 {
                     Core.Constants.FileSystemId.FS_FUSE => FuseMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),

@@ -22,10 +22,12 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public INavigationControl? NavigationControl { get; set; }
 
         /// <inheritdoc/>
-        public virtual bool IsInitialized => NavigationControl is not null;
-
-        /// <inheritdoc/>
         public event EventHandler<IViewDesignation?>? NavigationChanged;
+
+        /// <summary>
+        /// Gets the value that determines whether this service is initialized and can handle navigation.
+        /// </summary>
+        public virtual bool IsInitialized => NavigationControl is not null;
 
         protected BaseNavigationService()
         {

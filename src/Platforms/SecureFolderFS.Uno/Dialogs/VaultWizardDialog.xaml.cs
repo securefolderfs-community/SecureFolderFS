@@ -6,10 +6,10 @@ using Microsoft.UI.Xaml.Media.Animation;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.Utils;
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
@@ -121,22 +121,31 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            BaseWizardViewModel nextViewModel = e.Origin switch
+            BaseWizardViewModel? nextViewModel = e.Origin switch
             {
-                // Main (if existing selected) => Summary
+                // Main (if 'Add existing' selected) -> Summary
                 MainWizardViewModel { CreationType: NewVaultCreationType.AddExisting } => new SummaryWizardViewModel(
                     (Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!, ViewModel!.VaultCollectionModel),
 
-                // Main (if new selected) => Credentials
-                MainWizardViewModel { CreationType: NewVaultCreationType.CreateNew } => new CredentialsWizardViewModel((IModifiableFolder)(Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!),
-                // Credentials => Recovery
-                CredentialsWizardViewModel viewModel => new RecoveryWizardViewModel(viewModel.Folder, e.Result),
-                // Recovery => Summary
+                // Main (if 'Create new' selected) -> Credentials
+                MainWizardViewModel { CreationType: NewVaultCreationType.CreateNew } => new CredentialsWizardViewModel(
+                    (IModifiableFolder)(Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!),
+                
+                // Credentials -> Recovery
+                CredentialsWizardViewModel viewModel => new RecoveryWizardViewModel(viewModel.Folder, (e as WizardNavigationRequestedEventArgs)?.Result),
+                
+                // Recovery -> Summary
                 RecoveryWizardViewModel viewModel => new SummaryWizardViewModel(viewModel.Folder, ViewModel!.VaultCollectionModel),
 
-                // Fallback
-                _ => throw new NotImplementedException()
+                // Close
+                _ => null
             };
+
+            if (nextViewModel is null)
+            {
+                await HideAsync();
+                return;
+            }
 
             await NavigateAsync(nextViewModel);
         }

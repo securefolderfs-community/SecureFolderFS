@@ -2,10 +2,12 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -14,7 +16,8 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
     [Inject<ILocalizationService>, Inject<IApplicationService>]
-    public sealed partial class GeneralSettingsViewModel : BasePageViewModel
+    [Bindable(true)]
+    public sealed partial class GeneralSettingsViewModel : BaseSettingsViewModel
     {
         private readonly CultureInfo _currentCulture;
         private bool _noNotify;
@@ -28,6 +31,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         public GeneralSettingsViewModel()
         {
             ServiceProvider = Ioc.Default;
+            Title = "SettingsGeneral".ToLocalized();
             BannerViewModel = new();
             Languages = new();
             

@@ -4,12 +4,14 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
+    [Bindable(true)]
     public sealed class GraphsWidgetViewModel : BaseWidgetViewModel
     {
         private readonly IReadWriteStatistics _readWriteStatistics;

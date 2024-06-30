@@ -1,7 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
@@ -11,8 +11,10 @@ using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.ViewModels
 {
-    public sealed partial class WindowsHelloLoginViewModel(string id, IFolder vaultFolder)
-        : WindowsHelloViewModel(id, vaultFolder)
+    /// <inheritdoc cref="WindowsHelloViewModel"/>
+    [Bindable(true)]
+    public sealed class WindowsHelloLoginViewModel(string id, IFolder vaultFolder)
+        : WindowsHelloViewModel(id)
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
@@ -20,10 +22,10 @@ namespace SecureFolderFS.Uno.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        [RelayCommand]
-        private async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
+            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
             var auth = await vaultReader.ReadAuthenticationAsync(cancellationToken);
 
@@ -47,6 +49,7 @@ namespace SecureFolderFS.Uno.ViewModels
                 var key = await CreateSignatureAsync(result.Credential, auth.Challenge, cancellationToken);
 
                 // Compile new challenge in preparation
+                // TODO: Important
                 // TODO: When doing the signing operation, check payload MAC
                 // TODO: Do something to avoid triggering the Windows Hello dialog twice
                 //using var newChallenge = GenerateChallenge(config.Id);

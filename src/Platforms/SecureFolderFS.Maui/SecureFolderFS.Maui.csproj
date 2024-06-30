@@ -78,8 +78,26 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="UserControls\Navigation\ContentNavigationControl.xaml.cs">
+	    <DependentUpon>ContentNavigationControl.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="UserControls\LoginControl.xaml.cs">
 	    <DependentUpon>LoginControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Modals\Wizard\CredentialsWizardPage.xaml.cs">
+	    <DependentUpon>CredentialsWizardPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Modals\Wizard\RecoveryWizardPage.xaml.cs">
+	    <DependentUpon>RecoveryWizardPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Modals\Wizard\SummaryWizardPage.xaml.cs">
+	    <DependentUpon>SummaryWizardPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Modals\Wizard\LocationWizardPage.xaml.cs">
+	    <DependentUpon>LocationWizardPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Vault\OverviewPage.xaml.cs">
+	    <DependentUpon>OverviewPage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\Wizard\MainWizardViewControl.xaml.cs">
 	    <DependentUpon>MainWizardViewControl.xaml</DependentUpon>
@@ -96,10 +114,34 @@
 	  <MauiXaml Update="Sheets\VaultWizardSheet.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="UserControls\Navigation\ContentNavigationControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="UserControls\LoginControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="UserControls\ContentPresentation.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Modals\BaseModalPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Modals\Wizard\CredentialsWizardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Modals\Wizard\RecoveryWizardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Modals\Wizard\SummaryWizardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Modals\Wizard\LocationWizardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Modals\Wizard\MainWizardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Vault\OverviewPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Vault\LoginPage.xaml">
@@ -121,5 +163,7 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionSecureFolderFSMauiHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

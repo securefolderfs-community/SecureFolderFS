@@ -1,6 +1,9 @@
-﻿namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
+﻿using System.ComponentModel;
+
+namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
-    public sealed class AgreementDialogViewModel : DialogViewModel
+    [Bindable(true)]
+    public sealed class AgreementDialogViewModel : OverlayViewModel
     {
     }
 }

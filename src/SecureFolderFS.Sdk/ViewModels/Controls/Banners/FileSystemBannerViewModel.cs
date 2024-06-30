@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
     [Inject<IVaultService>, Inject<ISettingsService>]
+    [Bindable(true)]
     public sealed partial class FileSystemBannerViewModel : ObservableObject, IAsyncInitialize
     {
         [ObservableProperty] private ObservableCollection<FileSystemItemViewModel> _FileSystemAdapters;

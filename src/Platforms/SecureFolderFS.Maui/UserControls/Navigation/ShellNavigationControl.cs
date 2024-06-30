@@ -21,12 +21,13 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
         {
             var url = target switch
             {
-                VaultLoginPageViewModel => "LoginPage",
-                VaultDashboardPageViewModel => "DashboardPage",
+                VaultLoginViewModel => "LoginPage",
+                VaultOverviewViewModel => "OverviewPage",
+                VaultPropertiesViewModel => "PropertiesPage",
                 _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 
-            await Shell.Current.GoToAsync(url, target.ViewModelParameter());
+            await Shell.Current.GoToAsync(url, target.ToViewModelParameter());
             return true;
         }
 

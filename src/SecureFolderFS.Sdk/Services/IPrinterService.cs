@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -19,8 +18,8 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="vaultName">The name of the vault.</param>
         /// <param name="vaultId">The unique ID of the vault.</param>
-        /// <param name="superSecret">The master key secret to print.</param>
+        /// <param name="masterKey">The master key secret to print.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task PrintMasterKeyAsync(string vaultName, string? vaultId, IDisposable? superSecret);
+        Task PrintMasterKeyAsync(string vaultName, string? vaultId, string? masterKey);
     }
 }
