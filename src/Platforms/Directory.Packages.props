@@ -2,7 +2,7 @@
   <ItemGroup>
     <PackageVersion Include="IconPacks.Material" Version="1.0.8765.1-build" />
     <PackageVersion Include="Material.Components.Maui" Version="0.2.1-preview" />
-    <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="2.1.0" />
+    <PackageVersion Include="AathifMahir.Maui.MauiIcons.Material" Version="3.0.0" />
     <PackageVersion Include="CommunityToolkit.Maui" Version="7.0.1" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />

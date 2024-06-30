@@ -7,7 +7,7 @@
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:SummaryWizardPage"
-    ContinueEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
+    PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
     PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
     PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
 

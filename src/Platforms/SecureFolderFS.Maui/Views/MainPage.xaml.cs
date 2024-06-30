@@ -1,4 +1,5 @@
 using SecureFolderFS.Maui.UserControls.Navigation;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -38,6 +39,12 @@ namespace SecureFolderFS.Maui.Views
 
             // Navigate
             await ViewModel.NavigationService.NavigateAsync(target);
+        }
+
+        private void MainPage_Loaded(object? sender, EventArgs e)
+        {
+            // Need to set Title here because MainPage is instantiated before services are configured
+            Title = "MyVaults".ToLocalized();
         }
     }
 }

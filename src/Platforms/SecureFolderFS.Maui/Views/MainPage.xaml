@@ -2,12 +2,14 @@
     x:Class="SecureFolderFS.Maui.Views.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
+    Loaded="MainPage_Loaded"
     Title="My vaults"
     x:DataType="local:MainPage">
 
@@ -61,7 +63,7 @@
                     Margin="0,0,32,32"
                     Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
                     HorizontalOptions="End"
-                    IconData="{Static mdci:Material.Add}"
+                    IconData="{x:Static mdci:Material.Add}"
                     VerticalOptions="End" />
             </On>
         </OnPlatform>

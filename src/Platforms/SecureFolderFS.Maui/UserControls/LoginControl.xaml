@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk">
@@ -11,10 +12,26 @@
     <ContentView.Resources>
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
-            <VerticalStackLayout Spacing="24">
-                <Entry IsPassword="True" Text="{Binding PrimaryPassword, Mode=TwoWay}" />
-                <Button Command="{Binding ProvideCredentialsCommand, Mode=OneWay}" Text="{l:ResourceString Name=Continue}" />
-            </VerticalStackLayout>
+            <ContentView>
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="Android">
+                        <VerticalStackLayout Spacing="24">
+                            <mdc:TextField
+                                InputType="Password"
+                                LabelText="{l:ResourceString Name=Password}"
+                                SupportingText=""
+                                Text="{Binding PrimaryPassword, Mode=TwoWay}" />
+                            <mdc:Button Command="{Binding ProvideCredentialsCommand, Mode=OneWay}" Text="{l:ResourceString Name=Continue}" />
+                        </VerticalStackLayout>
+                    </On>
+                    <On Platform="iOS">
+                        <VerticalStackLayout Spacing="24">
+                            <Entry IsPassword="True" Text="{Binding PrimaryPassword, Mode=TwoWay}" />
+                            <Button Command="{Binding ProvideCredentialsCommand, Mode=OneWay}" Text="{l:ResourceString Name=Continue}" />
+                        </VerticalStackLayout>
+                    </On>
+                </OnPlatform>
+            </ContentView>
         </DataTemplate>
 
         <!--  Error Template  -->

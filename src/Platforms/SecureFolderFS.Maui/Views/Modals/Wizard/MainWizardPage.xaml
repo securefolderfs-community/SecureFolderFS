@@ -5,6 +5,7 @@
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:MainWizardPage"
     Shell.PresentationMode="ModalAnimated">
@@ -16,10 +17,20 @@
                 HorizontalOptions="Center"
                 Text="Add new vault" />
 
-            <VerticalStackLayout Spacing="4">
-                <Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
-                <Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
-            </VerticalStackLayout>
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android">
+                    <VerticalStackLayout Spacing="4">
+                        <mdc:Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
+                        <mdc:Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
+                    </VerticalStackLayout>
+                </On>
+                <On Platform="iOS">
+                    <VerticalStackLayout Spacing="4">
+                        <Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
+                        <Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
+                    </VerticalStackLayout>
+                </On>
+            </OnPlatform>
         </VerticalStackLayout>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

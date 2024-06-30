@@ -4,26 +4,44 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:LocationWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
     CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
     CloseText="{Binding OverlayViewModel.SecondaryButtonText, Mode=OneWay}"
-    ContinueEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
+    PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
     PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
     PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout Spacing="8" VerticalOptions="Center">
-            <Label
-                HorizontalOptions="Center"
-                Text="Choose vault folder"
-                VerticalOptions="Center" />
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <VerticalStackLayout Spacing="8" VerticalOptions="Center">
+                    <Label
+                        HorizontalOptions="Center"
+                        Text="Choose vault folder"
+                        VerticalOptions="Center" />
 
-            <Label HorizontalOptions="Center" Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
-            <Label HorizontalOptions="Center" Text="{Binding ViewModel.Message, Mode=OneWay}" />
+                    <Label HorizontalOptions="Center" Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
+                    <Label HorizontalOptions="Center" Text="{Binding ViewModel.Message, Mode=OneWay}" />
 
-            <Button Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}" Text="Browse" />
-        </VerticalStackLayout>
+                    <mdc:Button Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}" Text="Browse" />
+                </VerticalStackLayout>
+            </On>
+            <On Platform="iOS">
+                <VerticalStackLayout Spacing="8" VerticalOptions="Center">
+                    <Label
+                        HorizontalOptions="Center"
+                        Text="Choose vault folder"
+                        VerticalOptions="Center" />
+
+                    <Label HorizontalOptions="Center" Text="{Binding ViewModel.SelectedLocation, Mode=OneWay}" />
+                    <Label HorizontalOptions="Center" Text="{Binding ViewModel.Message, Mode=OneWay}" />
+
+                    <Button Command="{Binding ViewModel.SelectLocationCommand, Mode=OneWay}" Text="Browse" />
+                </VerticalStackLayout>
+            </On>
+        </OnPlatform>
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

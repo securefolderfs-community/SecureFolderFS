@@ -3,11 +3,17 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="Root"
     x:DataType="local:BaseModalPage"
     BackgroundColor="Transparent"
     NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </ContentPage.Resources>
 
     <Border BackgroundColor="White" BindingContext="{x:Reference Root}">
         <Border.StrokeShape>
@@ -46,17 +52,20 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <Button
-                            x:Name="CloseButton"
+                        <mdc:Button
                             Grid.Column="0"
                             Command="{Binding CloseCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
+                            IsEnabled="True"
+                            IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                             Text="{Binding CloseText, Mode=OneWay}" />
-                        <Button
-                            x:Name="PrimaryButton"
+
+                        <mdc:Button
                             Grid.Column="1"
                             Command="{Binding PrimaryCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
+                            IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                            IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                             Text="{Binding PrimaryText, Mode=OneWay}" />
                     </Grid>
                 </Grid>

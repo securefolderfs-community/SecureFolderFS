@@ -8,9 +8,6 @@ namespace SecureFolderFS.Maui.Views.Modals
         {
             BindingContext = this;
             InitializeComponent();
-
-            CloseButton.IsVisible = !string.IsNullOrEmpty(CloseText);
-            PrimaryButton.IsVisible = !string.IsNullOrEmpty(PrimaryText);
         }
 
         public View? ModalContent
@@ -27,17 +24,7 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(PrimaryCommandProperty, value);
         }
         public static readonly BindableProperty PrimaryCommandProperty =
-            BindableProperty.Create(nameof(ModalContent), typeof(ICommand), typeof(BaseModalPage), null, propertyChanged:
-                (bindable, _, newValue) =>
-                {
-                    if (bindable is not BaseModalPage page)
-                        return;
-
-                    if (newValue is not ICommand value)
-                        return;
-
-                    page.PrimaryButton.Command = value;
-                });
+            BindableProperty.Create(nameof(PrimaryCommand), typeof(ICommand), typeof(BaseModalPage), null);
 
         public ICommand CloseCommand
         {
@@ -45,17 +32,7 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(CloseCommandProperty, value);
         }
         public static readonly BindableProperty CloseCommandProperty =
-            BindableProperty.Create(nameof(ModalContent), typeof(ICommand), typeof(BaseModalPage), null, propertyChanged:
-                (bindable, _, newValue) =>
-                {
-                    if (bindable is not BaseModalPage page)
-                        return;
-
-                    if (newValue is not ICommand value)
-                        return;
-
-                    page.CloseButton.Command = value;
-                });
+            BindableProperty.Create(nameof(CloseCommand), typeof(ICommand), typeof(BaseModalPage), null);
 
         public string? PrimaryText
         {
@@ -63,15 +40,7 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(PrimaryTextProperty, value);
         }
         public static readonly BindableProperty PrimaryTextProperty =
-            BindableProperty.Create(nameof(ModalContent), typeof(string), typeof(BaseModalPage), null, propertyChanged:
-                (bindable, _, newValue) =>
-                {
-                    if (bindable is not BaseModalPage page)
-                        return;
-
-                    page.PrimaryButton.IsVisible = !string.IsNullOrEmpty((string?)newValue);
-                    page.PrimaryButton.Text = (string?)newValue ?? string.Empty;
-                });
+            BindableProperty.Create(nameof(PrimaryText), typeof(string), typeof(BaseModalPage), null);
 
         public string? CloseText
         {
@@ -79,33 +48,15 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(CloseTextProperty, value);
         }
         public static readonly BindableProperty CloseTextProperty =
-            BindableProperty.Create(nameof(ModalContent), typeof(string), typeof(BaseModalPage), null, propertyChanged:
-                (bindable, _, newValue) =>
-                {
-                    if (bindable is not BaseModalPage page)
-                        return;
+            BindableProperty.Create(nameof(CloseText), typeof(string), typeof(BaseModalPage), null);
 
-                    page.CloseButton.IsVisible = !string.IsNullOrEmpty((string?)newValue);
-                    page.CloseButton.Text = (string?)newValue ?? string.Empty;
-                });
-
-        public bool ContinueEnabled
+        public bool PrimaryEnabled
         {
-            get => (bool)GetValue(ContinueEnabledProperty);
-            set => SetValue(ContinueEnabledProperty, value);
+            get => (bool)GetValue(PrimaryEnabledProperty);
+            set => SetValue(PrimaryEnabledProperty, value);
         }
-        public static readonly BindableProperty ContinueEnabledProperty =
-            BindableProperty.Create(nameof(ModalContent), typeof(bool), typeof(BaseModalPage), true, propertyChanged:
-                (bindable, _, newValue) =>
-                {
-                    if (bindable is not BaseModalPage page)
-                        return;
-
-                    if (newValue is not bool value)
-                        return;
-
-                    page.PrimaryButton.IsEnabled = value;
-                });
+        public static readonly BindableProperty PrimaryEnabledProperty =
+            BindableProperty.Create(nameof(PrimaryEnabled), typeof(bool), typeof(BaseModalPage), true);
 
         public bool CloseEnabled
         {
@@ -113,16 +64,6 @@ namespace SecureFolderFS.Maui.Views.Modals
             set => SetValue(CloseEnabledProperty, value);
         }
         public static readonly BindableProperty CloseEnabledProperty =
-            BindableProperty.Create(nameof(ModalContent), typeof(bool), typeof(BaseModalPage), true, propertyChanged:
-                (bindable, _, newValue) =>
-                {
-                    if (bindable is not BaseModalPage page)
-                        return;
-
-                    if (newValue is not bool value)
-                        return;
-
-                    page.PrimaryButton.IsEnabled = value;
-                });
+            BindableProperty.Create(nameof(CloseEnabled), typeof(bool), typeof(BaseModalPage), true);
     }
 }
