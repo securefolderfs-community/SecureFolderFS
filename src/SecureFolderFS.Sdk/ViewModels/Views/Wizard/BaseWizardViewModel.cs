@@ -11,6 +11,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
     {
         /// <inheritdoc cref="IViewable.Title"/>
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private string? _CancelText;
+        [ObservableProperty] private string? _ContinueText;
         [ObservableProperty] private bool _CanCancel;
         [ObservableProperty] private bool _CanContinue;
 

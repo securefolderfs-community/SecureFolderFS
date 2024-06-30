@@ -1,0 +1,28 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.RecoveryWizardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:RecoveryWizardPage"
+    CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
+    CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryButtonText, Mode=OneWay}"
+    ContinueEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
+    PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+    PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
+
+    <md:BaseModalPage.ModalContent>
+        <VerticalStackLayout HorizontalOptions="Center" Spacing="16">
+            <Label Text="{l:ResourceString Name=MasterKeyDescription}" />
+            <VerticalStackLayout Spacing="4">
+                <Label FontAttributes="Bold" Text="Master Key:" />
+                <Border Padding="4" BackgroundColor="Gainsboro">
+                    <Label Text="{Binding ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}" />
+                </Border>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

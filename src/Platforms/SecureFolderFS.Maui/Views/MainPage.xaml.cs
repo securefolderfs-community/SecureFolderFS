@@ -11,8 +11,11 @@ namespace SecureFolderFS.Maui.Views
     {
         public MainHostViewModel ViewModel { get; } = new(Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
 
+        public static MainPage? Instance { get; private set; }
+
         public MainPage()
         {
+            Instance = this;
             BindingContext = this;
             _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
 

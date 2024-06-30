@@ -1,0 +1,72 @@
+﻿<ContentPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.BaseModalPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    x:Name="Root"
+    x:DataType="local:BaseModalPage"
+    BackgroundColor="Transparent"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
+
+    <Border BackgroundColor="White" BindingContext="{x:Reference Root}">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="24,24,0,0" />
+        </Border.StrokeShape>
+
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label
+                        Grid.Row="0"
+                        Padding="16"
+                        FontAttributes="Bold"
+                        FontSize="24"
+                        Text="{Binding Title, Mode=OneWay}" />
+
+                    <ContentView
+                        Grid.Row="1"
+                        Content="{Binding ModalContent, Mode=OneWay}"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill" />
+
+                    <Grid
+                        Grid.Row="2"
+                        ColumnSpacing="4"
+                        HorizontalOptions="Fill">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Button
+                            x:Name="CloseButton"
+                            Grid.Column="0"
+                            Command="{Binding CloseCommand, Mode=OneWay}"
+                            HorizontalOptions="Fill"
+                            Text="{Binding CloseText, Mode=OneWay}" />
+                        <Button
+                            x:Name="PrimaryButton"
+                            Grid.Column="1"
+                            Command="{Binding PrimaryCommand, Mode=OneWay}"
+                            HorizontalOptions="Fill"
+                            Text="{Binding PrimaryText, Mode=OneWay}" />
+                    </Grid>
+                </Grid>
+            </On>
+            <On Platform="iOS">
+                <ContentView
+                    Content="{Binding ModalContent, Mode=OneWay}"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill" />
+            </On>
+        </OnPlatform>
+    </Border>
+</ContentPage>

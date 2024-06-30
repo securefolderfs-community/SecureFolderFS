@@ -5,7 +5,10 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Wizard"
     x:DataType="local:LocationWizardViewControl">
 
-    <VerticalStackLayout Spacing="8" VerticalOptions="Center">
+    <VerticalStackLayout
+        HorizontalOptions="Center"
+        Spacing="8"
+        VerticalOptions="Center">
         <Label
             HorizontalOptions="Center"
             Text="Choose vault folder"

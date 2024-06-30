@@ -1,0 +1,25 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.SummaryWizardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:SummaryWizardPage"
+    ContinueEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
+    PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+    PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
+
+    <md:BaseModalPage.ModalContent>
+        <VerticalStackLayout Spacing="16" VerticalOptions="Fill">
+            <VerticalStackLayout VerticalOptions="Center">
+                <Label
+                    FontSize="20"
+                    HorizontalOptions="Start"
+                    Text="Vault has been added!" />
+                <Label HorizontalOptions="Start" Text="{Binding ViewModel.VaultName, Mode=OneWay}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

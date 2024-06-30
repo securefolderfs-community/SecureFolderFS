@@ -1,0 +1,25 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.MainWizardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:MainWizardPage"
+    Shell.PresentationMode="ModalAnimated">
+
+    <md:BaseModalPage.ModalContent>
+        <VerticalStackLayout Spacing="32" VerticalOptions="Center">
+            <Label
+                FontSize="22"
+                HorizontalOptions="Center"
+                Text="Add new vault" />
+
+            <VerticalStackLayout Spacing="4">
+                <Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
+                <Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

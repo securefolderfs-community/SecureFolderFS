@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -31,10 +32,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public LocationWizardViewModel(NewVaultCreationType creationType)
         {
             ServiceProvider = Ioc.Default;
-            // TODO: Add title
-            CanContinue = false;
-            CanCancel = true;
             CreationType = creationType;
+
+            CanCancel = true;
+            CanContinue = false;
+            CancelText = "Cancel".ToLocalized();
+            ContinueText = "Continue".ToLocalized();
+            Title = creationType == NewVaultCreationType.AddExisting ? "AddExisting".ToLocalized() : "CreateNew".ToLocalized();
         }
 
         /// <inheritdoc/>

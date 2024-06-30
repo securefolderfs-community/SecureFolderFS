@@ -121,24 +121,31 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            BaseWizardViewModel nextViewModel = e.Origin switch
+            BaseWizardViewModel? nextViewModel = e.Origin switch
             {
-                // Main (if existing selected) => Summary
+                // Main (if 'Add existing' selected) -> Summary
                 MainWizardViewModel { CreationType: NewVaultCreationType.AddExisting } => new SummaryWizardViewModel(
                     (Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!, ViewModel!.VaultCollectionModel),
 
-                // Main (if new selected) => Credentials
-                MainWizardViewModel { CreationType: NewVaultCreationType.CreateNew } => new CredentialsWizardViewModel((IModifiableFolder)(Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!),
+                // Main (if 'Create new' selected) -> Credentials
+                MainWizardViewModel { CreationType: NewVaultCreationType.CreateNew } => new CredentialsWizardViewModel(
+                    (IModifiableFolder)(Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!),
                 
-                // Credentials => Recovery
+                // Credentials -> Recovery
                 CredentialsWizardViewModel viewModel => new RecoveryWizardViewModel(viewModel.Folder, (e as WizardNavigationRequestedEventArgs)?.Result),
                 
-                // Recovery => Summary
+                // Recovery -> Summary
                 RecoveryWizardViewModel viewModel => new SummaryWizardViewModel(viewModel.Folder, ViewModel!.VaultCollectionModel),
 
-                // Fallback
-                _ => throw new NotImplementedException()
+                // Close
+                _ => null
             };
+
+            if (nextViewModel is null)
+            {
+                await HideAsync();
+                return;
+            }
 
             await NavigateAsync(nextViewModel);
         }

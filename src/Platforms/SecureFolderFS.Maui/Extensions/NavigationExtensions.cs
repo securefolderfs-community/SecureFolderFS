@@ -20,5 +20,14 @@ namespace SecureFolderFS.Maui.Extensions
 
             return null;
         }
+
+        public static async Task GoBackAsync(this Shell shell, int amountOfLevels = 1)
+        {
+            var destination = string.Empty;
+            for (var i = 0; i < amountOfLevels; i++)
+                destination += "../";
+
+            await shell.GoToAsync(destination);
+        }
     }
 }

@@ -39,12 +39,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public CredentialsWizardViewModel(IModifiableFolder folder)
         {
             ServiceProvider = Ioc.Default;
-            Title = "SetPassword".ToLocalized();
-            CanContinue = false;
-            CanCancel = true;
             Folder = folder;
             _credentials = new();
             _vaultId = Guid.NewGuid().ToString();
+
+            ContinueText = "Continue".ToLocalized();
+            Title = "SetPassword".ToLocalized();
+            CancelText = "Cancel".ToLocalized();
+            CanContinue = false;
+            CanCancel = true;
         }
 
         /// <inheritdoc/>

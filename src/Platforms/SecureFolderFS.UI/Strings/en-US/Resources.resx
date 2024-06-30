@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddExisting" xml:space="preserve">
+    <value>Add existing</value>
+  </data>
   <data name="AddExistingVault" xml:space="preserve">
     <value>Add existing vault</value>
   </data>
@@ -194,6 +197,9 @@
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
     <value>Select which version to copy to clipboard</value>
+  </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Create new</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
     <value>Create new vault</value>
