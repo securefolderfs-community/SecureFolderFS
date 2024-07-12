@@ -10,6 +10,8 @@ namespace SecureFolderFS.Maui
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if ANDROID
             new Platforms.Android.Helpers.AndroidLifecycleHelper();
+#elif IOS
+            new Platforms.iOS.Helpers.IOSLifecycleHelper();
 #else
             null;
 #endif

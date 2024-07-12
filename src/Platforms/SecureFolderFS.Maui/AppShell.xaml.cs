@@ -16,5 +16,10 @@ namespace SecureFolderFS.Maui
             Routing.RegisterRoute("OverviewPage", typeof(OverviewPage));
             //Routing.RegisterRoute("PropertiesPage", typeof(PropertiesPage)); // TODO
         }
+
+        private async void AppShell_Loaded(object? sender, EventArgs e)
+        {
+            await MainViewModel.InitAsync();
+        }
     }
 }

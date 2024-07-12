@@ -46,6 +46,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             if (result is null || MainActivity.Instance is null)
                 return null;
 
+            AddAndroidBookmark(result);
             return new AndroidFile(result, MainActivity.Instance);
         }
 

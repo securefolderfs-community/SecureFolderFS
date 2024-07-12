@@ -71,10 +71,37 @@
                 </Grid>
             </On>
             <On Platform="iOS">
-                <ContentView
-                    Content="{Binding ModalContent, Mode=OneWay}"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <ContentView
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Content="{Binding ModalContent, Mode=OneWay}"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill" />
+
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding CloseCommand, Mode=OneWay}"
+                        HorizontalOptions="Fill"
+                        IsEnabled="True"
+                        IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                        Text="{Binding CloseText, Mode=OneWay}"
+                        VerticalOptions="End" />
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding PrimaryCommand, Mode=OneWay}"
+                        HorizontalOptions="Fill"
+                        IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                        IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                        Text="{Binding PrimaryText, Mode=OneWay}"
+                        VerticalOptions="End" />
+                </Grid>
             </On>
         </OnPlatform>
     </Border>

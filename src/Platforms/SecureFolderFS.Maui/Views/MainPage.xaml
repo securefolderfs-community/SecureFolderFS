@@ -9,9 +9,9 @@
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
-    Loaded="MainPage_Loaded"
     Title="My vaults"
-    x:DataType="local:MainPage">
+    x:DataType="local:MainPage"
+    Loaded="MainPage_Loaded">
 
     <ContentPage.Resources>
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
@@ -57,13 +57,20 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <OnPlatform x:TypeArguments="GraphicsView">
+        <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
                 <mdc:FAB
                     Margin="0,0,32,32"
                     Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
                     HorizontalOptions="End"
                     IconData="{x:Static mdci:Material.Add}"
+                    VerticalOptions="End" />
+            </On>
+            <On Platform="iOS">
+                <Button
+                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+                    HorizontalOptions="Center"
+                    Text="Add"
                     VerticalOptions="End" />
             </On>
         </OnPlatform>
