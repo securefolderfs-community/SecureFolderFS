@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 using System;
 using System.Linq;
 using System.Threading;
@@ -67,7 +68,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultConfigurations.SavedVaults is null)
                 return false;
 
-            var item = VaultConfigurations.SavedVaults.FirstOrDefault(x => x.Id == Folder.Id);
+            var item = VaultConfigurations.SavedVaults.FirstOrDefault(x => x.PersistableId == Folder.GetPersistableId());
             if (item is null)
                 return false;
 

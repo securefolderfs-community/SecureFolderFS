@@ -13,8 +13,8 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         protected override DocumentFile? Document { get; }
 
-        public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null)
-            : base(uri, activity, parent, permissionRoot)
+        public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
+            : base(uri, activity, parent, permissionRoot, bookmarkId)
         {
             Document = DocumentFile.FromSingleUri(activity, uri);
         }
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             if (IsVirtualFile(activity, Inner))
             {
                 stream = GetVirtualFileStream(activity, Inner, accessMode != FileAccess.Read);
-                return Task.FromResult<Stream>(stream ?? throw new ArgumentException("No stream types available for '*/*' mime type."));
+                return Task.FromResult(stream ?? throw new ArgumentException("No stream types available for '*/*' mime type."));
             }
 
             stream = accessMode == FileAccess.Read

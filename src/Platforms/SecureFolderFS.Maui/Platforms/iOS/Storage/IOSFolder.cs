@@ -8,8 +8,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
     /// <inheritdoc cref="IChildFolder"/>
     internal sealed class IOSFolder : IOSStorable, IModifiableFolder, IChildFolder
     {
-        public IOSFolder(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null)
-            : base(url, parent, permissionRoot)
+        public IOSFolder(NSUrl url, IOSFolder? parent = null, NSUrl? permissionRoot = null, string? bookmarkId = null)
+            : base(url, parent, permissionRoot, bookmarkId)
         {
         }
 

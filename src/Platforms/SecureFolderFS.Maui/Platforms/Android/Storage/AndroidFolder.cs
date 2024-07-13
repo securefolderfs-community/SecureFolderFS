@@ -14,8 +14,8 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         protected override DocumentFile? Document { get; }
 
-        public AndroidFolder(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null)
-            : base(uri, activity, parent, permissionRoot)
+        public AndroidFolder(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
+            : base(uri, activity, parent, permissionRoot, bookmarkId)
         {
             Document = DocumentFile.FromTreeUri(activity, uri);
         }

@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -49,7 +50,7 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             // Update saved vaults
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
-            VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.Id, item.VaultName, item.LastAccessDate));
+            VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate));
 
             // Add default widgets for vault
             VaultWidgets.SetForVault(item.Folder.Id, new List<WidgetDataModel>()
@@ -88,7 +89,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultConfigurations.SavedVaults is null)
                 return;
 
-            VaultConfigurations.SavedVaults[index] = new(item.Folder.Id, item.VaultName, item.LastAccessDate);
+            VaultConfigurations.SavedVaults[index] = new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate);
 
             var oldItem = this[index];
             base.SetItem(index, item);
@@ -106,16 +107,16 @@ namespace SecureFolderFS.Sdk.AppModels
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
             foreach (var item in VaultConfigurations.SavedVaults)
             {
-                if (item.Id is null)
+                if (item.PersistableId is null)
                     continue;
 
                 try
                 {
-                    var folder = await StorageService.GetPersistedAsync<IFolder>(item.Id, cancellationToken);
+                    var folder = await StorageService.GetPersistedAsync<IFolder>(item.PersistableId, cancellationToken);
                     var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
 
                     Items.Add(vaultModel);
-                    CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item));
+                    CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, vaultModel));
                 }
                 catch (Exception ex)
                 {

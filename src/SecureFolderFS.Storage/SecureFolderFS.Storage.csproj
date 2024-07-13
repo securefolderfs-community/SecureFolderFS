@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OwlCore.Storage" Version="0.10.0" />
+    <PackageReference Include="OwlCore.Storage" Version="0.11.3" />
   </ItemGroup>
 
   <ItemGroup>

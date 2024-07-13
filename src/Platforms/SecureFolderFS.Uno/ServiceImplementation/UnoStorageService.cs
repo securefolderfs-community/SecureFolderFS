@@ -43,11 +43,5 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 throw new ArgumentException("The path is not a file nor a folder.", nameof(id));
             }
         }
-
-        /// <inheritdoc/>
-        public Task RemovePersistedAsync(IStorable storable, CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-        }
     }
 }

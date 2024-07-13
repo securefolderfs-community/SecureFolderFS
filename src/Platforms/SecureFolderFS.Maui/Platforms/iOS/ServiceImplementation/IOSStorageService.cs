@@ -16,37 +16,56 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<TStorable> GetPersistedAsync<TStorable>(string id, CancellationToken cancellationToken = default)
+        public async Task<TStorable> GetPersistedAsync<TStorable>(string persistableId, CancellationToken cancellationToken = default)
             where TStorable : IStorable
         {
-            var iosUrl = GetPersistedUrl(id);
-            if (iosUrl is null)
-                throw new FormatException("Could not parse NSUrl from Storage ID.");
+            var nsUrl = GetPersistableUrl(persistableId);
+            if (nsUrl is null)
+                throw new FormatException($"Could not parse NSUrl from {nameof(persistableId)}.");
 
+            var bookmarkId = persistableId.StartsWith(UI.Constants.STORABLE_BOOKMARK_RID) ? persistableId : null;
             await Task.CompletedTask;
+
             return (TStorable)(IStorable)(true switch
             {
-                _ when typeof(TStorable).IsAssignableFrom(typeof(IFile)) => new IOSFile(iosUrl),
-                _ when typeof(TStorable).IsAssignableFrom(typeof(IFolder)) => new IOSFolder(iosUrl),
-                _ => iosUrl.HasDirectoryPath ? new IOSFolder(iosUrl) : new IOSFile(iosUrl)
+                _ when typeof(TStorable).IsAssignableFrom(typeof(IFile)) => GetFile(nsUrl, bookmarkId),
+                _ when typeof(TStorable).IsAssignableFrom(typeof(IFolder)) => new IOSFolder(nsUrl, bookmarkId: bookmarkId),
+                _ => nsUrl.HasDirectoryPath ? new IOSFolder(nsUrl) : GetFile(nsUrl, bookmarkId, true)
             });
+
+            static IStorable GetFile(NSUrl nsUrl, string? bookmarkId, bool allowDirectory = false)
+            {
+                if (nsUrl.FilePathUrl?.Path is { } path)
+                {
+                    var isDirectory = false;
+                    if (!NSFileManager.DefaultManager.FileExists(path, ref isDirectory))
+                        throw new FileNotFoundException(null, Path.GetFileName(path));
+
+                    if (!NSFileManager.DefaultManager.IsReadableFile(path))
+                        throw new UnauthorizedAccessException("File is not readable");
+
+                    if (isDirectory)
+                        return allowDirectory ? new IOSFolder(nsUrl, bookmarkId: bookmarkId) : throw new IOException("File is a directory.");
+                }
+
+                return new IOSFile(nsUrl, bookmarkId: bookmarkId);
+            }
         }
 
-        /// <inheritdoc/>
-        public Task RemovePersistedAsync(IStorable storable, CancellationToken cancellationToken = default)
+        private static NSUrl? GetPersistableUrl(string persistableId)
         {
-            return Task.CompletedTask;
-        }
+            if (persistableId.StartsWith(UI.Constants.STORABLE_BOOKMARK_RID))
+            {
+                var idData = new NSData(persistableId.Remove(0, UI.Constants.STORABLE_BOOKMARK_RID.Length), NSDataBase64DecodingOptions.None);
+                var url = NSUrl.FromBookmarkData(idData, NSUrlBookmarkResolutionOptions.WithoutUI, null, out var isStale, out var error);
 
-        private static NSUrl? GetPersistedUrl(string id)
-        {
-            var idData = new NSData(id, NSDataBase64DecodingOptions.None);
-            var url = NSUrl.FromBookmarkData(idData, NSUrlBookmarkResolutionOptions.WithoutUI, null, out var isStale, out var error);
+                if (error is not null)
+                    throw new NSErrorException(error);
 
-            if (error is not null)
-                throw new NSErrorException(error);
+                return url;
+            }
 
-            return url;
+            return new NSUrl(persistableId);
         }
     }
 }

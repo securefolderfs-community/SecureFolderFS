@@ -26,6 +26,10 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:VaultListItemViewModel">
                     <ViewCell>
+                        <ViewCell.ContextActions>
+                            <MenuFlyoutItem Command="{Binding RemoveVaultCommand}" Text="Remove" />
+                        </ViewCell.ContextActions>
+
                         <Grid Padding="8,2">
                             <Grid.RowDefinitions>
                                 <RowDefinition />

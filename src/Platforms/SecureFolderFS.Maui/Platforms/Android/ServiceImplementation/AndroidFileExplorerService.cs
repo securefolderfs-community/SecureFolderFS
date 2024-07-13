@@ -46,8 +46,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             if (result is null || MainActivity.Instance is null)
                 return null;
 
-            AddAndroidBookmark(result);
-            return new AndroidFile(result, MainActivity.Instance);
+            var file = new AndroidFile(result, MainActivity.Instance);
+            await file.AddBookmarkAsync(cancellationToken);
+
+            return file;
         }
 
         /// <inheritdoc/>
@@ -69,8 +71,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             if (result is null || MainActivity.Instance is null)
                 return null;
 
-            AddAndroidBookmark(result);
-            return new AndroidFolder(result, MainActivity.Instance);
+            var folder = new AndroidFolder(result, MainActivity.Instance);
+            await folder.AddBookmarkAsync(cancellationToken);
+
+            return folder;
         }
 
         private async Task<AndroidUri?> StartActivityAsync(Intent? pickerIntent, int requestCode)
@@ -102,14 +106,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 activity.ActivityResult -= OnActivityResult;
                 _ = tcs.TrySetResult(resultCode == Result.Ok ? data : null);
             }
-        }
-
-        private static void AddAndroidBookmark(AndroidUri uri)
-        {
-            var activity = Platform.CurrentActivity;
-            activity?.ContentResolver?.TakePersistableUriPermission(uri,
-                    ActivityFlags.GrantWriteUriPermission |
-                    ActivityFlags.GrantReadUriPermission);
         }
     }
 }
