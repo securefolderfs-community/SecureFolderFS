@@ -19,25 +19,33 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IStorable> GetFromBookmarkAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<TStorable> GetPersistedAsync<TStorable>(string id, CancellationToken cancellationToken = default)
+            where TStorable : IStorable
         {
-            if (IsFile(id))
-                return Task.FromResult<IStorable>(new SystemFile(id));
-            
-            if (IsFolder(id))
-                return Task.FromResult<IStorable>(new SystemFolder(id));
+            await Task.CompletedTask;
+            return (TStorable)(IStorable)(true switch
+            {
+                _ when typeof(TStorable).IsAssignableFrom(typeof(IFile)) => new SystemFile(id),
+                _ when typeof(TStorable).IsAssignableFrom(typeof(IFolder)) => new SystemFolder(id),
+                _ => GetUnknown(id)
+            });
 
-            throw new ArgumentException("The path is not a file nor a folder.", nameof(id));
+            static IStorable GetUnknown(string path)
+            {
+                // Check for file
+                if (Path.GetFileName(path) is { } str && str != string.Empty && File.Exists(path))
+                    return new SystemFile(path);
 
-            static bool IsFolder(string path)
-                => Directory.Exists(path);
+                // Check for folder
+                if (Directory.Exists(path))
+                    return new SystemFolder(path);
 
-            static bool IsFile(string path)
-                => Path.GetFileName(path) is { } str && str != string.Empty && File.Exists(path);
+                throw new ArgumentException("The path is not a file nor a folder.", nameof(id));
+            }
         }
 
         /// <inheritdoc/>
-        public Task RemoveBookmark(IStorable storable, CancellationToken cancellationToken = default)
+        public Task RemovePersistedAsync(IStorable storable, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }

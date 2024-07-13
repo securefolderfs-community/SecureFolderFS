@@ -7,7 +7,7 @@ using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
-    /// <inheritdoc cref="IFile"/>
+    /// <inheritdoc cref="IChildFile"/>
     internal sealed class AndroidFile : AndroidStorable, IChildFile
     {
         /// <inheritdoc/>

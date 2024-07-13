@@ -8,7 +8,7 @@ using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
-    /// <inheritdoc cref="IStorable"/>
+    /// <inheritdoc cref="IStorableChild"/>
     internal abstract class AndroidStorable : IStorableChild, IWrapper<AndroidUri>
     {
         protected readonly Activity activity;
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         public virtual Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IFolder?>(parent);
         }
 
         protected static string? GetColumnValue(Context context, AndroidUri contentUri, string column, string? selection = null, string[]? selectionArgs = null)

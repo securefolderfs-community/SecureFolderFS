@@ -44,6 +44,15 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
                 return null;
 
             return new SystemFolder(result.Folder.Path);
+
+            //using var documentPicker = OperatingSystem.IsIOSVersionAtLeast(14)
+            //    ? new UIDocumentPickerViewController([ UTTypes.Folder ], false)
+            //    : throw new NotSupportedException("Picking folders on iOS<14 is unsupported.");
+
+            //documentPicker.AllowsMultipleSelection = false;
+            //var urls = await ShowDocumentPicker(documentPicker);
+
+            //return urls.Select(u => new IOSFolder(u)).FirstOrDefault();
         }
     }
 }

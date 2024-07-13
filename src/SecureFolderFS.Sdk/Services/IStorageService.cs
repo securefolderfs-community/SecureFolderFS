@@ -21,8 +21,9 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="id">The unique bookmark ID of the item to retrieve.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <typeparam name="TStorable">The requested type of storable to get the bookmark for.</typeparam>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If the item associated with the bookmark ID is found, returns <see cref="IStorable"/>.</returns>
-        Task<IStorable> GetFromBookmarkAsync(string id, CancellationToken cancellationToken = default);
+        Task<TStorable> GetPersistedAsync<TStorable>(string id, CancellationToken cancellationToken = default) where TStorable : IStorable;
 
         /// <summary>
         /// Removes application access from bookmarked file system resource.
@@ -30,6 +31,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="storable">The <see cref="IStorable"/> instance that was bookmarked to remove.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task RemoveBookmark(IStorable storable, CancellationToken cancellationToken = default);
+        Task RemovePersistedAsync(IStorable storable, CancellationToken cancellationToken = default);
     }
 }

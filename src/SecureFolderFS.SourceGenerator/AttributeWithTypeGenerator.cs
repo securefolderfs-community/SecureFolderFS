@@ -1,8 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using System.Collections.Immutable;
-
-// Some parts of the following code were used from WinUI3Utilities on the MIT License basis.
+﻿// Some parts of the following code were used from WinUI3Utilities on the MIT License basis.
 // See the license file for more information.
+
+using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
 
 namespace SecureFolderFS.SourceGenerator
 {

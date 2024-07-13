@@ -111,13 +111,10 @@ namespace SecureFolderFS.Sdk.AppModels
 
                 try
                 {
-                    var storable = await StorageService.GetFromBookmarkAsync(item.Id, cancellationToken);
-                    if (storable is not IFolder folder)
-                        continue;
-
+                    var folder = await StorageService.GetPersistedAsync<IFolder>(item.Id, cancellationToken);
                     var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
-                    Items.Add(vaultModel);
 
+                    Items.Add(vaultModel);
                     CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item));
                 }
                 catch (Exception ex)

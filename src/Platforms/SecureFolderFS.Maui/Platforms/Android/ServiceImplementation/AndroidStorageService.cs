@@ -20,7 +20,8 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task<IStorable> GetFromBookmarkAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<TStorable> GetPersistedAsync<TStorable>(string id, CancellationToken cancellationToken = default)
+            where TStorable : IStorable
         {
             var activity = MainActivity.Instance;
             if (activity?.ContentResolver is null)
@@ -30,14 +31,17 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             if (androidUri is null)
                 throw new FormatException("Could not parse AndroidUri from Storage ID.");
 
-            var isFolder = IsUriFolder(androidUri, activity.ContentResolver);
-            return isFolder
-                ? Task.FromResult<IStorable>(new AndroidFolder(androidUri, activity))
-                : Task.FromResult<IStorable>(new AndroidFile(androidUri, activity));
+            await Task.CompletedTask;
+            return (TStorable)(IStorable)(true switch
+            {
+                _ when typeof(TStorable).IsAssignableFrom(typeof(IFile)) => new AndroidFile(androidUri, activity),
+                _ when typeof(TStorable).IsAssignableFrom(typeof(IFolder)) => new AndroidFolder(androidUri, activity),
+                _ => IsUriFolder(androidUri, activity.ContentResolver) ? new AndroidFolder(androidUri, activity) : new AndroidFile(androidUri, activity)
+            });
         }
 
         /// <inheritdoc/>
-        public Task RemoveBookmark(IStorable storable, CancellationToken cancellationToken = default)
+        public Task RemovePersistedAsync(IStorable storable, CancellationToken cancellationToken = default)
         {
             try
             {

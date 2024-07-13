@@ -8,7 +8,7 @@ using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
-    /// <inheritdoc cref="IFolder"/>
+    /// <inheritdoc cref="IChildFolder"/>
     internal sealed class AndroidFolder : AndroidStorable, IModifiableFolder, IChildFolder, IGetFirstByName // TODO: Implement: IGetFirstByName, IGetItem
     {
         /// <inheritdoc/>
@@ -90,25 +90,41 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         public async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
-            await DeleteContents(this);
+            await DeleteContents(item);
             return;
 
-            async Task DeleteContents(AndroidFolder storageFolder)
+            async Task DeleteContents(IStorableChild storable)
             {
-                await foreach (var file in storageFolder.GetItemsAsync(StorableType.All, cancellationToken))
+                switch (storable)
                 {
-                    switch (file)
+                    case AndroidFile storableIsFile:
                     {
-                        case AndroidFolder androidFolder:
-                            await DeleteContents(androidFolder);
-                            break;
-                        case AndroidFile androidFile when activity.ContentResolver is not null:
-                            DocumentsContract.DeleteDocument(activity.ContentResolver, androidFile.Inner);
-                            break;
+                        if (activity.ContentResolver is not null)
+                            DocumentsContract.DeleteDocument(activity.ContentResolver, storableIsFile.Inner);
+
+                        break;
+                    }
+
+                    case AndroidFolder storableIsFolder:
+                    {
+                        await foreach (var itemInFolder in storableIsFolder.GetItemsAsync(StorableType.All, cancellationToken))
+                        {
+                            switch (itemInFolder)
+                            {
+                                case AndroidFolder androidFolder:
+                                    await DeleteContents(androidFolder);
+                                    break;
+
+                                case AndroidFile androidFile when activity.ContentResolver is not null:
+                                    DocumentsContract.DeleteDocument(activity.ContentResolver, androidFile.Inner);
+                                    break;
+                            }
+                        }
+
+                        DocumentFile.FromTreeUri(activity, storableIsFolder.Inner)?.Delete();
+                        break;
                     }
                 }
-
-                DocumentFile.FromTreeUri(activity, storageFolder.Inner)?.Delete();
             }
         }
 
@@ -117,7 +133,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         {
             var newFolder = Document?.CreateDirectory(name);
             if (newFolder is null)
-                throw new UnauthorizedAccessException("Could not create a folder.");
+                throw new UnauthorizedAccessException("Could not create Android folder.");
 
             return Task.FromResult<IChildFolder>(new AndroidFolder(newFolder.Uri, activity, this, permissionRoot));
         }
@@ -133,7 +149,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             var newFile = Document?.CreateFile(mimeType, name);
             if (newFile is null)
-                throw new UnauthorizedAccessException("Could not create a file.");
+                throw new UnauthorizedAccessException("Could not create Android file.");
 
             return Task.FromResult<IChildFile>(new AndroidFile(newFile.Uri, activity, this, permissionRoot));
         }
