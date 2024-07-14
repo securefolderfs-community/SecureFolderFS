@@ -9,6 +9,6 @@
 
     <uc:RecoveryPreviewControl
         ExportCommand="{x:Bind ViewModel.RecoveryViewModel.ExportCommand}"
-        MasterKey="{x:Bind ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}"
-        RevealCommand="{x:Bind ViewModel.RevealMasterKeyCommand}" />
+        IsExpanded="True"
+        MasterKey="{x:Bind ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}" />
 </Page>

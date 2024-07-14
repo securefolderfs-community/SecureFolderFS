@@ -97,7 +97,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         private static void AssertCanPick()
         {
             if (!OperatingSystem.IsIOSVersionAtLeast(14))
-                throw new NotSupportedException("Picking folders on iOS<14 is unsupported.");
+                throw new NotSupportedException("Picking folders on iOS<14 is not supported.");
         }
     }
 }

@@ -8,9 +8,9 @@
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
-    xmlns:vm2="using:SecureFolderFS.UI.ViewModels"
-    xmlns:vm3="using:SecureFolderFS.Uno.ViewModels"
+    xmlns:vm="using:SecureFolderFS.UI.ViewModels"
+    xmlns:vm2="using:SecureFolderFS.Uno.ViewModels"
+    xmlns:vm3="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
     x:Name="RootControl"
     mc:Ignorable="d">
 
@@ -19,7 +19,7 @@
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
         <!--  Password Template  -->
-        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm2:PasswordLoginViewModel">
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
             <StackPanel Spacing="24">
                 <!--  Password Control  -->
                 <uc:PasswordControl
@@ -43,7 +43,7 @@
         </DataTemplate>
 
         <!--  Key File Template  -->
-        <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm2:KeyFileLoginViewModel">
+        <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm:KeyFileLoginViewModel">
             <StackPanel Spacing="24">
                 <!--  Icon  -->
                 <FontIcon
@@ -70,7 +70,7 @@
         </DataTemplate>
 
         <!--  Windows Hello Template  -->
-        <DataTemplate x:Key="WindowsHelloTemplate" x:DataType="vm3:WindowsHelloLoginViewModel">
+        <DataTemplate x:Key="WindowsHelloTemplate" x:DataType="vm2:WindowsHelloLoginViewModel">
             <StackPanel Spacing="24">
                 <!--  Icon  -->
                 <FontIcon
@@ -97,7 +97,7 @@
         </DataTemplate>
 
         <!--  Migration Template  -->
-        <DataTemplate x:Key="MigrationTemplate" x:DataType="vm:MigrationViewModel">
+        <DataTemplate x:Key="MigrationTemplate" x:DataType="vm3:MigrationViewModel">
             <StackPanel Spacing="4">
                 <!--  Title  -->
                 <InfoBar
@@ -142,7 +142,7 @@
         </DataTemplate>
 
         <!--  Error Template  -->
-        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm:ErrorViewModel">
+        <DataTemplate x:Key="ErrorTemplate" x:DataType="vm3:ErrorViewModel">
             <StackPanel Spacing="4">
                 <TextBlock
                     HorizontalAlignment="Center"

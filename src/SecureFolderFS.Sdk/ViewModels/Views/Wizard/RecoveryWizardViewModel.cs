@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             Title = "VaultRecovery".ToLocalized();
             ContinueText = "Continue".ToLocalized();
             CancelText = "Cancel".ToLocalized();
-            CanContinue = false;
+            CanContinue = true;
             CanCancel = false;
             Folder = folder;
 
@@ -66,12 +66,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public override void OnDisappearing()
         {
             _unlockContract?.Dispose();
-        }
-
-        [RelayCommand]
-        private void RevealMasterKey()
-        {
-            CanContinue = true;
         }
     }
 }

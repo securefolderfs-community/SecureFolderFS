@@ -65,6 +65,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 else
                     CurrentViewModel = new ErrorViewModel(validationResult.GetMessage());
             }
+
+            // TODO: VaultWatcherModel.InitAsync is never called
         }
 
         [RelayCommand]

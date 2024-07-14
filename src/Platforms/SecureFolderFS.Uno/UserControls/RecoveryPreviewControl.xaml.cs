@@ -19,7 +19,6 @@ namespace SecureFolderFS.Uno.UserControls
             get => (string?)GetValue(MasterKeyProperty);
             set => SetValue(MasterKeyProperty, value);
         }
-
         public static readonly DependencyProperty MasterKeyProperty =
             DependencyProperty.Register(nameof(MasterKey), typeof(string), typeof(RecoveryPreviewControl), new PropertyMetadata(null));
 
@@ -28,7 +27,6 @@ namespace SecureFolderFS.Uno.UserControls
             get => (ICommand?)GetValue(ExportCommandProperty);
             set => SetValue(ExportCommandProperty, value);
         }
-
         public static readonly DependencyProperty ExportCommandProperty =
             DependencyProperty.Register(nameof(ExportCommand), typeof(ICommand), typeof(RecoveryPreviewControl), new PropertyMetadata(null));
 
@@ -37,8 +35,15 @@ namespace SecureFolderFS.Uno.UserControls
             get => (ICommand?)GetValue(RevealCommandProperty);
             set => SetValue(RevealCommandProperty, value);
         }
-
         public static readonly DependencyProperty RevealCommandProperty =
             DependencyProperty.Register(nameof(RevealCommand), typeof(ICommand), typeof(RecoveryPreviewControl), new PropertyMetadata(null));
+
+        public bool IsExpanded
+        {
+            get => (bool)GetValue(IsExpandedProperty);
+            set => SetValue(IsExpandedProperty, value);
+        }
+        public static readonly DependencyProperty IsExpandedProperty =
+            DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(RecoveryPreviewControl), new PropertyMetadata(false));
     }
 }

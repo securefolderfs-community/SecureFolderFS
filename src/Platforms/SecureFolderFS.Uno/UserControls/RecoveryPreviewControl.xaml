@@ -24,7 +24,8 @@
             Title="{l:ResourceString Name=RevealMasterKey}"
             Grid.Row="1"
             BlockMode="Expandable"
-            ExpanderExpandingCommand="{x:Bind RevealCommand, Mode=OneWay}">
+            ExpanderExpandingCommand="{x:Bind RevealCommand, Mode=OneWay}"
+            IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE8D7;" />
             </ucab:ActionBlockControl.Icon>

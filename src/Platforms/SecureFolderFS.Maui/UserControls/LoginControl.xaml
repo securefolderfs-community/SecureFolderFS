@@ -5,6 +5,8 @@
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mic="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk">
@@ -34,6 +36,47 @@
             </ContentView>
         </DataTemplate>
 
+        <!--  Key File Template  -->
+        <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm:KeyFileLoginViewModel">
+            <ContentView>
+                <VerticalStackLayout Spacing="24">
+                    <!--  Logo  -->
+                    <Grid>
+                        <mi:MauiIcon
+                            HorizontalOptions="Center"
+                            Icon="{mi:Material Key}"
+                            OnPlatforms="Android" />
+                        <mi:MauiIcon
+                            HorizontalOptions="Center"
+                            Icon="{mic:Cupertino Doc}"
+                            OnPlatforms="iOS" />
+                    </Grid>
+
+                    <!--  Title  -->
+                    <Label
+                        HorizontalOptions="Center"
+                        Opacity="0.8"
+                        Text="Authenticate using a Key File" />
+
+                    <!--  Authenticate  -->
+                    <OnPlatform x:TypeArguments="View">
+                        <On Platform="Android">
+                            <mdc:Button
+                                Command="{Binding ProvideCredentialsCommand}"
+                                HorizontalOptions="Center"
+                                Text="Setup" />
+                        </On>
+                        <On Platform="iOS">
+                            <Button
+                                Command="{Binding ProvideCredentialsCommand}"
+                                HorizontalOptions="Center"
+                                Text="Setup" />
+                        </On>
+                    </OnPlatform>
+                </VerticalStackLayout>
+            </ContentView>
+        </DataTemplate>
+
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
             <ContentView>
@@ -54,7 +97,7 @@
     </ContentView.Resources>
 
     <Grid x:Name="RootGrid" x:DataType="local:LoginControl">
-        <local:ContentPresentation ViewContent="{Binding LoginTypeViewModel, Mode=OneWay}">
+        <local:ContentPresentation ViewContent="{Binding CurrentViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
                 <ts:LoginMethodTemplateSelector ErrorTemplate="{StaticResource ErrorTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
             </local:ContentPresentation.TemplateSelector>

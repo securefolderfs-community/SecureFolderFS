@@ -1,0 +1,106 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.RegisterControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mic="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI">
+
+    <ContentView.Resources>
+        <!--  Password Template  -->
+        <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordCreationViewModel">
+            <ContentView>
+                <OnPlatform x:TypeArguments="View">
+                    <On Platform="Android">
+                        <VerticalStackLayout Spacing="16">
+                            <VerticalStackLayout>
+                                <Label HorizontalOptions="Fill" Text="{l:ResourceString Name=NewPassword}" />
+                                <mdc:TextField
+                                    HorizontalOptions="Fill"
+                                    InputType="Password"
+                                    LabelText="{l:ResourceString Name=Password}"
+                                    SupportingText=""
+                                    Text="{Binding PrimaryPassword, Mode=TwoWay}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout>
+                                <Label HorizontalOptions="Fill" Text="{l:ResourceString Name=RepeatPassword}" />
+                                <mdc:TextField
+                                    HorizontalOptions="Fill"
+                                    InputType="Password"
+                                    LabelText="{l:ResourceString Name=Password}"
+                                    SupportingText=""
+                                    Text="{Binding SecondaryPassword, Mode=TwoWay}" />
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </On>
+                    <On Platform="iOS">
+                        <VerticalStackLayout Spacing="16">
+                            <VerticalStackLayout>
+                                <Label Text="{l:ResourceString Name=NewPassword}" />
+                                <Entry IsPassword="True" Text="{Binding PrimaryPassword, Mode=TwoWay}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout>
+                                <Label Text="{l:ResourceString Name=RepeatPassword}" />
+                                <Entry IsPassword="True" Text="{Binding SecondaryPassword, Mode=TwoWay}" />
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </On>
+                </OnPlatform>
+            </ContentView>
+        </DataTemplate>
+
+        <!--  Key File Template  -->
+        <DataTemplate x:Key="KeyFileTemplate" x:DataType="vm:KeyFileCreationViewModel">
+            <ContentView>
+                <VerticalStackLayout Spacing="24">
+                    <!--  Logo  -->
+                    <Grid>
+                        <mi:MauiIcon
+                            HorizontalOptions="Center"
+                            Icon="{mi:Material Key}"
+                            OnPlatforms="Android" />
+                        <mi:MauiIcon
+                            HorizontalOptions="Center"
+                            Icon="{mic:Cupertino Doc}"
+                            OnPlatforms="iOS" />
+                    </Grid>
+
+                    <!--  Title  -->
+                    <Label
+                        HorizontalOptions="Center"
+                        Opacity="0.8"
+                        Text="Setup Key File authentication" />
+
+                    <!--  Authenticate  -->
+                    <OnPlatform x:TypeArguments="View">
+                        <On Platform="Android">
+                            <mdc:Button
+                                Command="{Binding ProvideCredentialsCommand}"
+                                HorizontalOptions="Center"
+                                Text="Setup" />
+                        </On>
+                        <On Platform="iOS">
+                            <Button
+                                Command="{Binding ProvideCredentialsCommand}"
+                                HorizontalOptions="Center"
+                                Text="Setup" />
+                        </On>
+                    </OnPlatform>
+                </VerticalStackLayout>
+            </ContentView>
+        </DataTemplate>
+    </ContentView.Resources>
+
+    <Grid x:Name="RootGrid" x:DataType="local:RegisterControl">
+        <uc:ContentPresentation ViewContent="{Binding CurrentViewModel, Mode=OneWay}">
+            <uc:ContentPresentation.TemplateSelector>
+                <ts:WizardAuthenticationTemplateSelector KeyFileTemplate="{StaticResource KeyFileTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
+            </uc:ContentPresentation.TemplateSelector>
+        </uc:ContentPresentation>
+    </Grid>
+</ContentView>

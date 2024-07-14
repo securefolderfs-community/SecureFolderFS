@@ -89,7 +89,6 @@
                         <Button
                             Grid.Column="0"
                             Command="{Binding CloseCommand, Mode=OneWay}"
-                            HorizontalOptions="Fill"
                             IsEnabled="True"
                             IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                             Text="{Binding CloseText, Mode=OneWay}"
@@ -106,7 +105,7 @@
                         <Button
                             Grid.Column="2"
                             Command="{Binding PrimaryCommand, Mode=OneWay}"
-                            HorizontalOptions="Fill"
+                            FontAttributes="Bold"
                             IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
                             IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                             Text="{Binding PrimaryText, Mode=OneWay}"

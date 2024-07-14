@@ -2,9 +2,9 @@ using System.ComponentModel;
 
 namespace SecureFolderFS.Maui.UserControls
 {
-    public partial class LoginControl : ContentView
+    public partial class RegisterControl : ContentView
     {
-        public LoginControl()
+        public RegisterControl()
         {
             InitializeComponent();
             RootGrid.BindingContext = this;
@@ -16,6 +16,6 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(CurrentViewModelProperty, value);
         }
         public static readonly BindableProperty CurrentViewModelProperty =
-            BindableProperty.Create(nameof(CurrentViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl), null);
+            BindableProperty.Create(nameof(CurrentViewModel), typeof(INotifyPropertyChanged), typeof(RegisterControl), null);
     }
 }
