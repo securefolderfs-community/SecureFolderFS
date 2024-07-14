@@ -19,6 +19,12 @@
         </OnPlatform>
     </NavigationPage.HasNavigationBar>
 
+    <NavigationPage.IconColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="iOS" Value="#007bff" />
+        </OnPlatform>
+    </NavigationPage.IconColor>
+
     <ContentPage.BackgroundColor>
         <OnPlatform x:TypeArguments="Color">
             <On Platform="Android" Value="Transparent" />
@@ -38,6 +44,7 @@
                         VerticalOptions="Center" />
 
                     <Button
+                        TextColor="#007bff"
                         Command="{Binding PrimaryCommand, Mode=OneWay}"
                         FontAttributes="Bold"
                         FontSize="18"

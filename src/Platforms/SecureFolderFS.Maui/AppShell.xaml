@@ -5,6 +5,7 @@
     xmlns:vw="clr-namespace:SecureFolderFS.Maui.Views"
     Title="SecureFolderFS"
     Loaded="AppShell_Loaded"
+    Shell.NavBarIsVisible="True"
     FlyoutBehavior="Disabled">
 
     <ShellContent ContentTemplate="{DataTemplate vw:MainPage}" Route="MainPage" />
