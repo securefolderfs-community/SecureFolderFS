@@ -2,11 +2,12 @@
     x:Class="SecureFolderFS.Maui.Views.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
     Title="My vaults"
@@ -40,11 +41,13 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <mi:MauiIcon
+                            <Grid
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
-                                Grid.Column="0"
-                                Icon="{mi:Material Lock}" />
+                                Grid.Column="0">
+                                <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
+                                <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
+                            </Grid>
 
                             <Label
                                 Grid.Row="0"

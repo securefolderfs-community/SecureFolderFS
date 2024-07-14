@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
@@ -15,10 +17,18 @@
 
         <!--  Login heading  -->
         <VerticalStackLayout Spacing="8">
-            <mi:MauiIcon
-                HorizontalOptions="Center"
-                Icon="{mi:Material Lock}"
-                IconSize="20" />
+            <Grid>
+                <mi:MauiIcon
+                    HorizontalOptions="Center"
+                    Icon="{mi_material:Material Lock}"
+                    IconSize="20"
+                    OnPlatforms="Android" />
+                <mi:MauiIcon
+                    HorizontalOptions="Center"
+                    Icon="{mi_cupertino:Cupertino Lock}"
+                    IconSize="20"
+                    OnPlatforms="iOS" />
+            </Grid>
             <Label
                 FontSize="20"
                 HorizontalOptions="Center"

@@ -5,7 +5,8 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
-    xmlns:mic="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:SummaryWizardPage"
     PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
@@ -21,11 +22,11 @@
             <Grid>
                 <mi:MauiIcon
                     HorizontalOptions="Center"
-                    Icon="{mi:Material Check}"
+                    Icon="{mi_material:Material Check}"
                     OnPlatforms="Android" />
                 <mi:MauiIcon
                     HorizontalOptions="Center"
-                    Icon="{mic:Cupertino TrayArrowDownFill}"
+                    Icon="{mi_cupertino:Cupertino TrayArrowDownFill}"
                     OnPlatforms="iOS" />
             </Grid>
 

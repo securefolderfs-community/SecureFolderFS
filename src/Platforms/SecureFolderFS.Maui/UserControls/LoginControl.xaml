@@ -6,7 +6,8 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
-    xmlns:mic="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
     xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk">
@@ -44,11 +45,11 @@
                     <Grid>
                         <mi:MauiIcon
                             HorizontalOptions="Center"
-                            Icon="{mi:Material Key}"
+                            Icon="{mi_material:Material Key}"
                             OnPlatforms="Android" />
                         <mi:MauiIcon
                             HorizontalOptions="Center"
-                            Icon="{mic:Cupertino Doc}"
+                            Icon="{mi_cupertino:Cupertino Doc}"
                             OnPlatforms="iOS" />
                     </Grid>
 
