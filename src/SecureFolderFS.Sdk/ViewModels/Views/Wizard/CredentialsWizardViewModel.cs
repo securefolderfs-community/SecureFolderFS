@@ -86,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IResult>(Result.Failure(null));
+            return Task.FromResult<IResult>(Result.Success);
         }
 
         /// <inheritdoc/>

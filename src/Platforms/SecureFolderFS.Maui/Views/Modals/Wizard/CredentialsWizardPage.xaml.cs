@@ -16,6 +16,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             BindingContext = this;
 
             InitializeComponent();
+            _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
         }
 
         /// <inheritdoc/>

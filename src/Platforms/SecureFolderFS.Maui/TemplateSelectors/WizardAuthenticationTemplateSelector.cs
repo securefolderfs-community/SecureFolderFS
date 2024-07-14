@@ -6,14 +6,17 @@ namespace SecureFolderFS.Maui.TemplateSelectors
     {
         public DataTemplate? PasswordTemplate { get; set; }
 
+        public DataTemplate? KeyFileTemplate { get; set; }
+
         /// <inheritdoc/>
-        protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
+        protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
         {
             return item switch
             {
                 PasswordCreationViewModel => PasswordTemplate,
+                KeyFileCreationViewModel => KeyFileTemplate,
                 _ => null
-            } ?? throw new ArgumentException("Invalid view model type specified.", nameof(item));
+            };
         }
     }
 }

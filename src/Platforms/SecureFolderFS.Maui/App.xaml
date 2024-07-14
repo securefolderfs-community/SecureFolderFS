@@ -11,7 +11,7 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
 
                 <!--  Platform styles for Android  -->
-                <mds:MaterialStyles />
+                <mds:MaterialStyles Dark="#1791ff" Light="#158de0" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

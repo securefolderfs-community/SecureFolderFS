@@ -8,8 +8,6 @@ namespace SecureFolderFS.Maui.Views.Vault
         public OverviewPage()
         {
             BindingContext = this;
-            _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
-
             InitializeComponent();
         }
 

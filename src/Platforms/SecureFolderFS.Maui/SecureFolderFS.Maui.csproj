@@ -62,6 +62,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AathifMahir.Maui.MauiIcons.Cupertino" />
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.Material" />
 		<PackageReference Include="CommunityToolkit.Maui" />
 		<PackageReference Include="IconPacks.Material" />
@@ -100,21 +101,9 @@
 	  <Compile Update="Views\Vault\OverviewPage.xaml.cs">
 	    <DependentUpon>OverviewPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Wizard\MainWizardViewControl.xaml.cs">
-	    <DependentUpon>MainWizardViewControl.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Wizard\CredentialsWizardViewControl.xaml.cs">
-	    <DependentUpon>CredentialsWizardViewControl.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Wizard\RecoveryWizardViewControl.xaml.cs">
-	    <DependentUpon>RecoveryWizardViewControl.xaml</DependentUpon>
-	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Sheets\VaultWizardSheet.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="UserControls\Navigation\ContentNavigationControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -148,21 +137,10 @@
 	  <MauiXaml Update="Views\Vault\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Wizard\LocationWizardViewControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Wizard\MainWizardViewControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Wizard\CredentialsWizardViewControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Wizard\RecoveryWizardViewControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Wizard\SummaryWizardViewControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Sheets\" />
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionSecureFolderFSMauiHideInfoBar="True" /></VisualStudio></ProjectExtensions>

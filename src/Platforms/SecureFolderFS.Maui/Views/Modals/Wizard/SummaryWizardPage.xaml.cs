@@ -15,6 +15,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             OverlayViewModel = overlayViewModel;
             BindingContext = this;
 
+            _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
             InitializeComponent();
         }
 

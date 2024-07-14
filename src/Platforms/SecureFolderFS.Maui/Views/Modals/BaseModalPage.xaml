@@ -44,7 +44,8 @@
 
                     <Grid
                         Grid.Row="2"
-                        ColumnSpacing="4"
+                        Padding="8"
+                        ColumnSpacing="8"
                         HorizontalOptions="Fill">
 
                         <Grid.ColumnDefinitions>
@@ -58,6 +59,7 @@
                             HorizontalOptions="Fill"
                             IsEnabled="True"
                             IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Style="{DynamicResource FilledTonalButtonStyle}"
                             Text="{Binding CloseText, Mode=OneWay}" />
 
                         <mdc:Button
@@ -72,35 +74,50 @@
             </On>
             <On Platform="iOS">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button
+                            Grid.Column="0"
+                            Command="{Binding CloseCommand, Mode=OneWay}"
+                            HorizontalOptions="Fill"
+                            IsEnabled="True"
+                            IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Text="{Binding CloseText, Mode=OneWay}"
+                            VerticalOptions="End" />
+
+                        <Label
+                            Grid.Column="1"
+                            Padding="16"
+                            FontAttributes="Bold"
+                            FontSize="24"
+                            HorizontalOptions="Center"
+                            Text="{Binding Title, Mode=OneWay}" />
+
+                        <Button
+                            Grid.Column="2"
+                            Command="{Binding PrimaryCommand, Mode=OneWay}"
+                            HorizontalOptions="Fill"
+                            IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                            IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Text="{Binding PrimaryText, Mode=OneWay}"
+                            VerticalOptions="End" />
+                    </Grid>
 
                     <ContentView
-                        Grid.Column="0"
-                        Grid.ColumnSpan="2"
+                        Grid.Row="1"
                         Content="{Binding ModalContent, Mode=OneWay}"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill" />
-
-                    <Button
-                        Grid.Column="0"
-                        Command="{Binding CloseCommand, Mode=OneWay}"
-                        HorizontalOptions="Fill"
-                        IsEnabled="True"
-                        IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                        Text="{Binding CloseText, Mode=OneWay}"
-                        VerticalOptions="End" />
-
-                    <Button
-                        Grid.Column="1"
-                        Command="{Binding PrimaryCommand, Mode=OneWay}"
-                        HorizontalOptions="Fill"
-                        IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
-                        IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                        Text="{Binding PrimaryText, Mode=OneWay}"
-                        VerticalOptions="End" />
                 </Grid>
             </On>
         </OnPlatform>

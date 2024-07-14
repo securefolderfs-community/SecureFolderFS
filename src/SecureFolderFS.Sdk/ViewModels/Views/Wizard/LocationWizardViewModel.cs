@@ -11,7 +11,6 @@ using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -56,6 +55,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             return Task.FromResult<IResult>(Result.Success);
         }
 
+        /// <inheritdoc/>
+        public override async void OnAppearing()
+        {
+            CanContinue = await UpdateStatusAsync();
+        }
+
         [RelayCommand]
         private async Task SelectLocationAsync(CancellationToken cancellationToken)
         {
@@ -76,8 +81,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
                 if (CreationType == NewVaultCreationType.AddExisting)
                 {
-                    var validationResult =
-                        await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
+                    var validationResult = await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
                     if (!validationResult.Successful)
                     {
                         if (validationResult.Exception is NotSupportedException)
@@ -99,8 +103,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 }
                 else
                 {
-                    var validationResult =
-                        await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
+                    var validationResult = await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
                     if (validationResult.Successful || validationResult.Exception is NotSupportedException)
                     {
                         // Check if a valid (or unsupported) vault exists at a specified path
@@ -110,18 +113,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     }
 
                     Severity = ViewSeverityType.Success;
-                    Message = "A new vault will be created in selected folder";
+                    Message = "A new vault will be created in the selected folder";
                     return true;
                 }
             }
             finally
             {
-                if (SelectedFolder is null)
-                    SelectedLocation = "No vault selected";
-                else
-                {
-                    SelectedLocation = $"..{Path.DirectorySeparatorChar}{Path.GetFileName(Path.GetDirectoryName(SelectedFolder.Id))}{Path.DirectorySeparatorChar}{SelectedFolder.Name}";
-                }
+                SelectedLocation = SelectedFolder is null ? "No vault selected" : SelectedFolder.Name;
             }
         }
     }

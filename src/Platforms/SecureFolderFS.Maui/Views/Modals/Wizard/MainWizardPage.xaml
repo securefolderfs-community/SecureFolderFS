@@ -13,22 +13,22 @@
     <md:BaseModalPage.ModalContent>
         <VerticalStackLayout Spacing="32" VerticalOptions="Center">
             <Label
-                FontSize="22"
+                FontSize="20"
                 HorizontalOptions="Center"
-                Text="Add new vault" />
+                Text="Select an option to add new vault" />
 
             <OnPlatform x:TypeArguments="View">
                 <On Platform="Android">
-                    <VerticalStackLayout Spacing="4">
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
                         <mdc:Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
                         <mdc:Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
-                    </VerticalStackLayout>
+                    </HorizontalStackLayout>
                 </On>
                 <On Platform="iOS">
-                    <VerticalStackLayout Spacing="4">
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
                         <Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
                         <Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
-                    </VerticalStackLayout>
+                    </HorizontalStackLayout>
                 </On>
             </OnPlatform>
         </VerticalStackLayout>

@@ -36,18 +36,20 @@
 
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm2:ErrorViewModel">
-            <VerticalStackLayout Spacing="4">
-                <Label
-                    FontSize="17"
-                    HorizontalOptions="Center"
-                    Text="Vault could not be loaded" />
-                <Label
-                    FontSize="12"
-                    HorizontalOptions="Center"
-                    HorizontalTextAlignment="Center"
-                    Opacity="0.8"
-                    Text="{Binding ErrorMessage, Mode=OneWay}" />
-            </VerticalStackLayout>
+            <ContentView>
+                <VerticalStackLayout Spacing="4">
+                    <Label
+                        FontSize="17"
+                        HorizontalOptions="Center"
+                        Text="Vault could not be loaded" />
+                    <Label
+                        FontSize="12"
+                        HorizontalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        Opacity="0.8"
+                        Text="{Binding ErrorMessage, Mode=OneWay}" />
+                </VerticalStackLayout>
+            </ContentView>
         </DataTemplate>
     </ContentView.Resources>
 
