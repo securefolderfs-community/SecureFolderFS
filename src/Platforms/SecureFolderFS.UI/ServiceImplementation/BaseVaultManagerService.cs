@@ -33,7 +33,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             if (vaultFolder is IModifiableFolder modifiableFolder)
             {
-                var readmeFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_README_FILENAME, false, cancellationToken);
+                var readmeFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_README_FILENAME, true, cancellationToken);
                 await readmeFile.WriteAllTextAsync(Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
             }
 

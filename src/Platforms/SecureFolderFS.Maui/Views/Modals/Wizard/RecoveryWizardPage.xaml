@@ -10,12 +10,16 @@
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
     CloseEnabled="{Binding ViewModel.CanCancel, Mode=OneWay}"
     CloseText="{Binding OverlayViewModel.SecondaryButtonText, Mode=OneWay}"
-    PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
     PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+    PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
     PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <VerticalStackLayout HorizontalOptions="Center" Spacing="16">
+        <VerticalStackLayout
+            Padding="16"
+            HorizontalOptions="Center"
+            Spacing="16"
+            VerticalOptions="Center">
             <Label Text="{l:ResourceString Name=MasterKeyDescription}" />
             <VerticalStackLayout Spacing="4">
                 <Label FontAttributes="Bold" Text="Master Key:" />

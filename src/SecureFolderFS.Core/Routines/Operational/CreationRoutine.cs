@@ -88,7 +88,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             // Create content folder
             if (_vaultFolder is IModifiableFolder modifiableFolder)
-                await modifiableFolder.CreateFolderAsync(Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, false, cancellationToken);
+                await modifiableFolder.CreateFolderAsync(Names.VAULT_CONTENT_FOLDERNAME, true, cancellationToken);
 
             // Key copies need to be created because the original ones are disposed of here
             return new CreationContract(_encKey.CreateCopy(), _macKey.CreateCopy());

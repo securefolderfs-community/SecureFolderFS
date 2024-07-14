@@ -16,42 +16,10 @@
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordCreationViewModel">
             <ContentView>
-                <OnPlatform x:TypeArguments="View">
-                    <On Platform="Android">
-                        <VerticalStackLayout Spacing="16">
-                            <VerticalStackLayout>
-                                <Label HorizontalOptions="Fill" Text="{l:ResourceString Name=NewPassword}" />
-                                <mdc:TextField
-                                    HorizontalOptions="Fill"
-                                    InputType="Password"
-                                    LabelText="{l:ResourceString Name=Password}"
-                                    SupportingText=""
-                                    Text="{Binding PrimaryPassword, Mode=TwoWay}" />
-                            </VerticalStackLayout>
-                            <VerticalStackLayout>
-                                <Label HorizontalOptions="Fill" Text="{l:ResourceString Name=RepeatPassword}" />
-                                <mdc:TextField
-                                    HorizontalOptions="Fill"
-                                    InputType="Password"
-                                    LabelText="{l:ResourceString Name=Password}"
-                                    SupportingText=""
-                                    Text="{Binding SecondaryPassword, Mode=TwoWay}" />
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
-                    </On>
-                    <On Platform="iOS">
-                        <VerticalStackLayout Spacing="16">
-                            <VerticalStackLayout>
-                                <Label Text="{l:ResourceString Name=NewPassword}" />
-                                <Entry IsPassword="True" Text="{Binding PrimaryPassword, Mode=TwoWay}" />
-                            </VerticalStackLayout>
-                            <VerticalStackLayout>
-                                <Label Text="{l:ResourceString Name=RepeatPassword}" />
-                                <Entry IsPassword="True" Text="{Binding SecondaryPassword, Mode=TwoWay}" />
-                            </VerticalStackLayout>
-                        </VerticalStackLayout>
-                    </On>
-                </OnPlatform>
+                <VerticalStackLayout Spacing="16">
+                    <local:PasswordControl Title="{l:ResourceString Name=NewPassword}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
+                    <local:PasswordControl Title="{l:ResourceString Name=RepeatPassword}" UnsecurePassword="{Binding SecondaryPassword, Mode=TwoWay}" />
+                </VerticalStackLayout>
             </ContentView>
         </DataTemplate>
 

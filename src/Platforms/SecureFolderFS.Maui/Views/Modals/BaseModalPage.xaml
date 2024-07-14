@@ -6,10 +6,7 @@
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     x:Name="Root"
-    x:DataType="local:BaseModalPage"
-    BackgroundColor="Transparent"
-    NavigationPage.HasNavigationBar="False"
-    Shell.NavBarIsVisible="False">
+    x:DataType="local:BaseModalPage">
 
     <ContentPage.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
@@ -22,11 +19,18 @@
         </OnPlatform>
     </NavigationPage.HasNavigationBar>
 
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android" Value="Transparent" />
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
+
     <NavigationPage.TitleView>
         <OnPlatform x:TypeArguments="View">
             <On Platform="iOS">
                 <Grid>
                     <Label
+                        Margin="-28,0,0,0"
                         FontAttributes="Bold"
                         FontSize="18"
                         HorizontalOptions="Center"
@@ -107,7 +111,7 @@
             </Border>
         </On>
         <On Platform="iOS">
-            <Border BackgroundColor="White" BindingContext="{x:Reference Root}">
+            <Border BindingContext="{x:Reference Root}">
                 <ContentView
                     Content="{Binding ModalContent, Mode=OneWay}"
                     HorizontalOptions="Fill"
