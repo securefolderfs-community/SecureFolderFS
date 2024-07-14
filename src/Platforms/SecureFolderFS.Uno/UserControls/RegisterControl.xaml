@@ -86,7 +86,7 @@
 
     <ContentControl HorizontalContentAlignment="Stretch" Content="{x:Bind CurrentViewModel, Mode=OneWay}">
         <ContentControl.ContentTemplateSelector>
-            <ts:WizardAuthenticationTemplateSelector
+            <ts:RegistrationTemplateSelector
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 PasswordTemplate="{StaticResource PasswordTemplate}"
                 WindowsHelloTemplate="{StaticResource WindowsHelloTemplate}" />

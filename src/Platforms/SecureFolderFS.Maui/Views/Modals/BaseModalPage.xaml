@@ -57,7 +57,7 @@
                             Grid.Column="0"
                             Command="{Binding CloseCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
-                            IsEnabled="True"
+                            IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
                             IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                             Style="{DynamicResource FilledTonalButtonStyle}"
                             Text="{Binding CloseText, Mode=OneWay}" />
@@ -89,7 +89,7 @@
                         <Button
                             Grid.Column="0"
                             Command="{Binding CloseCommand, Mode=OneWay}"
-                            IsEnabled="True"
+                            IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
                             IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                             Text="{Binding CloseText, Mode=OneWay}"
                             VerticalOptions="End" />

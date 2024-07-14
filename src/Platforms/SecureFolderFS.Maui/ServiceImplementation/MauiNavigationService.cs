@@ -17,5 +17,10 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             _ = navigationType;
             return await NavigationControl.NavigateAsync<IViewDesignation, string>(target);
         }
+
+        internal void SetCurrentViewInternal(IViewDesignation? viewDesignation)
+        {
+            CurrentView = viewDesignation;
+        }
     }
 }

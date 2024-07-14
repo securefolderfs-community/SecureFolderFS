@@ -1,3 +1,4 @@
+using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
@@ -45,6 +46,10 @@ namespace SecureFolderFS.Maui.Views
         {
             // Need to set Title here because MainPage is instantiated before services are configured
             Title = "MyVaults".ToLocalized();
+
+            // Also set the current starting view
+            if (ViewModel.NavigationService is MauiNavigationService navigationService)
+                navigationService.SetCurrentViewInternal(ViewModel);
         }
     }
 }

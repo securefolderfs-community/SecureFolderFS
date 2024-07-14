@@ -166,7 +166,7 @@
         Content="{x:Bind CurrentViewModel, Mode=OneWay}"
         IsTabStop="False">
         <ContentControl.ContentTemplateSelector>
-            <ts:LoginMethodTemplateSelector
+            <ts:LoginTemplateSelector
                 ErrorTemplate="{StaticResource ErrorTemplate}"
                 KeyFileTemplate="{StaticResource KeyFileTemplate}"
                 MigrationTemplate="{StaticResource MigrationTemplate}"

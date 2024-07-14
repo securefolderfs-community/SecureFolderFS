@@ -64,13 +64,13 @@
                             <mdc:Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 HorizontalOptions="Center"
-                                Text="Setup" />
+                                Text="Authenticate" />
                         </On>
                         <On Platform="iOS">
                             <Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 HorizontalOptions="Center"
-                                Text="Setup" />
+                                Text="Authenticate" />
                         </On>
                     </OnPlatform>
                 </VerticalStackLayout>
@@ -99,7 +99,10 @@
     <Grid x:Name="RootGrid" x:DataType="local:LoginControl">
         <local:ContentPresentation ViewContent="{Binding CurrentViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
-                <ts:LoginMethodTemplateSelector ErrorTemplate="{StaticResource ErrorTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
+                <ts:LoginTemplateSelector
+                    ErrorTemplate="{StaticResource ErrorTemplate}"
+                    KeyFileTemplate="{StaticResource KeyFileTemplate}"
+                    PasswordTemplate="{StaticResource PasswordTemplate}" />
             </local:ContentPresentation.TemplateSelector>
         </local:ContentPresentation>
     </Grid>

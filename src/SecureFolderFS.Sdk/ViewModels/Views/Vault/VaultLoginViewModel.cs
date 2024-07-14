@@ -42,9 +42,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return LoginViewModel.InitAsync(cancellationToken);
+            await LoginViewModel.InitAsync(cancellationToken);
         }
 
         [RelayCommand]

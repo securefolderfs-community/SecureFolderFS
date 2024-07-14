@@ -15,8 +15,12 @@
 
         <!--  Login heading  -->
         <VerticalStackLayout Spacing="8">
-            <mi:MauiIcon HorizontalOptions="Center" Icon="{mi:Material Lock}" />
+            <mi:MauiIcon
+                HorizontalOptions="Center"
+                Icon="{mi:Material Lock}"
+                IconSize="20" />
             <Label
+                FontSize="20"
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center"
                 Text="Vault is locked"

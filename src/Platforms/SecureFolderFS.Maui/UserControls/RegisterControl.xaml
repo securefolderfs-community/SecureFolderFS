@@ -99,7 +99,7 @@
     <Grid x:Name="RootGrid" x:DataType="local:RegisterControl">
         <uc:ContentPresentation ViewContent="{Binding CurrentViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
-                <ts:WizardAuthenticationTemplateSelector KeyFileTemplate="{StaticResource KeyFileTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
+                <ts:RegistrationTemplateSelector KeyFileTemplate="{StaticResource KeyFileTemplate}" PasswordTemplate="{StaticResource PasswordTemplate}" />
             </uc:ContentPresentation.TemplateSelector>
         </uc:ContentPresentation>
     </Grid>

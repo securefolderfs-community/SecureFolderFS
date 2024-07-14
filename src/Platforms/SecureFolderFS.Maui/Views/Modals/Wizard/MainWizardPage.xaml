@@ -8,6 +8,8 @@
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:MainWizardPage"
+    CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryButtonText, Mode=OneWay}"
     Shell.PresentationMode="ModalAnimated">
 
     <md:BaseModalPage.ModalContent>

@@ -1,11 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ViewModels;
 using SecureFolderFS.Uno.ViewModels;
 
 namespace SecureFolderFS.Uno.TemplateSelectors
 {
-    internal sealed class WizardAuthenticationTemplateSelector : BaseTemplateSelector<ObservableObject>
+    internal sealed class LoginTemplateSelector : BaseTemplateSelector<ObservableObject>
     {
         public DataTemplate? PasswordTemplate { get; set; }
 
@@ -13,13 +14,19 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 
         public DataTemplate? WindowsHelloTemplate { get; set; }
 
+        public DataTemplate? MigrationTemplate { get; set; }
+
+        public DataTemplate? ErrorTemplate { get; set; }
+
         protected override DataTemplate? SelectTemplateCore(ObservableObject? item, DependencyObject container)
         {
             return item switch
             {
-                PasswordCreationViewModel => PasswordTemplate,
-                KeyFileCreationViewModel => KeyFileTemplate,
-                WindowsHelloCreationViewModel => WindowsHelloTemplate,
+                PasswordLoginViewModel => PasswordTemplate,
+                KeyFileLoginViewModel => KeyFileTemplate,
+                WindowsHelloLoginViewModel => WindowsHelloTemplate,
+                MigrationViewModel => MigrationTemplate,
+                ErrorViewModel => ErrorTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }
