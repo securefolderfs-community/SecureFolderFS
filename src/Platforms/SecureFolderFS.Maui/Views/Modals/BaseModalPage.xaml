@@ -25,29 +25,24 @@
     <NavigationPage.TitleView>
         <OnPlatform x:TypeArguments="View">
             <On Platform="iOS">
-                <NavigationPage.HasNavigationBar>
-                    True
-                </NavigationPage.HasNavigationBar>
-                <NavigationPage.TitleView>
-                    <Grid>
-                        <Label
-                            FontAttributes="Bold"
-                            FontSize="18"
-                            HorizontalOptions="Center"
-                            Text="{Binding Title, Mode=OneWay}"
-                            VerticalOptions="Center" />
+                <Grid>
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        Text="{Binding Title, Mode=OneWay}"
+                        VerticalOptions="Center" />
 
-                        <Button
-                            Command="{Binding PrimaryCommand, Mode=OneWay}"
-                            FontAttributes="Bold"
-                            FontSize="18"
-                            HorizontalOptions="End"
-                            IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
-                            IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                            Text="{Binding PrimaryText, Mode=OneWay}"
-                            VerticalOptions="Center" />
-                    </Grid>
-                </NavigationPage.TitleView>
+                    <Button
+                        Command="{Binding PrimaryCommand, Mode=OneWay}"
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        HorizontalOptions="End"
+                        IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                        IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                        Text="{Binding PrimaryText, Mode=OneWay}"
+                        VerticalOptions="Center" />
+                </Grid>
             </On>
         </OnPlatform>
     </NavigationPage.TitleView>
