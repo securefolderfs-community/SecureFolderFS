@@ -33,10 +33,14 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         {
             // Using Shell to display modals is broken - each new page shown after a 'modal' page will be incorrectly displayed as another modal.
             // NavigationPage approach does not have this issue
+#if ANDROID
             await _sourceNavigation.PushModalAsync(new NavigationPage(this)
             {
                 BackgroundColor = Color.FromArgb("#80000000")
             });
+#elif IOS
+            await _sourceNavigation.PushModalAsync(new NavigationPage(this));
+#endif
 
             return await _modalTcs.Task;
         }

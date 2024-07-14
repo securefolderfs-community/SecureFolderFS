@@ -15,13 +15,50 @@
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </ContentPage.Resources>
 
-    <Border BackgroundColor="White" BindingContext="{x:Reference Root}">
-        <Border.StrokeShape>
-            <RoundRectangle CornerRadius="24,24,0,0" />
-        </Border.StrokeShape>
+    <NavigationPage.HasNavigationBar>
+        <OnPlatform x:TypeArguments="x:Boolean">
+            <On Platform="Android" Value="False" />
+            <On Platform="iOS" Value="True" />
+        </OnPlatform>
+    </NavigationPage.HasNavigationBar>
 
+    <NavigationPage.TitleView>
         <OnPlatform x:TypeArguments="View">
-            <On Platform="Android">
+            <On Platform="iOS">
+                <NavigationPage.HasNavigationBar>
+                    True
+                </NavigationPage.HasNavigationBar>
+                <NavigationPage.TitleView>
+                    <Grid>
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            HorizontalOptions="Center"
+                            Text="{Binding Title, Mode=OneWay}"
+                            VerticalOptions="Center" />
+
+                        <Button
+                            Command="{Binding PrimaryCommand, Mode=OneWay}"
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            HorizontalOptions="End"
+                            IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                            IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Text="{Binding PrimaryText, Mode=OneWay}"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </NavigationPage.TitleView>
+            </On>
+        </OnPlatform>
+    </NavigationPage.TitleView>
+
+    <OnPlatform x:TypeArguments="View">
+        <On Platform="Android">
+            <Border BackgroundColor="White" BindingContext="{x:Reference Root}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="24,24,0,0" />
+                </Border.StrokeShape>
+
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -33,7 +70,7 @@
                         Grid.Row="0"
                         Padding="16"
                         FontAttributes="Bold"
-                        FontSize="24"
+                        FontSize="22"
                         Text="{Binding Title, Mode=OneWay}" />
 
                     <ContentView
@@ -42,6 +79,7 @@
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill" />
 
+                    <!--  Buttons  -->
                     <Grid
                         Grid.Row="2"
                         Padding="8"
@@ -71,54 +109,15 @@
                             Text="{Binding PrimaryText, Mode=OneWay}" />
                     </Grid>
                 </Grid>
-            </On>
-            <On Platform="iOS">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <Button
-                            Grid.Column="0"
-                            Command="{Binding CloseCommand, Mode=OneWay}"
-                            IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
-                            IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                            Text="{Binding CloseText, Mode=OneWay}"
-                            VerticalOptions="End" />
-
-                        <Label
-                            Grid.Column="1"
-                            Padding="16"
-                            FontAttributes="Bold"
-                            FontSize="24"
-                            HorizontalOptions="Center"
-                            Text="{Binding Title, Mode=OneWay}" />
-
-                        <Button
-                            Grid.Column="2"
-                            Command="{Binding PrimaryCommand, Mode=OneWay}"
-                            FontAttributes="Bold"
-                            IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
-                            IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                            Text="{Binding PrimaryText, Mode=OneWay}"
-                            VerticalOptions="End" />
-                    </Grid>
-
-                    <ContentView
-                        Grid.Row="1"
-                        Content="{Binding ModalContent, Mode=OneWay}"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill" />
-                </Grid>
-            </On>
-        </OnPlatform>
-    </Border>
+            </Border>
+        </On>
+        <On Platform="iOS">
+            <Border BackgroundColor="White" BindingContext="{x:Reference Root}">
+                <ContentView
+                    Content="{Binding ModalContent, Mode=OneWay}"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill" />
+            </Border>
+        </On>
+    </OnPlatform>
 </ContentPage>

@@ -73,7 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             return Task.CompletedTask;
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task AddNewVaultAsync(CancellationToken cancellationToken)
         {
             var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenSettingsAsync(CancellationToken cancellationToken)
         {
             await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);

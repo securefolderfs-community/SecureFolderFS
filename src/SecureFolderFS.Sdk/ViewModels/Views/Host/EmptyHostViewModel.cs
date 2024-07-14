@@ -34,13 +34,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             await _rootNavigationService.TryNavigateAsync(() => new MainHostViewModel(_vaultCollectionModel), false);
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task AddNewVaultAsync()
         {
             await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenSettingsAsync()
         {
             await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
