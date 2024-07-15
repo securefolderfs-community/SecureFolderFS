@@ -12,6 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
@@ -22,9 +23,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         private readonly string? _vaultId;
         private readonly IDisposable? _unlockContract;
 
-        public IFolder Folder { get; }
+        [ObservableProperty] private RecoveryPreviewControlViewModel _RecoveryViewModel;
 
-        public RecoveryPreviewControlViewModel RecoveryViewModel { get; }
+        public IFolder Folder { get; }
 
         public RecoveryWizardViewModel(IFolder folder, IResult? additionalData)
         {

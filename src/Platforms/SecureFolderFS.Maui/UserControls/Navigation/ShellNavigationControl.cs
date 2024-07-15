@@ -1,4 +1,5 @@
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.Views.Vault;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
@@ -9,10 +10,6 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
     internal sealed class ShellNavigationControl : INavigationControl
     {
         public static ShellNavigationControl Instance { get; } = new();
-
-        private ShellNavigationControl()
-        {
-        }
 
         /// <inheritdoc/>
         public async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default)
@@ -26,6 +23,9 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
                 VaultPropertiesViewModel => "PropertiesPage",
                 _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
+
+            if (target is VaultOverviewViewModel && Shell.Current.CurrentPage is LoginPage)
+                url = $"../{url}";
 
             await Shell.Current.GoToAsync(url, target.ToViewModelParameter());
             return true;

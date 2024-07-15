@@ -27,10 +27,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async Task ExportAsync(string? exportHint, CancellationToken cancellationToken)
         {
             _ = VaultName ?? throw new ArgumentNullException(nameof(VaultName));
+            switch (exportHint?.ToLowerInvariant())
+            {
+                case "print":
+                {
+                    await ThreadingService.ChangeThreadAsync();
+                    if (await PrinterService.IsSupportedAsync())
+                        await PrinterService.PrintMasterKeyAsync(VaultName, VaultId, _MasterKey);
 
-            await ThreadingService.ChangeThreadAsync();
-            if (await PrinterService.IsSupportedAsync())
-                await PrinterService.PrintMasterKeyAsync(VaultName, VaultId, _MasterKey);
+                    break;
+                }
+
+                case "share":
+                {
+                    // TODO: Share
+                    break;
+                }
+
+                default: break;
+            }
         }
     }
 }

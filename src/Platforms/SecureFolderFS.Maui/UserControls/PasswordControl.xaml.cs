@@ -1,11 +1,13 @@
+using SecureFolderFS.Sdk.Extensions;
+
 namespace SecureFolderFS.Maui.UserControls
 {
     public partial class PasswordControl : ContentView
     {
         public PasswordControl()
         {
-            BindingContext = Root;
             InitializeComponent();
+            RootGrid.BindingContext = this;
         }
 
         public string? Title
@@ -14,7 +16,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(TitleProperty, value);
         }
         public static readonly BindableProperty TitleProperty =
-            BindableProperty.Create(nameof(Title), typeof(string), typeof(PasswordControl), defaultValue: null);
+            BindableProperty.Create(nameof(Title), typeof(string), typeof(PasswordControl), defaultValue: "EnterPassword".ToLocalized());
 
         public string? Placeholder
         {
@@ -22,7 +24,7 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(PlaceholderProperty, value);
         }
         public static readonly BindableProperty PlaceholderProperty =
-            BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(PasswordControl), defaultValue: null);
+            BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(PasswordControl), defaultValue: "Password".ToLocalized());
 
         public string? UnsecurePassword
         {
@@ -30,6 +32,6 @@ namespace SecureFolderFS.Maui.UserControls
             set => SetValue(UnsecurePasswordProperty, value);
         }
         public static readonly BindableProperty UnsecurePasswordProperty =
-            BindableProperty.Create(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), defaultValue: null);
+            BindableProperty.Create(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), defaultValue: null, defaultBindingMode: BindingMode.TwoWay);
     }
 }

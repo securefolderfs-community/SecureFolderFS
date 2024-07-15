@@ -48,7 +48,7 @@ namespace SecureFolderFS.UI.ViewModels
         }
 
         /// <inheritdoc/>
-        public override Task<IKey> SignAsync(string id, byte[] data, CancellationToken cancellationToken = default)
+        public override Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet."));
         }

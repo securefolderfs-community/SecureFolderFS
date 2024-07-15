@@ -10,6 +10,7 @@
 
     <ContentPage.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
     </ContentPage.Resources>
 
     <NavigationPage.HasNavigationBar>
@@ -34,8 +35,15 @@
     <NavigationPage.TitleView>
         <OnPlatform x:TypeArguments="View">
             <On Platform="iOS">
-                <Grid>
+                <Grid HorizontalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
                     <Label
+                        Grid.Column="1"
                         Margin="-28,0,0,0"
                         FontAttributes="Bold"
                         FontSize="18"
@@ -44,7 +52,7 @@
                         VerticalOptions="Center" />
 
                     <Button
-                        TextColor="#007bff"
+                        Grid.Column="2"
                         Command="{Binding PrimaryCommand, Mode=OneWay}"
                         FontAttributes="Bold"
                         FontSize="18"
@@ -52,6 +60,7 @@
                         IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
                         IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                         Text="{Binding PrimaryText, Mode=OneWay}"
+                        TextColor="#007bff"
                         VerticalOptions="Center" />
                 </Grid>
             </On>
@@ -98,7 +107,9 @@
                         </Grid.ColumnDefinitions>
 
                         <mdc:Button
+                            x:Name="CloseButton"
                             Grid.Column="0"
+                            Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference PrimaryButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
                             Command="{Binding CloseCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
@@ -107,7 +118,9 @@
                             Text="{Binding CloseText, Mode=OneWay}" />
 
                         <mdc:Button
-                            Grid.Column="1"
+                            x:Name="PrimaryButton"
+                            Grid.Column="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}, ConverterParameter='column'}"
+                            Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
                             Command="{Binding PrimaryCommand, Mode=OneWay}"
                             HorizontalOptions="Fill"
                             IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"

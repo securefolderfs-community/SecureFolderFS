@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             _vaultId = Guid.NewGuid().ToString();
 
             ContinueText = "Continue".ToLocalized();
-            Title = "SetPassword".ToLocalized();
+            Title = "SetCredentials".ToLocalized();
             CancelText = "Cancel".ToLocalized();
             CanContinue = false;
             CanCancel = true;
@@ -101,6 +101,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
             // Get authentication options
+            AuthenticationOptions.Clear();
             await foreach (var item in VaultService.GetCreationAsync(Folder, _vaultId))
                 AuthenticationOptions.Add(item);
 
@@ -109,6 +110,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
             static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherViewModel> destination)
             {
+                destination.Clear();
                 foreach (var item in source)
                 {
                     var name = string.IsNullOrEmpty(item) ? "NoEncryption".ToLocalized() : item;

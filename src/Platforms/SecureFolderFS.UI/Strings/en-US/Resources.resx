@@ -380,8 +380,8 @@
   <data name="SelectVaultPath" xml:space="preserve">
     <value>Select vault path</value>
   </data>
-  <data name="SetPassword" xml:space="preserve">
-    <value>Set password</value>
+  <data name="SetCredentials" xml:space="preserve">
+    <value>Set credentials</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
