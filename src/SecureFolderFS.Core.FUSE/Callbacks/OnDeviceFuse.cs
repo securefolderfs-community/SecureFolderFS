@@ -323,7 +323,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             var access = mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite;
             var handle = handlesManager.OpenFileHandle(ciphertextPath, mode, access, FileShare.ReadWrite, options);
-            if (handle == Constants.INVALID_HANDLE)
+            if (handle == FileSystem.Constants.INVALID_HANDLE)
                 return -EACCES;
 
             fi.fh = handle;
@@ -440,7 +440,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                 return -ENOTEMPTY;
 
             DirectoryIdAccess.RemoveDirectoryId(ciphertextPath);
-            File.Delete(Path.Combine(ciphertextPath, Constants.DIRECTORY_ID_FILENAME));
+            File.Delete(Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME));
 
             fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
             {
@@ -507,7 +507,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (fiRef.IsNull)
             {
                 var newHandle = handlesManager.OpenFileHandle(ciphertextPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.None);
-                if (newHandle == Constants.INVALID_HANDLE)
+                if (newHandle == FileSystem.Constants.INVALID_HANDLE)
                     return -EIO;
 
                 handle = handlesManager.GetHandle<FuseFileHandle>(newHandle)!;

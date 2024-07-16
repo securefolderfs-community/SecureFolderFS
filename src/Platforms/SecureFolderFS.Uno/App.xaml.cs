@@ -26,9 +26,9 @@ namespace SecureFolderFS.Uno
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
-            new Windows.Helpers.WindowsLifecycleHelper();
+            new Platforms.Windows.Helpers.WindowsLifecycleHelper();
 #elif HAS_UNO_SKIA
-            new SkiaGtk.Helpers.SkiaLifecycleHelper();
+            new Platforms.SkiaGtk.Helpers.SkiaLifecycleHelper();
 #else
             true ? throw new PlatformNotSupportedException() : null;
 #endif
