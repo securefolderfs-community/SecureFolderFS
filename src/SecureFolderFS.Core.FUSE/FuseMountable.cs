@@ -45,8 +45,9 @@ namespace SecureFolderFS.Core.FUSE
         }
 
         /// <inheritdoc/>
-        public Task<IVFSRootFolder> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public async Task<IVFSRoot> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
+            await Task.CompletedTask;
             if (!Directory.Exists(MountDirectory))
                 Directory.CreateDirectory(MountDirectory);
 
@@ -77,7 +78,7 @@ namespace SecureFolderFS.Core.FUSE
                 Directory.CreateDirectory(mountPoint);
 
             _fuseWrapper.StartFileSystem(mountPoint, fuseMountOptions);
-            return Task.FromResult<IVFSRootFolder>(new FuseRootFolder(_fuseWrapper, new SystemFolder(mountPoint), _options.FileSystemStatistics));
+            return new FuseRootFolder(_fuseWrapper, new SystemFolder(mountPoint), _options.FileSystemStatistics);
         }
 
         public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)

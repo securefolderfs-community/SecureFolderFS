@@ -103,6 +103,7 @@ namespace SecureFolderFS.Core.Routines.Operational
         /// <inheritdoc/>
         public void Dispose()
         {
+            Security.Dispose();
             _encKey.Dispose();
             _macKey.Dispose();
         }

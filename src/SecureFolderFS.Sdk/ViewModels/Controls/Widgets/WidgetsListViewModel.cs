@@ -54,11 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                     return new VaultHealthWidgetViewModel(widgetModel);
 
                 case Constants.Widgets.GRAPHS_WIDGET_ID:
-                {
-                    return _unlockedVaultViewModel.StorageRoot is IVFSRootFolder { ReadWriteStatistics: { } statistics }
-                        ? new GraphsWidgetViewModel(statistics, widgetModel)
-                        : null;
-                }
+                    return new GraphsWidgetViewModel(_unlockedVaultViewModel.StorageRoot.ReadWriteStatistics, widgetModel);
 
                 default:
                     return null;

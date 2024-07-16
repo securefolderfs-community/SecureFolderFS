@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.FileSystem.AppModels;
 
-namespace SecureFolderFS.Core.Dokany.AppModels
+namespace SecureFolderFS.Core.Dokany
 {
     /// <inheritdoc cref="MountOptions"/>
     public sealed class DokanyMountOptions : MountOptions

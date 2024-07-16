@@ -45,8 +45,9 @@ namespace SecureFolderFS.Core.WebDav
         }
 
         /// <inheritdoc/>
-        public async Task<IVFSRootFolder> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public async Task<IVFSRoot> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
+            await Task.CompletedTask;
             if (mountOptions is not WebDavMountOptions webDavMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
@@ -82,8 +83,6 @@ namespace SecureFolderFS.Core.WebDav
 
             // TODO: Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
-
-            await Task.CompletedTask;
             return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options.FileSystemStatistics);
         }
 

@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using OwlCore.Storage;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Threading.Tasks;
 
@@ -15,14 +15,14 @@ namespace SecureFolderFS.Sdk.ViewModels
         /// <summary>
         /// Gets the unlocked root folder of the vault.
         /// </summary>
-        public IFolder StorageRoot { get; }
+        public IVFSRoot StorageRoot { get; }
 
         /// <summary>
         /// Gets the vault model associated with the vault.
         /// </summary>
         public IVaultModel VaultModel { get; }
 
-        public UnlockedVaultViewModel(IFolder storageRoot, IVaultModel vaultModel)
+        public UnlockedVaultViewModel(IVFSRoot storageRoot, IVaultModel vaultModel)
         {
             StorageRoot = storageRoot;
             VaultModel = vaultModel;

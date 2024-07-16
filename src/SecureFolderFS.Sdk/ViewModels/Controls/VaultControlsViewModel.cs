@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            await FileExplorerService.TryOpenInFileExplorerAsync(_unlockedVaultViewModel.StorageRoot, cancellationToken);
+            await FileExplorerService.TryOpenInFileExplorerAsync(_unlockedVaultViewModel.StorageRoot.Inner, cancellationToken);
         }
 
         [RelayCommand]

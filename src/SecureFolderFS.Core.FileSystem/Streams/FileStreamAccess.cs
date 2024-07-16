@@ -7,6 +7,7 @@ using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
+    /// <inheritdoc cref="IStreamsAccess"/>
     public sealed class FileStreamAccess : IStreamsAccess
     {
         private readonly Security _security;

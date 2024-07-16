@@ -1,8 +1,4 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Directories;
-using SecureFolderFS.Core.FileSystem.Statistics;
-
-namespace SecureFolderFS.Core.FileSystem.Paths
+﻿namespace SecureFolderFS.Core.FileSystem.Paths
 {
     /// <summary>
     /// Manages and converts paths between their ciphertext and cleartext forms.

@@ -4,7 +4,7 @@ using Android.Database;
 using Android.OS;
 using Android.Provider;
 using static Android.Provider.DocumentsContract;
-using static SecureFolderFS.Core.MobileFS.Platforms.Android.Projections;
+using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {

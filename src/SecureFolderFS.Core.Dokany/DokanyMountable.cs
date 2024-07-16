@@ -65,13 +65,13 @@ namespace SecureFolderFS.Core.Dokany
             error |= dokanVersion > Constants.DOKAN_MAX_VERSION ? FileSystemAvailabilityType.VersionTooHigh : error;
             error |= dokanVersion < Constants.DOKAN_VERSION ? FileSystemAvailabilityType.VersionTooLow : error;
 
-            error = error == FileSystemAvailabilityType.None ? FileSystemAvailabilityType.Available : error;
-            return error;
+            return error == FileSystemAvailabilityType.None ? FileSystemAvailabilityType.Available : error;
         }
 
         /// <inheritdoc/>
-        public Task<IVFSRootFolder> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public async Task<IVFSRoot> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
+            await Task.CompletedTask;
             if (mountOptions is not DokanyMountOptions dokanyMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(DokanyMountOptions)}.");
 
@@ -80,7 +80,7 @@ namespace SecureFolderFS.Core.Dokany
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 
             _dokanyWrapper.StartFileSystem(mountPath);
-            return Task.FromResult<IVFSRootFolder>(new DokanyRootFolder(_dokanyWrapper, new SystemFolder(mountPath), _options.FileSystemStatistics));
+            return new DokanyVFSRoot(_dokanyWrapper, new SystemFolder(mountPath), _options.FileSystemStatistics);
         }
 
         public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)

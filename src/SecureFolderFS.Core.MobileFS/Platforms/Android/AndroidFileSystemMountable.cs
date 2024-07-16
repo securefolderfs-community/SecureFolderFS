@@ -15,13 +15,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
     /// <inheritdoc cref="IMountableFileSystem"/>
     public sealed class AndroidFileSystemMountable : IMountableFileSystem, IAvailabilityChecker
     {
+        private readonly IFolder _storageRoot;
         private readonly FileSystemOptions _options;
-        private readonly IFolder _opaqueRoot;
 
-        private AndroidFileSystemMountable(FileSystemOptions options, IFolder opaqueRoot)
+        private AndroidFileSystemMountable(IFolder storageRoot, FileSystemOptions options)
         {
+            _storageRoot = storageRoot;
             _options = options;
-            _opaqueRoot = opaqueRoot;
         }
 
         /// <inheritdoc/>
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
         }
 
         /// <inheritdoc/>
-        public Task<IVFSRootFolder> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public Task<IVFSRoot> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedError();
         }
@@ -42,7 +42,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
             IStreamsAccess streamsAccess)
         {
             var cryptoFolder = new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
-            return new AndroidFileSystemMountable(options, cryptoFolder);
+            return new AndroidFileSystemMountable(cryptoFolder, options);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.SecureStore;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.Routines.Operational;
@@ -11,7 +12,9 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.UI.ServiceImplementation
@@ -72,7 +75,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IFolder> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
+        public virtual async Task<IVFSRoot> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
         {
             try
             {
@@ -90,7 +93,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     FileSystemStatistics = statisticsModel
                 });
 
-                return new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
+                var cryptoFolder = new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
+                var disposable = new AggregatedDisposable([streamsAccess, unlockContract /*pathConverter*/, /*directoryIdCache*/]);
+
+                return new LocalVFSRoot(disposable, cryptoFolder, statisticsModel);
             }
             catch (Exception ex)
             {
@@ -103,6 +109,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public abstract Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
+        public abstract Task<IVFSRoot> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
     }
 }

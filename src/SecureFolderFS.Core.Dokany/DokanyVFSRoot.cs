@@ -1,12 +1,13 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Enums;
-using System.Threading.Tasks;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.Dokany
 {
-    internal sealed class DokanyRootFolder : WrappedFileSystemFolder
+    /// <inheritdoc cref="IVFSRoot"/>
+    internal sealed class DokanyVFSRoot : VFSRoot
     {
         private readonly DokanyWrapper _dokanyWrapper;
         private bool _disposed;
@@ -14,7 +15,7 @@ namespace SecureFolderFS.Core.Dokany
         /// <inheritdoc/>
         public override string FileSystemName { get; } = "Dokany";
 
-        public DokanyRootFolder(DokanyWrapper dokanyWrapper, IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
+        public DokanyVFSRoot(DokanyWrapper dokanyWrapper, IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
             : base(storageRoot, readWriteStatistics)
         {
             _dokanyWrapper = dokanyWrapper;
@@ -23,8 +24,12 @@ namespace SecureFolderFS.Core.Dokany
         /// <inheritdoc/>
         public override async ValueTask DisposeAsync()
         {
-            if (!_disposed)
-                _disposed = await Task.Run(() => _dokanyWrapper.CloseFileSystem(FileSystemCloseMethod.CloseForcefully));
+            if (_disposed)
+                return;
+         
+            _disposed = await Task.Run(() => _dokanyWrapper.CloseFileSystem(FileSystemCloseMethod.CloseForcefully));
+            if (_disposed)
+                FileSystemManager.Instance.RemoveRoot(this);
         }
     }
 }
