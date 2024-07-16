@@ -1,6 +1,5 @@
-using Android.Content;
-using Android.Database;
-using Android.Provider;
+using Android.App;
+using AndroidX.DocumentFile.Provider;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Maui.Platforms.Android.Storage;
@@ -37,7 +36,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             {
                 _ when typeof(TStorable).IsAssignableFrom(typeof(IFile)) => new AndroidFile(androidUri, activity, bookmarkId: bookmarkId),
                 _ when typeof(TStorable).IsAssignableFrom(typeof(IFolder)) => new AndroidFolder(androidUri, activity, bookmarkId: bookmarkId),
-                _ => IsUriFolder(androidUri, activity.ContentResolver)
+                _ => IsUriFolder(androidUri, activity)
                     ? new AndroidFolder(androidUri, activity, bookmarkId: bookmarkId)
                     : new AndroidFile(androidUri, activity, bookmarkId: bookmarkId)
             });
@@ -51,33 +50,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             return AndroidUri.Parse(persistableId);
         }
 
-        private static bool IsUriFolder(AndroidUri uri, ContentResolver contentResolver) // TODO: This function is unreliable determining storage types
+        private static bool IsUriFolder(AndroidUri uri, Activity activity)
         {
-            // Obtain the MIME type of the URI
-            var mimeType = contentResolver.GetType(uri);
-
-            if (mimeType != null && mimeType.StartsWith("vnd.android.document"))
-                return true;
-            
-            // Use DocumentsContract to determine if the URI is a directory
-            ICursor? cursor = null;
-            try
-            {
-                var projection = new[] { DocumentsContract.Document.ColumnMimeType };
-                cursor = contentResolver.Query(uri, projection, null, null, null);
-                if (cursor is not null && cursor.MoveToFirst())
-                {
-                    var documentMimeType = cursor.GetString(0);
-                    if (DocumentsContract.Document.MimeTypeDir.Equals(documentMimeType))
-                        return true;
-                }
-            }
-            finally
-            {
-                cursor?.Close();
-            }
-            
-            return false;
+            var document = DocumentFile.FromTreeUri(activity, uri);
+            return document?.IsDirectory ?? false;
         }
     }
 }

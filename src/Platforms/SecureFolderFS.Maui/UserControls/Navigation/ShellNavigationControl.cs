@@ -24,7 +24,12 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
                 _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 
+            // Logging in, remove LoginPage when going back
             if (target is VaultOverviewViewModel && Shell.Current.CurrentPage is LoginPage)
+                url = $"../{url}";
+
+            // Logging out, remove OverviewPage when going back
+            if (target is VaultLoginViewModel && Shell.Current.CurrentPage is OverviewPage)
                 url = $"../{url}";
 
             await Shell.Current.GoToAsync(url, target.ToViewModelParameter());

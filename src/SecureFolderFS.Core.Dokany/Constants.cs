@@ -2,13 +2,18 @@
 {
     public static class Constants
     {
-        public const string DOKAN_DLL = "dokan2.dll";
-        public const int DOKAN_VERSION = 205;
-        public const int DOKAN_MAX_VERSION = 210;
+        public const string FILE_SYSTEM_NAME = "Dokany";
+
+        internal static class Dokan
+        {
+            public const string DOKAN_DLL = "dokan2.dll";
+            public const int DOKAN_VERSION = 205;
+            public const int DOKAN_MAX_VERSION = 210;
+        }
 
         internal static class FileSystem
         {
-            public const string FILESYSTEM_NAME = "NTFS";
+            public const string FSRID = "NTFS";
             public const uint MAX_COMPONENT_LENGTH = 256;
             public const int MAX_DRIVE_INFO_CALLS_UNTIL_GIVE_UP = 5;
 

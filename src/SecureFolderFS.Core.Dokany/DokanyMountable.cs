@@ -62,8 +62,8 @@ namespace SecureFolderFS.Core.Dokany
             }
 
             var error = FileSystemAvailabilityType.None;
-            error |= dokanVersion > Constants.DOKAN_MAX_VERSION ? FileSystemAvailabilityType.VersionTooHigh : error;
-            error |= dokanVersion < Constants.DOKAN_VERSION ? FileSystemAvailabilityType.VersionTooLow : error;
+            error |= dokanVersion > Constants.Dokan.DOKAN_MAX_VERSION ? FileSystemAvailabilityType.VersionTooHigh : error;
+            error |= dokanVersion < Constants.Dokan.DOKAN_VERSION ? FileSystemAvailabilityType.VersionTooLow : error;
 
             return error == FileSystemAvailabilityType.None ? FileSystemAvailabilityType.Available : error;
         }
@@ -80,14 +80,14 @@ namespace SecureFolderFS.Core.Dokany
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 
             _dokanyWrapper.StartFileSystem(mountPath);
-            return new DokanyVFSRoot(_dokanyWrapper, new SystemFolder(mountPath), _options.FileSystemStatistics);
+            return new DokanyVFSRoot(_dokanyWrapper, new SystemFolder(mountPath), _options);
         }
 
         public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
         {
             var volumeModel = new DokanyVolumeModel()
             {
-                FileSystemName = Constants.FileSystem.FILESYSTEM_NAME,
+                FileSystemName = Constants.FileSystem.FSRID,
                 MaximumComponentLength = Constants.FileSystem.MAX_COMPONENT_LENGTH,
                 VolumeName = options.VolumeName,
                 FileSystemFeatures = FileSystemFeatures.CasePreservedNames

@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Threading.Tasks;
 
@@ -11,15 +12,19 @@ namespace SecureFolderFS.Core.FileSystem
         public IFolder Inner { get; }
 
         /// <inheritdoc/>
+        public string StorageName { get; }
+
+        /// <inheritdoc/>
         public abstract string FileSystemName { get; }
 
         /// <inheritdoc/>
         public virtual IReadWriteStatistics ReadWriteStatistics { get; }
 
-        protected VFSRoot(IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
+        protected VFSRoot(IFolder storageRoot, FileSystemOptions options)
         {
             Inner = storageRoot;
-            ReadWriteStatistics = readWriteStatistics;
+            StorageName = options.VolumeName;
+            ReadWriteStatistics = options.FileSystemStatistics;
 
             // Automatically add created root
             FileSystemManager.Instance.AddRoot(this);

@@ -1,5 +1,6 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
@@ -7,18 +8,26 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
     /// <inheritdoc cref="IVFSRoot"/>
     internal sealed class AndroidVFSRoot : VFSRoot
     {
-        /// <inheritdoc/>
-        public override string FileSystemName { get; } = "Android SAF";
+        private bool _disposed;
 
-        public AndroidVFSRoot(IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
-            : base(storageRoot, readWriteStatistics)
+        /// <inheritdoc/>
+        public override string FileSystemName { get; } = Constants.ANDROID_FILE_SYSTEM_NAME;
+
+        public AndroidVFSRoot(IFolder storageRoot, FileSystemOptions options)
+            : base(storageRoot, options)
         {
         }
 
         /// <inheritdoc/>
         public override ValueTask DisposeAsync()
         {
-            throw new NotImplementedException();
+            if (!_disposed)
+            {
+                _disposed = true;
+                FileSystemManager.Instance.RemoveRoot(this);
+            }
+
+            return ValueTask.CompletedTask;
         }
     }
 }

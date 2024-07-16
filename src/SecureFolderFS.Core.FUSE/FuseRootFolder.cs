@@ -1,5 +1,6 @@
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
@@ -12,10 +13,10 @@ namespace SecureFolderFS.Core.FUSE
         private bool _disposed;
 
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = "FUSE";
+        public override string FileSystemName { get; } = Constants.FILE_SYSTEM_NAME;
 
-        public FuseRootFolder(FuseWrapper fuseWrapper, IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
-            : base(storageRoot, readWriteStatistics)
+        public FuseRootFolder(FuseWrapper fuseWrapper, IFolder storageRoot, FileSystemOptions options)
+            : base(storageRoot, options)
         {
             _fuseWrapper = fuseWrapper;
         }

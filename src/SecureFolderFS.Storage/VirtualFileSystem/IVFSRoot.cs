@@ -10,6 +10,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
     public interface IVFSRoot : IWrapper<IFolder>, IAsyncDisposable, IDisposable
     {
         /// <summary>
+        /// Gets the display name of the storage.
+        /// </summary>
+        string StorageName { get; }
+
+        /// <summary>
         /// Gets the fully-qualified name of the file system this storage root is a part of.
         /// </summary>
         string FileSystemName { get; }

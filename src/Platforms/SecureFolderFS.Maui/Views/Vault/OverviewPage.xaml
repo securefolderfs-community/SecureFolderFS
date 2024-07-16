@@ -12,5 +12,6 @@
         VerticalOptions="Center">
 
         <Label Text="This is overview page" />
+        <Button Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand}" Text="dispose" />
     </VerticalStackLayout>
 </ContentPage>

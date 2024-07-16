@@ -13,7 +13,7 @@ namespace SecureFolderFS.Uno.SkiaGtk.AppModels
     internal sealed class SkiaFuseDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
-        public string Name { get; } = "FUSE";
+        public string Name { get; } = Core.FUSE.Constants.FILE_SYSTEM_NAME;
 
         /// <inheritdoc/>
         public string Id { get; } = Core.Constants.FileSystemId.FS_FUSE;

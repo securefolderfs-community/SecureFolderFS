@@ -1,5 +1,6 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Threading.Tasks;
@@ -13,10 +14,10 @@ namespace SecureFolderFS.Core.Dokany
         private bool _disposed;
 
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = "Dokany";
+        public override string FileSystemName { get; } = Constants.FILE_SYSTEM_NAME;
 
-        public DokanyVFSRoot(DokanyWrapper dokanyWrapper, IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
-            : base(storageRoot, readWriteStatistics)
+        public DokanyVFSRoot(DokanyWrapper dokanyWrapper, IFolder storageRoot, FileSystemOptions options)
+            : base(storageRoot, options)
         {
             _dokanyWrapper = dokanyWrapper;
         }

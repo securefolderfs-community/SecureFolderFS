@@ -10,7 +10,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.AppModels
     internal sealed class AndroidFileSystemDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
-        public string Name { get; } = "Android SAF";
+        public string Name { get; } = Core.MobileFS.Constants.ANDROID_FILE_SYSTEM_NAME;
 
         /// <inheritdoc/>
         public string Id { get; } = Core.Constants.FileSystemId.FS_ANDROID;

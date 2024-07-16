@@ -14,7 +14,7 @@ namespace SecureFolderFS.Uno.AppModels
     public sealed class WebDavDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
-        public string Name { get; } = "WebDav";
+        public string Name { get; } = Core.WebDav.Constants.FILE_SYSTEM_NAME;
 
         /// <inheritdoc/>
         public string Id { get; } = Core.Constants.FileSystemId.FS_WEBDAV;
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Uno.AppModels
         {
             var result = WebDavMountable.IsSupported();
             if (result == FileSystemAvailabilityType.Available)
-                return Task.FromResult<IResult>(new FileSystemResult(true, true)); // Always available
+                return Task.FromResult<IResult>(new FileSystemResult(true, true)); // Always available (canSupport)
 
             return Task.FromResult<IResult>(new FileSystemResult(true, new NotSupportedException($"WebDav file system is not supported: {result}.")));
         }

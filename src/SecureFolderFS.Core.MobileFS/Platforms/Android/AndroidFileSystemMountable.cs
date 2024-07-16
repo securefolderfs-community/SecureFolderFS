@@ -1,5 +1,4 @@
-﻿using Kotlin;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
@@ -8,6 +7,7 @@ using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android
@@ -32,9 +32,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
         }
 
         /// <inheritdoc/>
-        public Task<IVFSRoot> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public async Task<IVFSRoot> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedError();
+            await Task.CompletedTask;
+            return new AndroidVFSRoot(_storageRoot, _options);
         }
 
         public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder,

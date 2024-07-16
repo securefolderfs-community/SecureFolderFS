@@ -13,7 +13,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.AppModels
     internal sealed class WindowsDokanyDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
-        public string Name { get; } = "Dokany";
+        public string Name { get; } = Core.Dokany.Constants.FILE_SYSTEM_NAME;
 
         /// <inheritdoc/>
         public string Id { get; } = Core.Constants.FileSystemId.FS_DOKAN;

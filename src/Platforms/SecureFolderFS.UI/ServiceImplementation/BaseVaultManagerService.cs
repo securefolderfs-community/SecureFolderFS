@@ -83,20 +83,21 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
                 var statisticsModel = new ConsolidatedStatisticsModel();
                 var storageRoutine = routines.BuildStorage();
-
-                storageRoutine.SetUnlockContract(unlockContract);
-                var (directoryIdCache, _, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, new()
+                var options = new FileSystemOptions()
                 {
                     VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
                     FileSystemId = string.Empty,
                     HealthStatistics = statisticsModel,
                     FileSystemStatistics = statisticsModel
-                });
+                };
+
+                storageRoutine.SetUnlockContract(unlockContract);
+                var (directoryIdCache, _, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
 
                 var cryptoFolder = new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
                 var disposable = new AggregatedDisposable([streamsAccess, unlockContract /*pathConverter*/, /*directoryIdCache*/]);
 
-                return new LocalVFSRoot(disposable, cryptoFolder, statisticsModel);
+                return new LocalVFSRoot(disposable, cryptoFolder, options);
             }
             catch (Exception ex)
             {

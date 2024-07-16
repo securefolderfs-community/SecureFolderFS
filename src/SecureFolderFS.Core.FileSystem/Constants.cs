@@ -2,6 +2,8 @@
 {
     public static class Constants
     {
+        public const string LOCAL_FILE_SYSTEM_NAME = "AbstractStorage";
+
         public const string UNC_NAME = "securefolderfs";
         public const string DIRECTORY_ID_FILENAME = "dirid.iv";
         public const int DIRECTORY_ID_SIZE = 16;

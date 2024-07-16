@@ -83,7 +83,7 @@ namespace SecureFolderFS.Core.WebDav
 
             // TODO: Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
-            return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options.FileSystemStatistics);
+            return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options);
         }
 
         public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder,

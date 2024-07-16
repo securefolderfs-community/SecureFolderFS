@@ -159,8 +159,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         {
             var file = Document?.FindFile(name);
             if (file is not null)
-                return new AndroidFile(file.Uri, activity, this);
-            
+            {
+                if (file.IsFile)
+                    return new AndroidFile(file.Uri, activity, this, permissionRoot);
+
+                if (file.IsDirectory)
+                    return new AndroidFolder(file.Uri, activity, this, permissionRoot);
+
+                throw new InvalidOperationException("The found item is neither a file nor a folder.");
+            }
+
             var target = await GetItemsAsync(cancellationToken: cancellationToken).FirstOrDefaultAsync(x => name.Equals(x.Name, StringComparison.Ordinal), cancellationToken);
             if (target is null)
                 throw new DirectoryNotFoundException($"No storage item with the name '{name}' could be found.");

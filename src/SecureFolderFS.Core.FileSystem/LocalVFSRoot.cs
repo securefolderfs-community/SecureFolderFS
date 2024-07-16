@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Threading.Tasks;
@@ -11,10 +12,10 @@ namespace SecureFolderFS.Core.FileSystem
         private readonly IDisposable _disposable;
 
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = "Local";
+        public override string FileSystemName { get; } = Constants.LOCAL_FILE_SYSTEM_NAME;
 
-        public LocalVFSRoot(IDisposable disposable, IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
-            : base(storageRoot, readWriteStatistics)
+        public LocalVFSRoot(IDisposable disposable, IFolder storageRoot, FileSystemOptions options)
+            : base(storageRoot, options)
         {
             _disposable = disposable;
         }

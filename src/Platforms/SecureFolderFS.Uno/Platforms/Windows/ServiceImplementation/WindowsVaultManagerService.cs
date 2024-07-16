@@ -1,9 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
 using SecureFolderFS.Core.Dokany;
-using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.Routines.Operational;
 using SecureFolderFS.Core.WebDav;
@@ -12,6 +10,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 
@@ -21,7 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
     public sealed class WindowsVaultManagerService : BaseVaultManagerService
     {
         /// <inheritdoc/>
-        public override async Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
+        public override async Task<IVFSRoot> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
         {
             try
             {

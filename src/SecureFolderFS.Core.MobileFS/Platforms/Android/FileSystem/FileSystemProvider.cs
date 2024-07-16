@@ -3,13 +3,15 @@ using Android.Content;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
+using Microsoft.Maui.Platform;
+using OwlCore.Storage;
 using static Android.Provider.DocumentsContract;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
     [ContentProvider(["${applicationId}.provider"],
-        Name = "com.securefolderfs.securefolderfs.fileProvider",
+        Name = "com.securefolderfs.securefolderfs.provider",
         Permission = "android.permission.MANAGE_DOCUMENTS",
         Enabled = true,
         Exported = true,
@@ -17,9 +19,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
     [IntentFilter(["android.content.action.DOCUMENTS_PROVIDER"])]
     internal sealed class FileSystemProvider : DocumentsProvider
     {
+        private RootCollection? _rootCollection;
+
         /// <inheritdoc/>
         public override bool OnCreate()
         {
+            _rootCollection = new(Platform.AppContext);
             return true;
         }
 
@@ -27,20 +32,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         public override ICursor? QueryRoots(string[]? projection)
         {
             var matrix = new MatrixCursor(projection ?? DefaultRootProjection);
+            foreach (var item in _rootCollection?.Roots ?? Enumerable.Empty<SafRoot>())
+            {
+                var row = matrix.NewRow();
+                if (row is null)
+                    return null;
 
-            // TODO(fs): Check if there are any available (unlocked) vaults.
-            // Return an empty cursor if there are no vaults unlocked
-
-            var row = matrix.NewRow();
-            if (row is null)
-                return null;
-
-            // Temporary root properties (including IDs) to be replaced with multiple-roots approach
-            row.Add(Root.ColumnRootId, Constants.FILE_SYSTEM_ROOT_ID);
-            row.Add(Root.ColumnIcon, 0x0108002f); // ic_lock_lock 0x0108002f
-            row.Add(Root.ColumnTitle, "Test MobileFS (SecureFolderFS)");
-            row.Add(Root.ColumnDocumentId,  Constants.ROOT_DIRECTORY_ID);
-            row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+                row.Add(Root.ColumnRootId, item.Rid);
+                row.Add(Root.ColumnIcon, Constants.AndroidSaf.IC_LOCK_LOCK);
+                row.Add(Root.ColumnTitle, item.StorageRoot.StorageName);
+                row.Add(Root.ColumnDocumentId, GetDocumentIdForStorable(item.StorageRoot.Inner, item.Rid));
+                row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+            }
 
             return matrix;
         }
@@ -61,6 +64,15 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         public override ICursor? QueryDocument(string? documentId, string[]? projection)
         {
             return new MatrixCursor(projection ?? DefaultDocumentProjection);
+        }
+
+        private string GetDocumentIdForStorable(IStorable storable, string rid)
+        {
+            var safRoot = _rootCollection?.GetRootForRid(rid);
+            if (storable.Id == safRoot?.StorageRoot.Inner.Id)
+                return rid + ':';
+
+            return $"{rid}:{storable.Id.Substring(0, safRoot?.StorageRoot.Inner.Id.Length ?? 0)}";
         }
     }
 }

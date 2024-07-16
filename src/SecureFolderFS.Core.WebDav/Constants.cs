@@ -1,7 +1,9 @@
 ﻿namespace SecureFolderFS.Core.WebDav
 {
-    internal static class Constants
+    public static class Constants
     {
+        public const string FILE_SYSTEM_NAME = "WebDav";
+
         internal static class Headers
         {
             public const string E_TAG = "Etag";

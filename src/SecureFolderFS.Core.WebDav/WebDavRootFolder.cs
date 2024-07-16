@@ -1,5 +1,6 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Threading.Tasks;
@@ -13,10 +14,10 @@ namespace SecureFolderFS.Core.WebDav
         private bool _disposed;
 
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = "WebDav";
+        public override string FileSystemName { get; } = Constants.FILE_SYSTEM_NAME;
 
-        public WebDavRootFolder(WebDavWrapper webDavWrapper, IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
-            : base(storageRoot, readWriteStatistics)
+        public WebDavRootFolder(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemOptions options)
+            : base(storageRoot, options)
         {
             _webDavWrapper = webDavWrapper;
         }

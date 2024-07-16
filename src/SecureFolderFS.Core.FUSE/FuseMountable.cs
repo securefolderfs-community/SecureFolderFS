@@ -78,7 +78,7 @@ namespace SecureFolderFS.Core.FUSE
                 Directory.CreateDirectory(mountPoint);
 
             _fuseWrapper.StartFileSystem(mountPoint, fuseMountOptions);
-            return new FuseRootFolder(_fuseWrapper, new SystemFolder(mountPoint), _options.FileSystemStatistics);
+            return new FuseRootFolder(_fuseWrapper, new SystemFolder(mountPoint), _options);
         }
 
         public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
