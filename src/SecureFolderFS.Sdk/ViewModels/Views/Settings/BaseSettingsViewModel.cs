@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Attributes;
+﻿using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
 using System.Threading;
@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         protected BaseSettingsViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
         }
 
         /// <inheritdoc/>

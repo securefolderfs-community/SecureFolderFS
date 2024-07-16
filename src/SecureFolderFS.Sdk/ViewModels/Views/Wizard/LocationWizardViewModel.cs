@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public LocationWizardViewModel(NewVaultCreationType creationType)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             CreationType = creationType;
 
             CanCancel = true;

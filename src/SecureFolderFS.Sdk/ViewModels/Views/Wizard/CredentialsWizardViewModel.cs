@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
@@ -8,6 +7,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using System;
@@ -38,7 +38,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public CredentialsWizardViewModel(IModifiableFolder folder)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Folder = folder;
             _credentials = new();
             _vaultId = Guid.NewGuid().ToString();

@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -13,7 +14,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Enums;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 
         public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationType allowedStage)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _allowedStage = allowedStage;
             AuthenticationOptions = new();

@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Attributes;
+﻿using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
 using System.Threading;
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private PaymentDialogViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
         }
 
         /// <inheritdoc/>

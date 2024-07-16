@@ -1,19 +1,19 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Octokit;
-using SecureFolderFS.Sdk.DataModels;
-using SecureFolderFS.Sdk.Services;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Octokit;
+using SecureFolderFS.Sdk.DataModels;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
     /// <inheritdoc cref="IChangelogService"/>
     public sealed class GitHubChangelogService : IChangelogService
     {
-        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
+        private IApplicationService ApplicationService { get; } = DI.Service<IApplicationService>();
 
         /// <inheritdoc/>
         public async Task<ChangelogDataModel?> GetChangelogAsync(Version version, string platform, CancellationToken cancellationToken)

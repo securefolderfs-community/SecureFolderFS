@@ -1,13 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Settings;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.UI.Enums;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.UI.Enums;
 
 namespace SecureFolderFS.UI.Helpers
 {
@@ -16,7 +16,7 @@ namespace SecureFolderFS.UI.Helpers
     /// </summary>
     public abstract class ThemeHelper : ObservableObject, IAsyncInitialize, INotifyPropertyChanged
     {
-        protected IAppSettings AppSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().AppSettings;
+        protected IAppSettings AppSettings { get; } = DI.Service<ISettingsService>().AppSettings;
 
         private ThemeType _CurrentTheme;
         /// <summary>

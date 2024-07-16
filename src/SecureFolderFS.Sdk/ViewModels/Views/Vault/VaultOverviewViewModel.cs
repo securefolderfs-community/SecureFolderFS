@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets;
+using SecureFolderFS.Shared;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public VaultOverviewViewModel(UnlockedVaultViewModel unlockedVaultViewModel, VaultControlsViewModel vaultControlsViewModel, WidgetsListViewModel widgetsViewModel)
             : base(unlockedVaultViewModel)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             WidgetsViewModel = widgetsViewModel;
             VaultControlsViewModel = vaultControlsViewModel;
             Title = UnlockedVaultViewModel.VaultModel.VaultName;

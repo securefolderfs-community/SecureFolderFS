@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Attributes;
+﻿using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Shared;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
     {
         public PrivacySettingsViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             UserSettings.PropertyChanged += UserSettings_PropertyChanged;
         }
 

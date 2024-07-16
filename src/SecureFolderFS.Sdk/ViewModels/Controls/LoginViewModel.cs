@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
@@ -7,6 +6,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         public LoginViewModel(IVaultModel vaultModel, bool enableMigration)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _enableMigration = enableMigration;
             _vaultModel = vaultModel;
             _keyChain = new();

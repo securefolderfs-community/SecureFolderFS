@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -23,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels
 
         public MainViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
         }
 
         /// <inheritdoc/>
@@ -39,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             // Check if the user was introduced (OOBE)
             if (false && !SettingsService.AppSettings.IsIntroduced)
             {
-                var dialogService = Ioc.Default.GetRequiredService<IOverlayService>();
+                var dialogService = DI.Service<IOverlayService>();
                 var dialogResult = await OverlayService.ShowAsync(new AgreementDialogViewModel());
                 if (dialogResult is IResult<DialogOption> { Value: DialogOption.Primary } || dialogResult.Successful)
                 {

@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -22,7 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 
         public FileSystemBannerViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             FileSystemAdapters = new();
         }
 

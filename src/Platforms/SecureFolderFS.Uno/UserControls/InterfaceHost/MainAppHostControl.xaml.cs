@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,6 +10,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         private bool _isInitialized;
         private bool _isCompactMode; // WINDOWS only
 
-        private ISettingsService SettingsService { get; } = Ioc.Default.GetRequiredService<ISettingsService>();
+        private ISettingsService SettingsService { get; } = DI.Service<ISettingsService>();
 
         public MainAppHostControl()
         {

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
@@ -7,6 +6,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
 using System.Threading;
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             _vaultNavigator = vaultNavigator;
             _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]

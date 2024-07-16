@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System.ComponentModel;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public IntroductionDialogViewModel(int maxAmount)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _maxAmount = maxAmount;
             CurrentStep = $"1/{maxAmount}";
             TaskCompletion = new();

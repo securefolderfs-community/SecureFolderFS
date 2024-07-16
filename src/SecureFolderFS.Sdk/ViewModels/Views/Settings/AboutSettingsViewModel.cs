@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         public AboutSettingsViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Title = "SettingsAbout".ToLocalized();
             AppVersion = $"{ApplicationService.AppVersion} ({ApplicationService.Platform})";
         }

@@ -1,5 +1,5 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Services;
+﻿using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Sdk.Extensions
 {
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.Extensions
 
             static ILocalizationService? GetLocalizationService(ILocalizationService? fallback)
             {
-                FallbackLocalizationService ??= fallback ?? Ioc.Default.GetService<ILocalizationService>();
+                FallbackLocalizationService ??= fallback ?? DI.OptionalService<ILocalizationService>();
                 return FallbackLocalizationService;
             }
         }

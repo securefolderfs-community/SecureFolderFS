@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.ComponentModel;
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public ChangelogOverlayViewModel(Version changelogSince)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _changelogSince = changelogSince;
         }
 

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
@@ -10,6 +9,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public VaultLoginViewModel(IVaultModel vaultModel, INavigator vaultNavigator)
             : base(vaultModel)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Title = vaultModel.VaultName;
             VaultNavigator = vaultNavigator;
             _LoginViewModel = new(vaultModel, true);

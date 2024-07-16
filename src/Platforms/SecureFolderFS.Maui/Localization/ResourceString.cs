@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Maui.Localization
 {
@@ -17,7 +17,7 @@ namespace SecureFolderFS.Maui.Localization
         /// <inheritdoc/>
         public object ProvideValue(IServiceProvider serviceProvider)
         {
-            LocalizationService ??= Ioc.Default.GetService<ILocalizationService>();
+            LocalizationService ??= DI.OptionalService<ILocalizationService>();
             if (LocalizationService is null)
                 return $"{{{Name}}}";
 

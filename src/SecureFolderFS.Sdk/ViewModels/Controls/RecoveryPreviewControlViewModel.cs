@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         public RecoveryPreviewControlViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
         }
 
         [RelayCommand]

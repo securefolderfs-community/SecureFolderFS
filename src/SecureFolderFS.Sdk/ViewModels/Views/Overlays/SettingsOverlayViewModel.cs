@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Attributes;
+﻿using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private SettingsOverlayViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
         }
     }
 }

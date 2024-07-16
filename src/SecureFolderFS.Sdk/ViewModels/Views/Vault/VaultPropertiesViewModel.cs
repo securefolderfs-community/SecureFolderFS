@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
@@ -7,6 +6,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public VaultPropertiesViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
             : base(unlockedVaultViewModel)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Title = "VaultProperties".ToLocalized();
         }
 

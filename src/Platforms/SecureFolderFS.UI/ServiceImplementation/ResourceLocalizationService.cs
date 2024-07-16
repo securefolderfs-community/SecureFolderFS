@@ -1,6 +1,3 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,6 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Resources;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -27,7 +27,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             "id-ID", "hi-IN"
         };
 
-        protected IAppSettings AppSettings { get; } = Ioc.Default.GetRequiredService<ISettingsService>().AppSettings;
+        protected IAppSettings AppSettings { get; } = DI.Service<ISettingsService>().AppSettings;
 
         protected virtual ResourceManager ResourceManager { get; }
 

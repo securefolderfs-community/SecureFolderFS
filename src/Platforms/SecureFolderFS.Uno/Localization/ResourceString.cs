@@ -1,7 +1,8 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Markup;
 using SecureFolderFS.Sdk.Services;
 using System.ComponentModel;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Uno.Localization
 {
@@ -19,7 +20,7 @@ namespace SecureFolderFS.Uno.Localization
         /// <inheritdoc/>
         protected override object ProvideValue()
         {
-            LocalizationService ??= Ioc.Default.GetService<ILocalizationService>();
+            LocalizationService ??= DI.OptionalService<ILocalizationService>();
             if (LocalizationService is null)
                 return $"{{{Name}}}";
 

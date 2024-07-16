@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
 using System;
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public VaultModel(IFolder folder, string? vaultName = null, DateTime? lastAccessDate = null)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Folder = folder;
             VaultName = vaultName ?? folder.Name;
             LastAccessDate = lastAccessDate;

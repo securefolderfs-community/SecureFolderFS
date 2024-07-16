@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
+using SecureFolderFS.Shared;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 
         public GeneralSettingsViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Title = "SettingsGeneral".ToLocalized();
             BannerViewModel = new();
             Languages = new();

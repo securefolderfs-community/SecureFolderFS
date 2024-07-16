@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public RecoveryOverlayViewModel(IFolder vaultFolder)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
         }
 

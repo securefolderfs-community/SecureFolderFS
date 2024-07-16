@@ -1,18 +1,17 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
@@ -29,7 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public RecoveryWizardViewModel(IFolder folder, IResult? additionalData)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Title = "VaultRecovery".ToLocalized();
             ContinueText = "Continue".ToLocalized();
             CancelText = "Cancel".ToLocalized();

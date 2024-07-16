@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using static SecureFolderFS.Core.Constants.Vault;
 
@@ -16,8 +16,8 @@ namespace SecureFolderFS.UI.Helpers
     {
         public static async Task<string> GetBestFileSystemAsync(CancellationToken cancellationToken)
         {
-            var vaultService = Ioc.Default.GetRequiredService<IVaultService>();
-            var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
+            var vaultService = DI.Service<IVaultService>();
+            var settingsService = DI.Service<ISettingsService>();
 
             string? lastBestId = null;
             foreach (var item in vaultService.GetFileSystems())

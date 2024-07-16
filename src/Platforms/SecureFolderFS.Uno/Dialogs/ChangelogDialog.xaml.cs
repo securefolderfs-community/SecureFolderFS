@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
@@ -16,7 +16,7 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class ChangelogDialog : ContentDialog, IOverlayControl
     {
-        private IApplicationService ApplicationService { get; } = Ioc.Default.GetRequiredService<IApplicationService>();
+        private IApplicationService ApplicationService { get; } = DI.Service<IApplicationService>();
 
         public ChangelogOverlayViewModel? ViewModel
         {

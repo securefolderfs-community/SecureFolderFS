@@ -1,7 +1,7 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -18,7 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public LicensesOverlayViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Licenses = new();
         }
 

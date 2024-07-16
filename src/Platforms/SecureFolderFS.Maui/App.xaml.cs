@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
+using SecureFolderFS.Shared;
 using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui
@@ -36,7 +37,7 @@ namespace SecureFolderFS.Maui
             ServiceProvider = ApplicationLifecycle.ServiceCollection.BuildServiceProvider();
 
             // Register IoC
-            Ioc.Default.ConfigureServices(ServiceProvider);
+            DI.Default.SetServiceProvider(ServiceProvider);
             base.OnStart();
         }
 

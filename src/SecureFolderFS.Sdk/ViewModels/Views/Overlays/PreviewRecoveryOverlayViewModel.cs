@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.ComponentModel;
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public PreviewRecoveryOverlayViewModel(IVaultModel vaultModel)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _vaultModel = vaultModel;
             _loginViewModel = new(_vaultModel, false);
             _recoveryViewModel = new();

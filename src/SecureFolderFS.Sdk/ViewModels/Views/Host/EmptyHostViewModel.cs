@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System.ComponentModel;
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 
         public EmptyHostViewModel(INavigationService rootNavigationService, IVaultCollectionModel vaultCollectionModel)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _rootNavigationService = rootNavigationService;
             _vaultCollectionModel = vaultCollectionModel;
         }

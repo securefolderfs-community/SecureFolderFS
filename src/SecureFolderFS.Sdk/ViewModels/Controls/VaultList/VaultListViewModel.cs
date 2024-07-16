@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
         public VaultListViewModel(IVaultCollectionModel vaultCollectionModel)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _vaultCollectionModel = vaultCollectionModel;
             _Items = new();
             _SearchViewModel = new(Items);

@@ -1,13 +1,13 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Uno
             ServiceProvider = ApplicationLifecycle.ServiceCollection.BuildServiceProvider();
 
             // Register IoC
-            Ioc.Default.ConfigureServices(ServiceProvider);
+            DI.Default.SetServiceProvider(ServiceProvider);
 
             // Prepare MainWindow
             EnsureEarlyWindow(MainWindow);
@@ -128,7 +128,7 @@ namespace SecureFolderFS.Uno
 #if WINDOWS
         private static async void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
         {
-            var settingsService = Ioc.Default.GetRequiredService<ISettingsService>();
+            var settingsService = SecureFolderFS.Shared.DI.Service<ISettingsService>();
             await settingsService.TrySaveAsync();
         }
 #endif

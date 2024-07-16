@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.ComponentModel;
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             _vaultCollectionModel = vaultCollectionModel;
             LastAccessDate = vaultModel.LastAccessDate;
             VaultModel = vaultModel;
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
 
             WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
             WeakReferenceMessenger.Default.Register<VaultLockedMessage>(this);
