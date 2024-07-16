@@ -14,6 +14,13 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
     internal sealed class IOSVaultService : BaseVaultService
     {
         /// <inheritdoc/>
+        public override IEnumerable<IFileSystemInfoModel> GetFileSystems()
+        {
+            // TODO: Add ios FS
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
         public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
@@ -45,7 +52,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
             yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD);
@@ -54,13 +62,6 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
             yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE);
 
             await Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public override IEnumerable<IFileSystemInfoModel> GetFileSystems()
-        {
-            // TODO: Add ios FS
-            throw new NotImplementedException();
         }
     }
 }

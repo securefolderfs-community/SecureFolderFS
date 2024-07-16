@@ -6,16 +6,18 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
 using SecureFolderFS.Uno.AppModels;
+using SecureFolderFS.Uno.Platforms.Windows.AppModels;
 using SecureFolderFS.Uno.ViewModels;
-using SecureFolderFS.Uno.Windows.AppModels;
 using Windows.Security.Credentials;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
+    /// <inheritdoc cref="IVaultService"/>
     internal sealed class WindowsVaultService : BaseVaultService
     {
         /// <inheritdoc/>

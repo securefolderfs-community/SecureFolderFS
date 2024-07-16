@@ -12,7 +12,7 @@ using SecureFolderFS.Shared.Helpers;
 using Windows.ApplicationModel;
 using Windows.Services.Store;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IUpdateService"/>
     internal sealed class MicrosoftStoreUpdateService : IUpdateService

@@ -6,7 +6,7 @@ using Android.Provider;
 using static Android.Provider.DocumentsContract;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.Projections;
 
-namespace SecureFolderFS.Core.MobileFS.Platforms.Android
+namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
     [ContentProvider(["${applicationId}.provider"],
         Name = "com.securefolderfs.securefolderfs.fileProvider",
@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
         Exported = true,
         GrantUriPermissions = true)]
     [IntentFilter(["android.content.action.DOCUMENTS_PROVIDER"])]
-    public sealed class AndroidFileSystemProvider : DocumentsProvider
+    internal sealed class FileSystemProvider : DocumentsProvider
     {
         /// <inheritdoc/>
         public override bool OnCreate()

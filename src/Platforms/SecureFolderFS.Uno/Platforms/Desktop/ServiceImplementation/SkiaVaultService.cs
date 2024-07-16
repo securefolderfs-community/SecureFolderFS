@@ -58,7 +58,8 @@ namespace SecureFolderFS.Uno.SkiaGtk.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
             yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD);

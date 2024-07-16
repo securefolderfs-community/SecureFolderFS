@@ -43,22 +43,22 @@ namespace SecureFolderFS.Core.Dokany
             {
                 dokanVersion = UnsafeNativeApis.DokanVersion();
                 if (dokanVersion <= 0)
-                    return FileSystemAvailabilityType.ModuleNotAvailable;
+                    return FileSystemAvailabilityType.ModuleUnavailable;
             }
             catch (Exception)
             {
-                return FileSystemAvailabilityType.ModuleNotAvailable;
+                return FileSystemAvailabilityType.ModuleUnavailable;
             }
 
             try
             {
                 dokanDriverVersion = UnsafeNativeApis.DokanDriverVersion();
                 if (dokanDriverVersion <= 0)
-                    return FileSystemAvailabilityType.CoreNotAvailable;
+                    return FileSystemAvailabilityType.CoreUnavailable;
             }
             catch (Exception)
             {
-                return FileSystemAvailabilityType.CoreNotAvailable;
+                return FileSystemAvailabilityType.CoreUnavailable;
             }
 
             var error = FileSystemAvailabilityType.None;

@@ -36,11 +36,11 @@ namespace SecureFolderFS.Core.FUSE
         {
             try
             {
-                return Fuse.CheckDependencies() ? FileSystemAvailabilityType.Available : FileSystemAvailabilityType.ModuleNotAvailable;
+                return Fuse.CheckDependencies() ? FileSystemAvailabilityType.Available : FileSystemAvailabilityType.ModuleUnavailable;
             }
             catch (TypeInitializationException) // Fuse might sometimes throw (tested on Windows)
             {
-                return FileSystemAvailabilityType.ModuleNotAvailable;
+                return FileSystemAvailabilityType.ModuleUnavailable;
             }
         }
 

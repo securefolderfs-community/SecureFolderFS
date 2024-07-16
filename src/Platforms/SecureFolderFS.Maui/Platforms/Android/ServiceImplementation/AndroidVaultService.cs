@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Maui.Platforms.Android.AppModels;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -13,6 +14,12 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     /// <inheritdoc cref="IVaultService"/>
     internal sealed class AndroidVaultService : BaseVaultService
     {
+        /// <inheritdoc/>
+        public override IEnumerable<IFileSystemInfoModel> GetFileSystems()
+        {
+            yield return new AndroidFileSystemDescriptor();
+        }
+
         /// <inheritdoc/>
         public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
@@ -54,13 +61,6 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE);
 
             await Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public override IEnumerable<IFileSystemInfoModel> GetFileSystems()
-        {
-            // TODO: Add android DocumentsProvider FS
-            throw new NotImplementedException();
         }
     }
 }

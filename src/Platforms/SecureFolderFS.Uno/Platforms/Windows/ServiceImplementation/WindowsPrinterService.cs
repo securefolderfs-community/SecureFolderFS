@@ -6,11 +6,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Printing;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Uno.Platforms.Windows.Extensions;
 using SecureFolderFS.Uno.Views.PrintPages;
-using SecureFolderFS.Uno.Windows.Extensions;
 using Windows.Graphics.Printing;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IPrinterService"/>
     internal sealed class WindowsPrinterService : IPrinterService

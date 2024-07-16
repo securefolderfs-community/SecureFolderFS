@@ -1,4 +1,3 @@
-#if WINDOWS
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultManagerService"/>
     public sealed class WindowsVaultManagerService : BaseVaultManagerService
@@ -66,4 +65,3 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
         }
     }
 }
-#endif

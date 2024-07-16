@@ -8,9 +8,9 @@ using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.Uno.Windows.ServiceImplementation;
-using Windows.Storage;
 using SecureFolderFS.Uno.Extensions;
+using SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation;
+using Windows.Storage;
 
 #if !DEBUG
 using Microsoft.AppCenter;
@@ -19,7 +19,7 @@ using Microsoft.AppCenter.Crashes;
 using SecureFolderFS.UI.Api;
 #endif
 
-namespace SecureFolderFS.Uno.Windows.Helpers
+namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 {
     /// <inheritdoc cref="BaseLifecycleHelper"/>
     internal sealed class WindowsLifecycleHelper : BaseLifecycleHelper

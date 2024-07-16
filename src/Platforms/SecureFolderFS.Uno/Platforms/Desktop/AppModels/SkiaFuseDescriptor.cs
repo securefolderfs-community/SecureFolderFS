@@ -24,11 +24,11 @@ namespace SecureFolderFS.Uno.SkiaGtk.AppModels
             var result = FuseMountable.IsSupported();
             if (result != FileSystemAvailabilityType.Available)
             {
-                // TODO: Use translation strings
+                // TODO: Use localization strings
                 var message = result switch
                 {
-                    (FileSystemAvailabilityType.ModuleNotAvailable or
-                    FileSystemAvailabilityType.CoreNotAvailable) => "libfuse3 has not been detected. Please install libfuse3 to continue using SecureFolderFS.",
+                    FileSystemAvailabilityType.ModuleUnavailable or
+                    FileSystemAvailabilityType.CoreUnavailable => "libfuse3 has not been detected. Please install libfuse3 to continue using SecureFolderFS.",
                     _ => "SecureFolderFS cannot work with the installed libfuse version. Please install libfuse3."
                 };
 

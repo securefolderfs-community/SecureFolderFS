@@ -32,15 +32,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
-
-        /// <inheritdoc/>
-        public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
-
-        /// <inheritdoc/>
-        public abstract IEnumerable<IFileSystemInfoModel> GetFileSystems();
-
-        /// <inheritdoc/>
         public IEnumerable<string> GetContentCiphers()
         {
             yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
@@ -68,5 +59,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 VaultId = config.Uid
             };
         }
+
+        /// <inheritdoc/>
+        public abstract IEnumerable<IFileSystemInfoModel> GetFileSystems();
+
+        /// <inheritdoc/>
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+
+        /// <inheritdoc/>
+        public abstract IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
     }
 }

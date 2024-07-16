@@ -1,7 +1,7 @@
 using System;
 using Microsoft.UI.Xaml;
 
-namespace SecureFolderFS.Uno.Windows.Extensions
+namespace SecureFolderFS.Uno.Platforms.Windows.Extensions
 {
     public static class WindowingExtensions
     {

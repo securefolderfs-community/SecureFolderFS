@@ -1,6 +1,6 @@
 ﻿using static Android.Provider.DocumentsContract;
 
-namespace SecureFolderFS.Core.MobileFS.Platforms.Android
+namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
     internal static class Projections
     {

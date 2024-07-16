@@ -1,7 +1,12 @@
 using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
+using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.MobileFS.Platforms.Android;
+using SecureFolderFS.Core.Routines.Operational;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
@@ -10,13 +15,44 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
     internal sealed class AndroidVaultManagerService : BaseVaultManagerService
     {
         /// <inheritdoc/>
-        public override Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
+        public override async Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken)
         {
-            // TODO: Add implementation for android DocumentsProvider FS
+            try
+            {
+                var contentFolder = await vaultModel.Folder.GetFolderByNameAsync(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, cancellationToken);
+                var routines = await VaultRoutines.CreateRoutinesAsync(vaultModel.Folder, StreamSerializer.Instance, cancellationToken);
+                var statisticsModel = new ConsolidatedStatisticsModel();
+                var storageRoutine = routines.BuildStorage();
+                var options = new FileSystemOptions()
+                {
+                    VolumeName = vaultModel.VaultName, // TODO: Format name to exclude illegal characters
+                    FileSystemId = await VaultHelpers.GetBestFileSystemAsync(cancellationToken),
+                    HealthStatistics = statisticsModel,
+                    FileSystemStatistics = statisticsModel
+                };
 
-            var result = new SystemFolder(Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory);
-            return Task.FromResult<IFolder>(result);
-            //throw new NotImplementedException();
+                storageRoutine.SetUnlockContract(unlockContract);
+                var (directoryIdCache, security, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
+                var mountable = options.FileSystemId switch
+                {
+                    Core.Constants.FileSystemId.FS_ANDROID => AndroidFileSystemMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
+                };
+
+                return await mountable.MountAsync(options.FileSystemId switch
+                {
+                    Core.Constants.FileSystemId.FS_ANDROID => new AndroidMountOptions(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
+                }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                // Make sure to dispose the unlock contract when failed
+                unlockContract.Dispose();
+
+                _ = ex;
+                throw;
+            }
         }
     }
 }
