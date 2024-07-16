@@ -14,7 +14,9 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class RecoveryDialog : ContentDialog, IOverlayControl
     {
+#if HAS_UNO_SKIA
         private bool _primaryClicked;
+#endif
 
         public RecoveryOverlayViewModel? ViewModel
         {
@@ -30,8 +32,12 @@ namespace SecureFolderFS.Uno.Dialogs
         /// <inheritdoc/>
         public new async Task<IResult> ShowAsync()
         {
+#if HAS_UNO_SKIA
             var result = await base.ShowAsync();
             return _primaryClicked ? ContentDialogResult.Primary.ParseOverlayOption() : result.ParseOverlayOption();
+#else
+            return (await base.ShowAsync()).ParseOverlayOption();
+#endif
         }
 
         /// <inheritdoc/>

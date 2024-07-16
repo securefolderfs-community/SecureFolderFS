@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -15,7 +16,7 @@ namespace SecureFolderFS.Uno.Views.Vault
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [INotifyPropertyChanged]
-    public sealed partial class VaultOverviewPage : Page, IDisposable
+    public sealed partial class VaultOverviewPage : Page
     {
         public VaultOverviewViewModel? ViewModel
         {
@@ -40,17 +41,12 @@ namespace SecureFolderFS.Uno.Views.Vault
         /// <inheritdoc/>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            Dispose();
-            base.OnNavigatingFrom(e);
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            foreach (var item in (WidgetsList.ItemsSource as IEnumerable))
+            foreach (var item in (WidgetsList.ItemsSource as IEnumerable) ?? Enumerable.Empty<object>())
             {
                 (item as IDisposable)?.Dispose();
             }
+
+            base.OnNavigatingFrom(e);
         }
     }
 }

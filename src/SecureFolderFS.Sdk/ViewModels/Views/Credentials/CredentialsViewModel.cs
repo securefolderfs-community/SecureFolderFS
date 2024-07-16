@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [RelayCommand]
         private async Task ChosenAsync() // TODO: Name tbd
         {
-
+            await Task.CompletedTask;
         }
     }
 }

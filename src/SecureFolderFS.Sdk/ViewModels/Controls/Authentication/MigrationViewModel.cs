@@ -34,9 +34,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         }
 
         [RelayCommand]
-        private async Task MigrateAsync()
+        private Task MigrateAsync()
         {
-            // TODO
+            // TODO: Implement migration
+            return Task.CompletedTask;
         }
     }
 }

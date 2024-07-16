@@ -57,7 +57,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true)
+            if (ViewModel is null || (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true))
                 return;
 
             _ = Navigation.ContentFrame.Content;

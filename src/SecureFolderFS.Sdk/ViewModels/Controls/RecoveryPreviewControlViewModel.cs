@@ -33,7 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 {
                     await ThreadingService.ChangeThreadAsync();
                     if (await PrinterService.IsSupportedAsync())
-                        await PrinterService.PrintMasterKeyAsync(VaultName, VaultId, _MasterKey);
+                        await PrinterService.PrintMasterKeyAsync(VaultName, VaultId, MasterKey);
 
                     break;
                 }

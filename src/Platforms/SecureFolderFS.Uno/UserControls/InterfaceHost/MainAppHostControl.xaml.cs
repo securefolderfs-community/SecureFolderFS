@@ -140,6 +140,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             }
             else
                 PaneShowButton.Visibility = Visibility.Collapsed;
+#else
+            await Task.CompletedTask;
 #endif
         }
 
@@ -153,6 +155,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 await Task.Delay(1000);
                 PaneShowButton.Visibility = Visibility.Collapsed;
             }
+#else
+            await Task.CompletedTask;
 #endif
         }
 

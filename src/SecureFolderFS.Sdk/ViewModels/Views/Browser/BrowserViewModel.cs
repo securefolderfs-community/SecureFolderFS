@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
             // TODO: Add NewFolderOverlayViewModel
             _ = modifiableFolder;
-            var result = await OverlayService.ShowAsync(null);
+            var result = await OverlayService.ShowAsync(null!);
             if (result is IResult<IFolder> { Successful: true, Value: not null } folderResult)
                 folderViewModel.Items.Add(new FolderViewModel(folderResult.Value));
         }
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         protected virtual async Task CopyAsync(IEnumerable items, CancellationToken cancellationToken)
         {
             // TODO: Add CopyOverlayViewModel
-            var result = await OverlayService.ShowAsync(null);
+            var result = await OverlayService.ShowAsync(null!);
             if (result is not IResult<IFolder> { Successful: true, Value: ICreateCopyOf folderCreateCopyOf /*IDirectCopy directCopy*/ })
                 return;
 
@@ -59,7 +59,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 return;
 
             // TODO: Add MoveOverlayViewModel
-            var result = await OverlayService.ShowAsync(null);
+            var result = await OverlayService.ShowAsync(null!);
             if (result is not IResult<IFolder> { Successful: true, Value: IMoveFrom folderMoveFrom })
                 return;
 
@@ -78,7 +78,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 return;
 
             // TODO: Add DeletionOverlayViewModel
-            var result = await OverlayService.ShowAsync(null);
+            var result = await OverlayService.ShowAsync(null!);
             if (!result.Successful)
                 return;
 

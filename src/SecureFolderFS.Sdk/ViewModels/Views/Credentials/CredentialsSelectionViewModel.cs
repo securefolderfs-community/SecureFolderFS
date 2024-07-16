@@ -63,7 +63,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [RelayCommand]
         private async Task RemoveCredentialsAsync(CancellationToken cancellationToken)
         {
-
+            // TODO: Implement removing credentials option
+            await Task.CompletedTask;
         }
 
         /// <inheritdoc/>

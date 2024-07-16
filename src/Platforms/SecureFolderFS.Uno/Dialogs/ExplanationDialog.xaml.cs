@@ -22,7 +22,9 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class ExplanationDialog : ContentDialog, IOverlayControl
     {
+#if WINDOWS
         private IDisposable? _streamDisposable;
+#endif
 
         public ExplanationOverlayViewModel? ViewModel
         {
