@@ -3,25 +3,24 @@ using NWebDav.Server.Http;
 using NWebDav.Server.Locking;
 using NWebDav.Server.Props;
 using NWebDav.Server.Stores;
+using SecureFolderFS.Core.Cryptography;
+using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Streams;
 using System;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Paths;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
     internal class EncryptingDiskStoreItem : IDiskStoreItem
     {
-        private readonly IStreamsAccess _streamsAccess;
+        private readonly StreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
         private readonly FileInfo _fileInfo;
         private readonly Security _security;
 
-        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, IStreamsAccess streamsAccess, IPathConverter pathConverter, Security security)
+        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, StreamsAccess streamsAccess, IPathConverter pathConverter, Security security)
         {
             LockingManager = lockingManager;
             _fileInfo = fileInfo;
@@ -127,8 +126,8 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public string Name => _pathConverter.GetCleartextFileName(_fileInfo.FullName) ?? string.Empty;
         public string UniqueKey => _fileInfo.FullName;
         public string FullPath => _pathConverter.ToCleartext(_fileInfo.FullName) ?? string.Empty;
-        public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_streamsAccess.OpenCleartextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
-        public Task<Stream> GetWritableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_streamsAccess.OpenCleartextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
+        public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_streamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
+        public Task<Stream> GetWritableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_streamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
 
         public async Task<HttpStatusCode> UploadFromStreamAsync(IHttpContext context, Stream inputStream)
         {

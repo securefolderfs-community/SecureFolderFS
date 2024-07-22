@@ -1,9 +1,9 @@
-﻿using Android.App;
+﻿using Android.Content;
+using Android.Provider;
+using OwlCore.Storage;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.Specialized;
-using Android.Content;
-using Android.Provider;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
@@ -21,9 +21,20 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             FileSystemManager.Instance.CollectionChanged += FileSystemManager_CollectionChanged;
         }
 
-        public SafRoot? GetRootForRid(string rid)
+        public SafRoot? GetRootForRootId(string rootId)
         {
-            return Roots.FirstOrDefault(x => x.Rid == rid);
+            return Roots.FirstOrDefault(x => x.RootId == rootId);
+        }
+
+        public SafRoot? GetRootForStorable(IStorable storable)
+        {
+            foreach (var safRoot in Roots)
+            {
+                if (storable.Id.StartsWith(safRoot.StorageRoot.Inner.Id))
+                    return safRoot;
+            }
+
+            return null;
         }
 
         private void FileSystemManager_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

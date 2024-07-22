@@ -32,10 +32,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
                 };
 
                 storageRoutine.SetUnlockContract(unlockContract);
-                var (directoryIdCache, security, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
+                var specifics = storageRoutine.GetSpecifics(contentFolder, options);
                 var mountable = options.FileSystemId switch
                 {
-                    Core.Constants.FileSystemId.FS_ANDROID => AndroidFileSystemMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    Core.Constants.FileSystemId.FS_ANDROID => AndroidFileSystemMountable.CreateMountable(specifics),
                     _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
                 };
 

@@ -618,7 +618,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         {
             fixed (byte *cleartextNamePtr = cleartextName)
             {
-                var path = PathHelpers.PathFromVaultRoot(Encoding.UTF8.GetString(cleartextNamePtr, cleartextName.Length), LocatableContentFolder.Id);
+                var path = NativePathHelpers.PathFromVaultRoot(Encoding.UTF8.GetString(cleartextNamePtr, cleartextName.Length), LocatableContentFolder.Id);
                 return pathConverter.ToCiphertext(path);
             }
         }

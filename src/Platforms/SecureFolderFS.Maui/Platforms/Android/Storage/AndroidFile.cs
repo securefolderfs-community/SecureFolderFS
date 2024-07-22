@@ -26,14 +26,20 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             if (IsVirtualFile(activity, Inner))
             {
                 stream = GetVirtualFileStream(activity, Inner, accessMode != FileAccess.Read);
-                return Task.FromResult(stream ?? throw new ArgumentException("No stream types available for '*/*' mime type."));
+                if (stream is null)
+                    return Task.FromException<Stream>(new ArgumentException("No stream types available for '*/*' mime type."));
+
+                return Task.FromResult(stream);
             }
 
             stream = accessMode == FileAccess.Read
                 ? activity.ContentResolver?.OpenInputStream(Inner)
                 : activity.ContentResolver?.OpenOutputStream(Inner);
 
-            return Task.FromResult(stream ?? throw new UnauthorizedAccessException($"Could not open a stream to: '{Id}'"));
+            if (stream is null)
+                return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'"));
+
+            return Task.FromResult(stream);
         }
 
         private static bool IsVirtualFile(Context context, AndroidUri uri)

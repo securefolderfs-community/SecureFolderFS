@@ -1,15 +1,11 @@
 ﻿using DokanNet;
-using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
-using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,15 +23,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
     {
         private DriveInfo? _vaultDriveInfo;
         private int _vaultDriveInfoTries;
-        
-        public required IFolder ContentFolder { get; init; }
 
-        public required Security Security { get; init; }
-
-        public required DirectoryIdCache DirectoryIdAccess { get; init; }
-
-        public OnDeviceDokany(IPathConverter pathConverter, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel, IHealthStatistics? healthStatistics)
-            : base(pathConverter, handlesManager, volumeModel, healthStatistics)
+        public OnDeviceDokany(FileSystemSpecifics specifics, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel)
+            : base(specifics, handlesManager, volumeModel)
         {
         }
 
@@ -102,7 +92,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                             directoryIdStream.Write(directoryId);
 
                             // Set DirectoryID to known IDs
-                            DirectoryIdAccess.SetDirectoryId(directoryIdPath, directoryId);
+                            Specifics.DirectoryIdCache.CacheSet(directoryIdPath, new(directoryId));
                             break;
                         }
                     }
@@ -241,7 +231,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 {
                     if (info.IsDirectory)
                     {
-                        DirectoryIdAccess.RemoveDirectoryId(ciphertextPath);
+                        Specifics.DirectoryIdCache.CacheRemove(ciphertextPath);
                         Directory.Delete(ciphertextPath, true);
                     }
                     else
@@ -279,7 +269,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     LastAccessTime = finfo.LastAccessTime,
                     LastWriteTime = finfo.LastWriteTime,
                     Length = finfo is FileInfo fileInfo2
-                        ? Security.ContentCrypt.CalculateCleartextSize(fileInfo2.Length - Security.HeaderCrypt.HeaderCiphertextSize)
+                        ? Specifics.Security.ContentCrypt.CalculateCleartextSize(fileInfo2.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize)
                         : 0L
                 };
 
@@ -320,7 +310,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 _vaultDriveInfoTries++;
                 _vaultDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => 
                     di.IsReady &&
-                    di.RootDirectory.Name.Equals(Path.GetPathRoot(ContentFolder.Id), StringComparison.OrdinalIgnoreCase));
+                    di.RootDirectory.Name.Equals(Path.GetPathRoot(Specifics.ContentFolder.Id), StringComparison.OrdinalIgnoreCase));
             }
 
             freeBytesAvailable = _vaultDriveInfo?.TotalFreeSpace ?? 0L;
@@ -345,29 +335,43 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var directory = new DirectoryInfo(ciphertextPath);
                 List<FileInformation>? fileList = null;
 
-                var items = Security.NameCrypt is null ? directory.EnumerateFileSystemInfos(searchPattern) : directory.EnumerateFileSystemInfos();
+                var directoryId = DirectoryHelpers.AllocateDirectoryId(fileName, Specifics);
+                var items = Specifics.Security.NameCrypt is null ? directory.EnumerateFileSystemInfos(searchPattern) : directory.EnumerateFileSystemInfos();
+
                 foreach (var item in items)
                 {
                     if (PathHelpers.IsCoreFile(item.Name))
                         continue;
 
-                    var cleartextName = pathConverter.GetCleartextFileName(item.FullName);
-                    if (string.IsNullOrEmpty(cleartextName))
+                    var result = NativeDirectoryHelpers.GetDirectoryId(item.FullName, Specifics.ContentFolder, directoryId);
+                    var plaintextName = Specifics.Security.NameCrypt is null ? item.Name : null;
+
+                    try
+                    {
+                        plaintextName = Specifics.Security.NameCrypt?.DecryptName(Path.GetFileNameWithoutExtension(item.Name), result ? directoryId : ReadOnlySpan<byte>.Empty);
+                    }
+                    catch (CryptographicException)
+                    {
+                        // If decryption failed, display the file anyway instead of blocking access
+                        plaintextName ??= item.Name;
+                    }
+
+                    if (string.IsNullOrEmpty(plaintextName))
                         continue;
 
-                    if (Security.NameCrypt is not null && !UnsafeNativeApis.PathMatchSpec(cleartextName, searchPattern))
+                    if (Specifics.Security.NameCrypt is not null && !UnsafeNativeApis.PathMatchSpec(plaintextName, searchPattern))
                         continue;
 
                     fileList ??= new();
                     fileList.Add(new FileInformation()
                     {
-                        FileName = cleartextName,
+                        FileName = plaintextName,
                         Attributes = item.Attributes,
                         CreationTime = item.CreationTime,
                         LastAccessTime = item.LastAccessTime,
                         LastWriteTime = item.LastWriteTime,
                         Length = item is FileInfo fileInfo
-                            ? Security.ContentCrypt.CalculateCleartextSize(fileInfo.Length - Security.HeaderCrypt.HeaderCiphertextSize)
+                            ? Specifics.Security.ContentCrypt.CalculateCleartextSize(fileInfo.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize)
                             : 0L
                     });
                 }
@@ -797,11 +801,11 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             return base.FindStreams(fileName, out streams, info);
         }
 
+        // TODO: Remove this method and call NativePathHelpers.GetCiphertextPath() instead
         /// <inheritdoc/>
         protected override string? GetCiphertextPath(string cleartextName)
         {
-            var path = PathHelpers.PathFromVaultRoot(cleartextName, ContentFolder.Id);
-            return pathConverter.ToCiphertext(path);
+            return NativePathHelpers.GetCiphertextPath(cleartextName, Specifics);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Cryptography;
+﻿using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using SecureFolderFS.Core.FileSystem.Helpers;
@@ -16,13 +17,13 @@ namespace SecureFolderFS.Core.FileSystem.Paths
         private readonly DirectoryIdCache _directoryIdCache;
 
         /// <inheritdoc/>
-        public string ContentRootPath { get; }
+        public IFolder ContentFolder { get; }
 
-        private CiphertextPathConverter(string contentRoot, FileNameAccess fileNameAccess, DirectoryIdCache directoryIdCache)
+        private CiphertextPathConverter(IFolder contentFolder, FileNameAccess fileNameAccess, DirectoryIdCache directoryIdCache)
         {
             _fileNameAccess = fileNameAccess;
             _directoryIdCache = directoryIdCache;
-            ContentRootPath = contentRoot;
+            ContentFolder = contentFolder;
         }
 
         /// <inheritdoc/>
@@ -42,7 +43,7 @@ namespace SecureFolderFS.Core.FileSystem.Paths
         public string? GetCleartextFileName(string ciphertextFilePath)
         {
             // Construct DirectoryID path for the parent directory of ciphertextFilePath
-            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, ContentRootPath);
+            var directoryIdPath = NativePathHelpers.GetDirectoryIdPathOfParent(ciphertextFilePath, ContentFolder.Id);
             if (directoryIdPath is null)
                 return null;
 
@@ -73,7 +74,7 @@ namespace SecureFolderFS.Core.FileSystem.Paths
         public string? GetCiphertextFileName(string cleartextFilePath)
         {
             // Construct DirectoryID path for the parent directory of cleartextFilePath
-            var directoryIdPath = PathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, ContentRootPath);
+            var directoryIdPath = NativePathHelpers.GetDirectoryIdPathOfParent(cleartextFilePath, ContentFolder.Id);
             if (directoryIdPath is null)
                 return null;
 
@@ -102,8 +103,8 @@ namespace SecureFolderFS.Core.FileSystem.Paths
         // TODO: Refactor
         private string? ConstructPath(string rawPath, bool convertToCiphertext)
         {
-            var onlyPathAfterContent = rawPath.Substring(ContentRootPath.Length, rawPath.Length - ContentRootPath.Length);
-            var correctPath = PathHelpers.EnsureTrailingPathSeparator(ContentRootPath);
+            var onlyPathAfterContent = rawPath.Substring(ContentFolder.Id.Length, rawPath.Length - ContentFolder.Id.Length);
+            var correctPath = PathHelpers.EnsureTrailingPathSeparator(ContentFolder.Id);
             var path = correctPath;
 
             foreach (var item in onlyPathAfterContent.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
@@ -123,18 +124,18 @@ namespace SecureFolderFS.Core.FileSystem.Paths
         /// Creates a new instance of <see cref="IPathConverter"/>.
         /// </summary>
         /// <param name="security">The <see cref="Security"/> contract.</param>
-        /// <param name="contentRoot">The ciphertext storage root path.</param>
+        /// <param name="contentFolder">The ciphertext root content folder.</param>
         /// <param name="enableFileNameCache">Determines if file paths should cache names.</param>
         /// <param name="directoryIdCache">The <see cref="DirectoryIdCache"/> that stored directory IDs.</param>
         /// <param name="statistics">The <see cref="IFileSystemStatistics"/> to report statistics of opened streams.</param>
         /// <returns>A new instance of <see cref="IPathConverter"/>.</returns>
-        public static IPathConverter CreateNew(Security security, string contentRoot, DirectoryIdCache directoryIdCache, bool enableFileNameCache, IFileSystemStatistics statistics)
+        public static IPathConverter CreateNew(Security security, IFolder contentFolder, DirectoryIdCache directoryIdCache, bool enableFileNameCache, IFileSystemStatistics statistics)
         {
             var fileNameAccess = enableFileNameCache
                 ? new FileNameAccess(security, statistics)
                 : new CachingFileNameAccess(security, statistics);
 
-            return new CiphertextPathConverter(contentRoot, fileNameAccess, directoryIdCache);
+            return new CiphertextPathConverter(contentFolder, fileNameAccess, directoryIdCache);
         }
     }
 }

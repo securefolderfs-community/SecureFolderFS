@@ -11,7 +11,6 @@ using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.EncryptingStorage2;
@@ -88,9 +87,10 @@ namespace SecureFolderFS.Core.WebDav
 
         public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder,
             Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter,
-            IStreamsAccess streamsAccess)
+            StreamsAccess streamsAccess)
         {
-            var cryptoFolder = new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
+            // TODO: Implement FileSystemSpecifics
+            var cryptoFolder = (IFolder)null!; // new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
             var davFolder = new DavFolder(cryptoFolder);
 
             // TODO: Remove the following line once the new DavStorage is fully implemented.

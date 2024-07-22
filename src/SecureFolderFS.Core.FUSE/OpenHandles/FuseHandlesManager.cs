@@ -6,7 +6,7 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class FuseHandlesManager : BaseHandlesManager
     {
-        public FuseHandlesManager(IStreamsAccess streamsAccess)
+        public FuseHandlesManager(StreamsAccess streamsAccess)
             : base(streamsAccess)
         {
         }
@@ -35,7 +35,7 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
             });
 
             // Open cleartext stream on top of ciphertext stream
-            var cleartextStream = streamsAccess.OpenCleartextStream(ciphertextPath, ciphertextStream);
+            var cleartextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
             if (cleartextStream is null)
                 return FileSystem.Constants.INVALID_HANDLE;
 

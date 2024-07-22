@@ -1,17 +1,15 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Directories;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
+    /// <inheritdoc cref="IFile"/>
     public class CryptoFile : CryptoStorable<IFile>, IChildFile
     {
-        public CryptoFile(IFile inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache)
-            : base(inner, streamsAccess, pathConverter, directoryIdCache)
+        public CryptoFile(IFile inner, FileSystemSpecifics specifics)
+            : base(inner, specifics)
         {
         }
 
@@ -29,7 +27,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <returns>An encrypting <see cref="Stream"/> instance.</returns>
         protected virtual Stream CreateCleartextStream(Stream stream)
         {
-            return streamsAccess.OpenCleartextStream(Inner.Id, stream);
+            return specifics.StreamsAccess.OpenPlaintextStream(Inner.Id, stream);
         }
     }
 }

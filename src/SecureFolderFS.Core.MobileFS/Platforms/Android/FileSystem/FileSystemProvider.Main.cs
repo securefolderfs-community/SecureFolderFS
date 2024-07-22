@@ -3,7 +3,6 @@ using Android.Content;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
-using Microsoft.Maui.Platform;
 using OwlCore.Storage;
 using static Android.Provider.DocumentsContract;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
@@ -17,7 +16,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         Exported = true,
         GrantUriPermissions = true)]
     [IntentFilter(["android.content.action.DOCUMENTS_PROVIDER"])]
-    internal sealed class FileSystemProvider : DocumentsProvider
+    internal sealed partial class FileSystemProvider : DocumentsProvider
     {
         private RootCollection? _rootCollection;
 
@@ -38,10 +37,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 if (row is null)
                     return null;
 
-                row.Add(Root.ColumnRootId, item.Rid);
+                row.Add(Root.ColumnRootId, item.RootId);
                 row.Add(Root.ColumnIcon, Constants.AndroidSaf.IC_LOCK_LOCK);
                 row.Add(Root.ColumnTitle, item.StorageRoot.StorageName);
-                row.Add(Root.ColumnDocumentId, GetDocumentIdForStorable(item.StorageRoot.Inner, item.Rid));
+                row.Add(Root.ColumnDocumentId, GetDocumentIdForStorable(item.StorageRoot.Inner, item.RootId));
                 row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
             }
 
@@ -55,24 +54,38 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         }
 
         /// <inheritdoc/>
-        public override ICursor? QueryChildDocuments(string? parentDocumentId, string[]? projection, string? sortOrder)
+        public override ICursor? QueryDocument(string? documentId, string[]? projection)
         {
-            return QueryDocument(parentDocumentId, projection);
+            var matrix = new MatrixCursor(projection ?? DefaultDocumentProjection);
+            if (documentId is null)
+                return matrix;
+
+            var storable = GetStorableForDocumentId(documentId);
+            if (storable is null)
+                return matrix;
+
+            AddStorable(matrix, storable, documentId);
+            return matrix;
         }
 
         /// <inheritdoc/>
-        public override ICursor? QueryDocument(string? documentId, string[]? projection)
+        public override ICursor? QueryChildDocuments(string? parentDocumentId, string[]? projection, string? sortOrder)
         {
-            return new MatrixCursor(projection ?? DefaultDocumentProjection);
-        }
+            var matrix = new MatrixCursor(projection ?? DefaultDocumentProjection);
+            if (parentDocumentId is null)
+                return matrix;
 
-        private string GetDocumentIdForStorable(IStorable storable, string rid)
-        {
-            var safRoot = _rootCollection?.GetRootForRid(rid);
-            if (storable.Id == safRoot?.StorageRoot.Inner.Id)
-                return rid + ':';
+            var parent = GetStorableForDocumentId(parentDocumentId);
+            if (parent is not IFolder folder)
+                return matrix;
 
-            return $"{rid}:{storable.Id.Substring(0, safRoot?.StorageRoot.Inner.Id.Length ?? 0)}";
+            var items = folder.GetItemsAsync().ToArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            foreach (var item in items)
+            {
+                AddStorable(matrix, item, null);
+            }
+
+            return matrix;
         }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using DokanNet;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Helpers;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,19 +16,18 @@ using FileAccess = DokanNet.FileAccess;
 
 namespace SecureFolderFS.Core.Dokany.Callbacks
 {
-    internal abstract class BaseDokanyCallbacks : IDokanOperationsUnsafe
+    internal abstract class BaseDokanyCallbacks : IDokanOperationsUnsafe, IDisposable
     {
-        protected readonly IPathConverter pathConverter;
         protected readonly BaseHandlesManager handlesManager;
         protected readonly DokanyVolumeModel volumeModel;
-        protected readonly IHealthStatistics? healthStatistics;
 
-        protected BaseDokanyCallbacks(IPathConverter pathConverter, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel, IHealthStatistics? healthStatistics)
+        public FileSystemSpecifics Specifics { get; }
+
+        protected BaseDokanyCallbacks(FileSystemSpecifics specifics, BaseHandlesManager handlesManager, DokanyVolumeModel volumeModel)
         {
-            this.pathConverter = pathConverter;
+            Specifics = specifics;
             this.handlesManager = handlesManager;
             this.volumeModel = volumeModel;
-            this.healthStatistics = healthStatistics;
         }
 
         #region Unused
@@ -317,6 +315,13 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         protected void CloseHandle(IDokanFileInfo info)
         {
             handlesManager.CloseHandle(GetContextValue(info));
+        }
+
+        /// <inheritdoc/>
+        public virtual void Dispose()
+        {
+            Specifics.Dispose();
+            handlesManager.Dispose();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

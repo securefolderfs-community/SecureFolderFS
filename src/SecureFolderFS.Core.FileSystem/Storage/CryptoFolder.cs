@@ -1,8 +1,5 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,10 +10,11 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     // TODO(ns): Add move and copy support
+    /// <inheritdoc cref="IFolder"/>
     public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IModifiableFolder, IGetItem, IGetItemRecursive, IGetFirstByName
     {
-        public CryptoFolder(IFolder inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache)
-            : base(inner, streamsAccess, pathConverter, directoryIdCache)
+        public CryptoFolder(IFolder inner, FileSystemSpecifics specifics)
+            : base(inner, specifics)
         {
         }
 
@@ -116,7 +114,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             await directoryIdStream.WriteAsync(directoryId, cancellationToken);
 
             // Set DirectoryID to known IDs
-            directoryIdCache.SetDirectoryId(dirIdFile.Id, Guid.NewGuid().ToByteArray());
+            specifics.DirectoryIdCache.CacheSet(dirIdFile.Id, new(Guid.NewGuid().ToByteArray()));
 
             return (IChildFolder)Wrap(folder);
         }

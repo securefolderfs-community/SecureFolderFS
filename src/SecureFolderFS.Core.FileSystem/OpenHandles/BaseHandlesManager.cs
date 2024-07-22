@@ -15,11 +15,11 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
     {
         protected bool disposed;
         protected readonly object handlesLock = new();
-        protected readonly IStreamsAccess streamsAccess;
+        protected readonly StreamsAccess streamsAccess;
         protected readonly HandlesGenerator handlesGenerator;
         protected readonly Dictionary<ulong, IDisposable> handles;
 
-        protected BaseHandlesManager(IStreamsAccess streamsAccess)
+        protected BaseHandlesManager(StreamsAccess streamsAccess)
         {
             this.streamsAccess = streamsAccess;
             this.handlesGenerator = new();

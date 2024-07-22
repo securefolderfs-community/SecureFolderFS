@@ -34,6 +34,7 @@ namespace SecureFolderFS.Core.Dokany
         {
             _ = closeMethod; // TODO: Implement close method
             _dokanInstance?.Dispose();
+            _dokanCallbacks.Dispose();
 
             return true;
         }

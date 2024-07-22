@@ -1,12 +1,8 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
-using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FileSystem.Storage;
-using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
@@ -38,12 +34,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
             return new AndroidVFSRoot(_storageRoot, _options);
         }
 
-        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder,
-            Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter,
-            IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(FileSystemSpecifics specifics)
         {
-            var cryptoFolder = new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
-            return new AndroidFileSystemMountable(cryptoFolder, options);
+            var cryptoFolder = new CryptoFolder(specifics.ContentFolder, specifics);
+            return new AndroidFileSystemMountable(cryptoFolder, specifics.FileSystemOptions);
         }
     }
 }

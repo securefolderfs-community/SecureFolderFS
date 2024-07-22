@@ -78,7 +78,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 }
             }
 
-            await Task.CompletedTask;
+            await Task.CompletedTask.ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -107,7 +107,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
                     case AndroidFolder storableIsFolder:
                     {
-                        await foreach (var itemInFolder in storableIsFolder.GetItemsAsync(StorableType.All, cancellationToken))
+                        await foreach (var itemInFolder in storableIsFolder.GetItemsAsync(StorableType.All, cancellationToken).ConfigureAwait(false))
                         {
                             switch (itemInFolder)
                             {
@@ -133,7 +133,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         {
             var newFolder = Document?.CreateDirectory(name);
             if (newFolder is null)
-                throw new UnauthorizedAccessException("Could not create Android folder.");
+                return Task.FromException<IChildFolder>(new UnauthorizedAccessException("Could not create Android folder."));
 
             return Task.FromResult<IChildFolder>(new AndroidFolder(newFolder.Uri, activity, this, permissionRoot));
         }
@@ -149,7 +149,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             var newFile = Document?.CreateFile(mimeType, name);
             if (newFile is null)
-                throw new UnauthorizedAccessException("Could not create Android file.");
+                return Task.FromException<IChildFile>(new UnauthorizedAccessException("Could not create Android file."));
 
             return Task.FromResult<IChildFile>(new AndroidFile(newFile.Uri, activity, this, permissionRoot));
         }
@@ -169,7 +169,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 throw new InvalidOperationException("The found item is neither a file nor a folder.");
             }
 
-            var target = await GetItemsAsync(cancellationToken: cancellationToken).FirstOrDefaultAsync(x => name.Equals(x.Name, StringComparison.Ordinal), cancellationToken);
+            var target = await GetItemsAsync(cancellationToken: cancellationToken)
+                .FirstOrDefaultAsync(x => name.Equals(x.Name, StringComparison.Ordinal), cancellationToken)
+                .ConfigureAwait(false);
+
             if (target is null)
                 throw new DirectoryNotFoundException($"No storage item with the name '{name}' could be found.");
 

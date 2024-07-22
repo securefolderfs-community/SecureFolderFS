@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Core.FileSystem.Streams;
-using SecureFolderFS.Shared.Extensions;
+﻿using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;

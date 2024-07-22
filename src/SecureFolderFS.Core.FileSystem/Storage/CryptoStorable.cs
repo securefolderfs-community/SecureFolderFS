@@ -1,10 +1,6 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Directories;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,9 +12,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         private string? _computedId;
         private string? _computedName;
 
-        protected readonly IStreamsAccess streamsAccess;
-        protected readonly IPathConverter pathConverter;
-        protected readonly DirectoryIdCache directoryIdCache;
+        protected readonly FileSystemSpecifics specifics;
 
         /// <inheritdoc/>
         public TCapability Inner { get; }
@@ -29,12 +23,10 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <inheritdoc/>
         public virtual string Name => _computedName ??= DecryptName(Inner.Name);
 
-        protected CryptoStorable(TCapability inner, IStreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache)
+        protected CryptoStorable(TCapability inner, FileSystemSpecifics specifics)
         {
             this.Inner = inner;
-            this.streamsAccess = streamsAccess;
-            this.pathConverter = pathConverter;
-            this.directoryIdCache = directoryIdCache;
+            this.specifics = specifics;
         }
 
         /// <inheritdoc/>
@@ -44,7 +36,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 throw new NotSupportedException("Retrieving the parent folder is not supported.");
 
             // Make sure we don't go outside the root
-            if (storableChild.Id == pathConverter.ContentRootPath || !pathConverter.ContentRootPath.Contains(storableChild.Id))
+            if (storableChild.Id == specifics.ContentFolder.Id || !specifics.ContentFolder.Id.Contains(storableChild.Id))
                 return null;
 
             var parent = await storableChild.GetParentAsync(cancellationToken);
@@ -57,13 +49,13 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <inheritdoc/>
         public virtual IWrapper<IFile> Wrap(IFile file)
         {
-            return new CryptoFile(file, streamsAccess, pathConverter, directoryIdCache);
+            return new CryptoFile(file, specifics);
         }
 
         /// <inheritdoc/>
         public virtual IWrapper<IFolder> Wrap(IFolder folder)
         {
-            return new CryptoFolder(folder, streamsAccess, pathConverter, directoryIdCache);
+            return new CryptoFolder(folder, specifics);
         }
 
         /// <summary>
@@ -73,11 +65,13 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <returns>An encrypted path equivalent found on the file system.</returns>
         protected virtual string EncryptPath(string path)
         {
-            var ciphertextPath = pathConverter.ToCiphertext(path);
-            if (ciphertextPath is null)
-                throw new CryptographicException("Couldn't convert to ciphertext path.");
+            return path;
 
-            return ciphertextPath;
+            //var ciphertextPath = pathConverter.ToCiphertext(path);
+            //if (ciphertextPath is null)
+            //    throw new CryptographicException("Couldn't convert to ciphertext path.");
+
+            //return ciphertextPath;
         }
 
         /// <summary>
@@ -87,11 +81,13 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <returns>A decrypted path version of the one found on the file system.</returns>
         protected virtual string DecryptPath(string path)
         {
-            var cleartextPath = pathConverter.ToCleartext(path);
-            if (cleartextPath is null)
-                throw new CryptographicException("Couldn't convert to cleartext path.");
+            return path;
 
-            return cleartextPath;
+            //var cleartextPath = pathConverter.ToCleartext(path);
+            //if (cleartextPath is null)
+            //    throw new CryptographicException("Couldn't convert to cleartext path.");
+
+            //return cleartextPath;
         }
 
         /// <summary>
@@ -101,11 +97,13 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <returns>An encrypted name.</returns>
         protected virtual string EncryptName(string name)
         {
-            var ciphertextName = pathConverter.GetCiphertextFileName(System.IO.Path.Combine(Id, name));
-            if (ciphertextName is null)
-                throw new CryptographicException("Couldn't convert to ciphertext name.");
+            return name;
 
-            return ciphertextName;
+            //var ciphertextName = pathConverter.GetCiphertextFileName(System.IO.Path.Combine(Id, name));
+            //if (ciphertextName is null)
+            //    throw new CryptographicException("Couldn't convert to ciphertext name.");
+
+            //return ciphertextName;
         }
 
         /// <summary>
@@ -115,11 +113,13 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <returns>A decrypted name.</returns>
         protected virtual string DecryptName(string name)
         {
-            var cleartextName = pathConverter.GetCleartextFileName(System.IO.Path.Combine(Id, name));
-            if (cleartextName is null)
-                throw new CryptographicException("Couldn't convert to cleartext name.");
+            return name;
 
-            return cleartextName;
+            //var cleartextName = pathConverter.GetCleartextFileName(System.IO.Path.Combine(Id, name));
+            //if (cleartextName is null)
+            //    throw new CryptographicException("Couldn't convert to cleartext name.");
+
+            //return cleartextName;
         }
     }
 }

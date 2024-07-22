@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.FUSE
             return new FuseRootFolder(_fuseWrapper, new SystemFolder(mountPoint), _options);
         }
 
-        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, StreamsAccess streamsAccess)
         {
             var fuseCallbacks = new OnDeviceFuse(pathConverter, new(streamsAccess))
             {

@@ -1,18 +1,13 @@
 ﻿using DokanNet;
-using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
@@ -83,27 +78,24 @@ namespace SecureFolderFS.Core.Dokany
             return new DokanyVFSRoot(_dokanyWrapper, new SystemFolder(mountPath), _options);
         }
 
-        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(FileSystemSpecifics specifics)
         {
             var volumeModel = new DokanyVolumeModel()
             {
                 FileSystemName = Constants.FileSystem.FSRID,
                 MaximumComponentLength = Constants.FileSystem.MAX_COMPONENT_LENGTH,
-                VolumeName = options.VolumeName,
+                VolumeName = specifics.FileSystemOptions.VolumeName,
                 FileSystemFeatures = FileSystemFeatures.CasePreservedNames
                                      | FileSystemFeatures.CaseSensitiveSearch
                                      | FileSystemFeatures.PersistentAcls
                                      | FileSystemFeatures.SupportsRemoteStorage
                                      | FileSystemFeatures.UnicodeOnDisk
             };
-            var dokanyCallbacks = new OnDeviceDokany(pathConverter, new DokanyHandlesManager(streamsAccess), volumeModel, options.HealthStatistics)
-            {
-                ContentFolder = contentFolder,
-                DirectoryIdAccess = directoryIdCache,
-                Security = security
-            };
 
-            return new DokanyMountable(options, dokanyCallbacks);
+            var handlesManager = new DokanyHandlesManager(specifics.StreamsAccess);
+            var dokanyCallbacks = new OnDeviceDokany(specifics, handlesManager, volumeModel);
+
+            return new DokanyMountable(specifics.FileSystemOptions, dokanyCallbacks);
         }
     }
 }

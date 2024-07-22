@@ -12,12 +12,12 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
     internal class FileNameAccess
     {
         protected readonly Security security;
-        protected readonly IFileSystemStatistics fileSystemStatistics;
+        protected readonly IFileSystemStatistics statistics;
 
-        public FileNameAccess(Security security, IFileSystemStatistics fileSystemStatistics)
+        public FileNameAccess(Security security, IFileSystemStatistics statistics)
         {
             this.security = security;
-            this.fileSystemStatistics = fileSystemStatistics;
+            this.statistics = statistics;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
         /// <returns>If successful, returns a cleartext representation of the name; otherwise empty.</returns>
         public virtual string GetCleartextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
+            statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
 
             var nameWithoutExt = Path.GetFileNameWithoutExtension(ciphertextName);
             if (nameWithoutExt.IsEmpty)
@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
         /// <returns>If successful, returns a ciphertext representation of the name; otherwise empty.</returns>
         public virtual string GetCiphertextName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
         {
-            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
+            statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
 
             var ciphertextName = security.NameCrypt!.EncryptName(cleartextName, directoryId);
             return Path.ChangeExtension(ciphertextName, Constants.Names.ENCRYPTED_FILE_EXTENSION);

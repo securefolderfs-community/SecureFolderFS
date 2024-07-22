@@ -12,7 +12,6 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
@@ -92,12 +91,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 };
 
                 storageRoutine.SetUnlockContract(unlockContract);
-                var (directoryIdCache, _, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
+                var specifics = storageRoutine.GetSpecifics(contentFolder, options);
+                var cryptoFolder = new CryptoFolder(contentFolder, specifics);
 
-                var cryptoFolder = new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
-                var disposable = new AggregatedDisposable([streamsAccess, unlockContract /*pathConverter*/, /*directoryIdCache*/]);
-
-                return new LocalVFSRoot(disposable, cryptoFolder, options);
+                return new LocalVFSRoot(specifics, cryptoFolder, options);
             }
             catch (Exception ex)
             {

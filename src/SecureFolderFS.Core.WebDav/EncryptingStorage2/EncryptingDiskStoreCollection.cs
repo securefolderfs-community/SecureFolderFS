@@ -24,12 +24,12 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
     {
         private static readonly XElement s_xDavCollection = new XElement(WebDavNamespaces.DavNs + "collection");
         private readonly DirectoryInfo _directoryInfo;
-        private readonly IStreamsAccess _streamsAccess;
+        private readonly StreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
         private readonly DirectoryIdCache _directoryIdCache;
         private readonly Security _security;
 
-        public EncryptingDiskStoreCollection(ILockingManager lockingManager, DirectoryInfo directoryInfo, bool isWritable, IStreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache, Security security)
+        public EncryptingDiskStoreCollection(ILockingManager lockingManager, DirectoryInfo directoryInfo, bool isWritable, StreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache, Security security)
         {
             LockingManager = lockingManager;
             _directoryInfo = directoryInfo;

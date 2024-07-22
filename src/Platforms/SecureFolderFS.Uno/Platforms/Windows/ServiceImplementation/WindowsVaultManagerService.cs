@@ -38,9 +38,11 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
                 storageRoutine.SetUnlockContract(unlockContract);
                 var (directoryIdCache, security, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
+                var specifics = storageRoutine.GetSpecifics(contentFolder, options);
+
                 var mountable = options.FileSystemId switch
                 {
-                    Core.Constants.FileSystemId.FS_DOKAN => DokanyMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    Core.Constants.FileSystemId.FS_DOKAN => DokanyMountable.CreateMountable(specifics),
                     Core.Constants.FileSystemId.FS_WEBDAV => WebDavMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
                     _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
                 };
