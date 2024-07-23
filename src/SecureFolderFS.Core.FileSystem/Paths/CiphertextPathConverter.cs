@@ -3,6 +3,7 @@ using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using SecureFolderFS.Core.FileSystem.Statistics;
 using System;
 using System.IO;

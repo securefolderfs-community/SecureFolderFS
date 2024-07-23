@@ -5,6 +5,8 @@ using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.Dokany.UnsafeNative;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Helpers.Abstract;
+using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using System;
 using System.Collections.Generic;
@@ -231,7 +233,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 {
                     if (info.IsDirectory)
                     {
-                        Specifics.DirectoryIdCache.CacheRemove(ciphertextPath);
+                        var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+                        Specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
                         Directory.Delete(ciphertextPath, true);
                     }
                     else
@@ -335,26 +338,18 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var directory = new DirectoryInfo(ciphertextPath);
                 List<FileInformation>? fileList = null;
 
-                var directoryId = DirectoryHelpers.AllocateDirectoryId(fileName, Specifics);
-                var items = Specifics.Security.NameCrypt is null ? directory.EnumerateFileSystemInfos(searchPattern) : directory.EnumerateFileSystemInfos();
+                var directoryId = AbstractPathHelpers.AllocateDirectoryId(fileName, Specifics);
+                var itemsEnumerable = Specifics.Security.NameCrypt is null ? directory.EnumerateFileSystemInfos(searchPattern) : directory.EnumerateFileSystemInfos();
 
-                foreach (var item in items)
+                foreach (var item in itemsEnumerable)
                 {
                     if (PathHelpers.IsCoreFile(item.Name))
                         continue;
 
-                    var result = NativeDirectoryHelpers.GetDirectoryId(item.FullName, Specifics.ContentFolder, directoryId);
-                    var plaintextName = Specifics.Security.NameCrypt is null ? item.Name : null;
-
-                    try
-                    {
-                        plaintextName = Specifics.Security.NameCrypt?.DecryptName(Path.GetFileNameWithoutExtension(item.Name), result ? directoryId : ReadOnlySpan<byte>.Empty);
-                    }
-                    catch (CryptographicException)
-                    {
-                        // If decryption failed, display the file anyway instead of blocking access
-                        plaintextName ??= item.Name;
-                    }
+                    var plaintextName = NativePathHelpers.GetPlaintextPath(item.FullName, Specifics, directoryId);
+                    plaintextName = plaintextName is not null
+                        ? Path.GetFileName(plaintextName)
+                        : item.Name;
 
                     if (string.IsNullOrEmpty(plaintextName))
                         continue;
@@ -805,7 +800,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         protected override string? GetCiphertextPath(string cleartextName)
         {
-            return NativePathHelpers.GetCiphertextPath(cleartextName, Specifics);
+            var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+            return NativePathHelpers.GetCiphertextPath(cleartextName, Specifics, directoryId);
         }
     }
 }

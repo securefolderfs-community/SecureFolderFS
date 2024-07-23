@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
 
-namespace SecureFolderFS.Core.FileSystem.Helpers
+namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
 {
-    public static class DirectoryHelpers
+    /// <summary>
+    /// A set of file system path management helpers that work on any platform including constrained environments with limited file system access.
+    /// </summary>
+    public static partial class AbstractPathHelpers
     {
         public static byte[] AllocateDirectoryId(string path, FileSystemSpecifics specifics)
         {

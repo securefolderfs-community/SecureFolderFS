@@ -56,7 +56,8 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
         /// <inheritdoc/>
         public override ulong OpenDirectoryHandle(string ciphertextPath)
         {
-            throw new NotImplementedException();
+            // Not supported, return invalid handle
+            return FileSystem.Constants.INVALID_HANDLE;
         }
 
         /// <inheritdoc/>

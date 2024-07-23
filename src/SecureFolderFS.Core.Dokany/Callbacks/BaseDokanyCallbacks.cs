@@ -400,7 +400,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             return result;
         }
 
-        private static string[] DisallowedTraceMethods = new[]
+        private static string[] DisallowedTraceMethods =
         {
             "GetVolumeInformation"
         };

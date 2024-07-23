@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
+using System.Security.Cryptography;
 
 namespace SecureFolderFS.Core.Cryptography.NameCrypt
 {
@@ -20,7 +21,14 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         /// <inheritdoc/>
         protected override byte[]? DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId)
         {
-            return aesSiv128.Decrypt(ciphertextFileNameBuffer, directoryId);
+            try
+            {
+                return aesSiv128.Decrypt(ciphertextFileNameBuffer, directoryId);
+            }
+            catch (CryptographicException)
+            {
+                return null;
+            }
         }
     }
 }
