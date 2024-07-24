@@ -17,16 +17,26 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
                 return plaintextStorable.Id;
 
             IChildFolder? currentParent;
-            var finalPath = specifics.ContentFolder.Id;
+            var previousParent = specifics.ContentFolder;
+            var finalPath = string.Empty;
+            var expendableDirectoryId = new byte[Constants.DIRECTORY_ID_SIZE];
 
-            while ((currentParent = plaintextStorable.GetParentAsync() as IChildFolder) is not null)
+            while ((currentParent = await plaintextStorable.GetParentAsync() as IChildFolder) is not null)
             {
+                var result = await GetDirectoryIdAsync(currentParent, specifics, expendableDirectoryId);
+
+                var ciphertextName = specifics.Security.NameCrypt.EncryptName(currentParent.Name, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
+
+                finalPath = Path.Combine($"{ciphertextName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}", finalPath);
+                previousParent = currentParent;
             }
 
             // Last is root so currentParent is null
+            var ciphertextInRootName = specifics.Security.NameCrypt.EncryptName(previousParent.Name, ReadOnlySpan<byte>.Empty);
+            finalPath = Path.Combine($"{ciphertextInRootName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}", finalPath);
+            finalPath = Path.Combine(specifics.ContentFolder.Id, finalPath);
 
-            //plaintextStorable
-            throw new NotImplementedException();
+            return finalPath;
         }
 
         public static Task<string> GetPlaintextPathAsync(IStorableChild ciphertextStorable, FileSystemSpecifics specifics)
@@ -34,7 +44,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
             throw new NotImplementedException();
         }
 
-        public static async Task<bool> GetDirectoryIdAsync(IFolder folderOfDirectoryId, FileSystemSpecifics specifics, Span<byte> directoryId)
+        public static async Task<bool> GetDirectoryIdAsync(IFolder folderOfDirectoryId, FileSystemSpecifics specifics, Memory<byte> directoryId)
         {
             var cachedId = specifics.DirectoryIdCache.CacheGet(folderOfDirectoryId.Id);
             if (cachedId is not null)
@@ -50,11 +60,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
             if (specifics.DirectoryIdCache.IsAvailable)
             {
                 cachedId = new(Constants.DIRECTORY_ID_SIZE);
-                read = directoryIdStream.Read(cachedId);
+                read = await directoryIdStream.ReadAsync(cachedId.Buffer);
                 specifics.DirectoryIdCache.CacheSet(folderOfDirectoryId.Id, cachedId);
             }
             else
-                read = directoryIdStream.Read(directoryId);
+                read = await directoryIdStream.ReadAsync(directoryId);
             
 
             if (read < Constants.DIRECTORY_ID_SIZE)

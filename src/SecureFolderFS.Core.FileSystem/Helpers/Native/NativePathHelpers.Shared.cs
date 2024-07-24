@@ -59,9 +59,8 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Native
                 return true;
             }
 
-            using var directoryIdStream = File.Open(directoryIdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             int read;
-
+            using var directoryIdStream = File.Open(directoryIdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             if (specifics.DirectoryIdCache.IsAvailable)
             {
                 cachedId = new(Constants.DIRECTORY_ID_SIZE);
