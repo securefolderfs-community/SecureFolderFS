@@ -16,17 +16,25 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (row is null)
                 return false;
 
+            // TODO(saf): Implement columns
+            row.Add(Document.ColumnSize, 200);
+            row.Add(Document.ColumnLastModified, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+
             row.Add(Document.ColumnDocumentId, documentId);
             row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
-            row.Add(Document.ColumnDisplayName, storable.Name);
-            row.Add(Document.ColumnLastModified, null); // TODO(saf): Add last modified
 
             if (storable is not IFolder)
                 row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.SupportsDelete | DocumentContractFlags.SupportsWrite));
             else
-                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.DirSupportsCreate
-                                                                      | DocumentContractFlags.DirPrefersLastModified
-                                                                      | DocumentContractFlags.DirPrefersGrid));
+                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.DirSupportsCreate | DocumentContractFlags.DirPrefersLastModified | DocumentContractFlags.DirPrefersGrid));
+
+            if (string.IsNullOrEmpty(storable.Name))
+            {
+                var safRoot = _rootCollection?.GetRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
+                row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.StorageName ?? storable.Name);
+            }
+            else
+                row.Add(Document.ColumnDisplayName, storable.Name);
 
             return true;
         }
@@ -64,8 +72,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (string.IsNullOrEmpty(path))
                 return safRoot.StorageRoot.Inner;
 
-            var target = safRoot.StorageRoot.Inner.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
-            return target;
+            return safRoot.StorageRoot.Inner.GetItemByRelativePathAsync(path).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         private string GetMimeForStorable(IStorable storable)
@@ -73,7 +80,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (storable is IFolder)
                 return Document.MimeTypeDir;
 
-            var extension = IOPath.GetExtension(storable.Id);
+            // Get extension without the starting . (dot)
+            var extension = IOPath.GetExtension(storable.Name).Substring(1);
             return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension) ?? string.Empty;
         }
     }

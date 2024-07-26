@@ -23,59 +23,24 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         public async IAsyncEnumerable<IStorableChild> GetItemsAsync(StorableType type = StorableType.All, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var contentResolver = activity.ContentResolver;
-            if (contentResolver is null)
+            if (Document is null)
                 yield break;
 
-            var folderId = permissionRoot != Inner ? DocumentsContract.GetDocumentId(Inner) : DocumentsContract.GetTreeDocumentId(Inner);
-            var childrenUri = DocumentsContract.BuildChildDocumentsUriUsingTree(permissionRoot, folderId);
-
-            var projection = new[]
+            foreach (var item in Document.ListFiles())
             {
-                DocumentsContract.Document.ColumnDocumentId,
-                DocumentsContract.Document.ColumnMimeType
-            };
-            if (childrenUri != null)
-            {
-                using var cursor = contentResolver.Query(childrenUri, projection, null, null, null);
-                if (cursor is null)
-                    yield break;
-
-                while (cursor.MoveToNext())
+                var isDirectory = item.IsDirectory;
+                var result = (IStorableChild?)(type switch
                 {
-                    var id = cursor.GetString(0);
-                    var mime = cursor.GetString(1);
-                    var isDirectory = mime == DocumentsContract.Document.MimeTypeDir;
+                    StorableType.File when !isDirectory => new AndroidFile(item.Uri, activity, this, permissionRoot),
+                    StorableType.Folder when isDirectory => new AndroidFolder(item.Uri, activity, this, permissionRoot),
+                    StorableType.All => isDirectory
+                        ? new AndroidFolder(item.Uri, activity, this, permissionRoot)
+                        : new AndroidFile(item.Uri, activity, this, permissionRoot),
+                    _ => null
+                });
 
-                    var uri = DocumentsContract.BuildDocumentUriUsingTree(permissionRoot, id);
-                    if (uri is null)
-                        continue;
-
-                    switch (type)
-                    {
-                        case StorableType.File:
-                            if (!isDirectory)
-                                yield return new AndroidFile(uri, activity, this, permissionRoot);
-
-                            break;
-
-                        case StorableType.Folder:
-                            if (isDirectory)
-                                yield return new AndroidFolder(uri, activity, this, permissionRoot);
-
-                            break;
-
-                        case StorableType.All:
-                            yield return isDirectory
-                                ? new AndroidFolder(uri, activity, this, permissionRoot)
-                                : new AndroidFile(uri, activity, this, permissionRoot);
-                            break;
-
-                        default:
-                        case StorableType.None:
-                            yield break;
-                    }
-                }
+                if (result is not null)
+                    yield return result;
             }
 
             await Task.CompletedTask.ConfigureAwait(false);

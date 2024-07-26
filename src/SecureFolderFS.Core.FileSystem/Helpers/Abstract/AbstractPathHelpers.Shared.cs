@@ -8,7 +8,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
     /// </summary>
     public static partial class AbstractPathHelpers
     {
-        public static byte[] AllocateDirectoryId(string path, FileSystemSpecifics specifics)
+        public static byte[] AllocateDirectoryId(FileSystemSpecifics specifics, string? path = null)
         {
             if (specifics.Security.NameCrypt is null)
                 return Array.Empty<byte>();

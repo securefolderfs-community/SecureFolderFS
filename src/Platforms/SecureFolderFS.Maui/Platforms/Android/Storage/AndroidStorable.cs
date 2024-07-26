@@ -1,4 +1,5 @@
 using Android.Content;
+using Android.Provider;
 using AndroidX.DocumentFile.Provider;
 using CommunityToolkit.Maui.Core.Extensions;
 using OwlCore.Storage;
@@ -42,7 +43,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             Inner = uri;
             BookmarkId = bookmarkId;
             Id = Inner.ToString() ?? string.Empty;
-            Name = Path.GetFileName(Inner.ToPhysicalPath() ?? string.Empty);
+            Name = GetFileName(uri);
         }
 
         /// <inheritdoc/>
@@ -107,6 +108,18 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             }
 
             return null;
+        }
+
+        protected static string GetFileName(AndroidUri uri)
+        {
+            var path = uri.Path;
+            if (string.IsNullOrEmpty(path))
+                return string.Empty;
+
+            var index = path.LastIndexOf('/');
+            var fileName = index == -1 ? path : path[(index + 1)..];
+
+            return fileName.Split(':', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty;
         }
     }
 }

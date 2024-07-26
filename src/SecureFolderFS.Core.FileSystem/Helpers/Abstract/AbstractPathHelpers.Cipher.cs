@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
 using System;
 using System.IO;
@@ -11,41 +12,63 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
     /// </summary>
     public static partial class AbstractPathHelpers
     {
-        public static async Task<string> GetCiphertextPathAsync(IStorableChild plaintextStorable, FileSystemSpecifics specifics)
+        public static async Task<string?> GetCiphertextPathAsync(IStorableChild plaintextStorable, FileSystemSpecifics specifics)
         {
             if (specifics.Security.NameCrypt is null)
                 return plaintextStorable.Id;
 
             IChildFolder? currentParent;
-            var previousParent = specifics.ContentFolder;
-            var finalPath = string.Empty;
+            var currentStorable = plaintextStorable;
             var expendableDirectoryId = new byte[Constants.DIRECTORY_ID_SIZE];
+            var finalPath = string.Empty;
 
-            while ((currentParent = await plaintextStorable.GetParentAsync() as IChildFolder) is not null)
+            while ((currentParent = await currentStorable.GetParentAsync() as IChildFolder) is not null)
             {
-                var result = await GetDirectoryIdAsync(currentParent, specifics, expendableDirectoryId);
+                if (currentParent is not IWrapper<IFolder> { Inner: { } ciphertextParent })
+                    return null;
 
-                var ciphertextName = specifics.Security.NameCrypt.EncryptName(currentParent.Name, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
+                var result = await GetDirectoryIdAsync(ciphertextParent, specifics, expendableDirectoryId);
+                var ciphertextName = specifics.Security.NameCrypt.EncryptName(currentStorable.Name, result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
 
                 finalPath = Path.Combine($"{ciphertextName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}", finalPath);
-                previousParent = currentParent;
+                currentStorable = currentParent;
             }
 
-            // Last is root so currentParent is null
-            var ciphertextInRootName = specifics.Security.NameCrypt.EncryptName(previousParent.Name, ReadOnlySpan<byte>.Empty);
-            finalPath = Path.Combine($"{ciphertextInRootName}{Constants.Names.ENCRYPTED_FILE_EXTENSION}", finalPath);
-            finalPath = Path.Combine(specifics.ContentFolder.Id, finalPath);
+            return Path.Combine(specifics.ContentFolder.Id, finalPath);
+        }
+
+        public static async Task<string?> GetPlaintextPathAsync(IStorableChild ciphertextStorable, FileSystemSpecifics specifics)
+        {
+            if (specifics.Security.NameCrypt is null)
+                return ciphertextStorable.Id;
+
+            IChildFolder? currentParent;
+            var currentStorable = ciphertextStorable;
+            var expendableDirectoryId = new byte[Constants.DIRECTORY_ID_SIZE];
+            var finalPath = string.Empty;
+
+            while ((currentParent = await currentStorable.GetParentAsync() as IChildFolder) is not null)
+            {
+                if (!currentParent.Id.Contains(specifics.ContentFolder.Id))
+                    break;
+
+                var result = await GetDirectoryIdAsync(currentParent, specifics, expendableDirectoryId);
+                var plaintextName = specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(currentStorable.Name), result ? expendableDirectoryId : ReadOnlySpan<byte>.Empty);
+                if (plaintextName is null)
+                    return null;
+
+                finalPath = Path.Combine(plaintextName, finalPath);
+                currentStorable = currentParent;
+            }
 
             return finalPath;
         }
 
-        public static Task<string> GetPlaintextPathAsync(IStorableChild ciphertextStorable, FileSystemSpecifics specifics)
-        {
-            throw new NotImplementedException();
-        }
-
         public static async Task<bool> GetDirectoryIdAsync(IFolder folderOfDirectoryId, FileSystemSpecifics specifics, Memory<byte> directoryId)
         {
+            if (folderOfDirectoryId.Id == specifics.ContentFolder.Id)
+                return false;
+
             var cachedId = specifics.DirectoryIdCache.CacheGet(folderOfDirectoryId.Id);
             if (cachedId is not null)
             {
@@ -66,7 +89,6 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
             else
                 read = await directoryIdStream.ReadAsync(directoryId);
             
-
             if (read < Constants.DIRECTORY_ID_SIZE)
                 throw new IOException($"The data inside Directory ID file is of incorrect size: {read}.");
 

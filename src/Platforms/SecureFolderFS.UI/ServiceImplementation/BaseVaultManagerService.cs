@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -92,7 +93,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
                 storageRoutine.SetUnlockContract(unlockContract);
                 var specifics = storageRoutine.GetSpecifics(contentFolder, options);
-                var cryptoFolder = new CryptoFolder(contentFolder, specifics);
+                var cryptoFolder = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), contentFolder, specifics);
 
                 return new LocalVFSRoot(specifics, cryptoFolder, options);
             }

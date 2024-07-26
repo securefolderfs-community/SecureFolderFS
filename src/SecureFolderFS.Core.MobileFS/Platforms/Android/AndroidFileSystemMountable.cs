@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
 
         public static IMountableFileSystem CreateMountable(FileSystemSpecifics specifics)
         {
-            var cryptoFolder = new CryptoFolder(specifics.ContentFolder, specifics);
+            var cryptoFolder = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
             return new AndroidFileSystemMountable(cryptoFolder, specifics.FileSystemOptions);
         }
     }

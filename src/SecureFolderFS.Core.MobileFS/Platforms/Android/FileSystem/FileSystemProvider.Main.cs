@@ -4,6 +4,7 @@ using Android.Database;
 using Android.OS;
 using Android.Provider;
 using OwlCore.Storage;
+using SecureFolderFS.Storage.Extensions;
 using static Android.Provider.DocumentsContract;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 
@@ -50,7 +51,63 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public override ParcelFileDescriptor? OpenDocument(string? documentId, string? mode, CancellationSignal? signal)
         {
-            return null;
+            if (documentId is null)
+                return null;
+
+            var file = GetStorableForDocumentId(documentId);
+            if (file is not IChildFile childFile)
+                return null;
+
+            var fileAccess = ToFileAccess(mode);
+            if (fileAccess is null)
+                return null;
+
+            var stream = childFile.TryOpenStreamAsync(fileAccess.Value).ConfigureAwait(false).GetAwaiter().GetResult();
+            if (stream is null)
+                return null;
+
+            var pipe = ParcelFileDescriptor.CreatePipe();
+            if (pipe is null)
+                return null;
+
+            var readingPipe = pipe[0];
+            var writingPipe = pipe[1];
+
+            // Start a new task to write the stream content to the pipe
+            Task.Run(() =>
+            {
+                try
+                {
+                    using var output = new ParcelFileDescriptor.AutoCloseOutputStream(writingPipe);
+                    var buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        output.Write(buffer, 0, bytesRead);
+                    }
+                    output.Flush();
+                }
+                catch (IOException e)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error writing to pipe: " + e.Message);
+                }
+            });
+
+            return readingPipe;
+
+            static FileAccess? ToFileAccess(string? mode)
+            {
+                if (string.IsNullOrEmpty(mode))
+                    return null;
+
+                return mode switch
+                {
+                    "r" => FileAccess.Read,
+                    "w" => FileAccess.Write,
+                    "rw" => FileAccess.ReadWrite,
+                    _ => FileAccess.Read
+                };
+            }
         }
 
         /// <inheritdoc/>
@@ -82,6 +139,9 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var items = folder.GetItemsAsync().ToArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             foreach (var item in items)
             {
+                if (item is IFolder) // Temporary fix for folders
+                    continue;
+
                 AddStorable(matrix, item, null);
             }
 

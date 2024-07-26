@@ -8,8 +8,8 @@ namespace SecureFolderFS.Core.FileSystem.Storage
     /// <inheritdoc cref="IFile"/>
     public class CryptoFile : CryptoStorable<IFile>, IChildFile
     {
-        public CryptoFile(IFile inner, FileSystemSpecifics specifics)
-            : base(inner, specifics)
+        public CryptoFile(string plaintextId, IFile inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
+            : base(plaintextId, inner, specifics, parent)
         {
         }
 

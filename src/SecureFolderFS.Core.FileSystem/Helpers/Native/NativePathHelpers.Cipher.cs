@@ -74,7 +74,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Native
             foreach (var namePart in ciphertextPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
             {
                 // Remove encrypted file extension
-                var clearedNamePart = Path.ChangeExtension(namePart, null);
+                var clearedNamePart = Path.GetFileNameWithoutExtension(namePart);
 
                 // Get the Directory ID
                 // Important: The ciphertext path must be used with a file name to retrieve the Directory ID.

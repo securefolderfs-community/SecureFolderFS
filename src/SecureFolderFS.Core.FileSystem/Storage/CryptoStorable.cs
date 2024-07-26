@@ -1,37 +1,45 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
-    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild, IWrappable<IFile>, IWrappable<IFolder>
+    /// <inheritdoc cref="IStorable"/>
+    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild
         where TCapability : IStorable
     {
-        private string? _computedId;
-        private string? _computedName;
-
+        protected readonly CryptoFolder? parent;
         protected readonly FileSystemSpecifics specifics;
 
         /// <inheritdoc/>
         public TCapability Inner { get; }
 
         /// <inheritdoc/>
-        public virtual string Id => _computedId ??= DecryptPath(Inner.Id);
+        public virtual string Id { get; }
 
         /// <inheritdoc/>
-        public virtual string Name => _computedName ??= DecryptName(Inner.Name);
+        public virtual string Name { get; }
 
-        protected CryptoStorable(TCapability inner, FileSystemSpecifics specifics)
+        protected CryptoStorable(string plaintextId, TCapability inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
         {
-            this.Inner = inner;
+            this.parent = parent;
             this.specifics = specifics;
+
+            Inner = inner;
+            Id = plaintextId;
+            Name = Path.GetFileName(plaintextId);
         }
 
         /// <inheritdoc/>
         public virtual async Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
+            if (parent is not null)
+                return parent;
+
             if (Inner is not IStorableChild storableChild)
                 throw new NotSupportedException("Retrieving the parent folder is not supported.");
 
@@ -39,87 +47,74 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (storableChild.Id == specifics.ContentFolder.Id || !specifics.ContentFolder.Id.Contains(storableChild.Id))
                 return null;
 
-            var parent = await storableChild.GetParentAsync(cancellationToken);
-            if (parent is null)
+            var ciphertextParent = await storableChild.GetParentAsync(cancellationToken);
+            if (ciphertextParent is null)
                 return null;
 
-            return (IFolder?)Wrap(parent);
+            if (ciphertextParent is not IChildFolder ciphertextParentFolder)
+                throw new NotSupportedException("Retrieving the parent folder is not supported.");
+
+            // Get the parent folder of the parent folder to be able to retrieve the DirectoryID
+            // If the parent of parent is null, then we can assume we are at the root level and should use ContentFolder
+            var ciphertextParentOfParent = await ciphertextParentFolder.GetParentAsync(cancellationToken) ?? specifics.ContentFolder;
+
+            var plaintextName = await DecryptNameAsync(ciphertextParent.Name, ciphertextParentOfParent);
+            if (plaintextName is null)
+                return null;
+
+            return (IFolder?)Wrap(ciphertextParent, plaintextName);
         }
 
-        /// <inheritdoc/>
-        public virtual IWrapper<IFile> Wrap(IFile file)
+        protected virtual IWrapper<IFile> Wrap(IFile file, params object[] objects)
         {
-            return new CryptoFile(file, specifics);
+            if (objects[0] is not string plaintextName)
+                throw new ArgumentException($"The first argument of {nameof(objects)} should be the plaintext name.");
+
+            var plaintextId = Path.Combine(Id, plaintextName);
+            return new CryptoFile(plaintextId, file, specifics, this as CryptoFolder);
         }
 
-        /// <inheritdoc/>
-        public virtual IWrapper<IFolder> Wrap(IFolder folder)
+        protected virtual IWrapper<IFolder> Wrap(IFolder folder, params object[] objects)
         {
-            return new CryptoFolder(folder, specifics);
-        }
+            if (objects[0] is not string plaintextName)
+                throw new ArgumentException($"The first argument of {nameof(objects)} should be the plaintext name.");
 
-        /// <summary>
-        /// Encrypts the provided <paramref name="path"/>.
-        /// </summary>
-        /// <param name="path">The path to encrypt.</param>
-        /// <returns>An encrypted path equivalent found on the file system.</returns>
-        protected virtual string EncryptPath(string path)
-        {
-            return path;
-
-            //var ciphertextPath = pathConverter.ToCiphertext(path);
-            //if (ciphertextPath is null)
-            //    throw new CryptographicException("Couldn't convert to ciphertext path.");
-
-            //return ciphertextPath;
-        }
-
-        /// <summary>
-        /// Decrypts the provided <paramref name="path"/>.
-        /// </summary>
-        /// <param name="path">The path to decrypt.</param>
-        /// <returns>A decrypted path version of the one found on the file system.</returns>
-        protected virtual string DecryptPath(string path)
-        {
-            return path;
-
-            //var cleartextPath = pathConverter.ToCleartext(path);
-            //if (cleartextPath is null)
-            //    throw new CryptographicException("Couldn't convert to cleartext path.");
-
-            //return cleartextPath;
+            var plaintextId = Path.Combine(Id, plaintextName);
+            return new CryptoFolder(plaintextId, folder, specifics, this as CryptoFolder);
         }
 
         /// <summary>
-        /// Encrypts the provided <paramref name="name"/>.
+        /// Encrypts the provided <paramref name="plaintextName"/>.
         /// </summary>
-        /// <param name="name">The name to encrypt.</param>
-        /// <returns>An encrypted name.</returns>
-        protected virtual string EncryptName(string name)
+        /// <param name="plaintextName">The name to encrypt.</param>
+        /// <param name="parentFolder">The ciphertext parent folder.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is an encrypted name.</returns>
+        protected virtual async Task<string> EncryptNameAsync(string plaintextName, IFolder parentFolder)
         {
-            return name;
+            if (specifics.Security.NameCrypt is null)
+                return plaintextName;
 
-            //var ciphertextName = pathConverter.GetCiphertextFileName(System.IO.Path.Combine(Id, name));
-            //if (ciphertextName is null)
-            //    throw new CryptographicException("Couldn't convert to ciphertext name.");
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics, plaintextName);
+            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId);
 
-            //return ciphertextName;
+            return specifics.Security.NameCrypt.EncryptName(plaintextName, result ? directoryId : ReadOnlySpan<byte>.Empty) + FileSystem.Constants.Names.ENCRYPTED_FILE_EXTENSION;
         }
 
         /// <summary>
-        /// Decrypts the provided <paramref name="name"/>.
+        /// Decrypts the provided <paramref name="ciphertextName"/>.
         /// </summary>
-        /// <param name="name">The name to decrypt.</param>
-        /// <returns>A decrypted name.</returns>
-        protected virtual string DecryptName(string name)
+        /// <param name="ciphertextName">The name to decrypt.</param>
+        /// <param name="parentFolder">The ciphertext parent folder.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is a decrypted name.</returns>
+        protected virtual async Task<string?> DecryptNameAsync(string ciphertextName, IFolder parentFolder)
         {
-            return name;
+            if (specifics.Security.NameCrypt is null)
+                return ciphertextName;
 
-            //var cleartextName = pathConverter.GetCleartextFileName(System.IO.Path.Combine(Id, name));
-            //if (cleartextName is null)
-            //    throw new CryptographicException("Couldn't convert to cleartext name.");
+            var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics, ciphertextName);
+            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId);
 
-            //return cleartextName;
+            return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
         }
     }
 }

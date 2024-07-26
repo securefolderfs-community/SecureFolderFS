@@ -14,6 +14,11 @@ namespace SecureFolderFS.Shared
         /// </summary>
         public static DI Default { get; } = new();
 
+        /// <summary>
+        /// Gets the value that indicates whether the <see cref="IServiceProvider"/> is ready to be used.
+        /// </summary>
+        public bool IsAvailable => _serviceProvider is not null;
+
         /// <inheritdoc/>
         public object? GetService(Type serviceType)
         {

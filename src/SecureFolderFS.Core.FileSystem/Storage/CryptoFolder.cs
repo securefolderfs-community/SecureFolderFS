@@ -11,10 +11,10 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 {
     // TODO(ns): Add move and copy support
     /// <inheritdoc cref="IFolder"/>
-    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IModifiableFolder, IGetItem, IGetItemRecursive, IGetFirstByName
+    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IModifiableFolder, IGetFirstByName
     {
-        public CryptoFolder(IFolder inner, FileSystemSpecifics specifics)
-            : base(inner, specifics)
+        public CryptoFolder(string plaintextId, IFolder inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
+            : base(plaintextId, inner, specifics, parent)
         {
         }
 
@@ -26,53 +26,27 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 if (PathHelpers.IsCoreFile(item.Name))
                     continue;
 
+                var plaintextName = await DecryptNameAsync(item.Name, Inner);
+                if (plaintextName is null)
+                    continue;
+
                 yield return item switch
                 {
-                    IFile file => (IStorableChild)Wrap(file),
-                    IFolder folder => (IStorableChild)Wrap(folder),
+                    IFile file => (IStorableChild)Wrap(file, plaintextName),
+                    IFolder folder => (IStorableChild)Wrap(folder, plaintextName),
                     _ => throw new InvalidOperationException("The enumerated item was neither a file nor a folder.")
                 };
             }
         }
 
         /// <inheritdoc/>
-        public async Task<IStorableChild> GetItemRecursiveAsync(string id, CancellationToken cancellationToken = default)
-        {
-            if (!id.Contains(Id))
-                throw new FileNotFoundException("The provided Id does not belong to an item in this folder.");
-
-            var ciphertextId = EncryptPath(id);
-            return await Inner.GetItemRecursiveAsync(ciphertextId, cancellationToken) switch
-            {
-                IChildFile file => (IStorableChild)Wrap(file),
-                IChildFolder folder => (IStorableChild)Wrap(folder),
-                _ => throw new InvalidCastException("Could not match the item to neither a file nor a folder.")
-            };
-        }
-
-        /// <inheritdoc/>
         public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            var encryptedName = EncryptName(name);
-            return await Inner.GetFirstByNameAsync(encryptedName, cancellationToken) switch
+            var ciphertextName = await EncryptNameAsync(name, Inner);
+            return await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken) switch
             {
-                IChildFile file => (IStorableChild)Wrap(file),
-                IChildFolder folder => (IStorableChild)Wrap(folder),
-                _ => throw new InvalidCastException("Could not match the item to neither a file nor a folder.")
-            };
-        }
-
-        /// <inheritdoc/>
-        public async Task<IStorableChild> GetItemAsync(string id, CancellationToken cancellationToken = default)
-        {
-            if (!id.Contains(Id))
-                throw new FileNotFoundException("The provided Id does not belong to an item in this folder.");
-
-            var ciphertextId = EncryptPath(id);
-            return await Inner.GetItemAsync(ciphertextId, cancellationToken) switch
-            {
-                IChildFile file => (IStorableChild)Wrap(file),
-                IChildFolder folder => (IStorableChild)Wrap(folder),
+                IChildFile file => (IStorableChild)Wrap(file, name),
+                IChildFolder folder => (IStorableChild)Wrap(folder, name),
                 _ => throw new InvalidCastException("Could not match the item to neither a file nor a folder.")
             };
         }
@@ -90,6 +64,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
+            // TODO: Get and delete the ciphertext item on disk, not plaintext representation
             // TODO: Invalidate cache on success
             return modifiableFolder.DeleteAsync(item, cancellationToken);
         }
@@ -100,7 +75,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var encryptedName = EncryptName(name);
+            var encryptedName = await EncryptNameAsync(name, Inner);
             var folder = await modifiableFolder.CreateFolderAsync(encryptedName, overwrite, cancellationToken);
             if (folder is not IModifiableFolder createdModifiableFolder)
                 throw new ArgumentException("The created folder is not modifiable.");
@@ -116,7 +91,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             // Set DirectoryID to known IDs
             specifics.DirectoryIdCache.CacheSet(dirIdFile.Id, new(Guid.NewGuid().ToByteArray()));
 
-            return (IChildFolder)Wrap(folder);
+            return (IChildFolder)Wrap(folder, name);
         }
 
         /// <inheritdoc/>
@@ -125,10 +100,10 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var encryptedName = EncryptName(name);
+            var encryptedName = await EncryptNameAsync(name, Inner);
             var file = await modifiableFolder.CreateFileAsync(encryptedName, overwrite, cancellationToken);
 
-            return (IChildFile)Wrap(file);
+            return (IChildFile)Wrap(file, name);
         }
     }
 }
