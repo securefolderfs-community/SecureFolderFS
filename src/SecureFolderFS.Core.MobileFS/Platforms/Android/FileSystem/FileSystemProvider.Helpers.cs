@@ -51,7 +51,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (storable.Id == safRoot.StorageRoot.Inner.Id)
                 return $"{safRoot.RootId}:";
 
-            return $"{safRoot.RootId}:{storable.Id.Substring(0, safRoot.StorageRoot.Inner.Id.Length)}";
+            return $"{safRoot.RootId}:{storable.Id}";
         }
 
         private IStorable? GetStorableForDocumentId(string documentId)

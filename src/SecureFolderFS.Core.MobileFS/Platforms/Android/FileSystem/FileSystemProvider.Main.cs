@@ -139,9 +139,6 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var items = folder.GetItemsAsync().ToArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             foreach (var item in items)
             {
-                if (item is IFolder) // Temporary fix for folders
-                    continue;
-
                 AddStorable(matrix, item, null);
             }
 

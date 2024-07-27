@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DokanNet" Version="2.0.5.1" />
+    <PackageReference Include="DokanNet" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

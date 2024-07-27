@@ -21,6 +21,17 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public override IEnumerable<string> GetContentCiphers()
+        {
+            // XChaCha20-Poly1305 is not supported in NSec implementation for Android
+            // Trackers:
+            // - https://github.com/ektrah/nsec/issues/81
+            // - https://nsec.rocks/docs/install#supported-platforms
+
+            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
+        }
+
+        /// <inheritdoc/>
         public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
