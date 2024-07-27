@@ -20,17 +20,18 @@
     <AssemblyVersion>0.5.0.0</AssemblyVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>    
-    <!-- TODO: Set correct app identifier -->
-    <ApplicationId>com.companyname.SecureFolderFS</ApplicationId>
+    <ApplicationId>com.securefolderfs.SecureFolderFS</ApplicationId>
 
   </PropertyGroup>
 
   <PropertyGroup>
     <!--
-      UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
+      UnoFeatures lets you quickly add and manage implicit package references based on the features you want to use.
       https://aka.platform.uno/singleproject-features
     -->
-    <UnoFeatures></UnoFeatures>
+    <UnoFeatures>
+      OpenSans;
+    </UnoFeatures>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -413,9 +414,12 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Dialogs\AgreementDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\ChangelogDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\CredentialsDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\ExplanationDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\LicensesDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\PaymentDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\PreviewRecoveryDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\SettingsDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
@@ -437,6 +441,8 @@
     <UpToDateCheckInput Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\OverlayControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\PasswordControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\RecoveryPreviewControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\RegisterControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\TitleBarControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\GraphsWidget.xaml" />
@@ -454,26 +460,6 @@
     <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Dialogs\PreviewRecoveryDialog.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="UserControls\RecoveryPreviewControl.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Dialogs\CredentialsDialog.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="UserControls\RegisterControl.xaml" />
   </ItemGroup>
 
   <ItemGroup>
