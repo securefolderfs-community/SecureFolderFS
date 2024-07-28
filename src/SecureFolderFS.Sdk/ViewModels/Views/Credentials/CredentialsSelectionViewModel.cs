@@ -24,6 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         private readonly IFolder _vaultFolder;
         private readonly AuthenticationType _allowedStage;
 
+        [ObservableProperty] private bool _CanRemoveCredentials;
         [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
 
@@ -38,6 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _allowedStage = allowedStage;
+            CanRemoveCredentials = allowedStage != AuthenticationType.FirstStageOnly;
             AuthenticationOptions = new();
         }
 
@@ -46,7 +48,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         {
             // Get authentication options
             var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
-            await foreach (var item in VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId!, cancellationToken))
+            if (vaultOptions.VaultId is null)
+                return;
+
+            await foreach (var item in VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken))
             {
                 // Don't add authentication methods to list which are already in use
                 if (vaultOptions.AuthenticationMethod.Contains(item.Id))

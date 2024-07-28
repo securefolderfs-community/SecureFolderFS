@@ -73,25 +73,21 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var readingPipe = pipe[0];
             var writingPipe = pipe[1];
 
-            // Start a new task to write the stream content to the pipe
-            Task.Run(() =>
+            try
             {
-                try
+                using var output = new ParcelFileDescriptor.AutoCloseOutputStream(writingPipe);
+                var buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    using var output = new ParcelFileDescriptor.AutoCloseOutputStream(writingPipe);
-                    var buffer = new byte[8192];
-                    int bytesRead;
-                    while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        output.Write(buffer, 0, bytesRead);
-                    }
-                    output.Flush();
+                    output.Write(buffer, 0, bytesRead);
                 }
-                catch (IOException e)
-                {
-                    System.Diagnostics.Debug.WriteLine("Error writing to pipe: " + e.Message);
-                }
-            });
+                output.Flush();
+            }
+            catch (IOException e)
+            {
+                System.Diagnostics.Debug.WriteLine("Error writing to pipe: " + e.Message);
+            }
 
             return readingPipe;
 

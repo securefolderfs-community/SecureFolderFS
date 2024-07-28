@@ -17,8 +17,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return false;
 
             // TODO(saf): Implement columns
-            row.Add(Document.ColumnSize, 200);
-            row.Add(Document.ColumnLastModified, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            row.Add(Document.ColumnSize, 6);
+            row.Add(Document.ColumnLastModified, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
 
             row.Add(Document.ColumnDocumentId, documentId);
             row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));

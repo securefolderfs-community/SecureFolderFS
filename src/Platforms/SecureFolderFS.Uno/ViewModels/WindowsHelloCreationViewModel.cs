@@ -41,10 +41,10 @@ namespace SecureFolderFS.Uno.ViewModels
                 if (key is { Successful: true, Value: not null })
                     CredentialsProvided?.Invoke(this, new(key.Value));
             }
-            catch (InvalidOperationException iopex)
+            catch (InvalidOperationException ex)
             {
                 // Thrown when authentication is canceled
-                SetError(Result.Failure(iopex));
+                SetError(Result.Failure(ex));
             }
         }
     }

@@ -35,19 +35,6 @@ namespace SecureFolderFS.Uno.Platforms.SkiaGtk.ServiceImplementation
 
             foreach (var item in authenticationMethods)
             {
-                var supported = item switch
-                {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => true,
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => true,
-                    _ => false
-                };
-
-                if (!supported)
-                    throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.");
-            }
-
-            foreach (var item in authenticationMethods)
-            {
                 yield return item switch
                 {
                     Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD),

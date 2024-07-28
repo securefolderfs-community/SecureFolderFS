@@ -72,7 +72,7 @@ namespace SecureFolderFS.Uno.Views.Settings
             var adapterResult = await fileSystemAdapter.GetStatusAsync(cancellationToken);
             if (fileSystemAdapter.Id == Core.Constants.FileSystemId.FS_WEBDAV)
             {
-                FileSystemInfoBar = new();
+                FileSystemInfoBar = new WebDavInfoBar();
                 FileSystemInfoBar.IsOpen = true;
                 FileSystemInfoBar.Severity = ViewSeverityType.Warning;
                 FileSystemInfoBar.CanBeClosed = false;

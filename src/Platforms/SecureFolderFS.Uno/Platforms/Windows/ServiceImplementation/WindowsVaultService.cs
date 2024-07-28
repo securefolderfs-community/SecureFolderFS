@@ -36,25 +36,19 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
             foreach (var item in authenticationMethods)
             {
-                var supported = item switch
-                {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => true,
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken),
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => true,
-                    _ => false
-                };
-
-                if (!supported)
-                    throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.");
-            }
-
-            foreach (var item in authenticationMethods)
-            {
                 yield return item switch
                 {
+                    // Password
                     Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD),
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => new WindowsHelloLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder),
+
+                    // Windows Hello
+                    Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO => await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken)
+                            ? new WindowsHelloLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_WINDOWS_HELLO, vaultFolder)
+                            : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform."),
+
+                    // Key File
                     Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => new KeyFileLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder),
+
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }
