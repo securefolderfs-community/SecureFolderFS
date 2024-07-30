@@ -1,10 +1,12 @@
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -18,6 +20,8 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class CredentialsDialog : ContentDialog, IOverlayControl
     {
+        private bool _isBackShown;
+
         public CredentialsOverlayViewModel? ViewModel
         {
             get => DataContext.TryCast<CredentialsOverlayViewModel>();
@@ -36,6 +40,7 @@ namespace SecureFolderFS.Uno.Dialogs
         public void SetView(IViewable viewable)
         {
             ViewModel = (CredentialsOverlayViewModel)viewable;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.OnAppearing();
         }
 
@@ -44,6 +49,24 @@ namespace SecureFolderFS.Uno.Dialogs
         {
             Hide();
             return Task.CompletedTask;
+        }
+
+        private async Task AnimateBackAsync(bool shouldShowBack)
+        {
+            if (shouldShowBack && !_isBackShown)
+            {
+                _isBackShown = true;
+                GoBack.Visibility = Visibility.Visible;
+                await ShowBackButtonStoryboard.BeginAsync();
+                ShowBackButtonStoryboard.Stop();
+            }
+            else if (!shouldShowBack && _isBackShown)
+            {
+                _isBackShown = false;
+                await HideBackButtonStoryboard.BeginAsync();
+                HideBackButtonStoryboard.Stop();
+                GoBack.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -75,6 +98,39 @@ namespace SecureFolderFS.Uno.Dialogs
                 return;
 
             ViewModel.SelectionViewModel.ItemSelectedCommand.Execute(selectedAuthentication);
+        }
+
+        private async void GoBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            if (ViewModel.SelectedViewModel is not CredentialsConfirmationViewModel)
+                return;
+
+            ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
+            ViewModel.PrimaryButtonText = null;
+            ViewModel.Title = "Select authentication option";
+
+            await AnimateBackAsync(false);
+        }
+
+        private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            if (e.PropertyName == nameof(CredentialsOverlayViewModel.SelectedViewModel))
+            {
+                if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel)
+                    await AnimateBackAsync(true);
+            }
+        }
+
+        private void CredentialsDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            if (ViewModel is not null)
+                ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
         }
     }
 }

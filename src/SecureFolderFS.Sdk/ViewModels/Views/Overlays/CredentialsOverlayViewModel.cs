@@ -56,7 +56,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public void Dispose()
         {
-            SelectionViewModel.ConfirmationRequested += SelectionViewModel_ConfirmationRequested;
+            SelectionViewModel.ConfirmationRequested -= SelectionViewModel_ConfirmationRequested;
             LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
             SelectionViewModel.Dispose();
             LoginViewModel.Dispose();
