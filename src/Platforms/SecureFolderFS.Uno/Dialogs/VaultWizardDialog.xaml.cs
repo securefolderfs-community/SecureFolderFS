@@ -107,6 +107,12 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
+            if (e is CloseNavigationRequestedEventArgs)
+            {
+                await HideAsync();
+                return;
+            }
+
             BaseWizardViewModel? nextViewModel = e.Origin switch
             {
                 // Main (if 'Add existing' selected) -> Summary
