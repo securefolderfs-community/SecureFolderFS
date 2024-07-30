@@ -10,13 +10,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     public sealed partial class CredentialsConfirmationViewModel : ObservableObject
     {
         [ObservableProperty] private bool _IsRemoving;
+        [ObservableProperty] private bool _CanComplement;
         [ObservableProperty] private bool _IsComplementing;
         [ObservableProperty] private AuthenticationViewModel? _SelectedViewModel;
 
-        public CredentialsConfirmationViewModel(AuthenticationViewModel selectedViewModel, bool isRemoving)
+        public CredentialsConfirmationViewModel(AuthenticationViewModel selectedViewModel)
         {
             _SelectedViewModel = selectedViewModel;
-            _IsRemoving = isRemoving;
         }
 
         [RelayCommand]

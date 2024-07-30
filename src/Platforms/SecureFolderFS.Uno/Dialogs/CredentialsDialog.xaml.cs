@@ -85,7 +85,7 @@ namespace SecureFolderFS.Uno.Dialogs
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
 
-        private void ActionBlockControl_Click(object sender, RoutedEventArgs e)
+        private async void ActionBlockControl_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel is null)
                 return;
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Uno.Dialogs
             if (sender is not FrameworkElement { DataContext: AuthenticationViewModel selectedAuthentication })
                 return;
 
-            ViewModel.SelectionViewModel.ItemSelectedCommand.Execute(selectedAuthentication);
+            await ViewModel.SelectionViewModel.ItemSelectedCommand.ExecuteAsync(selectedAuthentication);
         }
 
         private async void GoBack_Click(object sender, RoutedEventArgs e)

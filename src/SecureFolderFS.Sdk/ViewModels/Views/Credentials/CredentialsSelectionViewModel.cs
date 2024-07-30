@@ -73,16 +73,36 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             if (CurrentViewModel is null)
                 return;
 
-            ConfirmationRequested?.Invoke(this, new(CurrentViewModel, true));
+            ConfirmationRequested?.Invoke(this, new(CurrentViewModel)
+            {
+                IsRemoving = true,
+                CanComplement = false
+            });
         }
 
         [RelayCommand]
-        private void ItemSelected(AuthenticationViewModel? authenticationViewModel)
+        private async Task ItemSelected(AuthenticationViewModel? authenticationViewModel, CancellationToken cancellationToken)
         {
+            // We need to get the current authentication in 'creation' instead of 'login' mode
+            authenticationViewModel ??= await GetExistingCreationAsync(cancellationToken);
             if (authenticationViewModel is null)
                 return;
 
-            ConfirmationRequested?.Invoke(this, new(authenticationViewModel, false));
+            ConfirmationRequested?.Invoke(this, new(authenticationViewModel)
+            {
+                IsRemoving = false,
+                CanComplement = _allowedStage != AuthenticationType.FirstStageOnly // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
+            });
+        }
+
+        private async Task<AuthenticationViewModel?> GetExistingCreationAsync(CancellationToken cancellationToken)
+        {
+            var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+            if (vaultOptions.VaultId is null)
+                return null;
+
+            return await VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken)
+                .FirstOrDefaultAsync(x => x.Id == CurrentViewModel?.Id, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc/>
