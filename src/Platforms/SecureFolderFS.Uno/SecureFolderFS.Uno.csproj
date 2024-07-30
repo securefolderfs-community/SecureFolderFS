@@ -207,6 +207,7 @@
     <None Remove="ResourceDictionaries\TextResources.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
+    <None Remove="UserControls\BackButtonTitleControl.xaml" />
     <None Remove="UserControls\BannerControl.xaml" />
     <None Remove="UserControls\GraphControl.xaml" />
     <None Remove="UserControls\InstallationControl.xaml" />
@@ -426,6 +427,7 @@
     <UpToDateCheckInput Remove="ResourceDictionaries\ImageResources.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\BackButtonTitleControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\BannerControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\GraphControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InstallationControl.xaml" />

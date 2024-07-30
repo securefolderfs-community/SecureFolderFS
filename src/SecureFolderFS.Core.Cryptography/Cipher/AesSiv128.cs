@@ -58,7 +58,15 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
         /// <inheritdoc/>
         public void Dispose()
         {
-            _aesCmacSiv.Dispose();
+            try
+            {
+                _aesCmacSiv.Dispose();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Investigate. Sometimes an exception is thrown when disposing the Aead instance
+                _ = ex;
+            }
         }
     }
 }

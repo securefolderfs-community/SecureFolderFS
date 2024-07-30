@@ -24,8 +24,7 @@ namespace SecureFolderFS.Uno.Dialogs
     public sealed partial class VaultWizardDialog : ContentDialog, IOverlayControl
     {
         private BaseWizardViewModel? _previousViewModel;
-        private bool _hasNavigationAnimatedOnLoaded;
-        private bool _isBackAnimationState;
+        private bool _isBackShown;
 
         public WizardOverlayViewModel? ViewModel
         {
@@ -68,30 +67,17 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async Task AnimateBackAsync(BaseWizardViewModel? viewModel)
         {
-            var canGoBack = viewModel is CredentialsWizardViewModel;
-            if (!_hasNavigationAnimatedOnLoaded)
+            var canGoBack = viewModel is CredentialsWizardViewModel && Navigation.ContentFrame.CanGoBack;
+            if (canGoBack && !_isBackShown)
             {
-                _hasNavigationAnimatedOnLoaded = true;
-                GoBack.Visibility = Visibility.Collapsed;
+                _isBackShown = true;
+                await BackTitle.ShowBackAsync();
             }
-            else switch (_isBackAnimationState)
+            else if (!canGoBack && _isBackShown)
             {
-                case false when (canGoBack && Navigation.ContentFrame.CanGoBack):
-                    _isBackAnimationState = true;
-                    GoBack.Visibility = Visibility.Visible;
-                    await ShowBackButtonStoryboard.BeginAsync();
-                    ShowBackButtonStoryboard.Stop();
-                    break;
-
-                case true when !(canGoBack && Navigation.ContentFrame.CanGoBack):
-                    _isBackAnimationState = false;
-                    await HideBackButtonStoryboard.BeginAsync();
-                    HideBackButtonStoryboard.Stop();
-                    GoBack.Visibility = Visibility.Collapsed;
-                    break;
+                _isBackShown = false;
+                await BackTitle.HideBackAsync();
             }
-
-            GoBack.Visibility = canGoBack && Navigation.ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

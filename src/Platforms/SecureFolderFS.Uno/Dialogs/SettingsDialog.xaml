@@ -13,9 +13,7 @@
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <ResourceDictionary>
-            <x:Double x:Key="ContentDialogMaxWidth">1300</x:Double>
-        </ResourceDictionary>
+        <x:Double x:Key="ContentDialogMaxWidth">1300</x:Double>
     </ContentDialog.Resources>
 
     <Grid

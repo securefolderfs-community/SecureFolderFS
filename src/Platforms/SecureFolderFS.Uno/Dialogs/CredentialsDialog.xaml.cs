@@ -56,16 +56,12 @@ namespace SecureFolderFS.Uno.Dialogs
             if (shouldShowBack && !_isBackShown)
             {
                 _isBackShown = true;
-                GoBack.Visibility = Visibility.Visible;
-                await ShowBackButtonStoryboard.BeginAsync();
-                ShowBackButtonStoryboard.Stop();
+                await BackTitle.ShowBackAsync();
             }
             else if (!shouldShowBack && _isBackShown)
             {
                 _isBackShown = false;
-                await HideBackButtonStoryboard.BeginAsync();
-                HideBackButtonStoryboard.Stop();
-                GoBack.Visibility = Visibility.Collapsed;
+                await BackTitle.HideBackAsync();
             }
         }
 
@@ -89,12 +85,12 @@ namespace SecureFolderFS.Uno.Dialogs
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
 
-        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void ActionBlockControl_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel is null)
                 return;
 
-            if (e.ClickedItem is not AuthenticationViewModel selectedAuthentication)
+            if (sender is not FrameworkElement { DataContext: AuthenticationViewModel selectedAuthentication })
                 return;
 
             ViewModel.SelectionViewModel.ItemSelectedCommand.Execute(selectedAuthentication);
