@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -63,6 +64,17 @@ namespace SecureFolderFS.Uno.Dialogs
         private void RecoverLink_Click(object sender, RoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+        }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            if (e.ClickedItem is not AuthenticationViewModel selectedAuthentication)
+                return;
+
+            ViewModel.SelectionViewModel.ItemSelectedCommand.Execute(selectedAuthentication);
         }
     }
 }

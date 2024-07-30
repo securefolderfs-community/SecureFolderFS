@@ -11,6 +11,8 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 
         public DataTemplate? SelectionTemplate { get; set; }
 
+        public DataTemplate? ConfirmationTemaplte { get; set; }
+
         /// <inheritdoc/>
         protected override DataTemplate? SelectTemplateCore(INotifyPropertyChanged? item, DependencyObject container)
         {
@@ -18,6 +20,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
             {
                 LoginViewModel => LoginTemplate,
                 CredentialsSelectionViewModel => SelectionTemplate,
+                CredentialsConfirmationViewModel => ConfirmationTemaplte,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

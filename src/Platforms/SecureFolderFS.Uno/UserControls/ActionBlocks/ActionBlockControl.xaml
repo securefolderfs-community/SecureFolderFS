@@ -45,6 +45,7 @@
                 Background="{ThemeResource ExpanderHeaderBackground}"
                 BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
                 BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
+                Click="Button_Click"
                 Command="{Binding ClickCommand, Mode=OneWay}"
                 CornerRadius="{ThemeResource ControlCornerRadius}"
                 DataContext="{Binding ElementName=ActionBlock}">

@@ -7,9 +7,17 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
     [Bindable(true)]
-    public sealed partial class CredentialsViewModel : ObservableObject
+    public sealed partial class CredentialsConfirmationViewModel : ObservableObject
     {
+        [ObservableProperty] private bool _IsRemoving;
+        [ObservableProperty] private bool _IsComplementing;
         [ObservableProperty] private AuthenticationViewModel? _SelectedViewModel;
+
+        public CredentialsConfirmationViewModel(AuthenticationViewModel selectedViewModel, bool isRemoving)
+        {
+            _SelectedViewModel = selectedViewModel;
+            _IsRemoving = isRemoving;
+        }
 
         [RelayCommand]
         private async Task ChosenAsync() // TODO: Name tbd

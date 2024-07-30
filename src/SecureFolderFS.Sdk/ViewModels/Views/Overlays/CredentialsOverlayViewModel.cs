@@ -15,43 +15,51 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Bindable(true)]
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
-        private readonly LoginViewModel _loginViewModel;
-        private readonly CredentialsSelectionViewModel _selectionViewModel;
-
+        [ObservableProperty] private LoginViewModel _LoginViewModel;
+        [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
 
         public CredentialsOverlayViewModel(IVaultModel vaultModel, CredentialsSelectionViewModel selectionViewModel)
         {
-            _loginViewModel = new(vaultModel, false);
-            _selectionViewModel = selectionViewModel;
+            LoginViewModel = new(vaultModel, false);
+            SelectionViewModel = selectionViewModel;
 
-            SelectedViewModel = _loginViewModel;
+            SelectedViewModel = LoginViewModel;
             Title = "Authenticate".ToLocalized();
             PrimaryButtonText = "Continue".ToLocalized();
 
-            _loginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
+            LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
+            SelectionViewModel.ConfirmationRequested += SelectionViewModel_ConfirmationRequested;
         }
 
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            await _selectionViewModel.InitAsync(cancellationToken);
-            await _loginViewModel.InitAsync(cancellationToken);
+            await SelectionViewModel.InitAsync(cancellationToken);
+            await LoginViewModel.InitAsync(cancellationToken);
         }
 
         private void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
             Title = "Select authentication option";
             PrimaryButtonText = null;
-            SelectedViewModel = _selectionViewModel;
-            _ = e;
+            SelectedViewModel = SelectionViewModel;
+        }
+
+        private void SelectionViewModel_ConfirmationRequested(object? sender, CredentialsConfirmationViewModel e)
+        {
+            Title = "Authenticate".ToLocalized();
+            PrimaryButtonText = "Confirm".ToLocalized();
+            SelectedViewModel = e;
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _selectionViewModel.Dispose();
-            _loginViewModel.Dispose();
+            SelectionViewModel.ConfirmationRequested += SelectionViewModel_ConfirmationRequested;
+            LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
+            SelectionViewModel.Dispose();
+            LoginViewModel.Dispose();
         }
     }
 }

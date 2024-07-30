@@ -176,6 +176,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <inheritdoc/>
         public void Dispose()
         {
+            VaultUnlocked = null;
             _vaultWatcherModel.StateChanged -= VaultWatcherModel_StateChanged;
 
             if (CurrentViewModel is not null)

@@ -28,6 +28,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
 
+        public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
+
         public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationViewModel currentViewModel)
             : this(vaultFolder, currentViewModel.Availability)
         {
@@ -66,15 +68,27 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         }
 
         [RelayCommand]
-        private async Task RemoveCredentialsAsync(CancellationToken cancellationToken)
+        private void RemoveCredentials()
         {
-            // TODO: Implement removing credentials option
-            await Task.CompletedTask;
+            if (CurrentViewModel is null)
+                return;
+
+            ConfirmationRequested?.Invoke(this, new(CurrentViewModel, true));
+        }
+
+        [RelayCommand]
+        private void ItemSelected(AuthenticationViewModel? authenticationViewModel)
+        {
+            if (authenticationViewModel is null)
+                return;
+
+            ConfirmationRequested?.Invoke(this, new(authenticationViewModel, false));
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
+            ConfirmationRequested = null;
             CurrentViewModel?.Dispose();
             AuthenticationOptions.DisposeElements();
         }
