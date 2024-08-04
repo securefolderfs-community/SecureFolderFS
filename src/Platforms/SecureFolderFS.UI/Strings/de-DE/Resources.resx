@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddExisting" xml:space="preserve">
+    <value>Add existing</value>
+  </data>
   <data name="AddExistingVault" xml:space="preserve">
     <value>Vorhandenen Tresor hinzufügen</value>
   </data>
@@ -127,10 +130,10 @@
     <value>Neuen Tresor hinzufügen</value>
   </data>
   <data name="Authenticate" xml:space="preserve">
-    <value>Authenticate</value>
+    <value>Authentifizieren</value>
   </data>
   <data name="AuthenticateUsing" xml:space="preserve">
-    <value>Authenticate using {0}</value>
+    <value>Authentifizieren mit {0}</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Tresore automatisch sperren</value>
@@ -145,7 +148,7 @@
     <value>SecureFolderFS beim Systemstart ausführen</value>
   </data>
   <data name="Back" xml:space="preserve">
-    <value>Back</value>
+    <value>Zurück</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Abbrechen</value>
@@ -154,7 +157,7 @@
     <value>Versionshinweise</value>
   </data>
   <data name="ChangelogCloseButton" xml:space="preserve">
-    <value>Awesome!</value>
+    <value>Großartig!</value>
   </data>
   <data name="ChangelogDescription" xml:space="preserve">
     <value>Aktuelle Versionshinweise für diese Version anzeigen</value>
@@ -194,6 +197,9 @@
   </data>
   <data name="CopyVersionMessage" xml:space="preserve">
     <value>Wählen Sie, welche Version in die Zwischenablage kopiert werden soll</value>
+  </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Create new</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
     <value>Neuen Tresor erstellen</value>
@@ -258,6 +264,9 @@
   <data name="InvalidPasswordMessage" xml:space="preserve">
     <value>Das angegebene Passwort ist falsch.</value>
   </data>
+  <data name="KeyFile" xml:space="preserve">
+    <value>Key file</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Sprache</value>
   </data>
@@ -286,7 +295,7 @@
     <value>Einstellungen verwalten</value>
   </data>
   <data name="MasterKeyDescription" xml:space="preserve">
-    <value>This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+    <value>Dies ist der Master-Schlüssel, mit dem Sie den Zugriff auf diesen Tresor wiederherstellen können. Wenn Sie ihn verlieren, können Sie ihr Passwort nicht zurücksetzen.</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Meine Tresore</value>
@@ -298,7 +307,7 @@
     <value>Neuer Tresor</value>
   </data>
   <data name="NoEncryption" xml:space="preserve">
-    <value>No encryption</value>
+    <value>Keine Verschlüsselung</value>
     <comment>Used as an option when choosing vault encryption</comment>
   </data>
   <data name="NoFolderSelected" xml:space="preserve">
@@ -322,8 +331,11 @@
   <data name="Password" xml:space="preserve">
     <value>Passwort</value>
   </data>
+  <data name="Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="Print" xml:space="preserve">
-    <value>Print</value>
+    <value>Drucken</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Datenschutzrichtlinie</value>
@@ -334,6 +346,12 @@
   <data name="ReadSpeeds" xml:space="preserve">
     <value>Lesegeschwindigkeiten</value>
   </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Recover</value>
+  </data>
+  <data name="RecoverAccess" xml:space="preserve">
+    <value>Recover access</value>
+  </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Tresor aus der Liste entfernen</value>
   </data>
@@ -341,7 +359,7 @@
     <value>Passwort wiederholen</value>
   </data>
   <data name="RestartRequired" xml:space="preserve">
-    <value>Restart required</value>
+    <value>Neustart erforderlich</value>
   </data>
   <data name="RestoreLastSession" xml:space="preserve">
     <value>An letzter Stelle fortfahren</value>
@@ -350,11 +368,11 @@
     <value>Beim zuvor ausgewählten Tresor starten</value>
   </data>
   <data name="Retry" xml:space="preserve">
-    <value>Retry</value>
+    <value>Erneut versuchen</value>
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Reveal master key</value>
+    <value>Masterschlüssel anzeigen</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Suchen</value>
@@ -362,11 +380,11 @@
   <data name="SelectVaultPath" xml:space="preserve">
     <value>Tresorpfad auswählen</value>
   </data>
-  <data name="SetPassword" xml:space="preserve">
-    <value>Passwort festlegen</value>
+  <data name="SetCredentials" xml:space="preserve">
+    <value>Set credentials</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Einstellungen</value>
   </data>
   <data name="SettingsAbout" xml:space="preserve">
     <value>Über</value>
@@ -438,7 +456,7 @@
     <value>Informationen zu diesem Tresor anzeigen</value>
   </data>
   <data name="VaultRecovery" xml:space="preserve">
-    <value>Vault recovery</value>
+    <value>Tresorwiederherstellung</value>
   </data>
   <data name="Version" xml:space="preserve">
     <value>Version</value>
@@ -463,6 +481,9 @@
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>Was gibt es Neues</value>
+  </data>
+  <data name="WindowsHello" xml:space="preserve">
+    <value>Windows Hello</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
     <value>Schreibgeschwindigkeiten</value>

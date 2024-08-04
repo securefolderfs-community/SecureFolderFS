@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddExisting" xml:space="preserve">
+    <value>Add existing</value>
+  </data>
   <data name="AddExistingVault" xml:space="preserve">
     <value>Додати наявне сховище</value>
   </data>
@@ -195,6 +198,9 @@
   <data name="CopyVersionMessage" xml:space="preserve">
     <value>Виберіть, яку версію скопіювати в буфер обміну</value>
   </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Create new</value>
+  </data>
   <data name="CreateNewVault" xml:space="preserve">
     <value>Створити нове сховище</value>
   </data>
@@ -257,6 +263,9 @@
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
     <value>Наданий пароль невірний.</value>
+  </data>
+  <data name="KeyFile" xml:space="preserve">
+    <value>Key file</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Мова</value>
@@ -323,6 +332,9 @@
   <data name="Password" xml:space="preserve">
     <value>Пароль</value>
   </data>
+  <data name="Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="Print" xml:space="preserve">
     <value>Print</value>
   </data>
@@ -334,6 +346,12 @@
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
     <value>Швидкість зчитування</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Recover</value>
+  </data>
+  <data name="RecoverAccess" xml:space="preserve">
+    <value>Recover access</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Видалити сховище зі списку</value>
@@ -363,8 +381,8 @@
   <data name="SelectVaultPath" xml:space="preserve">
     <value>Виберіть шлях до сховища</value>
   </data>
-  <data name="SetPassword" xml:space="preserve">
-    <value>Встановити пароль</value>
+  <data name="SetCredentials" xml:space="preserve">
+    <value>Set credentials</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Налаштування</value>
@@ -464,6 +482,9 @@
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>Що нового</value>
+  </data>
+  <data name="WindowsHello" xml:space="preserve">
+    <value>Windows Hello</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
     <value>Швидкість запису</value>

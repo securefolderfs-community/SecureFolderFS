@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddExisting" xml:space="preserve">
+    <value>Add existing</value>
+  </data>
   <data name="AddExistingVault" xml:space="preserve">
     <value>Añadir caja fuerte existente</value>
   </data>
@@ -127,10 +130,10 @@
     <value>Añadir nueva caja fuerte</value>
   </data>
   <data name="Authenticate" xml:space="preserve">
-    <value>Authenticate</value>
+    <value>Autentificar</value>
   </data>
   <data name="AuthenticateUsing" xml:space="preserve">
-    <value>Authenticate using {0}</value>
+    <value>Autentificarse usando {0}</value>
   </data>
   <data name="AutoLock" xml:space="preserve">
     <value>Bloquear automáticamente las cajas fuertes</value>
@@ -195,6 +198,9 @@
   <data name="CopyVersionMessage" xml:space="preserve">
     <value>Seleccione que versión copiar al portapapeles</value>
   </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Create new</value>
+  </data>
   <data name="CreateNewVault" xml:space="preserve">
     <value>Crear nueva caja fuerte</value>
   </data>
@@ -258,6 +264,9 @@
   <data name="InvalidPasswordMessage" xml:space="preserve">
     <value>La contraseña introducida es incorrecta.</value>
   </data>
+  <data name="KeyFile" xml:space="preserve">
+    <value>Key file</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Idioma</value>
   </data>
@@ -286,7 +295,7 @@
     <value>Administrar ajustes</value>
   </data>
   <data name="MasterKeyDescription" xml:space="preserve">
-    <value>This is the master key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
+    <value>Esta es la llave maestra que puedes utilizar para recuperar el acceso a esta caja fuerte. Si la pierdes, no podrás restablecer la contraseña.</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Mis cajas fuertes</value>
@@ -322,8 +331,11 @@
   <data name="Password" xml:space="preserve">
     <value>Contraseña</value>
   </data>
+  <data name="Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="Print" xml:space="preserve">
-    <value>Print</value>
+    <value>Imprimir</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Política de privacidad</value>
@@ -333,6 +345,12 @@
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
     <value>Velocidades de lectura</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Recover</value>
+  </data>
+  <data name="RecoverAccess" xml:space="preserve">
+    <value>Recover access</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Eliminar caja fuerte de la lista</value>
@@ -354,7 +372,7 @@
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Reveal master key</value>
+    <value>Revelar llave maestra</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Buscar</value>
@@ -362,8 +380,8 @@
   <data name="SelectVaultPath" xml:space="preserve">
     <value>Seleccionar ruta de la caja fuerte</value>
   </data>
-  <data name="SetPassword" xml:space="preserve">
-    <value>Establecer contraseña</value>
+  <data name="SetCredentials" xml:space="preserve">
+    <value>Set credentials</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ajustes</value>
@@ -438,7 +456,7 @@
     <value>Ver información sobre este caja fuerte</value>
   </data>
   <data name="VaultRecovery" xml:space="preserve">
-    <value>Vault recovery</value>
+    <value>Recuperación de caja fuerte</value>
   </data>
   <data name="Version" xml:space="preserve">
     <value>Versión</value>
@@ -463,6 +481,9 @@
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>Novedades</value>
+  </data>
+  <data name="WindowsHello" xml:space="preserve">
+    <value>Windows Hello</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
     <value>Velocidades de escritura</value>
