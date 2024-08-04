@@ -6,7 +6,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
 using Windows.Globalization;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="ILocalizationService"/>
     internal sealed class WindowsLocalizationService : ResourceLocalizationService

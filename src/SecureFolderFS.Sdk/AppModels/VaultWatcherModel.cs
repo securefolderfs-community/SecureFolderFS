@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using System;
 using System.Collections.Specialized;
 using System.IO;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public VaultWatcherModel(IFolder vaultFolder)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             VaultFolder = vaultFolder;
         }
 

@@ -14,16 +14,14 @@ namespace SecureFolderFS.UI.Helpers
 
         public static bool SetupNavigation(this INavigationService navigationService, INavigationControl navigationControl, bool overrideNavigation = false)
         {
-            if (!overrideNavigation && navigationService.IsInitialized)
+            if (navigationService is not BaseNavigationService baseNavigationService)
+                return false;
+
+            if (!overrideNavigation && baseNavigationService.IsInitialized)
                 return true;
 
-            if (navigationService is INavigationControlContract navigationControlContract)
-            {
-                navigationControlContract.NavigationControl = navigationControl;
-                return navigationService.IsInitialized;
-            }
-
-            return false;
+            baseNavigationService.NavigationControl = navigationControl;
+            return baseNavigationService.IsInitialized;
         }
     }
 }

@@ -10,6 +10,7 @@ using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Helpers
 {
+    /// <inheritdoc cref="BaseLifecycleHelper"/>
     internal sealed class AndroidLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>

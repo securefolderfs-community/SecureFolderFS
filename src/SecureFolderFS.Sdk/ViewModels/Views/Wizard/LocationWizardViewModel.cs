@@ -1,21 +1,23 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
 using System;
-using System.IO;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IFileExplorerService>, Inject<IVaultService>]
+    [Bindable(true)]
     public sealed partial class LocationWizardViewModel : BaseWizardViewModel
     {
         [ObservableProperty] private string? _Message;
@@ -28,11 +30,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public LocationWizardViewModel(NewVaultCreationType creationType)
         {
-            ServiceProvider = Ioc.Default;
-            // TODO: Add title
-            CanContinue = false;
-            CanCancel = true;
+            ServiceProvider = DI.Default;
             CreationType = creationType;
+
+            CanCancel = true;
+            CanContinue = false;
+            CancelText = "Cancel".ToLocalized();
+            ContinueText = "Continue".ToLocalized();
+            Title = creationType == NewVaultCreationType.AddExisting ? "AddExisting".ToLocalized() : "CreateNew".ToLocalized();
         }
 
         /// <inheritdoc/>
@@ -48,6 +53,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult<IResult>(Result.Success);
+        }
+
+        /// <inheritdoc/>
+        public override async void OnAppearing()
+        {
+            CanContinue = await UpdateStatusAsync();
         }
 
         [RelayCommand]
@@ -70,8 +81,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
                 if (CreationType == NewVaultCreationType.AddExisting)
                 {
-                    var validationResult =
-                        await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
+                    var validationResult = await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
                     if (!validationResult.Successful)
                     {
                         if (validationResult.Exception is NotSupportedException)
@@ -93,8 +103,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 }
                 else
                 {
-                    var validationResult =
-                        await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
+                    var validationResult = await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
                     if (validationResult.Successful || validationResult.Exception is NotSupportedException)
                     {
                         // Check if a valid (or unsupported) vault exists at a specified path
@@ -104,18 +113,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     }
 
                     Severity = ViewSeverityType.Success;
-                    Message = "A new vault will be created in selected folder";
+                    Message = "A new vault will be created in the selected folder";
                     return true;
                 }
             }
             finally
             {
-                if (SelectedFolder is null)
-                    SelectedLocation = "No vault selected";
-                else
-                {
-                    SelectedLocation = $"..{Path.DirectorySeparatorChar}{Path.GetFileName(Path.GetDirectoryName(SelectedFolder.Id))}{Path.DirectorySeparatorChar}{SelectedFolder.Name}";
-                }
+                SelectedLocation = SelectedFolder is null ? "No vault selected" : SelectedFolder.Name;
             }
         }
     }

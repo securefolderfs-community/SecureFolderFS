@@ -21,12 +21,12 @@ namespace SecureFolderFS.Core.FileSystem.Enums
         /// <summary>
         /// The file system core engine is unavailable or not found.
         /// </summary>
-        CoreNotAvailable = 2,
+        CoreUnavailable = 2,
 
         /// <summary>
         /// The file system module is unavailable or not found.
         /// </summary>
-        ModuleNotAvailable = 4,
+        ModuleUnavailable = 4,
 
         /// <summary>
         /// The file system version is too low to work with SecureFolderFS.

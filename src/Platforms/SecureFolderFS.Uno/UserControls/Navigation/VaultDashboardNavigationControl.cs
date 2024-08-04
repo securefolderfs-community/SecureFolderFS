@@ -1,8 +1,8 @@
-using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
-using SecureFolderFS.Uno.Views.Vault;
 using System;
 using System.Collections.Generic;
+using Microsoft.UI.Xaml.Media.Animation;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Uno.Views.Vault;
 
 namespace SecureFolderFS.Uno.UserControls.Navigation
 {
@@ -14,8 +14,8 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         /// <inheritdoc/>
         public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            { typeof(VaultOverviewPageViewModel), typeof(VaultOverviewPage) },
-            { typeof(VaultPropertiesPageViewModel), typeof(VaultPropertiesPage) }
+            { typeof(VaultOverviewViewModel), typeof(VaultOverviewPage) },
+            { typeof(VaultPropertiesViewModel), typeof(VaultPropertiesPage) }
         };
 
         /// <inheritdoc/>
@@ -30,8 +30,8 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
             {
                 transitionInfo ??= parameter switch
                 {
-                    VaultPropertiesPageViewModel => new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight },
-                    VaultOverviewPageViewModel => new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft },
+                    VaultPropertiesViewModel => new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight },
+                    VaultOverviewViewModel => new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft },
                     _ => new EntranceNavigationTransitionInfo()
                 };
             }

@@ -45,8 +45,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (serialized.CanSeek)
                 serialized.Position = 0L;
 
-            var deserialized = await JsonSerializer.DeserializeAsync(serialized, dataType, DefaultSerializerOptions, cancellationToken);
-            return deserialized;
+            return await JsonSerializer.DeserializeAsync(serialized, dataType, DefaultSerializerOptions, cancellationToken);
         }
     }
 }

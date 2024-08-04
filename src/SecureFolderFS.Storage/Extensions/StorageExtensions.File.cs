@@ -61,6 +61,20 @@ namespace SecureFolderFS.Storage.Extensions
             return await streamReader.ReadToEndAsync(cancellationToken);
         }
 
+        /// <returns>If successful, returns a <see cref="Stream"/>; otherwise null.</returns>
+        /// <inheritdoc cref="IFile.OpenStreamAsync"/>
+        public static async Task<Stream?> TryOpenStreamAsync(this IFile file, FileAccess access, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await file.OpenStreamAsync(access, cancellationToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         /// <returns>Value is <see cref="IResult"/> depending on whether the stream was successfully opened on the file.</returns>
         /// <inheritdoc cref="IFile.OpenStreamAsync"/>
         public static async Task<IResult<Stream?>> OpenStreamWithResultAsync(this IFile file, FileAccess access, CancellationToken cancellationToken = default)

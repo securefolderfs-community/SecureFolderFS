@@ -7,13 +7,13 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Shared.ComponentModel;
 
-namespace SecureFolderFS.Uno.SkiaGtk.AppModels
+namespace SecureFolderFS.Uno.Platforms.SkiaGtk.AppModels
 {
     /// <inheritdoc cref="IFileSystemInfoModel"/>
     internal sealed class SkiaFuseDescriptor : IFileSystemInfoModel
     {
         /// <inheritdoc/>
-        public string Name { get; } = "FUSE";
+        public string Name { get; } = Core.FUSE.Constants.FILE_SYSTEM_NAME;
 
         /// <inheritdoc/>
         public string Id { get; } = Core.Constants.FileSystemId.FS_FUSE;
@@ -24,11 +24,11 @@ namespace SecureFolderFS.Uno.SkiaGtk.AppModels
             var result = FuseMountable.IsSupported();
             if (result != FileSystemAvailabilityType.Available)
             {
-                // TODO: Use translation strings
+                // TODO: Use localization strings
                 var message = result switch
                 {
-                    (FileSystemAvailabilityType.ModuleNotAvailable or
-                    FileSystemAvailabilityType.CoreNotAvailable) => "libfuse3 has not been detected. Please install libfuse3 to continue using SecureFolderFS.",
+                    FileSystemAvailabilityType.ModuleUnavailable or
+                    FileSystemAvailabilityType.CoreUnavailable => "libfuse3 has not been detected. Please install libfuse3 to continue using SecureFolderFS.",
                     _ => "SecureFolderFS cannot work with the installed libfuse version. Please install libfuse3."
                 };
 

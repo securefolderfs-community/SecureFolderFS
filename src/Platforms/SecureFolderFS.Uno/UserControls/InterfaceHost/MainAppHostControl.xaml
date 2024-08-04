@@ -16,7 +16,7 @@
 
     <UserControl.Resources>
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
-        <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
     </UserControl.Resources>
@@ -119,7 +119,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    x:Load="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}"
+                    x:Load="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
                     AutomationProperties.Name="{l:ResourceString Name=NewVault}"
                     Command="{x:Bind ViewModel.VaultListViewModel.AddNewVaultCommand, Mode=OneWay}"
                     Style="{ThemeResource AccentButtonStyle}">
@@ -168,8 +168,8 @@
             <DataTemplate x:DataType="vm:VaultListItemViewModel">
                 <NavigationViewItem
                     Height="64"
-                    AutomationProperties.Name="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
-                    ToolTipService.ToolTip="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
+                    AutomationProperties.Name="{x:Bind VaultModel.VaultName, Mode=OneWay}"
+                    ToolTipService.ToolTip="{x:Bind VaultModel.VaultName, Mode=OneWay}">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xF540;" />
                     </NavigationViewItem.Icon>
@@ -178,7 +178,7 @@
                             <!--  Vault name  -->
                             <TextBlock
                                 FontWeight="SemiBold"
-                                Text="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
+                                Text="{x:Bind VaultModel.VaultName, Mode=OneWay}"
                                 TextTrimming="CharacterEllipsis" />
 
                             <!--  Last opened  -->

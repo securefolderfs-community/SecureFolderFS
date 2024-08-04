@@ -7,18 +7,18 @@ namespace SecureFolderFS.Maui.UserControls
             InitializeComponent();
         }
 
-        public object ViewContent
+        public object? ViewContent
         {
-            get => (object)GetValue(ViewContentProperty);
+            get => (object?)GetValue(ViewContentProperty);
             set => SetValue(ViewContentProperty, value);
         }
         public static readonly BindableProperty ViewContentProperty =
             BindableProperty.Create(nameof(ViewContent), typeof(object), typeof(ContentPresentation), null, propertyChanged:
                 (bindable, _, newValue) => ApplyTemplate(bindable, newValue));
 
-        public DataTemplateSelector TemplateSelector
+        public DataTemplateSelector? TemplateSelector
         {
-            get => (DataTemplateSelector)GetValue(TemplateSelectorProperty);
+            get => (DataTemplateSelector?)GetValue(TemplateSelectorProperty);
             set => SetValue(TemplateSelectorProperty, value);
         }
         public static readonly BindableProperty TemplateSelectorProperty =

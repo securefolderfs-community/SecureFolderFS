@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using OwlCore.Storage;
+using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.Paths
 {
@@ -8,11 +9,11 @@ namespace SecureFolderFS.Core.FileSystem.Paths
         // Paths are not encrypted hence we use the same path for every return value (ciphertext == cleartext)
 
         /// <inheritdoc/>
-        public string ContentRootPath { get; }
+        public IFolder ContentFolder { get; }
 
-        private CleartextPathConverter(string contentRoot)
+        private CleartextPathConverter(IFolder contentFolder)
         {
-            ContentRootPath = contentRoot;
+            ContentFolder = contentFolder;
         }
 
         /// <inheritdoc/>
@@ -42,11 +43,11 @@ namespace SecureFolderFS.Core.FileSystem.Paths
         /// <summary>
         /// Creates a new instance of <see cref="IPathConverter"/>.
         /// </summary>
-        /// <param name="contentRoot">The ciphertext storage root path.</param>
+        /// <param name="contentFolder">The ciphertext root content folder.</param>
         /// <returns>A new instance of <see cref="IPathConverter"/>.</returns>
-        public static IPathConverter CreateNew(string contentRoot)
+        public static IPathConverter CreateNew(IFolder contentFolder)
         {
-            return new CleartextPathConverter(contentRoot);
+            return new CleartextPathConverter(contentFolder);
         }
     }
 }

@@ -2,6 +2,9 @@
 
 namespace SecureFolderFS.Storage.VirtualFileSystem
 {
+    /// <summary>
+    /// Allows for IO statistics to be reported.
+    /// </summary>
     public interface IReadWriteStatistics
     {
         /// <summary>

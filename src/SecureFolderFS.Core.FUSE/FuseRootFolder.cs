@@ -1,20 +1,22 @@
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FUSE
 {
-    internal sealed class FuseRootFolder : WrappedFileSystemFolder
+    /// <inheritdoc cref="IVFSRoot"/>
+    internal sealed class FuseRootFolder : VFSRoot
     {
         private readonly FuseWrapper _fuseWrapper;
         private bool _disposed;
 
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = "FUSE";
+        public override string FileSystemName { get; } = Constants.FILE_SYSTEM_NAME;
 
-        public FuseRootFolder(FuseWrapper fuseWrapper, IFolder storageRoot, IReadWriteStatistics readWriteStatistics)
-            : base(storageRoot, readWriteStatistics)
+        public FuseRootFolder(FuseWrapper fuseWrapper, IFolder storageRoot, FileSystemOptions options)
+            : base(storageRoot, options)
         {
             _fuseWrapper = fuseWrapper;
         }
@@ -22,8 +24,12 @@ namespace SecureFolderFS.Core.FUSE
         /// <inheritdoc/>
         public override async ValueTask DisposeAsync()
         {
-            if (!_disposed)
-                _disposed = await _fuseWrapper.CloseFileSystemAsync(FileSystemCloseMethod.CloseForcefully);
+            if (_disposed)
+                return;
+
+            _disposed = await _fuseWrapper.CloseFileSystemAsync(FileSystemCloseMethod.CloseForcefully);
+            if (_disposed)
+                FileSystemManager.Instance.RemoveRoot(this);
         }
     }
 }

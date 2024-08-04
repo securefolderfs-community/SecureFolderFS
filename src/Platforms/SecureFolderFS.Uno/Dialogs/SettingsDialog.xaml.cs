@@ -3,14 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.Utils;
+using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -19,10 +19,9 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class SettingsDialog : ContentDialog, IOverlayControl
     {
-        /// <inheritdoc/>
-        public SettingsDialogViewModel? ViewModel
+        public SettingsOverlayViewModel? ViewModel
         {
-            get => (SettingsDialogViewModel?)DataContext;
+            get => DataContext.TryCast<SettingsOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -32,10 +31,10 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (SettingsDialogViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (SettingsOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()
@@ -58,9 +57,10 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            if (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true)
+            if (ViewModel is null || (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true))
                 return;
 
+            _ = Navigation.ContentFrame.Content;
             var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
             var target = GetViewForTag(tag);
             if (ViewModel.NavigationService.Views.FirstOrDefault(x => target == x) is null && target is IAsyncInitialize asyncInitialize)
@@ -72,15 +72,6 @@ namespace SecureFolderFS.Uno.Dialogs
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Hide();
-        }
-
-        private async void SettingsDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-        {
-            if (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true)
-                return;
-
-            var target = GetViewForTag(0);
-            await ViewModel.NavigationService.NavigateAsync(target);
         }
 
         private void SettingsDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)

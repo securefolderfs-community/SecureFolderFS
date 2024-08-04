@@ -1,18 +1,18 @@
 using System.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.AppModels.Database;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.Settings;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.UI.ServiceImplementation.Settings
 {
     /// <inheritdoc cref="IUserSettings"/>
     public class UserSettings : SettingsModel, IUserSettings
     {
-        private ITelemetryService TelemetryService { get; } = Ioc.Default.GetRequiredService<ITelemetryService>();
+        private ITelemetryService TelemetryService { get; } = DI.Service<ITelemetryService>();
 
         /// <inheritdoc/>
         protected override IDatabaseModel<string> SettingsDatabase { get; }

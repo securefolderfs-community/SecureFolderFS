@@ -1,17 +1,16 @@
-using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Uno.Helpers;
 
 #if WINDOWS
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.UI.Helpers;
-using SecureFolderFS.Uno.Helpers;
 #endif
 
 // To learn more about WinUI, the WinUI project structure,
@@ -23,7 +22,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [INotifyPropertyChanged]
-    public sealed partial class SummaryWizardPage : Page, IDisposable
+    public sealed partial class SummaryWizardPage : Page
     {
         public SummaryWizardViewModel? ViewModel
         {
@@ -34,9 +33,7 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         public SummaryWizardPage()
         {
             InitializeComponent();
-#if WINDOWS
-            UnoThemeHelper.Instance.PropertyChanged += ThemeHelper_PropertyChanged;
-#endif
+
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -44,7 +41,14 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             if (e.Parameter is SummaryWizardViewModel viewModel)
                 ViewModel = viewModel;
 
+            UnoThemeHelper.Instance.PropertyChanged += ThemeHelper_PropertyChanged;
             base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            UnoThemeHelper.Instance.PropertyChanged -= ThemeHelper_PropertyChanged;
+            base.OnNavigatingFrom(e);
         }
 
         private void ThemeHelper_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -68,14 +72,8 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             await Task.Delay(20);
 
             VisualPlayer.Visibility = Visibility.Visible;
-#endif
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-#if WINDOWS
-            UnoThemeHelper.Instance.PropertyChanged -= ThemeHelper_PropertyChanged;
+#else
+            await Task.CompletedTask;
 #endif
         }
     }

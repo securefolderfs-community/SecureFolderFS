@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
+using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,9 +14,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 {
     public sealed partial class IntroductionControl : UserControl, IOverlayControl
     {
-        public IntroductionDialogViewModel ViewModel
+        public IntroductionDialogViewModel? ViewModel
         {
-            get => (IntroductionDialogViewModel)DataContext;
+            get => DataContext.TryCast<IntroductionDialogViewModel>();
             set => DataContext = value;
         }
 
@@ -25,7 +26,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         }
 
         /// <inheritdoc/>
-        public Task<IResult> ShowAsync() => ViewModel.TaskCompletion.Task;
+        public Task<IResult> ShowAsync() => ViewModel?.TaskCompletion.Task ?? Task.FromResult<IResult>(Result.Failure(null));
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (IntroductionDialogViewModel)viewable;
@@ -33,7 +34,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            ViewModel.TaskCompletion.SetResult(DialogOption.Cancel.ParseDialogOption());
+            ViewModel?.TaskCompletion.SetResult(ContentDialogResult.None.ParseOverlayOption());
             return Task.CompletedTask;
         }
     }

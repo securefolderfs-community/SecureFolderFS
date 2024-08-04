@@ -1,47 +1,27 @@
-﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Directories;
-using SecureFolderFS.Core.FileSystem.Statistics;
+﻿using System;
+using OwlCore.Storage;
 
 namespace SecureFolderFS.Core.FileSystem.Paths
 {
     /// <summary>
-    /// Manages and converts paths between their ciphertext and cleartext forms.
+    /// Manages and converts paths between their ciphertext and plaintext forms.
     /// </summary>
+    [Obsolete("Use INameCrypt")]
     public interface IPathConverter
     {
-        // TODO: Use ReadOnlySpan<char> for all methods
+        [Obsolete]
+        IFolder ContentFolder { get; }
 
-        /// <summary>
-        /// Gets the ciphertext root where files are stored.
-        /// </summary>
-        string ContentRootPath { get; }
-
-        /// <summary>
-        /// Converts <paramref name="cleartextPath"/> into ciphertext.
-        /// </summary>
-        /// <param name="cleartextPath">The relative cleartext path to convert from.</param>
-        /// <returns>If successful, value represents a ciphertext path; otherwise null.</returns>
+        [Obsolete]
         string? ToCiphertext(string cleartextPath);
 
-        /// <summary>
-        /// Converts <paramref name="ciphertextPath"/> into cleartext.
-        /// </summary>
-        /// <param name="ciphertextPath">The relative ciphertext path to convert from.</param>
-        /// <returns>If successful, value represents a cleartext path; otherwise null.</returns>
+        [Obsolete]
         string? ToCleartext(string ciphertextPath);
 
-        /// <summary>
-        /// Gets first cleartext filename from provided ciphertext path.
-        /// </summary>
-        /// <param name="ciphertextFilePath">The ciphertext path to get the filename from.</param>
-        /// <returns>If successful, value represents a cleartext filename; otherwise null.</returns>
+        [Obsolete]
         string? GetCleartextFileName(string ciphertextFilePath);
 
-        /// <summary>
-        /// Gets first ciphertext filename from provided cleartext path.
-        /// </summary>
-        /// <param name="cleartextFilePath">The cleartext path to get the filename from.</param>
-        /// <returns>If successful, value represents a ciphertext filename; otherwise null.</returns>
+        [Obsolete]
         string? GetCiphertextFileName(string cleartextFilePath);
     }
 }

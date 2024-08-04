@@ -1,12 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+﻿// Some parts of the following code were used from WinUI3Utilities on the MIT License basis.
+// See the license file for more information.
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-
-// Some parts of the following code were used from WinUI3Utilities on the MIT License basis.
-// See the license file for more information.
 
 namespace SecureFolderFS.SourceGenerator.Helpers
 {

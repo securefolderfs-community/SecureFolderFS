@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
@@ -7,6 +6,8 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Storage.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,7 +30,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public VaultCollectionModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
         }
 
         /// <inheritdoc/>
@@ -49,9 +50,9 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             // Update saved vaults
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
-            VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.Id, item.VaultName, item.LastAccessDate));
+            VaultConfigurations.SavedVaults.Insert(index, new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate));
 
-            // Update widgets
+            // Add default widgets for vault
             VaultWidgets.SetForVault(item.Folder.Id, new List<WidgetDataModel>()
             {
                 new(Constants.Widgets.HEALTH_WIDGET_ID),
@@ -73,7 +74,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultConfigurations.SavedVaults is not null)
                 VaultConfigurations.SavedVaults.RemoveAt(index);
 
-            // Remove widgets data for that vault
+            // Remove widget data for that vault
             VaultWidgets.SetForVault(removedItem.Folder.Id, null);
 
             // Remove from cache
@@ -88,7 +89,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultConfigurations.SavedVaults is null)
                 return;
 
-            VaultConfigurations.SavedVaults[index] = new(item.Folder.Id, item.VaultName, item.LastAccessDate);
+            VaultConfigurations.SavedVaults[index] = new(item.Folder.GetPersistableId(), item.VaultName, item.LastAccessDate);
 
             var oldItem = this[index];
             base.SetItem(index, item);
@@ -106,19 +107,16 @@ namespace SecureFolderFS.Sdk.AppModels
             VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
             foreach (var item in VaultConfigurations.SavedVaults)
             {
-                if (item.Id is null)
+                if (item.PersistableId is null)
                     continue;
 
                 try
                 {
-                    var storable = await StorageService.GetFromBookmarkAsync(item.Id, cancellationToken);
-                    if (storable is not IFolder folder)
-                        continue;
-
+                    var folder = await StorageService.GetPersistedAsync<IFolder>(item.PersistableId, cancellationToken);
                     var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
-                    Items.Add(vaultModel);
 
-                    CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, item));
+                    Items.Add(vaultModel);
+                    CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, vaultModel));
                 }
                 catch (Exception ex)
                 {

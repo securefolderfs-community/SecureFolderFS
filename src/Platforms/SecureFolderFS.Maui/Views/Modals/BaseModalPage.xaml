@@ -1,0 +1,142 @@
+﻿<ContentPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.BaseModalPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    x:Name="Root"
+    x:DataType="local:BaseModalPage">
+
+    <ContentPage.Resources>
+        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
+    </ContentPage.Resources>
+
+    <NavigationPage.HasNavigationBar>
+        <OnPlatform x:TypeArguments="x:Boolean">
+            <On Platform="Android" Value="False" />
+            <On Platform="iOS" Value="True" />
+        </OnPlatform>
+    </NavigationPage.HasNavigationBar>
+
+    <NavigationPage.IconColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="iOS" Value="#007bff" />
+        </OnPlatform>
+    </NavigationPage.IconColor>
+
+    <ContentPage.BackgroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="Android" Value="Transparent" />
+        </OnPlatform>
+    </ContentPage.BackgroundColor>
+
+    <NavigationPage.TitleView>
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="iOS">
+                <Grid HorizontalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Label
+                        Grid.Column="1"
+                        Margin="-28,0,0,0"
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        Text="{Binding Title, Mode=OneWay}"
+                        VerticalOptions="Center" />
+
+                    <Button
+                        Grid.Column="2"
+                        Command="{Binding PrimaryCommand, Mode=OneWay}"
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        HorizontalOptions="End"
+                        IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                        IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                        Text="{Binding PrimaryText, Mode=OneWay}"
+                        TextColor="#007bff"
+                        VerticalOptions="Center" />
+                </Grid>
+            </On>
+        </OnPlatform>
+    </NavigationPage.TitleView>
+
+    <OnPlatform x:TypeArguments="View">
+        <On Platform="Android">
+            <Border BackgroundColor="White" BindingContext="{x:Reference Root}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="24,24,0,0" />
+                </Border.StrokeShape>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label
+                        Grid.Row="0"
+                        Padding="16"
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        Text="{Binding Title, Mode=OneWay}" />
+
+                    <ContentView
+                        Grid.Row="1"
+                        Content="{Binding ModalContent, Mode=OneWay}"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill" />
+
+                    <!--  Buttons  -->
+                    <Grid
+                        Grid.Row="2"
+                        Padding="8"
+                        ColumnSpacing="8"
+                        HorizontalOptions="Fill">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <mdc:Button
+                            x:Name="CloseButton"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference PrimaryButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
+                            Command="{Binding CloseCommand, Mode=OneWay}"
+                            HorizontalOptions="Fill"
+                            IsEnabled="{Binding CloseEnabled, Mode=OneWay}"
+                            IsVisible="{Binding CloseText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Style="{DynamicResource FilledTonalButtonStyle}"
+                            Text="{Binding CloseText, Mode=OneWay}" />
+
+                        <mdc:Button
+                            x:Name="PrimaryButton"
+                            Grid.Column="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}, ConverterParameter='column'}"
+                            Grid.ColumnSpan="{Binding IsVisible, Source={x:Reference CloseButton}, Converter={StaticResource VisibilityToColumnSpanConverter}}"
+                            Command="{Binding PrimaryCommand, Mode=OneWay}"
+                            HorizontalOptions="Fill"
+                            IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
+                            IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                            Text="{Binding PrimaryText, Mode=OneWay}" />
+                    </Grid>
+                </Grid>
+            </Border>
+        </On>
+        <On Platform="iOS">
+            <Border BindingContext="{x:Reference Root}">
+                <ContentView
+                    Content="{Binding ModalContent, Mode=OneWay}"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill" />
+            </Border>
+        </On>
+    </OnPlatform>
+</ContentPage>

@@ -1,28 +1,44 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
     [Inject<INavigationService>(Visibility = "public")]
-    public sealed partial class MainHostViewModel : BasePageViewModel
+    [Bindable(true)]
+    public sealed partial class MainHostViewModel : ObservableObject, IViewDesignation, IAsyncInitialize
     {
+        [ObservableProperty] private string? _Title;
+
         public VaultListViewModel VaultListViewModel { get; }
 
         public MainHostViewModel(IVaultCollectionModel vaultCollectionModel)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             VaultListViewModel = new(vaultCollectionModel);
         }
 
         /// <inheritdoc/>
-        public override Task InitAsync(CancellationToken cancellationToken = default)
+        public Task InitAsync(CancellationToken cancellationToken = default)
         {
             return VaultListViewModel.InitAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public void OnAppearing()
+        {
+        }
+
+        /// <inheritdoc/>
+        public void OnDisappearing()
+        {
         }
     }
 }

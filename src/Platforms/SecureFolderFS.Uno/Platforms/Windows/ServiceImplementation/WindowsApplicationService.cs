@@ -5,7 +5,7 @@ using SecureFolderFS.UI.ServiceImplementation;
 using Windows.ApplicationModel;
 using Windows.System;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IApplicationService"/>
     internal sealed class WindowsApplicationService : BaseApplicationService

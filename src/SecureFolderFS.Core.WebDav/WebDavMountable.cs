@@ -11,7 +11,6 @@ using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.EncryptingStorage2;
@@ -45,8 +44,9 @@ namespace SecureFolderFS.Core.WebDav
         }
 
         /// <inheritdoc/>
-        public async Task<IVFSRootFolder> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
+        public async Task<IVFSRoot> MountAsync(MountOptions mountOptions, CancellationToken cancellationToken = default)
         {
+            await Task.CompletedTask;
             if (mountOptions is not WebDavMountOptions webDavMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
@@ -57,16 +57,15 @@ namespace SecureFolderFS.Core.WebDav
             if (!PortHelpers.IsPortAvailable(port))
                 port = PortHelpers.GetNextAvailablePort(port);
 
+            var remotePath = $@"\\localhost@{port}\{_options.VolumeName}\";
             var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
             var prefix = $"{protocol}://{webDavMountOptions.Domain}:{port}/";
-            var httpListener = new HttpListener();
+            string? mountPath = null;
 
+            var httpListener = new HttpListener();
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            var remotePath = $"\\\\localhost@{port}\\{_options.VolumeName}\\";
-
-            string? mountPath = null;
             if (OperatingSystem.IsWindows())
             {
                 mountPath = DriveMappingHelper.GetMountPathForRemotePath(remotePath);
@@ -81,20 +80,21 @@ namespace SecureFolderFS.Core.WebDav
             var webDavWrapper = new WebDavWrapper(httpListener, _requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();
 
-            // TODO Remove once the port is displayed in the UI.
+            // TODO: Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
-            
-            return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options.FileSystemStatistics);
+            return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options);
         }
 
-        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder, Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter, IStreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder,
+            Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter,
+            StreamsAccess streamsAccess)
         {
-            var cryptoFolder = new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
+            // TODO: Implement FileSystemSpecifics
+            var cryptoFolder = (IFolder)null!; // new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
             var davFolder = new DavFolder(cryptoFolder);
 
             // TODO: Remove the following line once the new DavStorage is fully implemented.
             var encryptingDiskStore = new EncryptingDiskStore(contentFolder.Id, streamsAccess, pathConverter, directoryIdCache, security);
-
             var dispatcher = new WebDavDispatcher(new RootDiskStore(options.VolumeName, encryptingDiskStore), davFolder, new RequestHandlerProvider(), null);
             return new WebDavMountable(options, dispatcher);
         }

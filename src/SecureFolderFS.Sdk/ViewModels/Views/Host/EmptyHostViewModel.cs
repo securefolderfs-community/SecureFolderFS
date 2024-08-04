@@ -1,24 +1,30 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
-    public sealed partial class EmptyHostViewModel : BasePageViewModel
+    [Bindable(true)]
+    public sealed partial class EmptyHostViewModel : ObservableObject, IViewDesignation
     {
         private readonly INavigationService _rootNavigationService;
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
+        [ObservableProperty] private string? _Title;
+
         public EmptyHostViewModel(INavigationService rootNavigationService, IVaultCollectionModel vaultCollectionModel)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _rootNavigationService = rootNavigationService;
             _vaultCollectionModel = vaultCollectionModel;
         }
@@ -28,27 +34,27 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             await _rootNavigationService.TryNavigateAsync(() => new MainHostViewModel(_vaultCollectionModel), false);
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task AddNewVaultAsync()
         {
             await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenSettingsAsync()
         {
-            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
+            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync();
         }
 
         /// <inheritdoc/>
-        public override void OnAppearing()
+        public void OnAppearing()
         {
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
         }
 
         /// <inheritdoc/>
-        public override void OnDisappearing()
+        public void OnDisappearing()
         {
             _vaultCollectionModel.CollectionChanged -= VaultCollectionModel_CollectionChanged;
         }

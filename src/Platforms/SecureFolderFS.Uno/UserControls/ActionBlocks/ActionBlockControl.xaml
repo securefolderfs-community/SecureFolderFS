@@ -23,12 +23,12 @@
                 BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
                 CornerRadius="{ThemeResource ControlCornerRadius}">
                 <local:ActionBlockContentControl
-                    Title="{Binding Title, Mode=OneWay, FallbackValue={x:Null}}"
+                    Title="{Binding Title, Mode=OneWay}"
                     ActionElement="{Binding ActionElement, Mode=OneWay}"
                     AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
                     CustomDescription="{Binding CustomDescription, Mode=OneWay}"
                     DataContext="{Binding ElementName=ActionBlock}"
-                    Description="{Binding Description, Mode=OneWay, FallbackValue={x:Null}}"
+                    Description="{Binding Description, Mode=OneWay}"
                     Icon="{Binding Icon, Mode=OneWay}" />
             </Grid>
         </DataTemplate>
@@ -45,15 +45,16 @@
                 Background="{ThemeResource ExpanderHeaderBackground}"
                 BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
                 BorderThickness="{ThemeResource ExpanderHeaderBorderThickness}"
+                Click="Button_Click"
                 Command="{Binding ClickCommand, Mode=OneWay}"
                 CornerRadius="{ThemeResource ControlCornerRadius}"
                 DataContext="{Binding ElementName=ActionBlock}">
                 <local:ActionBlockContentControl
-                    Title="{Binding Title, Mode=OneWay, FallbackValue={x:Null}}"
+                    Title="{Binding Title, Mode=OneWay}"
                     ActionElement="{Binding ActionElement, Mode=OneWay}"
                     AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
                     CustomDescription="{Binding CustomDescription, Mode=OneWay}"
-                    Description="{Binding Description, Mode=OneWay, FallbackValue={x:Null}}"
+                    Description="{Binding Description, Mode=OneWay}"
                     Icon="{Binding Icon, Mode=OneWay}" />
             </Button>
         </DataTemplate>
@@ -71,12 +72,12 @@
                 IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
                 <Expander.Header>
                     <local:ActionBlockContentControl
-                        Title="{Binding Title, Mode=OneWay, FallbackValue={x:Null}}"
+                        Title="{Binding Title, Mode=OneWay}"
                         Height="72"
                         ActionElement="{Binding ActionElement, Mode=OneWay}"
                         AdditionalActionElement="{Binding AdditionalActionElement, Mode=OneWay}"
                         CustomDescription="{Binding CustomDescription, Mode=OneWay}"
-                        Description="{Binding Description, Mode=OneWay, FallbackValue={x:Null}}"
+                        Description="{Binding Description, Mode=OneWay}"
                         Icon="{Binding Icon, Mode=OneWay}" />
                 </Expander.Header>
                 <ContentControl

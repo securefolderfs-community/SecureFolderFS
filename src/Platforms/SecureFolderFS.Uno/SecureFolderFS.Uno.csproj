@@ -17,19 +17,21 @@
 
     <!-- Application Properties -->
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
+    <AssemblyVersion>0.5.0.0</AssemblyVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>    
-    <!-- TODO: Set correct app identifier -->
-    <ApplicationId>com.companyname.SecureFolderFS</ApplicationId>
+    <ApplicationId>com.securefolderfs.SecureFolderFS</ApplicationId>
 
   </PropertyGroup>
 
   <PropertyGroup>
     <!--
-      UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
+      UnoFeatures lets you quickly add and manage implicit package references based on the features you want to use.
       https://aka.platform.uno/singleproject-features
     -->
-    <UnoFeatures></UnoFeatures>
+    <UnoFeatures>
+      OpenSans;
+    </UnoFeatures>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -53,6 +55,7 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
 
   <!-- Project References -->
@@ -190,17 +193,21 @@
   <ItemGroup>
     <None Remove="Dialogs\AgreementDialog.xaml" />
     <None Remove="Dialogs\ChangelogDialog.xaml" />
+    <None Remove="Dialogs\CredentialsDialog.xaml" />
     <None Remove="Dialogs\ExplanationDialog.xaml" />
     <None Remove="Dialogs\LicensesDialog.xaml" />
-    <None Remove="Dialogs\PasswordChangeDialog.xaml" />
     <None Remove="Dialogs\PaymentDialog.xaml" />
+    <None Remove="Dialogs\PreviewRecoveryDialog.xaml" />
+    <None Remove="Dialogs\RecoveryDialog.xaml" />
     <None Remove="Dialogs\SettingsDialog.xaml" />
     <None Remove="Dialogs\VaultWizardDialog.xaml" />
     <None Remove="Package.appxmanifest" />
     <None Remove="ResourceDictionaries\ColorResources.xaml" />
     <None Remove="ResourceDictionaries\ImageResources.xaml" />
+    <None Remove="ResourceDictionaries\TextResources.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
+    <None Remove="UserControls\BackButtonTitleControl.xaml" />
     <None Remove="UserControls\BannerControl.xaml" />
     <None Remove="UserControls\GraphControl.xaml" />
     <None Remove="UserControls\InstallationControl.xaml" />
@@ -216,6 +223,8 @@
     <None Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <None Remove="UserControls\OverlayControl.xaml" />
     <None Remove="UserControls\PasswordControl.xaml" />
+    <None Remove="UserControls\RecoveryPreviewControl.xaml" />
+    <None Remove="UserControls\RegisterControl.xaml" />
     <None Remove="UserControls\TitleBarControl.xaml" />
     <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
@@ -252,11 +261,15 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Dialogs\PasswordChangeDialog.xaml">
+    <Page Update="Dialogs\PaymentDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Dialogs\PaymentDialog.xaml">
+    <Page Update="Dialogs\CredentialsDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\RecoveryDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -264,7 +277,15 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Dialogs\PreviewRecoveryDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Dialogs\VaultWizardDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ResourceDictionaries\TextResources.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -394,16 +415,19 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Dialogs\AgreementDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\ChangelogDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\CredentialsDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\ExplanationDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\LicensesDialog.xaml" />
-    <UpToDateCheckInput Remove="Dialogs\PasswordChangeDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\PaymentDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\PreviewRecoveryDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\SettingsDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ImageResources.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\BackButtonTitleControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\BannerControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\GraphControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InstallationControl.xaml" />
@@ -419,6 +443,8 @@
     <UpToDateCheckInput Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\OverlayControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\PasswordControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\RecoveryPreviewControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\RegisterControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\TitleBarControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\GraphsWidget.xaml" />
@@ -436,5 +462,9 @@
     <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="ResourceDictionaries\TextResources.xaml" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault.Dashboard;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -15,11 +16,11 @@ namespace SecureFolderFS.Uno.Views.Vault
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [INotifyPropertyChanged]
-    public sealed partial class VaultOverviewPage : Page, IDisposable
+    public sealed partial class VaultOverviewPage : Page
     {
-        public VaultOverviewPageViewModel? ViewModel
+        public VaultOverviewViewModel? ViewModel
         {
-            get => DataContext.TryCast<VaultOverviewPageViewModel>();
+            get => DataContext.TryCast<VaultOverviewViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
         }
 
@@ -31,7 +32,7 @@ namespace SecureFolderFS.Uno.Views.Vault
         /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter is VaultOverviewPageViewModel viewModel)
+            if (e.Parameter is VaultOverviewViewModel viewModel)
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
@@ -40,17 +41,12 @@ namespace SecureFolderFS.Uno.Views.Vault
         /// <inheritdoc/>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            Dispose();
-            base.OnNavigatingFrom(e);
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            foreach (var item in (WidgetsList.ItemsSource as IEnumerable))
+            foreach (var item in (WidgetsList.ItemsSource as IEnumerable) ?? Enumerable.Empty<object>())
             {
                 (item as IDisposable)?.Dispose();
             }
+
+            base.OnNavigatingFrom(e);
         }
     }
 }

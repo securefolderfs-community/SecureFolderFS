@@ -1,15 +1,18 @@
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.UI.ViewModels
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
+    [Bindable(true)]
     public abstract partial class PasswordViewModel : AuthenticationViewModel, IWrapper<IKey>
     {
         [ObservableProperty] private string? _PrimaryPassword;
@@ -17,10 +20,14 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public virtual IKey Inner => TryGetPasswordAsKey() ?? new DisposablePassword(string.Empty);
 
-        protected PasswordViewModel(string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        /// <inheritdoc/>
+        public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
+
+        protected PasswordViewModel(string id)
+            : base(id)
         {
-            DisplayName = "Password";
+            DisplayName = "Password".ToLocalized();
+            Icon = "\uE8AC";
         }
 
         partial void OnPrimaryPasswordChanged(string? value)
@@ -41,7 +48,7 @@ namespace SecureFolderFS.UI.ViewModels
         }
 
         /// <inheritdoc/>
-        public override Task<IKey> SignAsync(string id, byte[] data, CancellationToken cancellationToken = default)
+        public override Task<IKey> SignAsync(string id, byte[]? data, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(TryGetPasswordAsKey() ?? throw new InvalidOperationException("The password is not ready yet."));
         }

@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="using:SecureFolderFS.Uno.UserControls.Navigation"
+    xmlns:nv="using:SecureFolderFS.Uno.UserControls.Navigation"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -102,7 +102,7 @@
         </Grid>
 
         <!--  Content  -->
-        <uc:VaultDashboardNavigationControl
+        <nv:VaultDashboardNavigationControl
             x:Name="Navigation"
             Grid.Row="1"
             Loaded="Navigation_Loaded" />

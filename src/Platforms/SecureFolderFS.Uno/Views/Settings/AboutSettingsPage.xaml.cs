@@ -77,12 +77,18 @@ namespace SecureFolderFS.Uno.Views.Settings
 
         private async void CopyAppVersion_Click(object sender, RoutedEventArgs e)
         {
+            if (ViewModel is null)
+                return;
+
             await ViewModel.CopyAppVersionCommand.ExecuteAsync(default);
             await StartChangeTextAnimation(CopyAppVersionGrid.Children[0], CopyAppVersionGrid.Children[1]);
         }
 
         private async void CopySystemVersion_Click(object sender, RoutedEventArgs e)
         {
+            if (ViewModel is null)
+                return;
+
             await ViewModel.CopySystemVersionCommand.ExecuteAsync(default);
             await StartChangeTextAnimation(CopySystemVersionGrid.Children[0], CopySystemVersionGrid.Children[1]);
         }

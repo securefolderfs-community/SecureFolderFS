@@ -18,6 +18,7 @@ namespace SecureFolderFS.Core
 
             public static class AuthenticationMethods
             {
+                public const char SEPARATOR = ';';
                 public const string AUTH_NONE = "None";
                 public const string AUTH_PASSWORD = "Password";
                 public const string AUTH_KEYFILE = "KeyFile";
@@ -38,6 +39,16 @@ namespace SecureFolderFS.Core
                 public const string SPEC_NOTES = "Notes";
             }
 
+            public static class Associations
+            {
+                public const string ASSOC_CONTENT_CIPHER_ID = "contentCipherScheme";
+                public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
+                public const string ASSOC_SPECIALIZATION = "spec";
+                public const string ASSOC_AUTHENTICATION = "authMode";
+                public const string ASSOC_VAULT_ID = "vaultId";
+                public const string ASSOC_VERSION = "version";
+            }
+
             public static class Versions
             {
                 public const int V1 = 1;
@@ -46,21 +57,13 @@ namespace SecureFolderFS.Core
             }
         }
 
-        public static class Associations
-        {
-            public const string ASSOC_CONTENT_CIPHER_ID = "contentCipherScheme";
-            public const string ASSOC_FILENAME_CIPHER_ID = "filenameCipherScheme";
-            public const string ASSOC_SPECIALIZATION = "spec";
-            public const string ASSOC_AUTHENTICATION = "authMode";
-            public const string ASSOC_VAULT_ID = "vaultId";
-            public const string ASSOC_VERSION = "version";
-        }
-
         public static class FileSystemId
         {
             public const string FS_DOKAN = "DOKANY";
             public const string FS_FUSE = "FUSE";
             public const string FS_WEBDAV = "WEBDAV";
+            public const string FS_ANDROID = "ANDROID_DOCUMENTS_PROVIDER";
+            public const string FS_LOCAL = "ABSTRACT_STORAGE";
         }
     }
 }

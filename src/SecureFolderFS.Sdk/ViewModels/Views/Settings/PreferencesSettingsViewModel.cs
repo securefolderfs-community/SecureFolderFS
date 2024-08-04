@@ -1,39 +1,38 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Services;
+﻿using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Banners;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
 {
-    [Inject<ISettingsService>]
-    public sealed partial class PreferencesSettingsViewModel : BasePageViewModel
+    [Bindable(true)]
+    public sealed class PreferencesSettingsViewModel : BaseSettingsViewModel
     {
         public FileSystemBannerViewModel BannerViewModel { get; }
 
+        public PreferencesSettingsViewModel()
+        {
+            BannerViewModel = new();
+            Title = "SettingsPreferences".ToLocalized();
+        }
+
         public bool StartOnSystemStartup
         {
-            get => SettingsService.UserSettings.StartOnSystemStartup;
-            set => SettingsService.UserSettings.StartOnSystemStartup = value;
+            get => UserSettings.StartOnSystemStartup;
+            set => UserSettings.StartOnSystemStartup = value;
         }
 
         public bool ContinueOnLastVault
         {
-            get => SettingsService.UserSettings.ContinueOnLastVault;
-            set => SettingsService.UserSettings.ContinueOnLastVault = value;
+            get => UserSettings.ContinueOnLastVault;
+            set => UserSettings.ContinueOnLastVault = value;
         }
 
         public bool OpenFolderOnUnlock
         {
-            get => SettingsService.UserSettings.OpenFolderOnUnlock;
-            set => SettingsService.UserSettings.OpenFolderOnUnlock = value;
-        }
-
-        public PreferencesSettingsViewModel()
-        {
-            ServiceProvider = Ioc.Default;
-            BannerViewModel = new();
+            get => UserSettings.OpenFolderOnUnlock;
+            set => UserSettings.OpenFolderOnUnlock = value;
         }
 
         /// <inheritdoc/>

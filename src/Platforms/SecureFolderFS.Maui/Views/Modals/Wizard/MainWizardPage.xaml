@@ -1,0 +1,38 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.MainWizardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    Title="{Binding ViewModel.Title, Mode=OneWay}"
+    x:DataType="local:MainWizardPage"
+    CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.SecondaryButtonText, Mode=OneWay}"
+    Shell.PresentationMode="ModalAnimated">
+
+    <md:BaseModalPage.ModalContent>
+        <VerticalStackLayout Spacing="32" VerticalOptions="Center">
+            <Label
+                FontSize="20"
+                HorizontalOptions="Center"
+                Text="Select an option to add new vault" />
+
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android">
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                        <mdc:Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
+                        <mdc:Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
+                    </HorizontalStackLayout>
+                </On>
+                <On Platform="iOS">
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                        <Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
+                        <Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
+                    </HorizontalStackLayout>
+                </On>
+            </OnPlatform>
+        </VerticalStackLayout>
+    </md:BaseModalPage.ModalContent>
+</md:BaseModalPage>

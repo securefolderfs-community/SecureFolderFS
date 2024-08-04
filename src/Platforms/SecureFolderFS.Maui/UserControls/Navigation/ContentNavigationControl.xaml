@@ -1,0 +1,11 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.Navigation.ContentNavigationControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Navigation"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls">
+
+    <Grid x:Name="RootGrid" x:DataType="local:ContentNavigationControl">
+        <uc:ContentPresentation x:Name="Presentation" TemplateSelector="{Binding TemplateSelector, Mode=OneWay}" />
+    </Grid>
+</ContentView>

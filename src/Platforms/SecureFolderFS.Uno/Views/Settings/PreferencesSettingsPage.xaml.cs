@@ -23,7 +23,7 @@ namespace SecureFolderFS.Uno.Views.Settings
     [INotifyPropertyChanged]
     public sealed partial class PreferencesSettingsPage : Page
     {
-        public PreferencesSettingsViewModel ViewModel
+        public PreferencesSettingsViewModel? ViewModel
         {
             get => DataContext.TryCast<PreferencesSettingsViewModel>();
             set { DataContext = value; OnPropertyChanged(); }
@@ -48,7 +48,9 @@ namespace SecureFolderFS.Uno.Views.Settings
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            ViewModel.BannerViewModel.PropertyChanged -= BannerViewModel_PropertyChanged;
+            if (ViewModel is not null)
+                ViewModel.BannerViewModel.PropertyChanged -= BannerViewModel_PropertyChanged;
+
             base.OnNavigatingFrom(e);
         }
 
@@ -60,6 +62,9 @@ namespace SecureFolderFS.Uno.Views.Settings
 
         private async Task UpdateAdapterStatus(CancellationToken cancellationToken = default)
         {
+            if (ViewModel is null)
+                return;
+
             var fileSystemAdapter = ViewModel.BannerViewModel.SelectedItem?.FileSystemInfoModel;
             if (fileSystemAdapter is null)
                 return;
@@ -72,25 +77,30 @@ namespace SecureFolderFS.Uno.Views.Settings
                 FileSystemInfoBar.Severity = ViewSeverityType.Warning;
                 FileSystemInfoBar.CanBeClosed = false;
             }
-            else if (adapterResult.Successful && FileSystemInfoBar is not null)
+            else switch (adapterResult.Successful)
             {
-                FileSystemInfoBar.IsOpen = false;
-            }
-            else if (!adapterResult.Successful)
-            {
-                FileSystemInfoBar = fileSystemAdapter.Id switch
-                {
-                    Core.Constants.FileSystemId.FS_DOKAN => new DokanyInfoBar(),
-                    _ => null
-                };
-                if (FileSystemInfoBar is null)
-                    return;
+                case true when FileSystemInfoBar is not null:
+                    FileSystemInfoBar.IsOpen = false;
+                    break;
 
-                await Task.Delay(800, cancellationToken);
-                FileSystemInfoBar.IsOpen = true;
-                FileSystemInfoBar.Severity = ViewSeverityType.Error;
-                FileSystemInfoBar.CanBeClosed = false;
-                FileSystemInfoBar.Message = adapterResult.GetMessage("Invalid state.");
+                case false:
+                {
+                    FileSystemInfoBar = fileSystemAdapter.Id switch
+                    {
+                        Core.Constants.FileSystemId.FS_DOKAN => new DokanyInfoBar(),
+                        _ => null
+                    };
+                    if (FileSystemInfoBar is null)
+                        return;
+
+                    await Task.Delay(800, cancellationToken);
+                    FileSystemInfoBar.IsOpen = true;
+                    FileSystemInfoBar.Severity = ViewSeverityType.Error;
+                    FileSystemInfoBar.CanBeClosed = false;
+                    FileSystemInfoBar.Message = adapterResult.GetMessage("Invalid state.");
+
+                    break;
+                }
             }
 
             IsInfoBarOpen = FileSystemInfoBar?.IsOpen ?? false;
@@ -107,9 +117,9 @@ namespace SecureFolderFS.Uno.Views.Settings
             }
         }
 
-        public InfoBarViewModel FileSystemInfoBar
+        public InfoBarViewModel? FileSystemInfoBar
         {
-            get => (InfoBarViewModel)GetValue(FileSystemInfoBarProperty);
+            get => (InfoBarViewModel?)GetValue(FileSystemInfoBarProperty);
             set => SetValue(FileSystemInfoBarProperty, value);
         }
         public static readonly DependencyProperty FileSystemInfoBarProperty =

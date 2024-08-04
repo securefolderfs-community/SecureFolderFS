@@ -1,8 +1,13 @@
 using CommunityToolkit.Maui;
-using Material.Components.Maui.Extensions;
-using MauiIcons.Material;
 using Microsoft.Extensions.Logging;
 using The49.Maui.BottomSheet;
+
+#if ANDROID
+using Material.Components.Maui.Extensions;
+using MauiIcons.Material;
+#elif IOS
+using MauiIcons.Cupertino;
+#endif
 
 namespace SecureFolderFS.Maui
 {
@@ -19,10 +24,15 @@ namespace SecureFolderFS.Maui
                 })
 
                 // Plugins
-                .UseMaterialMauiIcons()         // https://github.com/AathifMahir/MauiIcons
                 .UseMauiCommunityToolkit()      // https://github.com/CommunityToolkit/Maui
-                .UseMaterialComponents()        // https://github.com/mdc-maui/mdc-maui
                 .UseBottomSheet()               // https://github.com/the49ltd/The49.Maui.BottomSheet
+
+#if ANDROID
+                .UseMaterialMauiIcons()         // https://github.com/AathifMahir/MauiIcons
+                .UseMaterialComponents()        // https://github.com/mdc-maui/mdc-maui
+#elif IOS
+                .UseCupertinoMauiIcons()
+#endif
                 ;
 
 #if DEBUG

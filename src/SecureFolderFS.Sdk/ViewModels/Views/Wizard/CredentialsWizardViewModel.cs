@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
@@ -7,12 +6,14 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Inject<IVaultService>, Inject<IVaultManagerService>]
+    [Bindable(true)]
     public sealed partial class CredentialsWizardViewModel : BaseWizardViewModel
     {
         private readonly KeyChain _credentials;
@@ -36,13 +38,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public CredentialsWizardViewModel(IModifiableFolder folder)
         {
-            ServiceProvider = Ioc.Default;
-            Title = "SetPassword".ToLocalized();
-            CanContinue = false;
-            CanCancel = true;
+            ServiceProvider = DI.Default;
             Folder = folder;
             _credentials = new();
             _vaultId = Guid.NewGuid().ToString();
+
+            ContinueText = "Continue".ToLocalized();
+            Title = "SetCredentials".ToLocalized();
+            CancelText = "Cancel".ToLocalized();
+            CanContinue = false;
+            CanCancel = true;
         }
 
         /// <inheritdoc/>
@@ -59,7 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 {
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
-                    AuthenticationMethod = CurrentViewModel.Id,
+                    AuthenticationMethod = [ CurrentViewModel.Id ],
                     VaultId = _vaultId
                 };
 
@@ -81,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         /// <inheritdoc/>
         public override Task<IResult> TryCancelAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IResult>(Result.Failure(null));
+            return Task.FromResult<IResult>(Result.Success);
         }
 
         /// <inheritdoc/>
@@ -96,7 +101,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             FileNameCipher = FileNameCiphers.FirstOrDefault();
 
             // Get authentication options
-            await foreach (var item in VaultService.GetAllSecurityAsync(Folder, _vaultId))
+            AuthenticationOptions.Clear();
+            await foreach (var item in VaultService.GetCreationAsync(Folder, _vaultId))
                 AuthenticationOptions.Add(item);
 
             // Set default authentication option
@@ -104,6 +110,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
             static void EnumerateCiphers(IEnumerable<string> source, ICollection<CipherViewModel> destination)
             {
+                destination.Clear();
                 foreach (var item in source)
                 {
                     var name = string.IsNullOrEmpty(item) ? "NoEncryption".ToLocalized() : item;

@@ -1,18 +1,18 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
-using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using Windows.ApplicationModel;
 using Windows.Services.Store;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IUpdateService"/>
     internal sealed class MicrosoftStoreUpdateService : IUpdateService
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
         private StoreContext? _storeContext;
         private IEnumerable<StorePackageUpdate>? _updates;
 
-        private IThreadingService ThreadingService { get; } = Ioc.Default.GetRequiredService<IThreadingService>();
+        private IThreadingService ThreadingService { get; } = DI.Service<IThreadingService>();
 
         /// <inheritdoc/>
         public event EventHandler<EventArgs>? StateChanged;

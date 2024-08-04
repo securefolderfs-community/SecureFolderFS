@@ -1,7 +1,6 @@
-using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Directories;
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FUSE.OpenHandles;
 using SecureFolderFS.Core.FUSE.UnsafeNative;
@@ -11,22 +10,15 @@ using Tmds.Fuse;
 using Tmds.Linux;
 using static SecureFolderFS.Core.FUSE.UnsafeNative.UnsafeNativeApis;
 using static Tmds.Linux.LibC;
-using Constants = SecureFolderFS.Core.FileSystem.Constants;
 
 namespace SecureFolderFS.Core.FUSE.Callbacks
 {
     internal sealed class OnDeviceFuse : BaseFuseCallbacks
     {
-        public required IFolder LocatableContentFolder { get; init; }
-
-        public required Security Security { get; init; }
-
-        public required DirectoryIdCache DirectoryIdAccess { get; init; }
-
         public override bool SupportsMultiThreading => true;
 
-        public OnDeviceFuse(IPathConverter pathConverter, FuseHandlesManager handlesManager)
-            : base(pathConverter, handlesManager)
+        public OnDeviceFuse(FileSystemSpecifics specifics, IPathConverter legacyPathConverter, FuseHandlesManager handlesManager)
+            : base(specifics, legacyPathConverter, handlesManager)
         {
         }
 
@@ -207,7 +199,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                     return -errno;
 
                 if (File.Exists(ciphertextPath))
-                    stat.st_size = Math.Max(0, Security.ContentCrypt.CalculateCleartextSize(stat.st_size - Security.HeaderCrypt.HeaderCiphertextSize));
+                    stat.st_size = Math.Max(0, Specifics.Security.ContentCrypt.CalculateCleartextSize(stat.st_size - Specifics.Security.HeaderCrypt.HeaderCiphertextSize));
 
                 return 0;
             }
@@ -286,7 +278,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             directoryIdStream.Write(directoryId);
 
             // Set DirectoryID to known IDs
-            DirectoryIdAccess.SetDirectoryId(directoryIdPath, directoryId);
+            Specifics.DirectoryIdCache.CacheSet(directoryIdPath, new(directoryId));
 
             return 0;
         }
@@ -323,7 +315,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             var access = mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite;
             var handle = handlesManager.OpenFileHandle(ciphertextPath, mode, access, FileShare.ReadWrite, options);
-            if (handle == Constants.INVALID_HANDLE)
+            if (handle == FileSystem.Constants.INVALID_HANDLE)
                 return -EACCES;
 
             fi.fh = handle;
@@ -439,8 +431,11 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreFile(x)))
                 return -ENOTEMPTY;
 
-            DirectoryIdAccess.RemoveDirectoryId(ciphertextPath);
-            File.Delete(Path.Combine(ciphertextPath, Constants.DIRECTORY_ID_FILENAME));
+            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+
+            // Remove DirectoryID
+            File.Delete(directoryIdPath);
+            Specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
 
             fixed (byte *ciphertextPathPtr = Encoding.UTF8.GetBytes(ciphertextPath))
             {
@@ -507,7 +502,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (fiRef.IsNull)
             {
                 var newHandle = handlesManager.OpenFileHandle(ciphertextPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite, FileOptions.None);
-                if (newHandle == Constants.INVALID_HANDLE)
+                if (newHandle == FileSystem.Constants.INVALID_HANDLE)
                     return -EIO;
 
                 handle = handlesManager.GetHandle<FuseFileHandle>(newHandle)!;
@@ -618,7 +613,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         {
             fixed (byte *cleartextNamePtr = cleartextName)
             {
-                var path = PathHelpers.PathFromVaultRoot(Encoding.UTF8.GetString(cleartextNamePtr, cleartextName.Length), LocatableContentFolder.Id);
+                var path = NativePathHelpers.PathFromVaultRoot(Encoding.UTF8.GetString(cleartextNamePtr, cleartextName.Length), Specifics.ContentFolder.Id);
                 return pathConverter.ToCiphertext(path);
             }
         }

@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
     /// <summary>
     /// Represents a cryptographic cipher descriptor.
     /// </summary>
+    [Bindable(true)]
     public sealed class CipherViewModel : ObservableObject
     {
         /// <summary>

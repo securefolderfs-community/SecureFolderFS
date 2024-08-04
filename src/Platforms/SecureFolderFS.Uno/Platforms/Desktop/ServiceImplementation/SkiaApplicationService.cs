@@ -5,7 +5,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
 using Windows.System;
 
-namespace SecureFolderFS.Uno.SkiaGtk.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.SkiaGtk.ServiceImplementation
 {
     /// <inheritdoc cref="IApplicationService"/>
     internal sealed class SkiaApplicationService : BaseApplicationService

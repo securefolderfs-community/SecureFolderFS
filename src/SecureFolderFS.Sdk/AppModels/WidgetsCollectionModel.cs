@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
+using SecureFolderFS.Shared;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public WidgetsCollectionModel(IFolder vaultFolder)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _widgets = new();
         }
@@ -56,6 +56,7 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public bool RemoveWidget(string widgetId)
         {
+            // Get widgets
             var widgets = VaultWidgets.GetForVault(_vaultFolder.Id);
             
             var itemToRemove = widgets?.FirstOrDefault(x => x.WidgetId == widgetId);

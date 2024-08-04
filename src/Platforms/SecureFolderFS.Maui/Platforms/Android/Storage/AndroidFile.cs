@@ -7,14 +7,14 @@ using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
-    /// <inheritdoc cref="IFile"/>
+    /// <inheritdoc cref="IChildFile"/>
     internal sealed class AndroidFile : AndroidStorable, IChildFile
     {
         /// <inheritdoc/>
         protected override DocumentFile? Document { get; }
 
-        public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null)
-            : base(uri, activity, parent, permissionRoot)
+        public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
+            : base(uri, activity, parent, permissionRoot, bookmarkId)
         {
             Document = DocumentFile.FromSingleUri(activity, uri);
         }
@@ -26,14 +26,20 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             if (IsVirtualFile(activity, Inner))
             {
                 stream = GetVirtualFileStream(activity, Inner, accessMode != FileAccess.Read);
-                return Task.FromResult<Stream>(stream ?? throw new ArgumentException("No stream types available for '*/*' mime type."));
+                if (stream is null)
+                    return Task.FromException<Stream>(new ArgumentException("No stream types available for '*/*' mime type."));
+
+                return Task.FromResult(stream);
             }
 
             stream = accessMode == FileAccess.Read
                 ? activity.ContentResolver?.OpenInputStream(Inner)
                 : activity.ContentResolver?.OpenOutputStream(Inner);
 
-            return Task.FromResult(stream ?? throw new UnauthorizedAccessException($"Could not open a stream to: '{Id}'"));
+            if (stream is null)
+                return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
+
+            return Task.FromResult(stream);
         }
 
         private static bool IsVirtualFile(Context context, AndroidUri uri)

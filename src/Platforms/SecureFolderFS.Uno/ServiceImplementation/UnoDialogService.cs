@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
@@ -8,12 +10,6 @@ using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Dialogs;
 using SecureFolderFS.Uno.UserControls.Introduction;
-using System.Collections.Generic;
-
-#if WINDOWS
-using Microsoft.UI.Xaml.Controls;
-using Windows.Foundation.Metadata;
-#endif
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
@@ -27,12 +23,14 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         {
             IOverlayControl overlay = viewable switch
             {
-                ChangelogDialogViewModel => new ChangelogDialog(),
-                LicensesDialogViewModel => new LicensesDialog(),
-                SettingsDialogViewModel => new SettingsDialog(),
+                ChangelogOverlayViewModel => new ChangelogDialog(),
+                LicensesOverlayViewModel => new LicensesDialog(),
+                SettingsOverlayViewModel => new SettingsDialog(),
                 WizardOverlayViewModel => new VaultWizardDialog(),
-                PasswordChangeDialogViewModel => new PasswordChangeDialog(),
-                ExplanationDialogViewModel => new ExplanationDialog(),
+                CredentialsOverlayViewModel => new CredentialsDialog(),
+                ExplanationOverlayViewModel => new ExplanationDialog(),
+                PreviewRecoveryOverlayViewModel => new PreviewRecoveryDialog(),
+                RecoveryOverlayViewModel => new RecoveryDialog(),
 
                 // Unused
                 PaymentDialogViewModel => new PaymentDialog(),
@@ -42,10 +40,8 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };
 
-#if WINDOWS
-            if (overlay is ContentDialog contentDialog && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8))
-                contentDialog.XamlRoot = App.Instance?.MainWindow?.Content.XamlRoot;
-#endif
+            if (overlay is ContentDialog contentDialog)
+                contentDialog.XamlRoot = App.Instance?.MainWindow?.Content?.XamlRoot;
 
             return overlay;
         }

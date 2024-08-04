@@ -7,7 +7,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class DokanyHandlesManager : BaseHandlesManager
     {
-        public DokanyHandlesManager(IStreamsAccess streamsAccess)
+        public DokanyHandlesManager(StreamsAccess streamsAccess)
             : base(streamsAccess)
         {
         }
@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
 
             // Open cleartext stream on top of ciphertext stream
-            var cleartextStream = streamsAccess.OpenCleartextStream(ciphertextPath, ciphertextStream);
+            var cleartextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
 
             if (cleartextStream is null)
                 return FileSystem.Constants.INVALID_HANDLE;

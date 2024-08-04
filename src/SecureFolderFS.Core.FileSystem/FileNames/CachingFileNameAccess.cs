@@ -7,13 +7,13 @@ using System.Linq;
 
 namespace SecureFolderFS.Core.FileSystem.FileNames
 {
-    /// <inheritdoc cref="IFileNameAccess"/>
+    /// <inheritdoc cref="FileNameAccess"/>
     internal sealed class CachingFileNameAccess : FileNameAccess
     {
         private readonly Dictionary<NameWithDirectoryId, string> _cleartextNames;
         private readonly Dictionary<NameWithDirectoryId, string> _ciphertextNames;
 
-        public CachingFileNameAccess(Security security, IFileSystemStatistics? fileSystemStatistics)
+        public CachingFileNameAccess(Security security, IFileSystemStatistics fileSystemStatistics)
             : base(security, fileSystemStatistics)
         {
             _cleartextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CLEARTEXT_FILENAMES);
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
                 if (!_cleartextNames.TryGetValue(new(directoryId.ToArray(), stringCiphertext), out cleartextName!))
                 {
                     // Not found in cache
-                    fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
+                    statistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
 
                     // Get new cleartext name
                     var newCleartextName = base.GetCleartextName(ciphertextName, directoryId);
@@ -45,8 +45,8 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
                 }
             }
 
-            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
-            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheHit);
+            statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
+            statistics.FileNameCache?.Report(CacheAccessType.CacheHit);
 
             // Return existing cleartext name
             return cleartextName;
@@ -63,7 +63,7 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
                 if (!_ciphertextNames.TryGetValue(new(directoryId.ToArray(), stringCleartext), out ciphertextName!))
                 {
                     // Not found in cache
-                    fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
+                    statistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
 
                     // Get new ciphertext name
                     var newCiphertextName = base.GetCiphertextName(cleartextName, directoryId);
@@ -77,8 +77,8 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
                 }
             }
 
-            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
-            fileSystemStatistics.FileNameCache?.Report(CacheAccessType.CacheHit);
+            statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
+            statistics.FileNameCache?.Report(CacheAccessType.CacheHit);
 
             // Return existing ciphertext name
             return ciphertextName;
@@ -98,55 +98,6 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
                 _ciphertextNames.Remove(_ciphertextNames.Keys.First(), out _);
 
             _ciphertextNames[new(directoryId.ToArray(), cleartextName)] = ciphertextName;
-        }
-
-        private sealed class NameWithDirectoryId : IEquatable<NameWithDirectoryId>
-        {
-            public byte[] DirectoryId { get; }
-
-            public string FileName { get; }
-
-            public NameWithDirectoryId(byte[] directoryId, string fileName)
-            {
-                DirectoryId = directoryId;
-                FileName = fileName;
-            }
-
-            /// <inheritdoc/>
-            public bool Equals(NameWithDirectoryId? other)
-            {
-                if (other is null)
-                    return false;
-
-                return DirectoryId.AsSpan() == other.DirectoryId.AsSpan() && FileName == other.FileName;
-            }
-
-            /// <inheritdoc/>
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    var hash = 17;
-                    hash *= 23 + FileName.GetHashCode();
-                    hash *= 23 + ComputeHash(DirectoryId);
-
-                    return hash;
-                }
-            }
-
-            private static int ComputeHash(ReadOnlySpan<byte> data)
-            {
-                unchecked
-                {
-                    const int p = 16777619;
-                    var hash = (int)2166136261;
-
-                    for (var i = 0; i < data.Length; i++)
-                        hash = (hash ^ data[i]) * p;
-
-                    return hash;
-                }
-            }
         }
     }
 }

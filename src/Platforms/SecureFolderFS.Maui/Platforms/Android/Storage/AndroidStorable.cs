@@ -1,15 +1,17 @@
 using Android.Content;
+using Android.Provider;
 using AndroidX.DocumentFile.Provider;
 using CommunityToolkit.Maui.Core.Extensions;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage;
 using Activity = Android.App.Activity;
 using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
-    /// <inheritdoc cref="IStorable"/>
-    internal abstract class AndroidStorable : IStorableChild, IWrapper<AndroidUri>
+    /// <inheritdoc cref="IStorableChild"/>
+    internal abstract class AndroidStorable : IStorableChild, IBookmark, IWrapper<AndroidUri>
     {
         protected readonly Activity activity;
         protected readonly AndroidFolder? parent;
@@ -24,25 +26,66 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <inheritdoc/>
         public virtual string Name { get; }
 
+        /// <inheritdoc/>
+        public string? BookmarkId { get; protected set; }
+
         /// <summary>
         /// Gets the <see cref="DocumentFile"/> associated with the storage type identified by <see cref="AndroidUri"/>.
         /// </summary>
         protected abstract DocumentFile? Document { get; }
 
-        protected AndroidStorable(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null)
+        protected AndroidStorable(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
         {
             this.activity = activity;
             this.parent = parent;
             this.permissionRoot = permissionRoot ?? uri;
+
             Inner = uri;
+            BookmarkId = bookmarkId;
             Id = Inner.ToString() ?? string.Empty;
-            Name = Path.GetFileName(Inner.ToPhysicalPath() ?? string.Empty);
+            Name = GetFileName(uri);
         }
 
         /// <inheritdoc/>
         public virtual Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IFolder?>(parent);
+        }
+
+        /// <inheritdoc/>
+        public Task AddBookmarkAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                activity.ContentResolver?.TakePersistableUriPermission(Inner,
+                    ActivityFlags.GrantWriteUriPermission | ActivityFlags.GrantReadUriPermission);
+
+                BookmarkId = $"{UI.Constants.STORABLE_BOOKMARK_RID}{Id}";
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task RemoveBookmarkAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                activity.ContentResolver?.ReleasePersistableUriPermission(Inner,
+                    ActivityFlags.GrantWriteUriPermission | ActivityFlags.GrantReadUriPermission);
+
+                BookmarkId = null;
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+            }
+
+            return Task.CompletedTask;
         }
 
         protected static string? GetColumnValue(Context context, AndroidUri contentUri, string column, string? selection = null, string[]? selectionArgs = null)
@@ -65,6 +108,18 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             }
 
             return null;
+        }
+
+        protected static string GetFileName(AndroidUri uri)
+        {
+            var path = uri.Path;
+            if (string.IsNullOrEmpty(path))
+                return string.Empty;
+
+            var index = path.LastIndexOf('/');
+            var fileName = index == -1 ? path : path[(index + 1)..];
+
+            return fileName.Split(':', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty;
         }
     }
 }

@@ -10,6 +10,8 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
 {
     public sealed partial class ActionBlockControl : UserControl
     {
+        public event RoutedEventHandler? Click;
+
         public ActionBlockControl()
         {
             InitializeComponent();
@@ -18,6 +20,11 @@ namespace SecureFolderFS.Uno.UserControls.ActionBlocks
         private void Expander_Expanding(Expander sender, ExpanderExpandingEventArgs args)
         {
             ExpanderExpandingCommand?.Execute(null);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Click?.Invoke(this, e);
         }
 
         public ActionBlockMode BlockMode

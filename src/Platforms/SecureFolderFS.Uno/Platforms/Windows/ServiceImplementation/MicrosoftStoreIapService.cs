@@ -5,7 +5,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
 using Windows.Services.Store;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="IIapService"/>
     internal sealed class MicrosoftStoreIapService : IIapService
@@ -95,7 +95,7 @@ namespace SecureFolderFS.Uno.Windows.ServiceImplementation
         {
             return productType switch
             {
-                IapProductType.SecureFolderFSPlus => IAP_SECUREFOLDERFS_PLUS_ID,
+                IapProductType.SecureFolderFS_PlusSubscription => IAP_SECUREFOLDERFS_PLUS_ID,
                 _ => null
             };
         }

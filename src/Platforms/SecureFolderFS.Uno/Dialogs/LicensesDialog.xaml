@@ -14,12 +14,10 @@
     mc:Ignorable="d">
 
     <ContentDialog.Resources>
-        <ResourceDictionary>
-            <x:Double x:Key="ContentDialogMinWidth">800</x:Double>
-            <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
-            <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-            <vc:OnlyFirstElementOrNullConverter x:Key="OnlyFirstElementOrNullConverter" />
-        </ResourceDictionary>
+        <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <vc:OnlyFirstElementOrNullConverter x:Key="OnlyFirstElementOrNullConverter" />
+        <x:Double x:Key="ContentDialogMinWidth">800</x:Double>
+        <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
     </ContentDialog.Resources>
 
     <Grid Height="500" Margin="-8">

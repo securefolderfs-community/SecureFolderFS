@@ -1,3 +1,4 @@
+using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Paths;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.OpenHandles;
@@ -10,9 +11,12 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         protected readonly IPathConverter pathConverter;
         protected readonly FuseHandlesManager handlesManager;
 
-        protected BaseFuseCallbacks(IPathConverter pathConverter, FuseHandlesManager handlesManager)
+        public FileSystemSpecifics Specifics { get; }
+
+        protected BaseFuseCallbacks(FileSystemSpecifics specifics, IPathConverter legacyPathConverter, FuseHandlesManager handlesManager)
         {
-            this.pathConverter = pathConverter;
+            Specifics = specifics;
+            this.pathConverter = legacyPathConverter;
             this.handlesManager = handlesManager;
         }
 

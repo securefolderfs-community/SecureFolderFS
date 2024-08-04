@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.Helpers;
@@ -42,7 +42,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     1 => AppUpdateResultType.FailedDeviceError,
                     2 => AppUpdateResultType.FailedNetworkError,
                     3 => AppUpdateResultType.FailedUnknownError,
-                    4 => AppUpdateResultType.Completed
+                    _ => AppUpdateResultType.Completed
                 };
                 StateChanged?.Invoke(this, new UpdateChangedEventArgs(state));
 

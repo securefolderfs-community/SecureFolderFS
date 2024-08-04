@@ -13,6 +13,7 @@
                 <!--  Other dictionaries  -->
                 <ResourceDictionary Source="ResourceDictionaries/ColorResources.xaml" />
                 <ResourceDictionary Source="ResourceDictionaries/ImageResources.xaml" />
+                <ResourceDictionary Source="ResourceDictionaries/TextResources.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

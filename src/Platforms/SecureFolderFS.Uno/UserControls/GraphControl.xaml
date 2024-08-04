@@ -10,7 +10,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     </UserControl.Resources>
 
     <Button
@@ -52,7 +52,7 @@
                 Grid.Row="2"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                x:Load="{x:Bind GraphLoaded, Mode=OneWay, Converter={StaticResource BooleanInvertConverter}}" />
+                x:Load="{x:Bind GraphLoaded, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}" />
 
             <!--  Chart  -->
             <lvc:CartesianChart

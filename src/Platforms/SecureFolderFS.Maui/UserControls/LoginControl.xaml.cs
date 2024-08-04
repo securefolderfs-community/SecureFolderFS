@@ -10,12 +10,12 @@ namespace SecureFolderFS.Maui.UserControls
             RootGrid.BindingContext = this;
         }
 
-        public INotifyPropertyChanged LoginTypeViewModel
+        public INotifyPropertyChanged? CurrentViewModel
         {
-            get => (INotifyPropertyChanged)GetValue(LoginTypeViewModelProperty);
-            set => SetValue(LoginTypeViewModelProperty, value);
+            get => (INotifyPropertyChanged?)GetValue(CurrentViewModelProperty);
+            set => SetValue(CurrentViewModelProperty, value);
         }
-        public static readonly BindableProperty LoginTypeViewModelProperty =
-            BindableProperty.Create(nameof(LoginTypeViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl), null);
+        public static readonly BindableProperty CurrentViewModelProperty =
+            BindableProperty.Create(nameof(CurrentViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl), null);
     }
 }

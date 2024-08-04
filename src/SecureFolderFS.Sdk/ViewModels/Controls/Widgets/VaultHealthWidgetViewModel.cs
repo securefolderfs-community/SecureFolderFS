@@ -3,11 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
+    [Bindable(true)]
     public sealed partial class VaultHealthWidgetViewModel : BaseWidgetViewModel
     {
         [ObservableProperty] private string _LastCheckedText;

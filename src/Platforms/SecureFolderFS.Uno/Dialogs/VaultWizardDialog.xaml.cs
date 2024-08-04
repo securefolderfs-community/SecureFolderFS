@@ -6,10 +6,10 @@ using Microsoft.UI.Xaml.Media.Animation;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.Utils;
@@ -24,8 +24,7 @@ namespace SecureFolderFS.Uno.Dialogs
     public sealed partial class VaultWizardDialog : ContentDialog, IOverlayControl
     {
         private BaseWizardViewModel? _previousViewModel;
-        private bool _hasNavigationAnimatedOnLoaded;
-        private bool _isBackAnimationState;
+        private bool _isBackShown;
 
         public WizardOverlayViewModel? ViewModel
         {
@@ -39,7 +38,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
@@ -68,30 +67,17 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async Task AnimateBackAsync(BaseWizardViewModel? viewModel)
         {
-            var canGoBack = viewModel is CredentialsWizardViewModel;
-            if (!_hasNavigationAnimatedOnLoaded)
+            var canGoBack = viewModel is CredentialsWizardViewModel && Navigation.ContentFrame.CanGoBack;
+            if (canGoBack && !_isBackShown)
             {
-                _hasNavigationAnimatedOnLoaded = true;
-                GoBack.Visibility = Visibility.Collapsed;
+                _isBackShown = true;
+                await BackTitle.ShowBackAsync();
             }
-            else switch (_isBackAnimationState)
+            else if (!canGoBack && _isBackShown)
             {
-                case false when (canGoBack && Navigation.ContentFrame.CanGoBack):
-                    _isBackAnimationState = true;
-                    GoBack.Visibility = Visibility.Visible;
-                    await ShowBackButtonStoryboard.BeginAsync();
-                    ShowBackButtonStoryboard.Stop();
-                    break;
-
-                case true when !(canGoBack && Navigation.ContentFrame.CanGoBack):
-                    _isBackAnimationState = false;
-                    await HideBackButtonStoryboard.BeginAsync();
-                    HideBackButtonStoryboard.Stop();
-                    GoBack.Visibility = Visibility.Collapsed;
-                    break;
+                _isBackShown = false;
+                await BackTitle.HideBackAsync();
             }
-
-            GoBack.Visibility = canGoBack && Navigation.ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -121,22 +107,37 @@ namespace SecureFolderFS.Uno.Dialogs
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
-            BaseWizardViewModel nextViewModel = e.Origin switch
+            if (e is CloseNavigationRequestedEventArgs)
             {
-                // Main (if existing selected) => Summary
+                await HideAsync();
+                return;
+            }
+
+            BaseWizardViewModel? nextViewModel = e.Origin switch
+            {
+                // Main (if 'Add existing' selected) -> Summary
                 MainWizardViewModel { CreationType: NewVaultCreationType.AddExisting } => new SummaryWizardViewModel(
                     (Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!, ViewModel!.VaultCollectionModel),
 
-                // Main (if new selected) => Credentials
-                MainWizardViewModel { CreationType: NewVaultCreationType.CreateNew } => new CredentialsWizardViewModel((IModifiableFolder)(Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!),
-                // Credentials => Recovery
-                CredentialsWizardViewModel viewModel => new RecoveryWizardViewModel(viewModel.Folder, e.Result),
-                // Recovery => Summary
+                // Main (if 'Create new' selected) -> Credentials
+                MainWizardViewModel { CreationType: NewVaultCreationType.CreateNew } => new CredentialsWizardViewModel(
+                    (IModifiableFolder)(Navigation.ContentFrame.Content as MainWizardPage)!.CurrentViewModel!.SelectedFolder!),
+                
+                // Credentials -> Recovery
+                CredentialsWizardViewModel viewModel => new RecoveryWizardViewModel(viewModel.Folder, (e as WizardNavigationRequestedEventArgs)?.Result),
+                
+                // Recovery -> Summary
                 RecoveryWizardViewModel viewModel => new SummaryWizardViewModel(viewModel.Folder, ViewModel!.VaultCollectionModel),
 
-                // Fallback
-                _ => throw new NotImplementedException()
+                // Close
+                _ => null
             };
+
+            if (nextViewModel is null)
+            {
+                await HideAsync();
+                return;
+            }
 
             await NavigateAsync(nextViewModel);
         }

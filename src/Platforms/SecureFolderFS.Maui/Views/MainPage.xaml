@@ -6,10 +6,13 @@
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
+    xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
+    xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
     Title="My vaults"
-    x:DataType="local:MainPage">
+    x:DataType="local:MainPage"
+    Loaded="MainPage_Loaded">
 
     <ContentPage.Resources>
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
@@ -24,6 +27,10 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:VaultListItemViewModel">
                     <ViewCell>
+                        <ViewCell.ContextActions>
+                            <MenuFlyoutItem Command="{Binding RemoveVaultCommand}" Text="Remove" />
+                        </ViewCell.ContextActions>
+
                         <Grid Padding="8,2">
                             <Grid.RowDefinitions>
                                 <RowDefinition />
@@ -34,16 +41,18 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <mi:MauiIcon
+                            <Grid
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
-                                Grid.Column="0"
-                                Icon="{mi:Material Lock}" />
+                                Grid.Column="0">
+                                <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
+                                <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
+                            </Grid>
 
                             <Label
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                Text="{Binding VaultViewModel.VaultModel.VaultName, Mode=OneWay}" />
+                                Text="{Binding VaultModel.VaultName, Mode=OneWay}" />
                             <Label
                                 Grid.Row="1"
                                 Grid.Column="1"
@@ -55,13 +64,20 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <OnPlatform x:TypeArguments="GraphicsView">
+        <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
                 <mdc:FAB
                     Margin="0,0,32,32"
                     Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
                     HorizontalOptions="End"
-                    IconData="{Static mdci:Material.Add}"
+                    IconData="{x:Static mdci:Material.Add}"
+                    VerticalOptions="End" />
+            </On>
+            <On Platform="iOS">
+                <Button
+                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+                    HorizontalOptions="Center"
+                    Text="Add"
                     VerticalOptions="End" />
             </On>
         </OnPlatform>

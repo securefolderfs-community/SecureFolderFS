@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -29,7 +30,7 @@ namespace SecureFolderFS.Sdk.Services
         Task<IDisposable> CreateAsync(IFolder vaultFolder, IKey passkey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Unlocks the specified <paramref name="vaultFolder"/> with the provided <paramref name="passkey"/>.
+        /// Unlocks the specified <paramref name="vaultFolder"/> using the provided <paramref name="passkey"/>.
         /// </summary>
         /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
         /// <param name="passkey"></param>
@@ -37,8 +38,17 @@ namespace SecureFolderFS.Sdk.Services
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the master key used to decrypt the vault.</returns>
         Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKey passkey, CancellationToken cancellationToken = default);
 
-        Task<IFolder> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
+        /// <summary>
+        /// Recovers the specified <paramref name="vaultFolder"/> using the provided <paramref name="encodedMasterKey"/>.
+        /// </summary>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
+        /// <param name="encodedMasterKey">The Base64 encoded master key.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the master key used to decrypt the vault.</returns>
+        Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedMasterKey, CancellationToken cancellationToken = default);
 
-        Task<IFolder> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
+        Task<IVFSRoot> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
+
+        Task<IVFSRoot> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
     }
 }

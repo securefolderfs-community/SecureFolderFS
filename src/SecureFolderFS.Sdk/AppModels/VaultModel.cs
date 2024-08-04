@@ -1,11 +1,12 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.DataModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.Services.VaultPersistence;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 using System;
 using System.Linq;
 using System.Threading;
@@ -30,10 +31,16 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public VaultModel(IFolder folder, string? vaultName = null, DateTime? lastAccessDate = null)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             Folder = folder;
             VaultName = vaultName ?? folder.Name;
             LastAccessDate = lastAccessDate;
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(IVaultModel? other)
+        {
+            return Folder.Id == other?.Folder.Id;
         }
 
         /// <inheritdoc/>
@@ -61,7 +68,7 @@ namespace SecureFolderFS.Sdk.AppModels
             if (VaultConfigurations.SavedVaults is null)
                 return false;
 
-            var item = VaultConfigurations.SavedVaults.FirstOrDefault(x => x.Id == Folder.Id);
+            var item = VaultConfigurations.SavedVaults.FirstOrDefault(x => x.PersistableId == Folder.GetPersistableId());
             if (item is null)
                 return false;
 

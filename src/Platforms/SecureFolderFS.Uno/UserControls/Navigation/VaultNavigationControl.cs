@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.UI.Xaml.Media.Animation;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Uno.Views.Vault;
-using System;
-using System.Collections.Generic;
 
 namespace SecureFolderFS.Uno.UserControls.Navigation
 {
@@ -12,8 +12,8 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         /// <inheritdoc/>
         public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
-            { typeof(VaultLoginPageViewModel), typeof(VaultLoginPage) },
-            { typeof(VaultDashboardPageViewModel), typeof(VaultDashboardPage) }
+            { typeof(VaultLoginViewModel), typeof(VaultLoginPage) },
+            { typeof(VaultDashboardViewModel), typeof(VaultDashboardPage) }
         };
 
         /// <inheritdoc/>
@@ -26,11 +26,6 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
             };
 
             return ContentFrame.Navigate(pageType, parameter, transitionInfo);
-        }
-
-        public void ClearContent()
-        {
-            ContentFrame.Content = null;
         }
     }
 }

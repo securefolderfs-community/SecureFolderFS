@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.Helpers;
@@ -17,11 +17,11 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 {
     public sealed partial class MainWindowRootControl : UserControl
     {
-        private INavigationService RootNavigationService { get; } = Ioc.Default.GetRequiredService<INavigationService>();
+        private INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
 
-        public MainViewModel ViewModel
+        public MainViewModel? ViewModel
         {
-            get => (MainViewModel)DataContext;
+            get => DataContext.TryCast<MainViewModel>();
             set => DataContext = value;
         }
 
@@ -46,6 +46,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             // Initialize ThemeHelper for theming
             UnoThemeHelper.Instance.RegisterWindowInstance(App.Instance?.MainWindow?.Content as FrameworkElement);
             await UnoThemeHelper.Instance.InitAsync();
+
+            if (ViewModel is null)
+                return;
 
             // Initialize the root view model
             await ViewModel.InitAsync();

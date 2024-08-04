@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 {
     [Inject<IVaultService>, Inject<ISettingsService>]
+    [Bindable(true)]
     public sealed partial class FileSystemBannerViewModel : ObservableObject, IAsyncInitialize
     {
         [ObservableProperty] private ObservableCollection<FileSystemItemViewModel> _FileSystemAdapters;
@@ -20,7 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 
         public FileSystemBannerViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             FileSystemAdapters = new();
         }
 

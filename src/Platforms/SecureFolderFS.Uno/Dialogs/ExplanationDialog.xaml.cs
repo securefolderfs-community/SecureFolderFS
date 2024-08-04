@@ -2,12 +2,11 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
+using SecureFolderFS.Uno.Extensions;
 
 
 #if WINDOWS
@@ -23,11 +22,13 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class ExplanationDialog : ContentDialog, IOverlayControl
     {
+#if WINDOWS
         private IDisposable? _streamDisposable;
+#endif
 
-        public ExplanationDialogViewModel? ViewModel
+        public ExplanationOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<ExplanationDialogViewModel>();
+            get => DataContext.TryCast<ExplanationOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -37,10 +38,10 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (ExplanationDialogViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (ExplanationOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()

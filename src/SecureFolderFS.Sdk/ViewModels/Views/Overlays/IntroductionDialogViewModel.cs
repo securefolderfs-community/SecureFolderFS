@@ -1,16 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
-    public sealed partial class IntroductionDialogViewModel : DialogViewModel
+    [Bindable(true)]
+    public sealed partial class IntroductionDialogViewModel : OverlayViewModel
     {
         private readonly int _maxAmount;
 
@@ -21,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public IntroductionDialogViewModel(int maxAmount)
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
             _maxAmount = maxAmount;
             CurrentStep = $"1/{maxAmount}";
             TaskCompletion = new();
@@ -30,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         [RelayCommand]
         private async Task OpenSettingsAsync()
         {
-            await OverlayService.ShowAsync(SettingsDialogViewModel.Instance);
+            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync();
         }
 

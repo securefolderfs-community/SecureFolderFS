@@ -1,25 +1,27 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System.Collections;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Inject<IOverlayService>]
+    [Bindable(true)]
     public partial class BrowserViewModel : ObservableObject
     {
         [ObservableProperty] private IViewable? _CurrentView;
 
         public BrowserViewModel()
         {
-            ServiceProvider = Ioc.Default;
+            ServiceProvider = DI.Default;
         }
 
         [RelayCommand]
@@ -30,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
             // TODO: Add NewFolderOverlayViewModel
             _ = modifiableFolder;
-            var result = await OverlayService.ShowAsync(null);
+            var result = await OverlayService.ShowAsync(null!);
             if (result is IResult<IFolder> { Successful: true, Value: not null } folderResult)
                 folderViewModel.Items.Add(new FolderViewModel(folderResult.Value));
         }
@@ -39,7 +41,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         protected virtual async Task CopyAsync(IEnumerable items, CancellationToken cancellationToken)
         {
             // TODO: Add CopyOverlayViewModel
-            var result = await OverlayService.ShowAsync(null);
+            var result = await OverlayService.ShowAsync(null!);
             if (result is not IResult<IFolder> { Successful: true, Value: ICreateCopyOf folderCreateCopyOf /*IDirectCopy directCopy*/ })
                 return;
 
@@ -57,7 +59,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 return;
 
             // TODO: Add MoveOverlayViewModel
-            var result = await OverlayService.ShowAsync(null);
+            var result = await OverlayService.ShowAsync(null!);
             if (result is not IResult<IFolder> { Successful: true, Value: IMoveFrom folderMoveFrom })
                 return;
 
@@ -76,7 +78,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 return;
 
             // TODO: Add DeletionOverlayViewModel
-            var result = await OverlayService.ShowAsync(null);
+            var result = await OverlayService.ShowAsync(null!);
             if (!result.Successful)
                 return;
 

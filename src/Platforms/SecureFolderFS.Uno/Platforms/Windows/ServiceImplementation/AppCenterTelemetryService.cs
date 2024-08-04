@@ -1,12 +1,12 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.Api;
-using System;
-using System.Threading.Tasks;
 
-namespace SecureFolderFS.Uno.Windows.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 {
     /// <inheritdoc cref="ITelemetryService"/>
     internal sealed class AppCenterTelemetryService : ITelemetryService

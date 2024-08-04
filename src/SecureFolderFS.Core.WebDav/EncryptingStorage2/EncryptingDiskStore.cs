@@ -14,12 +14,12 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
     internal sealed class EncryptingDiskStore : DiskStore
     {
-        private readonly IStreamsAccess _streamsAccess;
+        private readonly StreamsAccess _streamsAccess;
         private readonly IPathConverter _pathConverter;
         private readonly DirectoryIdCache _directoryIdCache;
         private readonly Security _security;
 
-        public EncryptingDiskStore(string directory, IStreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache, Security security, bool isWritable = true, ILockingManager? lockingManager = null)
+        public EncryptingDiskStore(string directory, StreamsAccess streamsAccess, IPathConverter pathConverter, DirectoryIdCache directoryIdCache, Security security, bool isWritable = true, ILockingManager? lockingManager = null)
             : base(directory, isWritable, lockingManager)
         {
             _streamsAccess = streamsAccess;

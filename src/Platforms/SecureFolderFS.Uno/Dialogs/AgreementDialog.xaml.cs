@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Utils;
+using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,D
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -16,9 +16,9 @@ namespace SecureFolderFS.Uno.Dialogs
     {
         private bool _agreed;
 
-        public AgreementDialogViewModel ViewModel
+        public AgreementDialogViewModel? ViewModel
         {
-            get => (AgreementDialogViewModel)DataContext;
+            get => DataContext.TryCast<AgreementDialogViewModel>();
             set => DataContext = value;
         }
 
@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno.Dialogs
         }
 
         /// <inheritdoc/>
-        public new async Task<IResult> ShowAsync() => ((DialogOption)await base.ShowAsync()).ParseDialogOption();
+        public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable) => ViewModel = (AgreementDialogViewModel)viewable;

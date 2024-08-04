@@ -1,7 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
@@ -11,27 +11,22 @@ using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Uno.ViewModels
 {
-    public sealed partial class WindowsHelloCreationViewModel : WindowsHelloViewModel
+    /// <inheritdoc cref="WindowsHelloViewModel"/>
+    [Bindable(true)]
+    public sealed class WindowsHelloCreationViewModel(string vaultId, string id, IFolder vaultFolder)
+        : WindowsHelloViewModel(id)
     {
-        private readonly string _vaultId;
-
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public WindowsHelloCreationViewModel(string vaultId, string id, IFolder vaultFolder)
-            : base(id, vaultFolder)
+        /// <inheritdoc/>
+        protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            _vaultId = vaultId;
-        }
-
-        [RelayCommand]
-        private async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
-        {
-            var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
-            using var challenge = GenerateChallenge(_vaultId);
+            var vaultWriter = new VaultWriter(vaultFolder, StreamSerializer.Instance);
+            using var challenge = GenerateChallenge(vaultId);
 
             // Write authentication data to the vault
             await vaultWriter.WriteAuthenticationAsync(new()
@@ -42,14 +37,14 @@ namespace SecureFolderFS.Uno.ViewModels
 
             try
             {
-                var key = await this.TryCreateAsync(_vaultId, challenge.Key, cancellationToken);
+                var key = await this.TryCreateAsync(vaultId, challenge.Key, cancellationToken);
                 if (key is { Successful: true, Value: not null })
                     CredentialsProvided?.Invoke(this, new(key.Value));
             }
-            catch (InvalidOperationException iopex)
+            catch (InvalidOperationException ex)
             {
                 // Thrown when authentication is canceled
-                SetError(Result.Failure(iopex));
+                SetError(Result.Failure(ex));
             }
         }
     }
