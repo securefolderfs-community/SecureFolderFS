@@ -1,13 +1,15 @@
 <p align="center">
-  <h1 align="center">SecureFolderFS</h1>
+  <h2 align="center">SecureFolderFS</h2>
+</p>
+
+<p align="center">
+  <img style="border-radius: 8px" src="assets/SecureFolderFS_Hero.png">
 </p>
 
 [![Discord](https://discordapp.com/api/guilds/926425949078159420/widget.png)](https://discord.gg/NrTxXpJ2Zj)
 [![Crowdin](https://badges.crowdin.net/securefolderfs/localized.svg)](https://crowdin.com/project/securefolderfs)
 
 SecureFolderFS helps you keep your files private. Safeguard your data with cutting-edge cryptographic algorithms that seamlessly secure your data thanks to our advanced on-fly encryption.
-
-![14 05 2023 18_51_03](https://github.com/securefolderfs-community/SecureFolderFS/assets/53011783/5320dfca-6388-46d8-99ab-90a5b3026d0a)
 
 ## Try out SecureFolderFS
 
