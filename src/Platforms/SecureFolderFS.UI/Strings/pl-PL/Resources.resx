@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddExisting" xml:space="preserve">
+    <value>Add existing</value>
+  </data>
   <data name="AddExistingVault" xml:space="preserve">
     <value>Dodaj istniejący sejf</value>
   </data>
@@ -195,6 +198,9 @@
   <data name="CopyVersionMessage" xml:space="preserve">
     <value>Wybierz wersję do skopiowania do schowka</value>
   </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Create new</value>
+  </data>
   <data name="CreateNewVault" xml:space="preserve">
     <value>Utwórz nowy sejf</value>
   </data>
@@ -257,6 +263,9 @@
   </data>
   <data name="InvalidPasswordMessage" xml:space="preserve">
     <value>Wprowadzone hasło jest nieprawidłowe.</value>
+  </data>
+  <data name="KeyFile" xml:space="preserve">
+    <value>Key file</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Język</value>
@@ -322,6 +331,9 @@
   <data name="Password" xml:space="preserve">
     <value>Hasło</value>
   </data>
+  <data name="Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
   <data name="Print" xml:space="preserve">
     <value>Drukuj</value>
   </data>
@@ -333,6 +345,12 @@
   </data>
   <data name="ReadSpeeds" xml:space="preserve">
     <value>Prędkość odczytu</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Recover</value>
+  </data>
+  <data name="RecoverAccess" xml:space="preserve">
+    <value>Recover access</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Usuń sejf z listy</value>
@@ -362,8 +380,8 @@
   <data name="SelectVaultPath" xml:space="preserve">
     <value>Wybierz ścieżkę sejfu</value>
   </data>
-  <data name="SetPassword" xml:space="preserve">
-    <value>Ustaw hasło</value>
+  <data name="SetCredentials" xml:space="preserve">
+    <value>Set credentials</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ustawienia</value>
@@ -463,6 +481,9 @@
   </data>
   <data name="WhatsNew" xml:space="preserve">
     <value>Co nowego</value>
+  </data>
+  <data name="WindowsHello" xml:space="preserve">
+    <value>Windows Hello</value>
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
     <value>Prędkość zapisu</value>
