@@ -79,6 +79,7 @@
     <When Condition="'$(TargetFramework)'=='net8.0-windows10.0.19041'">
       <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" />
+        <PackageReference Include="Vanara.PInvoke.ComCtl32" />
       </ItemGroup>
 
       <ItemGroup>
@@ -110,6 +111,9 @@
         <!-- Bundle WinAppSDK binaries in SelfContained -->
         <SelfContained>True</SelfContained>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+
+        <!-- Other -->
+        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
       </PropertyGroup>
 
       <!-- Define UNPACKAGED constant -->

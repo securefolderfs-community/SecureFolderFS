@@ -39,5 +39,6 @@
     <PackageVersion Include="Uno.WinUI.DevServer" Version="5.3.90" />
     <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="5.3.90" />
     <PackageVersion Include="Uno.WinUI.WebAssembly" Version="5.3.90" />
+    <PackageVersion Include="Vanara.PInvoke.ComCtl32" Version="4.0.2" />
   </ItemGroup>
 </Project>

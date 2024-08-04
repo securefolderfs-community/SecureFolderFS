@@ -120,6 +120,13 @@ namespace SecureFolderFS.Uno
                 window.SetTitleBar(rootControl.CustomTitleBar);
             }
 
+            // Get BoundsManager
+            var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(window);
+
+            // Set minimum window size
+            boundsManager.MinWidth = 662;
+            boundsManager.MinHeight = 572;
+
 #else
             _ = window;
 #endif
@@ -128,7 +135,7 @@ namespace SecureFolderFS.Uno
 #if WINDOWS
         private static async void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
         {
-            var settingsService = SecureFolderFS.Shared.DI.Service<ISettingsService>();
+            var settingsService = DI.Service<ISettingsService>();
             await settingsService.TrySaveAsync();
         }
 #endif
