@@ -8,15 +8,18 @@
 
 [![Discord](https://discordapp.com/api/guilds/926425949078159420/widget.png)](https://discord.gg/NrTxXpJ2Zj)
 [![Crowdin](https://badges.crowdin.net/securefolderfs/localized.svg)](https://crowdin.com/project/securefolderfs)
+![GitHub Release](https://img.shields.io/github/v/release/securefolderfs-community/SecureFolderFS)
 
 SecureFolderFS helps you keep your files private. Safeguard your data with cutting-edge cryptographic algorithms that seamlessly secure your data thanks to the on-fly encryption. Built from the ground up to be safe, our advanced file system engine ensures that only the specific sections of your data necessary for viewing are decrypted. This groundbreaking approach allows SecureFolderFS to achieve exceptional performance without sacrificing security.
 
-When trust is broken, encryption is not. SecureFolderFS cannot provide anyone with the decryption keys to your vaults without your credentials, not even the authors. This means that your data will always stay secure.
+When trust is broken, encryption is not. SecureFolderFS cannot provide anyone with the decryption keys to your vaults without your credentials (not even the authors). This ensures that your data will always stay secure.
 
 > [!NOTE]
 > The software is currently in the Beta stage which might have occasional stability issues. Developers are not responsible for the loss or corruption of data.
 
 ## Try out SecureFolderFS
+
+<img src="assets/MSStore_Download.png" width=140>
 
 You can download and install SecureFolderFS through either of these links:
 - *[Microsoft Store](https://apps.microsoft.com/store/detail/securefolderfs/9NZ7CZRN7GG8)*
