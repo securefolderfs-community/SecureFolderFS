@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img style="border-radius: 8px" src="assets/SecureFolderFS_Hero.png">
+  <img src="assets/SecureFolderFS_Hero.png">
 </p>
 
 [![Discord](https://discordapp.com/api/guilds/926425949078159420/widget.png)](https://discord.gg/NrTxXpJ2Zj)
