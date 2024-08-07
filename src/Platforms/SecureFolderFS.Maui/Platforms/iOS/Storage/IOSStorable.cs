@@ -55,7 +55,8 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Storage
                 if (error is not null)
                     return;
 
-                BookmarkId = nsDataBookmark.GetBase64EncodedString(NSDataBase64EncodingOptions.None);
+                var nsEncodedBookmark = nsDataBookmark.GetBase64EncodedString(NSDataBase64EncodingOptions.None);
+                BookmarkId = $"{UI.Constants.STORABLE_BOOKMARK_RID}{nsEncodedBookmark}";
             }
             finally
             {

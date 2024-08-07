@@ -5,8 +5,12 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.UI.Utils;
+
+#if IOS
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
+#endif
 
 namespace SecureFolderFS.Maui.Views.Modals.Wizard
 {
@@ -34,12 +38,14 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             // Using Shell to display modals is broken - each new page shown after a 'modal' page will be incorrectly displayed as another modal.
             // NavigationPage approach does not have this issue
 #if ANDROID
-            await _sourceNavigation.PushModalAsync(new NavigationPage(this)
+            await _sourceNavigation.PushModalAsync(new Microsoft.Maui.Controls.NavigationPage(this)
             {
                 BackgroundColor = Color.FromArgb("#80000000")
             });
 #elif IOS
-            await _sourceNavigation.PushModalAsync(new NavigationPage(this));
+            var navigationPage = new Microsoft.Maui.Controls.NavigationPage(this);
+            navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+            await _sourceNavigation.PushModalAsync(navigationPage);
 #endif
 
             return await _modalTcs.Task;
@@ -70,7 +76,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             base.OnAppearing();
         }
 
-        private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
+        private async void ViewModel_NavigationRequested(object? sender, Shared.EventArguments.NavigationRequestedEventArgs e)
         {
             if (OverlayViewModel is null)
                 return;

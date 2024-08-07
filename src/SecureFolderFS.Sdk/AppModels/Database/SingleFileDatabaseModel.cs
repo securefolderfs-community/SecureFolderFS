@@ -18,6 +18,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         private readonly IModifiableFolder _settingsFolder;
         private IFile? _databaseFile;
         private IFolderWatcher? _folderWatcher;
+        private bool _canCaptureChanges;
 
         /// <inheritdoc/>
         protected override INotifyCollectionChanged? NotifyCollectionChanged => _folderWatcher;
@@ -27,6 +28,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         {
             _fileName = fileName;
             _settingsFolder = settingsFolder;
+            _canCaptureChanges = true;
         }
 
         /// <inheritdoc/>
@@ -106,6 +108,7 @@ namespace SecureFolderFS.Sdk.AppModels.Database
                 // Copy contents
                 settingsStream.Position = 0L;
                 await settingsStream.CopyToAsync(dataStream, cancellationToken);
+                await dataStream.FlushAsync(cancellationToken);
 
                 return true;
             }
@@ -125,10 +128,17 @@ namespace SecureFolderFS.Sdk.AppModels.Database
         private async Task EnsureSettingsFileAsync(CancellationToken cancellationToken)
         {
             _databaseFile ??= await _settingsFolder.CreateFileAsync(_fileName, false, cancellationToken);
-            if (_folderWatcher is null && _settingsFolder is IMutableFolder mutableFolder)
+            if (_folderWatcher is null && _settingsFolder is IMutableFolder mutableFolder && _canCaptureChanges)
             {
-                _folderWatcher = await mutableFolder.GetFolderWatcherAsync(cancellationToken);
-                StartCapturingChanges();
+                try
+                {
+                    _folderWatcher = await mutableFolder.GetFolderWatcherAsync(cancellationToken);
+                    StartCapturingChanges();
+                }
+                catch (Exception)
+                {
+                    _canCaptureChanges = false;
+                }
             }
         }
 

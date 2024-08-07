@@ -1,4 +1,5 @@
 using OwlCore.Storage;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation;
 using SecureFolderFS.Sdk.Services;
@@ -10,6 +11,17 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
     /// <inheritdoc cref="BaseLifecycleHelper"/>
     internal sealed class IOSLifecycleHelper : BaseLifecycleHelper
     {
+        /// <inheritdoc/>
+        public override Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            // Initialize settings
+            var settingsFolderPath = Path.Combine(Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
+            ConfigureServices(settingsFolder);
+
+            return Task.CompletedTask;
+        }
+
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
         {
