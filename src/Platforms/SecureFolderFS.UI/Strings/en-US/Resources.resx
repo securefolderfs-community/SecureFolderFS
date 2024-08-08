@@ -488,4 +488,7 @@
   <data name="WriteSpeeds" xml:space="preserve">
     <value>Write speeds</value>
   </data>
+  <data name="Add" xml:space="preserve">
+      <value>Add</value>
+  </data>
 </root>

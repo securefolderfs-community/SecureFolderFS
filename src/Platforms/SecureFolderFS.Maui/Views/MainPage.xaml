@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Maui.Views.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
@@ -17,7 +18,30 @@
     <ContentPage.Resources>
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     </ContentPage.Resources>
+
+    <Shell.TitleView>
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="iOS">
+                <Grid>
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        Text="{l:ResourceString Name=MyVaults}"
+                        VerticalOptions="Center" />
+                    <Button
+                        Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+                        FontSize="18"
+                        HorizontalOptions="End"
+                        Text="{l:ResourceString Name=Add}"
+                        TextColor="#007bff"
+                        VerticalOptions="Center" />
+                </Grid>
+            </On>
+        </OnPlatform>
+    </Shell.TitleView>
 
     <Grid>
         <ListView
@@ -64,6 +88,24 @@
             </ListView.ItemTemplate>
         </ListView>
 
+        <VerticalStackLayout
+            Padding="12,0"
+            IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+            Spacing="16"
+            VerticalOptions="Center">
+            <Image Source="app_icon.png" WidthRequest="64" />
+            <Label
+                FontAttributes="Bold"
+                FontSize="24"
+                HorizontalOptions="Center"
+                Text="{l:ResourceString Name=Welcome}" />
+            <Label
+                FontSize="16"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="{l:ResourceString Name=NoVaultsMessage}" />
+        </VerticalStackLayout>
+
         <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
                 <mdc:FAB
@@ -71,13 +113,6 @@
                     Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
                     HorizontalOptions="End"
                     IconData="{x:Static mdci:Material.Add}"
-                    VerticalOptions="End" />
-            </On>
-            <On Platform="iOS">
-                <Button
-                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
-                    HorizontalOptions="Center"
-                    Text="Add"
                     VerticalOptions="End" />
             </On>
         </OnPlatform>

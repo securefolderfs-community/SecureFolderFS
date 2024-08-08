@@ -36,14 +36,7 @@
         <OnPlatform x:TypeArguments="View">
             <On Platform="iOS">
                 <Grid HorizontalOptions="FillAndExpand">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-
                     <Label
-                        Grid.Column="1"
                         Margin="-28,0,0,0"
                         FontAttributes="Bold"
                         FontSize="18"
@@ -52,7 +45,6 @@
                         VerticalOptions="Center" />
 
                     <Button
-                        Grid.Column="2"
                         Command="{Binding PrimaryCommand, Mode=OneWay}"
                         FontAttributes="Bold"
                         FontSize="18"

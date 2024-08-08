@@ -24,6 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
+        [ObservableProperty] private bool _HasVaults;
         [ObservableProperty] private VaultListItemViewModel? _SelectedItem;
         [ObservableProperty] private VaultListSearchViewModel _SearchViewModel;
         [ObservableProperty] private ObservableCollection<VaultListItemViewModel> _Items;
@@ -53,6 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 case NotifyCollectionChangedAction.Reset:
                     SelectedItem = null;
                     Items.Clear();
+                    HasVaults = false;
                     break;
 
                 default: return;
@@ -97,6 +99,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         {
             var listItem = new VaultListItemViewModel(vaultModel, _vaultCollectionModel);
             Items.Add(listItem);
+            HasVaults = true;
         }
 
         private void RemoveVault(IVaultModel vaultModel)
@@ -111,10 +114,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             }
             catch (NullReferenceException)
             {
-                // TODO: This happens rarely but the vault is actually removed
+                // This happens rarely but the vault is actually removed
             }
 
             SelectedItem = Items.FirstOrDefault();
+            HasVaults = Items.IsEmpty();
         }
 
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)
