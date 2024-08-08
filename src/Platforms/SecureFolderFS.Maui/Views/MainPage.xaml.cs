@@ -44,8 +44,10 @@ namespace SecureFolderFS.Maui.Views
 
         private void MainPage_Loaded(object? sender, EventArgs e)
         {
-            // Need to set Title here because MainPage is instantiated before services are configured
+            // Need to set properties here because MainPage is instantiated before services are configured
             Title = "MyVaults".ToLocalized();
+            NoVaultsTitle.Text = "Welcome".ToLocalized();
+            NoVaultsDescription.Text = "NoVaultsMessage".ToLocalized();
 
             // Also set the current starting view
             if (ViewModel.NavigationService is MauiNavigationService navigationService)
