@@ -4,9 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vw="clr-namespace:SecureFolderFS.Maui.Views"
     Title="SecureFolderFS"
+    FlyoutBehavior="Disabled"
     Loaded="AppShell_Loaded"
-    Shell.NavBarIsVisible="True"
-    FlyoutBehavior="Disabled">
+    Shell.NavBarIsVisible="True">
+
+    <Shell.ForegroundColor>
+        <OnPlatform x:TypeArguments="Color">
+            <On Platform="iOS">"#007bff"</On>
+        </OnPlatform>
+    </Shell.ForegroundColor>
 
     <ShellContent ContentTemplate="{DataTemplate vw:MainPage}" Route="MainPage" />
 </Shell>
