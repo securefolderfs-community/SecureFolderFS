@@ -118,7 +118,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             }
 
             SelectedItem = Items.FirstOrDefault();
-            HasVaults = Items.IsEmpty();
+            HasVaults = !Items.IsEmpty();
         }
 
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)

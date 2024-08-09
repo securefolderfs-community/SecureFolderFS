@@ -11,7 +11,7 @@
     x:DataType="local:LoginPage">
 
     <VerticalStackLayout
-        HorizontalOptions="Center"
+        Padding="64,0"
         Spacing="32"
         VerticalOptions="Center">
 
@@ -21,12 +21,12 @@
                 <mi:MauiIcon
                     HorizontalOptions="Center"
                     Icon="{mi_material:Material Lock}"
-                    IconSize="20"
+                    IconSize="40"
                     OnPlatforms="Android" />
                 <mi:MauiIcon
                     HorizontalOptions="Center"
                     Icon="{mi_cupertino:Cupertino Lock}"
-                    IconSize="20"
+                    IconSize="40"
                     OnPlatforms="iOS" />
             </Grid>
             <Label
