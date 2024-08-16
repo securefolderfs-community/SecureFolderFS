@@ -34,6 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             ServiceProvider = DI.Default;
             _vaultCollectionModel = vaultCollectionModel;
             _Items = new();
+            _HasVaults = true; // Assume there are vaults
             _SearchViewModel = new(Items);
 
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;

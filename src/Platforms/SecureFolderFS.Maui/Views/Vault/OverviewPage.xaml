@@ -2,16 +2,78 @@
     x:Class="SecureFolderFS.Maui.Views.Vault.OverviewPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:OverviewPage">
 
-    <VerticalStackLayout
-        HorizontalOptions="Center"
-        Spacing="32"
-        VerticalOptions="Center">
+    <VerticalStackLayout>
+        <!--  Top widgets  -->
+        <VerticalStackLayout Padding="20,16" Spacing="24">
 
-        <Label Text="This is overview page" />
-        <Button Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand}" Text="dispose" />
+            <!--  Health Widget  -->
+            <HorizontalStackLayout Spacing="4">
+                <Image
+                    Margin="-4,0,0,0"
+                    HeightRequest="48"
+                    Source="green_shield.png" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="{l:ResourceString Name=HealthNoProblems}"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!--  Data statistics widget  -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Opacity="0.8" Text="Total read" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        Text="0Mb" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Opacity="0.8" Text="Total write" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        Text="0Mb" />
+                </VerticalStackLayout>
+            </Grid>
+        </VerticalStackLayout>
+        <TableView>
+            <TableRoot>
+                <TableSection Title="Quick actions">
+                    <TextCell Command="{x:Null}" Text="View in Files" />
+                    <TextCell Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand}" Text="{l:ResourceString Name=LockVault}" />
+                </TableSection>
+                <TableSection Title="Properties">
+                    <uc:SplitCell
+                        IsEnabled="False"
+                        LeftText="Security"
+                        RightText="TODO" />
+                    <uc:SplitCell
+                        IsEnabled="False"
+                        LeftText="{l:ResourceString Name=DataEncryption}"
+                        RightText="TODO" />
+                    <uc:SplitCell
+                        IsEnabled="False"
+                        LeftText="{l:ResourceString Name=FileNameEncryption}"
+                        RightText="TODO" />
+                </TableSection>
+                <TableSection Title="Authentication">
+                    <TextCell Detail="Change how you log in into this vault" Text="Change credentials" />
+                    <TextCell Detail="Setup or change two-factor authentication" Text="Two-factor authentication" />
+                    <TextCell Text="View recovery codes" />
+                </TableSection>
+            </TableRoot>
+        </TableView>
     </VerticalStackLayout>
 </ContentPage>
