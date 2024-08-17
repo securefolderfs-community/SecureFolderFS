@@ -24,7 +24,7 @@ namespace SecureFolderFS.Maui.UserControls
             {
                 VerticalOptions = LayoutOptions.Center,
                 FontSize = 16d,
-                Opacity = 0.8d
+                Opacity = 0.6d
             };
             RootGrid.BindingContext = this;
         }

@@ -49,7 +49,7 @@
                     <!--  Title  -->
                     <Label
                         HorizontalOptions="Center"
-                        Opacity="0.8"
+                        Opacity="0.6"
                         Text="Authenticate using a Key File" />
 
                     <!--  Authenticate  -->
@@ -83,7 +83,7 @@
                         FontSize="12"
                         HorizontalOptions="Center"
                         HorizontalTextAlignment="Center"
-                        Opacity="0.8"
+                        Opacity="0.6"
                         Text="{Binding ErrorMessage, Mode=OneWay}" />
                 </VerticalStackLayout>
             </ContentView>

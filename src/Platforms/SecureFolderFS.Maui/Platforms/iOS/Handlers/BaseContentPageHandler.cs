@@ -15,9 +15,10 @@ namespace SecureFolderFS.Maui.Handlers
             
             ThisPage.Loaded += ContentPage_Loaded;
             ThisPage.NavigatedTo += ContentPage_NavigatedTo;
+            ThisPage.Appearing += ContentPage_Appearing;
             App.Instance.AppResumed += App_Resumed;
         }
-        
+
         protected abstract void ApplyHandler(IPlatformViewHandler viewHandler);
 
         private void ApplyHandler()
@@ -31,18 +32,23 @@ namespace SecureFolderFS.Maui.Handlers
         private async void ContentPage_Loaded(object? sender, EventArgs e)
         {
             // Await a small delay for the UI to load
-            await Task.Delay(100);
+            await Task.Delay(10);
+            ApplyHandler();
+        }
+
+        private void App_Resumed(object? sender, EventArgs e)
+        {
+            // When app is resumed, UI is reevaluated
+            ApplyHandler();
+        }
+        
+        private void ContentPage_Appearing(object? sender, EventArgs e)
+        {
             ApplyHandler();
         }
 
         private void ContentPage_NavigatedTo(object? sender, NavigatedToEventArgs e)
         {
-            ApplyHandler();
-        }
-        
-        private void App_Resumed(object? sender, EventArgs e)
-        {
-            // When app is resumed, UI is reevaluated
             ApplyHandler();
         }
     }

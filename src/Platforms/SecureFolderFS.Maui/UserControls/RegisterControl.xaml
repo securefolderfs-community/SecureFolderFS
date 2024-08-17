@@ -42,7 +42,7 @@
                     <!--  Title  -->
                     <Label
                         HorizontalOptions="Center"
-                        Opacity="0.8"
+                        Opacity="0.6"
                         Text="Setup Key File authentication" />
 
                     <!--  Authenticate  -->

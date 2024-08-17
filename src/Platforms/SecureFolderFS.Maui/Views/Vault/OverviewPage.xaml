@@ -33,14 +33,14 @@
                 </Grid.ColumnDefinitions>
 
                 <VerticalStackLayout Grid.Column="0">
-                    <Label Opacity="0.8" Text="Total read" />
+                    <Label Opacity="0.6" Text="Total read" />
                     <Label
                         FontAttributes="Bold"
                         FontSize="22"
                         Text="0Mb" />
                 </VerticalStackLayout>
                 <VerticalStackLayout Grid.Column="1">
-                    <Label Opacity="0.8" Text="Total write" />
+                    <Label Opacity="0.6" Text="Total write" />
                     <Label
                         FontAttributes="Bold"
                         FontSize="22"
@@ -58,20 +58,26 @@
                     <uc:SplitCell
                         IsEnabled="False"
                         LeftText="Security"
-                        RightText="TODO" />
+                        RightText="{Binding PropertiesViewModel.SecurityText, Mode=OneWay}" />
                     <uc:SplitCell
                         IsEnabled="False"
                         LeftText="{l:ResourceString Name=DataEncryption}"
-                        RightText="TODO" />
+                        RightText="{Binding PropertiesViewModel.ContentCipherText, Mode=OneWay}" />
                     <uc:SplitCell
                         IsEnabled="False"
                         LeftText="{l:ResourceString Name=FileNameEncryption}"
-                        RightText="TODO" />
+                        RightText="{Binding PropertiesViewModel.FileNameCipherText, Mode=OneWay}" />
                 </TableSection>
                 <TableSection Title="Authentication">
-                    <TextCell Detail="Change how you log in into this vault" Text="Change credentials" />
-                    <TextCell Detail="Setup or change two-factor authentication" Text="Two-factor authentication" />
-                    <TextCell Text="View recovery codes" />
+                    <TextCell
+                        Command="{Binding PropertiesViewModel.ChangeFirstAuthenticationCommand}"
+                        Detail="Change how you log in into this vault"
+                        Text="Change credentials" />
+                    <TextCell
+                        Command="{Binding PropertiesViewModel.ChangeSecondAuthenticationCommand}"
+                        Detail="Setup or change two-factor authentication"
+                        Text="Two-factor authentication" />
+                    <TextCell Command="{Binding PropertiesViewModel.ViewRecoveryCommand}" Text="View recovery codes" />
                 </TableSection>
             </TableRoot>
         </TableView>
