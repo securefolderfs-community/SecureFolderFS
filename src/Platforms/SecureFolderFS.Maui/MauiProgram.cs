@@ -33,6 +33,14 @@ namespace SecureFolderFS.Maui
 #elif IOS
                 .UseCupertinoMauiIcons()
 #endif
+                
+                // Handlers
+                .ConfigureMauiHandlers(handlers =>
+                {
+#if IOS
+                    handlers.AddHandler<ContentPage, Handlers.MenuBarContentPageHandler>();
+#endif
+                })
                 ;
 
 #if DEBUG

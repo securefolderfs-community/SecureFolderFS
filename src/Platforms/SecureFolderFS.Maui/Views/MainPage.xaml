@@ -2,6 +2,7 @@
     x:Class="SecureFolderFS.Maui.Views.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
@@ -11,6 +12,7 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
+    ios:NavigationPage.PrefersLargeTitles="True"
     x:DataType="local:MainPage"
     Loaded="MainPage_Loaded">
 
@@ -20,27 +22,16 @@
         <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     </ContentPage.Resources>
 
-    <Shell.TitleView>
-        <OnPlatform x:TypeArguments="View">
-            <On Platform="iOS">
-                <Grid>
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="18"
-                        HorizontalOptions="Center"
-                        Text="{l:ResourceString Name=MyVaults}"
-                        VerticalOptions="Center" />
-                    <Button
-                        Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
-                        FontSize="18"
-                        HorizontalOptions="End"
-                        Text="{l:ResourceString Name=Add}"
-                        TextColor="#007bff"
-                        VerticalOptions="Center" />
-                </Grid>
-            </On>
-        </OnPlatform>
-    </Shell.TitleView>
+    <Page.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+            Order="Secondary"
+            Text="{l:ResourceString Name=NewVault}" />
+        <ToolbarItem
+            Command="{Binding ViewModel.OpenSettingsCommand}"
+            Order="Secondary"
+            Text="{l:ResourceString Name=Settings}" />
+    </Page.ToolbarItems>
 
     <Grid>
         <ListView

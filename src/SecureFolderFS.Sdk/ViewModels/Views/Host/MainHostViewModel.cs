@@ -8,10 +8,13 @@ using SecureFolderFS.Shared.ComponentModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
-    [Inject<INavigationService>(Visibility = "public")]
+    [Inject<INavigationService>(Visibility = "public"), Inject<IOverlayService>, Inject<ISettingsService>]
     [Bindable(true)]
     public sealed partial class MainHostViewModel : ObservableObject, IViewDesignation, IAsyncInitialize
     {
@@ -39,6 +42,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         /// <inheritdoc/>
         public void OnDisappearing()
         {
+        }
+        
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private async Task OpenSettingsAsync()
+        {
+            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
+            await SettingsService.TrySaveAsync();
         }
     }
 }
