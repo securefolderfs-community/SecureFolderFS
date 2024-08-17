@@ -21,20 +21,28 @@ namespace SecureFolderFS.Maui.Handlers
             
             ThisPage.Loaded += ContentPage_Loaded;
             ThisPage.NavigatedTo += ContentPage_NavigatedTo;
+            App.Instance.AppResumed += App_Resumed;
         }
 
         private async void ContentPage_Loaded(object? sender, EventArgs e)
         {
-            await Task.Delay(200);
-            UpdateItems();
+            // Await a small delay for the UI to load
+            await Task.Delay(100);
+            UpdateToolbarItems();
         }
 
         private void ContentPage_NavigatedTo(object? sender, NavigatedToEventArgs e)
         {
-            UpdateItems();
+            UpdateToolbarItems();
+        }
+        
+        private void App_Resumed(object? sender, EventArgs e)
+        {
+            // When app is resumed, ToolbarItems are re-added
+            UpdateToolbarItems();
         }
 
-        private void UpdateItems()
+        private void UpdateToolbarItems()
         {
             if (ThisPage is null)
                 return;

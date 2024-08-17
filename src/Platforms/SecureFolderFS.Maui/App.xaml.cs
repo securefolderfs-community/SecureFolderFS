@@ -6,6 +6,8 @@ namespace SecureFolderFS.Maui
 {
     public partial class App : Application
     {
+        public static App Instance => (App)Application.Current!;
+        
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
@@ -16,6 +18,9 @@ namespace SecureFolderFS.Maui
 #else
             null;
 #endif
+        
+        public event EventHandler? AppResumed;
+        public event EventHandler? AppPutToForeground;
 
         public App()
         {
@@ -39,6 +44,20 @@ namespace SecureFolderFS.Maui
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
             base.OnStart();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnSleep()
+        {
+            AppPutToForeground?.Invoke(this, EventArgs.Empty);
+            base.OnSleep();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnResume()
+        {
+            AppResumed?.Invoke(this, EventArgs.Empty);
+            base.OnResume();
         }
 
         #region Exception Handlers
