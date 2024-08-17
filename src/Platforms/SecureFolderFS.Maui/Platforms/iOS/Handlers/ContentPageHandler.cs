@@ -1,6 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
+using Microsoft.Maui.Controls.Platform;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using Microsoft.Maui.Handlers;
+using Microsoft.Maui.Platform;
 using SecureFolderFS.Shared.Extensions;
 using UIKit;
 using ContentView = Microsoft.Maui.Platform.ContentView;
@@ -9,51 +12,24 @@ namespace SecureFolderFS.Maui.Handlers
 {
     // Callsite only reachable on iOS 13 and above
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
-    public sealed class MenuBarContentPageHandler : PageHandler
+    public sealed class ContentPageHandler : BaseContentPageHandler
     {
-        private ContentPage? ThisPage => VirtualView as ContentPage;
-        
-        protected override void ConnectHandler(ContentView platformView)
-        {
-            base.ConnectHandler(platformView);
-            if (ThisPage is null)
-                return;
-            
-            ThisPage.Loaded += ContentPage_Loaded;
-            ThisPage.NavigatedTo += ContentPage_NavigatedTo;
-            App.Instance.AppResumed += App_Resumed;
-        }
-
-        private async void ContentPage_Loaded(object? sender, EventArgs e)
-        {
-            // Await a small delay for the UI to load
-            await Task.Delay(100);
-            UpdateToolbarItems();
-        }
-
-        private void ContentPage_NavigatedTo(object? sender, NavigatedToEventArgs e)
-        {
-            UpdateToolbarItems();
-        }
-        
-        private void App_Resumed(object? sender, EventArgs e)
-        {
-            // When app is resumed, ToolbarItems are re-added
-            UpdateToolbarItems();
-        }
-
-        private void UpdateToolbarItems()
+        protected override void ApplyHandler(IPlatformViewHandler viewHandler)
         {
             if (ThisPage is null)
                 return;
             
-            if (this is not IPlatformViewHandler pvh)
-                return;
+            if (viewHandler.ViewController?.NavigationController?.NavigationBar is { } navigationBar)
+                UpdateTitleMode(ThisPage, navigationBar);
             
-            if (pvh.ViewController?.ParentViewController?.NavigationItem is not { } navItem)
-                return;
+            if (viewHandler.ViewController?.ParentViewController?.NavigationItem is { } navItem)
+                UpdateToolbarItems(ThisPage, navItem);
+        }
 
-            UpdateToolbarItems(ThisPage, navItem);
+        private void UpdateTitleMode(ContentPage contentPage, UINavigationBar navigationBar)
+        {
+            var largeTitleMode = Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page.GetLargeTitleDisplay(contentPage);
+            navigationBar.PrefersLargeTitles = largeTitleMode == LargeTitleDisplayMode.Always;
         }
 
         private void UpdateToolbarItems(ContentPage contentPage, UINavigationItem navigationItem)
@@ -90,19 +66,19 @@ namespace SecureFolderFS.Maui.Handlers
             
             // Assign the navigation bar buttons
             navigationItem.RightBarButtonItems = rightBarItems.ToArray();
-        }
-        
-        private static UIMenuElement CreateUIMenuElement(ToolbarItem item)
-        {
-            // Create a UIAction for each ToolbarItem
-            var imagePath = item.IconImageSource?.ToString();
-            var image = string.IsNullOrEmpty(imagePath) ? null : UIImage.FromBundle(imagePath);
-            var action = UIAction.Create(item.Text, image, null, _ =>
+            
+            static UIMenuElement CreateUIMenuElement(ToolbarItem item)
             {
-                item.Command?.Execute(item.CommandParameter);
-            });
+                // Create a UIAction for each ToolbarItem
+                var imagePath = item.IconImageSource?.ToString();
+                var image = string.IsNullOrEmpty(imagePath) ? null : UIImage.FromBundle(imagePath);
+                var action = UIAction.Create(item.Text, image, null, _ =>
+                {
+                    item.Command?.Execute(item.CommandParameter);
+                });
 
-            return action;
+                return action;
+            }
         }
     }
 }
