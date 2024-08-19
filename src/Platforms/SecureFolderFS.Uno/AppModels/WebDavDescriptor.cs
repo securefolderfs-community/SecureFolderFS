@@ -1,4 +1,4 @@
-#if HAS_UNO_SKIA || WINDOWS
+#if HAS_UNO_SKIA || MACCATALYST || WINDOWS
 using System;
 using System.Threading;
 using System.Threading.Tasks;

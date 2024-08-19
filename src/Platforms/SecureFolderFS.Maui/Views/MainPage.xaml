@@ -22,17 +22,6 @@
         <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     </ContentPage.Resources>
 
-    <Page.ToolbarItems>
-        <ToolbarItem
-            Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
-            Order="Secondary"
-            Text="{l:ResourceString Name=NewVault}" />
-        <ToolbarItem
-            Command="{Binding ViewModel.OpenSettingsCommand}"
-            Order="Secondary"
-            Text="{l:ResourceString Name=Settings}" />
-    </Page.ToolbarItems>
-
     <Grid>
         <ListView
             ItemTapped="ListView_ItemTapped"

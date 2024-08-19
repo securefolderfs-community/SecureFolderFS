@@ -1,12 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
-using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
-using Microsoft.Maui.Handlers;
-using Microsoft.Maui.Platform;
 using SecureFolderFS.Shared.Extensions;
 using UIKit;
-using ContentView = Microsoft.Maui.Platform.ContentView;
 
 namespace SecureFolderFS.Maui.Handlers
 {

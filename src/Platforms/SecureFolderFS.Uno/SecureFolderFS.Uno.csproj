@@ -5,6 +5,9 @@
       net8.0-windows10.0.19041;
       net8.0-desktop;
     </TargetFrameworks>
+
+    <!-- Uncomment if you want to explicity set a TargetFramework -->
+    <!--<TargetFramework>net8.0-maccatalyst</TargetFramework>-->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -19,7 +22,7 @@
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
     <AssemblyVersion>0.5.0.0</AssemblyVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-    <ApplicationVersion>1</ApplicationVersion>    
+    <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>com.securefolderfs.SecureFolderFS</ApplicationId>
 
   </PropertyGroup>
@@ -73,6 +76,16 @@
       <ItemGroup>
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
       </ItemGroup>
+
+      <ItemGroup>
+        <ProjectReference Include="..\..\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
+        <ProjectReference Include="..\..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
+      </ItemGroup>
+
+      <PropertyGroup>
+        <_RequiresILLinkPack>true</_RequiresILLinkPack>
+        <_ComputeManagedAssemblyToLink>true</_ComputeManagedAssemblyToLink>
+      </PropertyGroup>
     </When>
 
     <!-- Windows -->

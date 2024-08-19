@@ -52,6 +52,21 @@ namespace SecureFolderFS.Maui.Views
             // Also set the current starting view
             if (ViewModel.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
+
+#if IOS
+            ToolbarItems.Add(new()
+            {
+                Text = "NewVault".ToLocalized(),
+                Command = ViewModel.VaultListViewModel.AddNewVaultCommand,
+                Order = ToolbarItemOrder.Secondary
+            });
+            ToolbarItems.Add(new()
+            {
+                Text = "Settings".ToLocalized(),
+                Command = ViewModel.OpenSettingsCommand,
+                Order = ToolbarItemOrder.Secondary
+            });
+#endif
         }
     }
 }

@@ -73,6 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 SelectedItem = Items.FirstOrDefault(x => x.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
 
             SelectedItem ??= Items.FirstOrDefault();
+            HasVaults = !Items.IsEmpty();
             return Task.CompletedTask;
         }
 
