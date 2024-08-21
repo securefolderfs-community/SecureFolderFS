@@ -57,12 +57,14 @@ namespace SecureFolderFS.Uno.ViewModels
 
                 // Report that credentials were provided and new provision needs to be applied
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key));
+
+                // TODO: Provision is currently disabled since it opens the Windows Hello dialog for the second time
                 //StateChanged?.Invoke(this, new CredentialsProvisionChangedEventArgs(newChallenge.CreateCopy(), newSignedChallenge.CreateCopy()));
             }
-            catch (InvalidOperationException iopex)
+            catch (InvalidOperationException ex)
             {
                 // Thrown when authentication is canceled
-                SetError(Result.Failure(iopex));
+                SetError(Result.Failure(ex));
             }
         }
     }

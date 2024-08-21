@@ -129,13 +129,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
-        private void CurrentViewModel_StateChanged(object? sender, EventArgs e)
+        private async void CurrentViewModel_StateChanged(object? sender, EventArgs e)
         {
             if (e is CredentialsProvisionChangedEventArgs provisionArgs)
             {
                 // TODO
                 _ = provisionArgs.ClearProvision;
                 _ = provisionArgs.SignedProvision;
+            }
+            else if (e is MigrationCompletedEventArgs)
+            {
+                await InitAsync();
             }
         }
 
