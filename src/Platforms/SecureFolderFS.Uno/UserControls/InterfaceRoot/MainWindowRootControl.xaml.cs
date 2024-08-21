@@ -44,14 +44,17 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             await Task.Delay(1);
 #endif
             // Initialize ThemeHelper for theming
-            UnoThemeHelper.Instance.RegisterWindowInstance(App.Instance?.MainWindow?.Content as FrameworkElement);
-            await UnoThemeHelper.Instance.InitAsync();
+            UnoThemeHelper.Instance.RegisterWindowInstance(App.Instance?.MainWindow?.Content as FrameworkElement, App.Instance?.MainWindow?.AppWindow);
 
             if (ViewModel is null)
                 return;
 
             // Initialize the root view model
             await ViewModel.InitAsync();
+
+            // Initialize theme
+            await UnoThemeHelper.Instance.InitAsync();
+
             if (!ViewModel.VaultCollectionModel.IsEmpty()) // Has vaults
             {
                 // Show main app screen
