@@ -41,7 +41,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            Title = "Select authentication option";
+            Title = "SelectAuthentication".ToLocalized();
             PrimaryButtonText = null;
             SelectedViewModel = SelectionViewModel;
         }

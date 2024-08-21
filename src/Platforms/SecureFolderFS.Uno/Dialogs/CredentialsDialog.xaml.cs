@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
@@ -106,7 +107,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
             ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
             ViewModel.PrimaryButtonText = null;
-            ViewModel.Title = "Select authentication option";
+            ViewModel.Title = "SelectAuthentication".ToLocalized();
 
             await AnimateBackAsync(false);
         }

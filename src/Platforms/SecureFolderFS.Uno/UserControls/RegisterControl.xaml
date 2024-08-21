@@ -44,14 +44,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="Setup Key File authentication" />
+                    Text="{l:ResourceString Name=SetupKeyFile}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="Setup"
+                    Content="{l:ResourceString Name=Setup}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -70,14 +70,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="Setup Windows Hello authentication" />
+                    Text="{l:ResourceString Name=SetupWindowsHello}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="Setup"
+                    Content="{l:ResourceString Name=Setup}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>

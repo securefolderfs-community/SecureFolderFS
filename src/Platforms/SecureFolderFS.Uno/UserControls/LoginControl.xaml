@@ -55,7 +55,7 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="Authenticate using a Key File" />
+                    Text="{l:ResourceString Name=LoginKeyFile}" />
 
                 <!--  Authenticate  -->
                 <Button
@@ -63,7 +63,7 @@
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="Authenticate"
+                    Content="{l:ResourceString Name=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -82,7 +82,7 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="Authenticate with Windows Hello" />
+                    Text="{l:ResourceString Name=LoginWindowsHello}" />
 
                 <!--  Authenticate  -->
                 <Button
@@ -90,7 +90,7 @@
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="Authenticate"
+                    Content="{l:ResourceString Name=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -99,12 +99,21 @@
         <!--  Migration Template  -->
         <DataTemplate x:Key="MigrationTemplate" x:DataType="vm3:MigrationViewModel">
             <StackPanel Spacing="4">
-                <!--  Title  -->
+                <!--  Info  -->
                 <InfoBar
                     IsClosable="False"
                     IsOpen="True"
                     Message="The vault needs to be migrated before it can be used."
                     Severity="Informational" />
+
+                <!--  Migrate  -->
+                <Button
+                    Margin="0,30,0,0"
+                    Padding="24,6"
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind MigrateCommand, Mode=OneWay}"
+                    Content="Migrate"
+                    Style="{ThemeResource AccentButtonStyle}" />
 
                 <!--  Version info  -->
                 <StackPanel
@@ -129,32 +138,39 @@
                         Opacity="0.8"
                         Text="{x:Bind NewVersion, Mode=OneWay}" />
                 </Grid>
-
-                <!--  Migrate  -->
-                <Button
-                    Margin="0,30,0,0"
-                    Padding="24,6"
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind MigrateCommand, Mode=OneWay}"
-                    Content="Migrate"
-                    Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
 
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm3:ErrorViewModel">
             <StackPanel Spacing="4">
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="17"
-                    Text="Vault could not be loaded" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="12"
-                    HorizontalTextAlignment="Center"
-                    IsTextSelectionEnabled="True"
-                    Opacity="0.8"
-                    Text="{x:Bind ErrorMessage, Mode=OneWay}" />
+                <InfoBar
+                    Title="{l:ResourceString Name=Error}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:ResourceString Name=VaultLoadError}"
+                    Severity="Warning" />
+
+                <Expander Width="600">
+                    <Expander.Header>
+                        <TextBlock Text="{l:ResourceString Name=ErrorDetails}" />
+                    </Expander.Header>
+                    <ScrollViewer
+                        Height="200"
+                        MaxWidth="600"
+                        Padding="4"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            HorizontalTextAlignment="Center"
+                            IsTextSelectionEnabled="True"
+                            Opacity="0.8"
+                            Text="{x:Bind ErrorMessage, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                    </ScrollViewer>
+                </Expander>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>

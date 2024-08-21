@@ -75,7 +75,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 if (SelectedFolder is null)
                 {
                     Severity = ViewSeverityType.Default;
-                    Message = "Select a folder to continue";
+                    Message = "SelectFolderToContinue".ToLocalized();
                     return false;
                 }
 
@@ -88,17 +88,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                         {
                             // Allow unsupported vaults to be migrated
                             Severity = ViewSeverityType.Warning;
-                            Message = "Selected vault may not be supported";
+                            Message = "SelectedMayNotBeSupported".ToLocalized();
                             return true;
                         }
 
                         Severity = ViewSeverityType.Error;
-                        Message = "Vault folder is invalid";
+                        Message = "SelectedInvalidVault".ToLocalized();
                         return false;
                     }
 
                     Severity = ViewSeverityType.Success;
-                    Message = "Found a valid vault folder";
+                    Message = "SelectedValidVault".ToLocalized();
                     return true;
                 }
                 else
@@ -108,18 +108,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     {
                         // Check if a valid (or unsupported) vault exists at a specified path
                         Severity = ViewSeverityType.Warning;
-                        Message = "The selected vault will be overwritten";
+                        Message = "SelectedToBeOverwritten".ToLocalized();
                         return true;
                     }
 
                     Severity = ViewSeverityType.Success;
-                    Message = "A new vault will be created in the selected folder";
+                    Message = "SelectedWillCreate".ToLocalized();
                     return true;
                 }
             }
             finally
             {
-                SelectedLocation = SelectedFolder is null ? "No vault selected" : SelectedFolder.Name;
+                SelectedLocation = SelectedFolder is null ? "SelectedNone".ToLocalized() : SelectedFolder.Name;
             }
         }
     }
