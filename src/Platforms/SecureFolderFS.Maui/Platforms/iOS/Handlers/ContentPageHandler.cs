@@ -17,7 +17,7 @@ namespace SecureFolderFS.Maui.Handlers
             
             if (viewHandler.ViewController?.NavigationController?.NavigationBar is { } navigationBar)
                 UpdateTitleMode(ThisPage, navigationBar);
-            
+
             if (viewHandler.ViewController?.ParentViewController?.NavigationItem is { } navItem)
                 UpdateToolbarItems(ThisPage, navItem);
         }
