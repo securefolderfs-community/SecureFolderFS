@@ -1,4 +1,5 @@
 using SecureFolderFS.Maui.Extensions;
+using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
@@ -30,6 +31,14 @@ namespace SecureFolderFS.Maui.Views.Vault
             OnPropertyChanged(nameof(ViewModel));
         }
 
+        protected override void OnNavigatingFrom(NavigatingFromEventArgs args)
+        {
+            if (ViewModel is not null)
+                ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
+
+            base.OnNavigatingFrom(args);
+        }
+
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)
         {
             if (ViewModel is null)
@@ -40,16 +49,34 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
 
-            var vaultOverviewViewModel = new VaultOverviewViewModel(
-                args.UnlockedVaultViewModel,
-                new(ViewModel.VaultNavigator, ViewModel.VaultNavigator, args.UnlockedVaultViewModel),
-                new(args.UnlockedVaultViewModel, new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultModel.Folder)));
+            // Initialize DashboardViewModel
+            var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigator);
+            
+            // Since both overview and properties are on the same page,
+            // initialize and navigate the views to keep them in cache
 
-            _ = vaultOverviewViewModel.InitAsync();
+            var propertiesViewModel = new VaultPropertiesViewModel(args.UnlockedVaultViewModel);
+            var overviewViewModel = new VaultOverviewViewModel(
+                args.UnlockedVaultViewModel,
+                new(ViewModel.VaultNavigator, ViewModel.VaultNavigator, args.UnlockedVaultViewModel, propertiesViewModel),
+                new(args.UnlockedVaultViewModel,
+                    new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultModel.Folder)));
+
+            // Initialize both properties and overview
+            _ = Task.Run(async () =>
+            {
+                await propertiesViewModel.InitAsync();
+                await overviewViewModel.InitAsync();
+            });
+            
+            // Persist view models
+            dashboardViewModel.DashboardNavigationService.Views.Add(overviewViewModel);
+            dashboardViewModel.DashboardNavigationService.Views.Add(propertiesViewModel);
+            
             if (ViewModel.VaultNavigator is INavigationService navigationService)
-                await navigationService.TryNavigateAndForgetAsync(vaultOverviewViewModel);
+                await navigationService.TryNavigateAndForgetAsync(dashboardViewModel);
             else
-                await ViewModel.VaultNavigator.NavigateAsync(vaultOverviewViewModel);
+                await ViewModel.VaultNavigator.NavigateAsync(dashboardViewModel);
         }
 
         public VaultLoginViewModel? ViewModel

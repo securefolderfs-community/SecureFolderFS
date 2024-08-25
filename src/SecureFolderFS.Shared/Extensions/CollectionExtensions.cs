@@ -7,6 +7,12 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class CollectionExtensions
     {
+        public static TDestination? FirstOrDefaultType<TSource, TDestination>(this IEnumerable<TSource> enumerable)
+            where TDestination : class
+        {
+            return enumerable.FirstOrDefault(x => x is TDestination) as TDestination;
+        }
+        
         public static bool RemoveMatch<T>(this IList<T> list, Func<T, bool> predicate)
         {
             foreach (var item in list)

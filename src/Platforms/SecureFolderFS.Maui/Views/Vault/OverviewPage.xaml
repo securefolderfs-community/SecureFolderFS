@@ -51,8 +51,8 @@
         <TableView>
             <TableRoot>
                 <TableSection Title="Quick actions">
-                    <TextCell Command="{Binding ViewModel.VaultControlsViewModel.RevealFolderCommand}" Text="View in Files" />
-                    <TextCell Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand}" Text="{l:ResourceString Name=LockVault}" />
+                    <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" Text="View in Files" />
+                    <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" Text="{l:ResourceString Name=LockVault}" />
                 </TableSection>
                 <TableSection Title="Properties">
                     <uc:SplitCell

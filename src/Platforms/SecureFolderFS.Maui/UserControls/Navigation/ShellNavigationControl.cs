@@ -19,13 +19,12 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
             var url = target switch
             {
                 VaultLoginViewModel => "LoginPage",
-                VaultOverviewViewModel => "OverviewPage",
-                VaultPropertiesViewModel => "PropertiesPage",
+                VaultDashboardViewModel => "OverviewPage",
                 _ => throw new ArgumentOutOfRangeException(nameof(target))
             };
 
             // Logging in, remove LoginPage when going back
-            if (target is VaultOverviewViewModel && Shell.Current.CurrentPage is LoginPage)
+            if (target is VaultDashboardViewModel && Shell.Current.CurrentPage is LoginPage)
                 url = $"../{url}";
 
             // Logging out, remove OverviewPage when going back
