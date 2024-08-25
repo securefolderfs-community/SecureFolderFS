@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:OverviewPage">
@@ -48,16 +49,46 @@
                 </VerticalStackLayout>
             </Grid>
         </VerticalStackLayout>
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <Grid Padding="20,16" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <mdc:Button
+                        Grid.Column="0"
+                        HeightRequest="48"
+                        Style="{DynamicResource FilledTonalButtonStyle}"
+                        Text="{l:ResourceString Name=ViewInFiles}"
+                        WidthRequest="180" />
+                    <mdc:Button
+                        Grid.Column="1"
+                        HeightRequest="48"
+                        Style="{DynamicResource FilledTonalButtonStyle}"
+                        Text="{l:ResourceString Name=LockVault}"
+                        WidthRequest="180" />
+                </Grid>
+            </On>
+        </OnPlatform>
         <TableView>
             <TableRoot>
-                <TableSection Title="Quick actions">
-                    <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" Text="View in Files" />
-                    <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" Text="{l:ResourceString Name=LockVault}" />
-                </TableSection>
-                <TableSection Title="Properties">
+                <OnPlatform x:TypeArguments="TableSection">
+                    <On Platform="iOS">
+                        <TableSection Title="{l:ResourceString Name=QuickActions}">
+                            <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" Text="{l:ResourceString Name=ViewInFiles}" />
+                            <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" Text="{l:ResourceString Name=LockVault}" />
+                        </TableSection>
+                    </On>
+                    <On Platform="Android">
+                        <TableSection />
+                    </On>
+                </OnPlatform>
+                <TableSection Title="{l:ResourceString Name=VaultProperties}">
                     <uc:SplitCell
                         IsEnabled="False"
-                        LeftText="Security"
+                        LeftText="{l:ResourceString Name=Security}"
                         RightText="{Binding PropertiesViewModel.SecurityText, Mode=OneWay}" />
                     <uc:SplitCell
                         IsEnabled="False"
@@ -68,16 +99,16 @@
                         LeftText="{l:ResourceString Name=FileNameEncryption}"
                         RightText="{Binding PropertiesViewModel.FileNameCipherText, Mode=OneWay}" />
                 </TableSection>
-                <TableSection Title="Authentication">
+                <TableSection Title="{l:ResourceString Name=Authentication}">
                     <TextCell
                         Command="{Binding PropertiesViewModel.ChangeFirstAuthenticationCommand}"
-                        Detail="Change how you log in into this vault"
-                        Text="Change credentials" />
+                        Detail="{l:ResourceString Name=ChangeCredentialsDescription}"
+                        Text="{l:ResourceString Name=ChangeCredentials}" />
                     <TextCell
                         Command="{Binding PropertiesViewModel.ChangeSecondAuthenticationCommand}"
-                        Detail="Setup or change two-factor authentication"
-                        Text="Two-factor authentication" />
-                    <TextCell Command="{Binding PropertiesViewModel.ViewRecoveryCommand}" Text="View recovery codes" />
+                        Detail="{l:ResourceString Name=TwoFactorDescription}"
+                        Text="{l:ResourceString Name=TwoFactor}" />
+                    <TextCell Command="{Binding PropertiesViewModel.ViewRecoveryCommand}" Text="{l:ResourceString Name=RecoveryCodes}" />
                 </TableSection>
             </TableRoot>
         </TableView>
