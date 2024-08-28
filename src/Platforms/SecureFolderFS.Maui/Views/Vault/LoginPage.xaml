@@ -11,6 +11,10 @@
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem />
+    </ContentPage.ToolbarItems>
+
     <VerticalStackLayout
         Padding="64,0"
         Spacing="32"

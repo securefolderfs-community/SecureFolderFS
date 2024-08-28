@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             }
             catch (Exception)
             {
-                ErrorMessage = "The provided master key is invalid";
+                ErrorMessage = "The provided recovery key is invalid";
                 return false;
             }
         }

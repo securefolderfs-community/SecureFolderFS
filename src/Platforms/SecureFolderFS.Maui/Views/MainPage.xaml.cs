@@ -1,3 +1,4 @@
+using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Extensions;
@@ -9,7 +10,7 @@ using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Views
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPageExtended
     {
         public MainHostViewModel ViewModel { get; } = new(Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
 
@@ -50,13 +51,13 @@ namespace SecureFolderFS.Maui.Views
                 navigationService.SetCurrentViewInternal(ViewModel);
 
 #if IOS
-            ToolbarItems.Add(new()
+            ExToolbarItems.Add(new ExMenuItem()
             {
                 Text = "NewVault".ToLocalized(),
                 Command = ViewModel.VaultListViewModel.AddNewVaultCommand,
                 Order = ToolbarItemOrder.Secondary
             });
-            ToolbarItems.Add(new()
+            ExToolbarItems.Add(new ExMenuItem()
             {
                 Text = "Settings".ToLocalized(),
                 Command = ViewModel.OpenSettingsCommand,
