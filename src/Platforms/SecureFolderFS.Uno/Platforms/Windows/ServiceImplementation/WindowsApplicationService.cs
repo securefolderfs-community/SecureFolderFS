@@ -24,6 +24,13 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         }
 
         /// <inheritdoc/>
+        public override string GetSystemVersion()
+        {
+            var osInfo = Environment.OSVersion;
+            return $"Windows {osInfo.VersionString}";
+        }
+
+        /// <inheritdoc/>
         public override async Task OpenUriAsync(Uri uri)
         {
             await Launcher.LaunchUriAsync(uri);

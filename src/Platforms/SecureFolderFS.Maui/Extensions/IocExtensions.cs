@@ -15,7 +15,7 @@ namespace SecureFolderFS.Maui.Extensions
                     .AddSingleton<ISettingsService, SettingsService>(_ => new(new MauiAppSettings(settingsFolder), new UserSettings(settingsFolder)))
                     .AddSingleton<IOverlayService, MauiOverlayService>()
                     .AddTransient<INavigationService, MauiNavigationService>()
-                    //.AddSingleton<IClipboardService, ClipboardService>()
+                    .AddSingleton<IClipboardService, MauiClipboardService>()
                     //.AddSingleton<IThreadingService, ThreadingService>()
                 ;
         }

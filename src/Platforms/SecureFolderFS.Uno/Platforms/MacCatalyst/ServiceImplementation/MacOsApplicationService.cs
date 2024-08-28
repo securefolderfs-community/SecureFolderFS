@@ -1,9 +1,8 @@
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
+using Windows.System;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
-using Windows.System;
 
 namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
 {
@@ -14,12 +13,9 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
         public override string Platform { get; } = "Mac Catalyst - Uno";
 
         /// <inheritdoc/>
-        public override Version AppVersion
+        public override string GetSystemVersion()
         {
-            get
-            {
-                return Assembly.GetExecutingAssembly().GetName().Version!;
-            }
+            return Environment.OSVersion.VersionString;
         }
 
         /// <inheritdoc/>

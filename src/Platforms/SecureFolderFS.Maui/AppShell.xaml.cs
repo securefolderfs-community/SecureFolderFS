@@ -14,12 +14,6 @@ namespace SecureFolderFS.Maui
             // Register routes
             Routing.RegisterRoute("LoginPage", typeof(LoginPage));
             Routing.RegisterRoute("OverviewPage", typeof(OverviewPage));
-            //Routing.RegisterRoute("SettingsPage", typeof(SettingsPage)); // TODO
-        }
-
-        private async void AppShell_Loaded(object? sender, EventArgs e)
-        {
-            await MainViewModel.InitAsync();
         }
     }
 }

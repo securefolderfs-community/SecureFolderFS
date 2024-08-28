@@ -34,14 +34,14 @@
                 </Grid.ColumnDefinitions>
 
                 <VerticalStackLayout Grid.Column="0">
-                    <Label Opacity="0.6" Text="Total read" />
+                    <Label Opacity="0.6" Text="{l:ResourceString Name=TotalRead}" />
                     <Label
                         FontAttributes="Bold"
                         FontSize="22"
                         Text="0Mb" />
                 </VerticalStackLayout>
                 <VerticalStackLayout Grid.Column="1">
-                    <Label Opacity="0.6" Text="Total write" />
+                    <Label Opacity="0.6" Text="{l:ResourceString Name=TotalWrite}" />
                     <Label
                         FontAttributes="Bold"
                         FontSize="22"

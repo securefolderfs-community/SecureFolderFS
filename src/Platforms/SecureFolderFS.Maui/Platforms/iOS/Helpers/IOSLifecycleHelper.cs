@@ -33,7 +33,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.Helpers
         {
             return base.ConfigureServices(settingsFolder)
                     //.AddSingleton<IPrinterService, WindowsPrinterService>()
-                    //.AddSingleton<IApplicationService, SkiaApplicationService>()
+                    .AddSingleton<IApplicationService, IOSApplicationService>()
                     .AddSingleton<IVaultService, IOSVaultService>()
                     .AddSingleton<IVaultManagerService, IOSVaultManagerService>()
                     .AddSingleton<IStorageService, IOSStorageService>()

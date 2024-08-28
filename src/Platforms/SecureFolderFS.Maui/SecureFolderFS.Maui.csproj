@@ -102,6 +102,9 @@
     <Compile Update="Views\Vault\OverviewPage.xaml.cs">
       <DependentUpon>OverviewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="ServiceImplementation\MauiClipboardService.cs">
+      <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

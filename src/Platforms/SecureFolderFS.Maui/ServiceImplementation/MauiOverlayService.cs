@@ -1,4 +1,5 @@
 using SecureFolderFS.Maui.Views;
+using SecureFolderFS.Maui.Views.Modals.Settings;
 using SecureFolderFS.Maui.Views.Modals.Wizard;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -20,6 +21,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             return viewable switch
             {
                 WizardOverlayViewModel => new MainWizardPage(navigation),
+                SettingsOverlayViewModel => new SettingsPage(navigation),
 
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };

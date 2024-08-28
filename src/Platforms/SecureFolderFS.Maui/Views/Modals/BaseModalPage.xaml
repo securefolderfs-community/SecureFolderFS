@@ -11,6 +11,7 @@
     <ContentPage.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
         <vc:VisibilityToColumnSpanConverter x:Key="VisibilityToColumnSpanConverter" />
+        <vc:WidthToMarginConverter x:Key="WidthToMarginConverter" />
     </ContentPage.Resources>
 
     <NavigationPage.HasNavigationBar>
@@ -35,9 +36,9 @@
     <NavigationPage.TitleView>
         <OnPlatform x:TypeArguments="View">
             <On Platform="iOS">
-                <Grid HorizontalOptions="FillAndExpand">
+                <Grid HorizontalOptions="Fill">
                     <Label
-                        Margin="-28,0,0,0"
+                        x:Name="SheetTitle"
                         FontAttributes="Bold"
                         FontSize="18"
                         HorizontalOptions="Center"
@@ -45,12 +46,14 @@
                         VerticalOptions="Center" />
 
                     <Button
+                        x:Name="SheetPrimaryButton"
                         Command="{Binding PrimaryCommand, Mode=OneWay}"
                         FontAttributes="Bold"
                         FontSize="18"
                         HorizontalOptions="End"
                         IsEnabled="{Binding PrimaryEnabled, Mode=OneWay}"
                         IsVisible="{Binding PrimaryText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                        SizeChanged="SheetPrimaryButton_SizeChanged"
                         Text="{Binding PrimaryText, Mode=OneWay}"
                         TextColor="#007bff"
                         VerticalOptions="Center" />

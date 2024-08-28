@@ -7,7 +7,7 @@ using Windows.ApplicationModel.DataTransfer;
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
     /// <inheritdoc cref="IClipboardService"/>
-    internal sealed class ClipboardService : IClipboardService
+    internal sealed class UnoClipboardService : IClipboardService
     {
         /// <inheritdoc/>
         public Task<bool> IsSupportedAsync()

@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -16,8 +17,7 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
         /// <inheritdoc/>
         public override IEnumerable<IFileSystemInfoModel> GetFileSystems()
         {
-            // TODO: Add ios FS
-            throw new NotImplementedException();
+            yield return new IOSFileSystemDescriptor();
         }
 
         /// <inheritdoc/>

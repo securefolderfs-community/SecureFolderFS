@@ -15,7 +15,7 @@ namespace SecureFolderFS.Uno.Extensions
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(new AppSettings(settingsFolder), new UserSettings(settingsFolder)))
                 .AddSingleton<IOverlayService, UnoDialogService>()
                 .AddSingleton<IStorageService, UnoStorageService>()
-                .AddSingleton<IClipboardService, ClipboardService>()
+                .AddSingleton<IClipboardService, UnoClipboardService>()
                 .AddSingleton<IThreadingService, ThreadingService>()
                 .AddSingleton<IFileExplorerService, UnoFileExplorerService>()
                 .AddTransient<INavigationService, UnoNavigationService>()

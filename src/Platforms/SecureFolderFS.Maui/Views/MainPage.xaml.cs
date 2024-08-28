@@ -19,6 +19,7 @@ namespace SecureFolderFS.Maui.Views
         {
             Instance = this;
             BindingContext = this;
+            _ = ViewModel.InitAsync();
             _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
 
             InitializeComponent();
@@ -42,14 +43,9 @@ namespace SecureFolderFS.Maui.Views
             await ViewModel.NavigationService.NavigateAsync(target);
         }
 
-        private void MainPage_Loaded(object? sender, EventArgs e)
+        private async void MainPage_Loaded(object? sender, EventArgs e)
         {
-            // Need to set properties here because MainPage is instantiated before services are configured
-            Title = "MyVaults".ToLocalized();
-            NoVaultsTitle.Text = "Welcome".ToLocalized();
-            NoVaultsDescription.Text = "NoVaultsMessage".ToLocalized();
-
-            // Also set the current starting view
+            // Set the current starting view
             if (ViewModel.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
 

@@ -25,15 +25,19 @@ namespace SecureFolderFS.Maui
         public App()
         {
             InitializeComponent();
-            MainPage = new AppShell();
 
             // Configure exception handlers
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
         }
 
-        /// <inheritdoc/>
-        protected override async void OnStart()
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            var appShell = Task.Run(GetAppShellAsync).ConfigureAwait(false).GetAwaiter().GetResult();
+            return new Window(appShell);
+        }
+
+        private async Task<Page> GetAppShellAsync()
         {
             // Initialize application lifecycle
             await ApplicationLifecycle.InitAsync();
@@ -43,7 +47,12 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
-            base.OnStart();
+            
+            // Create and initialize AppShell
+            var appShell = new AppShell();
+            await appShell.MainViewModel.InitAsync();
+
+            return appShell;
         }
 
         /// <inheritdoc/>

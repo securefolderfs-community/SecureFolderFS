@@ -5,6 +5,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
 using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 
@@ -60,9 +61,24 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             OverlayViewModel = (WizardOverlayViewModel)viewable;
             OverlayViewModel.NavigationRequested += ViewModel_NavigationRequested;
             OverlayViewModel.CurrentViewModel = ViewModel;
+            Shell.Current.Navigated += Shell_Navigated;
 
             OnPropertyChanged(nameof(ViewModel));
             OnPropertyChanged(nameof(OverlayViewModel));
+        }
+
+        private void Shell_Navigated(object? sender, ShellNavigatedEventArgs e)
+        {
+            if (e.Current.Location.OriginalString.Contains("NavigationPage"))
+                return;
+                
+            Shell.Current.Navigated -= Shell_Navigated;
+            if (OverlayViewModel is not null)
+                OverlayViewModel.NavigationRequested -= ViewModel_NavigationRequested;
+            
+            _modalTcs.SetResult(OverlayViewModel?.CurrentViewModel is SummaryWizardViewModel
+                ? Result.Success
+                : Result.Failure(null));
         }
 
         /// <inheritdoc/>
@@ -74,7 +90,9 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         /// <inheritdoc/>
         protected override void OnAppearing()
         {
-            OverlayViewModel.CurrentViewModel = ViewModel;
+            if (OverlayViewModel is not null)
+                OverlayViewModel.CurrentViewModel = ViewModel;
+            
             base.OnAppearing();
         }
 
@@ -112,6 +130,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 
             if (nextViewModel is null)
             {
+                _modalTcs.SetResult(e.Origin is SummaryWizardViewModel ? Result.Success : Result.Failure(null));
                 await HideAsync();
                 return;
             }

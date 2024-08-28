@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace SecureFolderFS.Maui.UserControls
 {
@@ -28,7 +24,46 @@ namespace SecureFolderFS.Maui.UserControls
             };
             RootGrid.BindingContext = this;
         }
+        
+        private void SplitCell_Tapped(object? sender, EventArgs e)
+        {
+            Command?.Execute(CommandParameter);
+        }
+        
+        private static void SetText(BindableObject bindable, bool isRightSide, object? newValue)
+        {
+            if (bindable is not SplitCell splitCell)
+                throw new InvalidOperationException($"Bindable is not of type {nameof(SplitCell)}.");
 
+            var text = newValue as string;
+            if (isRightSide)
+            {
+                splitCell._rightLabel.Text = text ?? string.Empty;
+                splitCell.RightSide = text is null ? null : splitCell._rightLabel;
+            }
+            else
+            {
+                splitCell._leftLabel.Text = text ?? string.Empty;
+                splitCell.LeftSide = text is null ? null : splitCell._leftLabel;
+            }
+        }
+        
+        public ICommand? Command
+        {
+            get => (ICommand?)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
+        }
+        public static readonly BindableProperty CommandProperty =
+            BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(SplitCell), null);
+
+        public object? CommandParameter
+        {
+            get => (object?)GetValue(CommandParameterProperty);
+            set => SetValue(CommandParameterProperty, value);
+        }
+        public static readonly BindableProperty CommandParameterProperty =
+            BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(SplitCell), null);
+        
         public View? LeftSide
         {
             get => (View?)GetValue(LeftSideProperty);
@@ -62,23 +97,5 @@ namespace SecureFolderFS.Maui.UserControls
         public static readonly BindableProperty RightTextProperty =
             BindableProperty.Create(nameof(RightText), typeof(string), typeof(SplitCell), null, propertyChanged:
                 (bindable, _, newValue) => SetText(bindable, true, newValue));
-
-        private static void SetText(BindableObject bindable, bool isRightSide, object? newValue)
-        {
-            if (bindable is not SplitCell splitCell)
-                throw new InvalidOperationException($"Bindable is not of type {nameof(SplitCell)}.");
-
-            var text = newValue as string;
-            if (isRightSide)
-            {
-                splitCell._rightLabel.Text = text ?? string.Empty;
-                splitCell.RightSide = text is null ? null : splitCell._rightLabel;
-            }
-            else
-            {
-                splitCell._leftLabel.Text = text ?? string.Empty;
-                splitCell.LeftSide = text is null ? null : splitCell._leftLabel;
-            }
-        }
     }
 }

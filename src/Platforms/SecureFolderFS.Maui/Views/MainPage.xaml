@@ -12,6 +12,7 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
+    Title="{l:ResourceString Name=MyVaults}"
     ios:Page.LargeTitleDisplay="Always"
     x:DataType="local:MainPage"
     Loaded="MainPage_Loaded">
@@ -66,15 +67,15 @@
             VerticalOptions="Center">
             <Image Source="app_icon.png" WidthRequest="64" />
             <Label
-                x:Name="NoVaultsTitle"
                 FontAttributes="Bold"
                 FontSize="24"
-                HorizontalOptions="Center" />
+                HorizontalOptions="Center"
+                Text="{l:ResourceString Name=Welcome}" />
             <Label
-                x:Name="NoVaultsDescription"
                 FontSize="16"
                 HorizontalOptions="Center"
-                HorizontalTextAlignment="Center" />
+                HorizontalTextAlignment="Center"
+                Text="{l:ResourceString Name=NoVaultsMessage}" />
         </VerticalStackLayout>
 
         <OnPlatform x:TypeArguments="View">

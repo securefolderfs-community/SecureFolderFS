@@ -74,6 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             SelectedItem ??= Items.FirstOrDefault();
             HasVaults = !Items.IsEmpty();
+            
             return Task.CompletedTask;
         }
 
@@ -88,13 +89,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             }
             else
                 await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
-        }
-
-        [RelayCommand(AllowConcurrentExecutions = true)]
-        private async Task OpenSettingsAsync(CancellationToken cancellationToken)
-        {
-            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
-            await SettingsService.TrySaveAsync(cancellationToken);
         }
 
         private void AddVault(IVaultModel vaultModel)

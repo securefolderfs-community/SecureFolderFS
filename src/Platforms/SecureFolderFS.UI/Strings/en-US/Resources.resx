@@ -593,4 +593,13 @@
   <data name="Authentication" xml:space="preserve">
       <value>Authentication</value>
   </data>
+  <data name="TotalRead" xml:space="preserve">
+      <value>Total read</value>
+  </data>
+  <data name="TotalWrite" xml:space="preserve">
+      <value>Total write</value>
+  </data>
+  <data name="SystemVersion" xml:space="preserve">
+      <value>System version</value>
+  </data>
 </root>
