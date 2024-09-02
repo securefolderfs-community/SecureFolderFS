@@ -38,17 +38,17 @@ namespace SecureFolderFS.UI.Helpers
 #endif
         }
 
-        public abstract void LogExceptionToFile(Exception? ex);
-
         protected virtual IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return ServiceCollection
 
-                // Singleton services
-                .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
-                .AddSingleton<IChangelogService, GitHubChangelogService>()
+                    // Singleton services
+                    .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
+                    .AddSingleton<IChangelogService, GitHubChangelogService>()
 
                 ; // Finish service initialization
         }
+
+        public abstract void LogExceptionToFile(Exception? ex);
     }
 }

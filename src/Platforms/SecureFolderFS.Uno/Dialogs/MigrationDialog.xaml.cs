@@ -14,9 +14,9 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class MigrationDialog : ContentDialog, IOverlayControl
     {
-        public OverlayViewModel? ViewModel
+        public MigrationOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<OverlayViewModel>();
+            get => DataContext.TryCast<MigrationOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (OverlayViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (MigrationOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()

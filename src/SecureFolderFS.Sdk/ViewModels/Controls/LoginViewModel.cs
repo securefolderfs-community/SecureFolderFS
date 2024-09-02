@@ -60,8 +60,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             else
             {
                 // Try to migrate the vault if not supported
-                if (_enableMigration && validationResult.Exception is NotSupportedException)
-                    CurrentViewModel = new MigrationViewModel(VaultService.LatestVaultVersion);
+                if (_enableMigration && validationResult.Exception is NotSupportedException ex && ex.Data["Version"] is int currentVersion)
+                    CurrentViewModel = new MigrationViewModel(_vaultModel, currentVersion);
                 else
                     CurrentViewModel = new ErrorViewModel(validationResult.GetMessage());
             }

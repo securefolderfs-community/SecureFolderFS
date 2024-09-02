@@ -237,6 +237,7 @@
     <None Remove="UserControls\Introduction\IntroductionControl.xaml" />
     <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <None Remove="UserControls\LoginControl.xaml" />
+    <None Remove="UserControls\Migration\MigratorV1_V2.xaml" />
     <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
     <None Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <None Remove="UserControls\OverlayControl.xaml" />
@@ -489,5 +490,9 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="ResourceDictionaries\TextResources.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="UserControls\Migration\MigratorV1_V2.xaml" />
   </ItemGroup>
 </Project>

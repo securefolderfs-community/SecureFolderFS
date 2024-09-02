@@ -6,6 +6,9 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls.Migration"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
     CloseButtonText="{l:ResourceString Name=Cancel}"
     DefaultButton="Primary"
     IsPrimaryButtonEnabled="{x:Bind ViewModel.PrimaryButtonEnabled, Mode=OneWay}"
@@ -14,5 +17,20 @@
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
-    <StackPanel />
+    <ContentControl.Resources>
+        <DataTemplate x:Key="MigratorV1_V2" x:DataType="vm:MigrationViewModel">
+            <uc:MigratorV1_V2 />
+        </DataTemplate>
+    </ContentControl.Resources>
+
+    <ContentControl Content="{x:Bind ViewModel.MigrationViewModel, Mode=OneWay}">
+        <ContentControl.ContentTemplateSelector>
+            <ts:MigrationTemplateSelector MigratorV1_V2="{StaticResource MigratorV1_V2}" />
+        </ContentControl.ContentTemplateSelector>
+        <ContentControl.ContentTransitions>
+            <TransitionCollection>
+                <PopupThemeTransition />
+            </TransitionCollection>
+        </ContentControl.ContentTransitions>
+    </ContentControl>
 </ContentDialog>

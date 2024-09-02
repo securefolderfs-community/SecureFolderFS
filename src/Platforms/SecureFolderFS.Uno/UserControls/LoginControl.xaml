@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:local="using:SecureFolderFS.Uno.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
-    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.UI.ViewModels"
     xmlns:vm2="using:SecureFolderFS.Uno.ViewModels"
@@ -21,8 +21,8 @@
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
             <StackPanel Spacing="24">
-                <!--  Password Control  -->
-                <uc:PasswordControl
+                <!--  Password  -->
+                <local:PasswordControl
                     x:Name="PasswordBoxControl"
                     Width="364"
                     PasswordSubmittedCommand="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
@@ -111,7 +111,7 @@
                     Margin="0,30,0,0"
                     Padding="24,6"
                     HorizontalAlignment="Center"
-                    Command="{x:Bind MigrateCommand, Mode=OneWay}"
+                    Command="{x:Bind OpenMigrationOverlayCommand, Mode=OneWay}"
                     Content="Migrate"
                     Style="{ThemeResource AccentButtonStyle}" />
 

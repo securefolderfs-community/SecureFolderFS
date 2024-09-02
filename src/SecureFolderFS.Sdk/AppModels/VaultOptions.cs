@@ -24,5 +24,10 @@
         /// Gets the unique identifier of the vault.
         /// </summary>
         public string? VaultId { get; init; }
+
+        /// <summary>
+        /// Gets the version format of the vault.
+        /// </summary>
+        public int Version { get; init; }
     }
 }

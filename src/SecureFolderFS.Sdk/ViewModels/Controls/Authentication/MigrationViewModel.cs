@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
@@ -13,26 +14,30 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
-    [Inject<IOverlayService>]
+    [Inject<IOverlayService>, Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class MigrationViewModel : ReportableViewModel
+    public partial class MigrationViewModel : ReportableViewModel
     {
+        private readonly IVaultModel _vaultModel;
+
         [ObservableProperty] private string? _CurrentVersion;
         [ObservableProperty] private string? _NewVersion;
+
+        /// <summary>
+        /// Gets the current vault version.
+        /// </summary>
+        public int FormatVersion { get; }
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        public MigrationViewModel(int newVersion)
+        public MigrationViewModel(IVaultModel vaultModel, int currentVersion)
         {
             ServiceProvider = DI.Default;
-            _NewVersion = $"Update — Version {newVersion}";
-        }
-
-        public MigrationViewModel(int currentVersion, int newVersion)
-        {
+            _vaultModel = vaultModel;
             _CurrentVersion = $"Version {currentVersion}";
-            _NewVersion = $"Version {newVersion}";
+            _NewVersion = $"Version {VaultService.LatestVaultVersion}";
+            FormatVersion = currentVersion;
         }
 
         /// <inheritdoc/>
@@ -42,9 +47,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         }
 
         [RelayCommand]
-        private async Task MigrateAsync()
+        private async Task OpenMigrationOverlayAsync()
         {
-            var result = await OverlayService.ShowAsync(new MigrationOverlayViewModel());
+            var result = await OverlayService.ShowAsync(new MigrationOverlayViewModel(this));
             if (result.Positive())
                 StateChanged?.Invoke(this, new MigrationCompletedEventArgs());
         }
