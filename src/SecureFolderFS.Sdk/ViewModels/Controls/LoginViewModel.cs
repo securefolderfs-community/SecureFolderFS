@@ -95,9 +95,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
             catch (Exception ex)
             {
-                // If failed, restart the process
-                // TODO: Above ^
-                _ = ex;
+                // Report that an error occurred when trying to log in
+                CurrentViewModel?.SetError(Result.Failure(ex));
             }
             finally
             {
