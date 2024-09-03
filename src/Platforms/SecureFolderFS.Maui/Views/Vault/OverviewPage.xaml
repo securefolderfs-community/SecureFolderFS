@@ -55,10 +55,13 @@
 
     <VerticalStackLayout>
         <!--  Top widgets  -->
-        <CollectionView ItemsSource="{Binding OverviewViewModel.WidgetsViewModel}">
+        <CollectionView Margin="20,16" ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
             <CollectionView.ItemTemplate>
                 <ts:WidgetsTemplateSelector AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
             </CollectionView.ItemTemplate>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="16" Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
         </CollectionView>
 
         <!--  Top buttons  -->

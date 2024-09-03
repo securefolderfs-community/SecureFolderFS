@@ -1,3 +1,5 @@
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
+
 namespace SecureFolderFS.Maui.TemplateSelectors
 {
     internal sealed class WidgetsTemplateSelector : DataTemplateSelector
@@ -7,9 +9,14 @@ namespace SecureFolderFS.Maui.TemplateSelectors
         public DataTemplate? AggregatedDataWidgetTemplate { get; set; }
         
         /// <inheritdoc/>
-        protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
+        protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
         {
-            throw new NotImplementedException();
+            return item switch
+            {
+                HealthWidgetViewModel => HealthWidgetTemplate,
+                AggregatedDataWidgetViewModel => AggregatedDataWidgetTemplate,
+                _ => null
+            };
         }
     }
 }

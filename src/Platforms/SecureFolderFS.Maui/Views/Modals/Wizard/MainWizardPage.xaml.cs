@@ -76,7 +76,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             if (OverlayViewModel is not null)
                 OverlayViewModel.NavigationRequested -= ViewModel_NavigationRequested;
             
-            _modalTcs.SetResult(OverlayViewModel?.CurrentViewModel is SummaryWizardViewModel
+            _modalTcs.TrySetResult(OverlayViewModel?.CurrentViewModel is SummaryWizardViewModel
                 ? Result.Success
                 : Result.Failure(null));
         }

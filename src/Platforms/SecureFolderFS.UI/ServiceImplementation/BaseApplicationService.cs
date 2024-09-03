@@ -15,6 +15,9 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public abstract class BaseApplicationService : IApplicationService
     {
         /// <inheritdoc/>
+        public abstract bool IsDesktop { get; }
+
+        /// <inheritdoc/>
         public abstract string Platform { get; }
 
         /// <inheritdoc/>

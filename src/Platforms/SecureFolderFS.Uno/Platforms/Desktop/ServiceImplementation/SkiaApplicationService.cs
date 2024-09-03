@@ -10,6 +10,9 @@ namespace SecureFolderFS.Uno.Platforms.SkiaGtk.ServiceImplementation
     internal sealed class SkiaApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
+        public override bool IsDesktop { get; } = true;
+        
+        /// <inheritdoc/>
         public override string Platform { get; } = "Skia Gtk - Uno";
 
         /// <inheritdoc/>

@@ -1,12 +1,16 @@
 using Android.Content;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
-using AndroidUri = Android.Net.Uri;
+using AndroidUri = Microsoft.Maui.Controls.PlatformConfiguration.Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 {
     /// <inheritdoc cref="IApplicationService"/>
     internal sealed class AndroidApplicationService : BaseApplicationService
     {
+        /// <inheritdoc/>
+        public override bool IsDesktop { get; } = false;
+
         /// <inheritdoc/>
         public override string Platform { get; } = "Android - MAUI";
         

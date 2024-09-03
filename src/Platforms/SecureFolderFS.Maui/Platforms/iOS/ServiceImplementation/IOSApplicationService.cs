@@ -9,6 +9,9 @@ namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
     internal sealed class IOSApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
+        public override bool IsDesktop { get; } = false;
+        
+        /// <inheritdoc/>
         public override string Platform { get; } = "iOS - MAUI";
         
         /// <inheritdoc/>

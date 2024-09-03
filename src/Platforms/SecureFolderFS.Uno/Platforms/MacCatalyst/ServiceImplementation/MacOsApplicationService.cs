@@ -10,6 +10,9 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
     internal sealed class MacOsApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
+        public override bool IsDesktop { get; } = true;
+        
+        /// <inheritdoc/>
         public override string Platform { get; } = "Mac Catalyst - Uno";
 
         /// <inheritdoc/>
