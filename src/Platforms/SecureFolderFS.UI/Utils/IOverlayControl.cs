@@ -9,7 +9,7 @@ namespace SecureFolderFS.UI.Utils
     public interface IOverlayControl
     {
         /// <summary>
-        /// Shows the overlay and awaits until an option is selected or the overlay is closed.
+        /// Shows the overlay and waits until an option is selected or the overlay is closed.
         /// </summary>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> of the operation.</returns>
         /// <remarks>
@@ -20,7 +20,7 @@ namespace SecureFolderFS.UI.Utils
         /// <summary>
         /// Sets the view associated with the overlay.
         /// </summary>
-        /// <param name="view"></param>
+        /// <param name="viewable">The backing <see cref="IViewable"/> view to set.</param>
         void SetView(IViewable viewable);
 
         /// <summary>

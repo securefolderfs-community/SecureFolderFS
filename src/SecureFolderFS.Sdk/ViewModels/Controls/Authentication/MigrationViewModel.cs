@@ -22,6 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 
         [ObservableProperty] private string? _CurrentVersion;
         [ObservableProperty] private string? _NewVersion;
+        [ObservableProperty] private string? _VaultName;
 
         /// <summary>
         /// Gets the current vault version.
@@ -37,6 +38,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
             _vaultModel = vaultModel;
             _CurrentVersion = $"Version {currentVersion}";
             _NewVersion = $"Version {VaultService.LatestVaultVersion}";
+            _VaultName = _vaultModel.VaultName;
             FormatVersion = currentVersion;
         }
 

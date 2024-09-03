@@ -1,7 +1,7 @@
 using Android.Content;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
-using AndroidUri = Microsoft.Maui.Controls.PlatformConfiguration.Android.Net.Uri;
+using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 {

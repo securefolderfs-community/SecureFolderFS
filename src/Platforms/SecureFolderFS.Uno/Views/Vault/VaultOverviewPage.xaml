@@ -9,12 +9,13 @@
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:ucw="using:SecureFolderFS.Uno.UserControls.Widgets"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
         <!--  Vault Health  -->
-        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:HealthWidgetViewModel">
+        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm2:HealthWidgetViewModel">
             <ucw:HealthWidget
                 HealthLastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
@@ -23,7 +24,7 @@
         </DataTemplate>
 
         <!--  Resource Graphs  -->
-        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm:GraphsWidgetViewModel">
+        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm2:GraphsWidgetViewModel">
             <ucw:GraphsWidget
                 ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}"
                 ReadGraphIsExtended="{x:Bind ReadGraphViewModel.IsExtended, Mode=TwoWay}"

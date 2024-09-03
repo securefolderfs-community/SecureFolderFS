@@ -112,7 +112,7 @@
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind OpenMigrationOverlayCommand, Mode=OneWay}"
-                    Content="Migrate"
+                    Content="{l:ResourceString Name=Migrate}"
                     Style="{ThemeResource AccentButtonStyle}" />
 
                 <!--  Version info  -->

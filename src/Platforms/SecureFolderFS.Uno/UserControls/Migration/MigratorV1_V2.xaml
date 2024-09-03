@@ -3,12 +3,29 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:SecureFolderFS.Uno.UserControls.Migration"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     mc:Ignorable="d">
 
     <Grid>
-        <uc:PasswordControl />
+        <StackPanel x:Name="LoginView" Spacing="8">
+            <uc:PasswordControl x:Name="Password" PasswordSubmitted="Password_PasswordSubmitted" />
+            <Button
+                HorizontalAlignment="Center"
+                Click="Password_PasswordSubmitted"
+                Content="{l:ResourceString Name=Continue}"
+                Style="{ThemeResource AccentButtonStyle}" />
+        </StackPanel>
+        <StackPanel
+            x:Name="MigrateView"
+            Spacing="8"
+            Visibility="Collapsed">
+            <TextBlock Text="{x:Bind VaultName, Mode=OneWay}" />
+            <Button
+                Click="Migrate_Click"
+                Content="{l:ResourceString Name=Migrate}"
+                Style="{ThemeResource AccentButtonStyle}" />
+        </StackPanel>
     </Grid>
 </UserControl>

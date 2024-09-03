@@ -56,8 +56,9 @@ namespace SecureFolderFS.Sdk.AppModels
             VaultWidgets.SetForVault(item.Folder.Id, new List<WidgetDataModel>()
             {
                 new(Constants.Widgets.HEALTH_WIDGET_ID),
-                new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID),
-                //new(Constants.Widgets.GRAPHS_WIDGET_ID)
+                ApplicationService.IsDesktop
+                    ? new(Constants.Widgets.GRAPHS_WIDGET_ID)
+                    : new(Constants.Widgets.AGGREGATED_DATA_WIDGET_ID)
             });
 
             // Add to cache

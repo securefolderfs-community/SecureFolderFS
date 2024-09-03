@@ -9,6 +9,7 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.Routines.Operational;
+using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -105,6 +106,20 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 _ = ex;
                 throw;
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IVaultMigratorModel> GetMigratorAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
+        {
+            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
+            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+
+            // TODO
+            return config.Version switch
+            {
+                Core.Constants.Vault.Versions.V1 => null,
+                _ => null
+            };
         }
 
         /// <inheritdoc/>
