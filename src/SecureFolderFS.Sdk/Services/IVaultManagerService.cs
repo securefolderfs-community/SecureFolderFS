@@ -47,8 +47,12 @@ namespace SecureFolderFS.Sdk.Services
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the master key used to decrypt the vault.</returns>
         Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedMasterKey, CancellationToken cancellationToken = default);
 
+        // TODO: Needs docs
+
         Task<IVFSRoot> CreateFileSystemAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
 
         Task<IVFSRoot> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
+
+        Task<IVaultMigratorModel> GetMigratorAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
     }
 }
