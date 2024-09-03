@@ -1,13 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
 {
@@ -51,10 +51,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             switch (widgetModel.WidgetId)
             {
                 case Constants.Widgets.HEALTH_WIDGET_ID:
-                    return new VaultHealthWidgetViewModel(widgetModel);
+                    return new HealthWidgetViewModel(widgetModel);
 
                 case Constants.Widgets.GRAPHS_WIDGET_ID:
                     return new GraphsWidgetViewModel(_unlockedVaultViewModel.StorageRoot.ReadWriteStatistics, widgetModel);
+                
+                case Constants.Widgets.AGGREGATED_DATA_WIDGET_ID:
+                    return new AggregatedDataWidgetViewModel(_unlockedVaultViewModel.StorageRoot.ReadWriteStatistics, widgetModel);
 
                 default:
                     return null;

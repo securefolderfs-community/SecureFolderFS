@@ -51,6 +51,9 @@ namespace SecureFolderFS.Maui.Views
                 navigationService.SetCurrentViewInternal(ViewModel);
 
 #if IOS
+            if (!ExToolbarItems.IsEmpty())
+                return;
+            
             ExToolbarItems.Add(new ExMenuItem()
             {
                 Text = "NewVault".ToLocalized(),

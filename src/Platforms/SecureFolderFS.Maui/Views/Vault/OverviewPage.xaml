@@ -5,14 +5,14 @@
     xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:OverviewPage">
 
-    <VerticalStackLayout>
-        <!--  Top widgets  -->
-        <VerticalStackLayout Padding="20,16" Spacing="24">
-
+    <ContentPage.Resources>
+        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:HealthWidgetViewModel">
             <!--  Health Widget  -->
             <HorizontalStackLayout Spacing="4">
                 <Image
@@ -25,8 +25,10 @@
                     Text="{l:ResourceString Name=HealthNoProblems}"
                     VerticalOptions="Center" />
             </HorizontalStackLayout>
+        </DataTemplate>
 
-            <!--  Data statistics widget  -->
+        <!--  Data statistics widget  -->
+        <DataTemplate x:Key="AggregatedDataWidgetTemplate" x:DataType="vm:AggregatedDataWidgetViewModel">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -48,7 +50,18 @@
                         Text="0Mb" />
                 </VerticalStackLayout>
             </Grid>
-        </VerticalStackLayout>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout>
+        <!--  Top widgets  -->
+        <CollectionView ItemsSource="{Binding OverviewViewModel.WidgetsViewModel}">
+            <CollectionView.ItemTemplate>
+                <ts:WidgetsTemplateSelector AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!--  Top buttons  -->
         <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
                 <Grid Padding="20,16" ColumnSpacing="8">
@@ -72,6 +85,8 @@
                 </Grid>
             </On>
         </OnPlatform>
+
+        <!--  Options list  -->
         <TableView>
             <TableRoot>
                 <OnPlatform x:TypeArguments="TableSection">

@@ -14,7 +14,7 @@
 
     <Page.Resources>
         <!--  Vault Health  -->
-        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:VaultHealthWidgetViewModel">
+        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:HealthWidgetViewModel">
             <ucw:HealthWidget
                 HealthLastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
