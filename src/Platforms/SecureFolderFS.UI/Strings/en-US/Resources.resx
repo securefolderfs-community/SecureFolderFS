@@ -605,4 +605,7 @@
   <data name="Migrate" xml:space="preserve">
     <value>Migrate</value>
   </data>
+  <data name="EnterRecoveryKey" xml:space="preserve">
+      <value>Enter the recovery key for this vault</value>
+  </data>
 </root>

@@ -1,7 +1,8 @@
-﻿<ContentPage
+﻿<vw:ContentPageExtended
     x:Class="SecureFolderFS.Maui.Views.Vault.LoginPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vw="clr-namespace:SecureFolderFS.Maui.Views"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
@@ -11,11 +12,7 @@
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:LoginPage">
 
-    <ContentPage.ToolbarItems>
-        <ToolbarItem />
-    </ContentPage.ToolbarItems>
-
-    <VerticalStackLayout
+  <VerticalStackLayout
         Padding="64,0"
         Spacing="32"
         VerticalOptions="Center">
@@ -43,6 +40,9 @@
         </VerticalStackLayout>
 
         <!--  Login  -->
-        <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" />
+        <VerticalStackLayout>
+            <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" />
+            <Button Command="{Binding ViewModel.BeginRecoveryCommand}" Text="{l:ResourceString Name=RecoverAccess}" />
+        </VerticalStackLayout>
     </VerticalStackLayout>
-</ContentPage>
+</vw:ContentPageExtended>

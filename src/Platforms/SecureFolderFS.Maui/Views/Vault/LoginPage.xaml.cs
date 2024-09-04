@@ -1,5 +1,4 @@
 using SecureFolderFS.Maui.Extensions;
-using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
@@ -9,7 +8,7 @@ using SecureFolderFS.Shared.EventArguments;
 
 namespace SecureFolderFS.Maui.Views.Vault
 {
-    public partial class LoginPage : ContentPage, IQueryAttributable
+    public partial class LoginPage : ContentPageExtended, IQueryAttributable
     {
         public LoginPage()
         {

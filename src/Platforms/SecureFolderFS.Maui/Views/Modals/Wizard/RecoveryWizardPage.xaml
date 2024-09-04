@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
-    x:Name="Root"
+    x:Name="ThisPage"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:RecoveryWizardPage"
     CloseCommand="{Binding OverlayViewModel.CancellationCommand, Mode=OneWay}"
@@ -28,7 +28,7 @@
 
                         <VerticalStackLayout Spacing="8">
                             <mdc:Card Style="{DynamicResource FilledCardStyle}">
-                                <VerticalStackLayout BindingContext="{x:Reference Root}" Spacing="8">
+                                <VerticalStackLayout BindingContext="{x:Reference ThisPage}" Spacing="8">
                                     <Label
                                         FontAttributes="Bold"
                                         FontSize="20"
@@ -38,7 +38,7 @@
                             </mdc:Card>
                             <mdc:Button
                                 Command="{Binding ViewModel.RecoveryViewModel.ExportCommand}"
-                                CommandParameter="Share"
+                                CommandParameter="Copy"
                                 HorizontalOptions="End"
                                 Style="{DynamicResource FilledTonalButtonStyle}"
                                 Text="Export" />
@@ -59,7 +59,7 @@
                             </Border>
                             <Button
                                 Command="{Binding ViewModel.RecoveryViewModel.ExportCommand}"
-                                CommandParameter="Share"
+                                CommandParameter="Copy"
                                 HorizontalOptions="End"
                                 Text="Export" />
                         </VerticalStackLayout>

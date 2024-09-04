@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IPrinterService>, Inject<IThreadingService>]
+    [Inject<IPrinterService>, Inject<IThreadingService>, Inject<IClipboardService>]
     [Bindable(true)]
     public sealed partial class RecoveryPreviewControlViewModel : ObservableObject
     {
@@ -35,6 +35,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     if (await PrinterService.IsSupportedAsync())
                         await PrinterService.PrintMasterKeyAsync(VaultName, VaultId, MasterKey);
 
+                    break;
+                }
+
+                case "copy":
+                {
+                    await ClipboardService.SetTextAsync(MasterKey ?? string.Empty, cancellationToken);
                     break;
                 }
 
