@@ -17,7 +17,7 @@
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
             <ContentView>
                 <VerticalStackLayout Spacing="24">
-                    <local:PasswordControl UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
+                    <local:PasswordControl ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
                     <OnPlatform x:TypeArguments="View">
                         <On Platform="Android">
                             <mdc:Button Command="{Binding ProvideCredentialsCommand}" Text="{l:ResourceString Name=Continue}" />
