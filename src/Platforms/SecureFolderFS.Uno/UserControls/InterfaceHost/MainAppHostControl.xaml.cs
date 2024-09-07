@@ -1,9 +1,11 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -13,6 +15,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
+using Windows.ApplicationModel.DataTransfer;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -118,6 +121,39 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
             await SettingsService.AppSettings.TrySaveAsync();
         }
 
+        #region Drag and Drop
+
+        private void Sidebar_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+                e.AcceptedOperation = DataPackageOperation.Link;
+        }
+
+        private async void Sidebar_Drop(object sender, DragEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            if (!e.DataView.Contains(StandardDataFormats.StorageItems))
+                return;
+
+            // We only want to get the first item
+            // as it is unlikely the user will want to add multiple vaults in batch.
+            var droppedItems = await e.DataView.GetStorageItemsAsync().AsTask();
+            var item = droppedItems.FirstOrDefault();
+            if (item is null)
+                return;
+
+            // Recreate as SystemFolder for best performance.
+            // The logic can be changed to handle Platform Storage Items in the future, if needed.
+            var folder = new SystemFolder(item.Path);
+            await ViewModel.VaultListViewModel.AddNewVaultCommand.ExecuteAsync(folder);
+        }
+
+        #endregion
+
+        #region Sidebar Handle Actions
+
         private async void Sidebar_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
         {
 #if WINDOWS
@@ -184,6 +220,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 PaneShowButton.Visibility = Visibility.Collapsed;
 #endif
         }
+
+        #endregion
 
         public MainHostViewModel? ViewModel
         {

@@ -4,12 +4,12 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Helpers;
-using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,43 +79,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                     return false;
                 }
 
-                if (CreationType == NewVaultCreationType.AddExisting)
-                {
-                    var validationResult = await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
-                    if (!validationResult.Successful)
-                    {
-                        if (validationResult.Exception is NotSupportedException)
-                        {
-                            // Allow unsupported vaults to be migrated
-                            Severity = ViewSeverityType.Warning;
-                            Message = "SelectedMayNotBeSupported".ToLocalized();
-                            return true;
-                        }
+                // Validate vault
+                var result = CreationType == NewVaultCreationType.AddExisting
+                    ? await ValidationHelpers.ValidateExistingVault(SelectedFolder, cancellationToken)
+                    : await ValidationHelpers.ValidateNewVault(SelectedFolder, cancellationToken);
 
-                        Severity = ViewSeverityType.Error;
-                        Message = "SelectedInvalidVault".ToLocalized();
-                        return false;
-                    }
+                Severity = result.Value;
+                Message = result.GetMessage();
 
-                    Severity = ViewSeverityType.Success;
-                    Message = "SelectedValidVault".ToLocalized();
-                    return true;
-                }
-                else
-                {
-                    var validationResult = await VaultService.VaultValidator.TryValidateAsync(SelectedFolder, cancellationToken);
-                    if (validationResult.Successful || validationResult.Exception is NotSupportedException)
-                    {
-                        // Check if a valid (or unsupported) vault exists at a specified path
-                        Severity = ViewSeverityType.Warning;
-                        Message = "SelectedToBeOverwritten".ToLocalized();
-                        return true;
-                    }
-
-                    Severity = ViewSeverityType.Success;
-                    Message = "SelectedWillCreate".ToLocalized();
-                    return true;
-                }
+                return result.Successful;
             }
             finally
             {

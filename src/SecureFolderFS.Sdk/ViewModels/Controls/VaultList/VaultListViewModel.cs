@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -79,13 +82,27 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private async Task AddNewVaultAsync(CancellationToken cancellationToken)
+        private async Task AddNewVaultAsync(IFolder? folder, CancellationToken cancellationToken)
         {
+            // Check Plus version
             var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
             if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
             {
                 _ = PaymentDialogViewModel.Instance.InitAsync(cancellationToken);
                 await OverlayService.ShowAsync(PaymentDialogViewModel.Instance);
+                return;
+            }
+
+            if (folder is not null)
+            {
+                // Validate vault. We assume the user is adding an existing vault
+                var result = await ValidationHelpers.ValidateExistingVault(folder, cancellationToken);
+                if (!result.Successful)
+                    return;
+
+                // Try to save the new vault
+                _vaultCollectionModel.Add(new VaultModel(folder));
+                await _vaultCollectionModel.TrySaveAsync(cancellationToken);
             }
             else
                 await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
