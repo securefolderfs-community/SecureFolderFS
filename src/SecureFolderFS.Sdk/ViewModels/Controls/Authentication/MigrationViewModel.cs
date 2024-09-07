@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
@@ -18,8 +19,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
     [Bindable(true)]
     public partial class MigrationViewModel : ReportableViewModel
     {
-        private readonly IVaultModel _vaultModel;
-
         [ObservableProperty] private string? _CurrentVersion;
         [ObservableProperty] private string? _NewVersion;
         [ObservableProperty] private string? _VaultName;
@@ -29,16 +28,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         /// </summary>
         public int FormatVersion { get; }
 
+        /// <summary>
+        /// Gets the <see cref="IFolder"/> instance associated with the vault for migration.
+        /// </summary>
+        public IFolder VaultFolder { get; }
+
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
         public MigrationViewModel(IVaultModel vaultModel, int currentVersion)
         {
             ServiceProvider = DI.Default;
-            _vaultModel = vaultModel;
             _CurrentVersion = $"Version {currentVersion}";
             _NewVersion = $"Version {VaultService.LatestVaultVersion}";
-            _VaultName = _vaultModel.VaultName;
+            _VaultName = vaultModel.VaultName;
+            VaultFolder = vaultModel.Folder;
             FormatVersion = currentVersion;
         }
 
@@ -51,9 +55,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         [RelayCommand]
         private async Task OpenMigrationOverlayAsync()
         {
-            var result = await OverlayService.ShowAsync(new MigrationOverlayViewModel(this));
-            if (result.Positive())
-                StateChanged?.Invoke(this, new MigrationCompletedEventArgs());
+            await OverlayService.ShowAsync(new MigrationOverlayViewModel(this));
+            StateChanged?.Invoke(this, new MigrationCompletedEventArgs());
         }
     }
 }

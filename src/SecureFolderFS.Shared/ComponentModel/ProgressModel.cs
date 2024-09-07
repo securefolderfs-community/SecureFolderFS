@@ -1,7 +1,6 @@
-﻿using SecureFolderFS.Shared.ComponentModel;
-using System;
+﻿using System;
 
-namespace SecureFolderFS.Sdk.AppModels
+namespace SecureFolderFS.Shared.ComponentModel
 {
     /// <summary>
     /// Represents a generic model for reporting progress updates.

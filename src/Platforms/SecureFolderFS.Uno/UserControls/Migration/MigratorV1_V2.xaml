@@ -6,6 +6,7 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
+    Loaded="Migrator_Loaded"
     mc:Ignorable="d">
 
     <Grid>

@@ -1,7 +1,10 @@
 using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SecureFolderFS.Sdk.Models;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Models;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -11,15 +14,26 @@ namespace SecureFolderFS.Uno.UserControls.Migration
     public sealed partial class MigratorV1_V2 : UserControl
     {
         private IDisposable? _unlockContract;
+        private IVaultMigratorModel? _vaultMigrator;
+
+        private IVaultManagerService VaultManagerService { get; } = DI.Service<IVaultManagerService>();
 
         public MigratorV1_V2()
         {
             InitializeComponent();
         }
 
+        private async void Migrator_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (VaultFolder is null)
+                return;
+
+            _vaultMigrator = await VaultManagerService.GetMigratorAsync(VaultFolder);
+        }
+
         private async void Password_PasswordSubmitted(object sender, RoutedEventArgs e)
         {
-            if (VaultMigrator is null)
+            if (_vaultMigrator is null)
                 return;
 
             if (Password.GetPassword() is not { } password)
@@ -27,7 +41,7 @@ namespace SecureFolderFS.Uno.UserControls.Migration
 
             try
             {
-                _unlockContract = await VaultMigrator.UnlockAsync(password);
+                _unlockContract = await _vaultMigrator.UnlockAsync(password.ToString());
 
                 LoginView.Visibility = Visibility.Collapsed;
                 MigrateView.Visibility = Visibility.Visible;
@@ -41,15 +55,21 @@ namespace SecureFolderFS.Uno.UserControls.Migration
 
         private async void Migrate_Click(object sender, RoutedEventArgs e)
         {
-            if (VaultMigrator is null)
+            if (_vaultMigrator is null)
                 return;
 
             if (_unlockContract is null)
                 return;
 
-            var result = await VaultMigrator.MigrateAsync(_unlockContract, new());
-            _ = result;
-            // TODO: Notify whether the operation was successful or not
+            try
+            {
+                await _vaultMigrator.MigrateAsync(_unlockContract, new());
+            }
+            catch (Exception ex)
+            {
+                // TODO: Notify about an error
+                _ = ex;
+            }
         }
 
         public string? VaultName
@@ -60,12 +80,12 @@ namespace SecureFolderFS.Uno.UserControls.Migration
         public static readonly DependencyProperty VaultNameProperty =
             DependencyProperty.Register(nameof(VaultName), typeof(string), typeof(MigratorV1_V2), new PropertyMetadata(null));
 
-        public IVaultMigratorModel? VaultMigrator
+        public IFolder? VaultFolder
         {
-            get => (IVaultMigratorModel?)GetValue(VaultMigratorProperty);
-            set => SetValue(VaultMigratorProperty, value);
+            get => (IFolder?)GetValue(VaultFolderProperty);
+            set => SetValue(VaultFolderProperty, value);
         }
-        public static readonly DependencyProperty VaultMigratorProperty =
-            DependencyProperty.Register(nameof(VaultMigrator), typeof(IVaultMigratorModel), typeof(MigratorV1_V2), new PropertyMetadata(null));
+        public static readonly DependencyProperty VaultFolderProperty =
+            DependencyProperty.Register(nameof(VaultFolder), typeof(IFolder), typeof(MigratorV1_V2), new PropertyMetadata(null));
     }
 }

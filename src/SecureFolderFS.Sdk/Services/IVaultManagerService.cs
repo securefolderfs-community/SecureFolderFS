@@ -2,6 +2,7 @@
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;

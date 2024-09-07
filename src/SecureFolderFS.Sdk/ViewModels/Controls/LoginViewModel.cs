@@ -138,6 +138,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
             else if (e is MigrationCompletedEventArgs)
             {
+                _keyChain.Dispose();
+                if (_enumerator is not null)
+                    await _enumerator.DisposeAsync();
+
                 await InitAsync();
             }
         }

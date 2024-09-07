@@ -20,7 +20,7 @@
 
     <ContentControl.Resources>
         <DataTemplate x:Key="MigratorV1_V2" x:DataType="vm:MigrationViewModel">
-            <uc:MigratorV1_V2 VaultName="{x:Bind VaultName}" />
+            <uc:MigratorV1_V2 VaultFolder="{x:Bind VaultFolder, Mode=OneWay}" VaultName="{x:Bind VaultName}" />
         </DataTemplate>
     </ContentControl.Resources>
 

@@ -1,6 +1,6 @@
 ﻿using OwlCore.Storage;
 using OwlCore.Storage.Memory;
-using SecureFolderFS.Tests.Extensions;
+using SecureFolderFS.Core;
 
 namespace SecureFolderFS.Tests.Helpers
 {
@@ -15,16 +15,12 @@ namespace SecureFolderFS.Tests.Helpers
             var vaultFolder = new MemoryFolder(vaultPath, Path.GetFileName(vaultPath));
 
             // Create necessary vault configuration
-            var configFile = await vaultFolder.CreateFileAsync("sfconfig.cfg", false, cancellationToken);
-            var keystoreFile = await vaultFolder.CreateFileAsync("keystore.cfg", false, cancellationToken);
+            var configFile = await vaultFolder.CreateFileAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, false, cancellationToken);
+            var keystoreFile = await vaultFolder.CreateFileAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, false, cancellationToken);
             var contentFolder = await vaultFolder.CreateFolderAsync("content", false, cancellationToken);
 
             await configFile.WriteTextAsync(configString, cancellationToken);
             await keystoreFile.WriteTextAsync(keystoreString, cancellationToken);
-
-            // Reset internal stream position
-            await configFile.ResetMockFilePosition(cancellationToken);
-            await keystoreFile.ResetMockFilePosition(cancellationToken);
 
             _ = contentFolder;
             return vaultFolder;

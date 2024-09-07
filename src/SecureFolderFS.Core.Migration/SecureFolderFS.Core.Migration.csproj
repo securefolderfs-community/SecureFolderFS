@@ -6,4 +6,10 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
+    <ProjectReference Include="..\SecureFolderFS.Shared\SecureFolderFS.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
