@@ -3,7 +3,7 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
-namespace SecureFolderFS.Core.MobileFS.FileSystem
+namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
 {
     /// <inheritdoc cref="IVFSRoot"/>
     internal sealed class IOSVFSRoot : VFSRoot

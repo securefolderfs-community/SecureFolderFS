@@ -608,4 +608,10 @@
   <data name="EnterRecoveryKey" xml:space="preserve">
       <value>Enter the recovery key for this vault</value>
   </data>
+  <data name="DateToday" xml:space="preserve">
+      <value>Today, {0}</value>
+  </data>
+  <data name="DateAgo" xml:space="preserve">
+      <value>{0} ago</value>
+  </data>
 </root>

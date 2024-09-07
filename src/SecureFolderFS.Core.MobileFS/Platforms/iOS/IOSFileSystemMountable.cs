@@ -3,7 +3,6 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Storage;
-using SecureFolderFS.Core.MobileFS.FileSystem;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
