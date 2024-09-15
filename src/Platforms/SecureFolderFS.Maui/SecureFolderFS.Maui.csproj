@@ -149,10 +149,6 @@
     </MauiXaml>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Sheets\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionSecureFolderFSMauiHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -10,7 +10,8 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:ts="using:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:vm="clr-namespace:SecureFolderFS.UI.ViewModels;assembly=SecureFolderFS.UI"
-    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk">
+    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Authentication;assembly=SecureFolderFS.Sdk"
+    x:Name="ThisLoginControl">
 
     <ContentView.Resources>
         <!--  Password Template  -->
@@ -20,10 +21,16 @@
                     <local:PasswordControl ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
                     <OnPlatform x:TypeArguments="View">
                         <On Platform="Android">
-                            <mdc:Button Command="{Binding ProvideCredentialsCommand}" Text="{l:ResourceString Name=Continue}" />
+                            <mdc:Button
+                                Command="{Binding ProvideCredentialsCommand}"
+                                IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
+                                Text="{l:ResourceString Name=Continue}" />
                         </On>
                         <On Platform="iOS">
-                            <Button Command="{Binding ProvideCredentialsCommand}" Text="{l:ResourceString Name=Continue}" />
+                            <Button
+                                Command="{Binding ProvideCredentialsCommand}"
+                                IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
+                                Text="{l:ResourceString Name=Continue}" />
                         </On>
                     </OnPlatform>
                 </VerticalStackLayout>
