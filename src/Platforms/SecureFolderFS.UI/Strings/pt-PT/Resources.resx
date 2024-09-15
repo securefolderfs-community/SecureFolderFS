@@ -165,12 +165,6 @@
   <data name="ChangelogError" xml:space="preserve">
     <value>Um problema ocorreu enquanto carregávamos as notas da versão.</value>
   </data>
-  <data name="ChangePassword" xml:space="preserve">
-    <value>Alterar senha</value>
-  </data>
-  <data name="ChangePasswordDescription" xml:space="preserve">
-    <value>Alterar a senha usada para desbloquear este cofre</value>
-  </data>
   <data name="CheckForUpdates" xml:space="preserve">
     <value>Procurar atualizações</value>
   </data>
@@ -265,7 +259,7 @@
     <value>A senha informada está incorreta.</value>
   </data>
   <data name="KeyFile" xml:space="preserve">
-    <value>Key file</value>
+    <value>Key File</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Idioma</value>
@@ -487,5 +481,143 @@
   </data>
   <data name="WriteSpeeds" xml:space="preserve">
     <value>Velocidades de escrita</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="VaultLoadError" xml:space="preserve">
+    <value>Vault could not be loaded</value>
+  </data>
+  <data name="ErrorDetails" xml:space="preserve">
+    <value>Exception details</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="SelectFolderToContinue" xml:space="preserve">
+    <value>Select a folder to continue</value>
+  </data>
+  <data name="SelectedMayNotBeSupported" xml:space="preserve">
+    <value>Selected vault may not be supported</value>
+  </data>
+  <data name="SelectedInvalidVault" xml:space="preserve">
+    <value>Vault folder is invalid</value>
+  </data>
+  <data name="SelectedValidVault" xml:space="preserve">
+    <value>Found a valid vault folder</value>
+  </data>
+  <data name="SelectedToBeOverwritten" xml:space="preserve">
+    <value>The selected vault will be overwritten</value>
+  </data>
+  <data name="SelectedWillCreate" xml:space="preserve">
+    <value>A new vault will be created in the selected folder</value>
+  </data>
+  <data name="SelectedNone" xml:space="preserve">
+    <value>No location selected</value>
+  </data>
+  <data name="LockType" xml:space="preserve">
+    <value>Lock type</value>
+  </data>
+  <data name="AdvancedOptions" xml:space="preserve">
+    <value>Advanced options</value>
+    <comment>Use a short-hand name, if possible</comment>
+  </data>
+  <data name="Setup" xml:space="preserve">
+    <value>Setup</value>
+    <comment>Another word for 'configuration'. Used primarily when setting up other authentication methods</comment>
+  </data>
+  <data name="SetupKeyFile" xml:space="preserve">
+    <value>Setup key file authentication</value>
+  </data>
+  <data name="SetupWindowsHello" xml:space="preserve">
+    <value>Setup Windows Hello authentication</value>
+  </data>
+  <data name="LoginOptions" xml:space="preserve">
+    <value>Login options</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Security</value>
+    <comment>Used to describe the authentication method used in a vault. (See Vault Properties section)</comment>
+  </data>
+  <data name="RecoveryCodes" xml:space="preserve">
+    <value>View recovery codes</value>
+  </data>
+  <data name="RecoveryCodesDescription" xml:space="preserve">
+    <value>Access recovery codes for this vault in case you forget your credentials</value>
+  </data>
+  <data name="UseMasterKey" xml:space="preserve">
+    <value>Use Master Key</value>
+  </data>
+  <data name="ChangeCredentials" xml:space="preserve">
+    <value>Change credentials</value>
+  </data>
+  <data name="ChangeCredentialsDescription" xml:space="preserve">
+    <value>Change how you log in into this vault</value>
+  </data>
+  <data name="TwoFactor" xml:space="preserve">
+    <value>Two-factor authentication</value>
+  </data>
+  <data name="TwoFactorDescription" xml:space="preserve">
+    <value>Setup or change two-factor authentication</value>
+  </data>
+  <data name="ModifyExisting" xml:space="preserve">
+    <value>Modify existing</value>
+  </data>
+  <data name="SelectAuthentication" xml:space="preserve">
+    <value>Select authentication option</value>
+  </data>
+  <data name="AllOptions" xml:space="preserve">
+    <value>All options</value>
+  </data>
+  <data name="LoginKeyFile" xml:space="preserve">
+    <value>Authenticate using a Key File</value>
+  </data>
+  <data name="LoginWindowsHello" xml:space="preserve">
+    <value>Authenticate with Windows Hello</value>
+  </data>
+  <data name="RemoveAuthentication" xml:space="preserve">
+    <value>Remove authentication</value>
+  </data>
+  <data name="RemoveAuthenticationDescription" xml:space="preserve">
+    <value>Remove this authentication method</value>
+  </data>
+  <data name="ChangeCurrentAuthentication" xml:space="preserve">
+    <value>Change current authentication method</value>
+  </data>
+  <data name="ViewInFiles" xml:space="preserve">
+    <value>View in Files</value>
+  </data>
+  <data name="QuickActions" xml:space="preserve">
+    <value>Quick actions</value>
+  </data>
+  <data name="Authentication" xml:space="preserve">
+    <value>Authentication</value>
+  </data>
+  <data name="TotalRead" xml:space="preserve">
+    <value>Total read</value>
+  </data>
+  <data name="TotalWrite" xml:space="preserve">
+    <value>Total write</value>
+  </data>
+  <data name="SystemVersion" xml:space="preserve">
+    <value>System version</value>
+  </data>
+  <data name="Migrate" xml:space="preserve">
+    <value>Migrate</value>
+  </data>
+  <data name="EnterRecoveryKey" xml:space="preserve">
+    <value>Enter the recovery key for this vault</value>
+  </data>
+  <data name="DateToday" xml:space="preserve">
+    <value>Today, {0}</value>
+  </data>
+  <data name="DateAgo" xml:space="preserve">
+    <value>{0} ago</value>
+  </data>
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>An error occurred</value>
+  </data>
+  <data name="VaultMigrated" xml:space="preserve">
+    <value>Vault has been migrated successfully</value>
   </data>
 </root>
