@@ -1,5 +1,8 @@
 ﻿using SecureFolderFS.Sdk.Extensions;
 using System;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.UI.ValueConverters
 {
@@ -10,13 +13,16 @@ namespace SecureFolderFS.UI.ValueConverters
         {
             if (value is not DateTime dateTime)
                 return string.Empty;
+            
+            var cultureInfo = DI.Service<ILocalizationService>().CurrentCulture;
+            var dateString = dateTime switch
+            {
+                _ when dateTime.Year == 1 => "Unspecified",
+                _ when dateTime.Date == DateTime.Today => SafetyHelpers.NoThrowResult(() => string.Format("DateToday".ToLocalized(), dateTime.ToString("t", cultureInfo))),
+                _ => null
+            };
 
-            string dateString;
-            if (dateTime.Date == DateTime.Today)
-                dateString = $"Today, {dateTime.ToString("HH:mm")}"; // TODO: Localize
-            else
-                dateString = dateTime.Year == 1 ? "Unspecified" : dateTime.ToString("MM/dd/yyyy, HH:mm");
-
+            dateString ??= $"{dateTime.ToString("d", cultureInfo)}, {dateTime.ToString("t", cultureInfo)}";
             if (parameter is string formatString)
             {
                 var split = formatString.Split('|');

@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -56,7 +57,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             if (rounded == 100)
                 UpdateText = "Installing".ToLocalized();
             else
-                UpdateText = string.Format("Downloading".ToLocalized(), rounded);
+                UpdateText = SafetyHelpers.NoThrowResult(() => string.Format("Downloading".ToLocalized(), rounded)) ?? $"{rounded}%";
         }
 
         private void UpdateService_StateChanged(object? sender, EventArgs e)

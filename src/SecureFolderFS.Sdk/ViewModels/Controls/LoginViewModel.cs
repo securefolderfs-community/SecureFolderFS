@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
@@ -23,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Bindable(true)]
     public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
-        private readonly bool _enableMigration;
+        private readonly LoginViewType _loginViewMode;
         private readonly IVaultModel _vaultModel;
         private readonly KeyChain _keyChain;
         private readonly IVaultWatcherModel _vaultWatcherModel;
@@ -34,10 +35,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
 
-        public LoginViewModel(IVaultModel vaultModel, bool enableMigration)
+        public LoginViewModel(IVaultModel vaultModel, LoginViewType loginViewMode)
         {
             ServiceProvider = DI.Default;
-            _enableMigration = enableMigration;
+            _loginViewMode = loginViewMode;
             _vaultModel = vaultModel;
             _keyChain = new();
             _vaultWatcherModel = new VaultWatcherModel(vaultModel.Folder);
@@ -55,15 +56,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             {
                 // Set up the first authentication method
                 if (!await TryNextAuthAsync())
-                    CurrentViewModel = new ErrorViewModel("No authentication methods available.");
+                    CurrentViewModel = new ErrorViewModel("No authentication methods available.", null);
             }
             else
             {
                 // Try to migrate the vault if not supported
-                if (_enableMigration && validationResult.Exception is NotSupportedException)
-                    CurrentViewModel = new MigrationViewModel(VaultService.LatestVaultVersion);
+                if (validationResult.Exception is NotSupportedException ex && ex.Data["Version"] is int currentVersion)
+                {
+                    CurrentViewModel = _loginViewMode switch
+                    {
+                        LoginViewType.Full => new MigrationViewModel(_vaultModel, currentVersion),
+                        _ => new ErrorViewModel("You'll need to migrate this vault before it can be used.", null)
+                    };
+                }
                 else
-                    CurrentViewModel = new ErrorViewModel(validationResult.GetMessage());
+                    CurrentViewModel = new ErrorViewModel(null, validationResult.GetMessage());
             }
 
             // TODO: VaultWatcherModel.InitAsync is never called
@@ -78,7 +85,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             try
             {
                 var unlockContract = await VaultManagerService.RecoverAsync(_vaultModel.Folder, masterKey, cancellationToken);
-                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel));
+                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder));
             }
             catch (Exception ex)
             {
@@ -91,13 +98,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             try
             {
                 var unlockContract = await VaultManagerService.UnlockAsync(_vaultModel.Folder, _keyChain, cancellationToken);
-                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel));
+                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder));
             }
             catch (Exception ex)
             {
-                // If failed, restart the process
-                // TODO: Above ^
-                _ = ex;
+                // Report that an error occurred when trying to log in
+                CurrentViewModel?.Report(Result.Failure(ex));
             }
             finally
             {
@@ -125,17 +131,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 if (result.Successful)
                     return;
 
-                CurrentViewModel = new ErrorViewModel(result.GetMessage());
+                CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
             }
         }
 
-        private void CurrentViewModel_StateChanged(object? sender, EventArgs e)
+        private async void CurrentViewModel_StateChanged(object? sender, EventArgs e)
         {
             if (e is CredentialsProvisionChangedEventArgs provisionArgs)
             {
                 // TODO
                 _ = provisionArgs.ClearProvision;
                 _ = provisionArgs.SignedProvision;
+            }
+            else if (e is MigrationCompletedEventArgs)
+            {
+                _keyChain.Dispose();
+                if (_enumerator is not null)
+                    await _enumerator.DisposeAsync();
+
+                await InitAsync();
             }
         }
 

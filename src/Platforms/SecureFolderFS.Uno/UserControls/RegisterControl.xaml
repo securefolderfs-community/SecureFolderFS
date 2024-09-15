@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:local="using:SecureFolderFS.Uno.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
-    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm3="using:SecureFolderFS.UI.ViewModels"
     xmlns:vm4="using:SecureFolderFS.Uno.ViewModels"
@@ -20,11 +20,11 @@
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm3:PasswordCreationViewModel">
             <StackPanel Spacing="16">
-                <uc:PasswordControl
+                <local:PasswordControl
                     x:Name="FirstPassword"
                     Title="{l:ResourceString Name=NewPassword}"
                     UnsecurePassword="{x:Bind PrimaryPassword, Mode=TwoWay}" />
-                <uc:PasswordControl
+                <local:PasswordControl
                     x:Name="SecondPassword"
                     Title="{l:ResourceString Name=RepeatPassword}"
                     UnsecurePassword="{x:Bind SecondaryPassword, Mode=TwoWay}" />
@@ -44,14 +44,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="Setup Key File authentication" />
+                    Text="{l:ResourceString Name=SetupKeyFile}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="Setup"
+                    Content="{l:ResourceString Name=Setup}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -70,14 +70,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="Setup Windows Hello authentication" />
+                    Text="{l:ResourceString Name=SetupWindowsHello}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="Setup"
+                    Content="{l:ResourceString Name=Setup}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>

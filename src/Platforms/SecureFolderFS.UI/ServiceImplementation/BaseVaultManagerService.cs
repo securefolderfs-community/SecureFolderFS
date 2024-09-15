@@ -8,11 +8,14 @@ using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.Storage;
+using SecureFolderFS.Core.Migration;
 using SecureFolderFS.Core.Routines.Operational;
+using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
@@ -105,6 +108,19 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 _ = ex;
                 throw;
             }
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<IVaultMigratorModel> GetMigratorAsync(IFolder vaultFolder, CancellationToken cancellationToken = default)
+        {
+            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
+            var configVersion = await vaultReader.ReadVersionAsync(cancellationToken);
+
+            return configVersion.Version switch
+            {
+                Core.Constants.Vault.Versions.V1 => Migrators.GetMigratorV1_V2(vaultFolder, StreamSerializer.Instance),
+                _ => throw new ArgumentOutOfRangeException(nameof(configVersion.Version))
+            };
         }
 
         /// <inheritdoc/>

@@ -1,43 +1,66 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
+    [Inject<IOverlayService>, Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class MigrationViewModel : ReportableViewModel
+    public partial class MigrationViewModel : ReportableViewModel
     {
         [ObservableProperty] private string? _CurrentVersion;
         [ObservableProperty] private string? _NewVersion;
+        [ObservableProperty] private string? _VaultName;
+
+        /// <summary>
+        /// Gets the current vault version.
+        /// </summary>
+        public int FormatVersion { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IFolder"/> instance associated with the vault for migration.
+        /// </summary>
+        public IFolder VaultFolder { get; }
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        public MigrationViewModel(int newVersion)
+        public MigrationViewModel(IVaultModel vaultModel, int currentVersion)
         {
-            _NewVersion = $"Update — Version {newVersion}";
-        }
-
-        public MigrationViewModel(int currentVersion, int newVersion)
-        {
+            ServiceProvider = DI.Default;
             _CurrentVersion = $"Version {currentVersion}";
-            _NewVersion = $"Version {newVersion}";
+            _NewVersion = $"Version {VaultService.LatestVaultVersion}";
+            _VaultName = vaultModel.VaultName;
+            VaultFolder = vaultModel.Folder;
+            FormatVersion = currentVersion;
         }
 
         /// <inheritdoc/>
-        public override void SetError(IResult? result)
+        public override void Report(IResult? result)
         {
             _ = result;
         }
 
         [RelayCommand]
-        private Task MigrateAsync()
+        private async Task OpenMigrationOverlayAsync(CancellationToken cancellationToken)
         {
-            // TODO: Implement migration
-            return Task.CompletedTask;
+            using var migrationOverlay = new MigrationOverlayViewModel(this);
+            await migrationOverlay.InitAsync(cancellationToken);
+            await OverlayService.ShowAsync(migrationOverlay);
+
+            // Notify state changed after successful or unsuccessful migration
+            StateChanged?.Invoke(this, new MigrationCompletedEventArgs());
         }
     }
 }

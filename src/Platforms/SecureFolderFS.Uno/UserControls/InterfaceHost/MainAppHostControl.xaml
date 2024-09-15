@@ -33,7 +33,10 @@
         PaneClosed="Sidebar_PaneClosed"
         PaneTitle="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='false:STANDARD|:true:LOCALIZE|MyVaults'}"
         SelectedItem="{x:Bind ViewModel.VaultListViewModel.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        SelectionChanged="Sidebar_SelectionChanged">
+        SelectionChanged="Sidebar_SelectionChanged"
+        AllowDrop="True"
+        DragOver="Sidebar_DragOver"
+        Drop="Sidebar_Drop">
 
         <Grid>
             <Grid
@@ -138,7 +141,7 @@
                     AutomationProperties.Name="{l:ResourceString Name=Settings}"
                     Background="Transparent"
                     BorderThickness="0"
-                    Command="{x:Bind ViewModel.VaultListViewModel.OpenSettingsCommand, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}"
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
                     <AnimatedIcon>
                         <AnimatedIcon.Source>

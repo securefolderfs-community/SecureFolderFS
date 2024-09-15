@@ -13,6 +13,7 @@
         {
             public const string HEALTH_WIDGET_ID = "health_widget";
             public const string GRAPHS_WIDGET_ID = "graphs_widget";
+            public const string AGGREGATED_DATA_WIDGET_ID = "aggregatedStatistics_widget";
         }
 
         public static class Dialogs

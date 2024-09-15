@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -28,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             ServiceProvider = DI.Default;
             _vaultModel = vaultModel;
-            _loginViewModel = new(_vaultModel, false);
+            _loginViewModel = new(_vaultModel, LoginViewType.Basic);
             _recoveryViewModel = new();
             
             CurrentViewModel = _loginViewModel;

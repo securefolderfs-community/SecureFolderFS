@@ -24,7 +24,7 @@
     </ContentDialog.Resources>
 
     <StackPanel Spacing="8">
-        <TextBlock Text="Enter the Master key for this vault" />
+        <TextBlock Text="{l:ResourceString Name=EnterRecoveryKey}" />
         <TextBox
             AcceptsReturn="True"
             FontFamily="Consolas"

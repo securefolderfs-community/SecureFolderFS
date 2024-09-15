@@ -39,15 +39,15 @@ namespace SecureFolderFS.UI
         public static class Vault
         {
             public const string VAULT_README_FILENAME = "_readme_before_continuing.txt";
-            public const string VAULT_README_MESSAGE = "\n\t\t\t\tIMPORTATNT INFORMATION BEFORE USE" +
+            public const string VAULT_README_MESSAGE = "\n\t\t\t\tIMPORTANT INFORMATION. READ CAREFULLY" +
                                                        "\n" +
                                                        "\nThis is the root folder where necessary configuration data and all files in their encrypted form are stored." +
-                                                       "\nDo not remove or modify any files or folders, nor add any new items, as doing so may corrupt your vault." +
-                                                       "\nAny files manually added to this folder will not be encrypted by SecureFolderFS." +
+                                                       "\nDo not remove or modify any of the configuration information, as doing so may corrupt your vault." +
+                                                       "\nSecureFolderFS will not encrypt any documents manually added to this folder" +
                                                        "\n" +
-                                                       "\nTo ensure that your files are stored securely, first unlock the vault in SecureFolderFS app," +
-                                                       "\nand then click the \"View vault\" button. This will open the folder where you can place your files," +
-                                                       "\nwhich will be automatically encrypted.";
+                                                       "\nTo ensure that your files are stored securely, first unlock the vault in the SecureFolderFS app," +
+                                                       "\nand click the \"View vault\" button. This will open the folder where any files you add" +
+                                                       "\nwill be automatically encrypted.";
         }
     }
 }

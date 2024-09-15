@@ -68,11 +68,9 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
 
         private async void ReadGraph_Click(object sender, RoutedEventArgs e)
         {
-            bool result;
-            if (!ReadGraphIsExtended)
-                result = await GraphExtendAnimationAsync(ReadGraph, WriteGraph, WriteColumn);
-            else
-                result = await GraphRetractAnimationAsync(ReadGraph, WriteGraph, WriteColumn);
+            var result = !ReadGraphIsExtended
+                ? await GraphExtendAnimationAsync(ReadGraph, WriteGraph, WriteColumn)
+                : await GraphRetractAnimationAsync(ReadGraph, WriteGraph, WriteColumn);
 
             ReadGraphIsExtended = result ? !ReadGraphIsExtended : ReadGraphIsExtended;
         }

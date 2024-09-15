@@ -9,6 +9,12 @@ namespace SecureFolderFS.Maui.Views.Modals
             BindingContext = this;
             InitializeComponent();
         }
+        
+        private void SheetPrimaryButton_SizeChanged(object? sender, EventArgs e)
+        {
+            // TODO: Use division by dpi
+            SheetTitle.Margin = new(-(SheetPrimaryButton.Width / 4), 0d, 0d, 0d);
+        }
 
         public View? ModalContent
         {

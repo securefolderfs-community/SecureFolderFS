@@ -45,18 +45,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             // Notify the new target that it's been navigated to
             view.OnAppearing();
-
-            // Start actual navigation
-            var navigationResult = await BeginNavigationAsync(view, NavigationType.Chained);
-            if (!navigationResult)
-                return false;
-
+            
             // Update current target
             CurrentView = view;
 
             // Add new target
             if (!Views.Contains(view))
                 Views.Add(view);
+
+            // Start actual navigation
+            var navigationResult = await BeginNavigationAsync(view, NavigationType.Chained);
+            if (!navigationResult)
+                return false;
 
             // Notify that navigation has occurred
             NavigationChanged?.Invoke(this, view);

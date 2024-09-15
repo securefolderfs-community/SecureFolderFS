@@ -1,12 +1,13 @@
-﻿using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -14,22 +15,19 @@ namespace SecureFolderFS.UI.ServiceImplementation
     public abstract class BaseApplicationService : IApplicationService
     {
         /// <inheritdoc/>
+        public abstract bool IsDesktop { get; }
+
+        /// <inheritdoc/>
         public abstract string Platform { get; }
 
         /// <inheritdoc/>
-        public abstract Version AppVersion { get; }
+        public virtual Version AppVersion
+        {
+            get => Assembly.GetExecutingAssembly().GetName().Version!;
+        }
 
         /// <inheritdoc/>
-        public virtual string GetSystemVersion()
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                var windows = Environment.OSVersion;
-                return $"Windows {windows.Version}";
-            }
-
-            return string.Empty;
-        }
+        public abstract string GetSystemVersion();
 
         /// <inheritdoc/>
         public virtual async IAsyncEnumerable<LicenseViewModel> GetLicensesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)

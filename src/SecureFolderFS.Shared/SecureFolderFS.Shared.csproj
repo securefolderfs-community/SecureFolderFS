@@ -8,4 +8,8 @@
     <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="OwlCore.Storage" Version="0.12.0" />
+  </ItemGroup>
+
 </Project>

@@ -7,15 +7,15 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
     [Bindable(true)]
-    public sealed partial class VaultHealthWidgetViewModel : BaseWidgetViewModel
+    public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel
     {
         [ObservableProperty] private string _LastCheckedText;
         [ObservableProperty] private VaultHealthState _VaultHealthState;
 
-        public VaultHealthWidgetViewModel(IWidgetModel widgetModel)
+        public HealthWidgetViewModel(IWidgetModel widgetModel)
             : base(widgetModel)
         {
             LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");

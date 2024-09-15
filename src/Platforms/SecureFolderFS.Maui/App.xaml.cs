@@ -6,6 +6,8 @@ namespace SecureFolderFS.Maui
 {
     public partial class App : Application
     {
+        public static App Instance => (App)Application.Current!;
+        
         public IServiceProvider? ServiceProvider { get; private set; }
 
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
@@ -16,19 +18,26 @@ namespace SecureFolderFS.Maui
 #else
             null;
 #endif
+        
+        public event EventHandler? AppResumed;
+        public event EventHandler? AppPutToForeground;
 
         public App()
         {
             InitializeComponent();
-            MainPage = new AppShell();
 
             // Configure exception handlers
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
         }
 
-        /// <inheritdoc/>
-        protected override async void OnStart()
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            var appShell = Task.Run(GetAppShellAsync).ConfigureAwait(false).GetAwaiter().GetResult();
+            return new Window(appShell);
+        }
+
+        private async Task<Page> GetAppShellAsync()
         {
             // Initialize application lifecycle
             await ApplicationLifecycle.InitAsync();
@@ -38,7 +47,26 @@ namespace SecureFolderFS.Maui
 
             // Register IoC
             DI.Default.SetServiceProvider(ServiceProvider);
-            base.OnStart();
+            
+            // Create and initialize AppShell
+            var appShell = new AppShell();
+            await appShell.MainViewModel.InitAsync();
+
+            return appShell;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnSleep()
+        {
+            AppPutToForeground?.Invoke(this, EventArgs.Empty);
+            base.OnSleep();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnResume()
+        {
+            AppResumed?.Invoke(this, EventArgs.Empty);
+            base.OnResume();
         }
 
         #region Exception Handlers

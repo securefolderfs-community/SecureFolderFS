@@ -11,6 +11,9 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
     internal sealed class WindowsApplicationService : BaseApplicationService
     {
         /// <inheritdoc/>
+        public override bool IsDesktop { get; } = true;
+        
+        /// <inheritdoc/>
         public override string Platform { get; } = "WinUI";
 
         /// <inheritdoc/>
@@ -21,6 +24,13 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                 var packageVersion = Package.Current.Id.Version;
                 return new Version(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
             }
+        }
+
+        /// <inheritdoc/>
+        public override string GetSystemVersion()
+        {
+            var osInfo = Environment.OSVersion;
+            return $"Windows {osInfo.VersionString}";
         }
 
         /// <inheritdoc/>

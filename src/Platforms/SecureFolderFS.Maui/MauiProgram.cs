@@ -7,6 +7,7 @@ using Material.Components.Maui.Extensions;
 using MauiIcons.Material;
 #elif IOS
 using MauiIcons.Cupertino;
+using SecureFolderFS.Maui.Views;
 #endif
 
 namespace SecureFolderFS.Maui
@@ -33,6 +34,14 @@ namespace SecureFolderFS.Maui
 #elif IOS
                 .UseCupertinoMauiIcons()
 #endif
+                
+                // Handlers
+                .ConfigureMauiHandlers(handlers =>
+                {
+#if IOS
+                    handlers.AddHandler<ContentPageExtended, Handlers.ContentPageExHandler>();
+#endif
+                })
                 ;
 
 #if DEBUG

@@ -1,3 +1,4 @@
+using SecureFolderFS.Maui.AppModels;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
 using SecureFolderFS.Sdk.Extensions;
@@ -9,7 +10,7 @@ using SecureFolderFS.UI.Helpers;
 
 namespace SecureFolderFS.Maui.Views
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPageExtended
     {
         public MainHostViewModel ViewModel { get; } = new(Shell.Current.TryCast<AppShell>()!.MainViewModel.VaultCollectionModel);
 
@@ -19,6 +20,7 @@ namespace SecureFolderFS.Maui.Views
         {
             Instance = this;
             BindingContext = this;
+            _ = ViewModel.InitAsync();
             _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
 
             InitializeComponent();
@@ -42,14 +44,29 @@ namespace SecureFolderFS.Maui.Views
             await ViewModel.NavigationService.NavigateAsync(target);
         }
 
-        private void MainPage_Loaded(object? sender, EventArgs e)
+        private async void MainPage_Loaded(object? sender, EventArgs e)
         {
-            // Need to set Title here because MainPage is instantiated before services are configured
-            Title = "MyVaults".ToLocalized();
-
-            // Also set the current starting view
+            // Set the current starting view
             if (ViewModel.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
+
+#if IOS
+            if (!ExToolbarItems.IsEmpty())
+                return;
+            
+            ExToolbarItems.Add(new ExMenuItem()
+            {
+                Text = "NewVault".ToLocalized(),
+                Command = ViewModel.VaultListViewModel.AddNewVaultCommand,
+                Order = ToolbarItemOrder.Secondary
+            });
+            ExToolbarItems.Add(new ExMenuItem()
+            {
+                Text = "Settings".ToLocalized(),
+                Command = ViewModel.OpenSettingsCommand,
+                Order = ToolbarItemOrder.Secondary
+            });
+#endif
         }
     }
 }

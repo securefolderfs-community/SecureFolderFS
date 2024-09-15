@@ -56,7 +56,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 AuthenticationMethod = config.AuthenticationMethod.Split(Core.Constants.Vault.AuthenticationMethods.SEPARATOR),
                 ContentCipherId = config.ContentCipherId,
                 FileNameCipherId = config.FileNameCipherId,
-                VaultId = config.Uid
+                VaultId = config.Uid,
+                Version = config.Version
             };
         }
 

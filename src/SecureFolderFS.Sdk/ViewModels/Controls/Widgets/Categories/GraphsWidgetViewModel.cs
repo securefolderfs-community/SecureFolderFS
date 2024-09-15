@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
     [Bindable(true)]
     public sealed class GraphsWidgetViewModel : BaseWidgetViewModel
@@ -34,8 +34,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             _readWriteStatistics = readWriteStatistics;
 
             _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Graphs.GRAPH_UPDATE_INTERVAL_MS));
-            _readRates = new() { 0 };
-            _writeRates = new() { 0 };
+            _readRates = [ 0 ];
+            _writeRates = [ 0 ];
         }
 
         /// <inheritdoc/>
@@ -44,8 +44,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
             await ReadGraphViewModel.InitAsync(cancellationToken);
             await WriteGraphViewModel.InitAsync(cancellationToken);
 
-            InitializeCallbacks();
-
+            _readWriteStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
+            _readWriteStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
+            
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
         }
@@ -60,13 +61,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets
                 CalculateStatistics();
             }
         }
-
-        private void InitializeCallbacks()
-        {
-            _readWriteStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
-            _readWriteStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
-        }
-
+        
         private void CalculateStatistics()
         {
             var read = Convert.ToInt64(ByteSize.FromBytes(_currentReadAmount).MegaBytes);

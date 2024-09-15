@@ -1,20 +1,30 @@
+using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Maui.Storage;
 using Foundation;
+using Intents;
 using OwlCore.Storage;
 using SecureFolderFS.Maui.Platforms.iOS.Storage;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.ComponentModel;
 using UIKit;
 using UniformTypeIdentifiers;
 
 namespace SecureFolderFS.Maui.Platforms.iOS.ServiceImplementation
 {
     /// <inheritdoc cref="IFileExplorerService"/>
+    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility")]
     internal sealed class IOSFileExplorerService : IFileExplorerService
     {
         /// <inheritdoc/>
         public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-            // TODO: Try to implement opening in android file explorer
+            if (folder is not IWrapper<NSUrl> wrapper)
+                return Task.CompletedTask;
+            
+            // Open the folder in the Files app
+            var documentPicker = new UIDocumentPickerViewController(wrapper.Inner, UIDocumentPickerMode.Open);
+            UIApplication.SharedApplication.KeyWindow?.RootViewController?.PresentViewController(documentPicker, true, null);
+            
             return Task.CompletedTask;
         }
 

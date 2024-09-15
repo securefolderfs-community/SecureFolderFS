@@ -2,16 +2,133 @@
     x:Class="SecureFolderFS.Maui.Views.Vault.OverviewPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:OverviewPage">
 
-    <VerticalStackLayout
-        HorizontalOptions="Center"
-        Spacing="32"
-        VerticalOptions="Center">
+    <ContentPage.Resources>
+        <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:HealthWidgetViewModel">
+            <!--  Health Widget  -->
+            <HorizontalStackLayout Spacing="4">
+                <Image
+                    Margin="-4,0,0,0"
+                    HeightRequest="48"
+                    Source="green_shield.png" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="{l:ResourceString Name=HealthNoProblems}"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </DataTemplate>
 
-        <Label Text="This is overview page" />
-        <Button Command="{Binding ViewModel.VaultControlsViewModel.LockVaultCommand}" Text="dispose" />
+        <!--  Data statistics widget  -->
+        <DataTemplate x:Key="AggregatedDataWidgetTemplate" x:DataType="vm:AggregatedDataWidgetViewModel">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Opacity="0.6" Text="{l:ResourceString Name=TotalRead}" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        Text="0Mb" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Opacity="0.6" Text="{l:ResourceString Name=TotalWrite}" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        Text="0Mb" />
+                </VerticalStackLayout>
+            </Grid>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout>
+        <!--  Top widgets  -->
+        <CollectionView Margin="20,16" ItemsSource="{Binding OverviewViewModel.WidgetsViewModel.Widgets, Mode=OneWay}">
+            <CollectionView.ItemTemplate>
+                <ts:WidgetsTemplateSelector AggregatedDataWidgetTemplate="{StaticResource AggregatedDataWidgetTemplate}" HealthWidgetTemplate="{StaticResource HealthWidgetTemplate}" />
+            </CollectionView.ItemTemplate>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="16" Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+        </CollectionView>
+
+        <!--  Top buttons  -->
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <Grid Padding="20,16" ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <mdc:Button
+                        Grid.Column="0"
+                        HeightRequest="48"
+                        Style="{DynamicResource FilledTonalButtonStyle}"
+                        Text="{l:ResourceString Name=ViewInFiles}"
+                        WidthRequest="180" />
+                    <mdc:Button
+                        Grid.Column="1"
+                        HeightRequest="48"
+                        Style="{DynamicResource FilledTonalButtonStyle}"
+                        Text="{l:ResourceString Name=LockVault}"
+                        WidthRequest="180" />
+                </Grid>
+            </On>
+        </OnPlatform>
+
+        <!--  Options list  -->
+        <TableView>
+            <TableRoot>
+                <OnPlatform x:TypeArguments="TableSection">
+                    <On Platform="iOS">
+                        <TableSection Title="{l:ResourceString Name=QuickActions}">
+                            <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" Text="{l:ResourceString Name=ViewInFiles}" />
+                            <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" Text="{l:ResourceString Name=LockVault}" />
+                        </TableSection>
+                    </On>
+                    <On Platform="Android">
+                        <TableSection />
+                    </On>
+                </OnPlatform>
+                <TableSection Title="{l:ResourceString Name=VaultProperties}">
+                    <uc:SplitCell
+                        IsEnabled="False"
+                        LeftText="{l:ResourceString Name=Security}"
+                        RightText="{Binding PropertiesViewModel.SecurityText, Mode=OneWay}" />
+                    <uc:SplitCell
+                        IsEnabled="False"
+                        LeftText="{l:ResourceString Name=DataEncryption}"
+                        RightText="{Binding PropertiesViewModel.ContentCipherText, Mode=OneWay}" />
+                    <uc:SplitCell
+                        IsEnabled="False"
+                        LeftText="{l:ResourceString Name=FileNameEncryption}"
+                        RightText="{Binding PropertiesViewModel.FileNameCipherText, Mode=OneWay}" />
+                </TableSection>
+                <TableSection Title="{l:ResourceString Name=Authentication}">
+                    <TextCell
+                        Command="{Binding PropertiesViewModel.ChangeFirstAuthenticationCommand}"
+                        Detail="{l:ResourceString Name=ChangeCredentialsDescription}"
+                        Text="{l:ResourceString Name=ChangeCredentials}" />
+                    <TextCell
+                        Command="{Binding PropertiesViewModel.ChangeSecondAuthenticationCommand}"
+                        Detail="{l:ResourceString Name=TwoFactorDescription}"
+                        Text="{l:ResourceString Name=TwoFactor}" />
+                    <TextCell Command="{Binding PropertiesViewModel.ViewRecoveryCommand}" Text="{l:ResourceString Name=RecoveryCodes}" />
+                </TableSection>
+            </TableRoot>
+        </TableView>
     </VerticalStackLayout>
 </ContentPage>

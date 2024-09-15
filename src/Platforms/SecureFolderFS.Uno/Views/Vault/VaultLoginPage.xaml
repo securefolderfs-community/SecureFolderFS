@@ -6,8 +6,13 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
+    </Page.Resources>
 
     <ScrollViewer>
         <Grid Padding="32" HorizontalAlignment="Stretch">
@@ -45,10 +50,12 @@
                 <StackPanel Spacing="8">
                     <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
                     <HyperlinkButton
+                        x:Name="LoginOptions"
                         Padding="4,2"
                         HorizontalAlignment="Center"
+                        x:Load="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
                         Click="LoginOptions_Click"
-                        Content="Login options">
+                        Content="{l:ResourceString Name=LoginOptions}">
                         <FlyoutBase.AttachedFlyout>
                             <Flyout>
                                 <StackPanel Spacing="4">

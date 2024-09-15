@@ -42,8 +42,8 @@
                     <!--  Title  -->
                     <Label
                         HorizontalOptions="Center"
-                        Opacity="0.8"
-                        Text="Setup Key File authentication" />
+                        Opacity="0.6"
+                        Text="{l:ResourceString Name=SetupKeyFile}" />
 
                     <!--  Authenticate  -->
                     <OnPlatform x:TypeArguments="View">
@@ -51,13 +51,13 @@
                             <mdc:Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 HorizontalOptions="Center"
-                                Text="Setup" />
+                                Text="{l:ResourceString Name=Setup}" />
                         </On>
                         <On Platform="iOS">
                             <Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 HorizontalOptions="Center"
-                                Text="Setup" />
+                                Text="{l:ResourceString Name=Setup}" />
                         </On>
                     </OnPlatform>
                 </VerticalStackLayout>

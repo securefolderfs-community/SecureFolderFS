@@ -5,7 +5,9 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
+using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 
 #if IOS
 using Microsoft.Maui.Controls.PlatformConfiguration;
@@ -38,12 +40,13 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             // Using Shell to display modals is broken - each new page shown after a 'modal' page will be incorrectly displayed as another modal.
             // NavigationPage approach does not have this issue
 #if ANDROID
-            await _sourceNavigation.PushModalAsync(new Microsoft.Maui.Controls.NavigationPage(this)
+            await _sourceNavigation.PushModalAsync(new NavigationPage(this)
             {
                 BackgroundColor = Color.FromArgb("#80000000")
             });
 #elif IOS
-            var navigationPage = new Microsoft.Maui.Controls.NavigationPage(this);
+            var navigationPage = new NavigationPage(this);
+            NavigationPage.SetIconColor(navigationPage, Color.FromArgb("#007bff"));
             navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
             await _sourceNavigation.PushModalAsync(navigationPage);
 #endif
@@ -58,9 +61,24 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             OverlayViewModel = (WizardOverlayViewModel)viewable;
             OverlayViewModel.NavigationRequested += ViewModel_NavigationRequested;
             OverlayViewModel.CurrentViewModel = ViewModel;
+            Shell.Current.Navigated += Shell_Navigated;
 
             OnPropertyChanged(nameof(ViewModel));
             OnPropertyChanged(nameof(OverlayViewModel));
+        }
+
+        private void Shell_Navigated(object? sender, ShellNavigatedEventArgs e)
+        {
+            if (e.Current.Location.OriginalString.Contains("NavigationPage"))
+                return;
+                
+            Shell.Current.Navigated -= Shell_Navigated;
+            if (OverlayViewModel is not null)
+                OverlayViewModel.NavigationRequested -= ViewModel_NavigationRequested;
+            
+            _modalTcs.TrySetResult(OverlayViewModel?.CurrentViewModel is SummaryWizardViewModel
+                ? Result.Success
+                : Result.Failure(null));
         }
 
         /// <inheritdoc/>
@@ -72,7 +90,9 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         /// <inheritdoc/>
         protected override void OnAppearing()
         {
-            OverlayViewModel.CurrentViewModel = ViewModel;
+            if (OverlayViewModel is not null)
+                OverlayViewModel.CurrentViewModel = ViewModel;
+            
             base.OnAppearing();
         }
 
@@ -110,6 +130,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
 
             if (nextViewModel is null)
             {
+                _modalTcs.SetResult(e.Origin is SummaryWizardViewModel ? Result.Success : Result.Failure(null));
                 await HideAsync();
                 return;
             }

@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -24,6 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
+        [ObservableProperty] private bool _HasVaults;
         [ObservableProperty] private VaultListItemViewModel? _SelectedItem;
         [ObservableProperty] private VaultListSearchViewModel _SearchViewModel;
         [ObservableProperty] private ObservableCollection<VaultListItemViewModel> _Items;
@@ -33,6 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             ServiceProvider = DI.Default;
             _vaultCollectionModel = vaultCollectionModel;
             _Items = new();
+            _HasVaults = true; // Assume there are vaults
             _SearchViewModel = new(Items);
 
             _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
@@ -53,6 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 case NotifyCollectionChangedAction.Reset:
                     SelectedItem = null;
                     Items.Clear();
+                    HasVaults = false;
                     break;
 
                 default: return;
@@ -70,33 +76,43 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 SelectedItem = Items.FirstOrDefault(x => x.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
 
             SelectedItem ??= Items.FirstOrDefault();
+            HasVaults = !Items.IsEmpty();
+            
             return Task.CompletedTask;
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]
-        private async Task AddNewVaultAsync(CancellationToken cancellationToken)
+        private async Task AddNewVaultAsync(IFolder? folder, CancellationToken cancellationToken)
         {
+            // Check Plus version
             var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
             if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
             {
                 _ = PaymentDialogViewModel.Instance.InitAsync(cancellationToken);
                 await OverlayService.ShowAsync(PaymentDialogViewModel.Instance);
+                return;
+            }
+
+            if (folder is not null)
+            {
+                // Validate vault. We assume the user is adding an existing vault
+                var result = await ValidationHelpers.ValidateExistingVault(folder, cancellationToken);
+                if (!result.Successful)
+                    return;
+
+                // Try to save the new vault
+                _vaultCollectionModel.Add(new VaultModel(folder));
+                await _vaultCollectionModel.TrySaveAsync(cancellationToken);
             }
             else
                 await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
-        }
-
-        [RelayCommand(AllowConcurrentExecutions = true)]
-        private async Task OpenSettingsAsync(CancellationToken cancellationToken)
-        {
-            await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
-            await SettingsService.TrySaveAsync(cancellationToken);
         }
 
         private void AddVault(IVaultModel vaultModel)
         {
             var listItem = new VaultListItemViewModel(vaultModel, _vaultCollectionModel);
             Items.Add(listItem);
+            HasVaults = true;
         }
 
         private void RemoveVault(IVaultModel vaultModel)
@@ -111,10 +127,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             }
             catch (NullReferenceException)
             {
-                // TODO: This happens rarely but the vault is actually removed
+                // This happens rarely but the vault is actually removed
             }
 
             SelectedItem = Items.FirstOrDefault();
+            HasVaults = !Items.IsEmpty();
         }
 
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)

@@ -31,7 +31,7 @@ namespace SecureFolderFS.Uno.ViewModels
 
             if (auth?.Challenge is null)
             {
-                SetError(Result.Failure(new ArgumentNullException(nameof(auth))));
+                Report(Result.Failure(new ArgumentNullException(nameof(auth))));
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Uno.ViewModels
                 var result = await KeyCredentialManager.OpenAsync(config.Uid).AsTask(cancellationToken);
                 if (result.Status != KeyCredentialStatus.Success)
                 {
-                    SetError(Result.Failure(new InvalidOperationException("Failed to open the credential.")));
+                    Report(Result.Failure(new InvalidOperationException("Failed to open the credential.")));
                     return;
                 }
 
@@ -57,12 +57,14 @@ namespace SecureFolderFS.Uno.ViewModels
 
                 // Report that credentials were provided and new provision needs to be applied
                 CredentialsProvided?.Invoke(this, new CredentialsProvidedEventArgs(key));
+
+                // TODO: Provision is currently disabled since it opens the Windows Hello dialog for the second time
                 //StateChanged?.Invoke(this, new CredentialsProvisionChangedEventArgs(newChallenge.CreateCopy(), newSignedChallenge.CreateCopy()));
             }
-            catch (InvalidOperationException iopex)
+            catch (InvalidOperationException ex)
             {
                 // Thrown when authentication is canceled
-                SetError(Result.Failure(iopex));
+                Report(Result.Failure(ex));
             }
         }
     }

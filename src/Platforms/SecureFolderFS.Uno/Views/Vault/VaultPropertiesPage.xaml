@@ -25,7 +25,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="4">
-                        <TextBlock Text="Security" />
+                        <TextBlock Text="{l:ResourceString Name=Security}" />
                         <TextBlock Text="{l:ResourceString Name=DataEncryption}" />
                         <TextBlock Text="{l:ResourceString Name=FileNameEncryption}" />
                     </StackPanel>
@@ -48,30 +48,30 @@
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl
-            Title="Change credentials"
+            Title="{l:ResourceString Name=ChangeCredentials}"
             BlockMode="Clickable"
             ClickCommand="{x:Bind ViewModel.ChangeFirstAuthenticationCommand, Mode=OneWay}"
-            Description="Change how you log in into this vault">
+            Description="{l:ResourceString Name=ChangeCredentialsDescription}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE8D7;" />
             </ucab:ActionBlockControl.Icon>
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl
-            Title="Two-factor authentication"
+            Title="{l:ResourceString Name=TwoFactor}"
             BlockMode="Clickable"
             ClickCommand="{x:Bind ViewModel.ChangeSecondAuthenticationCommand, Mode=OneWay}"
-            Description="Setup or change two-factor authentication">
+            Description="{l:ResourceString Name=TwoFactorDescription}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xEC19;" />
             </ucab:ActionBlockControl.Icon>
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl
-            Title="View recovery codes"
+            Title="{l:ResourceString Name=RecoveryCodes}"
             BlockMode="Clickable"
             ClickCommand="{x:Bind ViewModel.ViewRecoveryCommand, Mode=OneWay}"
-            Description="Access recovery codes for this vault in case you forget your credentials">
+            Description="{l:ResourceString Name=RecoveryCodesDescription}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE777;" />
             </ucab:ActionBlockControl.Icon>

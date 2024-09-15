@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         public abstract event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
         /// <inheritdoc/>
-        public override void SetError(IResult? result)
+        public override void Report(IResult? result)
         {
             _ = result;
         }

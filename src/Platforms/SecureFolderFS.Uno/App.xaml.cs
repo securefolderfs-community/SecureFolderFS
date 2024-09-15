@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
@@ -27,6 +28,8 @@ namespace SecureFolderFS.Uno
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
             new Platforms.Windows.Helpers.WindowsLifecycleHelper();
+#elif MACCATALYST
+            new Platforms.MacCatalyst.Helpers.MacOsLifecycleHelper();
 #elif HAS_UNO_SKIA
             new Platforms.SkiaGtk.Helpers.SkiaLifecycleHelper();
 #else
@@ -135,6 +138,15 @@ namespace SecureFolderFS.Uno
 #if WINDOWS
         private static async void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
         {
+            try
+            {
+                FileSystemManager.Instance.FileSystems.DisposeElements();
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+            }
+
             var settingsService = DI.Service<ISettingsService>();
             await settingsService.TrySaveAsync();
         }

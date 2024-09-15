@@ -5,6 +5,9 @@
       net8.0-windows10.0.19041;
       net8.0-desktop;
     </TargetFrameworks>
+
+    <!-- Uncomment if you want to explicity set a TargetFramework -->
+    <!--<TargetFramework>net8.0-maccatalyst</TargetFramework>-->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -17,9 +20,9 @@
 
     <!-- Application Properties -->
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
-    <AssemblyVersion>0.5.0.0</AssemblyVersion>
+    <AssemblyVersion>0.6.0.0</AssemblyVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-    <ApplicationVersion>1</ApplicationVersion>    
+    <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>com.securefolderfs.SecureFolderFS</ApplicationId>
 
   </PropertyGroup>
@@ -73,6 +76,16 @@
       <ItemGroup>
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
       </ItemGroup>
+
+      <ItemGroup>
+        <ProjectReference Include="..\..\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
+        <ProjectReference Include="..\..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
+      </ItemGroup>
+
+      <PropertyGroup>
+        <_RequiresILLinkPack>true</_RequiresILLinkPack>
+        <_ComputeManagedAssemblyToLink>true</_ComputeManagedAssemblyToLink>
+      </PropertyGroup>
     </When>
 
     <!-- Windows -->
@@ -200,6 +213,7 @@
     <None Remove="Dialogs\CredentialsDialog.xaml" />
     <None Remove="Dialogs\ExplanationDialog.xaml" />
     <None Remove="Dialogs\LicensesDialog.xaml" />
+    <None Remove="Dialogs\MigrationDialog.xaml" />
     <None Remove="Dialogs\PaymentDialog.xaml" />
     <None Remove="Dialogs\PreviewRecoveryDialog.xaml" />
     <None Remove="Dialogs\RecoveryDialog.xaml" />
@@ -223,6 +237,7 @@
     <None Remove="UserControls\Introduction\IntroductionControl.xaml" />
     <None Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <None Remove="UserControls\LoginControl.xaml" />
+    <None Remove="UserControls\Migration\MigratorV1_V2.xaml" />
     <None Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
     <None Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <None Remove="UserControls\OverlayControl.xaml" />
@@ -262,6 +277,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialogs\LicensesDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialogs\MigrationDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
@@ -422,6 +441,7 @@
     <UpToDateCheckInput Remove="Dialogs\CredentialsDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\ExplanationDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\LicensesDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\MigrationDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\PaymentDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\PreviewRecoveryDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\RecoveryDialog.xaml" />
@@ -470,5 +490,9 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="ResourceDictionaries\TextResources.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="UserControls\Migration\MigratorV1_V2.xaml" />
   </ItemGroup>
 </Project>

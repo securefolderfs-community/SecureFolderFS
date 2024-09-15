@@ -1,3 +1,5 @@
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Maui.UserControls
@@ -33,5 +35,26 @@ namespace SecureFolderFS.Maui.UserControls
         }
         public static readonly BindableProperty UnsecurePasswordProperty =
             BindableProperty.Create(nameof(UnsecurePassword), typeof(string), typeof(PasswordControl), defaultValue: null, defaultBindingMode: BindingMode.TwoWay);
+        
+        public bool ShowInvalidPasswordMessage
+        {
+            get => (bool)GetValue(ShowInvalidPasswordMessageProperty);
+            set => SetValue(ShowInvalidPasswordMessageProperty, value);
+        }
+        public static readonly BindableProperty ShowInvalidPasswordMessageProperty =
+            BindableProperty.Create(nameof(ShowInvalidPasswordMessage), typeof(bool), typeof(PasswordControl), defaultValue: false, defaultBindingMode: BindingMode.TwoWay,
+                propertyChanged: async (bindable, value, newValue) =>
+                {
+                    if (newValue is not (bool and true))
+                        return;
+                    
+                    if (bindable is not PasswordControl passwordControl)
+                        return;
+
+                    var toast = Toast.Make("InvalidPassword".ToLocalized(), ToastDuration.Short);
+                    await toast.Show();
+
+                    passwordControl.ShowInvalidPasswordMessage = false;
+                });
     }
 }

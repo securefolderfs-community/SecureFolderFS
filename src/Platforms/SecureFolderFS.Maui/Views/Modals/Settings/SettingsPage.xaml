@@ -1,0 +1,50 @@
+﻿<md:BaseModalPage
+    x:Class="SecureFolderFS.Maui.Views.Modals.Settings.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Settings"
+    xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    x:Name="ThisPage"
+    Title="{l:ResourceString Name=Settings}"
+    x:DataType="local:SettingsPage">
+
+    <VerticalStackLayout>
+        <TableView>
+            <TableRoot>
+                <TableSection Title="{l:ResourceString Name=SettingsGeneral}">
+                    <uc:SplitCell LeftText="{l:ResourceString Name=Language}">
+                        <uc:SplitCell.RightSide>
+                            <Border>
+                                <Border.Stroke>
+                                    <SolidColorBrush Color="Transparent" />
+                                </Border.Stroke>
+
+                                <Picker
+                                    BindingContext="{x:Reference ThisPage}"
+                                    ItemDisplayBinding="{Binding DisplayName, Mode=OneWay}"
+                                    ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
+                                    SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}"
+                                    WidthRequest="96" />
+                            </Border>
+                        </uc:SplitCell.RightSide>
+                    </uc:SplitCell>
+                    <SwitchCell On="{Binding PrivacyViewModel.AutoLockVaults, Mode=TwoWay}" Text="{l:ResourceString Name=AutoLock}" />
+                    <SwitchCell On="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" Text="{l:ResourceString Name=Telemetry}" />
+                </TableSection>
+
+                <TableSection Title="{l:ResourceString Name=SettingsAbout}">
+                    <uc:SplitCell
+                        Command="{Binding AboutViewModel.CopyAppVersionCommand}"
+                        LeftText="{l:ResourceString Name=Version}"
+                        RightText="{Binding AboutViewModel.AppVersion, Mode=OneWay}" />
+                    <uc:SplitCell
+                        Command="{Binding AboutViewModel.CopySystemVersionCommand}"
+                        LeftText="{l:ResourceString Name=SystemVersion}"
+                        RightText="{Binding AboutViewModel.SystemVersion, Mode=OneWay}" />
+                </TableSection>
+            </TableRoot>
+        </TableView>
+    </VerticalStackLayout>
+</md:BaseModalPage>

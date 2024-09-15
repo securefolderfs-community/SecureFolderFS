@@ -16,6 +16,9 @@ namespace SecureFolderFS.Uno.UserControls
 {
     public sealed partial class PasswordControl : UserControl, IEquatable<PasswordControl>
     {
+        public event RoutedEventHandler? PasswordChanged;
+        public event RoutedEventHandler? PasswordSubmitted;
+
         public PasswordControl()
         {
             InitializeComponent();
@@ -38,15 +41,16 @@ namespace SecureFolderFS.Uno.UserControls
         private void PasswordInput_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter)
+            {
                 PasswordSubmittedCommand?.Execute(GetPassword());
+                PasswordSubmitted?.Invoke(this, new RoutedEventArgs());
+            }
         }
 
         private void PasswordInput_PasswordChanged(object sender, RoutedEventArgs e)
         {
             PasswordChanged?.Invoke(sender, e);
         }
-
-        public event RoutedEventHandler? PasswordChanged;
 
         public ICommand? PasswordSubmittedCommand
         {

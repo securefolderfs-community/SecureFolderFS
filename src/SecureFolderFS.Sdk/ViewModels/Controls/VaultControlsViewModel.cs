@@ -23,11 +23,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private VaultPropertiesViewModel? _propertiesViewModel;
 
-        public VaultControlsViewModel(INavigator vaultNavigator, INavigator dashboardNavigator, UnlockedVaultViewModel unlockedVaultViewModel)
+        public VaultControlsViewModel(INavigator vaultNavigator, INavigator dashboardNavigator, UnlockedVaultViewModel unlockedVaultViewModel, VaultPropertiesViewModel? propertiesViewModel = null)
         {
             _vaultNavigator = vaultNavigator;
             _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
+            _propertiesViewModel = propertiesViewModel;
             ServiceProvider = DI.Default;
         }
 

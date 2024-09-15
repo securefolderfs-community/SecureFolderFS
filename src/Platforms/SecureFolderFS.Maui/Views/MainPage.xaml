@@ -1,7 +1,9 @@
-﻿<ContentPage
+﻿<local:ContentPageExtended
     x:Class="SecureFolderFS.Maui.Views.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views"
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mdci="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
@@ -10,19 +12,22 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.VaultList;assembly=SecureFolderFS.Sdk"
-    Title="My vaults"
+    Title="{l:ResourceString Name=MyVaults}"
+    ios:Page.LargeTitleDisplay="Always"
     x:DataType="local:MainPage"
     Loaded="MainPage_Loaded">
 
     <ContentPage.Resources>
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     </ContentPage.Resources>
 
     <Grid>
         <ListView
             ItemTapped="ListView_ItemTapped"
             ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
+            RowHeight="64"
             SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:VaultListItemViewModel">
@@ -31,38 +36,47 @@
                             <MenuFlyoutItem Command="{Binding RemoveVaultCommand}" Text="Remove" />
                         </ViewCell.ContextActions>
 
-                        <Grid Padding="8,2">
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid
-                                Grid.Row="0"
-                                Grid.RowSpan="2"
-                                Grid.Column="0">
+                        <HorizontalStackLayout
+                            Padding="8,2"
+                            Spacing="8"
+                            VerticalOptions="Center">
+                            <Grid VerticalOptions="Center">
                                 <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
                                 <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
                             </Grid>
 
-                            <Label
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Text="{Binding VaultModel.VaultName, Mode=OneWay}" />
-                            <Label
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                IsVisible="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                                Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
-                        </Grid>
+                            <VerticalStackLayout VerticalOptions="Center">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="16"
+                                    Text="{Binding VaultModel.VaultName, Mode=OneWay}"
+                                    VerticalOptions="Center" />
+                                <Label IsVisible="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <VerticalStackLayout
+            Margin="0,0,0,64"
+            Padding="12,0"
+            IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+            Spacing="16"
+            VerticalOptions="Center">
+            <Image Source="app_icon.png" WidthRequest="64" />
+            <Label
+                FontAttributes="Bold"
+                FontSize="24"
+                HorizontalOptions="Center"
+                Text="{l:ResourceString Name=Welcome}" />
+            <Label
+                FontSize="16"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="{l:ResourceString Name=NoVaultsMessage}" />
+        </VerticalStackLayout>
 
         <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
@@ -73,13 +87,6 @@
                     IconData="{x:Static mdci:Material.Add}"
                     VerticalOptions="End" />
             </On>
-            <On Platform="iOS">
-                <Button
-                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
-                    HorizontalOptions="Center"
-                    Text="Add"
-                    VerticalOptions="End" />
-            </On>
         </OnPlatform>
     </Grid>
-</ContentPage>
+</local:ContentPageExtended>

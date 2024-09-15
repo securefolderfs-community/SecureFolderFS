@@ -47,6 +47,9 @@ namespace SecureFolderFS.Shared
         public T? GetOptionalService<T>()
             where T : class
         {
+            if (_serviceProvider is null)
+                return default;
+            
             return (T?)GetService(typeof(T));
         }
 
@@ -69,7 +72,7 @@ namespace SecureFolderFS.Shared
         public static T? OptionalService<T>()
             where T : class
         {
-            return Default.GetService<T>();
+            return Default.GetOptionalService<T>();
         }
 
         /// <summary>

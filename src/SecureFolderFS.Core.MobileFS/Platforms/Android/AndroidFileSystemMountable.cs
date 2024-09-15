@@ -23,7 +23,6 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
         /// <inheritdoc/>
         public static FileSystemAvailabilityType IsSupported()
         {
-            // TODO: Check if available
             return FileSystemAvailabilityType.Available;
         }
 

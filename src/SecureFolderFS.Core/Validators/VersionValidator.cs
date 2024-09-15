@@ -36,7 +36,12 @@ namespace SecureFolderFS.Core.Validators
             _ = versionDataModel.Version switch
             {
                 // (V1 or Vn) except LATEST_VERSION are not supported
-                (V1 or V1) and not LATEST_VERSION => throw new NotSupportedException($"Vault version {versionDataModel.Version} is not supported."),
+                (V1 or V1) and not LATEST_VERSION =>
+                    throw new NotSupportedException($"Vault version {versionDataModel.Version} is not supported.") { Data = { { "Version", versionDataModel.Version } } },
+
+                // More cases...
+
+                // Default
                 _ => 0
             };
         }

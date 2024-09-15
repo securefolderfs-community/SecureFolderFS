@@ -17,12 +17,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
     public sealed partial class AboutSettingsViewModel : BaseSettingsViewModel
     {
         [ObservableProperty] private string _AppVersion;
+        [ObservableProperty] private string _SystemVersion;
 
         public AboutSettingsViewModel()
         {
             ServiceProvider = DI.Default;
             Title = "SettingsAbout".ToLocalized();
             AppVersion = $"{ApplicationService.AppVersion} ({ApplicationService.Platform})";
+            SystemVersion = ApplicationService.GetSystemVersion();
         }
 
         /// <inheritdoc/>
@@ -60,7 +62,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
         private async Task CopySystemVersionAsync(CancellationToken cancellationToken)
         {
             if (await ClipboardService.IsSupportedAsync())
-                await ClipboardService.SetTextAsync(ApplicationService.GetSystemVersion(), cancellationToken);
+                await ClipboardService.SetTextAsync(SystemVersion, cancellationToken);
         }
 
         [RelayCommand]

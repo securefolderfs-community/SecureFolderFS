@@ -3,6 +3,7 @@
     public static class Constants
     {
         public const string ANDROID_FILE_SYSTEM_NAME = "Android SAF";
+        public const string IOS_FILE_SYSTEM_NAME = "iOS File Provider Extension";
 
         internal static class AndroidSaf
         {

@@ -1,5 +1,4 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.Models;
 using System;
 
 namespace SecureFolderFS.Sdk.EventArguments
@@ -7,7 +6,7 @@ namespace SecureFolderFS.Sdk.EventArguments
     /// <summary>
     /// Event arguments for vault unlocked events.
     /// </summary>
-    public sealed class VaultUnlockedEventArgs(IDisposable unlockContract, IVaultModel vaultModel) : EventArgs
+    public sealed class VaultUnlockedEventArgs(IDisposable unlockContract, IFolder vaultFolder) : EventArgs
     {
         /// <summary>
         /// Gets the <see cref="IDisposable"/> that represents the contract of the unlocked vault.
@@ -15,8 +14,8 @@ namespace SecureFolderFS.Sdk.EventArguments
         public IDisposable UnlockContract { get; } = unlockContract;
 
         /// <summary>
-        /// Gets the <see cref="IVaultModel"/> of the unlocked vault.
+        /// Gets the <see cref="IFolder"/> of the unlocked vault.
         /// </summary>
-        public IVaultModel VaultModel { get; } = vaultModel;
+        public IFolder VaultFolder { get; } = vaultFolder;
     }
 }

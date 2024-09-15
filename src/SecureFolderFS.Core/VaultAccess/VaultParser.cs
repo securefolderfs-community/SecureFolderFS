@@ -10,7 +10,7 @@ using System.Text;
 
 namespace SecureFolderFS.Core.VaultAccess
 {
-    internal static class VaultParser
+    public static class VaultParser
     {
         /// <summary>
         /// Computes a unique HMAC thumbprint of <paramref name="configDataModel"/> properties.

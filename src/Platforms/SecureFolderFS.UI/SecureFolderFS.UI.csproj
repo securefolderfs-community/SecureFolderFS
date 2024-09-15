@@ -153,6 +153,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\SecureFolderFS.Core.Migration\SecureFolderFS.Core.Migration.csproj" />
       <ProjectReference Include="..\..\SecureFolderFS.Core\SecureFolderFS.Core.csproj" />
       <ProjectReference Include="..\..\SecureFolderFS.Sdk\SecureFolderFS.Sdk.csproj" />
     </ItemGroup>

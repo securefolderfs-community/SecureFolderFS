@@ -27,6 +27,8 @@ namespace SecureFolderFS.Core
                 public const string AUTH_APPLE_FACEID = "AppleFaceID";
                 public const string AUTH_APPLE_TOUCHID = "AppleTouchID";
                 public const string AUTH_ANDROID_BIOMETRIC = "AndroidBiometric";
+
+                public const string AUTH_DEVICE_PING = "DevicePing";
             }
 
             [Obsolete]

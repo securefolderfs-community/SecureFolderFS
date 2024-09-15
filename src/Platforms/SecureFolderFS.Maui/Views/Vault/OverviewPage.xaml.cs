@@ -1,5 +1,7 @@
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Maui.Views.Vault
 {
@@ -13,16 +15,40 @@ namespace SecureFolderFS.Maui.Views.Vault
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            ViewModel = query.ToViewModel<VaultOverviewViewModel>()!;
+            ViewModel = query.ToViewModel<VaultDashboardViewModel>();
+            if (ViewModel is not null)
+            {
+                OverviewViewModel = ViewModel.DashboardNavigationService.Views.FirstOrDefaultType<IViewDesignation, VaultOverviewViewModel>();
+                PropertiesViewModel = ViewModel.DashboardNavigationService.Views.FirstOrDefaultType<IViewDesignation, VaultPropertiesViewModel>();
+            }
+            
             OnPropertyChanged(nameof(ViewModel));
+            OnPropertyChanged(nameof(OverviewViewModel));
+            OnPropertyChanged(nameof(PropertiesViewModel));
         }
 
-        public VaultOverviewViewModel ViewModel
+        public VaultDashboardViewModel? ViewModel
         {
-            get => (VaultOverviewViewModel)GetValue(ViewModelProperty);
+            get => (VaultDashboardViewModel?)GetValue(ViewModelProperty);
             set => SetValue(ViewModelProperty, value);
         }
         public static readonly BindableProperty ViewModelProperty =
-            BindableProperty.Create(nameof(ViewModel), typeof(VaultOverviewViewModel), typeof(OverviewPage), null);
+            BindableProperty.Create(nameof(ViewModel), typeof(VaultDashboardViewModel), typeof(OverviewPage), null);
+
+        public VaultOverviewViewModel? OverviewViewModel
+        {
+            get => (VaultOverviewViewModel?)GetValue(OverviewViewModelProperty);
+            set => SetValue(OverviewViewModelProperty, value);
+        }
+        public static readonly BindableProperty OverviewViewModelProperty =
+            BindableProperty.Create(nameof(OverviewViewModel), typeof(VaultOverviewViewModel), typeof(OverviewPage), null);
+        
+        public VaultPropertiesViewModel? PropertiesViewModel
+        {
+            get => (VaultPropertiesViewModel?)GetValue(PropertiesViewModelProperty);
+            set => SetValue(PropertiesViewModelProperty, value);
+        }
+        public static readonly BindableProperty PropertiesViewModelProperty =
+            BindableProperty.Create(nameof(PropertiesViewModel), typeof(VaultPropertiesViewModel), typeof(OverviewPage), null);
     }
 }
