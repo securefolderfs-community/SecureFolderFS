@@ -9,8 +9,8 @@ using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,8 +35,8 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
         /// <inheritdoc/>
         public async Task<IDisposable> UnlockAsync<T>(T credentials, CancellationToken cancellationToken = default)
         {
-            if (credentials is not string strPassword)
-                throw new ArgumentException($"Argument {credentials} is not of type {typeof(string)}.");
+            if (credentials is not IPassword password)
+                throw new ArgumentException($"Argument {credentials} is not of type {typeof(IPassword)}.");
 
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
@@ -49,13 +49,12 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             if (_v1KeystoreDataModel is null)
                 throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
 
-            var passwordAsKey = Encoding.UTF8.GetBytes(strPassword);
+            
             var kek = new byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
-
             using var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
             using var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
 
-            Argon2id.DeriveKey(passwordAsKey, _v1KeystoreDataModel.Salt, kek);
+            Argon2id.DeriveKey(password.ToArray(), _v1KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
             Rfc3394KeyWrap.UnwrapKey(_v1KeystoreDataModel.WrappedEncKey, kek, encKey.Key);
@@ -73,6 +72,9 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
 
             if (unlockContract is not EncAndMacKey encAndMacKey)
                 throw new ArgumentException($"{nameof(unlockContract)} is not of correct type.");
+
+            // Begin progress report
+            progress.PrecisionProgress?.Report(0d);
 
             var vaultId = Guid.NewGuid().ToString();
             var v2ConfigDataModel = new VaultConfigurationDataModel()
@@ -96,6 +98,9 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
 
             await using var serializedStream = await _streamSerializer.SerializeAsync(v2ConfigDataModel, cancellationToken);
             await serializedStream.CopyToAsync(configStream, cancellationToken);
+
+            // End progress report
+            progress.PrecisionProgress?.Report(100d);
         }
 
         private async Task CreateConfigBackup(Stream configStream, CancellationToken cancellationToken)

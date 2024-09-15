@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -11,6 +10,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
@@ -47,15 +47,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         }
 
         /// <inheritdoc/>
-        public override void SetError(IResult? result)
+        public override void Report(IResult? result)
         {
             _ = result;
         }
 
         [RelayCommand]
-        private async Task OpenMigrationOverlayAsync()
+        private async Task OpenMigrationOverlayAsync(CancellationToken cancellationToken)
         {
-            await OverlayService.ShowAsync(new MigrationOverlayViewModel(this));
+            using var migrationOverlay = new MigrationOverlayViewModel(this);
+            await migrationOverlay.InitAsync(cancellationToken);
+            await OverlayService.ShowAsync(migrationOverlay);
+
+            // Notify state changed after successful or unsuccessful migration
             StateChanged?.Invoke(this, new MigrationCompletedEventArgs());
         }
     }

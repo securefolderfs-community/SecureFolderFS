@@ -149,9 +149,20 @@
                     IsClosable="False"
                     IsOpen="True"
                     Message="{l:ResourceString Name=VaultLoadError}"
-                    Severity="Warning" />
+                    Severity="Error" />
 
-                <Expander Width="600">
+                <TextBlock
+                    x:Name="ErrorTitle"
+                    HorizontalAlignment="Center"
+                    x:Load="{x:Bind ErrorTitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    Text="{x:Bind ErrorTitle, Mode=OneWay}" />
+
+                <Expander
+                    x:Name="ErrorDetails"
+                    Width="600"
+                    x:Load="{x:Bind ErrorMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
                     <Expander.Header>
                         <TextBlock Text="{l:ResourceString Name=ErrorDetails}" />
                     </Expander.Header>

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
@@ -21,7 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public CredentialsOverlayViewModel(IVaultModel vaultModel, CredentialsSelectionViewModel selectionViewModel)
         {
-            LoginViewModel = new(vaultModel, false);
+            LoginViewModel = new(vaultModel, LoginViewType.Basic);
             SelectionViewModel = selectionViewModel;
 
             SelectedViewModel = LoginViewModel;

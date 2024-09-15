@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
@@ -37,7 +38,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             ServiceProvider = DI.Default;
             Title = vaultModel.VaultName;
             VaultNavigator = vaultNavigator;
-            _LoginViewModel = new(vaultModel, true);
+            _LoginViewModel = new(vaultModel, LoginViewType.Full);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
 

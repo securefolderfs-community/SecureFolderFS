@@ -44,7 +44,7 @@ namespace SecureFolderFS.Uno.ViewModels
             catch (InvalidOperationException ex)
             {
                 // Thrown when authentication is canceled
-                SetError(Result.Failure(ex));
+                Report(Result.Failure(ex));
             }
         }
     }

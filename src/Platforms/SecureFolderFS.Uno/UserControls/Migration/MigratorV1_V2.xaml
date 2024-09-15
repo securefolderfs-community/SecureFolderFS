@@ -6,27 +6,16 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
-    Loaded="Migrator_Loaded"
     mc:Ignorable="d">
 
-    <Grid>
-        <StackPanel x:Name="LoginView" Spacing="8">
-            <uc:PasswordControl x:Name="Password" PasswordSubmitted="Password_PasswordSubmitted" />
-            <Button
-                HorizontalAlignment="Center"
-                Click="Password_PasswordSubmitted"
-                Content="{l:ResourceString Name=Continue}"
-                Style="{ThemeResource AccentButtonStyle}" />
-        </StackPanel>
-        <StackPanel
-            x:Name="MigrateView"
-            Spacing="8"
-            Visibility="Collapsed">
-            <TextBlock Text="{x:Bind VaultName, Mode=OneWay}" />
-            <Button
-                Click="Migrate_Click"
-                Content="{l:ResourceString Name=Migrate}"
-                Style="{ThemeResource AccentButtonStyle}" />
-        </StackPanel>
-    </Grid>
+    <StackPanel Spacing="8">
+        <uc:PasswordControl x:Name="Password" PasswordSubmitted="Password_PasswordSubmitted" />
+        <Button
+            x:Name="ContinueButton"
+            HorizontalAlignment="Center"
+            x:Load="{x:Bind ProvideContinuationButton, Mode=OneWay}"
+            Click="Password_PasswordSubmitted"
+            Content="{l:ResourceString Name=Continue}"
+            Style="{ThemeResource AccentButtonStyle}" />
+    </StackPanel>
 </UserControl>

@@ -31,7 +31,7 @@ namespace SecureFolderFS.Uno.ViewModels
 
             if (auth?.Challenge is null)
             {
-                SetError(Result.Failure(new ArgumentNullException(nameof(auth))));
+                Report(Result.Failure(new ArgumentNullException(nameof(auth))));
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Uno.ViewModels
                 var result = await KeyCredentialManager.OpenAsync(config.Uid).AsTask(cancellationToken);
                 if (result.Status != KeyCredentialStatus.Success)
                 {
-                    SetError(Result.Failure(new InvalidOperationException("Failed to open the credential.")));
+                    Report(Result.Failure(new InvalidOperationException("Failed to open the credential.")));
                     return;
                 }
 
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Uno.ViewModels
             catch (InvalidOperationException ex)
             {
                 // Thrown when authentication is canceled
-                SetError(Result.Failure(ex));
+                Report(Result.Failure(ex));
             }
         }
     }

@@ -606,12 +606,18 @@
     <value>Migrate</value>
   </data>
   <data name="EnterRecoveryKey" xml:space="preserve">
-      <value>Enter the recovery key for this vault</value>
+    <value>Enter the recovery key for this vault</value>
   </data>
   <data name="DateToday" xml:space="preserve">
-      <value>Today, {0}</value>
+    <value>Today, {0}</value>
   </data>
   <data name="DateAgo" xml:space="preserve">
-      <value>{0} ago</value>
+    <value>{0} ago</value>
+  </data>
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>An error occurred</value>
+  </data>
+  <data name="VaultMigrated" xml:space="preserve">
+    <value>Vault has been migrated successfully</value>
   </data>
 </root>

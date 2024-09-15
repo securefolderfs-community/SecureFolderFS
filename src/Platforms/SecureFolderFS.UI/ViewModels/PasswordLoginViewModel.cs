@@ -25,9 +25,9 @@ namespace SecureFolderFS.UI.ViewModels
         {
         }
 
-        public override void SetError(IResult? result)
+        public override void Report(IResult? result)
         {
-            base.SetError(result);
+            base.Report(result);
             IsPasswordInvalid = !result?.Successful ?? false;
         }
 
