@@ -11,7 +11,7 @@
     xmlns:vm="using:SecureFolderFS.UI.ViewModels"
     xmlns:vm2="using:SecureFolderFS.Uno.ViewModels"
     xmlns:vm3="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
-    x:Name="RootControl"
+    x:Name="ThisLoginControl"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -38,7 +38,7 @@
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Continue}"
                     Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=True}" />
             </StackPanel>
         </DataTemplate>
 
@@ -65,7 +65,7 @@
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=True}" />
             </StackPanel>
         </DataTemplate>
 
@@ -92,7 +92,7 @@
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=True}" />
             </StackPanel>
         </DataTemplate>
 

@@ -42,12 +42,12 @@ namespace SecureFolderFS.Core.VaultAccess
             await WriteDataAsync(configFile, configDataModel, cancellationToken);
         }
 
-        public async Task WriteAuthenticationAsync(VaultAuthenticationDataModel? authDataModel, CancellationToken cancellationToken)
+        public async Task WriteAuthenticationAsync(string fileName, VaultPasskeyDataModel? authDataModel, CancellationToken cancellationToken)
         {
             var authFile = authDataModel is null ? null : _vaultFolder switch
             {
-                IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, true, cancellationToken),
-                _ => await _vaultFolder.GetFirstByNameAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, cancellationToken) as IFile
+                IModifiableFolder modifiableFolder => await modifiableFolder.CreateFileAsync(fileName, true, cancellationToken),
+                _ => await _vaultFolder.GetFirstByNameAsync(fileName, cancellationToken) as IFile
             };
 
             await WriteDataAsync(authFile, authDataModel, cancellationToken);

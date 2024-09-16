@@ -31,8 +31,8 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        protected KeyFileViewModel(string id)
-            : base(id)
+        protected KeyFileViewModel()
+            : base(Core.Constants.Vault.Authentication.AUTH_KEYFILE)
         {
             DisplayName = "KeyFile".ToLocalized();
             Icon = "\uE8D7";
@@ -83,7 +83,7 @@ namespace SecureFolderFS.UI.ViewModels
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
 
-            var keyFile = await FileExplorerService.PickFileAsync(new[] { ".key", "*" }, cancellationToken);
+            var keyFile = await FileExplorerService.PickFileAsync([ ".key", "*" ], cancellationToken);
             if (keyFile is null)
                 throw new OperationCanceledException("The user did not pick a file.");
 

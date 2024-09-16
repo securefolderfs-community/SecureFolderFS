@@ -46,7 +46,7 @@ namespace SecureFolderFS.UI.Helpers
             {
                 { Associations.ASSOC_CONTENT_CIPHER_ID, vaultOptions.ContentCipherId },
                 { Associations.ASSOC_FILENAME_CIPHER_ID, vaultOptions.FileNameCipherId },
-                { Associations.ASSOC_AUTHENTICATION, string.Join(AuthenticationMethods.SEPARATOR, vaultOptions.AuthenticationMethod) },
+                { Associations.ASSOC_AUTHENTICATION, string.Join(Authentication.SEPARATOR, vaultOptions.AuthenticationMethod) },
                 { Associations.ASSOC_VAULT_ID, vaultOptions.VaultId }
             };
         }

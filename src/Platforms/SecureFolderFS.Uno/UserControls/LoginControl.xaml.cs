@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -8,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace SecureFolderFS.Uno.UserControls
 {
+    [INotifyPropertyChanged]
     public sealed partial class LoginControl : UserControl
     {
         public LoginControl()
@@ -38,7 +40,14 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(CurrentViewModelProperty, value);
         }
         public static readonly DependencyProperty CurrentViewModelProperty =
-            DependencyProperty.Register(nameof(CurrentViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(CurrentViewModel), typeof(INotifyPropertyChanged), typeof(LoginControl), new PropertyMetadata(defaultValue: null,
+                (s, e) =>
+                {
+                    if (s is not LoginControl loginControl)
+                        return;
+
+                    loginControl.OnPropertyChanged(nameof(ProvideContinuationButton));
+                }));
 
         public bool ProvideContinuationButton
         {
@@ -46,6 +55,6 @@ namespace SecureFolderFS.Uno.UserControls
             set => SetValue(ProvideContinuationButtonProperty, value);
         }
         public static readonly DependencyProperty ProvideContinuationButtonProperty =
-            DependencyProperty.Register(nameof(ProvideContinuationButton), typeof(bool), typeof(LoginControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(ProvideContinuationButton), typeof(bool), typeof(LoginControl), new PropertyMetadata(true));
     }
 }

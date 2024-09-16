@@ -13,8 +13,7 @@ namespace SecureFolderFS.Uno.ViewModels
 {
     /// <inheritdoc cref="WindowsHelloViewModel"/>
     [Bindable(true)]
-    public sealed class WindowsHelloCreationViewModel(string vaultId, string id, IFolder vaultFolder)
-        : WindowsHelloViewModel(id)
+    public sealed class WindowsHelloCreationViewModel(IFolder vaultFolder, string vaultId) : WindowsHelloViewModel
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
@@ -29,7 +28,7 @@ namespace SecureFolderFS.Uno.ViewModels
             using var challenge = GenerateChallenge(vaultId);
 
             // Write authentication data to the vault
-            await vaultWriter.WriteAuthenticationAsync(new()
+            await vaultWriter.WriteAuthenticationAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
             {
                 Capability = "supportsChallenge", // TODO: Put somewhere in Constants
                 Challenge = challenge.Key

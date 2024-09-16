@@ -23,8 +23,8 @@ namespace SecureFolderFS.Uno.ViewModels
         /// <inheritdoc/>
         public sealed override AuthenticationType Availability { get; } = AuthenticationType.Any;
 
-        protected WindowsHelloViewModel(string id)
-            : base(id)
+        protected WindowsHelloViewModel()
+            : base(Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO)
         {
             DisplayName = "WindowsHello".ToLocalized();
             Icon = "\uEB68";

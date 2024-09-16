@@ -23,8 +23,8 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
 
-        protected PasswordViewModel(string id)
-            : base(id)
+        protected PasswordViewModel()
+            : base(Core.Constants.Vault.Authentication.AUTH_PASSWORD)
         {
             DisplayName = "Password".ToLocalized();
             Icon = "\uE8AC";

@@ -15,8 +15,7 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public KeyFileCreationViewModel(string vaultId, string id)
-            : base(id)
+        public KeyFileCreationViewModel(string vaultId)
         {
             _vaultId = vaultId;
         }

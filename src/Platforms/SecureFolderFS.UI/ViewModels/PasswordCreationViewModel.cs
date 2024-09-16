@@ -19,11 +19,6 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public PasswordCreationViewModel(string id)
-            : base(id)
-        {
-        }
-
         partial void OnSecondaryPasswordChanged(string? value)
         {
             StateChanged?.Invoke(this, new PasswordChangedEventArgs(PrimaryPassword == SecondaryPassword));

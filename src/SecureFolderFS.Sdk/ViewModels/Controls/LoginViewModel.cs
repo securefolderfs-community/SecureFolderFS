@@ -55,8 +55,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (validationResult.Successful)
             {
                 // Set up the first authentication method
-                if (!await TryNextAuthAsync())
-                    CurrentViewModel = new ErrorViewModel("No authentication methods available.", null);
+                var result = await TryNextAuthAsync();
+                if (!result.Successful)
+                    CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
             }
             else
             {
@@ -111,16 +112,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
-        private async Task<bool> TryNextAuthAsync()
+        private async Task<IResult> TryNextAuthAsync()
         {
-            if (_enumerator is null || !await _enumerator.MoveNextAsync())
-                return false;
+            try
+            {
+                if (_enumerator is null || !await _enumerator.MoveNextAsync())
+                    return new MessageResult(false, "No authentication methods available.");
 
-            // Get the appropriate method
-            var viewModel = _enumerator.Current;
-            CurrentViewModel = viewModel;
+                // Get the appropriate method
+                var viewModel = _enumerator.Current;
+                CurrentViewModel = viewModel;
 
-            return true;
+                return Result.Success;
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex);
+            }
         }
 
         private async void VaultWatcherModel_StateChanged(object? sender, EventArgs e)
@@ -158,7 +166,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             // Add authentication
             _keyChain.Push(e.Authentication);
 
-            if (!await TryNextAuthAsync() && CurrentViewModel is not ErrorViewModel)
+            var result = await TryNextAuthAsync();
+            if (!result.Successful && CurrentViewModel is not ErrorViewModel)
             {
                 // Reached the end in which case we should try to unlock the vault
                 await TryUnlockAsync();

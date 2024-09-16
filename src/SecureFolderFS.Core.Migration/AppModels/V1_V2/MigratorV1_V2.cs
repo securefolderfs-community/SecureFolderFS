@@ -79,7 +79,7 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             var vaultId = Guid.NewGuid().ToString();
             var v2ConfigDataModel = new VaultConfigurationDataModel()
             {
-                AuthenticationMethod = Constants.Vault.AuthenticationMethods.AUTH_PASSWORD,
+                AuthenticationMethod = Constants.Vault.Authentication.AUTH_PASSWORD,
                 ContentCipherId = GetContentCipherId(_v1ConfigDataModel.ContentCipherScheme),
                 FileNameCipherId = GetFileNameCipherId(_v1ConfigDataModel.FileNameCipherScheme),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes],

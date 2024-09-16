@@ -13,8 +13,7 @@ namespace SecureFolderFS.Uno.ViewModels
 {
     /// <inheritdoc cref="WindowsHelloViewModel"/>
     [Bindable(true)]
-    public sealed class WindowsHelloLoginViewModel(string id, IFolder vaultFolder)
-        : WindowsHelloViewModel(id)
+    public sealed class WindowsHelloLoginViewModel(IFolder vaultFolder) : WindowsHelloViewModel
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
@@ -27,7 +26,7 @@ namespace SecureFolderFS.Uno.ViewModels
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var auth = await vaultReader.ReadAuthenticationAsync(cancellationToken);
+            var auth = await vaultReader.ReadAuthenticationAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
 
             if (auth?.Challenge is null)
             {

@@ -5,13 +5,13 @@ namespace SecureFolderFS.Tests.Helpers
     internal static partial class MockVaultHelpers
     {
         // Mock recovery key
-        public const string V2_RECOVERY_KEY = "tjrkk1TRcnSG7v8pIEFdhO3PKteBj1l3/xX/N4AkDpU=@@@uOVXKhcbK/Wshqx7WXsGKXJXbwiTZ2gu6UBSwHfu1JU=";
+        public const string V2_RECOVERY_KEY = "zepBGsfJZi/abgiEgca9Gtx4t0or5OH2J9PSg9KIQrU=@@@XfLMZXuHtQOTSvl9sVU4tOgZgvdjwWzTQCqZbppDE7c=";
 
         private const string V2_KEYSTORE_STRING = """
                                                   {
-                                                    "c_encryptionKey": "Gz2pwsoj7yQLDsxcEZVFk5YkQNUm8Ctpq2dUeRQvybVPDJh5bqxCXA==",
-                                                    "c_macKey": "7bIu/eF5wCQ0as2MY/Gf+dJnEyLHq9yFBRd7Exl/cq3+eQsJsbFjEQ==",
-                                                    "salt": "McqBPpjXQ+xbqBB0HtZ8Wg=="
+                                                    "c_encryptionKey": "CwoIRzFKP6Djc8a6Kf22bI0wDT+Ei6aO6eylyvLu3+G0IwRkmA+DhQ==",
+                                                    "c_macKey": "lqYV/vPLd63xp9ngULhshlLs3B4DYl0DWdJnV7Ap3prMS4din89beQ==",
+                                                    "salt": "Wsngg8yAWHMEJuOUsdk8Ow=="
                                                   }
                                                   """;
 
@@ -19,9 +19,9 @@ namespace SecureFolderFS.Tests.Helpers
                                                   {
                                                     "contentCipherScheme": "XChaCha20-Poly1305",
                                                     "filenameCipherScheme": "AES-SIV",
-                                                    "authMode": "Password",
-                                                    "vaultId": "16da6b20-49a5-4fd5-b0e8-de607db10d63",
-                                                    "hmacsha256mac": "9v/eMaxelNay/aYUUuBsx0gb6GJugVJRXb+6Eq5b8Sc=",
+                                                    "authMode": "password",
+                                                    "vaultId": "f89761bf-1ff3-487e-9212-943fb20c3ff5",
+                                                    "hmacsha256mac": "fzYCLHtGxHrjsdwvjEarJaYVQlN2vR+Yqw5l4RW2+Ew=",
                                                     "version": 2
                                                   }
                                                   """;
