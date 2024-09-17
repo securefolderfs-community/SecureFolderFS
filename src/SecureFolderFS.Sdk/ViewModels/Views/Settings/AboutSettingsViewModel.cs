@@ -45,7 +45,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             return ApplicationService.OpenUriAsync(new Uri("https://github.com/securefolderfs-community/SecureFolderFS/blob/master/PRIVACY.md"));
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private Task OpenLicensesAsync()
         {
             return OverlayService.ShowAsync(new LicensesOverlayViewModel());
@@ -65,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
                 await ClipboardService.SetTextAsync(SystemVersion, cancellationToken);
         }
 
-        [RelayCommand]
+        [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task OpenChangelogAsync()
         {
             var changelogOverlay = new ChangelogOverlayViewModel(ApplicationService.AppVersion);

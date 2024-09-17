@@ -27,17 +27,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     {
         [ObservableProperty] private LoginViewModel _LoginViewModel;
 
-        public INavigator VaultNavigator { get; }
+        public INavigationService VaultNavigation { get; }
 
         /// <inheritdoc/>
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
-        public VaultLoginViewModel(IVaultModel vaultModel, INavigator vaultNavigator)
+        public VaultLoginViewModel(IVaultModel vaultModel, INavigationService vaultNavigation)
             : base(vaultModel)
         {
             ServiceProvider = DI.Default;
             Title = vaultModel.VaultName;
-            VaultNavigator = vaultNavigator;
+            VaultNavigation = vaultNavigation;
             _LoginViewModel = new(vaultModel, LoginViewType.Full);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
