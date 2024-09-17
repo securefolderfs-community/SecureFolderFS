@@ -50,8 +50,8 @@ namespace SecureFolderFS.Uno.Views.Vault
             if (ViewModel is not null)
             {
                 // Remove the reference to the NavigationControl so the page can get properly garbage collected
-                ViewModel.DashboardNavigationService.ResetNavigation();
-                ViewModel.DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
+                ViewModel.DashboardNavigation.ResetNavigation();
+                ViewModel.DashboardNavigation.NavigationChanged -= DashboardNavigationService_NavigationChanged;
             }
             
             Navigation.Dispose();
@@ -67,19 +67,19 @@ namespace SecureFolderFS.Uno.Views.Vault
             _isLoaded = true;
             
             // Attach navigation event
-            ViewModel.DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
+            ViewModel.DashboardNavigation.NavigationChanged += DashboardNavigationService_NavigationChanged;
 
             // Initialize navigation
-            if (ViewModel.DashboardNavigationService.SetupNavigation(Navigation, true))
+            if (ViewModel.DashboardNavigation.SetupNavigation(Navigation, true))
             {
-                var target = ViewModel.DashboardNavigationService.CurrentView ?? GetDefaultDashboardViewModel(); // Get current target or initialize default
-                await ViewModel.DashboardNavigationService.NavigateAsync(target);
+                var target = ViewModel.DashboardNavigation.CurrentView ?? GetDefaultDashboardViewModel(); // Get current target or initialize default
+                await ViewModel.DashboardNavigation.NavigateAsync(target);
 
                 IViewDesignation GetDefaultDashboardViewModel()
                 {
                     var vaultOverviewViewModel = new VaultOverviewViewModel(
                         ViewModel.UnlockedVaultViewModel,
-                        new(ViewModel.VaultNavigator, ViewModel.DashboardNavigationService, ViewModel.UnlockedVaultViewModel),
+                        new(ViewModel.VaultNavigation, ViewModel.DashboardNavigation, ViewModel.UnlockedVaultViewModel),
                         new(ViewModel.UnlockedVaultViewModel, new WidgetsCollectionModel(ViewModel.VaultModel.Folder)));
 
                     _ = vaultOverviewViewModel.InitAsync();

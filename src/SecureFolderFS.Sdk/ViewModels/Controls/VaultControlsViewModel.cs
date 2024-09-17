@@ -18,14 +18,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Bindable(true)]
     public sealed partial class VaultControlsViewModel : ObservableObject
     {
-        private readonly INavigator _vaultNavigator;
         private readonly INavigator _dashboardNavigator;
+        private readonly INavigationService _vaultNavigation;
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private VaultPropertiesViewModel? _propertiesViewModel;
 
-        public VaultControlsViewModel(INavigator vaultNavigator, INavigator dashboardNavigator, UnlockedVaultViewModel unlockedVaultViewModel, VaultPropertiesViewModel? propertiesViewModel = null)
+        public VaultControlsViewModel(INavigationService vaultNavigation, INavigator dashboardNavigator, UnlockedVaultViewModel unlockedVaultViewModel, VaultPropertiesViewModel? propertiesViewModel = null)
         {
-            _vaultNavigator = vaultNavigator;
+            _vaultNavigation = vaultNavigation;
             _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
             _propertiesViewModel = propertiesViewModel;
@@ -45,15 +45,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             await _unlockedVaultViewModel.DisposeAsync();
 
             // Prepare login page
-            var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultModel, _vaultNavigator);
+            var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultModel, _vaultNavigation);
             _ = loginPageViewModel.InitAsync();
 
             // Navigate away
-            if (_vaultNavigator is INavigationService navigationService)
-                await navigationService.TryNavigateAndForgetAsync(loginPageViewModel);
-            else
-                await _vaultNavigator.NavigateAsync(loginPageViewModel);
-
+            await _vaultNavigation.TryNavigateAndForgetAsync(loginPageViewModel);
             WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultModel));
         }
 

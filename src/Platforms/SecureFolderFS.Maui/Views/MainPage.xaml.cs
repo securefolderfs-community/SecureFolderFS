@@ -47,7 +47,7 @@ namespace SecureFolderFS.Maui.Views
         private async void MainPage_Loaded(object? sender, EventArgs e)
         {
             // Set the current starting view
-            if (ViewModel.NavigationService is MauiNavigationService navigationService)
+            if (ViewModel.NavigationService.CurrentView is null && ViewModel.NavigationService is MauiNavigationService navigationService)
                 navigationService.SetCurrentViewInternal(ViewModel);
 
 #if IOS

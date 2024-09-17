@@ -1,29 +1,28 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<INavigationService>(Visibility = "public", Name = "DashboardNavigationService")]
     [Bindable(true)]
     public sealed partial class VaultDashboardViewModel : BaseDashboardViewModel, IRecipient<VaultLockedMessage>
     {
-        public INavigator VaultNavigator { get; }
+        public INavigationService VaultNavigation { get; }
+        
+        public INavigationService DashboardNavigation { get; }
 
-        public VaultDashboardViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator vaultNavigator)
+        public VaultDashboardViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigationService vaultNavigation, INavigationService dashboardNavigation)
             : base(unlockedVaultViewModel)
         {
-            ServiceProvider = DI.Default;
-            VaultNavigator = vaultNavigator;
-            DashboardNavigationService.NavigationChanged += DashboardNavigationService_NavigationChanged;
+            VaultNavigation = vaultNavigation;
+            DashboardNavigation = dashboardNavigation;
+            DashboardNavigation.NavigationChanged += DashboardNavigation_NavigationChanged;
 
             WeakReferenceMessenger.Default.Register(this);
         }
@@ -45,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task GoBackAsync()
         {
-            await DashboardNavigationService.TryNavigateAsync<VaultOverviewViewModel>();
+            await DashboardNavigation.TryNavigateAsync<VaultOverviewViewModel>();
 
             // TODO(n): Use GoBackAsync so the navigation is unified when more nested views are implemented
             // The current problem is that GoBackAsync does not update CurrentView
@@ -53,16 +52,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             //await DashboardNavigationService.GoBackAsync();
         }
 
-        private void DashboardNavigationService_NavigationChanged(object? sender, IViewDesignation? e)
+        private void DashboardNavigation_NavigationChanged(object? sender, IViewDesignation? e)
         {
-            Title = DashboardNavigationService.CurrentView?.Title;
+            Title = DashboardNavigation.CurrentView?.Title;
         }
 
         /// <inheritdoc/>
         public override void Dispose()
         {
-            DashboardNavigationService.NavigationChanged -= DashboardNavigationService_NavigationChanged;
-            DashboardNavigationService.Dispose();
+            DashboardNavigation.NavigationChanged -= DashboardNavigation_NavigationChanged;
+            DashboardNavigation.Dispose();
         }
     }
 }

@@ -1,9 +1,11 @@
+using MauiIcons.Core;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.EventArguments;
 
 namespace SecureFolderFS.Maui.Views.Vault
@@ -13,7 +15,7 @@ namespace SecureFolderFS.Maui.Views.Vault
         public LoginPage()
         {
             BindingContext = this;
-            _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
+            _ = new MauiIcon(); // Workaround for XFC0000
 
             InitializeComponent();
         }
@@ -48,8 +50,9 @@ namespace SecureFolderFS.Maui.Views.Vault
 
             ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
 
-            // Initialize DashboardViewModel
-            var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigator);
+            // Initialize DashboardViewModel and use the same navigation for dashboard
+            var dashboardNavigation = DI.Service<INavigationService>();
+            var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
             
             // Since both overview and properties are on the same page,
             // initialize and navigate the views to keep them in cache
@@ -57,7 +60,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             var propertiesViewModel = new VaultPropertiesViewModel(args.UnlockedVaultViewModel);
             var overviewViewModel = new VaultOverviewViewModel(
                 args.UnlockedVaultViewModel,
-                new(ViewModel.VaultNavigator, ViewModel.VaultNavigator, args.UnlockedVaultViewModel, propertiesViewModel),
+                new(ViewModel.VaultNavigation, ViewModel.VaultNavigation, args.UnlockedVaultViewModel, propertiesViewModel),
                 new(args.UnlockedVaultViewModel,
                     new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultModel.Folder)));
             
@@ -72,13 +75,10 @@ namespace SecureFolderFS.Maui.Views.Vault
             });
             
             // Persist view models
-            dashboardViewModel.DashboardNavigationService.Views.Add(overviewViewModel);
-            dashboardViewModel.DashboardNavigationService.Views.Add(propertiesViewModel);
-            
-            if (ViewModel.VaultNavigator is INavigationService navigationService)
-                await navigationService.TryNavigateAndForgetAsync(dashboardViewModel);
-            else
-                await ViewModel.VaultNavigator.NavigateAsync(dashboardViewModel);
+            dashboardViewModel.DashboardNavigation.Views.Add(overviewViewModel);
+            dashboardViewModel.DashboardNavigation.Views.Add(propertiesViewModel);
+
+            await ViewModel.VaultNavigation.TryNavigateAndForgetAsync(dashboardViewModel);
         }
 
         public VaultLoginViewModel? ViewModel

@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Maui.Views;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
 
@@ -17,22 +13,36 @@ namespace SecureFolderFS.Maui.Popups
         }
 
         /// <inheritdoc/>
-        public Task<IResult> ShowAsync()
+        public async Task<IResult> ShowAsync()
         {
-            throw new NotImplementedException();
+            if (ViewModel is null)
+                return Shared.Helpers.Result.Failure(null);
+            
+            var page = Shell.Current.CurrentPage;
+            var result =  await page.ShowPopupAsync(this);
+
+            return Shared.Helpers.Result.Success;
         }
 
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            throw new NotImplementedException();
+            ViewModel = (PreviewRecoveryOverlayViewModel)viewable;
         }
         
         /// <inheritdoc/>
         public Task HideAsync()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
+        
+        public PreviewRecoveryOverlayViewModel? ViewModel
+        {
+            get => (PreviewRecoveryOverlayViewModel?)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+        public static readonly BindableProperty ViewModelProperty =
+            BindableProperty.Create(nameof(ViewModel), typeof(PreviewRecoveryOverlayViewModel), typeof(PreviewRecoveryPopup), null);
     }
 }
 

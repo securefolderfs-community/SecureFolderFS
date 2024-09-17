@@ -1,0 +1,60 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.RecoveryPreviewControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    x:Name="ThisRecoveryControl">
+
+    <Grid
+        Padding="16"
+        BindingContext="{x:Reference ThisRecoveryControl}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <VerticalStackLayout Spacing="32">
+                    <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
+
+                    <VerticalStackLayout Spacing="8">
+                        <mdc:Card Style="{DynamicResource FilledCardStyle}">
+                            <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="8">
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="20"
+                                    Text="Master Key:" />
+                                <Label LineBreakMode="CharacterWrap" Text="{Binding MasterKey, Mode=OneWay}" />
+                            </VerticalStackLayout>
+                        </mdc:Card>
+                        <mdc:Button
+                            Command="{Binding ExportCommand}"
+                            CommandParameter="Copy"
+                            HorizontalOptions="End"
+                            Style="{DynamicResource FilledTonalButtonStyle}"
+                            Text="Export" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </On>
+            <On Platform="iOS">
+                <VerticalStackLayout Spacing="24">
+                    <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="20"
+                            Text="Master Key:" />
+                        <Border Padding="4" BackgroundColor="Gainsboro">
+                            <Label LineBreakMode="CharacterWrap" Text="{Binding MasterKey, Mode=OneWay}" />
+                        </Border>
+                        <Button
+                            Command="{Binding ExportCommand}"
+                            CommandParameter="Copy"
+                            HorizontalOptions="End"
+                            Text="Export" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </On>
+        </OnPlatform>
+    </Grid>
+</ContentView>

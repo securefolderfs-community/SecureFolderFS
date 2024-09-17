@@ -1,14 +1,11 @@
 using System;
-using Microsoft.UI.Xaml.Data;
-using SecureFolderFS.UI.ValueConverters;
 
-namespace SecureFolderFS.Uno.ValueConverters
+namespace SecureFolderFS.UI.ValueConverters
 {
-    /// <inheritdoc cref="BaseLoginViewModelBoolConverter"/>
-    internal sealed class LoginViewModelBoolConverter : BaseLoginViewModelBoolConverter, IValueConverter
+    public abstract class BaseLoginViewModelBoolConverter : BaseConverter
     {
         /// <inheritdoc/>
-        public object Convert(object? value, Type targetType, object parameter, string language)
+        protected override object? TryConvert(object? value, Type targetType, object? parameter)
         {
             if (parameter is not string strParam)
                 return false;
@@ -26,9 +23,9 @@ namespace SecureFolderFS.Uno.ValueConverters
 
             return invert ? !result : result;
         }
-
+        
         /// <inheritdoc/>
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        protected sealed override object? TryConvertBack(object? value, Type targetType, object? parameter)
         {
             throw new NotImplementedException();
         }

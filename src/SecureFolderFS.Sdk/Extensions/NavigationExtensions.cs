@@ -14,10 +14,10 @@ namespace SecureFolderFS.Sdk.Extensions
             return (T?)navigationService.Views.FirstOrDefault(x => x is T);
         }
 
-        public static async Task<bool> TryNavigateAsync<T>(this INavigationService navigationService, Func<T>? initializer = null, bool useInitialization = true)
+        public static async Task<bool> TryNavigateAsync<T>(this INavigationService navigation, Func<T>? initializer = null, bool useInitialization = true)
             where T : class, IViewDesignation
         {
-            var view = navigationService.TryGetView<T>();
+            var view = navigation.TryGetView<T>();
             var isNewView = view is null;
 
             view ??= initializer?.Invoke() ?? null;
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.Extensions
                 _ = supportsAsyncInitialize.InitAsync();
 
             // Navigate to the target
-            return await navigationService.NavigateAsync(view);
+            return await navigation.NavigateAsync(view);
         }
 
         public static async Task<bool> TryNavigateAndForgetAsync(this INavigationService navigationService, IViewDesignation view)

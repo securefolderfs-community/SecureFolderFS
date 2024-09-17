@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <uc:RecoveryPreviewControl
-        ExportCommand="{x:Bind ViewModel.RecoveryViewModel.ExportCommand}"
+        ExportCommand="{x:Bind ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}"
         IsExpanded="True"
         MasterKey="{x:Bind ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}" />
 </Page>

@@ -22,7 +22,7 @@ namespace SecureFolderFS.UI.ValueConverters
         }
 
         /// <inheritdoc/>
-        protected override object? TryConvertBack(object? value, Type targetType, object? parameter)
+        protected sealed override object? TryConvertBack(object? value, Type targetType, object? parameter)
         {
             throw new NotImplementedException();
         }
