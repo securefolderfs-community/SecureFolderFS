@@ -620,4 +620,7 @@
   <data name="VaultMigrated" xml:space="preserve">
     <value>Vault has been migrated successfully</value>
   </data>
+  <data name="VaultNeedsMigration" xml:space="preserve">
+    <value>The vault needs to be migrated before it can be used</value>
+  </data>
 </root>

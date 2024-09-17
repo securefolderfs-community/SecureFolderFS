@@ -88,8 +88,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
             if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
             {
-                _ = PaymentDialogViewModel.Instance.InitAsync(cancellationToken);
-                await OverlayService.ShowAsync(PaymentDialogViewModel.Instance);
+                _ = PaymentOverlayViewModel.Instance.InitAsync(cancellationToken);
+                await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance);
                 return;
             }
 

@@ -16,9 +16,9 @@ namespace SecureFolderFS.Uno.Dialogs
     {
         private bool _agreed;
 
-        public AgreementDialogViewModel? ViewModel
+        public AgreementOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<AgreementDialogViewModel>();
+            get => DataContext.TryCast<AgreementOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -31,7 +31,7 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (AgreementDialogViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (AgreementOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()

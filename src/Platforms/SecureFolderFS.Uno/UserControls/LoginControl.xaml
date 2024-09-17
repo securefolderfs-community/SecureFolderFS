@@ -103,7 +103,7 @@
                 <InfoBar
                     IsClosable="False"
                     IsOpen="True"
-                    Message="The vault needs to be migrated before it can be used."
+                    Message="{l:ResourceString Name=VaultNeedsMigration}"
                     Severity="Informational" />
 
                 <!--  Migrate  -->

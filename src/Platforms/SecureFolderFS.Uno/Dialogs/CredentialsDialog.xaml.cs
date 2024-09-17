@@ -73,7 +73,12 @@ namespace SecureFolderFS.Uno.Dialogs
 
             args.Cancel = true;
             if (ViewModel.SelectedViewModel is LoginViewModel loginViewModel)
+            {
                 loginViewModel.ProvideCredentialsCommand?.Execute(null);
+            }
+            else if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel credentialsConfirmation)
+            {
+            }
         }
 
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)

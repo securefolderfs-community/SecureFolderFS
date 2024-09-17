@@ -14,9 +14,9 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class PaymentDialog : ContentDialog, IOverlayControl
     {
-        public PaymentDialogViewModel? ViewModel
+        public PaymentOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<PaymentDialogViewModel>();
+            get => DataContext.TryCast<PaymentOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Uno.Dialogs
         public new async Task<IResult> ShowAsync() => (await base.ShowAsync()).ParseOverlayOption();
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (PaymentDialogViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (PaymentOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()

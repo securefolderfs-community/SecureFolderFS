@@ -11,11 +11,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IIapService>]
     [Bindable(true)]
-    public sealed partial class PaymentDialogViewModel : OverlayViewModel, IAsyncInitialize
+    public sealed partial class PaymentOverlayViewModel : OverlayViewModel, IAsyncInitialize
     {
-        public static PaymentDialogViewModel Instance { get; } = new();
+        public static PaymentOverlayViewModel Instance { get; } = new();
 
-        private PaymentDialogViewModel()
+        private PaymentOverlayViewModel()
         {
             ServiceProvider = DI.Default;
         }

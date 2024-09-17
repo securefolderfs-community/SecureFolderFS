@@ -21,13 +21,5 @@ namespace SecureFolderFS.Uno.UserControls
         }
         public static readonly DependencyProperty CurrentViewModelProperty =
             DependencyProperty.Register(nameof(CurrentViewModel), typeof(INotifyPropertyChanged), typeof(RegisterControl), new PropertyMetadata(defaultValue: null));
-
-        public bool ProvideContinuationButton
-        {
-            get => (bool)GetValue(ProvideContinuationButtonProperty);
-            set => SetValue(ProvideContinuationButtonProperty, value);
-        }
-        public static readonly DependencyProperty ProvideContinuationButtonProperty =
-            DependencyProperty.Register(nameof(ProvideContinuationButton), typeof(bool), typeof(LoginControl), new PropertyMetadata(false));
     }
 }

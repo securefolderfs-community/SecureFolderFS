@@ -23,8 +23,15 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            var key = await CreateAsync(_vaultId, null, cancellationToken);
-            CredentialsProvided?.Invoke(this, new(key));
+            try
+            {
+                var key = await CreateAsync(_vaultId, null, cancellationToken);
+                CredentialsProvided?.Invoke(this, new(key));
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+            }
         }
     }
 }
