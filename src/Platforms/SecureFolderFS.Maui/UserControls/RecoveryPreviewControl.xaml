@@ -18,8 +18,11 @@
                     <VerticalStackLayout Spacing="8">
                         <mdc:Card Style="{DynamicResource FilledCardStyle}">
                             <VerticalStackLayout Spacing="8">
-                                <Label FontSize="18" Text="Recovery key" />
-                                <Label LineBreakMode="CharacterWrap" Text="{Binding MasterKey, Mode=OneWay}" />
+                                <Label Opacity="0.6" Text="Recovery key" />
+                                <Label
+                                    FontFamily="Courier New"
+                                    LineBreakMode="CharacterWrap"
+                                    Text="{Binding MasterKey, Mode=OneWay}" />
                             </VerticalStackLayout>
                         </mdc:Card>
                         <mdc:Button
@@ -39,7 +42,7 @@
                         <Label Opacity="0.6" Text="Recovery key" />
                         <Border Padding="4" BackgroundColor="Gainsboro">
                             <Label
-                                FontFamily="Andale Mono"
+                                FontFamily="Courier New"
                                 LineBreakMode="CharacterWrap"
                                 Text="{Binding MasterKey, Mode=OneWay}" />
                         </Border>
