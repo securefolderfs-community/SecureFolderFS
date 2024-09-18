@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SecureFolderFS.Maui.UserControls
@@ -11,8 +6,8 @@ namespace SecureFolderFS.Maui.UserControls
     {
         public RecoveryPreviewControl()
         {
-            BindingContext = this;
             InitializeComponent();
+            RootGrid.BindingContext = this;
         }
         
         public string? MasterKey

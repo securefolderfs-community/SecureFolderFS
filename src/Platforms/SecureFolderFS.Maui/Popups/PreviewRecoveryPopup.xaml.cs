@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using CommunityToolkit.Maui.Views;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.UI.Utils;
@@ -18,8 +20,9 @@ namespace SecureFolderFS.Maui.Popups
             if (ViewModel is null)
                 return Shared.Helpers.Result.Failure(null);
             
-            var page = Shell.Current.CurrentPage;
-            var result =  await page.ShowPopupAsync(this);
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
+            ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
             return Shared.Helpers.Result.Success;
         }
@@ -34,6 +37,15 @@ namespace SecureFolderFS.Maui.Popups
         public Task HideAsync()
         {
             return Task.CompletedTask;
+        }
+        
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.CurrentViewModel)
+                && ViewModel?.CurrentViewModel is RecoveryPreviewControlViewModel)
+            {
+                ThisPopup.Size = new(ThisPopup.Size.Width, 300d);
+            }
         }
         
         public PreviewRecoveryOverlayViewModel? ViewModel

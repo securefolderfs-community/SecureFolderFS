@@ -7,27 +7,23 @@
     x:Name="ThisRecoveryControl">
 
     <Grid
-        Padding="16"
-        BindingContext="{x:Reference ThisRecoveryControl}"
+        x:Name="RootGrid"
         HorizontalOptions="Center"
         VerticalOptions="Center">
         <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
-                <VerticalStackLayout Spacing="32">
+                <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="32">
                     <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
 
                     <VerticalStackLayout Spacing="8">
                         <mdc:Card Style="{DynamicResource FilledCardStyle}">
-                            <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="8">
-                                <Label
-                                    FontAttributes="Bold"
-                                    FontSize="20"
-                                    Text="Master Key:" />
+                            <VerticalStackLayout Spacing="8">
+                                <Label FontSize="18" Text="Recovery key" />
                                 <Label LineBreakMode="CharacterWrap" Text="{Binding MasterKey, Mode=OneWay}" />
                             </VerticalStackLayout>
                         </mdc:Card>
                         <mdc:Button
-                            Command="{Binding ExportCommand}"
+                            Command="{Binding ExportCommand, Mode=OneWay}"
                             CommandParameter="Copy"
                             HorizontalOptions="End"
                             Style="{DynamicResource FilledTonalButtonStyle}"
@@ -36,19 +32,19 @@
                 </VerticalStackLayout>
             </On>
             <On Platform="iOS">
-                <VerticalStackLayout Spacing="24">
+                <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="32">
                     <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
 
                     <VerticalStackLayout Spacing="4">
-                        <Label
-                            FontAttributes="Bold"
-                            FontSize="20"
-                            Text="Master Key:" />
+                        <Label Opacity="0.6" Text="Recovery key" />
                         <Border Padding="4" BackgroundColor="Gainsboro">
-                            <Label LineBreakMode="CharacterWrap" Text="{Binding MasterKey, Mode=OneWay}" />
+                            <Label
+                                FontFamily="Andale Mono"
+                                LineBreakMode="CharacterWrap"
+                                Text="{Binding MasterKey, Mode=OneWay}" />
                         </Border>
                         <Button
-                            Command="{Binding ExportCommand}"
+                            Command="{Binding ExportCommand, Mode=OneWay}"
                             CommandParameter="Copy"
                             HorizontalOptions="End"
                             Text="Export" />

@@ -7,7 +7,8 @@
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPopup"
-    BindingContext="{x:Reference ThisPopup}">
+    BindingContext="{x:Reference ThisPopup}"
+    Size="400,192">
 
     <tv:Popup.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
@@ -18,9 +19,25 @@
         </DataTemplate>
     </tv:Popup.Resources>
 
-    <uc:ContentPresentation ViewContent="{Binding ViewModel.CurrentViewModel, Mode=OneWay}">
-        <uc:ContentPresentation.TemplateSelector>
-            <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
-        </uc:ContentPresentation.TemplateSelector>
-    </uc:ContentPresentation>
+    <Grid Padding="16" RowSpacing="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Label
+            Grid.Row="0"
+            FontAttributes="Bold"
+            FontSize="24"
+            Text="{Binding ViewModel.Title, Mode=OneWay}" />
+
+        <uc:ContentPresentation
+            Grid.Row="1"
+            VerticalOptions="Center"
+            ViewContent="{Binding ViewModel.CurrentViewModel, Mode=OneWay}">
+            <uc:ContentPresentation.TemplateSelector>
+                <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
+            </uc:ContentPresentation.TemplateSelector>
+        </uc:ContentPresentation>
+    </Grid>
 </tv:Popup>
