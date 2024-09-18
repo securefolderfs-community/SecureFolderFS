@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddExisting" xml:space="preserve">
-    <value>Add existing</value>
+    <value>Dodaj istniejący</value>
   </data>
   <data name="AddExistingVault" xml:space="preserve">
     <value>Dodaj istniejący sejf</value>
@@ -193,7 +193,7 @@
     <value>Wybierz wersję do skopiowania do schowka</value>
   </data>
   <data name="CreateNew" xml:space="preserve">
-    <value>Create new</value>
+    <value>Utwórz nowy</value>
   </data>
   <data name="CreateNewVault" xml:space="preserve">
     <value>Utwórz nowy sejf</value>
@@ -259,7 +259,7 @@
     <value>Wprowadzone hasło jest nieprawidłowe.</value>
   </data>
   <data name="KeyFile" xml:space="preserve">
-    <value>Key File</value>
+    <value>Plik klucza</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Język</value>
@@ -326,7 +326,7 @@
     <value>Hasło</value>
   </data>
   <data name="Paste" xml:space="preserve">
-    <value>Paste</value>
+    <value>Wklej</value>
   </data>
   <data name="Print" xml:space="preserve">
     <value>Drukuj</value>
@@ -341,10 +341,10 @@
     <value>Prędkość odczytu</value>
   </data>
   <data name="Recover" xml:space="preserve">
-    <value>Recover</value>
+    <value>Odzyskaj</value>
   </data>
   <data name="RecoverAccess" xml:space="preserve">
-    <value>Recover access</value>
+    <value>Odzyskaj dostęp</value>
   </data>
   <data name="RemoveFromList" xml:space="preserve">
     <value>Usuń sejf z listy</value>
@@ -375,7 +375,7 @@
     <value>Wybierz ścieżkę sejfu</value>
   </data>
   <data name="SetCredentials" xml:space="preserve">
-    <value>Set credentials</value>
+    <value>Ustaw poświadczenia</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ustawienia</value>
@@ -483,141 +483,141 @@
     <value>Prędkość zapisu</value>
   </data>
   <data name="Add" xml:space="preserve">
-    <value>Add</value>
+    <value>Dodaj</value>
   </data>
   <data name="VaultLoadError" xml:space="preserve">
-    <value>Vault could not be loaded</value>
+    <value>Nie można załadować sejfu</value>
   </data>
   <data name="ErrorDetails" xml:space="preserve">
-    <value>Exception details</value>
+    <value>Szczegóły wyjątku</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Open</value>
+    <value>Otwórz</value>
   </data>
   <data name="SelectFolderToContinue" xml:space="preserve">
-    <value>Select a folder to continue</value>
+    <value>Wybierz folder, aby kontynuować</value>
   </data>
   <data name="SelectedMayNotBeSupported" xml:space="preserve">
-    <value>Selected vault may not be supported</value>
+    <value>Wybrany sejf może nie być obsługiwany</value>
   </data>
   <data name="SelectedInvalidVault" xml:space="preserve">
-    <value>Vault folder is invalid</value>
+    <value>Katalog sejfu jest nieprawidłowy</value>
   </data>
   <data name="SelectedValidVault" xml:space="preserve">
-    <value>Found a valid vault folder</value>
+    <value>Znaleziono prawidłowy katalog sejfu</value>
   </data>
   <data name="SelectedToBeOverwritten" xml:space="preserve">
-    <value>The selected vault will be overwritten</value>
+    <value>Wybrany sejf zostanie nadpisany</value>
   </data>
   <data name="SelectedWillCreate" xml:space="preserve">
-    <value>A new vault will be created in the selected folder</value>
+    <value>Nowy sejf zostanie utworzony w wybranym folderze</value>
   </data>
   <data name="SelectedNone" xml:space="preserve">
-    <value>No location selected</value>
+    <value>Nie wybrano lokalizacji</value>
   </data>
   <data name="LockType" xml:space="preserve">
-    <value>Lock type</value>
+    <value>Typ blokady</value>
   </data>
   <data name="AdvancedOptions" xml:space="preserve">
-    <value>Advanced options</value>
+    <value>Opcje zaawansowane</value>
     <comment>Use a short-hand name, if possible</comment>
   </data>
   <data name="Setup" xml:space="preserve">
-    <value>Setup</value>
+    <value>Konfiguruj</value>
     <comment>Another word for 'configuration'. Used primarily when setting up other authentication methods</comment>
   </data>
   <data name="SetupKeyFile" xml:space="preserve">
-    <value>Setup key file authentication</value>
+    <value>Konfiguruj uwierzytelnianie pliku klucza</value>
   </data>
   <data name="SetupWindowsHello" xml:space="preserve">
-    <value>Setup Windows Hello authentication</value>
+    <value>Konfiguruj uwierzytelnianie Windows Hello</value>
   </data>
   <data name="LoginOptions" xml:space="preserve">
-    <value>Login options</value>
+    <value>Opcje logowania</value>
   </data>
   <data name="Security" xml:space="preserve">
-    <value>Security</value>
+    <value>Zabezpieczenie</value>
     <comment>Used to describe the authentication method used in a vault. (See Vault Properties section)</comment>
   </data>
   <data name="RecoveryCodes" xml:space="preserve">
-    <value>View recovery codes</value>
+    <value>Wyświetl kod odzyskiwania</value>
   </data>
   <data name="RecoveryCodesDescription" xml:space="preserve">
-    <value>Access recovery codes for this vault in case you forget your credentials</value>
+    <value>Uzyskaj dostęp do kodów odzyskiwania dla tego sejfu, jeśli zapomnisz swoich poświadczeń</value>
   </data>
   <data name="UseMasterKey" xml:space="preserve">
-    <value>Use Master Key</value>
+    <value>Użyj klucza głównego</value>
   </data>
   <data name="ChangeCredentials" xml:space="preserve">
-    <value>Change credentials</value>
+    <value>Zmień dane logowania</value>
   </data>
   <data name="ChangeCredentialsDescription" xml:space="preserve">
-    <value>Change how you log in into this vault</value>
+    <value>Zmień sposób logowania do tego sejfu</value>
   </data>
   <data name="TwoFactor" xml:space="preserve">
-    <value>Two-factor authentication</value>
+    <value>Logowanie dwuetapowe</value>
   </data>
   <data name="TwoFactorDescription" xml:space="preserve">
-    <value>Setup or change two-factor authentication</value>
+    <value>Skonfiguruj lub zmień uwierzytelnianie dwuetapowe</value>
   </data>
   <data name="ModifyExisting" xml:space="preserve">
-    <value>Modify existing</value>
+    <value>Modyfikuj istniejący</value>
   </data>
   <data name="SelectAuthentication" xml:space="preserve">
-    <value>Select authentication option</value>
+    <value>Wybierz opcję uwierzytelniania</value>
   </data>
   <data name="AllOptions" xml:space="preserve">
-    <value>All options</value>
+    <value>Wszystkie opcje</value>
   </data>
   <data name="LoginKeyFile" xml:space="preserve">
-    <value>Authenticate using a Key File</value>
+    <value>Uwierzytelnij za pomocą pliku klucza</value>
   </data>
   <data name="LoginWindowsHello" xml:space="preserve">
-    <value>Authenticate with Windows Hello</value>
+    <value>Uwierzytelnianie za pomocą Windows Hello</value>
   </data>
   <data name="RemoveAuthentication" xml:space="preserve">
-    <value>Remove authentication</value>
+    <value>Usuń uwierzytelnienie</value>
   </data>
   <data name="RemoveAuthenticationDescription" xml:space="preserve">
-    <value>Remove this authentication method</value>
+    <value>Usuń tę metodę uwierzytelniania</value>
   </data>
   <data name="ChangeCurrentAuthentication" xml:space="preserve">
-    <value>Change current authentication method</value>
+    <value>Zmień obecną metodę uwierzytelniania</value>
   </data>
   <data name="ViewInFiles" xml:space="preserve">
-    <value>View in Files</value>
+    <value>Wyświetl w Plikach</value>
   </data>
   <data name="QuickActions" xml:space="preserve">
-    <value>Quick actions</value>
+    <value>Szybki dostęp</value>
   </data>
   <data name="Authentication" xml:space="preserve">
-    <value>Authentication</value>
+    <value>Uwierzytelnianie</value>
   </data>
   <data name="TotalRead" xml:space="preserve">
-    <value>Total read</value>
+    <value>Odczyt całkowity</value>
   </data>
   <data name="TotalWrite" xml:space="preserve">
-    <value>Total write</value>
+    <value>Zapis całkowity</value>
   </data>
   <data name="SystemVersion" xml:space="preserve">
-    <value>System version</value>
+    <value>Wersja systemu</value>
   </data>
   <data name="Migrate" xml:space="preserve">
-    <value>Migrate</value>
+    <value>Migruj</value>
   </data>
   <data name="EnterRecoveryKey" xml:space="preserve">
-    <value>Enter the recovery key for this vault</value>
+    <value>Wprowadź klucz odzyskiwania dla tego sejfu</value>
   </data>
   <data name="DateToday" xml:space="preserve">
-    <value>Today, {0}</value>
+    <value>Dzisiaj, {0}</value>
   </data>
   <data name="DateAgo" xml:space="preserve">
-    <value>{0} ago</value>
+    <value>{0} temu</value>
   </data>
   <data name="ErrorOccurred" xml:space="preserve">
-    <value>An error occurred</value>
+    <value>Wystąpił błąd</value>
   </data>
   <data name="VaultMigrated" xml:space="preserve">
-    <value>Vault has been migrated successfully</value>
+    <value>Sejf został pomyślnie przeniesiony</value>
   </data>
 </root>
