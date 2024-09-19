@@ -27,8 +27,7 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         protected override void OnPasswordChanged(string? value)
         {
-            if (PrimaryPassword == SecondaryPassword)
-                StateChanged?.Invoke(this, new PasswordChangedEventArgs(PrimaryPassword == SecondaryPassword));
+            StateChanged?.Invoke(this, new PasswordChangedEventArgs(PrimaryPassword == SecondaryPassword));
         }
 
         /// <inheritdoc/>

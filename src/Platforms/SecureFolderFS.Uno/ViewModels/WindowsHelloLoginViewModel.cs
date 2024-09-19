@@ -13,7 +13,7 @@ namespace SecureFolderFS.Uno.ViewModels
 {
     /// <inheritdoc cref="WindowsHelloViewModel"/>
     [Bindable(true)]
-    public sealed class WindowsHelloLoginViewModel(IFolder vaultFolder) : WindowsHelloViewModel
+    public sealed class WindowsHelloLoginViewModel(IFolder vaultFolder, string vaultId) : WindowsHelloViewModel(vaultFolder, vaultId)
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
@@ -24,8 +24,7 @@ namespace SecureFolderFS.Uno.ViewModels
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
-            var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
+            var vaultReader = new VaultReader(VaultFolder, StreamSerializer.Instance);
             var auth = await vaultReader.ReadAuthenticationAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", cancellationToken);
 
             if (auth?.Challenge is null)
@@ -37,7 +36,7 @@ namespace SecureFolderFS.Uno.ViewModels
             try
             {
                 // Ask for credentials
-                var result = await KeyCredentialManager.OpenAsync(config.Uid).AsTask(cancellationToken);
+                var result = await KeyCredentialManager.OpenAsync(VaultId).AsTask(cancellationToken);
                 if (result.Status != KeyCredentialStatus.Success)
                 {
                     Report(Result.Failure(new InvalidOperationException("Failed to open the credential.")));

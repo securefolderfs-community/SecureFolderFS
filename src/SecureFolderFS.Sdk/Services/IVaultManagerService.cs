@@ -55,5 +55,9 @@ namespace SecureFolderFS.Sdk.Services
         Task<IVFSRoot> CreateLocalStorageAsync(IVaultModel vaultModel, IDisposable unlockContract, CancellationToken cancellationToken);
 
         Task<IVaultMigratorModel> GetMigratorAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
+
+        // API not final. TBD
+        // TODO: Information needs to be passed on WHAT to replace/update
+        Task ChangeAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKey newKey, CancellationToken cancellationToken = default);
     }
 }

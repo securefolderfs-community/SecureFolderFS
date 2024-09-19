@@ -66,7 +66,7 @@ namespace SecureFolderFS.Uno.Dialogs
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (ViewModel is null)
                 return;
@@ -78,6 +78,8 @@ namespace SecureFolderFS.Uno.Dialogs
             }
             else if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel credentialsConfirmation)
             {
+                await credentialsConfirmation.ConfirmCommand.ExecuteAsync(null);
+                args.Cancel = false;
             }
         }
 
@@ -107,9 +109,14 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel is null)
                 return;
 
-            if (ViewModel.SelectedViewModel is not CredentialsConfirmationViewModel)
+            if (ViewModel.SelectedViewModel is not CredentialsConfirmationViewModel confirmationViewModel)
                 return;
 
+            // We also need to revoke existing credentials if the user added and aborted
+            if (confirmationViewModel.AuthenticationViewModel is not null)
+                await confirmationViewModel.AuthenticationViewModel.RevokeAsync(null);
+
+            confirmationViewModel.RegisterViewModel.Dispose();
             ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
             ViewModel.PrimaryButtonText = null;
             ViewModel.Title = "SelectAuthentication".ToLocalized();

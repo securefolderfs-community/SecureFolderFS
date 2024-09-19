@@ -43,7 +43,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
                     // Windows Hello
                     Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO => await KeyCredentialManager.IsSupportedAsync().AsTask(cancellationToken)
-                            ? new WindowsHelloLoginViewModel(vaultFolder)
+                            ? new WindowsHelloLoginViewModel(vaultFolder, config.Uid)
                             : throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform."),
 
                     // Key File

@@ -59,13 +59,16 @@ namespace SecureFolderFS.Core.VaultAccess
                 return;
 
             // Open a stream to the data file
-            await using var dataStream = await file.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            await using var fileStream = await file.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
 
             // Clear contents if opened from existing file
-            dataStream.TrySetLength(0L);
+            fileStream.TrySetLength(0L);
 
-            await using var serializedData = await _serializer.SerializeAsync(data, cancellationToken);
-            await serializedData.CopyToAsync(dataStream, cancellationToken);
+            if (data is not null)
+            {
+                await using var serializedData = await _serializer.SerializeAsync(data, cancellationToken);
+                await serializedData.CopyToAsync(fileStream, cancellationToken);
+            }
         }
     }
 }

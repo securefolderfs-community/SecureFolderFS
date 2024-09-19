@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
 using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,

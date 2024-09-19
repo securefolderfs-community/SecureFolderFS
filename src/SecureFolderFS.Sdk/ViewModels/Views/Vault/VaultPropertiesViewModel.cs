@@ -46,7 +46,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (item is null)
                 return;
 
-            var selectionViewModel = new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, item);
+            var selectionViewModel = new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, item, AuthenticationType.FirstStageOnly);
             using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel, selectionViewModel);
 
             await credentialsOverlay.InitAsync(cancellationToken);
@@ -59,7 +59,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             var item = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken).ElementAtOrDefaultAsync(1, cancellationToken);
             var selectionViewModel = item is not null
-                ? new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, item)
+                ? new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, item, AuthenticationType.ProceedingStageOnly)
                 : new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, AuthenticationType.ProceedingStageOnly);
 
             using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel, selectionViewModel);
