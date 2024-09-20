@@ -47,7 +47,16 @@ namespace SecureFolderFS.Maui.Popups
                 ThisPopup.Size = new(ThisPopup.Size.Width, 300d);
             }
         }
-        
+
+        private void RootGrid_Loaded(object? sender, EventArgs e)
+        {
+            var displayInfo = DeviceDisplay.MainDisplayInfo;
+            var width = displayInfo.Width / displayInfo.Density;
+
+            width -= 32; // Artificial margin on left and right
+            ThisPopup.Size = new(width, 232d);
+        }
+
         public PreviewRecoveryOverlayViewModel? ViewModel
         {
             get => (PreviewRecoveryOverlayViewModel?)GetValue(ViewModelProperty);

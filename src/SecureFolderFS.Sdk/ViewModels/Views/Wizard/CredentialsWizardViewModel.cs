@@ -64,6 +64,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
 
             // Await the credentials
+            RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
             var credentials = await _credentialsTcs.Task;
 
             // Make sure to also dispose the data within the current view model whether the navigation is successful or not

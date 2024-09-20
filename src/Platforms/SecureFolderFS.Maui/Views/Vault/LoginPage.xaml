@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Vault"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:mi_cupertino="clr-namespace:MauiIcons.Cupertino;assembly=MauiIcons.Cupertino"
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
@@ -45,12 +46,22 @@
         </VerticalStackLayout>
 
         <!--  Login  -->
-        <VerticalStackLayout>
+        <VerticalStackLayout Spacing="{OnPlatform Android=8}">
             <uc:LoginControl CurrentViewModel="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
-            <Button
-                Command="{Binding ViewModel.BeginRecoveryCommand}"
-                IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
-                Text="{l:ResourceString Name=RecoverAccess}" />
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="iOS">
+                    <Button
+                        Command="{Binding ViewModel.BeginRecoveryCommand}"
+                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                        Text="{l:ResourceString Name=RecoverAccess}" />
+                </On>
+                <On Platform="Android">
+                    <mdc:Button
+                        Command="{Binding ViewModel.BeginRecoveryCommand}"
+                        IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                        Text="{l:ResourceString Name=RecoverAccess}" />
+                </On>
+            </OnPlatform>
         </VerticalStackLayout>
     </VerticalStackLayout>
 </vw:ContentPageExtended>

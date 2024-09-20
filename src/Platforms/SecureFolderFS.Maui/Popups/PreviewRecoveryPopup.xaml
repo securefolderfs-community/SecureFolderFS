@@ -2,13 +2,14 @@
     x:Class="SecureFolderFS.Maui.Popups.PreviewRecoveryPopup"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.Popups"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPopup"
     BindingContext="{x:Reference ThisPopup}"
-    Size="400,192">
+    CanBeDismissedByTappingOutsideOfPopup="True">
 
     <tv:Popup.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
@@ -19,7 +20,11 @@
         </DataTemplate>
     </tv:Popup.Resources>
 
-    <Grid Padding="16" RowSpacing="24">
+    <Grid
+        Margin="16,0"
+        Padding="16"
+        Loaded="RootGrid_Loaded"
+        RowSpacing="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -33,6 +38,7 @@
 
         <uc:ContentPresentation
             Grid.Row="1"
+            HorizontalOptions="Fill"
             VerticalOptions="Center"
             ViewContent="{Binding ViewModel.CurrentViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>

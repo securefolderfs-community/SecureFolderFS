@@ -17,12 +17,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         /// <inheritdoc/>
         public override Task OpenUriAsync(Uri uri)
         {
+            var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+            if (activity?.PackageManager is null)
+                return Task.CompletedTask;
+
             var androidUri = AndroidUri.Parse(uri.AbsoluteUri);
             var intent = new Intent(Intent.ActionView, androidUri);
 
             // Ensure that there's an activity to handle the intent
-            if (intent.ResolveActivity(Platform.CurrentActivity.PackageManager) != null)
-                Platform.CurrentActivity.StartActivity(intent);
+            if (intent.ResolveActivity(activity.PackageManager) != null)
+                activity.StartActivity(intent);
 
             return Task.CompletedTask;
         }

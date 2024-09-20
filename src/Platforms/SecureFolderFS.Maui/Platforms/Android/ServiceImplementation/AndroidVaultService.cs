@@ -36,14 +36,14 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);
             var config = await vaultReader.ReadConfigurationAsync(cancellationToken);
-            var authenticationMethods = config.AuthenticationMethod.Split(Core.Constants.Vault.AuthenticationMethods.SEPARATOR);
+            var authenticationMethods = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR);
 
             foreach (var item in authenticationMethods)
             {
                 yield return item switch
                 {
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD => new PasswordLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD),
-                    Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE => new KeyFileLoginViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE, vaultFolder),
+                    Core.Constants.Vault.Authentication.AUTH_PASSWORD => new PasswordLoginViewModel(),
+                    Core.Constants.Vault.Authentication.AUTH_KEYFILE => new KeyFileLoginViewModel(vaultFolder),
                     _ => throw new NotSupportedException($"The authentication method '{item}' is not supported by the platform.")
                 };
             }
@@ -54,10 +54,10 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // Password
-            yield return new PasswordCreationViewModel(Core.Constants.Vault.AuthenticationMethods.AUTH_PASSWORD);
+            yield return new PasswordCreationViewModel();
 
             // Key File
-            yield return new KeyFileCreationViewModel(vaultId, Core.Constants.Vault.AuthenticationMethods.AUTH_KEYFILE);
+            yield return new KeyFileCreationViewModel(vaultId);
 
             await Task.CompletedTask;
         }

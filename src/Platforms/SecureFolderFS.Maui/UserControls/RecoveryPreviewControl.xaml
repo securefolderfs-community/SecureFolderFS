@@ -16,7 +16,7 @@
                     <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
 
                     <VerticalStackLayout Spacing="8">
-                        <mdc:Card Style="{DynamicResource FilledCardStyle}">
+                        <mdc:Card BindingContext="{x:Reference ThisRecoveryControl}" Style="{DynamicResource FilledCardStyle}">
                             <VerticalStackLayout Spacing="8">
                                 <Label Opacity="0.6" Text="Recovery key" />
                                 <Label

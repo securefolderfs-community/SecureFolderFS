@@ -67,7 +67,7 @@
         <!--  Top buttons  -->
         <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
-                <Grid Padding="20,16" ColumnSpacing="8">
+                <Grid Padding="20,16" ColumnSpacing="24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />

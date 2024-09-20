@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand]
-        private async Task ConfirmAsync()
+        private void ConfirmCredentials()
         {
             // In case the authentication was not reported, try to extract it manually, if possible
             if (_credentials.Count == 0 && CurrentViewModel is IWrapper<IKey> keyWrapper)
