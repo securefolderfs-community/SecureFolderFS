@@ -11,18 +11,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
     [Bindable(true)]
     public sealed partial class GraphControlViewModel : ObservableObject, IProgress<double>, IAsyncInitialize
     {
-        [ObservableProperty] private ObservableCollection<GraphPoint> _Data;
         [ObservableProperty] private bool _IsExtended;
         [ObservableProperty] private string? _GraphSubheader = "0mb/s";
+        [ObservableProperty] private ObservableCollection<double> _Data;
 
         public GraphControlViewModel()
         {
             _Data = new();
-        }
-
-        public void UpdateLastPoint()
-        {
-            Data.Move(0, Data.Count - 1);
         }
 
         /// <inheritdoc/>
@@ -35,24 +30,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         public Task InitAsync(CancellationToken cancellationToken = default)
         {
             for (var i = 0; i < Constants.Graphs.MAX_GRAPH_POINTS; i++)
-            {
-                Data.Add(new(0, DateTime.Now));
-            }
+                Data.Add(0d);
 
             return Task.CompletedTask;
-        }
-    }
-
-    public sealed class GraphPoint
-    {
-        public long Value { get; set; }
-
-        public DateTime Date { get; set; }
-
-        public GraphPoint(long value, DateTime date)
-        {
-            Value = value;
-            Date = date;
         }
     }
 }

@@ -70,16 +70,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             var now = DateTime.Now;
 
             // Update graph for read
-            var readPoint = ReadGraphViewModel.Data[0];
-            readPoint.Value = read;
-            readPoint.Date = now;
-            ReadGraphViewModel.UpdateLastPoint();
+            ReadGraphViewModel.Data.RemoveAt(0);
+            ReadGraphViewModel.Data.Add(read);
 
             // Update graph for write
-            var writePoint = WriteGraphViewModel.Data[0];
-            writePoint.Date = now;
-            writePoint.Value = write;
-            WriteGraphViewModel.UpdateLastPoint();
+            WriteGraphViewModel.Data.RemoveAt(0);
+            WriteGraphViewModel.Data.Add(write);
 
             // Reset amounts
             _currentReadAmount = 0;
