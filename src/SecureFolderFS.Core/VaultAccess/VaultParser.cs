@@ -51,8 +51,9 @@ namespace SecureFolderFS.Core.VaultAccess
             Argon2id.DeriveKey(passkey.Key, keystoreDataModel.Salt, kek);
 
             // Unwrap keys
-            Rfc3394KeyWrap.UnwrapKey(keystoreDataModel.WrappedEncKey, kek, encKey.Key);
-            Rfc3394KeyWrap.UnwrapKey(keystoreDataModel.WrappedMacKey, kek, macKey.Key);
+            using var rfc3394 = new Rfc3394KeyWrap();
+            rfc3394.UnwrapKey(keystoreDataModel.WrappedEncKey, kek, encKey.Key);
+            rfc3394.UnwrapKey(keystoreDataModel.WrappedMacKey, kek, macKey.Key);
 
             return (encKey, macKey);
         }
@@ -77,8 +78,9 @@ namespace SecureFolderFS.Core.VaultAccess
             Argon2id.DeriveKey(passkey, salt, kek);
 
             // Wrap keys
-            var wrappedEncKey = Rfc3394KeyWrap.WrapKey(encKey, kek);
-            var wrappedMacKey = Rfc3394KeyWrap.WrapKey(macKey, kek);
+            using var rfc3394 = new Rfc3394KeyWrap();
+            var wrappedEncKey = rfc3394.WrapKey(encKey, kek);
+            var wrappedMacKey = rfc3394.WrapKey(macKey, kek);
 
             // Generate keystore
             return new()

@@ -10,7 +10,6 @@ using LiveChartsCore.SkiaSharpView.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
 using SkiaSharp;
 using Windows.UI;
 
@@ -64,7 +63,7 @@ namespace SecureFolderFS.Uno.UserControls
                     Stroke = new SolidColorPaint(new(ChartStrokeColor.R, ChartStrokeColor.G, ChartStrokeColor.B, ChartStrokeColor.A), 2),
                     LineSmoothness = 0d,
                     DataPadding = new(0.5f, 0),
-                    AnimationsSpeed = TimeSpan.FromMilliseconds(150),
+                    AnimationsSpeed = TimeSpan.FromMilliseconds(0),
                     IsHoverable = false,
                     GeometrySize = 0d // TODO: Setting this to 0 causes a bug with jumping line series
                 }
