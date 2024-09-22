@@ -43,7 +43,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                 var mountable = options.FileSystemId switch
                 {
                     Core.Constants.FileSystemId.FS_DOKAN => DokanyMountable.CreateMountable(specifics),
-                    Core.Constants.FileSystemId.FS_WEBDAV => WebDavMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    Core.Constants.FileSystemId.FS_WEBDAV => WebDavMountable.CreateMountable(specifics, pathConverter),
                     _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
                 };
 

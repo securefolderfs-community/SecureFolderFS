@@ -12,7 +12,7 @@ namespace SecureFolderFS.Core.Routines
     // TODO: Needs docs
     public interface IStorageRoutine : IContractRoutine
     {
-        [Obsolete]
+        [Obsolete("Use FileSystemSpecifics")]
         (DirectoryIdCache, Security, IPathConverter, StreamsAccess) CreateStorageComponents(IFolder contentRoot, FileSystemOptions options);
 
         FileSystemSpecifics GetSpecifics(IFolder contentFolder, FileSystemOptions options);

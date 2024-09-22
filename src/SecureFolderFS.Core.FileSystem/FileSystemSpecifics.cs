@@ -15,21 +15,21 @@ namespace SecureFolderFS.Core.FileSystem
         /// </summary>
         public required IFolder ContentFolder { get; init; }
 
-        private FileSystemSpecifics()
-        {
-        }
-
-        public required UniversalCache<NameWithDirectoryId, string> PlaintextFileNameCache { get; init; }
-
-        public required UniversalCache<NameWithDirectoryId, string> CiphertextFileNameCache { get; init; }
-
-        public required UniversalCache<string, BufferHolder> DirectoryIdCache { get; init; }
-
-        public required FileSystemOptions FileSystemOptions { get; init; }
+        public required Security Security { get; init; }
 
         public required StreamsAccess StreamsAccess { get; init; }
 
-        public required Security Security { get; init; }
+        public required FileSystemOptions FileSystemOptions { get; init; }
+
+        public required UniversalCache<string, BufferHolder> DirectoryIdCache { get; init; }
+        
+        public required UniversalCache<NameWithDirectoryId, string> CiphertextFileNameCache { get; init; }
+
+        public required UniversalCache<NameWithDirectoryId, string> PlaintextFileNameCache { get; init; }
+
+        private FileSystemSpecifics()
+        {
+        }
 
         /// <inheritdoc/>
         public void Dispose()

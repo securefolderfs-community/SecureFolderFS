@@ -4,14 +4,11 @@ using NWebDav.Server.Storage;
 using NWebDav.Server.Stores;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Core.WebDav.Enums;
@@ -85,18 +82,16 @@ namespace SecureFolderFS.Core.WebDav
             return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options);
         }
 
-        public static IMountableFileSystem CreateMountable(FileSystemOptions options, IFolder contentFolder,
-            Security security, DirectoryIdCache directoryIdCache, IPathConverter pathConverter,
-            StreamsAccess streamsAccess)
+        public static IMountableFileSystem CreateMountable(FileSystemSpecifics specifics, IPathConverter pathConverter)
         {
             // TODO: Implement FileSystemSpecifics
             var cryptoFolder = (IFolder)null!; // new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
             var davFolder = new DavFolder(cryptoFolder);
 
             // TODO: Remove the following line once the new DavStorage is fully implemented.
-            var encryptingDiskStore = new EncryptingDiskStore(contentFolder.Id, streamsAccess, pathConverter, directoryIdCache, security);
-            var dispatcher = new WebDavDispatcher(new RootDiskStore(options.VolumeName, encryptingDiskStore), davFolder, new RequestHandlerProvider(), null);
-            return new WebDavMountable(options, dispatcher);
+            var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, pathConverter);
+            var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.FileSystemOptions.VolumeName, encryptingDiskStore), davFolder, new RequestHandlerProvider(), null);
+            return new WebDavMountable(specifics.FileSystemOptions, dispatcher);
         }
     }
 }

@@ -10,24 +10,23 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
     internal class EncryptingDiskStoreItem : IDiskStoreItem
     {
-        private readonly StreamsAccess _streamsAccess;
+        private readonly FileSystemSpecifics _specifics;
         private readonly IPathConverter _pathConverter;
         private readonly FileInfo _fileInfo;
-        private readonly Security _security;
 
-        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, StreamsAccess streamsAccess, IPathConverter pathConverter, Security security)
+        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, FileSystemSpecifics specifics, IPathConverter pathConverter)
         {
             LockingManager = lockingManager;
-            _fileInfo = fileInfo;
-            _streamsAccess = streamsAccess;
-            _pathConverter = pathConverter;
-            _security = security;
             IsWritable = isWritable;
+            _fileInfo = fileInfo;
+            _specifics = specifics;
+            _pathConverter = pathConverter;
         }
 
         public static PropertyManager<EncryptingDiskStoreItem> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreItem>[]
@@ -48,7 +47,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavGetContentLength<EncryptingDiskStoreItem>
             {
-                Getter = (context, item) => Math.Max(0, item._security.ContentCrypt.CalculateCleartextSize(item._fileInfo.Length - item._security.HeaderCrypt.HeaderCiphertextSize))
+                Getter = (context, item) => Math.Max(0, item._specifics.Security.ContentCrypt.CalculateCleartextSize(item._fileInfo.Length - item._specifics.Security.HeaderCrypt.HeaderCiphertextSize))
             },
             new DavGetContentType<EncryptingDiskStoreItem>
             {
@@ -126,8 +125,8 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public string Name => _pathConverter.GetCleartextFileName(_fileInfo.FullName) ?? string.Empty;
         public string UniqueKey => _fileInfo.FullName;
         public string FullPath => _pathConverter.ToCleartext(_fileInfo.FullName) ?? string.Empty;
-        public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_streamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
-        public Task<Stream> GetWritableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_streamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
+        public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
+        public Task<Stream> GetWritableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
 
         public async Task<HttpStatusCode> UploadFromStreamAsync(IHttpContext context, Stream inputStream)
         {

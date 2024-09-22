@@ -796,7 +796,6 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             return base.FindStreams(fileName, out streams, info);
         }
 
-        // TODO: Remove this method and call NativePathHelpers.GetCiphertextPath() instead
         /// <inheritdoc/>
         protected override string? GetCiphertextPath(string cleartextName)
         {
