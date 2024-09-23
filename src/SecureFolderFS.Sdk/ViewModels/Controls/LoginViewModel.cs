@@ -202,6 +202,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             VaultUnlocked = null;
             _vaultWatcherModel.StateChanged -= VaultWatcherModel_StateChanged;
 
+            (CurrentViewModel as IDisposable)?.Dispose();
             if (CurrentViewModel is not null)
                 CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;
 

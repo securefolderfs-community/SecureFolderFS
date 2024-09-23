@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -36,17 +33,6 @@ namespace SecureFolderFS.Uno.Views.Vault
                 ViewModel = viewModel;
 
             base.OnNavigatedTo(e);
-        }
-
-        /// <inheritdoc/>
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            foreach (var item in (WidgetsList.ItemsSource as IEnumerable) ?? Enumerable.Empty<object>())
-            {
-                (item as IDisposable)?.Dispose();
-            }
-
-            base.OnNavigatingFrom(e);
         }
     }
 }

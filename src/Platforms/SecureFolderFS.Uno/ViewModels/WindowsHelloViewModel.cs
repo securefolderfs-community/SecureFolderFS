@@ -86,14 +86,16 @@ namespace SecureFolderFS.Uno.ViewModels
             using var challenge = new SecureKey(KEY_PART_LENGTH + encodedVaultIdLength);
             using var secureRandom = RandomNumberGenerator.Create();
 
-            // Fill the first 180 bytes with secure random data
+            // Fill the first KEY_PART_LENGTH bytes with secure random data
             secureRandom.GetNonZeroBytes(challenge.Key.AsSpan(0, KEY_PART_LENGTH));
 
             // Fill the remaining bytes with the ID
             // By using ASCII encoding we get 1:1 byte to char ratio which allows us
             // to use the length of the string ID as part of the SecretKey length above
-            Encoding.ASCII.GetBytes(vaultId, challenge.Key.AsSpan(KEY_PART_LENGTH));
-
+            var written = Encoding.ASCII.GetBytes(vaultId, challenge.Key.AsSpan(KEY_PART_LENGTH));
+            if (written != encodedVaultIdLength)
+                throw new FormatException("The allocated and vault ID written bytes amount were different.");
+            
             // Return a copy of the challenge since the original version is being disposed of
             return challenge.CreateCopy();
         }
