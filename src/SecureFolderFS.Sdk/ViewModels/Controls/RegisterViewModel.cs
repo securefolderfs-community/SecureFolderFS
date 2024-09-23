@@ -8,7 +8,6 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -56,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
                 // We also need to revoke existing credentials if the user added and aborted
                 if (_credentials.Count > 0)
-                    await oldValue.RevokeAsync(null);
+                    await SafetyHelpers.NoThrowAsync(async () => await oldValue.RevokeAsync(null));
             }
 
             if (newValue is not null)
@@ -84,10 +83,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         public void Dispose()
         {
             _credentials.Dispose();
+            CredentialsProvided = null;
             if (CurrentViewModel is not null)
             {
-                CurrentViewModel.StateChanged += CurrentViewModel_StateChanged;
-                CurrentViewModel.CredentialsProvided += CurrentViewModel_CredentialsProvided;
+                CurrentViewModel.StateChanged -= CurrentViewModel_StateChanged;
+                CurrentViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
             }
         }
     }

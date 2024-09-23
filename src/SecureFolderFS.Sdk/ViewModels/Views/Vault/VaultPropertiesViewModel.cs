@@ -18,9 +18,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultPropertiesViewModel : BaseDashboardViewModel
     {
+        [ObservableProperty] private string? _SecurityText;
         [ObservableProperty] private string? _ContentCipherText;
         [ObservableProperty] private string? _FileNameCipherText;
-        [ObservableProperty] private string? _SecurityText;
+        [ObservableProperty] private string? _ActiveFileSystemText;
 
         public VaultPropertiesViewModel(UnlockedVaultViewModel unlockedVaultViewModel)
             : base(unlockedVaultViewModel)
@@ -35,6 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             var vaultOptions = await VaultService.GetVaultOptionsAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken);
             ContentCipherText = string.IsNullOrEmpty(vaultOptions.ContentCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
             FileNameCipherText = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown");
+            ActiveFileSystemText = UnlockedVaultViewModel.StorageRoot.FileSystemName;
 
             await UpdateSecurityTextAsync(cancellationToken);
         }
@@ -46,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (item is null)
                 return;
 
-            var selectionViewModel = new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, item, AuthenticationType.FirstStageOnly);
+            var selectionViewModel = new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, AuthenticationType.FirstStageOnly) { ConfiguredViewModel = item };
             using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel, selectionViewModel);
 
             await credentialsOverlay.InitAsync(cancellationToken);
@@ -59,7 +61,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             var item = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken).ElementAtOrDefaultAsync(1, cancellationToken);
             var selectionViewModel = item is not null
-                ? new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, item, AuthenticationType.ProceedingStageOnly)
+                ? new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, AuthenticationType.ProceedingStageOnly) { ConfiguredViewModel = item }
                 : new CredentialsSelectionViewModel(UnlockedVaultViewModel.VaultModel.Folder, AuthenticationType.ProceedingStageOnly);
 
             using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel, selectionViewModel);

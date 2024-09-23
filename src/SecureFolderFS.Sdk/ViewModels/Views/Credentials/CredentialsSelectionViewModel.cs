@@ -4,6 +4,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -25,24 +26,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         private readonly AuthenticationType _authenticationStage;
 
         [ObservableProperty] private bool _CanRemoveCredentials;
-        [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
+        [ObservableProperty] private RegisterViewModel _RegisterViewModel;
+        [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
-
-        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationViewModel currentViewModel, AuthenticationType authenticationStage)
-            : this(vaultFolder, authenticationStage)
-        {
-            CurrentViewModel = currentViewModel;
-        }
 
         public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationType authenticationStage)
         {
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _authenticationStage = authenticationStage;
-            CanRemoveCredentials = authenticationStage != AuthenticationType.FirstStageOnly;
-            AuthenticationOptions = new();
+            _RegisterViewModel = new();
+            _CanRemoveCredentials = authenticationStage != AuthenticationType.FirstStageOnly;
+            _AuthenticationOptions = new();
         }
 
         /// <inheritdoc/>
@@ -70,10 +67,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [RelayCommand]
         private void RemoveCredentials()
         {
-            if (CurrentViewModel is null)
+            if (ConfiguredViewModel is null)
                 return;
 
-            ConfirmationRequested?.Invoke(this, new(CurrentViewModel, _authenticationStage)
+            RegisterViewModel.CurrentViewModel = ConfiguredViewModel;
+            ConfirmationRequested?.Invoke(this, new(RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = true,
                 CanComplement = false
@@ -88,7 +86,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             if (authenticationViewModel is null)
                 return;
 
-            ConfirmationRequested?.Invoke(this, new(authenticationViewModel, _authenticationStage)
+            RegisterViewModel.CurrentViewModel = authenticationViewModel;
+            ConfirmationRequested?.Invoke(this, new(RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
                 CanComplement = _authenticationStage != AuthenticationType.FirstStageOnly // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
@@ -102,14 +101,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 return null;
 
             return await VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken)
-                .FirstOrDefaultAsync(x => x.Id == CurrentViewModel?.Id, cancellationToken: cancellationToken);
+                .FirstOrDefaultAsync(x => x.Id == ConfiguredViewModel?.Id, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
             ConfirmationRequested = null;
-            CurrentViewModel?.Dispose();
+            RegisterViewModel.Dispose();
+            ConfiguredViewModel?.Dispose();
             AuthenticationOptions.DisposeElements();
         }
     }

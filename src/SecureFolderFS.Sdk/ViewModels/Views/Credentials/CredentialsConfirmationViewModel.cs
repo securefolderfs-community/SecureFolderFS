@@ -2,11 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
-using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
-using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
     [Bindable(true)]
     [Inject<IVaultManagerService>]
-    public sealed partial class CredentialsConfirmationViewModel : ObservableObject, IDisposable
+    public sealed partial class CredentialsConfirmationViewModel : ObservableObject
     {
         private readonly AuthenticationType _authenticationStage;
 
@@ -22,17 +21,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private bool _CanComplement;
         [ObservableProperty] private bool _IsComplementing;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
-        [ObservableProperty] private AuthenticationViewModel? _AuthenticationViewModel;
 
-        public CredentialsConfirmationViewModel(AuthenticationViewModel authenticationViewModel, AuthenticationType authenticationStage)
+        public CredentialsConfirmationViewModel(RegisterViewModel registerViewModel, AuthenticationType authenticationStage)
         {
             ServiceProvider = DI.Default;
-            _AuthenticationViewModel = authenticationViewModel;
+            _RegisterViewModel = registerViewModel;
             _authenticationStage = authenticationStage;
-            _RegisterViewModel = new()
-            {
-                CurrentViewModel = AuthenticationViewModel
-            };
+
+            RegisterViewModel.CredentialsProvided += RegisterViewModel_CredentialsProvided;
         }
 
         [RelayCommand]
@@ -47,10 +43,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             await Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
-        public void Dispose()
+        private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            RegisterViewModel.Dispose();
+            throw new System.NotImplementedException();
         }
     }
 }

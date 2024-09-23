@@ -11,6 +11,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 
@@ -21,8 +22,6 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class CredentialsDialog : ContentDialog, IOverlayControl
     {
-        private bool _isBackShown;
-
         public CredentialsOverlayViewModel? ViewModel
         {
             get => DataContext.TryCast<CredentialsOverlayViewModel>();
@@ -50,20 +49,6 @@ namespace SecureFolderFS.Uno.Dialogs
         {
             Hide();
             return Task.CompletedTask;
-        }
-
-        private async Task AnimateBackAsync(bool shouldShowBack)
-        {
-            if (shouldShowBack && !_isBackShown)
-            {
-                _isBackShown = true;
-                await BackTitle.ShowBackAsync();
-            }
-            else if (!shouldShowBack && _isBackShown)
-            {
-                _isBackShown = false;
-                await BackTitle.HideBackAsync();
-            }
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -113,15 +98,14 @@ namespace SecureFolderFS.Uno.Dialogs
                 return;
 
             // We also need to revoke existing credentials if the user added and aborted
-            if (confirmationViewModel.AuthenticationViewModel is not null)
-                await confirmationViewModel.AuthenticationViewModel.RevokeAsync(null);
+            if (confirmationViewModel.RegisterViewModel.CurrentViewModel is not null)
+                await SafetyHelpers.NoThrowAsync(async () => await confirmationViewModel.RegisterViewModel.CurrentViewModel.RevokeAsync(null));
 
-            confirmationViewModel.RegisterViewModel.Dispose();
             ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
             ViewModel.PrimaryButtonText = null;
             ViewModel.Title = "SelectAuthentication".ToLocalized();
 
-            await AnimateBackAsync(false);
+            await BackTitle.AnimateBackAsync(false);
         }
 
         private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -132,7 +116,7 @@ namespace SecureFolderFS.Uno.Dialogs
             if (e.PropertyName == nameof(CredentialsOverlayViewModel.SelectedViewModel))
             {
                 if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel)
-                    await AnimateBackAsync(true);
+                    await BackTitle.AnimateBackAsync(true);
             }
         }
 

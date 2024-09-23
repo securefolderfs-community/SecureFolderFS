@@ -11,11 +11,27 @@ namespace SecureFolderFS.Uno.UserControls
 
     public sealed partial class BackButtonTitleControl : UserControl
     {
+        private bool _isBackShown;
+        
         public event RoutedEventHandler Click;
 
         public BackButtonTitleControl()
         {
             InitializeComponent();
+        }
+
+        public async Task AnimateBackAsync(bool shouldShowBack)
+        {
+            if (shouldShowBack && !_isBackShown)
+            {
+                _isBackShown = true;
+                await ShowBackAsync();
+            }
+            else if (!shouldShowBack && _isBackShown)
+            {
+                _isBackShown = false;
+                await HideBackAsync();
+            }
         }
 
         public async Task ShowBackAsync()
