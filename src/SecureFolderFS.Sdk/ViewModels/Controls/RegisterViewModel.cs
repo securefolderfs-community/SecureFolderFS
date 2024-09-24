@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
@@ -12,7 +10,6 @@ using System.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IVaultService>, Inject<IVaultManagerService>]
     [Bindable(true)]
     public sealed partial class RegisterViewModel : ObservableObject, IDisposable
     {

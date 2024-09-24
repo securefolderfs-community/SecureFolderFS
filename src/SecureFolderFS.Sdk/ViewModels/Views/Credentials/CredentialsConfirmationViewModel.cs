@@ -50,20 +50,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         {
             RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
             var key = await _credentialsTcs.Task;
-            var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
-            var newOptions = new VaultOptions()
-            {
-                AuthenticationMethod = GetAuthenticationMethod(),
-                ContentCipherId = vaultOptions.ContentCipherId,
-                FileNameCipherId = vaultOptions.FileNameCipherId,
-                VaultId = vaultOptions.VaultId,
-                Version = vaultOptions.Version
-            };
-            
-            await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
-            if (ConfiguredViewModel is not null)
-                await ConfiguredViewModel.RevokeAsync(null, cancellationToken);
+            var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+            var authenticationMethod = GetAuthenticationMethod();
 
+            await ChangeCredentialsAsync(key, configuredOptions, authenticationMethod, cancellationToken);
             return;
 
             string[] GetAuthenticationMethod()
@@ -71,9 +61,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
                 return _authenticationStage switch
                 {
-                    AuthenticationType.ProceedingStageOnly => [ vaultOptions.AuthenticationMethod[0], RegisterViewModel.CurrentViewModel.Id ],
-                    AuthenticationType.FirstStageOnly => vaultOptions.AuthenticationMethod.Length > 1
-                        ? [ RegisterViewModel.CurrentViewModel.Id, vaultOptions.AuthenticationMethod[1] ]
+                    AuthenticationType.ProceedingStageOnly => [ configuredOptions.AuthenticationMethod[0], RegisterViewModel.CurrentViewModel.Id ],
+                    AuthenticationType.FirstStageOnly => configuredOptions.AuthenticationMethod.Length > 1
+                        ? [ RegisterViewModel.CurrentViewModel.Id, configuredOptions.AuthenticationMethod[1] ]
                         : [ RegisterViewModel.CurrentViewModel.Id ],
 
                     _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
@@ -86,18 +76,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         {
             if (_authenticationStage != AuthenticationType.ProceedingStageOnly)
                 return;
-            
-            var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+
+            var key = RegisterViewModel.Credentials.Keys.First();
+            var configuredOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+            var authenticationMethod = new[] { configuredOptions.AuthenticationMethod[0] };
+
+            await ChangeCredentialsAsync(key, configuredOptions, authenticationMethod, cancellationToken);
+        }
+
+        private async Task ChangeCredentialsAsync(IKey key, VaultOptions configuredOptions, string[] authenticationMethod, CancellationToken cancellationToken)
+        {
             var newOptions = new VaultOptions()
             {
-                AuthenticationMethod = [ vaultOptions.AuthenticationMethod[0] ],
-                ContentCipherId = vaultOptions.ContentCipherId,
-                FileNameCipherId = vaultOptions.FileNameCipherId,
-                VaultId = vaultOptions.VaultId,
-                Version = vaultOptions.Version
+                AuthenticationMethod = authenticationMethod,
+                ContentCipherId = configuredOptions.ContentCipherId,
+                FileNameCipherId = configuredOptions.FileNameCipherId,
+                VaultId = configuredOptions.VaultId,
+                Version = configuredOptions.Version
             };
 
-            await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, RegisterViewModel.Credentials.Keys.First(), newOptions, cancellationToken);
+            await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
             if (ConfiguredViewModel is not null)
                 await ConfiguredViewModel.RevokeAsync(null, cancellationToken);
         }
