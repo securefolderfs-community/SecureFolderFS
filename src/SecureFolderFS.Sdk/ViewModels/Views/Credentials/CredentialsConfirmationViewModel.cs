@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
@@ -28,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private bool _CanComplement;
         [ObservableProperty] private bool _IsComplementing;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
+        [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
         
         public required IDisposable UnlockContract { private get; init; }
 
@@ -57,6 +59,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 Version = vaultOptions.Version
             };
             
+            // TODO: Revoke current
+
             await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
             return;
 
@@ -65,10 +69,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
                 return _authenticationStage switch
                 {
-                    AuthenticationType.ProceedingStageOnly => [vaultOptions.AuthenticationMethod[0], RegisterViewModel.CurrentViewModel.Id],
+                    AuthenticationType.ProceedingStageOnly => [ vaultOptions.AuthenticationMethod[0], RegisterViewModel.CurrentViewModel.Id ],
                     AuthenticationType.FirstStageOnly => vaultOptions.AuthenticationMethod.Length > 1
-                        ? [RegisterViewModel.CurrentViewModel.Id, vaultOptions.AuthenticationMethod[1]]
-                        : [RegisterViewModel.CurrentViewModel.Id],
+                        ? [ RegisterViewModel.CurrentViewModel.Id, vaultOptions.AuthenticationMethod[1] ]
+                        : [ RegisterViewModel.CurrentViewModel.Id ],
 
                     _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
                 };
@@ -76,9 +80,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         }
 
         [RelayCommand]
-        public async Task RemoveAsync()
+        public async Task RemoveAsync(CancellationToken cancellationToken)
         {
-            await Task.CompletedTask;
+            if (_authenticationStage != AuthenticationType.ProceedingStageOnly)
+                return;
+
+            // TODO: Revoke current
+            var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
+            var newOptions = new VaultOptions()
+            {
+                AuthenticationMethod = [ vaultOptions.AuthenticationMethod[0] ],
+                ContentCipherId = vaultOptions.ContentCipherId,
+                FileNameCipherId = vaultOptions.FileNameCipherId,
+                VaultId = vaultOptions.VaultId,
+                Version = vaultOptions.Version
+            };
+
+            // TODO
+            //await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, EXISTING KEY (UNLOCK CONTRACT) OR NULL, newOptions, cancellationToken);
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         private readonly AuthenticationType _authenticationStage;
 
         [ObservableProperty] private bool _CanRemoveCredentials;
-        [ObservableProperty] private RegisterViewModel _RegisterViewModel;
+        [ObservableProperty] private RegisterViewModel? _RegisterViewModel;
         [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
         
@@ -39,7 +39,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
             _authenticationStage = authenticationStage;
-            _RegisterViewModel = new();
             _CanRemoveCredentials = authenticationStage != AuthenticationType.FirstStageOnly;
             _AuthenticationOptions = new();
         }
@@ -69,18 +68,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [RelayCommand]
         private void RemoveCredentials()
         {
-            if (ConfiguredViewModel is null)
-                return;
-            
-            if (UnlockContract is null)
+            if (ConfiguredViewModel is null || RegisterViewModel is null || UnlockContract is null)
                 return;
 
-            RegisterViewModel.CurrentViewModel = ConfiguredViewModel;
             ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = true,
                 CanComplement = false,
-                UnlockContract = UnlockContract
+                UnlockContract = UnlockContract,
+                ConfiguredViewModel = ConfiguredViewModel
             });
         }
 
@@ -92,7 +88,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             if (authenticationViewModel is null)
                 return;
             
-            if (UnlockContract is null)
+            if (UnlockContract is null || RegisterViewModel is null)
                 return;
 
             RegisterViewModel.CurrentViewModel = authenticationViewModel;
@@ -100,7 +96,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             {
                 IsRemoving = false,
                 CanComplement = _authenticationStage != AuthenticationType.FirstStageOnly, // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
-                UnlockContract = UnlockContract
+                UnlockContract = UnlockContract,
+                ConfiguredViewModel = ConfiguredViewModel
             });
         }
 
@@ -118,7 +115,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         public void Dispose()
         {
             ConfirmationRequested = null;
-            RegisterViewModel.Dispose();
+            RegisterViewModel?.Dispose();
             ConfiguredViewModel?.Dispose();
             AuthenticationOptions.DisposeElements();
         }

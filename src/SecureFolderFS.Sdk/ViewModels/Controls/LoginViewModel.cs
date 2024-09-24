@@ -36,12 +36,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         public event EventHandler<VaultUnlockedEventArgs>? VaultUnlocked;
 
-        public LoginViewModel(IVaultModel vaultModel, LoginViewType loginViewMode)
+        public LoginViewModel(IVaultModel vaultModel, LoginViewType loginViewMode, KeyChain? keyChain = null)
         {
             ServiceProvider = DI.Default;
             _loginViewMode = loginViewMode;
             _vaultModel = vaultModel;
-            _keyChain = new();
+            _keyChain = keyChain ?? new();
             _vaultWatcherModel = new VaultWatcherModel(vaultModel.Folder);
             _vaultWatcherModel.StateChanged += VaultWatcherModel_StateChanged;
         }
@@ -119,10 +119,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 // Report that an error occurred when trying to log in
                 CurrentViewModel?.Report(Result.Failure(ex));
             }
-            finally
-            {
-                _keyChain.Dispose();
-            }
         }
 
         private async Task<IResult> TryNextAuthAsync()
@@ -177,7 +173,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
             // Add authentication
-            _keyChain.Push(e.Authentication);
+            _keyChain.Add(e.Authentication);
 
             var result = await TryNextAuthAsync();
             if (!result.Successful && CurrentViewModel is not ErrorViewModel)

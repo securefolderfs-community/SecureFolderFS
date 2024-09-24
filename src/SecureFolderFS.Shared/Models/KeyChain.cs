@@ -10,7 +10,7 @@ namespace SecureFolderFS.Shared.Models
     /// </summary>
     public sealed class KeyChain : IKey
     {
-        private readonly Stack<IKey> _keys;
+        private readonly List<IKey> _keys;
 
         public int Count => _keys.Count;
 
@@ -19,14 +19,9 @@ namespace SecureFolderFS.Shared.Models
             _keys = new();
         }
 
-        public void Push(IKey key)
+        public void Add(IKey key)
         {
-            _keys.Push(key);
-        }
-
-        public void Pop()
-        {
-            _ = _keys.Pop();
+            _keys.Add(key);
         }
 
         /// <inheritdoc/>

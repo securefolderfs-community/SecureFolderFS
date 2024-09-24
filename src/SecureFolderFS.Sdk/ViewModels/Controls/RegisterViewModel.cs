@@ -26,9 +26,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// </summary>
         public event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public RegisterViewModel()
+        public RegisterViewModel(KeyChain? credentials = null)
         {
-            _credentials = new();
+            _credentials = credentials ?? new();
         }
 
         [RelayCommand]
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             // In case the authentication was not reported, try to extract it manually, if possible
             if (_credentials.Count == 0 && CurrentViewModel is IWrapper<IKey> keyWrapper)
-                _credentials.Push(keyWrapper.Inner);
+                _credentials.Add(keyWrapper.Inner);
 
             if (_credentials.Count == 0)
                 return;
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         private void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            _credentials.Push(e.Authentication);
+            _credentials.Add(e.Authentication);
             CanContinue = true;
         }
 

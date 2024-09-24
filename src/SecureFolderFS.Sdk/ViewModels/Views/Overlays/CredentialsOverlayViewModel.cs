@@ -6,6 +6,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -16,15 +17,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     [Bindable(true)]
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
+        private readonly KeyChain _keyChain;
+
         [ObservableProperty] private LoginViewModel _LoginViewModel;
         [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
 
         public CredentialsOverlayViewModel(IVaultModel vaultModel, CredentialsSelectionViewModel selectionViewModel)
         {
-            LoginViewModel = new(vaultModel, LoginViewType.Basic);
-            SelectionViewModel = selectionViewModel;
+            _keyChain = new();
 
+            LoginViewModel = new(vaultModel, LoginViewType.Basic, _keyChain);
+            SelectionViewModel = selectionViewModel;
             SelectedViewModel = LoginViewModel;
             Title = "Authenticate".ToLocalized();
             PrimaryButtonText = "Continue".ToLocalized();
@@ -44,7 +48,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             Title = "SelectAuthentication".ToLocalized();
             PrimaryButtonText = null;
+
             SelectionViewModel.UnlockContract = e.UnlockContract;
+            SelectionViewModel.RegisterViewModel = new(_keyChain);
             SelectedViewModel = SelectionViewModel;
         }
 
