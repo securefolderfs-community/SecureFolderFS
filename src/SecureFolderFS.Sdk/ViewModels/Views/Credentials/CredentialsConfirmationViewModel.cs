@@ -12,6 +12,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -59,9 +60,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 Version = vaultOptions.Version
             };
             
-            // TODO: Revoke current
-
             await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
+            if (ConfiguredViewModel is not null)
+                await ConfiguredViewModel.RevokeAsync(null, cancellationToken);
+
             return;
 
             string[] GetAuthenticationMethod()
@@ -84,8 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         {
             if (_authenticationStage != AuthenticationType.ProceedingStageOnly)
                 return;
-
-            // TODO: Revoke current
+            
             var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
             var newOptions = new VaultOptions()
             {
@@ -96,8 +97,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 Version = vaultOptions.Version
             };
 
-            // TODO
-            //await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, EXISTING KEY (UNLOCK CONTRACT) OR NULL, newOptions, cancellationToken);
+            await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, RegisterViewModel.Credentials.Keys.First(), newOptions, cancellationToken);
+            if (ConfiguredViewModel is not null)
+                await ConfiguredViewModel.RevokeAsync(null, cancellationToken);
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

@@ -16,8 +16,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Bindable(true)]
     public sealed partial class RegisterViewModel : ObservableObject, IDisposable
     {
-        private readonly KeyChain _credentials;
-
         [ObservableProperty] private bool _CanContinue;
         [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
 
@@ -26,22 +24,27 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// </summary>
         public event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
+        /// <summary>
+        /// Gets the user credentials.
+        /// </summary>
+        public KeyChain Credentials { get; }
+
         public RegisterViewModel(KeyChain? credentials = null)
         {
-            _credentials = credentials ?? new();
+            Credentials = credentials ?? new();
         }
 
         [RelayCommand]
         private void ConfirmCredentials()
         {
             // In case the authentication was not reported, try to extract it manually, if possible
-            if (_credentials.Count == 0 && CurrentViewModel is IWrapper<IKey> keyWrapper)
-                _credentials.Add(keyWrapper.Inner);
+            if (Credentials.Count == 0 && CurrentViewModel is IWrapper<IKey> keyWrapper)
+                Credentials.Add(keyWrapper.Inner);
 
-            if (_credentials.Count == 0)
+            if (Credentials.Count == 0)
                 return;
 
-            CredentialsProvided?.Invoke(this, new(_credentials));
+            CredentialsProvided?.Invoke(this, new(Credentials));
         }
 
         async partial void OnCurrentViewModelChanged(AuthenticationViewModel? oldValue, AuthenticationViewModel? newValue)
@@ -55,7 +58,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 oldValue.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
                 // We also need to revoke existing credentials if the user added and aborted
-                if (_credentials.Count > 0)
+                if (Credentials.Count > 0)
                     await SafetyHelpers.NoThrowAsync(async () => await oldValue.RevokeAsync(null));
             }
 
@@ -70,7 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
         private void CurrentViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
-            _credentials.Add(e.Authentication);
+            Credentials.Add(e.Authentication);
             CanContinue = true;
         }
 
@@ -83,7 +86,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <inheritdoc/>
         public void Dispose()
         {
-            _credentials.Dispose();
+            Credentials.Dispose();
             CredentialsProvided = null;
             if (CurrentViewModel is not null)
             {

@@ -14,6 +14,8 @@ namespace SecureFolderFS.Shared.Models
 
         public int Count => _keys.Count;
 
+        public IReadOnlyCollection<IKey> Keys => _keys;
+
         public KeyChain()
         {
             _keys = new();
