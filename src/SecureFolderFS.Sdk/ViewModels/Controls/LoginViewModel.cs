@@ -107,17 +107,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
-        private async Task TryUnlockAsync(CancellationToken cancellationToken = default)
+        private async Task<bool> TryUnlockAsync(CancellationToken cancellationToken = default)
         {
             try
             {
                 var unlockContract = await VaultManagerService.UnlockAsync(_vaultModel.Folder, _keyChain, cancellationToken);
                 VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder));
+                return true;
             }
             catch (Exception ex)
             {
                 // Report that an error occurred when trying to log in
                 CurrentViewModel?.Report(Result.Failure(ex));
+                return false;
             }
         }
 
@@ -179,7 +181,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (!result.Successful && CurrentViewModel is not ErrorViewModel)
             {
                 // Reached the end in which case we should try to unlock the vault
-                await TryUnlockAsync();
+                if (!await TryUnlockAsync())
+                    _keyChain.Dispose();
             }
         }
 
