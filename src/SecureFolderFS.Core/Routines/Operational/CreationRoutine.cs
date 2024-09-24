@@ -18,8 +18,8 @@ namespace SecureFolderFS.Core.Routines.Operational
     {
         private readonly IFolder _vaultFolder;
         private readonly VaultWriter _vaultWriter;
-        private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private SecretKey? _macKey;
         private SecretKey? _encKey;
 
@@ -82,7 +82,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             // First we need to fill in the PayloadMac of the content
             VaultParser.CalculateConfigMac(_configDataModel, _macKey, _configDataModel.PayloadMac);
 
-            // Write the whole config
+            // Write the whole configuration
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
             await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 

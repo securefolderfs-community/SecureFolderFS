@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using static SecureFolderFS.Core.Constants.Vault;
 
 namespace SecureFolderFS.Core.Routines.Operational
@@ -15,8 +16,9 @@ namespace SecureFolderFS.Core.Routines.Operational
     internal sealed class ModifyCredentialsRoutine : IModifyCredentialsRoutine
     {
         private readonly VaultWriter _vaultWriter;
-        private VaultConfigurationDataModel? _configDataModel;
         private KeystoreContract? _unlockContract;
+        private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
 
         public ModifyCredentialsRoutine(VaultWriter vaultWriter)
         {
@@ -59,6 +61,20 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
+        public void SetCredentials(SecretKey passkey)
+        {
+            ArgumentNullException.ThrowIfNull(_unlockContract);
+
+            // Generate new salt
+            using var secureRandom = RandomNumberGenerator.Create();
+            var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
+            secureRandom.GetNonZeroBytes(salt);
+
+            // Encrypt new keystore
+            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, _unlockContract.EncKey, _unlockContract.MacKey, salt);
+        }
+
+        /// <inheritdoc/>
         public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(_unlockContract);
@@ -67,7 +83,8 @@ namespace SecureFolderFS.Core.Routines.Operational
             // First we need to fill in the PayloadMac of the content
             VaultParser.CalculateConfigMac(_configDataModel, _unlockContract.MacKey, _configDataModel.PayloadMac);
 
-            // Write only the configuration
+            // Write the whole configuration
+            await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
             await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
             // TODO: Return UnlockContract

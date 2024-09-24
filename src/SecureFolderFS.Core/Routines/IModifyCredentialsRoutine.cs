@@ -1,6 +1,6 @@
 ﻿namespace SecureFolderFS.Core.Routines
 {
-    public interface IModifyCredentialsRoutine : IFinalizationRoutine, IContractRoutine, IOptionsRoutine
+    public interface IModifyCredentialsRoutine : ICredentialsRoutine, IContractRoutine, IOptionsRoutine
     {
     }
 }

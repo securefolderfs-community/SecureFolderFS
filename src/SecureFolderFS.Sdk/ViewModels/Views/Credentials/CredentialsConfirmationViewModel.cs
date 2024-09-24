@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         }
 
         [RelayCommand]
-        private async Task ConfirmAsync(CancellationToken cancellationToken)
+        public async Task ConfirmAsync(CancellationToken cancellationToken)
         {
             RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
             var key = await _credentialsTcs.Task;
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         }
 
         [RelayCommand]
-        private async Task RemoveAsync()
+        public async Task RemoveAsync()
         {
             await Task.CompletedTask;
         }

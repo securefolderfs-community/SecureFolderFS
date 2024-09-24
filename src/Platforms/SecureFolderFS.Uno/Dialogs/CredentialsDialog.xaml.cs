@@ -63,8 +63,16 @@ namespace SecureFolderFS.Uno.Dialogs
             }
             else if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel credentialsConfirmation)
             {
-                await credentialsConfirmation.ConfirmCommand.ExecuteAsync(null);
-                args.Cancel = false;
+                try
+                {
+                    await credentialsConfirmation.ConfirmAsync(default);
+                    await HideAsync();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Report to user
+                    _ = ex;
+                }
             }
         }
 
