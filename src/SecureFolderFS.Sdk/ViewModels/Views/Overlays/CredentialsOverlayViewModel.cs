@@ -44,6 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             Title = "SelectAuthentication".ToLocalized();
             PrimaryButtonText = null;
+            SelectionViewModel.UnlockContract = e.UnlockContract;
             SelectedViewModel = SelectionViewModel;
         }
 

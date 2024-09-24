@@ -75,12 +75,14 @@
 
                     <mdc:Button
                         Grid.Column="0"
+                        Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
                         HeightRequest="48"
                         Style="{DynamicResource FilledTonalButtonStyle}"
                         Text="{l:ResourceString Name=ViewInFiles}"
                         WidthRequest="180" />
                     <mdc:Button
                         Grid.Column="1"
+                        Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
                         HeightRequest="48"
                         Style="{DynamicResource FilledTonalButtonStyle}"
                         Text="{l:ResourceString Name=LockVault}"

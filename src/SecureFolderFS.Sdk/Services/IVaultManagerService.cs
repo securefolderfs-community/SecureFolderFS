@@ -57,7 +57,7 @@ namespace SecureFolderFS.Sdk.Services
         Task<IVaultMigratorModel> GetMigratorAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
         // API not final. TBD
-        // TODO: Information needs to be passed on WHAT to replace/update
-        Task ChangeAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKey newKey, CancellationToken cancellationToken = default);
+        // TODO: string authenticationMethod is kind of bad
+        Task ChangeAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKey newKey, VaultOptions vaultOptions, CancellationToken cancellationToken = default);
     }
 }

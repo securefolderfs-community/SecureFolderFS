@@ -74,18 +74,18 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 {
                     ContentCipherId = ContentCipher.Id,
                     FileNameCipherId = FileNameCipher.Id,
-                    AuthenticationMethod = [RegisterViewModel.CurrentViewModel.Id ],
+                    AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ],
                     VaultId = _vaultId
                 };
 
                 // Create the vault
-                var superSecret = await VaultManagerService.CreateAsync(
+                var unlockContract = await VaultManagerService.CreateAsync(
                     Folder,
                     credentials,
                     vaultOptions,
                     cancellationToken);
 
-                return new CredentialsResult(superSecret, _vaultId);
+                return new CredentialsResult(unlockContract, _vaultId);
             }
         }
 

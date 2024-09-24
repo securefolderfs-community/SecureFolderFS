@@ -29,6 +29,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
+        
+        public IDisposable? UnlockContract { private get; set; }
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
 
@@ -69,12 +71,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         {
             if (ConfiguredViewModel is null)
                 return;
+            
+            if (UnlockContract is null)
+                return;
 
             RegisterViewModel.CurrentViewModel = ConfiguredViewModel;
             ConfirmationRequested?.Invoke(this, new(RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = true,
-                CanComplement = false
+                CanComplement = false,
+                UnlockContract = UnlockContract
             });
         }
 
@@ -85,12 +91,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             authenticationViewModel ??= await GetExistingCreationForLoginAsync(cancellationToken);
             if (authenticationViewModel is null)
                 return;
+            
+            if (UnlockContract is null)
+                return;
 
             RegisterViewModel.CurrentViewModel = authenticationViewModel;
             ConfirmationRequested?.Invoke(this, new(RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
-                CanComplement = _authenticationStage != AuthenticationType.FirstStageOnly // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
+                CanComplement = _authenticationStage != AuthenticationType.FirstStageOnly, // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
+                UnlockContract = UnlockContract
             });
         }
 

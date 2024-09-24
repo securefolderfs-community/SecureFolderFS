@@ -39,12 +39,6 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         {
             if (ViewModel?.VaultListViewModel.Items.IsEmpty() ?? false)
                 Navigation?.ClearContent();
-
-            if (ViewModel?.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultModel.Equals(message.VaultModel) ?? false) is not BaseVaultViewModel viewModel)
-                return;
-
-            ViewModel?.NavigationService.Views.Remove(viewModel);
-            viewModel.Dispose();
         }
 
         /// <inheritdoc/>

@@ -124,10 +124,23 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task ChangeAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKey newKey,
-            CancellationToken cancellationToken = default)
+        public async Task ChangeAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKey newKey,
+            VaultOptions vaultOptions, CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask; // TODO
+            using var credentialsRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).ModifyCredentials();
+            var options = VaultHelpers.ParseOptions(vaultOptions);
+
+            await credentialsRoutine.InitAsync(cancellationToken);
+            credentialsRoutine.SetCredentials(passkeySecret);
+            credentialsRoutine.SetUnlockContract(options);
+
+            if (vaultFolder is IModifiableFolder modifiableFolder)
+            {
+                var readmeFile = await modifiableFolder.CreateFileAsync(Sdk.Constants.Vault.VAULT_README_FILENAME, true, cancellationToken);
+                await readmeFile.WriteAllTextAsync(Sdk.Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
+            }
+
+            return await creationRoutine.FinalizeAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

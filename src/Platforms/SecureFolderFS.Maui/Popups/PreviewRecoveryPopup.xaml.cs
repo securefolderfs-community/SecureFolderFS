@@ -46,7 +46,7 @@ namespace SecureFolderFS.Maui.Popups
             {
 #if IOS
                 var height = 300d;
-#elif ANDROID
+#else
                 var height = 400d;
 #endif
                 
