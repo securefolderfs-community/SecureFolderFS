@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
+﻿using SecureFolderFS.Core.Contracts;
+using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
@@ -59,7 +60,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
                 // In this case, we rely on the consumer to take ownership of the keys, and thus manage their lifetimes
                 // Key copies need to be created because the original ones are disposed of here
-                return new UnlockContract(_encKey.CreateCopy(), _macKey.CreateCopy(), _configDataModel, _keystoreDataModel);
+                return new SecurityContract(_encKey.CreateCopy(), _macKey.CreateCopy(), _keystoreDataModel, _configDataModel);
             }
         }
 

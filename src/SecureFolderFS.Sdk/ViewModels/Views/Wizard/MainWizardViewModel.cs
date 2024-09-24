@@ -2,7 +2,7 @@
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;

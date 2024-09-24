@@ -37,7 +37,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                 };
 
                 storageRoutine.SetUnlockContract(unlockContract);
-                var (directoryIdCache, security, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
+                var pathConverter = storageRoutine.CreateStorageComponents(contentFolder, options);
                 var specifics = storageRoutine.GetSpecifics(contentFolder, options);
 
                 var mountable = options.FileSystemId switch

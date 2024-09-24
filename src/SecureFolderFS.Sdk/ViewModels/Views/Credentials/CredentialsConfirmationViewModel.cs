@@ -1,18 +1,18 @@
-﻿using System;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
@@ -45,11 +45,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [RelayCommand]
         private async Task ConfirmAsync(CancellationToken cancellationToken)
         {
+            RegisterViewModel.ConfirmCredentialsCommand.Execute(null);
             var key = await _credentialsTcs.Task;
             var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
             var newOptions = new VaultOptions()
             {
-                AuthenticationMethod = null, // TODO
+                AuthenticationMethod = GetAuthenticationMethod(),
                 ContentCipherId = vaultOptions.ContentCipherId,
                 FileNameCipherId = vaultOptions.FileNameCipherId,
                 VaultId = vaultOptions.VaultId,
@@ -57,6 +58,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
             };
             
             await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
+            return;
+
+            string[] GetAuthenticationMethod()
+            {
+                ArgumentNullException.ThrowIfNull(RegisterViewModel.CurrentViewModel);
+                return _authenticationStage switch
+                {
+                    AuthenticationType.ProceedingStageOnly => [vaultOptions.AuthenticationMethod[0], RegisterViewModel.CurrentViewModel.Id],
+                    AuthenticationType.FirstStageOnly => vaultOptions.AuthenticationMethod.Length > 1
+                        ? [RegisterViewModel.CurrentViewModel.Id, vaultOptions.AuthenticationMethod[1]]
+                        : [RegisterViewModel.CurrentViewModel.Id],
+
+                    _ => throw new ArgumentOutOfRangeException(nameof(_authenticationStage))
+                };
+            }
         }
 
         [RelayCommand]

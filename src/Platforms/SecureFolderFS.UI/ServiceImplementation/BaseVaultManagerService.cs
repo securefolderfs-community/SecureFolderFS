@@ -132,7 +132,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             await credentialsRoutine.InitAsync(cancellationToken);
             credentialsRoutine.SetUnlockContract(unlockContract);
-            credentialsRoutine.Dispose();
+            credentialsRoutine.SetOptions(options);
             
             _ = await credentialsRoutine.FinalizeAsync(cancellationToken);
         }

@@ -6,7 +6,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using Windows.Security.Credentials;
 
 namespace SecureFolderFS.Uno.ViewModels

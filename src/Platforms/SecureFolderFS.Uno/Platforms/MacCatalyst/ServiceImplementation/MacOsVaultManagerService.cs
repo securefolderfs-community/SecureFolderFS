@@ -38,7 +38,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
                 };
 
                 storageRoutine.SetUnlockContract(unlockContract);
-                var (_, _, pathConverter, _) = storageRoutine.CreateStorageComponents(contentFolder, options);
+                var pathConverter = storageRoutine.CreateStorageComponents(contentFolder, options);
                 var specifics = storageRoutine.GetSpecifics(contentFolder, options);
 
                 var mountable = options.FileSystemId switch

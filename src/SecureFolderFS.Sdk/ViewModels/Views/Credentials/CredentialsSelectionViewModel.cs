@@ -76,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 return;
 
             RegisterViewModel.CurrentViewModel = ConfiguredViewModel;
-            ConfirmationRequested?.Invoke(this, new(RegisterViewModel, _authenticationStage)
+            ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = true,
                 CanComplement = false,
@@ -96,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 return;
 
             RegisterViewModel.CurrentViewModel = authenticationViewModel;
-            ConfirmationRequested?.Invoke(this, new(RegisterViewModel, _authenticationStage)
+            ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
                 CanComplement = _authenticationStage != AuthenticationType.FirstStageOnly, // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented

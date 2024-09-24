@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 

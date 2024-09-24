@@ -10,7 +10,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,6 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private readonly IVaultWatcherModel _vaultWatcherModel;
         private IAsyncEnumerator<AuthenticationViewModel>? _enumerator;
 
+        [ObservableProperty] private bool _CanRecover;
         [ObservableProperty] private ICommand? _ProvideCredentialsCommand;
         [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
 
@@ -48,6 +49,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
+            // TODO: Refactor choosing the login view model:
+            //
+            // 1. Enumerate everything once instead of using an _enumerator
+            // 2. Expand vault validation to account for missing passkey files like windows_hello.cfg
+            //      2a. Display an error view if not found
+            //      2b. Offer to unlock (from error view) using recovery key, if possible
+            // 3. (Optional) Add a 'provide keystore' view if the keystore is missing
+            //      3a. After providing keystore, the presumed authentication should continue as normal
+            //      3b. Offer to unlock (from 'provide keystore' view) using recovery key, if possible
+            //
+
             // Get the authentication method enumerator for this vault
             _enumerator = VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
 
@@ -64,6 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 // Try to migrate the vault if not supported
                 if (validationResult.Exception is NotSupportedException ex && ex.Data["Version"] is int currentVersion)
                 {
+                    CanRecover = false;
                     CurrentViewModel = _loginViewMode switch
                     {
                         LoginViewType.Full => new MigrationViewModel(_vaultModel, currentVersion),

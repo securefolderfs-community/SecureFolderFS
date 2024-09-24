@@ -4,6 +4,6 @@ namespace SecureFolderFS.Core.Routines
 {
     public interface IOptionsRoutine
     {
-        void SetOptions(IDictionary<string, string?> options);
+        void SetOptions(IDictionary<string, object?> options);
     }
 }

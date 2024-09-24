@@ -5,7 +5,7 @@ using SecureFolderFS.Core.FileSystem.CryptFiles;
 using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using System;
 using System.Collections.Generic;
 

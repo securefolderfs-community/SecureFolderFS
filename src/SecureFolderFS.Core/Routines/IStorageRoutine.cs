@@ -1,11 +1,8 @@
-using System;
 using OwlCore.Storage;
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
+using System;
 
 namespace SecureFolderFS.Core.Routines
 {
@@ -13,7 +10,7 @@ namespace SecureFolderFS.Core.Routines
     public interface IStorageRoutine : IContractRoutine
     {
         [Obsolete("Use FileSystemSpecifics")]
-        (DirectoryIdCache, Security, IPathConverter, StreamsAccess) CreateStorageComponents(IFolder contentRoot, FileSystemOptions options);
+        IPathConverter CreateStorageComponents(IFolder contentRoot, FileSystemOptions options);
 
         FileSystemSpecifics GetSpecifics(IFolder contentFolder, FileSystemOptions options);
     }

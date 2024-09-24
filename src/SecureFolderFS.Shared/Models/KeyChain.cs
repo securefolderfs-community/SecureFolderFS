@@ -3,7 +3,7 @@ using SecureFolderFS.Shared.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace SecureFolderFS.Shared.Helpers
+namespace SecureFolderFS.Shared.Models
 {
     /// <summary>
     /// A class used to concatenate a collection of keys in a stack-like behavior into one, singular <see cref="IKey"/> instance.

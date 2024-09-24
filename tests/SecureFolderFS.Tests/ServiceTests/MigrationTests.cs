@@ -2,7 +2,7 @@
 using SecureFolderFS.Core;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
 using SecureFolderFS.Tests.Helpers;
 
