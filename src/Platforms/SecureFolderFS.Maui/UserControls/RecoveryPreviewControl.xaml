@@ -41,6 +41,9 @@
                     <VerticalStackLayout Spacing="4">
                         <Label Opacity="0.6" Text="Recovery key" />
                         <Border Padding="4" BackgroundColor="Gainsboro">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="4" />
+                            </Border.StrokeShape>
                             <Label
                                 FontFamily="Courier New"
                                 LineBreakMode="CharacterWrap"

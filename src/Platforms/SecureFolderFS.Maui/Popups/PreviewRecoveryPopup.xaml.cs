@@ -44,17 +44,16 @@ namespace SecureFolderFS.Maui.Popups
             if (e.PropertyName == nameof(ViewModel.CurrentViewModel)
                 && ViewModel?.CurrentViewModel is RecoveryPreviewControlViewModel)
             {
-                ThisPopup.Size = new(ThisPopup.Size.Width, 300d);
+#if IOS
+                var height = 300d;
+#elif ANDROID
+                var height = 400d;
+#endif
+                
+                var displayInfo = DeviceDisplay.MainDisplayInfo;
+                var width = (displayInfo.Width / displayInfo.Density) - 38; // Account for artificial margin
+                ThisPopup.Size = new(width, height);
             }
-        }
-
-        private void RootGrid_Loaded(object? sender, EventArgs e)
-        {
-            var displayInfo = DeviceDisplay.MainDisplayInfo;
-            var width = displayInfo.Width / displayInfo.Density;
-
-            width -= 32; // Artificial margin on left and right
-            ThisPopup.Size = new(width, 232d);
         }
 
         public PreviewRecoveryOverlayViewModel? ViewModel

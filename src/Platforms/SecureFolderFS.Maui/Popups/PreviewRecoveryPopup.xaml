@@ -2,7 +2,6 @@
     x:Class="SecureFolderFS.Maui.Popups.PreviewRecoveryPopup"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SecureFolderFS.Maui.Popups"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
@@ -16,15 +15,18 @@
             <uc:LoginControl CurrentViewModel="{Binding CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
-            <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" MasterKey="{Binding MasterKey, Mode=OneWay}" />
+            <Grid HeightRequest="500">
+                <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" MasterKey="{Binding MasterKey, Mode=OneWay}" />
+            </Grid>
         </DataTemplate>
     </tv:Popup.Resources>
 
     <Grid
+        x:Name="RootGrid"
         Margin="16,0"
         Padding="16"
-        Loaded="RootGrid_Loaded"
-        RowSpacing="24">
+        RowSpacing="24"
+        WidthRequest="392">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
