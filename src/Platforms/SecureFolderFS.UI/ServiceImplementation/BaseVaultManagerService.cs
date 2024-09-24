@@ -131,16 +131,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
             var options = VaultHelpers.ParseOptions(vaultOptions);
 
             await credentialsRoutine.InitAsync(cancellationToken);
-            credentialsRoutine.SetCredentials(passkeySecret);
-            credentialsRoutine.SetUnlockContract(options);
-
-            if (vaultFolder is IModifiableFolder modifiableFolder)
-            {
-                var readmeFile = await modifiableFolder.CreateFileAsync(Sdk.Constants.Vault.VAULT_README_FILENAME, true, cancellationToken);
-                await readmeFile.WriteAllTextAsync(Sdk.Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
-            }
-
-            return await creationRoutine.FinalizeAsync(cancellationToken);
+            credentialsRoutine.SetUnlockContract(unlockContract);
+            credentialsRoutine.Dispose();
+            
+            _ = await credentialsRoutine.FinalizeAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

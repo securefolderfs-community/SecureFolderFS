@@ -1,10 +1,13 @@
-﻿using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Core.DataModels;
+﻿using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.VaultAccess;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Extensions;
+using static SecureFolderFS.Core.Constants.Vault;
+using static SecureFolderFS.Core.Cryptography.Constants;
 
 namespace SecureFolderFS.Core.Routines.Operational
 {
@@ -12,7 +15,7 @@ namespace SecureFolderFS.Core.Routines.Operational
     internal sealed class ModifyCredentialsRoutine : IModifyCredentialsRoutine
     {
         private readonly VaultWriter _vaultWriter;
-        private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private UnlockContract? _unlockContract;
 
         public ModifyCredentialsRoutine(VaultWriter vaultWriter)
@@ -36,29 +39,26 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(SecretKey passkey)
+        public void SetOptions(IDictionary<string, object?> options)
         {
-            ArgumentNullException.ThrowIfNull(_unlockContract);
-
-            using var encKey = _unlockContract.Security.CopyEncryptionKey();
-            using var macKey = _unlockContract.Security.CopyMacKey();
-            using var secureRandom = RandomNumberGenerator.Create();
-
-            // Generate new salt
-            var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
-            secureRandom.GetNonZeroBytes(salt);
-
-            // Generate keystore
-            _keystoreDataModel = VaultParser.EncryptKeystore(passkey, encKey, macKey, salt);
+            _configDataModel = new()
+            {
+                Version = options.Get(Associations.ASSOC_VERSION) ?? throw new InvalidOperationException("Cannot modify vault without specifying the version."),
+                ContentCipherId = options.Get(Associations.ASSOC_CONTENT_CIPHER_ID) ?? throw new InvalidOperationException("Cannot modify vault without specifying the content cipher."),
+                FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID) ?? throw new InvalidOperationException("Cannot modify vault without specifying the file name cipher."),
+                AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION) ?? throw new InvalidOperationException("Cannot modify vault without specifying the authentication method."),
+                Uid = options.Get(Associations.ASSOC_VAULT_ID) ?? Guid.NewGuid().ToString(),
+                PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
+            };
         }
 
         /// <inheritdoc/>
         public async Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(_keystoreDataModel);
-
-            // Write only the keystore
-            await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
+            
+            
+            // Write only the configuration
+            await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
             // TODO: Return UnlockContract
             return null!;

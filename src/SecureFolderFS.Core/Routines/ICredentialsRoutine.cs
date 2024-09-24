@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.Routines
 {
     // TODO: Needs docs
-    public interface ICredentialsRoutine : IAsyncInitialize, IDisposable
+    public interface ICredentialsRoutine : IFinalizationRoutine, IDisposable
     {
         void SetCredentials(SecretKey passkey);
-
-        Task<IDisposable> FinalizeAsync(CancellationToken cancellationToken);
     }
 }
