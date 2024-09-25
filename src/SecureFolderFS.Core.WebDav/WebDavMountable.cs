@@ -16,6 +16,7 @@ using SecureFolderFS.Core.WebDav.Helpers;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,7 +55,8 @@ namespace SecureFolderFS.Core.WebDav
             if (!PortHelpers.IsPortAvailable(port))
                 port = PortHelpers.GetNextAvailablePort(port);
 
-            var remotePath = $@"\\localhost@{port}\{_options.VolumeName}\";
+            var sep = Path.DirectorySeparatorChar;
+            var remotePath = $@"{sep}{sep}localhost@{port}{sep}{_options.VolumeName}{sep}";
             var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
             var prefix = $"{protocol}://{webDavMountOptions.Domain}:{port}/";
             string? mountPath = null;
@@ -73,6 +75,9 @@ namespace SecureFolderFS.Core.WebDav
                         _ = DriveMappingHelper.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);
                 }
             }
+
+            // TODO: Get mount path
+            _ = mountPath ?? throw new NotImplementedException();
 
             var webDavWrapper = new WebDavWrapper(httpListener, _requestDispatcher, mountPath);
             webDavWrapper.StartFileSystem();

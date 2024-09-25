@@ -23,7 +23,6 @@
             <StackPanel Spacing="24">
                 <!--  Password  -->
                 <local:PasswordControl
-                    x:Name="PasswordBoxControl"
                     Width="364"
                     PasswordSubmittedCommand="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     ShowInvalidPasswordMessage="{x:Bind IsPasswordInvalid, Mode=TwoWay}"
@@ -31,14 +30,13 @@
 
                 <!--  Continue  -->
                 <Button
-                    x:Name="ContinueButton"
                     Padding="32,6"
                     HorizontalAlignment="Center"
                     Click="ContinueButton_Click"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Continue}"
                     Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=True}" />
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </DataTemplate>
 
@@ -59,13 +57,12 @@
 
                 <!--  Authenticate  -->
                 <Button
-                    x:Name="ContinueButton"
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=True}" />
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </DataTemplate>
 
@@ -86,13 +83,12 @@
 
                 <!--  Authenticate  -->
                 <Button
-                    x:Name="ContinueButton"
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=True}" />
+                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </DataTemplate>
 
