@@ -12,10 +12,13 @@
 
     <tv:Popup.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
-            <uc:LoginControl CurrentViewModel="{Binding CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+            <uc:LoginControl
+                CurrentViewModel="{Binding CurrentViewModel, Mode=OneWay}"
+                HorizontalOptions="Fill"
+                ProvideContinuationButton="True" />
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
-            <Grid HeightRequest="500">
+            <Grid Padding="{OnPlatform Android='12,0'}">
                 <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" MasterKey="{Binding MasterKey, Mode=OneWay}" />
             </Grid>
         </DataTemplate>

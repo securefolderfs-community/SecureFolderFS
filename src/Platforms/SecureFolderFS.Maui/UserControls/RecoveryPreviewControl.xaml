@@ -16,13 +16,13 @@
                     <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
 
                     <VerticalStackLayout Spacing="8">
-                        <mdc:Card BindingContext="{x:Reference ThisRecoveryControl}" Style="{DynamicResource FilledCardStyle}">
+                        <mdc:Card Style="{DynamicResource FilledCardStyle}">
                             <VerticalStackLayout Spacing="8">
                                 <Label Opacity="0.6" Text="Recovery key" />
                                 <Label
                                     FontFamily="Courier New"
                                     LineBreakMode="CharacterWrap"
-                                    Text="{Binding MasterKey, Mode=OneWay}" />
+                                    Text="{Binding MasterKey, Mode=OneWay, Source={x:Reference ThisRecoveryControl}}" />
                             </VerticalStackLayout>
                         </mdc:Card>
                         <mdc:Button
@@ -30,7 +30,7 @@
                             CommandParameter="Copy"
                             HorizontalOptions="End"
                             Style="{DynamicResource FilledTonalButtonStyle}"
-                            Text="Export" />
+                            Text="Copy" />
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </On>
@@ -53,7 +53,7 @@
                             Command="{Binding ExportCommand, Mode=OneWay}"
                             CommandParameter="Copy"
                             HorizontalOptions="End"
-                            Text="Export" />
+                            Text="Copy" />
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </On>

@@ -18,13 +18,13 @@ namespace SecureFolderFS.Maui.Popups
         public async Task<IResult> ShowAsync()
         {
             if (ViewModel is null)
-                return Shared.Helpers.Result.Failure(null);
+                return Shared.Models.Result.Failure(null);
             
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
-            return Shared.Helpers.Result.Success;
+            return Shared.Models.Result.Success;
         }
 
         /// <inheritdoc/>
@@ -47,7 +47,7 @@ namespace SecureFolderFS.Maui.Popups
 #if IOS
                 var height = 300d;
 #else
-                var height = 400d;
+                var height = 376d;
 #endif
                 
                 var displayInfo = DeviceDisplay.MainDisplayInfo;

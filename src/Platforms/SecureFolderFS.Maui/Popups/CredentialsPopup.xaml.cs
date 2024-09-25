@@ -21,10 +21,10 @@ namespace SecureFolderFS.Maui.Popups
         public async Task<IResult> ShowAsync()
         {
             if (ViewModel is null)
-                return Shared.Helpers.Result.Failure(null);
+                return Shared.Models.Result.Failure(null);
             
             _ = await Shell.Current.CurrentPage.ShowPopupAsync(this);
-            return Shared.Helpers.Result.Success;
+            return Shared.Models.Result.Success;
         }
 
         /// <inheritdoc/>
