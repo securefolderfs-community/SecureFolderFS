@@ -20,7 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.Helpers
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, nameof(SecureFolderFS), UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 

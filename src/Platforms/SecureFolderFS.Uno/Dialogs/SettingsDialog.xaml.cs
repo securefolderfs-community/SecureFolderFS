@@ -19,6 +19,8 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class SettingsDialog : ContentDialog, IOverlayControl
     {
+        private bool _firstNavigated;
+        
         public SettingsOverlayViewModel? ViewModel
         {
             get => DataContext.TryCast<SettingsOverlayViewModel>();
@@ -55,18 +57,23 @@ namespace SecureFolderFS.Uno.Dialogs
             };
         }
 
-        private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private async Task NavigateToTagAsync(int tag)
         {
             if (ViewModel is null || (!ViewModel?.NavigationService.SetupNavigation(Navigation) ?? true))
                 return;
-
-            _ = Navigation.ContentFrame.Content;
-            var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
+            
+            _firstNavigated = true;
             var target = GetViewForTag(tag);
             if (ViewModel.NavigationService.Views.FirstOrDefault(x => target == x) is null && target is IAsyncInitialize asyncInitialize)
                 _ = asyncInitialize.InitAsync();
 
             await ViewModel.NavigationService.NavigateAsync(target);
+        }
+
+        private async void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            var tag = Convert.ToInt32((args.SelectedItem as NavigationViewItem)?.Tag);
+            await NavigateToTagAsync(tag);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -78,6 +85,12 @@ namespace SecureFolderFS.Uno.Dialogs
         {
             // Remove the reference to the NavigationControl so the dialog can get properly garbage collected
             ViewModel?.NavigationService.ResetNavigation();
+        }
+
+        private async void Navigation_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!_firstNavigated)
+                await NavigateToTagAsync(0);
         }
     }
 }
