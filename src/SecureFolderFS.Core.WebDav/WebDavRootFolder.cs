@@ -28,7 +28,7 @@ namespace SecureFolderFS.Core.WebDav
             if (_disposed)
                 return;
 
-            _disposed = await Task.Run(() => _webDavWrapper.CloseFileSystem(FileSystemCloseMethod.CloseForcefully));
+            _disposed = await _webDavWrapper.CloseFileSystemAsync(FileSystemCloseMethod.CloseForcefully);
             if (_disposed)
                 FileSystemManager.Instance.RemoveRoot(this);
         }

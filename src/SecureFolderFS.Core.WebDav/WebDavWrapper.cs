@@ -54,14 +54,14 @@ namespace SecureFolderFS.Core.WebDav
             }
         }
 
-        public bool CloseFileSystem(FileSystemCloseMethod closeMethod)
+        public async Task<bool> CloseFileSystemAsync(FileSystemCloseMethod closeMethod)
         {
             _ = closeMethod; // TODO: Implement close method
-            _fileSystemCts.Cancel();
             _httpListener.Close();
+            await _fileSystemCts.CancelAsync();
 
             if (_mountPath is not null)
-                DriveMappingHelper.DisconnectNetworkDrive(_mountPath, true);
+                await DriveMappingHelpers.DisconnectNetworkDriveAsync(_mountPath, true);
 
             return true;
         }

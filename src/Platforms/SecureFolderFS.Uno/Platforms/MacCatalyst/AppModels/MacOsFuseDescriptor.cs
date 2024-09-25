@@ -32,10 +32,10 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.AppModels
                     _ => "SecureFolderFS cannot work with the installed libfuse version. Please install libfuse3."
                 };
 
-                return Task.FromResult<IResult>(new FileSystemResult(OperatingSystem.IsLinux(), new NotSupportedException(message)));
+                return Task.FromResult<IResult>(new FileSystemResult(OperatingSystem.IsMacOS(), new NotSupportedException(message)));
             }
 
-            return Task.FromResult<IResult>(new FileSystemResult(OperatingSystem.IsLinux(), true));
+            return Task.FromResult<IResult>(new FileSystemResult(OperatingSystem.IsMacOS(), true));
         }
     }
 }

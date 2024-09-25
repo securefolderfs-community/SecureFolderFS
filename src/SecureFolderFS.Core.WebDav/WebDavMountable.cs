@@ -46,7 +46,8 @@ namespace SecureFolderFS.Core.WebDav
         {
             await Task.CompletedTask;
             if (mountOptions is not WebDavMountOptions webDavMountOptions)
-                throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
+                throw new ArgumentException(
+                    $"Parameter {nameof(mountOptions)} does not implement {nameof(WebDavMountOptions)}.");
 
             var port = webDavMountOptions.PreferredPort;
             if (port > 65536 || port <= 0)
@@ -65,15 +66,12 @@ namespace SecureFolderFS.Core.WebDav
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            if (OperatingSystem.IsWindows())
+            mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
+            if (mountPath is null)
             {
-                mountPath = DriveMappingHelper.GetMountPathForRemotePath(remotePath);
-                if (mountPath is null)
-                {
-                    mountPath = PathHelpers.GetFreeWindowsMountPath();
-                    if (mountPath is not null)
-                        _ = DriveMappingHelper.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);
-                }
+                mountPath = PathHelpers.GetFreeWindowsMountPath();
+                if (mountPath is not null)
+                    _ = DriveMappingHelpers.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);
             }
 
             // TODO: Get mount path

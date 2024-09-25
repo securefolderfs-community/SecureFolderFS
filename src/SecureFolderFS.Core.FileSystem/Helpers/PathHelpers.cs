@@ -37,6 +37,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
 
         public static string? GetFreeWindowsMountPath()
         {
+            if (!OperatingSystem.IsWindows())
+                return null;
+
             return Enumerable.Range('C', 'Z' - 'C' + 1) // Skip floppy disk drives and system drive
                 .Select(item => (char)item)
                 .Except(DriveInfo.GetDrives().Select(item => item.Name[0]))
