@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -33,6 +34,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 
         private void MainWindowRootControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (OperatingSystem.IsMacCatalyst())
+                RootGrid.Margin = new(0, 37, 0, 0);
+
             RootNavigationService.SetupNavigation(Navigation);
             _ = EnsureRootAsync();
         }

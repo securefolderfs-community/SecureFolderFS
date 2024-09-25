@@ -11,10 +11,32 @@ namespace SecureFolderFS.Core.WebDav.Helpers
 {
     internal static class DriveMappingHelpers
     {
+        public static string GetRemotePath(
+            string protocol,
+            string domain,
+            int port,
+            string name)
+        {
+            var sep = Path.DirectorySeparatorChar;
+            if (OperatingSystem.IsWindows())
+            {
+                return $"{sep}{sep}{domain}@{port}{sep}{name}{sep}";
+            }
+            else if (OperatingSystem.IsMacCatalyst())
+            {
+                return $"{protocol}:{sep}{sep}{domain}:{port}{sep}{name}";
+            }
+
+            throw new PlatformNotSupportedException();
+        }
+
         /// <summary>
         /// Attempts to map a network drive. Doesn't throw on failure.
         /// </summary>
-        public static Task MapNetworkDriveAsync(string mountPath, string remotePath, CancellationToken cancellationToken = default)
+        public static async Task MapNetworkDriveAsync(
+            string mountPath,
+            string remotePath,
+            CancellationToken cancellationToken = default)
         {
             if (OperatingSystem.IsWindows())
             {
@@ -27,31 +49,29 @@ namespace SecureFolderFS.Core.WebDav.Helpers
 
                 // WNetAddConnection2 doesn't return until it has either successfully established a connection or timed out,
                 // so it has to be run in another thread to prevent blocking the server from responding.
-                return Task.Run(() => UnsafeNativeApis.WNetAddConnection2(netResource, null!, null!, UnsafeNativeApis.CONNECT_TEMPORARY), cancellationToken);
+                await Task.Run(() => UnsafeNativeApis.WNetAddConnection2(netResource, null!, null!, UnsafeNativeApis.CONNECT_TEMPORARY), cancellationToken);
             }
-            else if (OperatingSystem.IsMacOS())
+            else if (OperatingSystem.IsMacCatalyst())
             {
-                return Task.Run(() =>
+                var args = $"mount_webdav {remotePath} {mountPath}";
+                var process = new Process()
                 {
-                    var process = new Process()
+                    StartInfo = new ProcessStartInfo()
                     {
-                        StartInfo = new ProcessStartInfo()
-                        {
-                            FileName = "mount_smbfs",
-                            Arguments = $"{remotePath} {mountPath}",
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        }
-                    };
+                        FileName = "/bin/bash",
+                        Arguments = $"-c \"{args}\"",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    }
+                };
 
-                    process.Start();
-                    process.WaitForExit();
-                }, cancellationToken);
+                process.Start();
+                await process.WaitForExitAsync(cancellationToken);
+                var error = await process.StandardError.ReadToEndAsync();
+                _ = error;
             }
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -63,14 +83,15 @@ namespace SecureFolderFS.Core.WebDav.Helpers
             {
                 _ = UnsafeNativeApis.WNetCancelConnection2(mountPath, 0, force);
             }
-            else if (OperatingSystem.IsMacOS())
+            else if (OperatingSystem.IsMacCatalyst())
             {
+                var args = $"umount {mountPath}";
                 var process = new Process()
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = "umount",
-                        Arguments = mountPath,
+                        FileName = "/bin/bash",
+                        Arguments = $"-c \"{args}\"",
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,
@@ -100,14 +121,14 @@ namespace SecureFolderFS.Core.WebDav.Helpers
                     driveRemotePathBuilder.Clear();
                 }
             }
-            else if (OperatingSystem.IsMacOS())
+            else if (OperatingSystem.IsMacCatalyst())
             {
-                var process = new Process
+                var process = new Process()
                 {
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = "mount",
-                        Arguments = "-t smbfs",
+                        Arguments = "-t webdav",
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false,

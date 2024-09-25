@@ -24,7 +24,7 @@
     </UserControl.Resources>
 
     <!--  Root  -->
-    <Grid not_win:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="RootGrid" not_win:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

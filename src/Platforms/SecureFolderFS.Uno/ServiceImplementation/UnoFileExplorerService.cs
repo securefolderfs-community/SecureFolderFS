@@ -29,7 +29,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             process.StartInfo = new ProcessStartInfo()
             {
                 FileName = "open",
-                Arguments = folder.Id,
+                Arguments = $"\"{folder.Id}/\"",
                 RedirectStandardOutput = false,
                 UseShellExecute = false,
                 CreateNoWindow = true,

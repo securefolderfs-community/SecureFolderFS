@@ -35,16 +35,22 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
 
         #endregion
 
-        public static string? GetFreeWindowsMountPath()
+        public static string? GetFreeMountPath(string nameHint)
         {
-            if (!OperatingSystem.IsWindows())
-                return null;
+            if (OperatingSystem.IsWindows())
+            {
+                return Enumerable.Range('C', 'Z' - 'C' + 1) // Skip floppy disk drives and system drive
+                    .Select(item => (char)item)
+                    .Except(DriveInfo.GetDrives().Select(item => item.Name[0]))
+                    .Select(item => $"{item}:")
+                    .FirstOrDefault();
+            }
+            else if (OperatingSystem.IsMacCatalyst())
+            {
+                return $@"{Path.DirectorySeparatorChar}{Path.Combine("Volumes", nameHint)}{Path.DirectorySeparatorChar}";
+            }
 
-            return Enumerable.Range('C', 'Z' - 'C' + 1) // Skip floppy disk drives and system drive
-                .Select(item => (char)item)
-                .Except(DriveInfo.GetDrives().Select(item => item.Name[0]))
-                .Select(item => $"{item}:")
-                .FirstOrDefault();
+            return null;
         }
     }
 }
