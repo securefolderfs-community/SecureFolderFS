@@ -70,7 +70,7 @@ namespace SecureFolderFS.Core.Dokany
             if (mountOptions is not DokanyMountOptions dokanyMountOptions)
                 throw new ArgumentException($"Parameter {nameof(mountOptions)} does not implement {nameof(DokanyMountOptions)}.");
 
-            var mountPath = dokanyMountOptions.MountPath ?? PathHelpers.GetFreeWindowsMountPath();
+            var mountPath = dokanyMountOptions.MountPath ?? PathHelpers.GetFreeMountPath(_options.VolumeName);
             if (mountPath is null)
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 
