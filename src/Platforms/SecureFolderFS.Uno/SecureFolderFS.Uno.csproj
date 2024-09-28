@@ -1,12 +1,10 @@
 <Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>
-      net8.0-desktop;
-      net8.0-maccatalyst;
-      net8.0-windows10.0.19041;
-    </TargetFrameworks>
+    <TargetFrameworks>net8.0-desktop;</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net8.0-windows10.0.19041</TargetFrameworks>
+    <TargetFrameworks Condition=" !$([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net8.0-maccatalyst</TargetFrameworks>
 
-    <!-- To build SecureFolderFS (Desktop), comment net8.0-windows -->
+    <!-- To build SecureFolderFS (Desktop) on Windows, comment net8.0-windows[...] -->
 
     <!-- Uncomment if you want to explicity set a TargetFramework -->
     <!--<TargetFramework>net8.0-desktop</TargetFramework>-->
