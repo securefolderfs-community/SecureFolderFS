@@ -23,7 +23,10 @@
 
     <ContentDialog.Resources>
         <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
-            <uc:LoginControl CurrentViewModel="{x:Bind CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="False" />
+            <uc:LoginControl
+                CurrentViewModel="{x:Bind CurrentViewModel, Mode=OneWay}"
+                IsKeyboardEventTrackingEnabled="False"
+                ProvideContinuationButton="False" />
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
             <uc:RecoveryPreviewControl ExportCommand="{x:Bind ExportCommand, Mode=OneWay}" MasterKey="{x:Bind MasterKey, Mode=OneWay}" />

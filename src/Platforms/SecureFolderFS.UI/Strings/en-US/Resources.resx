@@ -624,6 +624,6 @@
     <value>The vault needs to be migrated before it can be used</value>
   </data>
   <data name="ActiveFileSystem" xml:space="preserve">
-    <value>Active File System</value>
+    <value>Active file system</value>
   </data>
 </root>

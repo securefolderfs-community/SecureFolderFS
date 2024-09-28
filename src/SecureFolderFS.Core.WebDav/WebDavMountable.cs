@@ -3,7 +3,6 @@ using NWebDav.Server.Dispatching;
 using NWebDav.Server.Storage;
 using NWebDav.Server.Stores;
 using OwlCore.Storage;
-using OwlCore.Storage.Memory;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
@@ -57,24 +56,22 @@ namespace SecureFolderFS.Core.WebDav
             if (!PortHelpers.IsPortAvailable(port))
                 port = PortHelpers.GetNextAvailablePort(port);
 
-            var sep = Path.DirectorySeparatorChar;
             var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
             var remotePath = DriveMappingHelpers.GetRemotePath(protocol, "localhost", port, _options.VolumeName);
             var prefix = $"{protocol}://{webDavMountOptions.Domain}:{port}/";
-            string? mountPath = null;
 
             var httpListener = new HttpListener();
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
+            var mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
             if (mountPath is null)
             {
                 mountPath = PathHelpers.GetFreeMountPath(_options.VolumeName);
                 if (mountPath is null)
                     throw new IOException("No free mount points found.");
                 
-                await DriveMappingHelpers.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);    
+                _ = DriveMappingHelpers.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);    
             }
 
             var webDavWrapper = new WebDavWrapper(httpListener, _requestDispatcher, mountPath);
@@ -82,7 +79,7 @@ namespace SecureFolderFS.Core.WebDav
 
             // TODO: Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
-            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(mountPath, _options.VolumeName), _options);
+            return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options);
         }
 
         public static IMountableFileSystem CreateMountable(FileSystemSpecifics specifics, IPathConverter pathConverter)

@@ -56,5 +56,13 @@ namespace SecureFolderFS.Uno.UserControls
         }
         public static readonly DependencyProperty ProvideContinuationButtonProperty =
             DependencyProperty.Register(nameof(ProvideContinuationButton), typeof(bool), typeof(LoginControl), new PropertyMetadata(true));
+
+        public bool IsKeyboardEventTrackingEnabled
+        {
+            get => (bool)GetValue(IsKeyboardEventTrackingEnabledProperty);
+            set => SetValue(IsKeyboardEventTrackingEnabledProperty, value);
+        }
+        public static readonly DependencyProperty IsKeyboardEventTrackingEnabledProperty =
+            DependencyProperty.Register(nameof(IsKeyboardEventTrackingEnabled), typeof(bool), typeof(LoginControl), new PropertyMetadata(true));
     }
 }

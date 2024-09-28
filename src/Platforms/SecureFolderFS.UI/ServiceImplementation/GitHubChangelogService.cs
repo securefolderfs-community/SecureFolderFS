@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,19 +17,28 @@ namespace SecureFolderFS.UI.ServiceImplementation
         private IApplicationService ApplicationService { get; } = DI.Service<IApplicationService>();
 
         /// <inheritdoc/>
-        public async Task<ChangelogDataModel?> GetChangelogAsync(Version version, string platform, CancellationToken cancellationToken)
+        public async Task<ChangelogDataModel> GetLatestAsync(Version version, string platform, CancellationToken cancellationToken)
         {
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;
-
             var client = new GitHubClient(new ProductHeaderValue(repoOwner));
-            var release = await client.Repository.Release.Get(repoOwner, repoName, version.ToString());
 
-            return new(release.Name, release.Body, version);
+            try
+            {
+                var release = await client.Repository.Release.Get(repoOwner, repoName, version.ToString());
+                return new(release.Name, release.Body, version);
+            }
+            catch (NotFoundException)
+            {
+                var allReleases = await client.Repository.Release.GetAll(repoOwner, repoName);
+                var latestRelease = allReleases.First();
+
+                return new(latestRelease.Name, latestRelease.Body, version);
+            }
         }
 
         /// <inheritdoc/>
-        public async IAsyncEnumerable<ChangelogDataModel> GetChangelogSinceAsync(Version version, string platform, [EnumeratorCancellation] CancellationToken cancellationToken)
+        public async IAsyncEnumerable<ChangelogDataModel> GetSinceAsync(Version version, string platform, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             const string repoName = Constants.GitHub.REPOSITORY_NAME;
             const string repoOwner = Constants.GitHub.REPOSITORY_OWNER;

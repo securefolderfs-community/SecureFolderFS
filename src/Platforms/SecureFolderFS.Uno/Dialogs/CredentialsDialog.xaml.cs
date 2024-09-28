@@ -11,7 +11,6 @@ using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 
@@ -85,7 +84,7 @@ namespace SecureFolderFS.Uno.Dialogs
             ViewModel?.OnDisappearing();
         }
 
-        private void RecoverLink_Click(object sender, RoutedEventArgs e)
+        private void ResetCredentialsLink_Click(object sender, RoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
@@ -111,7 +110,7 @@ namespace SecureFolderFS.Uno.Dialogs
 
             // We also need to revoke existing credentials if the user added and aborted
             if (confirmationViewModel.RegisterViewModel.CurrentViewModel is not null)
-                await SafetyHelpers.NoThrowAsync(async () => await confirmationViewModel.RegisterViewModel.CurrentViewModel.RevokeAsync(null));
+                await confirmationViewModel.RegisterViewModel.RevokeCredentialsAsync(default);
 
             ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
             ViewModel.PrimaryButtonText = null;

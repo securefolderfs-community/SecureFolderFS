@@ -122,30 +122,11 @@
                     <ucab:ActionBlockControl.CustomDescription />
                 </ucab:ActionBlockControl>
                 <InfoBar
+                    Title="{l:ResourceString Name=RestartRequired}"
                     IsClosable="False"
                     IsOpen="True"
                     Severity="Warning"
                     Visibility="{x:Bind ViewModel.IsRestartRequired, Mode=OneWay}">
-                    <InfoBar.Content>
-                        <Grid Margin="0,0,20,0" ColumnSpacing="12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                VerticalAlignment="Center"
-                                FontWeight="Semibold"
-                                Text="{l:ResourceString Name=RestartRequired}" />
-
-                            <!--  TODO: Button hidden. Blocking issue: https://github.com/microsoft/WindowsAppSDK/issues/2792  -->
-                            <Button
-                                Grid.Column="1"
-                                Command="{x:Bind ViewModel.RestartCommand, Mode=OneWay}"
-                                Content="Restart"
-                                Visibility="Collapsed" />
-                        </Grid>
-                    </InfoBar.Content>
                     <!--<anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             From="0,-15,0"

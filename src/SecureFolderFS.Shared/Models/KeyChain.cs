@@ -26,6 +26,25 @@ namespace SecureFolderFS.Shared.Models
             _keys.Add(key);
         }
 
+        public void SetOrAdd(int index, IKey key)
+        {
+            if (index >= 0 && index < _keys.Count)
+            {
+                // If valid index, set the element at that index
+                _keys[index] = key;
+            }
+            else
+            {
+                // If index is out of bounds, add the element to the list
+                _keys.Add(key);
+            }
+        }
+
+        public void RemoveAt(int index)
+        {
+            _keys.RemoveAt(index);
+        }
+
         /// <inheritdoc/>
         public IEnumerator<byte> GetEnumerator()
         {

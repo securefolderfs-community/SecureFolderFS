@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Results;
@@ -42,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             ServiceProvider = DI.Default;
             Folder = folder;
             _credentialsTcs = new();
-            _RegisterViewModel = new();
+            _RegisterViewModel = new(AuthenticationType.FirstStageOnly);
             _vaultId = Guid.NewGuid().ToString();
 
             ContinueText = "Continue".ToLocalized();

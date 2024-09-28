@@ -24,6 +24,7 @@
                 <!--  Password  -->
                 <local:PasswordControl
                     Width="364"
+                    IsKeyboardEventTrackingEnabled="{Binding Path=IsKeyboardEventTrackingEnabled, ElementName=ThisLoginControl, Mode=OneWay}"
                     PasswordSubmittedCommand="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     ShowInvalidPasswordMessage="{x:Bind IsPasswordInvalid, Mode=TwoWay}"
                     UnsecurePassword="{x:Bind PrimaryPassword, Mode=TwoWay}" />

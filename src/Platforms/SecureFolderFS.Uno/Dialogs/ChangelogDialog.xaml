@@ -6,6 +6,7 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tuc="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     Title="{l:ResourceString Name=WhatsNew}"
     DefaultButton="Primary"
@@ -44,12 +45,10 @@
                 x:Name="ChangelogScroll"
                 Grid.Row="0"
                 x:Load="{x:Bind ViewModel.UpdateText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
-                <TextBlock Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />
-                <!--  TODO: Regression - markdown is unavailable  -->
-                <!--<tuc:MarkdownTextBlock
+                <tuc:MarkdownTextBlock
                     Background="Transparent"
                     LinkClicked="MarkdownTextBlock_LinkClicked"
-                    Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />-->
+                    Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />
             </ScrollViewer>
 
             <HyperlinkButton
