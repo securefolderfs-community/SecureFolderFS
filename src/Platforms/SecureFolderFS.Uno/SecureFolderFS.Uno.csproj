@@ -1,12 +1,15 @@
 <Project Sdk="Uno.Sdk">
   <PropertyGroup>
     <TargetFrameworks>
+      net8.0-desktop;
       net8.0-maccatalyst;
       net8.0-windows10.0.19041;
-      net8.0-desktop;
     </TargetFrameworks>
 
+    <!-- To build SecureFolderFS (Desktop), comment net8.0-windows -->
+
     <!-- Uncomment if you want to explicity set a TargetFramework -->
+    <!--<TargetFramework>net8.0-desktop</TargetFramework>-->
     <!--<TargetFramework>net8.0-maccatalyst</TargetFramework>-->
   </PropertyGroup>
 
@@ -88,14 +91,24 @@
       </PropertyGroup>
     </When>
 
-    <!-- Windows -->
-    <When Condition="'$(TargetFramework)'=='net8.0-windows10.0.19041'">
-
+    <!-- Skia Desktop -->
+    <When Condition="'$(TargetFramework)'=='net8.0-desktop'">
       <PropertyGroup>
-        <!-- TODO: Remove when the .NET SDK 8.0.403 or later has been released -->
-        <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
+        <DefineConstants>HAS_UNO_SKIA</DefineConstants>
       </PropertyGroup>
 
+      <ItemGroup>
+        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <ProjectReference Include="..\..\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
+        <ProjectReference Include="..\..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
+      </ItemGroup>
+    </When>
+
+    <!-- Windows -->
+    <When Condition="'$(TargetFramework)'=='net8.0-windows10.0.19041'">
       <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" />
         <PackageReference Include="Vanara.PInvoke.ComCtl32" />
@@ -139,23 +152,6 @@
       <PropertyGroup Condition="'$(WindowsPackageType)' == 'None'">
         <DefineConstants>UNPACKAGED</DefineConstants>
       </PropertyGroup>
-    </When>
-
-    <!-- Skia Desktop -->
-    <When Condition="'$(TargetFramework)'=='net8.0-desktop'">
-      <ItemGroup>
-        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
-      </ItemGroup>
-
-      <ItemGroup>
-        <ProjectReference Include="..\..\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
-        <ProjectReference Include="..\..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
-      </ItemGroup>
-
-      <!--<ItemGroup>
-        <Compile Include="Platforms\Desktop\*.cs" />
-        <Compile Include="Platforms\Desktop\*\*.cs" />
-      </ItemGroup>-->
     </When>
 
   </Choose>
