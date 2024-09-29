@@ -31,6 +31,13 @@ namespace SecureFolderFS.UI.ViewModels
         }
 
         /// <inheritdoc/>
+        public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
+        {
+            SecondaryPassword = null;
+            return base.RevokeAsync(id, cancellationToken);
+        }
+
+        /// <inheritdoc/>
         protected override Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
             // TODO: Maybe opt-in to something similar like in PasswordLoginViewModel, where CredentialsProvided is also used?

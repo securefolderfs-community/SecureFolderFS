@@ -38,6 +38,7 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
+            PrimaryPassword = null;
             return Task.CompletedTask;
         }
 

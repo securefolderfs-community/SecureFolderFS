@@ -53,7 +53,6 @@ namespace SecureFolderFS.Shared.Models
         {
             _sequencePointer = -1;
             _sequence.DisposeElements();
-            _sequence.Clear();
         }
     }
 }
