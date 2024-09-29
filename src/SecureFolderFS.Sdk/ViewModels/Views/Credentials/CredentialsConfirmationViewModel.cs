@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
     [Bindable(true)]
     [Inject<IVaultManagerService>, Inject<IVaultService>]
-    public sealed partial class CredentialsConfirmationViewModel : ObservableObject
+    public sealed partial class CredentialsConfirmationViewModel : ObservableObject, IDisposable
     {
         private readonly IFolder _vaultFolder;
         private readonly AuthenticationType _authenticationStage;
@@ -103,6 +103,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)
         {
             _credentialsTcs.TrySetResult(e.Authentication);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            RegisterViewModel.CredentialsProvided -= RegisterViewModel_CredentialsProvided;
         }
     }
 }

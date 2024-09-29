@@ -9,6 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using System;
 using System.ComponentModel;
@@ -28,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         [ObservableProperty] private bool _CanContinue;
         [ObservableProperty] private LoginViewModel _LoginViewModel;
+        [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;
         [ObservableProperty] private INotifyPropertyChanged? _SelectedViewModel;
 
@@ -38,6 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             _vaultModel = vaultModel;
             _authenticationStage = authenticationStage;
 
+            RegisterViewModel = new(authenticationStage, _keyChain);
             LoginViewModel = new(vaultModel, LoginViewType.Basic, _keyChain);
             SelectionViewModel = new(vaultModel.Folder, authenticationStage);
             SelectedViewModel = LoginViewModel;
@@ -45,6 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             PrimaryButtonText = "Continue".ToLocalized();
 
             LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
+            RegisterViewModel.PropertyChanged += RegisterViewModel_PropertyChanged;
             SelectionViewModel.ConfirmationRequested += SelectionViewModel_ConfirmationRequested;
         }
 
@@ -66,13 +70,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private void LoginViewModel_VaultUnlocked(object? sender, VaultUnlockedEventArgs e)
         {
-            Title = "SelectAuthentication".ToLocalized();
-            PrimaryButtonText = null;
+            if (e.IsRecovered)
+            {
+                Title = "SetCredentials".ToLocalized();
+                PrimaryButtonText = "Confirm".ToLocalized();
+                CanContinue = false;
 
-            SelectionViewModel.UnlockContract = e.UnlockContract;
-            SelectionViewModel.RegisterViewModel = new(_authenticationStage, _keyChain);
-            SelectionViewModel.RegisterViewModel.PropertyChanged += RegisterViewModel_PropertyChanged;
-            SelectedViewModel = SelectionViewModel;
+                // Note: We can omit the fact that a flag other than FirstStage is passed to the ResetViewModel (via RegisterViewModel).
+                // The flag is manipulating the order at which keys are placed in the keychain, so it shouldn't matter if it's cleared here
+                _keyChain.Dispose();
+                SelectedViewModel = new CredentialsResetViewModel(_vaultModel.Folder, e.UnlockContract, RegisterViewModel).WithInitAsync();
+            }
+            else
+            {
+                Title = "SelectAuthentication".ToLocalized();
+                PrimaryButtonText = null;
+                SelectionViewModel.UnlockContract = e.UnlockContract;
+                SelectionViewModel.RegisterViewModel = RegisterViewModel;
+                SelectedViewModel = SelectionViewModel;
+            }
         }
 
         private void SelectionViewModel_ConfirmationRequested(object? sender, CredentialsConfirmationViewModel e)
@@ -86,17 +102,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private void RegisterViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(RegisterViewModel.CanContinue))
-                CanContinue = SelectionViewModel.RegisterViewModel?.CanContinue ?? false;
+                CanContinue = RegisterViewModel.CanContinue;
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (SelectionViewModel.RegisterViewModel is not null)
-                SelectionViewModel.RegisterViewModel.PropertyChanged -= RegisterViewModel_PropertyChanged;
-
+            RegisterViewModel.PropertyChanged -= RegisterViewModel_PropertyChanged;
             SelectionViewModel.ConfirmationRequested -= SelectionViewModel_ConfirmationRequested;
             LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
+            (SelectedViewModel as IDisposable)?.Dispose();
             SelectionViewModel.Dispose();
             LoginViewModel.Dispose();
         }

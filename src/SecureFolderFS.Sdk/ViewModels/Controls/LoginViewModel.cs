@@ -100,7 +100,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             try
             {
                 var unlockContract = await VaultManagerService.RecoverAsync(_vaultModel.Folder, masterKey, cancellationToken);
-                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder));
+                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder, true));
             }
             catch (Exception ex)
             {
@@ -124,7 +124,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             try
             {
                 var unlockContract = await VaultManagerService.UnlockAsync(_vaultModel.Folder, _keyChain, cancellationToken);
-                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder));
+                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder, false));
                 return true;
             }
             catch (Exception ex)

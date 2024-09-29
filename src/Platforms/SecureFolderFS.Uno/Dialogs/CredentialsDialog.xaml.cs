@@ -1,9 +1,11 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Windows.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
@@ -59,6 +61,19 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel.SelectedViewModel is LoginViewModel loginViewModel)
             {
                 loginViewModel.ProvideCredentialsCommand?.Execute(null);
+            }
+            else if (ViewModel.SelectedViewModel is CredentialsResetViewModel credentialsReset)
+            {
+                try
+                {
+                    await credentialsReset.ConfirmAsync(default);
+                    await HideAsync();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Report to user
+                    _ = ex;
+                }
             }
             else if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel credentialsConfirmation)
             {
