@@ -18,9 +18,12 @@ namespace SecureFolderFS.Uno.Platforms.SkiaGtk.Helpers
     internal sealed class SkiaLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
+        protected override string AppDirectory { get; } = ApplicationData.Current.LocalFolder.Path;
+
+        /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -30,7 +33,7 @@ namespace SecureFolderFS.Uno.Platforms.SkiaGtk.Helpers
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
         {
-            _ = ex;
+            ExceptionHelpers.TryWriteToFile(Path.Combine(AppDirectory, UI.Constants.Application.EXCEPTION_LOG_FILENAME), ex);
         }
 
         /// <inheritdoc/>

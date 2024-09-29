@@ -65,7 +65,7 @@ namespace SecureFolderFS.UI.ViewModels
             // Write to the data stream and save the file
             await dataStream.WriteAsync(secretKey.Key, cancellationToken);
             dataStream.Position = 0L;
-            var result = await FileExplorerService.SaveFileAsync("Vault authentication key", dataStream, new Dictionary<string, string>()
+            var result = await FileExplorerService.SaveFileAsync("Vault key file", dataStream, new Dictionary<string, string>()
             {
                 { "Key File", Constants.FileNames.KEY_FILE_EXTENSION },
                 { "All Files", "*" }

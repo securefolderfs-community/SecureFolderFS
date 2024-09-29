@@ -25,6 +25,14 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
     internal sealed class WindowsLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
+        protected override string AppDirectory { get; } =
+#if UNPACKAGED
+            Directory.GetCurrentDirectory();
+#else
+            ApplicationData.Current.LocalFolder.Path;
+#endif
+
+        /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
 #if !DEBUG
@@ -40,16 +48,18 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
             }
 #endif
 
-#if UNPACKAGED
-            var settingsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
-#else
-            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
-#endif
-
+            var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
             return Task.CompletedTask;
+        }
+
+
+        /// <inheritdoc/>
+        public override void LogExceptionToFile(Exception? ex)
+        {
+            ExceptionHelpers.TryWriteToFile(Path.Combine(AppDirectory, UI.Constants.Application.EXCEPTION_LOG_FILENAME), ex);
         }
 
         /// <inheritdoc/>
@@ -86,12 +96,6 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
                 
                 .WithUnoServices(settingsFolder)
                 ;
-        }
-
-        /// <inheritdoc/>
-        public override void LogExceptionToFile(Exception? ex)
-        {
-            _ = ex;
         }
     }
 }

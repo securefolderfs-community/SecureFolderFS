@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -24,23 +24,21 @@ namespace SecureFolderFS.UI.Helpers
             return exceptionString;
         }
 
-        public static void LogExceptionToFile(string appDirectory, string? formattedException)
+        public static void TryWriteToFile(string appDirectory, Exception? ex)
         {
+            var formattedException = FormatException(ex);
             if (formattedException is null)
                 return;
 
             try
             {
                 var filePath = Path.Combine(appDirectory, Constants.Application.EXCEPTION_LOG_FILENAME);
-
-                var existing = File.ReadAllText(filePath);
-                existing += formattedException;
-
-                File.WriteAllText(filePath, existing);
+                File.AppendAllText(filePath, $"\n\n\t\tEXCEPTION EVENT: {DateTime.Now}\n{formattedException}");
             }
-            catch (Exception ex)
+            catch (Exception ex2)
             {
-                Debug.WriteLine(ex);
+                Debug.WriteLine(ex2);
+                Debugger.Break();
             }
         }
     }
