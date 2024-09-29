@@ -62,6 +62,11 @@
                                     <CheckBox Content="Unlock as read-only" IsEnabled="False" />
                                     <CheckBox Content="Save credentials" IsEnabled="False" />
                                     <Button
+                                        x:Name="RestartProcessButton"
+                                        x:Load="{x:Bind ViewModel.LoginViewModel.IsLoginSequence, Mode=OneWay}"
+                                        Command="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
+                                        Content="{l:ResourceString Name=RestartLogin}" />
+                                    <Button
                                         HorizontalAlignment="Stretch"
                                         Command="{x:Bind ViewModel.BeginRecoveryCommand, Mode=OneWay}"
                                         Content="{l:ResourceString Name=RecoverAccess}" />

@@ -12,8 +12,8 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -24,13 +24,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     [Bindable(true)]
     public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
-        private readonly LoginViewType _loginViewMode;
-        private readonly IVaultModel _vaultModel;
         private readonly KeyChain _keyChain;
+        private readonly IVaultModel _vaultModel;
+        private readonly LoginViewType _loginViewMode;
         private readonly IVaultWatcherModel _vaultWatcherModel;
-        private IAsyncEnumerator<AuthenticationViewModel>? _enumerator;
+        private Iterator<AuthenticationViewModel>? _loginSequence;
 
         [ObservableProperty] private bool _CanRecover;
+        [ObservableProperty] private bool _IsLoginSequence;
         [ObservableProperty] private ICommand? _ProvideCredentialsCommand;
         [ObservableProperty] private ReportableViewModel? _CurrentViewModel;
 
@@ -51,23 +52,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             // TODO: Refactor choosing the login view model:
             //
-            // 1. Enumerate everything once instead of using an _enumerator
-            // 2. Expand vault validation to account for missing passkey files like windows_hello.cfg
-            //      2a. Display an error view if not found
-            //      2b. Offer to unlock (from error view) using recovery key, if possible
-            // 3. (Optional) Add a 'provide keystore' view if the keystore is missing
-            //      3a. After providing keystore, the presumed authentication should continue as normal
-            //      3b. Offer to unlock (from 'provide keystore' view) using recovery key, if possible
+            // 1. Expand vault validation to account for missing passkey files like windows_hello.cfg
+            //      1a. Display an error view if not found
+            //      1b. Offer to unlock (from error view) using recovery key, if possible
+            // 2. (Optional) Add a 'provide keystore' view if the keystore is missing
+            //      2a. After providing keystore, the presumed authentication should continue as normal
+            //      2b. Offer to unlock (from 'provide keystore' view) using recovery key, if possible
             //
 
             // Get the authentication method enumerator for this vault
-            _enumerator = VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken).GetAsyncEnumerator(cancellationToken);
+            _loginSequence = new(await VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken));
+            IsLoginSequence = _loginSequence.Count > 1;
 
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
             {
                 // Set up the first authentication method
-                var result = await TryNextAuthAsync();
+                var result = ProceedAuthentication();
                 if (!result.Successful)
                     CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
             }
@@ -107,6 +108,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
+        [RelayCommand]
+        private void RestartLoginProcess()
+        {
+            _loginSequence?.Reset();
+            _keyChain.Dispose();
+
+            var result = ProceedAuthentication();
+            if (!result.Successful)
+                CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
+        }
+
         private async Task<bool> TryUnlockAsync(CancellationToken cancellationToken = default)
         {
             try
@@ -123,15 +135,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
-        private async Task<IResult> TryNextAuthAsync()
+        private IResult ProceedAuthentication()
         {
             try
             {
-                if (_enumerator is null || !await _enumerator.MoveNextAsync())
+                if (_loginSequence is null || !_loginSequence.MoveNext())
                     return new MessageResult(false, "No authentication methods available.");
 
                 // Get the appropriate method
-                var viewModel = _enumerator.Current;
+                var viewModel = _loginSequence.Current;
                 CurrentViewModel = viewModel;
 
                 return Result.Success;
@@ -165,8 +177,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             else if (e is MigrationCompletedEventArgs)
             {
                 _keyChain.Dispose();
-                if (_enumerator is not null)
-                    await _enumerator.DisposeAsync();
+                _loginSequence?.Dispose();
 
                 await InitAsync();
             }
@@ -177,12 +188,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             // Add authentication
             _keyChain.Add(e.Authentication);
 
-            var result = await TryNextAuthAsync();
+            var result = ProceedAuthentication();
             if (!result.Successful && CurrentViewModel is not ErrorViewModel)
             {
                 // Reached the end in which case we should try to unlock the vault
-                if (!await TryUnlockAsync())
-                    _keyChain.Dispose();
+                if (!await TryUnlockAsync() && _loginSequence?.Count > 1)
+                {
+                    // If login failed, restart the process
+                    RestartLoginProcess();
+                }
             }
         }
 
@@ -222,7 +236,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 authenticationViewModel.CredentialsProvided -= CurrentViewModel_CredentialsProvided;
 
             _keyChain.Dispose();
-            _ = _enumerator?.DisposeAsync().ConfigureAwait(false);
+            _loginSequence?.Dispose();
         }
     }
 }

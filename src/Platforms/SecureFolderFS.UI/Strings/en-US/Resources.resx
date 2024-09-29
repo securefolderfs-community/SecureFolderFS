@@ -626,4 +626,10 @@
   <data name="ActiveFileSystem" xml:space="preserve">
     <value>Active file system</value>
   </data>
+  <data name="RestartLogin" xml:space="preserve">
+    <value>Restart login process</value>
+  </data>
+  <data name="ResetCredentials" xml:space="preserve">
+    <value>Reset credentials</value>
+  </data>
 </root>

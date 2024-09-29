@@ -8,11 +8,6 @@ namespace SecureFolderFS.Maui.ServiceImplementation
     /// <inheritdoc cref="INavigationService"/>
     internal sealed class MauiNavigationService : BaseNavigationService
     {
-        public MauiNavigationService()
-        {
-            _ = 0;
-        }
-        
         /// <inheritdoc/>
         protected override async Task<bool> BeginNavigationAsync(IViewDesignation? target, NavigationType navigationType)
         {

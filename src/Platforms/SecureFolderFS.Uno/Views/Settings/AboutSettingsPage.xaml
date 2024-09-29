@@ -99,8 +99,7 @@
                                             Grid.Row="1"
                                             HorizontalAlignment="Stretch"
                                             AutomationProperties.Name="{l:ResourceString Name=CopySystemVersion}"
-                                            Click="CopySystemVersion_Click"
-                                            Command="{x:Bind ViewModel.CopySystemVersionCommand, Mode=OneWay}">
+                                            Click="CopySystemVersion_Click">
                                             <Grid x:Name="CopySystemVersionGrid">
                                                 <TextBlock Text="{l:ResourceString Name=CopySystemVersion}" />
                                                 <StackPanel
