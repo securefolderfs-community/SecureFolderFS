@@ -24,15 +24,6 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Native
             return Path.Combine(parentPath, Constants.DIRECTORY_ID_FILENAME);
         }
 
-        [Obsolete]
-        public static string PathFromVaultRoot(string fileName, string vaultRootPath)
-        {
-            if (fileName.Length == 0 || fileName.Length == 1 && fileName[0] == Path.DirectorySeparatorChar)
-                return PathHelpers.EnsureTrailingPathSeparator(vaultRootPath);
-
-            return Path.Combine(vaultRootPath, PathHelpers.EnsureNoLeadingPathSeparator(fileName));
-        }
-
         public static string MakeRelative(string fullPath, string basePath)
         {
             return PathHelpers.EnsureNoLeadingPathSeparator(Path.DirectorySeparatorChar + fullPath.Replace(basePath, ""));

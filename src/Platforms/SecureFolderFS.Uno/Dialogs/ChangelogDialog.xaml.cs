@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -42,10 +43,10 @@ namespace SecureFolderFS.Uno.Dialogs
             return Task.CompletedTask;
         }
 
-        //private async void MarkdownTextBlock_LinkClicked(object? sender, LinkClickedEventArgs e)
-        //{
-        //    var uri = new Uri(e.Link);
-        //    await ApplicationService.OpenUriAsync(uri);
-        //}
+        private async void MarkdownTextBlock_LinkClicked(object? sender, LinkClickedEventArgs e)
+        {
+            var uri = new Uri(e.Link);
+            await ApplicationService.OpenUriAsync(uri);
+        }
     }
 }

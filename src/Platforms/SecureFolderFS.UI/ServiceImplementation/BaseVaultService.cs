@@ -10,6 +10,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.UI.ServiceImplementation
 {
@@ -53,7 +54,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             return new()
             {
-                AuthenticationMethod = config.AuthenticationMethod.Split(Core.Constants.Vault.AuthenticationMethods.SEPARATOR),
+                AuthenticationMethod = config.AuthenticationMethod.Split(Core.Constants.Vault.Authentication.SEPARATOR),
                 ContentCipherId = config.ContentCipherId,
                 FileNameCipherId = config.FileNameCipherId,
                 VaultId = config.Uid,

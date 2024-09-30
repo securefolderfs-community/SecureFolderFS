@@ -38,13 +38,13 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
                 };
 
                 storageRoutine.SetUnlockContract(unlockContract);
-                var (directoryIdCache, security, pathConverter, streamsAccess) = storageRoutine.CreateStorageComponents(contentFolder, options);
+                var pathConverter = storageRoutine.CreateStorageComponents(contentFolder, options);
                 var specifics = storageRoutine.GetSpecifics(contentFolder, options);
 
                 var mountable = options.FileSystemId switch
                 {
-                    Core.Constants.FileSystemId.FS_FUSE => FuseMountable.CreateMountable(specifics, pathConverter),
-                    Core.Constants.FileSystemId.FS_WEBDAV => WebDavMountable.CreateMountable(options, contentFolder, security, directoryIdCache, pathConverter, streamsAccess),
+                    Core.Constants.FileSystemId.FS_FUSE => FuseMountable.CreateMountable(specifics),
+                    Core.Constants.FileSystemId.FS_WEBDAV => WebDavMountable.CreateMountable(specifics, pathConverter),
                     _ => throw new ArgumentOutOfRangeException(nameof(options.FileSystemId))
                 };
 

@@ -16,6 +16,8 @@ namespace SecureFolderFS.UI.Helpers
     {
         public IServiceCollection ServiceCollection { get; } = new ServiceCollection();
 
+        protected abstract string AppDirectory { get; }
+
         /// <inheritdoc/>
         public virtual Task InitAsync(CancellationToken cancellationToken = default)
         {
@@ -35,6 +37,9 @@ namespace SecureFolderFS.UI.Helpers
             Debugger.Break();
 #if !DEBUG
             LogExceptionToFile(ex);
+#else
+            if (!Debugger.IsAttached)
+                LogExceptionToFile(ex);
 #endif
         }
 

@@ -47,7 +47,13 @@
         Square44x44Logo="Assets\AppIcon\AppIcon.png"
         BackgroundColor="transparent">
         <uap:SplashScreen Image="Assets\AppIcon\SplashScreen.png"/>
-        <uap:DefaultTile Square71x71Logo="Assets\AppIcon\SmallTile.png" Wide310x150Logo="Assets\AppIcon\WideTile.png" Square310x310Logo="Assets\AppIcon\LargeTile.png"/>
+        <uap:DefaultTile Square71x71Logo="Assets\AppIcon\SmallTile.png" Wide310x150Logo="Assets\AppIcon\WideTile.png" Square310x310Logo="Assets\AppIcon\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
       </uap:VisualElements>
     </Application>
   </Applications>

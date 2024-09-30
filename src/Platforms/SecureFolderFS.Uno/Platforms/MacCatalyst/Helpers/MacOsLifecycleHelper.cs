@@ -18,9 +18,12 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.Helpers
     internal sealed class MacOsLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
+        protected override string AppDirectory { get; } = Path.Combine(ApplicationData.Current.LocalFolder.Path, nameof(SecureFolderFS));
+
+        /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var settingsFolderPath = Path.Combine(ApplicationData.Current.LocalFolder.Path, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
 
@@ -30,7 +33,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.Helpers
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
         {
-            _ = ex;
+            ExceptionHelpers.TryWriteToFile(AppDirectory, ex);
         }
 
         /// <inheritdoc/>

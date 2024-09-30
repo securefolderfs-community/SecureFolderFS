@@ -1,12 +1,13 @@
 <Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>
-      net8.0-maccatalyst;
-      net8.0-windows10.0.19041;
-      net8.0-desktop;
-    </TargetFrameworks>
+    <TargetFrameworks>net8.0-desktop;</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net8.0-windows10.0.19041</TargetFrameworks>
+    <TargetFrameworks Condition=" !$([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net8.0-maccatalyst</TargetFrameworks>
+
+    <!-- To build SecureFolderFS (Desktop) on Windows, comment net8.0-windows[...] -->
 
     <!-- Uncomment if you want to explicity set a TargetFramework -->
+    <!--<TargetFramework>net8.0-desktop</TargetFramework>-->
     <!--<TargetFramework>net8.0-maccatalyst</TargetFramework>-->
   </PropertyGroup>
 
@@ -75,6 +76,7 @@
     <When Condition="'$(TargetFramework)'=='net8.0-maccatalyst'">
       <ItemGroup>
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
+        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
 
       <ItemGroup>
@@ -88,10 +90,28 @@
       </PropertyGroup>
     </When>
 
+    <!-- Skia Desktop -->
+    <When Condition="'$(TargetFramework)'=='net8.0-desktop'">
+      <PropertyGroup>
+        <DefineConstants>HAS_UNO_SKIA</DefineConstants>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
+        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
+      </ItemGroup>
+
+      <ItemGroup>
+        <ProjectReference Include="..\..\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
+        <ProjectReference Include="..\..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
+      </ItemGroup>
+    </When>
+
     <!-- Windows -->
     <When Condition="'$(TargetFramework)'=='net8.0-windows10.0.19041'">
       <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Markdown" />
         <PackageReference Include="Vanara.PInvoke.ComCtl32" />
       </ItemGroup>
 
@@ -133,23 +153,6 @@
       <PropertyGroup Condition="'$(WindowsPackageType)' == 'None'">
         <DefineConstants>UNPACKAGED</DefineConstants>
       </PropertyGroup>
-    </When>
-
-    <!-- Skia Desktop -->
-    <When Condition="'$(TargetFramework)'=='net8.0-desktop'">
-      <ItemGroup>
-        <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
-      </ItemGroup>
-
-      <ItemGroup>
-        <ProjectReference Include="..\..\SecureFolderFS.Core.FUSE\SecureFolderFS.Core.FUSE.csproj" />
-        <ProjectReference Include="..\..\SecureFolderFS.Core.WebDav\SecureFolderFS.Core.WebDav.csproj" />
-      </ItemGroup>
-
-      <!--<ItemGroup>
-        <Compile Include="Platforms\Desktop\*.cs" />
-        <Compile Include="Platforms\Desktop\*\*.cs" />
-      </ItemGroup>-->
     </When>
 
   </Choose>
@@ -449,6 +452,7 @@
     <UpToDateCheckInput Remove="Dialogs\VaultWizardDialog.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ColorResources.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionaries\ImageResources.xaml" />
+    <UpToDateCheckInput Remove="ResourceDictionaries\TextResources.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockContentControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\BackButtonTitleControl.xaml" />
@@ -463,6 +467,7 @@
     <UpToDateCheckInput Remove="UserControls\Introduction\IntroductionControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\WelcomeScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\LoginControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\Migration\MigratorV1_V2.xaml" />
     <UpToDateCheckInput Remove="UserControls\Navigation\ContentNavigationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Navigation\FrameNavigationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\OverlayControl.xaml" />
@@ -486,13 +491,5 @@
     <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="ResourceDictionaries\TextResources.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="UserControls\Migration\MigratorV1_V2.xaml" />
   </ItemGroup>
 </Project>

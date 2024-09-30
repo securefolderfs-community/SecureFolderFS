@@ -41,7 +41,7 @@ namespace SecureFolderFS.Sdk.ViewModels
             if (false && !SettingsService.AppSettings.IsIntroduced)
             {
                 var dialogService = DI.Service<IOverlayService>();
-                var dialogResult = await OverlayService.ShowAsync(new AgreementDialogViewModel());
+                var dialogResult = await OverlayService.ShowAsync(new AgreementOverlayViewModel());
                 if (dialogResult is IResult<DialogOption> { Value: DialogOption.Primary } || dialogResult.Successful)
                 {
                     SettingsService.AppSettings.IsIntroduced = true;

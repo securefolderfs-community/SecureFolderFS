@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Uno.Extensions;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -170,21 +169,21 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
         public static readonly DependencyProperty WriteGraphIsExtendedProperty =
             DependencyProperty.Register(nameof(WriteGraphIsExtended), typeof(bool), typeof(GraphsWidget), new PropertyMetadata(defaultValue: false));
 
-        public IList<GraphPoint>? ReadGraphData
+        public ICollection? ReadGraphData
         {
-            get => (IList<GraphPoint>?)GetValue(ReadGraphDataProperty);
+            get => (ICollection?)GetValue(ReadGraphDataProperty);
             set => SetValue(ReadGraphDataProperty, value);
         }
         public static readonly DependencyProperty ReadGraphDataProperty =
-            DependencyProperty.Register(nameof(ReadGraphData), typeof(IList<GraphPoint>), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(ReadGraphData), typeof(ICollection), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
 
-        public IList<GraphPoint>? WriteGraphData
+        public ICollection? WriteGraphData
         {
-            get => (IList<GraphPoint>?)GetValue(WriteGraphDataProperty);
+            get => (ICollection?)GetValue(WriteGraphDataProperty);
             set => SetValue(WriteGraphDataProperty, value);
         }
         public static readonly DependencyProperty WriteGraphDataProperty =
-            DependencyProperty.Register(nameof(WriteGraphData), typeof(IList<GraphPoint>), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(WriteGraphData), typeof(ICollection), typeof(GraphsWidget), new PropertyMetadata(defaultValue: null));
 
         public string? ReadGraphSubheader
         {

@@ -57,8 +57,9 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             Argon2id.DeriveKey(password.ToArray(), _v1KeystoreDataModel.Salt, kek);
 
             // Unwrap keys
-            Rfc3394KeyWrap.UnwrapKey(_v1KeystoreDataModel.WrappedEncKey, kek, encKey.Key);
-            Rfc3394KeyWrap.UnwrapKey(_v1KeystoreDataModel.WrappedMacKey, kek, macKey.Key);
+            using var rfc3394 = new Rfc3394KeyWrap();
+            rfc3394.UnwrapKey(_v1KeystoreDataModel.WrappedEncKey, kek, encKey.Key);
+            rfc3394.UnwrapKey(_v1KeystoreDataModel.WrappedMacKey, kek, macKey.Key);
 
             // Create copies of keys for later use
             return new EncAndMacKey(encKey.CreateCopy(), macKey.CreateCopy());
@@ -79,7 +80,7 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             var vaultId = Guid.NewGuid().ToString();
             var v2ConfigDataModel = new VaultConfigurationDataModel()
             {
-                AuthenticationMethod = Constants.Vault.AuthenticationMethods.AUTH_PASSWORD,
+                AuthenticationMethod = Constants.Vault.Authentication.AUTH_PASSWORD,
                 ContentCipherId = GetContentCipherId(_v1ConfigDataModel.ContentCipherScheme),
                 FileNameCipherId = GetFileNameCipherId(_v1ConfigDataModel.FileNameCipherScheme),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes],

@@ -7,14 +7,13 @@ using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Uno.ViewModels
 {
     /// <inheritdoc cref="WindowsHelloViewModel"/>
     [Bindable(true)]
-    public sealed class WindowsHelloCreationViewModel(string vaultId, string id, IFolder vaultFolder)
-        : WindowsHelloViewModel(id)
+    public sealed class WindowsHelloCreationViewModel(IFolder vaultFolder, string vaultId) : WindowsHelloViewModel(vaultFolder, vaultId)
     {
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
@@ -25,11 +24,11 @@ namespace SecureFolderFS.Uno.ViewModels
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            var vaultWriter = new VaultWriter(vaultFolder, StreamSerializer.Instance);
-            using var challenge = GenerateChallenge(vaultId);
+            var vaultWriter = new VaultWriter(VaultFolder, StreamSerializer.Instance);
+            using var challenge = GenerateChallenge(VaultId);
 
             // Write authentication data to the vault
-            await vaultWriter.WriteAuthenticationAsync(new()
+            await vaultWriter.WriteAuthenticationAsync($"{Id}{Core.Constants.Vault.Names.CONFIGURATION_EXTENSION}", new()
             {
                 Capability = "supportsChallenge", // TODO: Put somewhere in Constants
                 Challenge = challenge.Key
@@ -37,7 +36,7 @@ namespace SecureFolderFS.Uno.ViewModels
 
             try
             {
-                var key = await this.TryCreateAsync(vaultId, challenge.Key, cancellationToken);
+                var key = await this.TryCreateAsync(VaultId, challenge.Key, cancellationToken);
                 if (key is { Successful: true, Value: not null })
                     CredentialsProvided?.Invoke(this, new(key.Value));
             }

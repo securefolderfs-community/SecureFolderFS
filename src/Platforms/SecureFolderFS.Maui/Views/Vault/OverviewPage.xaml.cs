@@ -18,8 +18,8 @@ namespace SecureFolderFS.Maui.Views.Vault
             ViewModel = query.ToViewModel<VaultDashboardViewModel>();
             if (ViewModel is not null)
             {
-                OverviewViewModel = ViewModel.DashboardNavigationService.Views.FirstOrDefaultType<IViewDesignation, VaultOverviewViewModel>();
-                PropertiesViewModel = ViewModel.DashboardNavigationService.Views.FirstOrDefaultType<IViewDesignation, VaultPropertiesViewModel>();
+                OverviewViewModel = ViewModel.DashboardNavigation.Views.FirstOrDefaultType<IViewDesignation, VaultOverviewViewModel>();
+                PropertiesViewModel = ViewModel.DashboardNavigation.Views.FirstOrDefaultType<IViewDesignation, VaultPropertiesViewModel>();
             }
             
             OnPropertyChanged(nameof(ViewModel));

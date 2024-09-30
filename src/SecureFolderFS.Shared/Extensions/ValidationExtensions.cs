@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Shared.Extensions

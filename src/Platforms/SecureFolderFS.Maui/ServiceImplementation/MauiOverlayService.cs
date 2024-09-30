@@ -25,6 +25,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
                 WizardOverlayViewModel => new MainWizardPage(navigation),
                 SettingsOverlayViewModel => new SettingsPage(navigation),
                 RecoveryOverlayViewModel => new RecoveryPrompt(),
+                CredentialsOverlayViewModel => new CredentialsPopup(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryPopup(),
 
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))

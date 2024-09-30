@@ -1,4 +1,4 @@
-﻿namespace SecureFolderFS.Sdk.AppModels
+﻿namespace SecureFolderFS.Shared.Models
 {
     /// <summary>
     /// Contains details about a vault.

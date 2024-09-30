@@ -1,17 +1,12 @@
-using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
-using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Directories;
 using SecureFolderFS.Core.FileSystem.Enums;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
+using SecureFolderFS.Core.FUSE.OpenHandles;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Text;
-using SecureFolderFS.Core.FUSE.OpenHandles;
 using Tmds.Fuse;
 using Tmds.Linux;
 using MountOptions = SecureFolderFS.Core.FileSystem.AppModels.MountOptions;
@@ -80,10 +75,10 @@ namespace SecureFolderFS.Core.FUSE
             return new FuseRootFolder(_fuseWrapper, new SystemFolder(mountPoint), _options);
         }
 
-        public static IMountableFileSystem CreateMountable(FileSystemSpecifics specifics, IPathConverter legacyPathConverter)
+        public static IMountableFileSystem CreateMountable(FileSystemSpecifics specifics)
         {
             var handlesManager = new FuseHandlesManager(specifics.StreamsAccess);
-            var fuseCallbacks = new OnDeviceFuse(specifics, legacyPathConverter, handlesManager);
+            var fuseCallbacks = new OnDeviceFuse(specifics, handlesManager);
 
             return new FuseMountable(specifics.FileSystemOptions, fuseCallbacks);
         }

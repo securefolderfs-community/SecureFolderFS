@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Shared.Enums;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

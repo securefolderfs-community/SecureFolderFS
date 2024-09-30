@@ -45,11 +45,10 @@
                 x:Name="ChangelogScroll"
                 Grid.Row="0"
                 x:Load="{x:Bind ViewModel.UpdateText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
-                <!--  TODO: Regression - markdown is unavailable  -->
-                <!--<tuc:MarkdownTextBlock
+                <tuc:MarkdownTextBlock
                     Background="Transparent"
                     LinkClicked="MarkdownTextBlock_LinkClicked"
-                    Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />-->
+                    Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />
             </ScrollViewer>
 
             <HyperlinkButton

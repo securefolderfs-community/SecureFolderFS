@@ -16,9 +16,12 @@
     <ContentView.Resources>
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordLoginViewModel">
-            <ContentView>
-                <VerticalStackLayout Spacing="24">
-                    <local:PasswordControl ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
+            <ContentView HorizontalOptions="Fill">
+                <VerticalStackLayout HorizontalOptions="Fill" Spacing="24">
+                    <local:PasswordControl
+                        HorizontalOptions="Fill"
+                        ShowInvalidPasswordMessage="{Binding IsPasswordInvalid, Mode=TwoWay}"
+                        UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
                     <OnPlatform x:TypeArguments="View">
                         <On Platform="Android">
                             <mdc:Button

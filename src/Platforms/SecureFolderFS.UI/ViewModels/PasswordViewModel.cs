@@ -7,7 +7,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.UI.ViewModels
 {
@@ -23,8 +23,8 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public sealed override AuthenticationType Availability { get; } = AuthenticationType.FirstStageOnly;
 
-        protected PasswordViewModel(string id)
-            : base(id)
+        protected PasswordViewModel()
+            : base(Core.Constants.Vault.Authentication.AUTH_PASSWORD)
         {
             DisplayName = "Password".ToLocalized();
             Icon = "\uE8AC";
@@ -36,8 +36,9 @@ namespace SecureFolderFS.UI.ViewModels
         }
 
         /// <inheritdoc/>
-        public override Task RevokeAsync(string id, CancellationToken cancellationToken = default)
+        public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
+            PrimaryPassword = null;
             return Task.CompletedTask;
         }
 

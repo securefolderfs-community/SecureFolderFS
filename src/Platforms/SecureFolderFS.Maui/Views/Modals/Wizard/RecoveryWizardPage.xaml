@@ -2,10 +2,9 @@
     x:Class="SecureFolderFS.Maui.Views.Modals.Wizard.RecoveryWizardPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:l="using:SecureFolderFS.Maui.Localization"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Wizard"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
-    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     x:Name="ThisPage"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:RecoveryWizardPage"
@@ -17,55 +16,6 @@
     PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
-        <Grid
-            Padding="16"
-            HorizontalOptions="Center"
-            VerticalOptions="Center">
-            <OnPlatform x:TypeArguments="View">
-                <On Platform="Android">
-                    <VerticalStackLayout Spacing="32">
-                        <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
-
-                        <VerticalStackLayout Spacing="8">
-                            <mdc:Card Style="{DynamicResource FilledCardStyle}">
-                                <VerticalStackLayout BindingContext="{x:Reference ThisPage}" Spacing="8">
-                                    <Label
-                                        FontAttributes="Bold"
-                                        FontSize="20"
-                                        Text="Master Key:" />
-                                    <Label LineBreakMode="CharacterWrap" Text="{Binding ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}" />
-                                </VerticalStackLayout>
-                            </mdc:Card>
-                            <mdc:Button
-                                Command="{Binding ViewModel.RecoveryViewModel.ExportCommand}"
-                                CommandParameter="Copy"
-                                HorizontalOptions="End"
-                                Style="{DynamicResource FilledTonalButtonStyle}"
-                                Text="Export" />
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </On>
-                <On Platform="iOS">
-                    <VerticalStackLayout Spacing="24">
-                        <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
-
-                        <VerticalStackLayout Spacing="4">
-                            <Label
-                                FontAttributes="Bold"
-                                FontSize="20"
-                                Text="Master Key:" />
-                            <Border Padding="4" BackgroundColor="Gainsboro">
-                                <Label LineBreakMode="CharacterWrap" Text="{Binding ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}" />
-                            </Border>
-                            <Button
-                                Command="{Binding ViewModel.RecoveryViewModel.ExportCommand}"
-                                CommandParameter="Copy"
-                                HorizontalOptions="End"
-                                Text="Export" />
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </On>
-            </OnPlatform>
-        </Grid>
+        <uc:RecoveryPreviewControl ExportCommand="{Binding ViewModel.RecoveryViewModel.ExportCommand, Mode=OneWay}" MasterKey="{Binding ViewModel.RecoveryViewModel.MasterKey, Mode=OneWay}" />
     </md:BaseModalPage.ModalContent>
 </md:BaseModalPage>

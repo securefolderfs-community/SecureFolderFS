@@ -67,7 +67,7 @@
         <!--  Top buttons  -->
         <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
-                <Grid Padding="20,16" ColumnSpacing="8">
+                <Grid Padding="20,16" ColumnSpacing="24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
@@ -75,12 +75,14 @@
 
                     <mdc:Button
                         Grid.Column="0"
+                        Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
                         HeightRequest="48"
                         Style="{DynamicResource FilledTonalButtonStyle}"
                         Text="{l:ResourceString Name=ViewInFiles}"
                         WidthRequest="180" />
                     <mdc:Button
                         Grid.Column="1"
+                        Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
                         HeightRequest="48"
                         Style="{DynamicResource FilledTonalButtonStyle}"
                         Text="{l:ResourceString Name=LockVault}"

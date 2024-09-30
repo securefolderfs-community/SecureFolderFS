@@ -19,11 +19,6 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public PasswordCreationViewModel(string id)
-            : base(id)
-        {
-        }
-
         partial void OnSecondaryPasswordChanged(string? value)
         {
             StateChanged?.Invoke(this, new PasswordChangedEventArgs(PrimaryPassword == SecondaryPassword));
@@ -32,8 +27,14 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         protected override void OnPasswordChanged(string? value)
         {
-            if (PrimaryPassword == SecondaryPassword)
-                StateChanged?.Invoke(this, new PasswordChangedEventArgs(PrimaryPassword == SecondaryPassword));
+            StateChanged?.Invoke(this, new PasswordChangedEventArgs(PrimaryPassword == SecondaryPassword));
+        }
+
+        /// <inheritdoc/>
+        public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
+        {
+            SecondaryPassword = null;
+            return base.RevokeAsync(id, cancellationToken);
         }
 
         /// <inheritdoc/>

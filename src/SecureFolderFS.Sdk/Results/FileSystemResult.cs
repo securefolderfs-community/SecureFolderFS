@@ -1,4 +1,4 @@
-﻿using SecureFolderFS.Shared.Helpers;
+﻿using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 

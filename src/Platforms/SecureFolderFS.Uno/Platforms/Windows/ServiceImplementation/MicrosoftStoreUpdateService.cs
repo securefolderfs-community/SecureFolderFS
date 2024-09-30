@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using Windows.ApplicationModel;
 using Windows.Services.Store;
 

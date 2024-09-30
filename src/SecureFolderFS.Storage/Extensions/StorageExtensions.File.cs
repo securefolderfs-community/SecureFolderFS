@@ -1,7 +1,7 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using System;
 using System.IO;
 using System.Text;

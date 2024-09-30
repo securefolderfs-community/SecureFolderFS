@@ -7,7 +7,7 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using System;
 using System.ComponentModel;
 using System.Threading;

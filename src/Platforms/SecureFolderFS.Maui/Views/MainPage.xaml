@@ -23,70 +23,76 @@
         <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
     </ContentPage.Resources>
 
-    <Grid>
-        <ListView
-            ItemTapped="ListView_ItemTapped"
-            ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
-            RowHeight="64"
-            SelectionMode="None">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:VaultListItemViewModel">
-                    <ViewCell>
-                        <ViewCell.ContextActions>
-                            <MenuFlyoutItem Command="{Binding RemoveVaultCommand}" Text="Remove" />
-                        </ViewCell.ContextActions>
+    <VerticalStackLayout>
+        <SearchBar
+            HeightRequest="24"
+            IsVisible="True"
+            Placeholder="Search" />
+        <Grid>
+            <ListView
+                ItemTapped="ListView_ItemTapped"
+                ItemsSource="{Binding ViewModel.VaultListViewModel.Items, Mode=OneWay}"
+                RowHeight="64"
+                SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:VaultListItemViewModel">
+                        <ViewCell>
+                            <ViewCell.ContextActions>
+                                <MenuFlyoutItem Command="{Binding RemoveVaultCommand}" Text="Remove" />
+                            </ViewCell.ContextActions>
 
-                        <HorizontalStackLayout
-                            Padding="8,2"
-                            Spacing="8"
-                            VerticalOptions="Center">
-                            <Grid VerticalOptions="Center">
-                                <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
-                                <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
-                            </Grid>
+                            <HorizontalStackLayout
+                                Padding="8,2"
+                                Spacing="8"
+                                VerticalOptions="Center">
+                                <Grid VerticalOptions="Center">
+                                    <mi:MauiIcon Icon="{mi_material:Material Lock}" OnPlatforms="Android" />
+                                    <mi:MauiIcon Icon="{mi_cupertino:Cupertino Lock}" OnPlatforms="iOS" />
+                                </Grid>
 
-                            <VerticalStackLayout VerticalOptions="Center">
-                                <Label
-                                    FontAttributes="Bold"
-                                    FontSize="16"
-                                    Text="{Binding VaultModel.VaultName, Mode=OneWay}"
-                                    VerticalOptions="Center" />
-                                <Label IsVisible="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
-                            </VerticalStackLayout>
-                        </HorizontalStackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                                <VerticalStackLayout VerticalOptions="Center">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="16"
+                                        Text="{Binding VaultModel.VaultName, Mode=OneWay}"
+                                        VerticalOptions="Center" />
+                                    <Label IsVisible="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-        <VerticalStackLayout
-            Margin="0,0,0,64"
-            Padding="12,0"
-            IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
-            Spacing="16"
-            VerticalOptions="Center">
-            <Image Source="app_icon.png" WidthRequest="64" />
-            <Label
-                FontAttributes="Bold"
-                FontSize="24"
-                HorizontalOptions="Center"
-                Text="{l:ResourceString Name=Welcome}" />
-            <Label
-                FontSize="16"
-                HorizontalOptions="Center"
-                HorizontalTextAlignment="Center"
-                Text="{l:ResourceString Name=NoVaultsMessage}" />
-        </VerticalStackLayout>
+            <VerticalStackLayout
+                Margin="0,0,0,64"
+                Padding="12,0"
+                IsVisible="{Binding ViewModel.VaultListViewModel.HasVaults, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                Spacing="16"
+                VerticalOptions="Center">
+                <Image Source="app_icon.png" WidthRequest="64" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="24"
+                    HorizontalOptions="Center"
+                    Text="{l:ResourceString Name=Welcome}" />
+                <Label
+                    FontSize="16"
+                    HorizontalOptions="Center"
+                    HorizontalTextAlignment="Center"
+                    Text="{l:ResourceString Name=NoVaultsMessage}" />
+            </VerticalStackLayout>
 
-        <OnPlatform x:TypeArguments="View">
-            <On Platform="Android">
-                <mdc:FAB
-                    Margin="0,0,32,32"
-                    Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
-                    HorizontalOptions="End"
-                    IconData="{x:Static mdci:Material.Add}"
-                    VerticalOptions="End" />
-            </On>
-        </OnPlatform>
-    </Grid>
+            <OnPlatform x:TypeArguments="View">
+                <On Platform="Android">
+                    <mdc:FAB
+                        Margin="0,0,32,32"
+                        Command="{Binding ViewModel.VaultListViewModel.AddNewVaultCommand}"
+                        HorizontalOptions="End"
+                        IconData="{x:Static mdci:Material.Add}"
+                        VerticalOptions="End" />
+                </On>
+            </OnPlatform>
+        </Grid>
+    </VerticalStackLayout>
 </local:ContentPageExtended>

@@ -12,7 +12,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Inject<IOverlayService>, Inject<ISettingsService>]
     [Bindable(true)]
-    public sealed partial class IntroductionDialogViewModel : OverlayViewModel
+    public sealed partial class IntroductionOverlayViewModel : OverlayViewModel
     {
         private readonly int _maxAmount;
 
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         public TaskCompletionSource<IResult> TaskCompletion { get; }
 
-        public IntroductionDialogViewModel(int maxAmount)
+        public IntroductionOverlayViewModel(int maxAmount)
         {
             ServiceProvider = DI.Default;
             _maxAmount = maxAmount;

@@ -39,8 +39,8 @@ namespace SecureFolderFS.UI.ServiceImplementation
 
             if (vaultFolder is IModifiableFolder modifiableFolder)
             {
-                var readmeFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_README_FILENAME, true, cancellationToken);
-                await readmeFile.WriteAllTextAsync(Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
+                var readmeFile = await modifiableFolder.CreateFileAsync(Sdk.Constants.Vault.VAULT_README_FILENAME, true, cancellationToken);
+                await readmeFile.WriteAllTextAsync(Sdk.Constants.Vault.VAULT_README_MESSAGE, Encoding.UTF8, cancellationToken);
             }
 
             return await creationRoutine.FinalizeAsync(cancellationToken);
@@ -121,6 +121,22 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 Core.Constants.Vault.Versions.V1 => Migrators.GetMigratorV1_V2(vaultFolder, StreamSerializer.Instance),
                 _ => throw new ArgumentOutOfRangeException(nameof(configVersion.Version))
             };
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task ChangeAuthenticationAsync(IFolder vaultFolder, IDisposable unlockContract, IKey newPasskey,
+            VaultOptions vaultOptions, CancellationToken cancellationToken = default)
+        {
+            using var credentialsRoutine = (await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken)).ModifyCredentials();
+            using var newPasskeySecret = VaultHelpers.ParsePasskeySecret(newPasskey);
+            var options = VaultHelpers.ParseOptions(vaultOptions);
+
+            await credentialsRoutine.InitAsync(cancellationToken);
+            credentialsRoutine.SetUnlockContract(unlockContract);
+            credentialsRoutine.SetOptions(options);
+            credentialsRoutine.SetCredentials(newPasskeySecret);
+            
+            _ = await credentialsRoutine.FinalizeAsync(cancellationToken);
         }
 
         /// <inheritdoc/>

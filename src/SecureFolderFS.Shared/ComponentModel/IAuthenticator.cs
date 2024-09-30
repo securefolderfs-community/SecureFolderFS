@@ -14,7 +14,7 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// <param name="id">The ID that uniquely identifies each authentication transaction.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task RevokeAsync(string id, CancellationToken cancellationToken = default);
+        Task RevokeAsync(string? id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a new authentication for the user.

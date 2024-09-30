@@ -21,8 +21,6 @@ namespace SecureFolderFS.Uno.Dialogs
 {
     public sealed partial class CredentialsDialog : ContentDialog, IOverlayControl
     {
-        private bool _isBackShown;
-
         public CredentialsOverlayViewModel? ViewModel
         {
             get => DataContext.TryCast<CredentialsOverlayViewModel>();
@@ -52,28 +50,46 @@ namespace SecureFolderFS.Uno.Dialogs
             return Task.CompletedTask;
         }
 
-        private async Task AnimateBackAsync(bool shouldShowBack)
-        {
-            if (shouldShowBack && !_isBackShown)
-            {
-                _isBackShown = true;
-                await BackTitle.ShowBackAsync();
-            }
-            else if (!shouldShowBack && _isBackShown)
-            {
-                _isBackShown = false;
-                await BackTitle.HideBackAsync();
-            }
-        }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (ViewModel is null)
                 return;
 
             args.Cancel = true;
             if (ViewModel.SelectedViewModel is LoginViewModel loginViewModel)
+            {
                 loginViewModel.ProvideCredentialsCommand?.Execute(null);
+            }
+            else if (ViewModel.SelectedViewModel is CredentialsResetViewModel credentialsReset)
+            {
+                try
+                {
+                    await credentialsReset.ConfirmAsync(default);
+                    await HideAsync();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Report to user
+                    _ = ex;
+                }
+            }
+            else if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel credentialsConfirmation)
+            {
+                try
+                {
+                    if (credentialsConfirmation.IsRemoving)
+                        await credentialsConfirmation.RemoveAsync(default);
+                    else
+                        await credentialsConfirmation.ConfirmAsync(default);
+                        
+                    await HideAsync();
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Report to user
+                    _ = ex;
+                }
+            }
         }
 
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
@@ -81,7 +97,7 @@ namespace SecureFolderFS.Uno.Dialogs
             ViewModel?.OnDisappearing();
         }
 
-        private void RecoverLink_Click(object sender, RoutedEventArgs e)
+        private void ResetCredentialsLink_Click(object sender, RoutedEventArgs e)
         {
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
@@ -102,14 +118,18 @@ namespace SecureFolderFS.Uno.Dialogs
             if (ViewModel is null)
                 return;
 
-            if (ViewModel.SelectedViewModel is not CredentialsConfirmationViewModel)
+            if (ViewModel.SelectedViewModel is not CredentialsConfirmationViewModel confirmationViewModel)
                 return;
+
+            // We also need to revoke existing credentials if the user added and aborted
+            if (confirmationViewModel.RegisterViewModel.CurrentViewModel is not null)
+                await confirmationViewModel.RegisterViewModel.RevokeCredentialsAsync(default);
 
             ViewModel.SelectedViewModel = ViewModel.SelectionViewModel;
             ViewModel.PrimaryButtonText = null;
             ViewModel.Title = "SelectAuthentication".ToLocalized();
 
-            await AnimateBackAsync(false);
+            await BackTitle.AnimateBackAsync(false);
         }
 
         private async void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -120,7 +140,7 @@ namespace SecureFolderFS.Uno.Dialogs
             if (e.PropertyName == nameof(CredentialsOverlayViewModel.SelectedViewModel))
             {
                 if (ViewModel.SelectedViewModel is CredentialsConfirmationViewModel)
-                    await AnimateBackAsync(true);
+                    await BackTitle.AnimateBackAsync(true);
             }
         }
 

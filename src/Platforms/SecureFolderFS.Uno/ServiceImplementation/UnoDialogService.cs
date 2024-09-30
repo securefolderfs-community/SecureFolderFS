@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Services;
@@ -16,7 +17,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     /// <inheritdoc cref="IOverlayService"/>
     public sealed class UnoDialogService : BaseOverlayService
     {
-        private readonly Stack<IOverlayControl> _overlays = new();
+        private readonly List<IOverlayControl> _overlays = new();
 
         /// <inheritdoc/>
         protected override IOverlayControl GetOverlay(IViewable viewable)
@@ -34,9 +35,9 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 MigrationOverlayViewModel => new MigrationDialog(),
 
                 // Unused
-                PaymentDialogViewModel => new PaymentDialog(),
-                AgreementDialogViewModel => new AgreementDialog(),
-                IntroductionDialogViewModel => new IntroductionControl(),
+                PaymentOverlayViewModel => new PaymentDialog(),
+                AgreementOverlayViewModel => new AgreementDialog(),
+                IntroductionOverlayViewModel => new IntroductionControl(),
 
                 _ => throw new ArgumentException("Unknown viewable type.", nameof(viewable))
             };
@@ -55,25 +56,27 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 var overlay = GetOverlay(viewable);
                 overlay.SetView(viewable);
 
-                _overlays.Push(overlay);
-                var result = await overlay.ShowAsync();
-                _overlays.Pop();
-
-                return result;
+                return await ShowOverlayAsync(overlay);
             }
             else
             {
-                var current = _overlays.Pop();
-                await current.HideAsync();
+                var last = _overlays.Last();
+                await last.HideAsync();
 
                 var overlay = GetOverlay(viewable);
                 overlay.SetView(viewable);
 
-                _overlays.Push(overlay);
-                var result = await overlay.ShowAsync();
+                var result = await ShowOverlayAsync(overlay);
+                await ShowOverlayAsync(last);
 
-                _overlays.Pop();
-                await current.ShowAsync();
+                return result;
+            }
+
+            async Task<IResult> ShowOverlayAsync(IOverlayControl overlay)
+            {
+                _overlays.Add(overlay);
+                var result = await overlay.ShowAsync();
+                _overlays.Remove(overlay);
 
                 return result;
             }

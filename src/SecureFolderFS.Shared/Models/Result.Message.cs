@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Shared.ComponentModel;
 using System;
 
-namespace SecureFolderFS.Shared.Helpers
+namespace SecureFolderFS.Shared.Models
 {
     /// <inheritdoc cref="IResultWithMessage"/>
     public class MessageResult : Result, IResultWithMessage

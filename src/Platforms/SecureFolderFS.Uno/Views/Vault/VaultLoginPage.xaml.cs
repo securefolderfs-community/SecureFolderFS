@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 
@@ -67,13 +68,11 @@ namespace SecureFolderFS.Uno.Views.Vault
 
             ViewModel.NavigationRequested -= ViewModel_NavigationRequested;
 
-            var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigator);
+            var dashboardNavigation = DI.Service<INavigationService>();
+            var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
             _ = dashboardViewModel.InitAsync();
 
-            if (ViewModel.VaultNavigator is INavigationService navigationService)
-                await navigationService.TryNavigateAndForgetAsync(dashboardViewModel);
-            else
-                await ViewModel.VaultNavigator.NavigateAsync(dashboardViewModel);
+            await ViewModel.VaultNavigation.TryNavigateAndForgetAsync(dashboardViewModel);
         }
     }
 }

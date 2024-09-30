@@ -31,15 +31,15 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        protected KeyFileViewModel(string id)
-            : base(id)
+        protected KeyFileViewModel()
+            : base(Core.Constants.Vault.Authentication.AUTH_KEYFILE)
         {
             DisplayName = "KeyFile".ToLocalized();
             Icon = "\uE8D7";
         }
 
         /// <inheritdoc/>
-        public override Task RevokeAsync(string id, CancellationToken cancellationToken = default)
+        public override Task RevokeAsync(string? id, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }
@@ -64,7 +64,8 @@ namespace SecureFolderFS.UI.ViewModels
 
             // Write to the data stream and save the file
             await dataStream.WriteAsync(secretKey.Key, cancellationToken);
-            var result = await FileExplorerService.SaveFileAsync("Vault authentication key", dataStream, new Dictionary<string, string>()
+            dataStream.Position = 0L;
+            var result = await FileExplorerService.SaveFileAsync("Vault key file", dataStream, new Dictionary<string, string>()
             {
                 { "Key File", Constants.FileNames.KEY_FILE_EXTENSION },
                 { "All Files", "*" }
@@ -83,7 +84,7 @@ namespace SecureFolderFS.UI.ViewModels
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
 
-            var keyFile = await FileExplorerService.PickFileAsync(new[] { ".key", "*" }, cancellationToken);
+            var keyFile = await FileExplorerService.PickFileAsync([ ".key", "*" ], cancellationToken);
             if (keyFile is null)
                 throw new OperationCanceledException("The user did not pick a file.");
 

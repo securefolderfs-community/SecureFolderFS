@@ -1,0 +1,62 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.RecoveryPreviewControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="using:SecureFolderFS.Maui.Localization"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    x:Name="ThisRecoveryControl">
+
+    <Grid
+        x:Name="RootGrid"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="Android">
+                <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="32">
+                    <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
+
+                    <VerticalStackLayout Spacing="8">
+                        <mdc:Card Style="{DynamicResource FilledCardStyle}">
+                            <VerticalStackLayout Spacing="8">
+                                <Label Opacity="0.6" Text="Recovery key" />
+                                <Label
+                                    FontFamily="Courier New"
+                                    LineBreakMode="CharacterWrap"
+                                    Text="{Binding MasterKey, Mode=OneWay, Source={x:Reference ThisRecoveryControl}}" />
+                            </VerticalStackLayout>
+                        </mdc:Card>
+                        <mdc:Button
+                            Command="{Binding ExportCommand, Mode=OneWay}"
+                            CommandParameter="Copy"
+                            HorizontalOptions="End"
+                            Style="{DynamicResource FilledTonalButtonStyle}"
+                            Text="Copy" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </On>
+            <On Platform="iOS">
+                <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="32">
+                    <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Opacity="0.6" Text="Recovery key" />
+                        <Border Padding="4" BackgroundColor="Gainsboro">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="4" />
+                            </Border.StrokeShape>
+                            <Label
+                                FontFamily="Courier New"
+                                LineBreakMode="CharacterWrap"
+                                Text="{Binding MasterKey, Mode=OneWay}" />
+                        </Border>
+                        <Button
+                            Command="{Binding ExportCommand, Mode=OneWay}"
+                            CommandParameter="Copy"
+                            HorizontalOptions="End"
+                            Text="Copy" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </On>
+        </OnPlatform>
+    </Grid>
+</ContentView>

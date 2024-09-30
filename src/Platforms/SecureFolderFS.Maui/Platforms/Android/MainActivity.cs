@@ -1,7 +1,6 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.OS;
 
 namespace SecureFolderFS.Maui
 {
@@ -12,10 +11,8 @@ namespace SecureFolderFS.Maui
 
         public Action<int, Result, Intent?>? ActivityResult { get; set; }
 
-        /// <inheritdoc/>
-        protected override void OnCreate(Bundle? savedInstanceState)
+        public MainActivity()
         {
-            base.OnCreate(savedInstanceState);
             Instance ??= this;
         }
 

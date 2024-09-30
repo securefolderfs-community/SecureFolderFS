@@ -81,15 +81,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             return Task.CompletedTask;
         }
 
-        [RelayCommand(AllowConcurrentExecutions = true)]
+        [RelayCommand]
         private async Task AddNewVaultAsync(IFolder? folder, CancellationToken cancellationToken)
         {
             // Check Plus version
             var isPremiumOwned = await IapService.IsOwnedAsync(IapProductType.SecureFolderFS_PlusSubscription, cancellationToken);
             if (_vaultCollectionModel.Count >= 2 && !isPremiumOwned)
             {
-                _ = PaymentDialogViewModel.Instance.InitAsync(cancellationToken);
-                await OverlayService.ShowAsync(PaymentDialogViewModel.Instance);
+                _ = PaymentOverlayViewModel.Instance.InitAsync(cancellationToken);
+                await OverlayService.ShowAsync(PaymentOverlayViewModel.Instance);
                 return;
             }
 

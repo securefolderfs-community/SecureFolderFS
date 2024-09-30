@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.Extensions;
 
@@ -14,9 +14,9 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
 {
     public sealed partial class IntroductionControl : UserControl, IOverlayControl
     {
-        public IntroductionDialogViewModel? ViewModel
+        public IntroductionOverlayViewModel? ViewModel
         {
-            get => DataContext.TryCast<IntroductionDialogViewModel>();
+            get => DataContext.TryCast<IntroductionOverlayViewModel>();
             set => DataContext = value;
         }
 
@@ -29,7 +29,7 @@ namespace SecureFolderFS.Uno.UserControls.Introduction
         public Task<IResult> ShowAsync() => ViewModel?.TaskCompletion.Task ?? Task.FromResult<IResult>(Result.Failure(null));
 
         /// <inheritdoc/>
-        public void SetView(IViewable viewable) => ViewModel = (IntroductionDialogViewModel)viewable;
+        public void SetView(IViewable viewable) => ViewModel = (IntroductionOverlayViewModel)viewable;
 
         /// <inheritdoc/>
         public Task HideAsync()

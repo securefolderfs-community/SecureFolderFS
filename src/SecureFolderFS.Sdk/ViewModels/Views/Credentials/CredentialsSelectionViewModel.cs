@@ -4,6 +4,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -22,27 +23,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
     public sealed partial class CredentialsSelectionViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
         private readonly IFolder _vaultFolder;
-        private readonly AuthenticationType _allowedStage;
+        private readonly AuthenticationType _authenticationStage;
 
         [ObservableProperty] private bool _CanRemoveCredentials;
-        [ObservableProperty] private AuthenticationViewModel? _CurrentViewModel;
+        [ObservableProperty] private RegisterViewModel? _RegisterViewModel;
+        [ObservableProperty] private AuthenticationViewModel? _ConfiguredViewModel;
         [ObservableProperty] private ObservableCollection<AuthenticationViewModel> _AuthenticationOptions;
+        
+        public IDisposable? UnlockContract { private get; set; }
 
         public event EventHandler<CredentialsConfirmationViewModel>? ConfirmationRequested;
 
-        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationViewModel currentViewModel)
-            : this(vaultFolder, currentViewModel.Availability)
-        {
-            CurrentViewModel = currentViewModel;
-        }
-
-        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationType allowedStage)
+        public CredentialsSelectionViewModel(IFolder vaultFolder, AuthenticationType authenticationStage)
         {
             ServiceProvider = DI.Default;
             _vaultFolder = vaultFolder;
-            _allowedStage = allowedStage;
-            CanRemoveCredentials = allowedStage != AuthenticationType.FirstStageOnly;
-            AuthenticationOptions = new();
+            _authenticationStage = authenticationStage;
+            _CanRemoveCredentials = authenticationStage != AuthenticationType.FirstStageOnly;
+            _AuthenticationOptions = new();
         }
 
         /// <inheritdoc/>
@@ -59,8 +57,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 if (vaultOptions.AuthenticationMethod.Contains(item.Id))
                     continue;
 
-                // Don't add authentication methods which are not allowed in the _allowedStage
-                if (!item.Availability.HasFlag(_allowedStage))
+                // Don't add authentication methods which are not allowed in the Authentication Stage
+                if (!item.Availability.HasFlag(_authenticationStage))
                     continue;
 
                 AuthenticationOptions.Add(item);
@@ -70,46 +68,55 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
         [RelayCommand]
         private void RemoveCredentials()
         {
-            if (CurrentViewModel is null)
+            if (ConfiguredViewModel is null || RegisterViewModel is null || UnlockContract is null)
                 return;
 
-            ConfirmationRequested?.Invoke(this, new(CurrentViewModel)
+            ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = true,
-                CanComplement = false
+                CanComplement = false,
+                UnlockContract = UnlockContract,
+                ConfiguredViewModel = ConfiguredViewModel
             });
         }
 
         [RelayCommand]
         private async Task ItemSelected(AuthenticationViewModel? authenticationViewModel, CancellationToken cancellationToken)
         {
-            // We need to get the current authentication in 'creation' instead of 'login' mode
-            authenticationViewModel ??= await GetExistingCreationAsync(cancellationToken);
+            // We need to get the current authentication equivalent in 'creation' instead of 'login' mode
+            authenticationViewModel ??= await GetExistingCreationForLoginAsync(cancellationToken);
             if (authenticationViewModel is null)
                 return;
+            
+            if (UnlockContract is null || RegisterViewModel is null)
+                return;
 
-            ConfirmationRequested?.Invoke(this, new(authenticationViewModel)
+            RegisterViewModel.CurrentViewModel = authenticationViewModel;
+            ConfirmationRequested?.Invoke(this, new(_vaultFolder, RegisterViewModel, _authenticationStage)
             {
                 IsRemoving = false,
-                CanComplement = _allowedStage != AuthenticationType.FirstStageOnly // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
+                CanComplement = _authenticationStage != AuthenticationType.FirstStageOnly, // TODO: Also add a flag to the AuthenticationViewModel to indicate if it can be complemented
+                UnlockContract = UnlockContract,
+                ConfiguredViewModel = ConfiguredViewModel
             });
         }
 
-        private async Task<AuthenticationViewModel?> GetExistingCreationAsync(CancellationToken cancellationToken)
+        private async Task<AuthenticationViewModel?> GetExistingCreationForLoginAsync(CancellationToken cancellationToken)
         {
             var vaultOptions = await VaultService.GetVaultOptionsAsync(_vaultFolder, cancellationToken);
             if (vaultOptions.VaultId is null)
                 return null;
 
             return await VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken)
-                .FirstOrDefaultAsync(x => x.Id == CurrentViewModel?.Id, cancellationToken: cancellationToken);
+                .FirstOrDefaultAsync(x => x.Id == ConfiguredViewModel?.Id, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
             ConfirmationRequested = null;
-            CurrentViewModel?.Dispose();
+            RegisterViewModel?.Dispose();
+            ConfiguredViewModel?.Dispose();
             AuthenticationOptions.DisposeElements();
         }
     }

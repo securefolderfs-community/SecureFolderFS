@@ -20,11 +20,6 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public PasswordLoginViewModel(string id)
-            : base(id)
-        {
-        }
-
         public override void Report(IResult? result)
         {
             base.Report(result);

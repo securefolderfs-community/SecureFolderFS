@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace SecureFolderFS.Core.Routines
+﻿namespace SecureFolderFS.Core.Routines
 {
     // TODO: Needs docs
-    public interface ICreationRoutine : ICredentialsRoutine
+    public interface ICreationRoutine : IOptionsRoutine, ICredentialsRoutine
     {
-        void SetOptions(IDictionary<string, string?> options);
     }
 }

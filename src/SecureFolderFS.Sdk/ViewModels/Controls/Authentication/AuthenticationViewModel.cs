@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
     {
         [ObservableProperty] private string? _DisplayName;
         [ObservableProperty] private string? _Description;
-        [ObservableProperty] private string? _Icon;
+        [ObservableProperty] private string? _Icon; // TODO: Change to IImage
 
         /// <summary>
         /// Gets the unique ID of this authentication method.
@@ -24,7 +24,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         public string Id { get; } = id;
 
         /// <summary>
-        /// Gets or sets the stage (step) availability of the given authentication type.
+        /// Gets the stage (step) availability of the given authentication type.
         /// </summary>
         public abstract AuthenticationType Availability { get; }
 
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
         }
 
         /// <inheritdoc/>
-        public abstract Task RevokeAsync(string id, CancellationToken cancellationToken = default);
+        public abstract Task RevokeAsync(string? id, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
         public abstract Task<IKey> CreateAsync(string id, byte[]? data, CancellationToken cancellationToken = default);

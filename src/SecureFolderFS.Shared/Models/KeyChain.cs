@@ -3,30 +3,46 @@ using SecureFolderFS.Shared.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace SecureFolderFS.Shared.Helpers
+namespace SecureFolderFS.Shared.Models
 {
     /// <summary>
     /// A class used to concatenate a collection of keys in a stack-like behavior into one, singular <see cref="IKey"/> instance.
     /// </summary>
     public sealed class KeyChain : IKey
     {
-        private readonly Stack<IKey> _keys;
+        private readonly List<IKey> _keys;
 
         public int Count => _keys.Count;
+
+        public IReadOnlyCollection<IKey> Keys => _keys;
 
         public KeyChain()
         {
             _keys = new();
         }
 
-        public void Push(IKey key)
+        public void Add(IKey key)
         {
-            _keys.Push(key);
+            _keys.Add(key);
         }
 
-        public void Pop()
+        public void SetOrAdd(int index, IKey key)
         {
-            _ = _keys.Pop();
+            if (index >= 0 && index < _keys.Count)
+            {
+                // If valid index, set the element at that index
+                _keys[index] = key;
+            }
+            else
+            {
+                // If index is out of bounds, add the element to the list
+                _keys.Add(key);
+            }
+        }
+
+        public void RemoveAt(int index)
+        {
+            _keys.RemoveAt(index);
         }
 
         /// <inheritdoc/>

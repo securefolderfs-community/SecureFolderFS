@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,13 +18,30 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         /// <inheritdoc/>
         public Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default)
         {
-#if WINDOWS
-            return global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
-#endif
             if (OperatingSystem.IsLinux())
-                System.Diagnostics.Process.Start("xdg-open", folder.Id);
-
+            {
+                Process.Start("xdg-open", folder.Id);
+                return Task.CompletedTask;
+            }
+        
+#if __MACOS__ || __MACCATALYST__
+            using var process = new Process();
+            process.StartInfo = new ProcessStartInfo()
+            {
+                FileName = "open",
+                Arguments = $"\"{folder.Id}/\"",
+                RedirectStandardOutput = false,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+            process.Start();
+            
             return Task.CompletedTask;
+#elif WINDOWS
+            return global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
+#else
+            return Task.CompletedTask;
+#endif
         }
 
         /// <inheritdoc/>

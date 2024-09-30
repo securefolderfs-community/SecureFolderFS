@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using static SecureFolderFS.Core.Constants.Vault;
 
 namespace SecureFolderFS.UI.Helpers
@@ -40,13 +40,14 @@ namespace SecureFolderFS.UI.Helpers
             return lastBestId;
         }
 
-        public static IDictionary<string, string?> ParseOptions(VaultOptions vaultOptions)
+        public static IDictionary<string, object?> ParseOptions(VaultOptions vaultOptions)
         {
-            return new Dictionary<string, string?>()
+            return new Dictionary<string, object?>()
             {
                 { Associations.ASSOC_CONTENT_CIPHER_ID, vaultOptions.ContentCipherId },
                 { Associations.ASSOC_FILENAME_CIPHER_ID, vaultOptions.FileNameCipherId },
-                { Associations.ASSOC_AUTHENTICATION, string.Join(AuthenticationMethods.SEPARATOR, vaultOptions.AuthenticationMethod) },
+                { Associations.ASSOC_AUTHENTICATION, string.Join(Authentication.SEPARATOR, vaultOptions.AuthenticationMethod) },
+                { Associations.ASSOC_VERSION, vaultOptions.Version },
                 { Associations.ASSOC_VAULT_ID, vaultOptions.VaultId }
             };
         }

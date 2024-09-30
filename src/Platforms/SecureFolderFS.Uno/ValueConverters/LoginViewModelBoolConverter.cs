@@ -1,9 +1,11 @@
 using System;
 using Microsoft.UI.Xaml.Data;
+using SecureFolderFS.UI.ValueConverters;
 
 namespace SecureFolderFS.Uno.ValueConverters
 {
-    internal sealed class LoginViewModelBoolConverter : IValueConverter
+    /// <inheritdoc cref="BaseLoginViewModelBoolConverter"/>
+    internal sealed class LoginViewModelBoolConverter : BaseLoginViewModelBoolConverter, IValueConverter
     {
         /// <inheritdoc/>
         public object Convert(object? value, Type targetType, object parameter, string language)

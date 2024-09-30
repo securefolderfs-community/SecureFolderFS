@@ -15,8 +15,7 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override event EventHandler<CredentialsProvidedEventArgs>? CredentialsProvided;
 
-        public KeyFileCreationViewModel(string vaultId, string id)
-            : base(id)
+        public KeyFileCreationViewModel(string vaultId)
         {
             _vaultId = vaultId;
         }
@@ -24,8 +23,15 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         protected override async Task ProvideCredentialsAsync(CancellationToken cancellationToken)
         {
-            var key = await CreateAsync(_vaultId, null, cancellationToken);
-            CredentialsProvided?.Invoke(this, new(key));
+            try
+            {
+                var key = await CreateAsync(_vaultId, null, cancellationToken);
+                CredentialsProvided?.Invoke(this, new(key));
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+            }
         }
     }
 }

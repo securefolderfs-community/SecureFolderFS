@@ -36,5 +36,14 @@
                 This will open a virtual storage directory where the files you add will be automatically encrypted on the hard drive.
                 """;
         }
+
+        public static class IntegrationPermissions
+        {
+            public const string ENUMERATE_VAULTS = "enumerate_vaults"; // List all added vaults and get basic info
+            public const string VAULT_STATE_EVENTS = "vault_state_events"; // Listen to vault state events like unlocking or locking
+            public const string RESCAP_MANAGE_VAULTS = "manage_vaults"; // Add existing or remove vaults from saved list
+            public const string RESCAP_FILESYSTEM_PROVIDER = "filesystem_provider"; // Ability to provide custom file systems
+            public const string RESCAP_AUTHENTICATION_PROVIDER = "authentication_provider"; // Ability to provide custom authentication for vaults
+        }
     }
 }

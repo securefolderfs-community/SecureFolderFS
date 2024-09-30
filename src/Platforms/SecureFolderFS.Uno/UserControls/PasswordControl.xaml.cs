@@ -1,12 +1,12 @@
+using System;
+using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
-using System;
-using System.Windows.Input;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -40,7 +40,7 @@ namespace SecureFolderFS.Uno.UserControls
 
         private void PasswordInput_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
+            if (IsKeyboardEventTrackingEnabled && e.Key == VirtualKey.Enter)
             {
                 PasswordSubmittedCommand?.Execute(GetPassword());
                 PasswordSubmitted?.Invoke(this, new RoutedEventArgs());
@@ -91,5 +91,13 @@ namespace SecureFolderFS.Uno.UserControls
         }
         public static readonly DependencyProperty ShowInvalidPasswordMessageProperty =
             DependencyProperty.Register(nameof(ShowInvalidPasswordMessage), typeof(bool), typeof(PasswordControl), new PropertyMetadata(defaultValue: false));
+
+        public bool IsKeyboardEventTrackingEnabled
+        {
+            get => (bool)GetValue(IsKeyboardEventTrackingEnabledProperty);
+            set => SetValue(IsKeyboardEventTrackingEnabledProperty, value);
+        }
+        public static readonly DependencyProperty IsKeyboardEventTrackingEnabledProperty =
+            DependencyProperty.Register(nameof(IsKeyboardEventTrackingEnabled), typeof(bool), typeof(PasswordControl), new PropertyMetadata(true));
     }
 }

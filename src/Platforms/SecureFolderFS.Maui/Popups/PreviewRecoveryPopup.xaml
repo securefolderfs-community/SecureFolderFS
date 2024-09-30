@@ -2,7 +2,53 @@
     x:Class="SecureFolderFS.Maui.Popups.PreviewRecoveryPopup"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui">
+    xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
+    xmlns:tv="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+    xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
+    x:Name="ThisPopup"
+    BindingContext="{x:Reference ThisPopup}"
+    CanBeDismissedByTappingOutsideOfPopup="True">
 
-    <Label />
+    <tv:Popup.Resources>
+        <DataTemplate x:Key="LoginTemplate" x:DataType="vm:LoginViewModel">
+            <uc:LoginControl
+                CurrentViewModel="{Binding CurrentViewModel, Mode=OneWay}"
+                HorizontalOptions="Fill"
+                ProvideContinuationButton="True" />
+        </DataTemplate>
+        <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
+            <Grid Padding="{OnPlatform Android='12,0'}">
+                <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" MasterKey="{Binding MasterKey, Mode=OneWay}" />
+            </Grid>
+        </DataTemplate>
+    </tv:Popup.Resources>
+
+    <Grid
+        x:Name="RootGrid"
+        Margin="16,0"
+        Padding="16"
+        RowSpacing="24"
+        WidthRequest="392">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Label
+            Grid.Row="0"
+            FontAttributes="Bold"
+            FontSize="24"
+            Text="{Binding ViewModel.Title, Mode=OneWay}" />
+
+        <uc:ContentPresentation
+            Grid.Row="1"
+            HorizontalOptions="Fill"
+            VerticalOptions="Center"
+            ViewContent="{Binding ViewModel.CurrentViewModel, Mode=OneWay}">
+            <uc:ContentPresentation.TemplateSelector>
+                <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
+            </uc:ContentPresentation.TemplateSelector>
+        </uc:ContentPresentation>
+    </Grid>
 </tv:Popup>

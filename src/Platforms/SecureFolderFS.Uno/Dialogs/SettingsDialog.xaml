@@ -21,8 +21,10 @@
         Margin="-24"
         Background="{ThemeResource ContentDialogBackground}">
         <NavigationView
+            x:Name="NavigationView"
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="False"
+            Loaded="Navigation_Loaded"
             PaneDisplayMode="Top"
             SelectionChanged="NavigationView_SelectionChanged">
             <NavigationView.MenuItems>

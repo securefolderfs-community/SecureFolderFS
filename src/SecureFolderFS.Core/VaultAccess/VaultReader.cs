@@ -50,13 +50,13 @@ namespace SecureFolderFS.Core.VaultAccess
             return await ReadDataAsync<VersionDataModel>(configFile, _serializer, cancellationToken);
         }
 
-        public async Task<VaultAuthenticationDataModel?> ReadAuthenticationAsync(CancellationToken cancellationToken)
+        public async Task<VaultPasskeyDataModel?> ReadAuthenticationAsync(string fileName, CancellationToken cancellationToken)
         {
             try
             {
                 // Try to get authentication file
-                var authFile = await _vaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_AUTHENTICATION_FILENAME, cancellationToken);
-                return await ReadDataAsync<VaultAuthenticationDataModel?>(authFile, _serializer, cancellationToken);
+                var authFile = await _vaultFolder.GetFileByNameAsync(fileName, cancellationToken);
+                return await ReadDataAsync<VaultPasskeyDataModel?>(authFile, _serializer, cancellationToken);
             }
             catch (Exception)
             {

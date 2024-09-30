@@ -18,8 +18,8 @@ namespace SecureFolderFS.Core.Routines.Operational
     {
         private readonly IFolder _vaultFolder;
         private readonly VaultWriter _vaultWriter;
-        private VaultConfigurationDataModel? _configDataModel;
         private VaultKeystoreDataModel? _keystoreDataModel;
+        private VaultConfigurationDataModel? _configDataModel;
         private SecretKey? _macKey;
         private SecretKey? _encKey;
 
@@ -58,15 +58,15 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetOptions(IDictionary<string, string?> options)
+        public void SetOptions(IDictionary<string, object?> options)
         {
             _configDataModel = new()
             {
                 Version = Versions.LATEST_VERSION,
-                ContentCipherId = options.Get(Associations.ASSOC_CONTENT_CIPHER_ID) ?? CipherId.XCHACHA20_POLY1305,
-                FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID) ?? CipherId.AES_SIV,
-                AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION) ?? throw new InvalidOperationException("Cannot create vault without specifying the authentication method."),
-                Uid = options.Get(Associations.ASSOC_VAULT_ID) ?? Guid.NewGuid().ToString(),
+                ContentCipherId = options.Get(Associations.ASSOC_CONTENT_CIPHER_ID).TryCast<string>() ?? CipherId.XCHACHA20_POLY1305,
+                FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID).TryCast<string>() ?? CipherId.AES_SIV,
+                AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION).TryCast<string>() ?? throw new InvalidOperationException($"Cannot create vault without specifying {Associations.ASSOC_AUTHENTICATION}."),
+                Uid = options.Get(Associations.ASSOC_VAULT_ID).TryCast<string>() ?? Guid.NewGuid().ToString(),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
             };
         }
@@ -82,7 +82,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             // First we need to fill in the PayloadMac of the content
             VaultParser.CalculateConfigMac(_configDataModel, _macKey, _configDataModel.PayloadMac);
 
-            // Write the whole config
+            // Write the whole configuration
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
             await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 

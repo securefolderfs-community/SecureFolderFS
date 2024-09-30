@@ -24,7 +24,6 @@ namespace SecureFolderFS.Uno.Dialogs
     public sealed partial class VaultWizardDialog : ContentDialog, IOverlayControl
     {
         private BaseWizardViewModel? _previousViewModel;
-        private bool _isBackShown;
 
         public WizardOverlayViewModel? ViewModel
         {
@@ -62,22 +61,9 @@ namespace SecureFolderFS.Uno.Dialogs
             _previousViewModel = ViewModel.CurrentViewModel;
             ViewModel.CurrentViewModel = viewModel;
             _ = Navigation.NavigateAsync(viewModel, (NavigationTransitionInfo?)null);
-            await AnimateBackAsync(viewModel);
-        }
 
-        private async Task AnimateBackAsync(BaseWizardViewModel? viewModel)
-        {
-            var canGoBack = viewModel is CredentialsWizardViewModel && Navigation.ContentFrame.CanGoBack;
-            if (canGoBack && !_isBackShown)
-            {
-                _isBackShown = true;
-                await BackTitle.ShowBackAsync();
-            }
-            else if (!canGoBack && _isBackShown)
-            {
-                _isBackShown = false;
-                await BackTitle.HideBackAsync();
-            }
+            var shouldShowBack = ViewModel.CurrentViewModel is CredentialsWizardViewModel && Navigation.ContentFrame.CanGoBack;
+            await BackTitle.AnimateBackAsync(shouldShowBack);
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -163,7 +149,9 @@ namespace SecureFolderFS.Uno.Dialogs
 
             ViewModel.CurrentViewModel = _previousViewModel;
             Navigation.ContentFrame.GoBack();
-            await AnimateBackAsync(ViewModel.CurrentViewModel);
+
+            var shouldShowBack = ViewModel.CurrentViewModel is CredentialsWizardViewModel && Navigation.ContentFrame.CanGoBack;
+            await BackTitle.AnimateBackAsync(shouldShowBack);
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using SecureFolderFS.Shared.Helpers;
 
-namespace SecureFolderFS.Shared.Helpers
+namespace SecureFolderFS.Shared.Models
 {
     public sealed class DisposableStopwatch : IDisposable
     {

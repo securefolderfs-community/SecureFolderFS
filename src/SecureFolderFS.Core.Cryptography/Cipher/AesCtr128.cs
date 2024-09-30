@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.Cryptography.Cipher
             }
         }
 
-        #region AES-SIV Implementation
+        #region AES-CTR Implementation
 
         // The MIT License (MIT)
 

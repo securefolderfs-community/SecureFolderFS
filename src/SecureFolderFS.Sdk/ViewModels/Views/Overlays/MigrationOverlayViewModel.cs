@@ -7,7 +7,6 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Shared.Models;
 using System;
 using System.ComponentModel;
@@ -76,7 +75,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 _unlockContract?.Dispose();
                 _unlockContract = await _vaultMigrator.UnlockAsync(credentials, cancellationToken);
 
-                StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultFolder));
+                StateChanged?.Invoke(this, new VaultUnlockedEventArgs(_unlockContract, MigrationViewModel.VaultFolder, false));
                 Title = "Migrate".ToLocalized();
                 PrimaryButtonText = null;
             }

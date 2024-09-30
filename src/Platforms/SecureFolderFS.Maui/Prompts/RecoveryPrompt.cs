@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Helpers;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
 
 namespace SecureFolderFS.Maui.Prompts

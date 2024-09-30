@@ -47,7 +47,7 @@
         </Storyboard>
     </UserControl.Resources>
 
-    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+    <StackPanel Orientation="Horizontal">
         <Button
             x:Name="GoBack"
             Width="32"

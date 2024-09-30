@@ -7,11 +7,13 @@ namespace SecureFolderFS.Uno.TemplateSelectors
 {
     internal sealed class CredentialsTemplateSelector : BaseTemplateSelector<INotifyPropertyChanged>
     {
+        public DataTemplate? ResetTemplate { get; set; }
+
         public DataTemplate? LoginTemplate { get; set; }
 
         public DataTemplate? SelectionTemplate { get; set; }
 
-        public DataTemplate? ConfirmationTemaplte { get; set; }
+        public DataTemplate? ConfirmationTemplate { get; set; }
 
         /// <inheritdoc/>
         protected override DataTemplate? SelectTemplateCore(INotifyPropertyChanged? item, DependencyObject container)
@@ -19,8 +21,9 @@ namespace SecureFolderFS.Uno.TemplateSelectors
             return item switch
             {
                 LoginViewModel => LoginTemplate,
+                CredentialsResetViewModel => ResetTemplate,
                 CredentialsSelectionViewModel => SelectionTemplate,
-                CredentialsConfirmationViewModel => ConfirmationTemaplte,
+                CredentialsConfirmationViewModel => ConfirmationTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
         }

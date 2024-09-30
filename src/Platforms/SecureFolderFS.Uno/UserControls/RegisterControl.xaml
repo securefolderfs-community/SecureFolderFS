@@ -7,7 +7,6 @@
     xmlns:local="using:SecureFolderFS.Uno.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
-    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm3="using:SecureFolderFS.UI.ViewModels"
     xmlns:vm4="using:SecureFolderFS.Uno.ViewModels"
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -15,8 +14,6 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
         <!--  Password Template  -->
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm3:PasswordCreationViewModel">
             <StackPanel Spacing="16">
@@ -52,8 +49,7 @@
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Setup}"
-                    Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
 
@@ -78,8 +74,7 @@
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
                     Content="{l:ResourceString Name=Setup}"
-                    Style="{ThemeResource AccentButtonStyle}"
-                    Visibility="{Binding Path=ProvideContinuationButton, ElementName=RootControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </win:DataTemplate>
     </UserControl.Resources>

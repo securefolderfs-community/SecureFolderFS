@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Shared.Extensions;
 using System;
 
-namespace SecureFolderFS.Shared.Helpers
+namespace SecureFolderFS.Shared.Models
 {
     /// <inheritdoc cref="IDisposable"/>
     public sealed class AggregatedDisposable : IDisposable
