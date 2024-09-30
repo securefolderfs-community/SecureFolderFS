@@ -289,7 +289,7 @@
     <value>Gerenciar configurações</value>
   </data>
   <data name="MasterKeyDescription" xml:space="preserve">
-    <value>Esta é a chave mestra que você pode usar para recuperar o acesso a este cofre. Perdê-la irá impedir que você redefina a sua senha.</value>
+    <value>This is the recovery key which you can use to regain access to this vault. Losing it will prevent you from resetting your password.</value>
   </data>
   <data name="MyVaults" xml:space="preserve">
     <value>Meus cofres</value>
@@ -366,7 +366,7 @@
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Revelar chave mestra</value>
+    <value>Reveal recovery key</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Pesquisar</value>
@@ -546,7 +546,7 @@
     <value>Access recovery codes for this vault in case you forget your credentials</value>
   </data>
   <data name="UseMasterKey" xml:space="preserve">
-    <value>Use Master Key</value>
+    <value>Use recovery key</value>
   </data>
   <data name="ChangeCredentials" xml:space="preserve">
     <value>Change credentials</value>
@@ -619,5 +619,29 @@
   </data>
   <data name="VaultMigrated" xml:space="preserve">
     <value>Vault has been migrated successfully</value>
+  </data>
+  <data name="VaultNeedsMigration" xml:space="preserve">
+    <value>The vault needs to be migrated before it can be used</value>
+  </data>
+  <data name="ActiveFileSystem" xml:space="preserve">
+    <value>Active file system</value>
+  </data>
+  <data name="RestartLogin" xml:space="preserve">
+    <value>Restart login process</value>
+  </data>
+  <data name="ResetCredentials" xml:space="preserve">
+    <value>Reset credentials</value>
+  </data>
+  <data name="RecoveryKeyTip" xml:space="preserve">
+    <value>You can recover your vault using Recovery Key in case you lose or forget your credentials</value>
+  </data>
+  <data name="RemoveAuthenticationQuestion" xml:space="preserve">
+    <value>The following authentication method will be removed. Do you wish to continue?</value>
+  </data>
+  <data name="RemoveAuthenticationTip" xml:space="preserve">
+    <value>You can always re-add it later</value>
+  </data>
+  <data name="LearnMore" xml:space="preserve">
+    <value>Learn more</value>
   </data>
 </root>
