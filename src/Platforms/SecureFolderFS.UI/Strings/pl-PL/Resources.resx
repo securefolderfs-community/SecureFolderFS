@@ -366,7 +366,7 @@
     <comment>Used to retry a failed action</comment>
   </data>
   <data name="RevealMasterKey" xml:space="preserve">
-    <value>Pokaż klucz główny</value>
+    <value>Pokaż klucz odzyskiwania</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Szukaj</value>
@@ -546,7 +546,7 @@
     <value>Uzyskaj dostęp do kodów odzyskiwania dla tego sejfu, jeśli zapomnisz swoich poświadczeń</value>
   </data>
   <data name="UseMasterKey" xml:space="preserve">
-    <value>Użyj klucza głównego</value>
+    <value>Użyj klucza odzyskiwania</value>
   </data>
   <data name="ChangeCredentials" xml:space="preserve">
     <value>Zmień dane logowania</value>
@@ -619,5 +619,29 @@
   </data>
   <data name="VaultMigrated" xml:space="preserve">
     <value>Sejf został pomyślnie przeniesiony</value>
+  </data>
+  <data name="VaultNeedsMigration" xml:space="preserve">
+    <value>Sejf musi zostać zmigrowany, zanim będzie mógł zostać użyty</value>
+  </data>
+  <data name="ActiveFileSystem" xml:space="preserve">
+    <value>Aktywny system plików</value>
+  </data>
+  <data name="RestartLogin" xml:space="preserve">
+    <value>Ponów proces logowania</value>
+  </data>
+  <data name="ResetCredentials" xml:space="preserve">
+    <value>Zresetuj dane logowania</value>
+  </data>
+  <data name="RecoveryKeyTip" xml:space="preserve">
+    <value>Możesz odzyskać swój sejf za pomocą klucza odzyskiwania, jeśli utracisz lub zapomnisz swoich danych logowania</value>
+  </data>
+  <data name="RemoveAuthenticationQuestion" xml:space="preserve">
+    <value>Następująca metoda uwierzytelniania zostanie usunięta. Czy chcesz kontynuować?</value>
+  </data>
+  <data name="RemoveAuthenticationTip" xml:space="preserve">
+    <value>Zawsze możesz dodać ponownie później</value>
+  </data>
+  <data name="LearnMore" xml:space="preserve">
+    <value>Dowiedz się więcej</value>
   </data>
 </root>
