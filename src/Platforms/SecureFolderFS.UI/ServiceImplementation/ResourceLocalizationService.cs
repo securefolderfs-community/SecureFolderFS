@@ -21,10 +21,21 @@ namespace SecureFolderFS.UI.ServiceImplementation
         {
             // Commented out languages exist in Resources but are not translated
 
-            /* "cz-CZ", */ "da-DK", "de-DE", "en-US",
-            "es-ES", /* "fr-FR", */ /* "it-IT", */ "pl-PL",
-            /* "ru-RU", */ "uk-UA", "pt-PT", "ms-MY",
-            "id-ID", "hi-IN"
+            // "cz-CZ",
+            "da-DK",
+            "de-DE",
+            "en-US",
+            "es-ES",
+            // "fr-FR", 
+            // "he-IL",
+            "hi-IN",
+            "id-ID",
+            // "it-IT",
+            "ms-MY",
+            "pl-PL",
+            "pt-PT",
+            // "ru-RU",
+            "uk-UA",
         };
 
         protected IAppSettings AppSettings { get; } = DI.Service<ISettingsService>().AppSettings;

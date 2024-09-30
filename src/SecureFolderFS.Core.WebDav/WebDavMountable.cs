@@ -20,6 +20,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage.Memory;
 
 namespace SecureFolderFS.Core.WebDav
 {
@@ -71,7 +72,7 @@ namespace SecureFolderFS.Core.WebDav
                 if (mountPath is null)
                     throw new IOException("No free mount points found.");
                 
-                _ = DriveMappingHelpers.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);    
+                await DriveMappingHelpers.MapNetworkDriveAsync(mountPath, remotePath, cancellationToken);    
             }
 
             var webDavWrapper = new WebDavWrapper(httpListener, _requestDispatcher, mountPath);
@@ -79,7 +80,10 @@ namespace SecureFolderFS.Core.WebDav
 
             // TODO: Remove once the port is displayed in the UI.
             Debug.WriteLine($"WebDAV server started on port {port}.");
-            return new WebDavRootFolder(webDavWrapper, new SystemFolder(remotePath), _options);
+            Debug.WriteLine($"MountableDAV\nmountPath: {mountPath}\nremotePath: {remotePath}");
+
+            // TODO: Currently using MemoryFolder because the check in SystemFolder might sometimes fail
+            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(remotePath, _options.VolumeName), _options);
         }
 
         public static IMountableFileSystem CreateMountable(FileSystemSpecifics specifics, IPathConverter pathConverter)

@@ -49,7 +49,7 @@ namespace SecureFolderFS.Core.WebDav.Helpers
 
                 // WNetAddConnection2 doesn't return until it has either successfully established a connection or timed out,
                 // so it has to be run in another thread to prevent blocking the server from responding.
-                await Task.Run(() => UnsafeNativeApis.WNetAddConnection2(netResource, null!, null!, UnsafeNativeApis.CONNECT_TEMPORARY), cancellationToken);
+                _ = Task.Run(() => UnsafeNativeApis.WNetAddConnection2(netResource, null!, null!, UnsafeNativeApis.CONNECT_TEMPORARY), cancellationToken);
             }
             else if (OperatingSystem.IsMacCatalyst())
             {
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Core.WebDav.Helpers
 
                 process.Start();
                 await process.WaitForExitAsync(cancellationToken);
-                var error = await process.StandardError.ReadToEndAsync();
+                var error = await process.StandardError.ReadToEndAsync(cancellationToken);
                 _ = error;
             }
         }

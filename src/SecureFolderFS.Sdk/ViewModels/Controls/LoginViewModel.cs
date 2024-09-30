@@ -200,7 +200,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
         }
 
-        partial void OnCurrentViewModelChanging(ReportableViewModel? oldValue, ReportableViewModel? newValue)
+        partial void OnCurrentViewModelChanged(ReportableViewModel? oldValue, ReportableViewModel? newValue)
         {
             // Detach old
             if (oldValue is not null)

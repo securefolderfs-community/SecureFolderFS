@@ -33,7 +33,7 @@ namespace SecureFolderFS.Uno.Platforms.SkiaGtk.Helpers
         /// <inheritdoc/>
         public override void LogExceptionToFile(Exception? ex)
         {
-            ExceptionHelpers.TryWriteToFile(Path.Combine(AppDirectory, UI.Constants.Application.EXCEPTION_LOG_FILENAME), ex);
+            ExceptionHelpers.TryWriteToFile(AppDirectory, ex);
         }
 
         /// <inheritdoc/>

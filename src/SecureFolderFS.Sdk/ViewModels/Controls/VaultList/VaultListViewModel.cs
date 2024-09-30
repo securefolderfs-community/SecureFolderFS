@@ -81,7 +81,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
             return Task.CompletedTask;
         }
 
-        [RelayCommand(AllowConcurrentExecutions = true)]
+        [RelayCommand]
         private async Task AddNewVaultAsync(IFolder? folder, CancellationToken cancellationToken)
         {
             // Check Plus version
