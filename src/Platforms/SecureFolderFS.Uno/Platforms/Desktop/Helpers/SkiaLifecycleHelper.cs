@@ -18,7 +18,7 @@ namespace SecureFolderFS.Uno.Platforms.SkiaGtk.Helpers
     internal sealed class SkiaLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
-        protected override string AppDirectory { get; } = ApplicationData.Current.LocalFolder.Path;
+        protected override string AppDirectory { get; } = Directory.GetCurrentDirectory();
 
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)

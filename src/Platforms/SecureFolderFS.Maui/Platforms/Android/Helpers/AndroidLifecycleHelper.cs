@@ -14,13 +14,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
     internal sealed class AndroidLifecycleHelper : BaseLifecycleHelper
     {
         /// <inheritdoc/>
+        protected override string AppDirectory { get; } = Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory;
+
+        /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
             // Request permissions
             //await RequestPermissionsAsync<Permissions.StorageWrite>();
 
             // Initialize settings
-            var settingsFolderPath = Path.Combine(Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
         }
