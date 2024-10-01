@@ -373,5 +373,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 
+# SecureFolderFS
+src/Platforms/SecureFolderFS.Uno/settings/
+
 # MacOS
 .DS_Store
