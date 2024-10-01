@@ -31,7 +31,7 @@ namespace SecureFolderFS.Uno
 #elif MACCATALYST
             new Platforms.MacCatalyst.Helpers.MacOsLifecycleHelper();
 #elif HAS_UNO_SKIA
-            new Platforms.SkiaGtk.Helpers.SkiaLifecycleHelper();
+            new Platforms.Desktop.Helpers.SkiaLifecycleHelper();
 #else
             true ? throw new PlatformNotSupportedException() : null;
 #endif

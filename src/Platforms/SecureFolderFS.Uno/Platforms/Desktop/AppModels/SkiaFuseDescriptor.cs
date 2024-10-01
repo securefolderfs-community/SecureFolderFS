@@ -7,7 +7,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Shared.ComponentModel;
 
-namespace SecureFolderFS.Uno.Platforms.SkiaGtk.AppModels
+namespace SecureFolderFS.Uno.Platforms.Desktop.AppModels
 {
     /// <inheritdoc cref="IFileSystemInfoModel"/>
     internal sealed class SkiaFuseDescriptor : IFileSystemInfoModel

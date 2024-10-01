@@ -6,6 +6,7 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:not_win="http://uno.ui/skia"
     xmlns:tuc="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     Title="{l:ResourceString Name=WhatsNew}"
@@ -13,7 +14,7 @@
     PrimaryButtonText="{l:ResourceString Name=ChangelogCloseButton}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
-    mc:Ignorable="d">
+    mc:Ignorable="d not_win">
 
     <ContentDialog.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
@@ -45,10 +46,13 @@
                 x:Name="ChangelogScroll"
                 Grid.Row="0"
                 x:Load="{x:Bind ViewModel.UpdateText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
-                <tuc:MarkdownTextBlock
-                    Background="Transparent"
-                    LinkClicked="MarkdownTextBlock_LinkClicked"
-                    Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />
+                <Grid>
+                    <tuc:MarkdownTextBlock
+                        Background="Transparent"
+                        LinkClicked="MarkdownTextBlock_LinkClicked"
+                        Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />
+                    <not_win:TextBlock Text="{x:Bind ViewModel.UpdateText, Mode=OneWay}" />
+                </Grid>
             </ScrollViewer>
 
             <HyperlinkButton

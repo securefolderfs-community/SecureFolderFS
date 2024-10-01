@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
-    public sealed partial class WizardOverlayViewModel: OverlayViewModel, INavigatable
+    public sealed partial class WizardOverlayViewModel: OverlayViewModel, INavigatable, IDisposable
     {
         [ObservableProperty] private BaseWizardViewModel? _CurrentViewModel;
 
@@ -110,6 +110,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                     Title = CurrentViewModel.Title;
                     break;
             }
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            if (CurrentViewModel is not null)
+                CurrentViewModel.PropertyChanged -= CurrentViewModel_PropertyChanged;
         }
     }
 }

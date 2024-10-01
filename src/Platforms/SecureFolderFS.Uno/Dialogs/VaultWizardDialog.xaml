@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
-    xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:uc2="using:SecureFolderFS.Uno.UserControls.Navigation"
@@ -15,10 +14,10 @@
     IsPrimaryButtonEnabled="{x:Bind ViewModel.PrimaryButtonEnabled, Mode=OneWay}"
     Loaded="VaultWizardDialog_Loaded"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    PrimaryButtonText="{l:ResourceString Name=Continue}"
+    PrimaryButtonText="{x:Bind ViewModel.PrimaryButtonText, Mode=OneWay}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    SecondaryButtonText="{l:ResourceString Name=Cancel}"
+    SecondaryButtonText="{x:Bind ViewModel.SecondaryButtonText, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 

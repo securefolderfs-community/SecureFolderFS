@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using Windows.System;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.ServiceImplementation;
+using Windows.System;
 
-namespace SecureFolderFS.Uno.Platforms.SkiaGtk.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {
     /// <inheritdoc cref="IApplicationService"/>
     internal sealed class SkiaApplicationService : BaseApplicationService
@@ -13,7 +13,7 @@ namespace SecureFolderFS.Uno.Platforms.SkiaGtk.ServiceImplementation
         public override bool IsDesktop { get; } = true;
         
         /// <inheritdoc/>
-        public override string Platform { get; } = "Skia Gtk - Uno";
+        public override string Platform { get; } = "Skia X11 - Uno";
 
         /// <inheritdoc/>
         public override string GetSystemVersion()

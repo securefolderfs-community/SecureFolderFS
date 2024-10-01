@@ -6,6 +6,7 @@
     <PackageVersion Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
     <PackageVersion Include="CommunityToolkit.WinUI.UI.Controls.Markdown" Version="7.1.2" />
     <PackageVersion Include="IconPacks.Material" Version="1.0.8765.1-build" />
+    <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc3.3" />
     <PackageVersion Include="Material.Components.Maui" Version="0.2.1-preview" />
     <PackageVersion Include="Microsoft.AppCenter.Analytics" Version="5.0.3" />
     <PackageVersion Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
@@ -14,7 +15,6 @@
     <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.70" />
     <PackageVersion Include="Microsoft.Maui.Core" Version="8.0.70" />
     <PackageVersion Include="Microsoft.Maui.Essentials" Version="8.0.70" />
-    <PackageVersion Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" Version="2.0.0-rc3.3" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
     <PackageVersion Include="Microsoft.NET.ILLink.Analyzers" Version="7.0.100-1.23401.1" />

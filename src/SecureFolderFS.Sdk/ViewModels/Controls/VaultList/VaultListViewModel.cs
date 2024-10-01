@@ -105,7 +105,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 await _vaultCollectionModel.TrySaveAsync(cancellationToken);
             }
             else
-                await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
+            {
+                using var wizardOverlay = new WizardOverlayViewModel(_vaultCollectionModel);
+                await OverlayService.ShowAsync(wizardOverlay);
+            }
         }
 
         private void AddVault(IVaultModel vaultModel)

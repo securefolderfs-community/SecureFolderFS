@@ -12,9 +12,9 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.UI.ViewModels;
 using SecureFolderFS.Uno.AppModels;
-using SecureFolderFS.Uno.Platforms.SkiaGtk.AppModels;
+using SecureFolderFS.Uno.Platforms.Desktop.AppModels;
 
-namespace SecureFolderFS.Uno.Platforms.SkiaGtk.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultService"/>
     internal sealed class SkiaVaultService : BaseVaultService

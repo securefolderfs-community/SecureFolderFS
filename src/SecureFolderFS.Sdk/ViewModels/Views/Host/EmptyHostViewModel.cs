@@ -37,7 +37,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
         [RelayCommand]
         private async Task AddNewVaultAsync()
         {
-            await OverlayService.ShowAsync(new WizardOverlayViewModel(_vaultCollectionModel));
+            using var wizardOverlay = new WizardOverlayViewModel(_vaultCollectionModel);
+            await OverlayService.ShowAsync(wizardOverlay);
         }
 
         [RelayCommand]

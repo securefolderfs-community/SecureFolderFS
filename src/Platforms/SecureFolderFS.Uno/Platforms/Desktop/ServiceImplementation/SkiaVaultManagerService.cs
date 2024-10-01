@@ -15,7 +15,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 
-namespace SecureFolderFS.Uno.Platforms.SkiaGtk.ServiceImplementation
+namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {
     /// <inheritdoc cref="IVaultManagerService"/>
     internal sealed class SkiaVaultManagerService : BaseVaultManagerService

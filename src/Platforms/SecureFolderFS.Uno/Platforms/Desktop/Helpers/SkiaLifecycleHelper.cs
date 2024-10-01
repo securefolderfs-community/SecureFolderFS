@@ -9,10 +9,9 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.UI.ServiceImplementation;
 using SecureFolderFS.Uno.Extensions;
-using SecureFolderFS.Uno.Platforms.SkiaGtk.ServiceImplementation;
-using Windows.Storage;
+using SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation;
 
-namespace SecureFolderFS.Uno.Platforms.SkiaGtk.Helpers
+namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
 {
     /// <inheritdoc cref="BaseLifecycleHelper"/>
     internal sealed class SkiaLifecycleHelper : BaseLifecycleHelper
