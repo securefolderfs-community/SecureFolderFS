@@ -26,6 +26,10 @@ namespace SecureFolderFS.Core.WebDav.Helpers
             {
                 return $"{protocol}:{sep}{sep}{domain}:{port}{sep}{name}";
             }
+            else if (OperatingSystem.IsLinux())
+            {
+                return $"{protocol}:{sep}{sep}{domain}:{port}{sep}{name}";
+            }
 
             throw new PlatformNotSupportedException();
         }

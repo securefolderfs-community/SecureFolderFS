@@ -58,13 +58,13 @@ namespace SecureFolderFS.Core.WebDav
                 port = PortHelpers.GetNextAvailablePort(port);
 
             var protocol = webDavMountOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
-            var remotePath = DriveMappingHelpers.GetRemotePath(protocol, "localhost", port, _options.VolumeName);
             var prefix = $"{protocol}://{webDavMountOptions.Domain}:{port}/";
 
             var httpListener = new HttpListener();
             httpListener.Prefixes.Add(prefix);
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
+            var remotePath = DriveMappingHelpers.GetRemotePath(protocol, "localhost", port, _options.VolumeName);
             var mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
             if (mountPath is null)
             {
