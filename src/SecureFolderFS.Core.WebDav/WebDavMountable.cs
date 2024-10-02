@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.WebDav
 
             var remotePath = DriveMappingHelpers.GetRemotePath(protocol, "localhost", port, _options.VolumeName);
             var mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
-            if (mountPath is null)
+            if (mountPath is null && !OperatingSystem.IsLinux())
             {
                 mountPath = PathHelpers.GetFreeMountPath(_options.VolumeName);
                 if (mountPath is null)
