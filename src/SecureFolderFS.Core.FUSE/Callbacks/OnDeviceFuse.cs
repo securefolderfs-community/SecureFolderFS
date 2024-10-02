@@ -361,12 +361,12 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             foreach (var entry in Directory.GetFileSystemEntries(ciphertextPath))
             {
-                if (!PathHelpers.IsCoreFile(entry))
-                {
-                    var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-                    var plaintextName = NativePathHelpers.GetPlaintextPath(entry, Specifics, directoryId);
-                    content.AddEntry(plaintextName);
-                }
+                if (PathHelpers.IsCoreFile(entry))
+                    continue;
+
+                var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+                var plaintextPath = NativePathHelpers.GetPlaintextPath(entry, Specifics, directoryId);
+                content.AddEntry(Path.GetFileName(plaintextPath));
             }
 
             return 0;
