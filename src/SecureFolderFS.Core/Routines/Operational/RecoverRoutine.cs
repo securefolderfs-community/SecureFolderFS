@@ -33,13 +33,13 @@ namespace SecureFolderFS.Core.Routines.Operational
         }
 
         /// <inheritdoc/>
-        public void SetCredentials(SecretKey masterKey)
+        public void SetCredentials(SecretKey passkey)
         {
             // Copy the first part (DEK) of the master key
-            masterKey.Key.AsSpan(0, Cryptography.Constants.KeyChains.ENCKEY_LENGTH).CopyTo(_encKey.Key);
+            passkey.Key.AsSpan(0, Cryptography.Constants.KeyChains.ENCKEY_LENGTH).CopyTo(_encKey.Key);
 
             // Copy the second part (MAC) of the master key
-            masterKey.Key.AsSpan(Cryptography.Constants.KeyChains.MACKEY_LENGTH).CopyTo(_macKey.Key);
+            passkey.Key.AsSpan(Cryptography.Constants.KeyChains.MACKEY_LENGTH).CopyTo(_macKey.Key);
         }
 
         /// <inheritdoc/>

@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
     {
         [ObservableProperty] private string? _VaultId;
         [ObservableProperty] private string? _VaultName;
-        [ObservableProperty] private string? _MasterKey;
+        [ObservableProperty] private string? _RecoveryKey;
 
         public RecoveryPreviewControlViewModel()
         {
@@ -33,14 +33,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 {
                     await ThreadingService.ChangeThreadAsync();
                     if (await PrinterService.IsSupportedAsync())
-                        await PrinterService.PrintMasterKeyAsync(VaultName, VaultId, MasterKey);
+                        await PrinterService.PrintRecoveryKeyAsync(VaultName, VaultId, RecoveryKey);
 
                     break;
                 }
 
                 case "copy":
                 {
-                    await ClipboardService.SetTextAsync(MasterKey ?? string.Empty, cancellationToken);
+                    await ClipboardService.SetTextAsync(RecoveryKey ?? string.Empty, cancellationToken);
                     break;
                 }
 

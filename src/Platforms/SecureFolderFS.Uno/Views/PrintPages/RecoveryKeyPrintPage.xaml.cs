@@ -8,9 +8,9 @@ namespace SecureFolderFS.Uno.Views.PrintPages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MasterKeyPrintPage : Page
+    public sealed partial class RecoveryKeyPrintPage : Page
     {
-        public MasterKeyPrintPage()
+        public RecoveryKeyPrintPage()
         {
             InitializeComponent();
         }

@@ -46,7 +46,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
             {
                 VaultId = _vaultId,
                 VaultName = Folder.Name,
-                MasterKey = _unlockContract?.ToString()
+                RecoveryKey = _unlockContract?.ToString()
             };
         }
 

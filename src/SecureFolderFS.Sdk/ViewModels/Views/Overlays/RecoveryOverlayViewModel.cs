@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     {
         private readonly IFolder _vaultFolder;
 
-        [ObservableProperty] private string? _MasterKey;
+        [ObservableProperty] private string? _RecoveryKey;
         [ObservableProperty] private string? _ErrorMessage;
 
         public IDisposable? UnlockContract { get; private set; }
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         {
             try
             {
-                var unlockContract = await VaultManagerService.RecoverAsync(_vaultFolder, MasterKey ?? string.Empty, cancellationToken);
+                var unlockContract = await VaultManagerService.RecoverAsync(_vaultFolder, RecoveryKey ?? string.Empty, cancellationToken);
                 UnlockContract?.Dispose();
                 UnlockContract = unlockContract;
 
@@ -46,11 +46,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         }
 
         [RelayCommand]
-        private async Task PasteMasterKeyAsync(CancellationToken cancellationToken)
+        private async Task PasteRecoveryKeyAsync(CancellationToken cancellationToken)
         {
             try
             {
-                MasterKey = await ClipboardService.GetTextAsync(cancellationToken) ?? MasterKey;
+                RecoveryKey = await ClipboardService.GetTextAsync(cancellationToken) ?? RecoveryKey;
             }
             catch (FormatException) { }
         }

@@ -251,7 +251,7 @@
     <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <None Remove="UserControls\Widgets\HealthWidget.xaml" />
-    <None Remove="Views\PrintPages\MasterKeyPrintPage.xaml" />
+    <None Remove="Views\PrintPages\RecoveryKeyPrintPage.xaml" />
     <None Remove="Views\Settings\AboutSettingsPage.xaml" />
     <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
     <None Remove="Views\Settings\PreferencesSettingsPage.xaml" />
@@ -397,7 +397,7 @@
     <Page Update="UserControls\Widgets\HealthWidget.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Views\PrintPages\MasterKeyPrintPage.xaml">
+    <Page Update="Views\PrintPages\RecoveryKeyPrintPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\Settings\AboutSettingsPage.xaml">
@@ -478,7 +478,7 @@
     <UpToDateCheckInput Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\HealthWidget.xaml" />
-    <UpToDateCheckInput Remove="Views\PrintPages\MasterKeyPrintPage.xaml" />
+    <UpToDateCheckInput Remove="Views\PrintPages\RecoveryKeyPrintPage.xaml" />
     <UpToDateCheckInput Remove="Views\Settings\AboutSettingsPage.xaml" />
     <UpToDateCheckInput Remove="Views\Settings\GeneralSettingsPage.xaml" />
     <UpToDateCheckInput Remove="Views\Settings\PreferencesSettingsPage.xaml" />

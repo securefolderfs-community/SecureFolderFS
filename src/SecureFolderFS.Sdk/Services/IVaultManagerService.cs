@@ -40,13 +40,13 @@ namespace SecureFolderFS.Sdk.Services
         Task<IDisposable> UnlockAsync(IFolder vaultFolder, IKey passkey, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Recovers the specified <paramref name="vaultFolder"/> using the provided <paramref name="encodedMasterKey"/>.
+        /// Recovers the specified <paramref name="vaultFolder"/> using the provided <paramref name="encodedRecoveryKey"/>.
         /// </summary>
         /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
-        /// <param name="encodedMasterKey">The Base64 encoded master key.</param>
+        /// <param name="encodedRecoveryKey">The Base64 encoded recovery key.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IDisposable"/> that represents the master key used to decrypt the vault.</returns>
-        Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedMasterKey, CancellationToken cancellationToken = default);
+        Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default);
 
         // TODO: Needs docs
 

@@ -38,7 +38,7 @@
                         <TextBlock
                             FontFamily="Consolas"
                             IsTextSelectionEnabled="True"
-                            Text="{x:Bind MasterKey, Mode=OneWay}"
+                            Text="{x:Bind RecoveryKey, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </Grid>
                     <Button

@@ -14,13 +14,13 @@ namespace SecureFolderFS.Uno.UserControls
             InitializeComponent();
         }
 
-        public string? MasterKey
+        public string? RecoveryKey
         {
-            get => (string?)GetValue(MasterKeyProperty);
-            set => SetValue(MasterKeyProperty, value);
+            get => (string?)GetValue(RecoveryKeyProperty);
+            set => SetValue(RecoveryKeyProperty, value);
         }
-        public static readonly DependencyProperty MasterKeyProperty =
-            DependencyProperty.Register(nameof(MasterKey), typeof(string), typeof(RecoveryPreviewControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty RecoveryKeyProperty =
+            DependencyProperty.Register(nameof(RecoveryKey), typeof(string), typeof(RecoveryPreviewControl), new PropertyMetadata(null));
 
         public ICommand? ExportCommand
         {

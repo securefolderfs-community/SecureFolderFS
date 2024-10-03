@@ -28,10 +28,10 @@
         <TextBox
             AcceptsReturn="True"
             FontFamily="Consolas"
-            Text="{x:Bind ViewModel.MasterKey, Mode=TwoWay}"
+            Text="{x:Bind ViewModel.RecoveryKey, Mode=TwoWay}"
             TextWrapping="Wrap" />
 
-        <Button HorizontalAlignment="Right" Command="{x:Bind ViewModel.PasteMasterKeyCommand, Mode=OneWay}">
+        <Button HorizontalAlignment="Right" Command="{x:Bind ViewModel.PasteRecoveryKeyCommand, Mode=OneWay}">
             <StackPanel Orientation="Horizontal" Spacing="8">
                 <FontIcon
                     Margin="0,0,0,-4"

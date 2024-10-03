@@ -59,21 +59,21 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedMasterKey, CancellationToken cancellationToken = default)
+        public async Task<IDisposable> RecoverAsync(IFolder vaultFolder, string encodedRecoveryKey, CancellationToken cancellationToken = default)
         {
             var routines = await VaultRoutines.CreateRoutinesAsync(vaultFolder, StreamSerializer.Instance, cancellationToken);
             var recoveryRoutine = routines.RecoverVault();
-            var keySplit = encodedMasterKey.Split(Core.Constants.KEY_TEXT_SEPARATOR);
-            var masterKey = new SecureKey(Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH + Core.Cryptography.Constants.KeyChains.MACKEY_LENGTH);
+            var keySplit = encodedRecoveryKey.Split(Core.Constants.KEY_TEXT_SEPARATOR);
+            var recoveryKey = new SecureKey(Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH + Core.Cryptography.Constants.KeyChains.MACKEY_LENGTH);
 
-            if (!Convert.TryFromBase64String(keySplit[0], masterKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH), out _))
-                throw new FormatException("The master key (1) was not in correct format.");
+            if (!Convert.TryFromBase64String(keySplit[0], recoveryKey.Key.AsSpan(0, Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH), out _))
+                throw new FormatException("The recovery key (1) was not in correct format.");
 
-            if (!Convert.TryFromBase64String(keySplit[1], masterKey.Key.AsSpan(Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH), out _))
-                throw new FormatException("The master key (2) was not in correct format.");
+            if (!Convert.TryFromBase64String(keySplit[1], recoveryKey.Key.AsSpan(Core.Cryptography.Constants.KeyChains.ENCKEY_LENGTH), out _))
+                throw new FormatException("The recovery key (2) was not in correct format.");
 
             await recoveryRoutine.InitAsync(cancellationToken);
-            recoveryRoutine.SetCredentials(masterKey);
+            recoveryRoutine.SetCredentials(recoveryKey);
             return await recoveryRoutine.FinalizeAsync(cancellationToken);
         }
 

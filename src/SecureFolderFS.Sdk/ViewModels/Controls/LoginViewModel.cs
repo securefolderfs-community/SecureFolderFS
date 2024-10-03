@@ -92,14 +92,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand]
-        private async Task RecoverAccessAsync(string? masterKey, CancellationToken cancellationToken)
+        private async Task RecoverAccessAsync(string? recoveryKey, CancellationToken cancellationToken)
         {
-            if (masterKey is null)
+            if (recoveryKey is null)
                 return;
 
             try
             {
-                var unlockContract = await VaultManagerService.RecoverAsync(_vaultModel.Folder, masterKey, cancellationToken);
+                var unlockContract = await VaultManagerService.RecoverAsync(_vaultModel.Folder, recoveryKey, cancellationToken);
                 VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder, true));
             }
             catch (Exception ex)

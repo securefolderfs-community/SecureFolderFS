@@ -53,7 +53,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 // Prepare the recovery view
                 _recoveryViewModel.VaultId = vaultOptions.VaultId;
                 _recoveryViewModel.VaultName = _vaultModel.VaultName;
-                _recoveryViewModel.MasterKey = e.UnlockContract.ToString();
+                _recoveryViewModel.RecoveryKey = e.UnlockContract.ToString();
 
                 // Change view to recovery
                 CurrentViewModel = _recoveryViewModel;
@@ -67,7 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public void Dispose()
         {
-            _recoveryViewModel.MasterKey = null;
+            _recoveryViewModel.RecoveryKey = null;
             _loginViewModel.Dispose();
         }
     }

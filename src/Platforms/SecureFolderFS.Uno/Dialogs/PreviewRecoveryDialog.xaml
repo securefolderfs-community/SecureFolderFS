@@ -29,7 +29,7 @@
                 ProvideContinuationButton="False" />
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
-            <uc:RecoveryPreviewControl ExportCommand="{x:Bind ExportCommand, Mode=OneWay}" MasterKey="{x:Bind MasterKey, Mode=OneWay}" />
+            <uc:RecoveryPreviewControl ExportCommand="{x:Bind ExportCommand, Mode=OneWay}" RecoveryKey="{x:Bind RecoveryKey, Mode=OneWay}" />
         </DataTemplate>
     </ContentDialog.Resources>
 

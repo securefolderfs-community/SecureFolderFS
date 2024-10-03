@@ -23,18 +23,18 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task PrintMasterKeyAsync(string vaultName, string? vaultId, string? masterKey)
+        public async Task PrintRecoveryKeyAsync(string vaultName, string? vaultId, string? recoveryKey)
         {
             if (!await IsSupportedAsync())
                 throw new NotSupportedException("Printing is not supported.");
 
             using var printer = new SimplePrinter();
 
-            // Setup master key print page
-            var printPage = new MasterKeyPrintPage();
-            printPage.MasterKeyVaultNameText.Text = $"Master key for '{vaultName}'";
+            // Setup recovery  key print page
+            var printPage = new RecoveryKeyPrintPage();
+            printPage.RecoveryKeyVaultNameText.Text = $"Recovery key for '{vaultName}'";
             printPage.VaultGuidText.Text = vaultId ?? "No Vault ID to show";
-            printPage.MasterKeyText.Text = masterKey ?? "No Master key to show";
+            printPage.RecoveryKeyText.Text = recoveryKey ?? "No Recovery key to show";
 
             await printer.PrintAsync(printPage);
         }

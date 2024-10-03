@@ -14,12 +14,12 @@ namespace SecureFolderFS.Sdk.Services
         Task<bool> IsSupportedAsync();
 
         /// <summary>
-        /// Prints a formatted document containing vault's master key.
+        /// Prints a formatted document containing vault's recovery key.
         /// </summary>
         /// <param name="vaultName">The name of the vault.</param>
         /// <param name="vaultId">The unique ID of the vault.</param>
-        /// <param name="masterKey">The master key secret to print.</param>
+        /// <param name="recoveryKey">The recovery key secret to print.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task PrintMasterKeyAsync(string vaultName, string? vaultId, string? masterKey);
+        Task PrintRecoveryKeyAsync(string vaultName, string? vaultId, string? recoveryKey);
     }
 }
