@@ -60,13 +60,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             //      2b. Offer to unlock (from 'provide keystore' view) using recovery key, if possible
             //
 
-            // Get the authentication method enumerator for this vault
-            _loginSequence = new(await VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken));
-            IsLoginSequence = _loginSequence.Count > 1;
-
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
             {
+                // Get the authentication method enumerator for this vault
+                _loginSequence = new(await VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken));
+                IsLoginSequence = _loginSequence.Count > 1;
+
                 // Set up the first authentication method
                 var result = ProceedAuthentication();
                 if (!result.Successful)
