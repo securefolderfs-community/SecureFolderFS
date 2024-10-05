@@ -38,10 +38,13 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 #if !DEBUG
             try
             {
-                // Start AppCenter
-                var appCenterKey = ApiKeys.GetAppCenterKey();
-                if (!string.IsNullOrEmpty(appCenterKey) || !AppCenter.Configured)
-                    AppCenter.Start(appCenterKey, typeof(Analytics), typeof(Crashes));
+                if (false) // TODO(t): Disable AppCenter
+                {
+                    // Start AppCenter
+                    var appCenterKey = ApiKeys.GetAppCenterKey();
+                    if (!string.IsNullOrEmpty(appCenterKey) || !AppCenter.Configured)
+                        AppCenter.Start(appCenterKey, typeof(Analytics), typeof(Crashes));
+                }
             }
             catch (Exception)
             {
@@ -75,7 +78,8 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
 #if DEBUG
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
 #else
-                .AddSingleton<ITelemetryService, AppCenterTelemetryService>()
+                .AddSingleton<ITelemetryService, DebugTelemetryService>()
+                // .AddSingleton<ITelemetryService, AppCenterTelemetryService>() // TODO(t): Disable AppCenter
 #endif
 
                 // IIapService, IUpdateService
