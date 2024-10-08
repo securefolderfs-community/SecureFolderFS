@@ -5,9 +5,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:not_win="http://uno.ui/not_win"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
-    mc:Ignorable="d">
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    mc:Ignorable="d not_win">
 
     <Page.Resources>
         <Storyboard x:Key="ChangeTextAnimation" x:Name="ChangeTextAnimation">
@@ -30,11 +32,16 @@
         <!--  Banner  -->
         <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
-                <Image
+                <win:Image
                     Width="230"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.svg" />
+                <not_win:Image
+                    Width="230"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Source="/Assets/AppAssets/AppTitle.png" />
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
                 <StackPanel

@@ -13,6 +13,8 @@
         <None Remove="Assets\AppAssets\AppIcon.png" />
         <None Remove="Assets\AppAssets\AppTitle.png" />
         <None Remove="Assets\AppAssets\AppTitle.svg" />
+        <None Remove="Assets\AppAssets\GreenShield.svg" />
+        <None Remove="Assets\AppAssets\GreenShield.png" />
         <None Remove="Assets\AppAssets\Media\ExplanationVideoDark.mov" />
         <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
@@ -43,7 +45,6 @@
         <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <None Remove="Assets\AppAssets\GreenShield.svg" />
         <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
@@ -144,6 +145,9 @@
         </EmbeddedResource>
         <None Remove="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
         <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\AppAssets\GreenShield.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
     </ItemGroup>

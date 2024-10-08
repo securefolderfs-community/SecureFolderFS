@@ -28,7 +28,7 @@ namespace SecureFolderFS.Uno
         public BaseLifecycleHelper ApplicationLifecycle { get; } =
 #if WINDOWS
             new Platforms.Windows.Helpers.WindowsLifecycleHelper();
-#elif MACCATALYST
+#elif MACCATALYST || __MACOS__
             new Platforms.MacCatalyst.Helpers.MacOsLifecycleHelper();
 #elif HAS_UNO_SKIA
             new Platforms.Desktop.Helpers.SkiaLifecycleHelper();
