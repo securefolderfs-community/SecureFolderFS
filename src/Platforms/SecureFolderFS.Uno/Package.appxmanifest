@@ -14,7 +14,7 @@
   <Properties>
     <DisplayName>SecureFolderFS</DisplayName>
     <PublisherDisplayName>d2dyno</PublisherDisplayName>
-    <Logo>Assets\PackageLogo.png</Logo>
+    <Logo>Assets\AppIcon\PackageLogo.png</Logo>
   </Properties>
 
   <Dependencies>

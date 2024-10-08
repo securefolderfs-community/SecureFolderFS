@@ -96,6 +96,7 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
 
             // Create backup
             await CreateConfigBackup(configStream, cancellationToken);
+            await CreateKeystoreBackup(cancellationToken);
 
             await using var serializedStream = await _streamSerializer.SerializeAsync(v2ConfigDataModel, cancellationToken);
             await serializedStream.CopyToAsync(configStream, cancellationToken);
@@ -115,6 +116,18 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
 
             await configStream.CopyToAsync(backupConfigStream, cancellationToken);
             configStream.Position = 0L;
+        }
+
+        private async Task CreateKeystoreBackup(CancellationToken cancellationToken)
+        {
+            if (VaultFolder is not IModifiableFolder modifiableFolder)
+                return;
+
+            var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
+            var backupKeystoreName = $"{Constants.Vault.Names.VAULT_KEYSTORE_FILENAME}.bkup";
+            var backupKeystoreFile = await modifiableFolder.CreateFileAsync(backupKeystoreName, true, cancellationToken);
+
+            await keystoreFile.CopyContentsToAsync(backupKeystoreFile, cancellationToken);
         }
 
         private static string GetContentCipherId(int v1ContentCipherScheme)

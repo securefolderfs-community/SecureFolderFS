@@ -9,10 +9,10 @@
     <!-- Uncomment if you want to explicity set a TargetFramework -->
     <!--<TargetFramework>net8.0-desktop</TargetFramework>-->
     <!--<TargetFramework>net8.0-maccatalyst</TargetFramework>-->
+    <!--<TargetFramework>net8.0-windows10.0.19041</TargetFramework>-->
   </PropertyGroup>
 
-  <PropertyGroup>
-
+  <PropertyGroup>    
     <!-- Build Properties -->
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -25,31 +25,6 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>com.securefolderfs.SecureFolderFS</ApplicationId>
-
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!--
-      UnoFeatures lets you quickly add and manage implicit package references based on the features you want to use.
-      https://aka.platform.uno/singleproject-features
-    -->
-    <UnoFeatures>
-      OpenSans;
-    </UnoFeatures>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!--
-      If you encounter this error message:
-
-        error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
-        Please update to a newer .NET SDK in order to reference this assembly.
-
-      This means that the two packages below must be aligned with the "build" version number of
-      the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
-      must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
-    -->
-    <!-- <WindowsSdkPackageVersion>10.0.22621.28</WindowsSdkPackageVersion> -->
   </PropertyGroup>
 
   <!-- Package References -->
@@ -128,14 +103,23 @@
         <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
         <TargetFramework>$(DotNetVersion)-windows10.0.19041.0</TargetFramework>
         <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+        <!--<RuntimeIdentifier>win-$(Platform)</RuntimeIdentifier>-->
 
         <!-- Packaging -->
+        <AppxBundle>Never</AppxBundle>
+        <!--<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>-->  
+        <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
         <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
         <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-        <GenerateTestArtifacts>False</GenerateTestArtifacts>
-        <AppxBundle>Always</AppxBundle>
-        <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <!--<GenerateAppxPackageOnBuild>True</GenerateAppxPackageOnBuild>-->
         <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+        <GenerateTestArtifacts>False</GenerateTestArtifacts>
+        <!--<UapAppxPackageBuildMode>Sideloading</UapAppxPackageBuildMode>-->
+
+        <!-- Temporary workaround for https://github.com/microsoft/WindowsAppSDK/issues/4480 -->
+        <WinAppSdkBuildToolsVersion Condition="$(TargetFramework.Contains('windows10'))">10.0.22621.3233</WinAppSdkBuildToolsVersion>
+        <UnoExtensionsVersion Condition="$(TargetFramework.Contains('windows10'))">4.2.2</UnoExtensionsVersion>
 
         <!-- Languages -->
         <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID;hi-IN</AppxDefaultResourceQualifiers>
@@ -222,7 +206,6 @@
     <None Remove="Dialogs\RecoveryDialog.xaml" />
     <None Remove="Dialogs\SettingsDialog.xaml" />
     <None Remove="Dialogs\VaultWizardDialog.xaml" />
-    <None Remove="Package.appxmanifest" />
     <None Remove="ResourceDictionaries\ColorResources.xaml" />
     <None Remove="ResourceDictionaries\ImageResources.xaml" />
     <None Remove="ResourceDictionaries\TextResources.xaml" />
