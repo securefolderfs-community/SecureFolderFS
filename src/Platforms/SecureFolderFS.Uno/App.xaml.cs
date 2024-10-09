@@ -13,6 +13,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
+using Uno.Resizetizer;
 using Windows.ApplicationModel;
 
 namespace SecureFolderFS.Uno
@@ -131,7 +132,7 @@ namespace SecureFolderFS.Uno
             boundsManager.MinHeight = 572;
 
 #else
-            _ = window;
+            window.SetWindowIcon();
 #endif
         }
 

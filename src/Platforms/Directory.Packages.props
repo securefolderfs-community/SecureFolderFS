@@ -30,7 +30,7 @@
     <PackageVersion Include="Uno.Core.Extensions.Logging" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.1.1" />
     <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
-    <PackageVersion Include="Uno.Resizetizer" Version="1.6.0" />
+    <PackageVersion Include="Uno.Resizetizer" Version="1.5.2" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="5.3.90" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.37" />
     <PackageVersion Include="Uno.Wasm.Bootstrap" Version="8.0.20" />

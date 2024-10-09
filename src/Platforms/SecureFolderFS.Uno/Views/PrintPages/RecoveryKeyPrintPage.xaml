@@ -32,13 +32,13 @@
                 <Image
                     Height="52"
                     VerticalAlignment="Center"
-                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppIcon.png" />
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_icon.png" />
 
                 <Image
                     Height="29"
                     Margin="0,0,0,-3"
                     VerticalAlignment="Center"
-                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.png" />
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_title.png" />
 
             </StackPanel>
 

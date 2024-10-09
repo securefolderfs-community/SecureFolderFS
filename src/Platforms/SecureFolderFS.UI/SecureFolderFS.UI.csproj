@@ -9,12 +9,12 @@
 
     <ItemGroup>
         <EmbeddedResource Include="Assets\*" />
-        <None Remove="Assets\AppAssets\AppIcon.ico" />
-        <None Remove="Assets\AppAssets\AppIcon.png" />
-        <None Remove="Assets\AppAssets\AppTitle.png" />
-        <None Remove="Assets\AppAssets\AppTitle.svg" />
-        <None Remove="Assets\AppAssets\GreenShield.svg" />
-        <None Remove="Assets\AppAssets\GreenShield.png" />
+        <None Remove="Assets\AppAssets\app_icon.ico" />
+        <None Remove="Assets\AppAssets\app_icon.png" />
+        <None Remove="Assets\AppAssets\app_title.png" />
+        <None Remove="Assets\AppAssets\app_title.svg" />
+        <None Remove="Assets\AppAssets\green_shield.svg" />
+        <None Remove="Assets\AppAssets\green_shield.png" />
         <None Remove="Assets\AppAssets\Media\ExplanationVideoDark.mov" />
         <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
@@ -22,30 +22,30 @@
         <None Remove="Assets\Licenses\Roslyn Analyzers LICENSE" />
         <None Remove="Assets\Licenses\Roslyn LICENSE" />
         <None Remove="Assets\Licenses\WinUI3Utilities LICENSE" />
-        <EmbeddedResource Include="Assets\AppAssets\AppIcon.ico">
+        <EmbeddedResource Include="Assets\AppAssets\app_icon.ico">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="Assets\AppAssets\AppIcon.png">
+        <EmbeddedResource Include="Assets\AppAssets\app_icon.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="Assets\AppAssets\AppTitle.png">
+        <EmbeddedResource Include="Assets\AppAssets\app_title.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="Assets\AppAssets\AppTitle.svg">
+        <EmbeddedResource Include="Assets\AppAssets\app_title.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <None Remove="Assets\AppAssets\Vault_dark.svg" />
+        <None Remove="Assets\AppAssets\vault_dark.svg" />
         <EmbeddedResource Include="Assets\AppAssets\Media\ExplanationVideoDark.mov">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="Assets\AppAssets\Vault_dark.svg">
+        <EmbeddedResource Include="Assets\AppAssets\vault_dark.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <None Remove="Assets\AppAssets\Vault_light.svg" />
-        <EmbeddedResource Include="Assets\AppAssets\Vault_light.svg">
+        <None Remove="Assets\AppAssets\vault_light.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\vault_light.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="Assets\AppAssets\GreenShield.svg">
+        <EmbeddedResource Include="Assets\AppAssets\green_shield.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\Tmds.Fuse LICENSE" />
@@ -147,7 +147,11 @@
         <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="Assets\AppAssets\GreenShield.png">
+        <EmbeddedResource Include="Assets\AppAssets\green_shield.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="Assets\AppAssets\app_icon.svg" />
+        <EmbeddedResource Include="Assets\AppAssets\app_icon.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
     </ItemGroup>

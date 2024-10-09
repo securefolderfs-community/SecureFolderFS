@@ -54,7 +54,7 @@
                 VerticalAlignment="Center"
                 Stretch="UniformToFill">
                 <win:Image.Source>
-                    <SvgImageSource UriSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/GreenShield.svg" />
+                    <SvgImageSource UriSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/green_shield.svg" />
                 </win:Image.Source>
             </win:Image>
             <not_win:Image
@@ -62,7 +62,7 @@
                 Height="64"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Source="/Assets/AppAssets/GreenShield.png"
+                Source="/Assets/AppAssets/green_shield.png"
                 Stretch="UniformToFill" />
         </Grid>
 

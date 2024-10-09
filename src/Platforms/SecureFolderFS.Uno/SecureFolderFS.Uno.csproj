@@ -12,7 +12,7 @@
     <!--<TargetFramework>net8.0-windows10.0.19041</TargetFramework>-->
   </PropertyGroup>
 
-  <PropertyGroup>    
+  <PropertyGroup>
     <!-- Build Properties -->
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -50,6 +50,7 @@
     <!-- Mac Catalyst -->
     <When Condition="'$(TargetFramework)'=='net8.0-maccatalyst'">
       <ItemGroup>
+        <PackageReference Include="Uno.Resizetizer" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
@@ -60,6 +61,16 @@
       </ItemGroup>
 
       <PropertyGroup>
+        <!-- Set icon -->
+<!--        <UnoIcon Include="..\SecureFolderFS.UI\Assets\AppAssets\app_icon.svg"-->
+<!--                 ForegroundFile="..\SecureFolderFS.UI\Assets\AppAssets\app_backplate.png"-->
+<!--                 Color="#FF0000"/>-->
+            <UnoIconForegroundFile>app_icon.svg</UnoIconForegroundFile>
+            <UnoIconBackgroundFile>icon_background.png</UnoIconBackgroundFile>
+            <UnoIconBackgroundColor>#FFFFFF</UnoIconBackgroundColor>
+<!--        <ApplicationIcon>..\SecureFolderFS.UI\Assets\AppAssets\app_icon.ico</ApplicationIcon>-->
+
+
         <_RequiresILLinkPack>true</_RequiresILLinkPack>
         <_ComputeManagedAssemblyToLink>true</_ComputeManagedAssemblyToLink>
       </PropertyGroup>
@@ -72,6 +83,7 @@
       </PropertyGroup>
 
       <ItemGroup>
+        <PackageReference Include="Uno.Resizetizer" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
@@ -107,7 +119,7 @@
 
         <!-- Packaging -->
         <AppxBundle>Never</AppxBundle>
-        <!--<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>-->  
+        <!--<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>-->
         <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
         <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
         <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
@@ -474,5 +486,24 @@
     <UpToDateCheckInput Remove="Views\Vault\VaultLoginPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultOverviewPage.xaml" />
     <UpToDateCheckInput Remove="Views\Vault\VaultPropertiesPage.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UnoImage Update="Assets\AppAssets\icon_background.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Assets\AppAssets\icon_background.svg</Link>
+    </UnoImage>
+    <UnoImage Update="Assets\AppAssets\app_icon.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Assets\AppAssets\app_icon.svg</Link>
+    </UnoImage>
+    <UnoImage Update="Assets\Icons\app_icon.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Assets\Icons\app_icon.svg</Link>
+    </UnoImage>
+    <UnoImage Update="Assets\Icons\icon_background.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Assets\Icons\icon_background.svg</Link>
+    </UnoImage>
   </ItemGroup>
 </Project>

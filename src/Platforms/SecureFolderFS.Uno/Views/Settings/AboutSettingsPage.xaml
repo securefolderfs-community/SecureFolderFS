@@ -36,12 +36,12 @@
                     Width="230"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.svg" />
+                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_title.svg" />
                 <not_win:Image
-                    Width="230"
+                    Width="192"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Source="/Assets/AppAssets/AppTitle.png" />
+                    Source="/Assets/AppAssets/app_title.png" />
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
                 <StackPanel
