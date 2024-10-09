@@ -13,7 +13,6 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
-using Uno.Resizetizer;
 using Windows.ApplicationModel;
 
 namespace SecureFolderFS.Uno
@@ -94,7 +93,7 @@ namespace SecureFolderFS.Uno
         private static void EnsureEarlyWindow(Window window)
         {
             window.Content = new MainWindowRootControl();
-
+            //global::Uno.Resizetizer.SetWindowIcon();
 #if WINDOWS
 #if !UNPACKAGED
             // Set icon
@@ -132,7 +131,7 @@ namespace SecureFolderFS.Uno
             boundsManager.MinHeight = 572;
 
 #else
-            window.SetWindowIcon();
+            //window.SetWindowIcon();
 #endif
         }
 
@@ -173,9 +172,9 @@ namespace SecureFolderFS.Uno
             var factory = LoggerFactory.Create(builder =>
             {
 #if __WASM__
-            builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
+                builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #elif __IOS__ || __MACCATALYST__
-            builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
+                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #else
                 builder.AddConsole();
 #endif

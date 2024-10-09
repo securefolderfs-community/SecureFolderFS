@@ -69,7 +69,6 @@
     <PackageReference Include="Material.Components.Maui" />
     <PackageReference Include="Microsoft.Maui.Controls" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
     <PackageReference Include="Microsoft.Maui.Core" />
     <PackageReference Include="Microsoft.Maui.Essentials" />
     <PackageReference Include="The49.Maui.BottomSheet" />

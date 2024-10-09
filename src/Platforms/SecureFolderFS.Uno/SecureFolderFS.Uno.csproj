@@ -19,22 +19,25 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>SecureFolderFS.Uno</RootNamespace>
 
-    <!-- Application Properties -->
-    <ApplicationTitle>SecureFolderFS</ApplicationTitle>
+    <!-- Application Version -->
     <AssemblyVersion>0.6.0.0</AssemblyVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
+
+    <!-- Application Properties -->
+    <ApplicationTitle>SecureFolderFS</ApplicationTitle>
     <ApplicationId>com.securefolderfs.SecureFolderFS</ApplicationId>
+    <ApplicationPublisher>d2dyno</ApplicationPublisher>
   </PropertyGroup>
 
   <!-- Package References -->
   <ItemGroup>
+    <PackageReference Include="Uno.Resizetizer" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
 
   <!-- Project References -->
@@ -50,7 +53,6 @@
     <!-- Mac Catalyst -->
     <When Condition="'$(TargetFramework)'=='net8.0-maccatalyst'">
       <ItemGroup>
-        <PackageReference Include="Uno.Resizetizer" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
@@ -65,11 +67,10 @@
 <!--        <UnoIcon Include="..\SecureFolderFS.UI\Assets\AppAssets\app_icon.svg"-->
 <!--                 ForegroundFile="..\SecureFolderFS.UI\Assets\AppAssets\app_backplate.png"-->
 <!--                 Color="#FF0000"/>-->
-            <UnoIconForegroundFile>app_icon.svg</UnoIconForegroundFile>
+<!--            <UnoIconForegroundFile>app_icon.svg</UnoIconForegroundFile>
             <UnoIconBackgroundFile>icon_background.png</UnoIconBackgroundFile>
-            <UnoIconBackgroundColor>#FFFFFF</UnoIconBackgroundColor>
+            <UnoIconBackgroundColor>#FFFFFF</UnoIconBackgroundColor>-->
 <!--        <ApplicationIcon>..\SecureFolderFS.UI\Assets\AppAssets\app_icon.ico</ApplicationIcon>-->
-
 
         <_RequiresILLinkPack>true</_RequiresILLinkPack>
         <_ComputeManagedAssemblyToLink>true</_ComputeManagedAssemblyToLink>
@@ -83,7 +84,6 @@
       </PropertyGroup>
 
       <ItemGroup>
-        <PackageReference Include="Uno.Resizetizer" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Animations" />
         <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls.Markdown" />
       </ItemGroup>
@@ -132,6 +132,8 @@
         <!-- Temporary workaround for https://github.com/microsoft/WindowsAppSDK/issues/4480 -->
         <WinAppSdkBuildToolsVersion Condition="$(TargetFramework.Contains('windows10'))">10.0.22621.3233</WinAppSdkBuildToolsVersion>
         <UnoExtensionsVersion Condition="$(TargetFramework.Contains('windows10'))">4.2.2</UnoExtensionsVersion>
+        <!-- Remove when the .NET SDK 8.0.403 or later has been released -->
+        <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
 
         <!-- Languages -->
         <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID;hi-IN</AppxDefaultResourceQualifiers>
@@ -489,14 +491,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UnoImage Update="Assets\AppAssets\icon_background.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>Assets\AppAssets\icon_background.svg</Link>
-    </UnoImage>
-    <UnoImage Update="Assets\AppAssets\app_icon.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>Assets\AppAssets\app_icon.svg</Link>
-    </UnoImage>
     <UnoImage Update="Assets\Icons\app_icon.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Assets\Icons\app_icon.svg</Link>

@@ -26,7 +26,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
     {
         /// <inheritdoc/>
         protected override string AppDirectory { get; } =
-#if UNPACKAGED
+#if UNPACKAGED || HAS_UNO_SKIA
             Directory.GetCurrentDirectory();
 #else
             ApplicationData.Current.LocalFolder.Path;
