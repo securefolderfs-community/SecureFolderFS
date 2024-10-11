@@ -120,6 +120,8 @@
         <!-- Temporary workaround for https://github.com/microsoft/WindowsAppSDK/issues/4480 -->
         <WinAppSdkBuildToolsVersion Condition="$(TargetFramework.Contains('windows10'))">10.0.22621.3233</WinAppSdkBuildToolsVersion>
         <UnoExtensionsVersion Condition="$(TargetFramework.Contains('windows10'))">4.2.2</UnoExtensionsVersion>
+        <!-- Remove when the .NET SDK 8.0.403 or later has been released -->
+        <WindowsSdkPackageVersion>10.0.19041.34</WindowsSdkPackageVersion>
 
         <!-- Languages -->
         <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID;hi-IN</AppxDefaultResourceQualifiers>
