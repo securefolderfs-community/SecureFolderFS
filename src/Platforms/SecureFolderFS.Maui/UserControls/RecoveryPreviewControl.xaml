@@ -22,7 +22,7 @@
                                 <Label
                                     FontFamily="Courier New"
                                     LineBreakMode="CharacterWrap"
-                                    Text="{Binding MasterKey, Mode=OneWay, Source={x:Reference ThisRecoveryControl}}" />
+                                    Text="{Binding RecoveryKey, Mode=OneWay, Source={x:Reference ThisRecoveryControl}}" />
                             </VerticalStackLayout>
                         </mdc:Card>
                         <mdc:Button
@@ -47,7 +47,7 @@
                             <Label
                                 FontFamily="Courier New"
                                 LineBreakMode="CharacterWrap"
-                                Text="{Binding MasterKey, Mode=OneWay}" />
+                                Text="{Binding RecoveryKey, Mode=OneWay}" />
                         </Border>
                         <Button
                             Command="{Binding ExportCommand, Mode=OneWay}"

@@ -42,11 +42,8 @@ namespace SecureFolderFS.Maui
                     handlers.AddHandler<ContentPageExtended, Handlers.ContentPageExHandler>();
 #endif
                 })
-                ;
-
-#if DEBUG
-            builder.Logging.AddDebug();
-#endif
+                
+                ; // Finish initialization
 
             return builder.Build();
         }

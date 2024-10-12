@@ -10,13 +10,13 @@ namespace SecureFolderFS.Maui.UserControls
             RootGrid.BindingContext = this;
         }
         
-        public string? MasterKey
+        public string? RecoveryKey
         {
-            get => (string?)GetValue(MasterKeyProperty);
-            set => SetValue(MasterKeyProperty, value);
+            get => (string?)GetValue(RecoveryKeyProperty);
+            set => SetValue(RecoveryKeyProperty, value);
         }
-        public static readonly BindableProperty MasterKeyProperty =
-            BindableProperty.Create(nameof(MasterKey), typeof(string), typeof(RecoveryPreviewControl), null);
+        public static readonly BindableProperty RecoveryKeyProperty =
+            BindableProperty.Create(nameof(RecoveryKey), typeof(string), typeof(RecoveryPreviewControl), null);
         
         public ICommand? ExportCommand
         {

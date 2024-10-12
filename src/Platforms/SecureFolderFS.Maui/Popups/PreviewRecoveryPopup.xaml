@@ -19,7 +19,7 @@
         </DataTemplate>
         <DataTemplate x:Key="RecoveryTemplate" x:DataType="vm:RecoveryPreviewControlViewModel">
             <Grid Padding="{OnPlatform Android='12,0'}">
-                <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" MasterKey="{Binding MasterKey, Mode=OneWay}" />
+                <uc:RecoveryPreviewControl ExportCommand="{Binding ExportCommand, Mode=OneWay}" RecoveryKey="{Binding RecoveryKey, Mode=OneWay}" />
             </Grid>
         </DataTemplate>
     </tv:Popup.Resources>
