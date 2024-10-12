@@ -15,7 +15,7 @@
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
 		<key>XSAppIconAssets</key>
-		<string>Assets.xcassets/icon.appiconset</string>
+		<string>Assets.xcassets/iconapp.appiconset</string>
 
 		<!--
 		Adjust this to your application's encryption usage.

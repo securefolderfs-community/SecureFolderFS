@@ -93,7 +93,6 @@ namespace SecureFolderFS.Uno
         private static void EnsureEarlyWindow(Window window)
         {
             window.Content = new MainWindowRootControl();
-            //global::Uno.Resizetizer.SetWindowIcon();
 #if WINDOWS
 #if !UNPACKAGED
             // Set icon
@@ -134,7 +133,7 @@ namespace SecureFolderFS.Uno
             window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
 
 #else
-            //window.SetWindowIcon();
+            global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
 #endif
         }
 
