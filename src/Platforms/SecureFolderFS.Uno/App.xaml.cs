@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -132,7 +131,7 @@ namespace SecureFolderFS.Uno
             boundsManager.MinHeight = 572;
 
             // TODO: Temporary, set starting size on Windows (until window position store is implemented)
-            window.AppWindow.MoveAndResize(new(100, 100, 976, 680));
+            window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
 
 #else
             //window.SetWindowIcon();
