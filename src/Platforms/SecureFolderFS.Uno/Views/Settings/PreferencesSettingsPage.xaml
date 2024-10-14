@@ -151,6 +151,20 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
+                Title="Put to background"
+                BlockMode="Default"
+                Description="Reduce the app to System Tray when closing the window">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE75B;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <ToggleSwitch
+                        MinWidth="0"
+                        AutomationProperties.Name="Put to background"
+                        IsOn="{x:Bind ViewModel.ReduceToBackground, Mode=TwoWay}" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
                 Title="{l:ResourceString Name=RestoreLastSession}"
                 BlockMode="Default"
                 Description="{l:ResourceString Name=RestoreLastSessionDescription}">

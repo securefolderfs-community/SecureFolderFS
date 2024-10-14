@@ -40,6 +40,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         }
 
         /// <inheritdoc/>
+        public virtual bool ReduceToBackground
+        {
+            get => GetSetting(static () => true);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
         public virtual bool ContinueOnLastVault
         {
             get => GetSetting(static () => false);

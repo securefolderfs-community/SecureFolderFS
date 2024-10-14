@@ -14,12 +14,16 @@ using SecureFolderFS.UI.Helpers;
 using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 using Uno.UI;
 using Windows.ApplicationModel;
+using H.NotifyIcon;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Uno
 {
     public partial class App : Application
     {
         public static App? Instance { get; private set; }
+
+        public bool UseForceClose { get; set; }
 
         public IServiceProvider? ServiceProvider { get; private set; }
 
@@ -92,7 +96,12 @@ namespace SecureFolderFS.Uno
 
         private static void EnsureEarlyWindow(Window window)
         {
+            // Set window content
             window.Content = new MainWindowRootControl();
+
+            // Attach event for window closing
+            window.Closed += Window_Closed;
+
 #if WINDOWS
 #if !UNPACKAGED
             // Set icon
@@ -103,9 +112,6 @@ namespace SecureFolderFS.Uno
 
             // Set title
             window.AppWindow.Title = "SecureFolderFS";
-
-            // Attach event for window closing
-            window.AppWindow.Closing += AppWindow_Closing;
 
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())
             {
@@ -137,22 +143,24 @@ namespace SecureFolderFS.Uno
 #endif
         }
 
-#if WINDOWS
-        private static async void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+        private static async void Window_Closed(object sender, WindowEventArgs args)
         {
-            try
-            {
-                FileSystemManager.Instance.FileSystems.DisposeElements();
-            }
-            catch (Exception ex)
-            {
-                _ = ex;
-            }
-
             var settingsService = DI.Service<ISettingsService>();
-            await settingsService.TrySaveAsync();
+            var shouldForceClose = (!App.Instance?.UseForceClose) ?? false;
+            shouldForceClose = shouldForceClose && settingsService.UserSettings.ReduceToBackground;
+
+            if (shouldForceClose)
+            {
+                args.Handled = true;
+                App.Instance?.MainWindow?.Hide(enableEfficiencyMode: false);
+            }
+            else
+            {
+                await SafetyHelpers.NoThrowAsync(async () => await settingsService.TrySaveAsync());
+                SafetyHelpers.NoThrow(static () => FileSystemManager.Instance.FileSystems.DisposeElements());
+                Application.Current.Exit();
+            }
         }
-#endif
 
         #endregion
 

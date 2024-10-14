@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hni="using:H.NotifyIcon"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:not_win="http://uno.ui/not_win"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
@@ -60,5 +61,26 @@
             Click="DebugButton_Click">
             <FontIcon Glyph="&#xEBE8;" />
         </Button>
+
+        <!--  Taskbar Icon  -->
+        <hni:TaskbarIcon
+            x:Name="TaskbarIcon"
+            Grid.Row="0"
+            ContextMenuMode="SecondWindow"
+            DoubleClickCommand="{x:Bind TaskbarIconDoubleClickCommand, Mode=OneWay}"
+            IconSource="ms-appx:///Assets/Icons/app_icon.ico"
+            MenuActivation="LeftOrRightClick"
+            PopupActivation="DoubleClick"
+            ToolTipText="SecureFolderFS">
+            <hni:TaskbarIcon.ContextFlyout>
+                <MenuFlyout Placement="Top">
+                    <MenuFlyoutItem Click="CloseApp_Click" Text="Exit">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE8BB;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                </MenuFlyout>
+            </hni:TaskbarIcon.ContextFlyout>
+        </hni:TaskbarIcon>
     </Grid>
 </UserControl>

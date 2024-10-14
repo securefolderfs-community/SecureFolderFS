@@ -1,8 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
@@ -17,6 +20,7 @@ using SecureFolderFS.Uno.Helpers;
 
 namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 {
+    [INotifyPropertyChanged]
     public sealed partial class MainWindowRootControl : UserControl
     {
         public INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
@@ -96,6 +100,21 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             global::Uno.UI.WindowExtensions.EnableHotReload(window);
             window.Activate();
 #endif
+        }
+
+        [RelayCommand]
+        private void TaskbarIconDoubleClick()
+        {
+            App.Instance?.MainWindow?.Activate();
+        }
+
+        private void CloseApp_Click(object sender, RoutedEventArgs e)
+        {
+            if (App.Instance is null)
+                return;
+
+            App.Instance.UseForceClose = true;
+            Application.Current.Exit();
         }
     }
 }

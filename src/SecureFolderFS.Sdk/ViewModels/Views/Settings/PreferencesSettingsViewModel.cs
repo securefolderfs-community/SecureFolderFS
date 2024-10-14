@@ -23,6 +23,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             set => UserSettings.StartOnSystemStartup = value;
         }
 
+        public bool ReduceToBackground
+        {
+            get => UserSettings.ReduceToBackground;
+            set => UserSettings.ReduceToBackground = value;
+        }
+
         public bool ContinueOnLastVault
         {
             get => UserSettings.ContinueOnLastVault;

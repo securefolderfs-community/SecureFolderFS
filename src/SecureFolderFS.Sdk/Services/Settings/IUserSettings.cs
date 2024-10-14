@@ -21,6 +21,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool StartOnSystemStartup { get; set; }
 
         /// <summary>
+        /// Gets or sets the value that determines whether to put the app to background system Task Bar when closing the window.
+        /// </summary>
+        bool ReduceToBackground { get; set; }
+
+        /// <summary>
         /// Gets or sets the value that determines whether to continue on the previously selected vault.
         /// </summary>
         bool ContinueOnLastVault { get; set; }
