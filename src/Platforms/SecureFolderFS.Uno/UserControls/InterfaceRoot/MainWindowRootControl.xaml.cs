@@ -85,7 +85,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
             var window = new Window()
             {
                 Content = new DebugWindowRootControl(),
+#if !__IOS__
                 Title = $"{nameof(SecureFolderFS)} Debug Window",
+#endif
             };
 #if WINDOWS
             window.AppWindow?.MoveAndResize(new(100, 100, 700, 900));

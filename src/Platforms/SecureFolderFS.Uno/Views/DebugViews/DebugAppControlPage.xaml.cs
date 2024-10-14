@@ -42,7 +42,12 @@ namespace SecureFolderFS.Uno.Views.DebugViews
             Dbg_AppInfo_AreEffectsFast.Text = CompositionCapabilities.GetForCurrentView().AreEffectsFast().ToString();
 
             // App Title
-            Dbg_AppTitle_Part1.Text = _titleBarPart1?.Text ?? App.Instance?.MainWindow?.Title;
+            Dbg_AppTitle_Part1.Text = _titleBarPart1?.Text ??
+#if !__IOS__
+                                      App.Instance?.MainWindow?.Title;
+#else
+                                      null;
+#endif
             Dbg_AppTitle_Part2.Text = _titleBarPart2?.Text;
         }
 
@@ -52,7 +57,9 @@ namespace SecureFolderFS.Uno.Views.DebugViews
                 _titleBarPart1.Text = Dbg_AppTitle_Part1.Text;
             else if (App.Instance?.MainWindow is { } mainWindow)
             {
+#if !__IOS__
                 mainWindow.Title = Dbg_AppTitle_Part1.Text;
+#endif
             }
         }
 
