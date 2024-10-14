@@ -30,6 +30,7 @@
 
   <!-- Package References -->
   <ItemGroup>
+    <PackageReference Include="H.NotifyIcon.Uno.WinUI" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Uno.WinUI" />
     <PackageReference Include="Microsoft.AppCenter.Analytics" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" />
@@ -195,6 +196,7 @@
     <None Remove="Assets\AppIcon\WideTile.scale-150.png" />
     <None Remove="Assets\AppIcon\WideTile.scale-200.png" />
     <None Remove="Assets\AppIcon\WideTile.scale-400.png" />
+    <None Remove="Assets\Icons\app_icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
