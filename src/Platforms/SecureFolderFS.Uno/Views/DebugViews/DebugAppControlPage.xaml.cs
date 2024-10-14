@@ -32,7 +32,9 @@ namespace SecureFolderFS.Uno.Views.DebugViews
             await Task.Delay(1000);
 
             _rootControl = App.Instance?.MainWindow?.Content as MainWindowRootControl;
+#if WINDOWS
             _titleBar = _rootControl?.CustomTitleBar;
+#endif
             _titleBarPart1 = _titleBar?.TitlePanel?.Children?[0] as TextBlock;
             _titleBarPart2 = _titleBar?.TitlePanel?.Children?[1] as TextBlock;
 
@@ -40,7 +42,7 @@ namespace SecureFolderFS.Uno.Views.DebugViews
             Dbg_AppInfo_AreEffectsFast.Text = CompositionCapabilities.GetForCurrentView().AreEffectsFast().ToString();
 
             // App Title
-            Dbg_AppTitle_Part1.Text = _titleBarPart1?.Text;
+            Dbg_AppTitle_Part1.Text = _titleBarPart1?.Text ?? App.Instance?.MainWindow?.Title;
             Dbg_AppTitle_Part2.Text = _titleBarPart2?.Text;
         }
 
@@ -48,6 +50,10 @@ namespace SecureFolderFS.Uno.Views.DebugViews
         {
             if (_titleBarPart1 is not null)
                 _titleBarPart1.Text = Dbg_AppTitle_Part1.Text;
+            else if (App.Instance?.MainWindow is { } mainWindow)
+            {
+                mainWindow.Title = Dbg_AppTitle_Part1.Text;
+            }
         }
 
         private void AppTitlePart2_TextChanged(object sender, TextChangedEventArgs e)

@@ -87,7 +87,9 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 Content = new DebugWindowRootControl(),
                 Title = $"{nameof(SecureFolderFS)} Debug Window",
             };
+#if WINDOWS
             window.AppWindow?.MoveAndResize(new(100, 100, 700, 900));
+#endif
 
             global::Uno.UI.WindowExtensions.EnableHotReload(window);
             window.Activate();
