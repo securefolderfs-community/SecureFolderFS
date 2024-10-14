@@ -76,6 +76,7 @@ namespace SecureFolderFS.Uno.Views.DebugViews
 
             Dbg_PrimaryView_Presenter.Content = mainHost.NavigationService.CurrentView switch
             {
+                VaultLoginViewModel => new DebugLoginRepresentationControl(),
                 VaultDashboardViewModel => new DebugDashboardRepresentationControl(),
                 _ => new TextBlock() { Text = "No content to show", HorizontalAlignment = HorizontalAlignment.Center }
             };

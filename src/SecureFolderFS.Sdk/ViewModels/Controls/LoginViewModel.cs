@@ -60,6 +60,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             //      2b. Offer to unlock (from 'provide keystore' view) using recovery key, if possible
             //
 
+            // Dispose previous state, if any
+            _keyChain.Dispose();
+            _loginSequence?.Dispose();
+
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
             {
@@ -176,9 +180,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
             else if (e is MigrationCompletedEventArgs)
             {
-                _keyChain.Dispose();
-                _loginSequence?.Dispose();
-
                 await InitAsync();
             }
         }
