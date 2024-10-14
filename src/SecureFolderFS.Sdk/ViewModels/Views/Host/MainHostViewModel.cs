@@ -60,7 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Remove when e.OldItems is not null && e.OldItems[0] is IVaultModel vaultModel:
-                    if (NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultModel.Equals(vaultModel) ?? false) is not BaseVaultViewModel viewModel)
+                    if (NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultViewModel.VaultModel.Equals(vaultModel) ?? false) is not BaseVaultViewModel viewModel)
                         return;
 
                     NavigationService.Views.Remove(viewModel);

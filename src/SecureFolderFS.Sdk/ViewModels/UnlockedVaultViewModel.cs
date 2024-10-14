@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels
@@ -10,6 +10,7 @@ namespace SecureFolderFS.Sdk.ViewModels
     /// <summary>
     /// Represents the view model of an unlocked vault.
     /// </summary>
+    [Bindable(true)]
     public sealed class UnlockedVaultViewModel : ObservableObject, IAsyncDisposable
     {
         /// <summary>
@@ -18,14 +19,14 @@ namespace SecureFolderFS.Sdk.ViewModels
         public IVFSRoot StorageRoot { get; }
 
         /// <summary>
-        /// Gets the vault model associated with the vault.
+        /// Gets the vault view model associated with the vault.
         /// </summary>
-        public IVaultModel VaultModel { get; }
+        public VaultViewModel VaultViewModel { get; }
 
-        public UnlockedVaultViewModel(IVFSRoot storageRoot, IVaultModel vaultModel)
+        public UnlockedVaultViewModel(IVFSRoot storageRoot, VaultViewModel vaultViewModel)
         {
             StorageRoot = storageRoot;
-            VaultModel = vaultModel;
+            VaultViewModel = vaultViewModel;
         }
 
         /// <inheritdoc/>

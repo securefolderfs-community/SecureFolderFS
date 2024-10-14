@@ -7,11 +7,11 @@ using SecureFolderFS.Sdk.ViewModels.Views.Wizard;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
-using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 
 #if IOS
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
+using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 #endif
 
 namespace SecureFolderFS.Maui.Views.Modals.Wizard
@@ -57,8 +57,8 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            ViewModel = new();
             OverlayViewModel = (WizardOverlayViewModel)viewable;
+            ViewModel = new(OverlayViewModel.VaultCollectionModel);
             OverlayViewModel.NavigationRequested += ViewModel_NavigationRequested;
             OverlayViewModel.CurrentViewModel = ViewModel;
             Shell.Current.Navigated += Shell_Navigated;
@@ -110,7 +110,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             BaseWizardViewModel? nextViewModel = e.Origin switch
             {
                 // Main -> Location
-                MainWizardViewModel viewModel => new LocationWizardViewModel(viewModel.CreationType),
+                MainWizardViewModel viewModel => new LocationWizardViewModel(OverlayViewModel.VaultCollectionModel, viewModel.CreationType),
 
                 // Location -> Credentials
                 LocationWizardViewModel { CreationType: NewVaultCreationType.CreateNew, SelectedFolder: IModifiableFolder modifiableFolder } => new CredentialsWizardViewModel(modifiableFolder),

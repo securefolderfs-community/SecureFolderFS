@@ -1,5 +1,4 @@
-﻿using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.ComponentModel;
+﻿using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,13 +6,13 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     /// <inheritdoc cref="IViewDesignation"/>
-    public abstract partial class BaseVaultViewModel(IVaultModel vaultModel)
+    public abstract partial class BaseVaultViewModel(VaultViewModel vaultViewModel)
         : BaseDesignationViewModel, IAsyncInitialize, IDisposable
     {
         /// <summary>
-        /// Gets the vault model associated with the vault.
+        /// Gets the vault view model associated with the vault.
         /// </summary>
-        public IVaultModel VaultModel { get; } = vaultModel;
+        public VaultViewModel VaultViewModel { get; } = vaultViewModel;
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);

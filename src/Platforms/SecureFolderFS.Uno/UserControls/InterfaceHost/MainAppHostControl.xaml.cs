@@ -7,8 +7,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -53,17 +53,17 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 #endif
         }
 
-        private async Task NavigateToItem(IVaultModel vaultModel)
+        private async Task NavigateToItem(VaultViewModel vaultViewModel)
         {
             await SetupNavigationAsync();
             if (ViewModel is null)
                 return;
             
             // Find existing target or create new
-            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultModel.Equals(vaultModel) ?? false);
+            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel) ?? false);
             if (target is null)
             {
-                var vaultLoginViewModel = new VaultLoginViewModel(vaultModel, ViewModel.NavigationService);
+                var vaultLoginViewModel = new VaultLoginViewModel(vaultViewModel, ViewModel.NavigationService);
                 _ = vaultLoginViewModel.InitAsync();
                 target = vaultLoginViewModel;
             }
@@ -96,17 +96,17 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         private async void Sidebar_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is VaultListItemViewModel itemViewModel) 
-                await NavigateToItem(itemViewModel.VaultModel);
+                await NavigateToItem(itemViewModel.VaultViewModel);
         }
 
         private async void SidebarSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultModel.VaultName.Equals(args.ChosenSuggestion));
+            var chosenItem = ViewModel!.VaultListViewModel.Items.FirstOrDefault(x => x.VaultViewModel.VaultName.Equals(args.ChosenSuggestion));
             if (chosenItem is null)
                 return;
 
             Sidebar.SelectedItem  = chosenItem;
-            await NavigateToItem(chosenItem.VaultModel);
+            await NavigateToItem(chosenItem.VaultViewModel);
         }
 
         private async void SidebarSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)

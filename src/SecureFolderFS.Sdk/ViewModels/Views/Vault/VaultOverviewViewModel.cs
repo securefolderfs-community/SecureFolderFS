@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             ServiceProvider = DI.Default;
             WidgetsViewModel = widgetsViewModel;
             VaultControlsViewModel = vaultControlsViewModel;
-            Title = UnlockedVaultViewModel.VaultModel.VaultName;
+            Title = UnlockedVaultViewModel.VaultViewModel.VaultName;
         }
 
         /// <inheritdoc/>

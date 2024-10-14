@@ -45,12 +45,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             await _unlockedVaultViewModel.DisposeAsync();
 
             // Prepare login page
-            var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultModel, _vaultNavigation);
+            var loginPageViewModel = new VaultLoginViewModel(_unlockedVaultViewModel.VaultViewModel, _vaultNavigation);
             _ = loginPageViewModel.InitAsync();
 
             // Navigate away
             await _vaultNavigation.TryNavigateAndForgetAsync(loginPageViewModel);
-            WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultModel));
+            WeakReferenceMessenger.Default.Send(new VaultLockedMessage(_unlockedVaultViewModel.VaultViewModel.VaultModel));
         }
 
         [RelayCommand]

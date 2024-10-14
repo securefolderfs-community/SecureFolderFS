@@ -5,12 +5,14 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Helpers;
+using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,6 +22,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
     [Bindable(true)]
     public sealed partial class LocationWizardViewModel : BaseWizardViewModel
     {
+        private readonly IVaultCollectionModel _vaultCollectionModel;
+
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _SelectedLocation;
         [ObservableProperty] private ViewSeverityType _Severity;
@@ -28,11 +32,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         public IFolder? SelectedFolder { get; private set; }
 
-        public LocationWizardViewModel(NewVaultCreationType creationType)
+        public LocationWizardViewModel(IVaultCollectionModel vaultCollectionModel, NewVaultCreationType creationType)
         {
             ServiceProvider = DI.Default;
+            _vaultCollectionModel = vaultCollectionModel;
             CreationType = creationType;
-
             CanCancel = true;
             CanContinue = false;
             CancelText = "Cancel".ToLocalized();
@@ -72,10 +76,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         {
             try
             {
+                // No folder selected
                 if (SelectedFolder is null)
                 {
                     Severity = ViewSeverityType.Default;
                     Message = "SelectFolderToContinue".ToLocalized();
+                    return false;
+                }
+
+                // Check for duplicates
+                var isDuplicate = _vaultCollectionModel.Any(x => x.Folder.Id == SelectedFolder.Id);
+                if (isDuplicate)
+                {
+                    Severity = ViewSeverityType.Warning;
+                    Message = "VaultAlreadyExists".ToLocalized();
                     return false;
                 }
 

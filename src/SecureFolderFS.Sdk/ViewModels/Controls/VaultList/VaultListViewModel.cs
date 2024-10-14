@@ -73,7 +73,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                 AddVault(item);
 
             if (SettingsService.UserSettings.ContinueOnLastVault)
-                SelectedItem = Items.FirstOrDefault(x => x.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
+                SelectedItem = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel.Folder.Id.Equals(SettingsService.AppSettings.LastVaultFolderId));
 
             SelectedItem ??= Items.FirstOrDefault();
             HasVaults = !Items.IsEmpty();
@@ -95,6 +95,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
             if (folder is not null)
             {
+                // Check for duplicates
+                var isDuplicate = _vaultCollectionModel.Any(x => x.Folder.Id == folder.Id);
+                if (isDuplicate)
+                    return;
+
                 // Validate vault. We assume the user is adding an existing vault
                 var result = await ValidationHelpers.ValidateExistingVault(folder, cancellationToken);
                 if (!result.Successful)
@@ -113,14 +118,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 
         private void AddVault(IVaultModel vaultModel)
         {
-            var listItem = new VaultListItemViewModel(vaultModel, _vaultCollectionModel);
+            var listItem = new VaultListItemViewModel(new(vaultModel), _vaultCollectionModel);
             Items.Add(listItem);
             HasVaults = true;
         }
 
         private void RemoveVault(IVaultModel vaultModel)
         {
-            var itemToRemove = Items.FirstOrDefault(x => x.VaultModel == vaultModel);
+            var itemToRemove = Items.FirstOrDefault(x => x.VaultViewModel.VaultModel == vaultModel);
             if (itemToRemove is null)
                 return;
 
@@ -140,7 +145,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         partial void OnSelectedItemChanged(VaultListItemViewModel? value)
         {
             if (SettingsService.UserSettings.ContinueOnLastVault)
-                SettingsService.AppSettings.LastVaultFolderId = value?.VaultModel.Folder.Id;
+                SettingsService.AppSettings.LastVaultFolderId = value?.VaultViewModel.VaultModel.Folder.Id;
         }
     }
 }

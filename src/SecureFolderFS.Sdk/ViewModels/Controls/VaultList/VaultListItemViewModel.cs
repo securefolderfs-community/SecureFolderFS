@@ -7,7 +7,6 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
-using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,15 +20,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
         [ObservableProperty] private bool _CanRemoveVault = true;
-        [ObservableProperty] private DateTime? _LastAccessDate;
+        [ObservableProperty] private VaultViewModel _VaultViewModel;
 
-        public IVaultModel VaultModel { get; }
-
-        public VaultListItemViewModel(IVaultModel vaultModel, IVaultCollectionModel vaultCollectionModel)
+        public VaultListItemViewModel(VaultViewModel vaultViewModel, IVaultCollectionModel vaultCollectionModel)
         {
             _vaultCollectionModel = vaultCollectionModel;
-            LastAccessDate = vaultModel.LastAccessDate;
-            VaultModel = vaultModel;
+            VaultViewModel = vaultViewModel;
             ServiceProvider = DI.Default;
 
             WeakReferenceMessenger.Default.Register<VaultUnlockedMessage>(this);
@@ -39,34 +35,31 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         /// <inheritdoc/>
         public void Receive(VaultUnlockedMessage message)
         {
-            if (VaultModel.Equals(message.VaultModel))
+            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
             {
                 // Prevent from removing vault if it is unlocked
                 CanRemoveVault = false;
-
-                // Update last accessed date
-                LastAccessDate = VaultModel.LastAccessDate;
             }
         }
 
         /// <inheritdoc/>
         public void Receive(VaultLockedMessage message)
         {
-            if (VaultModel.Equals(message.VaultModel))
+            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
                 CanRemoveVault = true;
         }
 
         [RelayCommand]
         private Task RemoveVaultAsync(CancellationToken cancellationToken)
         {
-            _vaultCollectionModel.Remove(VaultModel);
+            _vaultCollectionModel.Remove(VaultViewModel.VaultModel);
             return _vaultCollectionModel.TrySaveAsync(cancellationToken);
         }
 
         [RelayCommand]
         private Task RevealFolderAsync(CancellationToken cancellationToken)
         {
-            return FileExplorerService.TryOpenInFileExplorerAsync(VaultModel.Folder, cancellationToken);
+            return FileExplorerService.TryOpenInFileExplorerAsync(VaultViewModel.VaultModel.Folder, cancellationToken);
         }
     }
 }

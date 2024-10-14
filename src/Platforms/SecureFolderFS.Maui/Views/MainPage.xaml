@@ -54,9 +54,9 @@
                                     <Label
                                         FontAttributes="Bold"
                                         FontSize="16"
-                                        Text="{Binding VaultModel.VaultName, Mode=OneWay}"
+                                        Text="{Binding VaultViewModel.VaultName, Mode=OneWay}"
                                         VerticalOptions="Center" />
-                                    <Label IsVisible="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                                    <Label IsVisible="{Binding VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}" Text="{Binding LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
                         </ViewCell>

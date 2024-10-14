@@ -644,4 +644,7 @@
   <data name="LearnMore" xml:space="preserve">
     <value>Learn more</value>
   </data>
+  <data name="VaultAlreadyExists" xml:space="preserve">
+    <value>The selected vault already exists</value>
+  </data>
 </root>

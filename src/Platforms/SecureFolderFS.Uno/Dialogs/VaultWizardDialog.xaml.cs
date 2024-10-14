@@ -88,7 +88,7 @@ namespace SecureFolderFS.Uno.Dialogs
                 return;
 
             ViewModel.NavigationRequested += ViewModel_NavigationRequested;
-            await NavigateAsync(new MainWizardViewModel());
+            await NavigateAsync(new MainWizardViewModel(ViewModel.VaultCollectionModel));
         }
 
         private async void ViewModel_NavigationRequested(object? sender, NavigationRequestedEventArgs e)

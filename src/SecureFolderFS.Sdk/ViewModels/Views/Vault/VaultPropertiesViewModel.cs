@@ -4,7 +4,6 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Credentials;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using System.ComponentModel;
@@ -33,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var vaultOptions = await VaultService.GetVaultOptionsAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken);
+            var vaultOptions = await VaultService.GetVaultOptionsAsync(UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder, cancellationToken);
             ContentCipherText = string.IsNullOrEmpty(vaultOptions.ContentCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
             FileNameCipherText = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown");
             ActiveFileSystemText = UnlockedVaultViewModel.StorageRoot.FileSystemName;
@@ -44,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ChangeFirstAuthenticationAsync(CancellationToken cancellationToken)
         {
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel, AuthenticationType.FirstStageOnly);
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationType.FirstStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
@@ -53,7 +52,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ChangeSecondAuthenticationAsync(CancellationToken cancellationToken)
         {
-            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultModel, AuthenticationType.ProceedingStageOnly);
+            using var credentialsOverlay = new CredentialsOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel, AuthenticationType.ProceedingStageOnly);
             await credentialsOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(credentialsOverlay);
             await UpdateSecurityTextAsync(cancellationToken);
@@ -62,7 +61,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ViewRecoveryAsync(CancellationToken cancellationToken)
         {
-            using var previewRecoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultModel);
+            using var previewRecoveryOverlay = new PreviewRecoveryOverlayViewModel(UnlockedVaultViewModel.VaultViewModel.VaultModel);
 
             await previewRecoveryOverlay.InitAsync(cancellationToken);
             await OverlayService.ShowAsync(previewRecoveryOverlay);
@@ -70,7 +69,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
         {
-            var items = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken);
+            var items = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken);
             SecurityText = string.Join(" + ", items.Select(x => x.DisplayName));
         }
     }
