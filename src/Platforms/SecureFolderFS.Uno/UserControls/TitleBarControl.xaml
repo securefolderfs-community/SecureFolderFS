@@ -15,7 +15,9 @@
 
         <!--  Title  -->
         <StackPanel
+            x:Name="TitlePanel"
             HorizontalAlignment="Left"
+            x:FieldModifier="public"
             Orientation="Horizontal"
             Spacing="6">
             <TextBlock

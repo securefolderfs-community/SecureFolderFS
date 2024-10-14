@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -18,7 +19,14 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 {
     public sealed partial class MainWindowRootControl : UserControl
     {
-        private INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
+        public INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
+
+        public bool IsDebugging { get; } =
+#if DEBUG
+            Debugger.IsAttached;
+#else
+            false;
+#endif
 
         public MainViewModel? ViewModel
         {
@@ -69,6 +77,21 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 // Show no vaults screen
                 await RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(RootNavigationService, ViewModel.VaultCollectionModel), false);
             }
+        }
+
+        private void DebugButton_Click(object sender, RoutedEventArgs e)
+        {
+#if DEBUG
+            var window = new Window()
+            {
+                Content = new DebugWindowRootControl(),
+                Title = $"{nameof(SecureFolderFS)} Debug Window",
+            };
+            window.AppWindow?.MoveAndResize(new(100, 100, 700, 900));
+
+            global::Uno.UI.WindowExtensions.EnableHotReload(window);
+            window.Activate();
+#endif
         }
     }
 }

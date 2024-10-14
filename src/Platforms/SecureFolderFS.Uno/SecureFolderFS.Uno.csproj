@@ -18,6 +18,7 @@
     <UnoSingleProject>true</UnoSingleProject>
     <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>SecureFolderFS.Uno</RootNamespace>
+    <AccelerateBuildsInVisualStudio>True</AccelerateBuildsInVisualStudio>
 
     <!-- Application Properties -->
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
@@ -215,10 +216,12 @@
     <None Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <None Remove="UserControls\BackButtonTitleControl.xaml" />
     <None Remove="UserControls\BannerControl.xaml" />
+    <None Remove="UserControls\DebugControls\DebugDashboardRepresentationControl.xaml" />
     <None Remove="UserControls\GraphControl.xaml" />
     <None Remove="UserControls\InstallationControl.xaml" />
     <None Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
     <None Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
+    <None Remove="UserControls\InterfaceRoot\DebugWindowRootControl.xaml" />
     <None Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
     <None Remove="UserControls\Introduction\AgreementScreen.xaml" />
     <None Remove="UserControls\Introduction\EndScreen.xaml" />
@@ -236,6 +239,8 @@
     <None Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <None Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <None Remove="UserControls\Widgets\HealthWidget.xaml" />
+    <None Remove="Views\DebugViews\DebugAppControlPage.xaml" />
+    <None Remove="Views\DebugViews\DebugFileSystemLogPage.xaml" />
     <None Remove="Views\PrintPages\RecoveryKeyPrintPage.xaml" />
     <None Remove="Views\Settings\AboutSettingsPage.xaml" />
     <None Remove="Views\Settings\GeneralSettingsPage.xaml" />
@@ -442,10 +447,12 @@
     <UpToDateCheckInput Remove="UserControls\ActionBlocks\ActionBlockControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\BackButtonTitleControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\BannerControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\DebugControls\DebugDashboardRepresentationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\GraphControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InstallationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InterfaceHost\NoVaultsAppHostControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\InterfaceRoot\DebugWindowRootControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InterfaceRoot\MainWindowRootControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\AgreementScreen.xaml" />
     <UpToDateCheckInput Remove="UserControls\Introduction\EndScreen.xaml" />
@@ -463,6 +470,8 @@
     <UpToDateCheckInput Remove="UserControls\VaultFolderSelectionControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\GraphsWidget.xaml" />
     <UpToDateCheckInput Remove="UserControls\Widgets\HealthWidget.xaml" />
+    <UpToDateCheckInput Remove="Views\DebugViews\DebugAppControlPage.xaml" />
+    <UpToDateCheckInput Remove="Views\DebugViews\DebugFileSystemLogPage.xaml" />
     <UpToDateCheckInput Remove="Views\PrintPages\RecoveryKeyPrintPage.xaml" />
     <UpToDateCheckInput Remove="Views\Settings\AboutSettingsPage.xaml" />
     <UpToDateCheckInput Remove="Views\Settings\GeneralSettingsPage.xaml" />

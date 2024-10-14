@@ -1,4 +1,5 @@
 ﻿using ByteSizeLib;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
     [Bindable(true)]
-    public sealed class GraphsWidgetViewModel : BaseWidgetViewModel
+    public sealed partial class GraphsWidgetViewModel : BaseWidgetViewModel
     {
         private readonly IReadWriteStatistics _readWriteStatistics;
         private readonly PeriodicTimer _periodicTimer;
@@ -22,9 +23,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         private long _currentWriteAmount;
         private int _updateTimeCount;
 
-        public GraphControlViewModel ReadGraphViewModel { get; }
-
-        public GraphControlViewModel WriteGraphViewModel { get; }
+        [ObservableProperty] private GraphControlViewModel _ReadGraphViewModel;
+        [ObservableProperty] private GraphControlViewModel _WriteGraphViewModel;
+        public bool IsActive { get; set; }
 
         public GraphsWidgetViewModel(IReadWriteStatistics readWriteStatistics, IWidgetModel widgetModel)
             : base(widgetModel)
@@ -55,6 +56,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             while (await _periodicTimer.WaitForNextTickAsync(cancellationToken))
             {
+                if (!IsActive)
+                    continue;
+
                 _readRates.AddWithMaxCapacity(_currentReadAmount, Constants.Graphs.GRAPH_REFRESH_RATE);
                 _writeRates.AddWithMaxCapacity(_currentWriteAmount, Constants.Graphs.GRAPH_REFRESH_RATE);
 

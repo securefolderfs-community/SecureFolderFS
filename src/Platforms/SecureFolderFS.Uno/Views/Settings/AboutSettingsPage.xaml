@@ -32,16 +32,18 @@
         <!--  Banner  -->
         <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
-                <win:Image
-                    Width="230"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_title.svg" />
-                <not_win:Image
-                    Width="192"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Source="/Assets/AppAssets/app_title.png" />
+                <Grid>
+                    <win:Image
+                        Width="230"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_title.svg" />
+                    <not_win:Image
+                        Width="192"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Source="/Assets/AppAssets/app_title.png" />
+                </Grid>
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
                 <StackPanel

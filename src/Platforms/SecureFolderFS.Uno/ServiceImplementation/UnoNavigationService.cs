@@ -6,13 +6,12 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.Utils;
 using SecureFolderFS.Uno.UserControls.Navigation;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
     /// <inheritdoc cref="INavigationService"/>
-    public sealed class UnoNavigationService : BaseNavigationService, INavigationControlContract
+    public sealed class UnoNavigationService : BaseNavigationService
     {
         /// <inheritdoc/>
         protected override async Task<bool> BeginNavigationAsync(IViewDesignation? view, NavigationType navigationType)

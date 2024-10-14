@@ -44,5 +44,21 @@
                 <ts:InterfaceHostTemplateSelector MainAppHostDataTemplate="{StaticResource MainAppHostDataTemplate}" NoVaultsAppHostDataTemplate="{StaticResource NoVaultsAppHostDataTemplate}" />
             </uc3:RootNavigationControl.TemplateSelector>
         </uc3:RootNavigationControl>
+
+        <!--  Debugging Button  -->
+        <Button
+            x:Name="DebugButton"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Width="32"
+            Height="32"
+            Padding="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            x:FieldModifier="public"
+            x:Load="{x:Bind IsDebugging, Mode=OneWay}"
+            Click="DebugButton_Click">
+            <FontIcon Glyph="&#xEBE8;" />
+        </Button>
     </Grid>
 </UserControl>

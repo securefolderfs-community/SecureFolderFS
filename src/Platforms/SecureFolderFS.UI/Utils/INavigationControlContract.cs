@@ -8,6 +8,6 @@ namespace SecureFolderFS.UI.Utils
         /// <summary>
         /// Sets the control used for navigation.
         /// </summary>
-        public INavigationControl? NavigationControl { set; }
+        public INavigationControl? NavigationControl { get; set; }
     }
 }
