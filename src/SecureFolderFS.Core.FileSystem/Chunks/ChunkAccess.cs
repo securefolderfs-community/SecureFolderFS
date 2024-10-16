@@ -16,6 +16,11 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         protected readonly IContentCrypt contentCrypt;
         protected readonly IFileSystemStatistics fileSystemStatistics;
 
+        /// <summary>
+        /// Determines whether there are outstanding chunks ready to be flushed to disk.
+        /// </summary>
+        public virtual bool FlushAvailable { get; } = false;
+
         public ChunkAccess(ChunkReader chunkReader, ChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics fileSystemStatistics)
         {
             this.chunkReader = chunkReader;

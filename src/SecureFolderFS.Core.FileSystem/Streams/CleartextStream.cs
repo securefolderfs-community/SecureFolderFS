@@ -16,6 +16,7 @@ namespace SecureFolderFS.Core.Streams
         private readonly ChunkAccess _chunkAccess;
         private readonly HeaderBuffer _headerBuffer;
         private readonly Action<Stream> _notifyStreamClosed;
+        private readonly object _writeLock = new();
 
         private long _Length;
         private long _Position;
@@ -54,7 +55,7 @@ namespace SecureFolderFS.Core.Streams
             _chunkAccess = chunkAccess;
             _headerBuffer = headerBuffer;
             _notifyStreamClosed = notifyStreamClosed;
-            _Length = Math.Max(_security.ContentCrypt.CalculateCleartextSize(ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize), 0L);
+            _Length = _security.ContentCrypt.CalculateCleartextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
         }
 
         /// <inheritdoc/>
@@ -73,7 +74,6 @@ namespace SecureFolderFS.Core.Streams
         public override int Read(Span<byte> buffer)
         {
             var ciphertextStreamLength = Inner.Length;
-
             if (ciphertextStreamLength == 0L)
                 return FileSystem.Constants.FILE_EOF;
 
@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.Streams
                 return FileSystem.Constants.FILE_EOF; // TODO: HealthAPI - report invalid header size
 
             var lengthToEof = Length - _Position;
-            if (lengthToEof < 1L)
+            if (lengthToEof <= 0L)
                 return FileSystem.Constants.FILE_EOF;
 
             // Read header if not ready
@@ -90,15 +90,15 @@ namespace SecureFolderFS.Core.Streams
 
             var read = 0;
             var positionInBuffer = 0;
-            var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
+            var plaintextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
             var adjustedBuffer = buffer.Slice(0, (int)Math.Min(buffer.Length, lengthToEof));
 
             while (positionInBuffer < adjustedBuffer.Length)
             {
                 var readPosition = _Position + read;
-                var chunkNumber = readPosition / cleartextChunkSize;
-                var offsetInChunk = (int)(readPosition % cleartextChunkSize);
-                var length = Math.Min(adjustedBuffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
+                var chunkNumber = readPosition / plaintextChunkSize;
+                var offsetInChunk = (int)(readPosition % plaintextChunkSize);
+                var length = Math.Min(adjustedBuffer.Length - positionInBuffer, plaintextChunkSize - offsetInChunk);
 
                 var copied = _chunkAccess.CopyFromChunk(chunkNumber, adjustedBuffer.Slice(positionInBuffer), offsetInChunk);
                 if (copied < 0)
@@ -144,23 +144,23 @@ namespace SecureFolderFS.Core.Streams
         /// <inheritdoc/>
         public override void SetLength(long value)
         {
-            // Make sure header is ready before we can read/modify chunks
-            if (!TryWriteHeader() && !TryReadHeader())
-                throw new CryptographicException();
-
             // Ignore resizing the same length
             if (value == Length)
                 return;
 
-            var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
+            // Make sure header is ready before we can read/modify chunks
+            if (!TryWriteHeader() && !TryReadHeader())
+                throw new CryptographicException();
+
+            var plaintextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
 
             // Determine whether to extend or truncate the file
             if (value < Length)
             {
-                var remainingSize = (int)(value % cleartextChunkSize);
+                var remainingSize = (int)(value % plaintextChunkSize);
                 if (remainingSize > 0)
                 {
-                    var lastChunkNumber = value / cleartextChunkSize;
+                    var lastChunkNumber = value / plaintextChunkSize;
                     _chunkAccess.SetChunkLength(lastChunkNumber, remainingSize);
                 }
 
@@ -172,16 +172,16 @@ namespace SecureFolderFS.Core.Streams
                 // Flush remaining chunks before base stream is accessed
                 _chunkAccess.Flush();
 
-                // Calculate cleartext size here because cleartext Length might not be initialized yet
-                var cleartextFileSize = _security.ContentCrypt.CalculateCleartextSize(Inner.Length - _security.HeaderCrypt.HeaderCiphertextSize);
-                var lastChunkNumber = cleartextFileSize / cleartextChunkSize;
-                var amountToWrite = cleartextFileSize % cleartextChunkSize != 0 ? (int)Math.Min(cleartextChunkSize, value - cleartextFileSize) : 0;
+                // Calculate plaintext size here because plaintext Length might not be initialized yet
+                var plaintextFileSize = _security.ContentCrypt.CalculateCleartextSize(Inner.Length - _security.HeaderCrypt.HeaderCiphertextSize);
+                var lastChunkNumber = plaintextFileSize / plaintextChunkSize;
+                var amountToWrite = plaintextFileSize % plaintextChunkSize != 0 ? (int)Math.Min(plaintextChunkSize, value - plaintextFileSize) : 0;
 
                 // Extend the chunk including already existing data
                 _chunkAccess.SetChunkLength(lastChunkNumber, amountToWrite, true);
             }
 
-            // Calculate ciphertext size based on new cleartext length
+            // Calculate ciphertext size based on new plaintext length
             var ciphertextFileSize = _security.HeaderCrypt.HeaderCiphertextSize + Math.Max(_security.ContentCrypt.CalculateCiphertextSize(value), 0L);
 
             // Flush modified chunks
@@ -190,7 +190,7 @@ namespace SecureFolderFS.Core.Streams
             // Resize base stream to the ciphertext size
             Inner.SetLength(ciphertextFileSize);
 
-            // Update cleartext length
+            // Update plaintext length
             _Length = value;
 
             // Update last write time, if possible
@@ -209,7 +209,7 @@ namespace SecureFolderFS.Core.Streams
                 _ => throw new ArgumentOutOfRangeException(nameof(origin))
             };
 
-            var ciphertextPosition = AlignToChunkStartPosition(seekPosition);
+            var ciphertextPosition = Math.Max(0L, AlignToChunkStartPosition(seekPosition));
             Inner.Position = ciphertextPosition;
             _Position = seekPosition;
 
@@ -237,8 +237,12 @@ namespace SecureFolderFS.Core.Streams
             if (!CanWrite)
                 return;
 
-            TryWriteHeader();
-            _chunkAccess.Flush();
+            // Only flush when there's a need to
+            if (_chunkAccess.FlushAvailable)
+            {
+                TryWriteHeader();
+                _chunkAccess.Flush();
+            }
         }
 
         private void WriteInternal(ReadOnlySpan<byte> buffer, long position)
@@ -246,20 +250,21 @@ namespace SecureFolderFS.Core.Streams
             if (!TryWriteHeader() && !TryReadHeader())
                 throw new CryptographicException();
 
-            var cleartextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
+            var plaintextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
             var written = 0;
             var positionInBuffer = 0;
 
             while (positionInBuffer < buffer.Length)
             {
                 var currentPosition = position + written;
-                var chunkNumber = currentPosition / cleartextChunkSize;
-                var offsetInChunk = (int)(currentPosition % cleartextChunkSize);
-                var length = Math.Min(buffer.Length - positionInBuffer, cleartextChunkSize - offsetInChunk);
+                var chunkNumber = currentPosition / plaintextChunkSize;
+                var offsetInChunk = (int)(currentPosition % plaintextChunkSize);
+                var length = Math.Min(buffer.Length - positionInBuffer, plaintextChunkSize - offsetInChunk);
 
                 var copy = _chunkAccess.CopyToChunk(
                     chunkNumber,
-                    buffer.Slice(positionInBuffer), (offsetInChunk == 0 && length == cleartextChunkSize) ? 0 : offsetInChunk);
+                    buffer.Slice(positionInBuffer),
+                    (offsetInChunk == 0 && length == plaintextChunkSize) ? 0 : offsetInChunk);
 
                 if (copy < 0)
                     throw new CryptographicException();
@@ -307,35 +312,36 @@ namespace SecureFolderFS.Core.Streams
         [SkipLocalsInit]
         private bool TryWriteHeader()
         {
-            if (!_headerBuffer.IsHeaderReady && CanWrite && Inner.Length == 0L)
-            {
-                // Make sure we save the header state
-                _headerBuffer.IsHeaderReady = true;
+            lock (_writeLock)
+                if (!_headerBuffer.IsHeaderReady && CanWrite && Inner.Length == 0L)
+                {
+                    // Make sure we save the header state
+                    _headerBuffer.IsHeaderReady = true;
 
-                // Allocate ciphertext header
-                Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
+                    // Allocate ciphertext header
+                    Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
 
-                // Get and encrypt header
-                _security.HeaderCrypt.CreateHeader(_headerBuffer);
-                _security.HeaderCrypt.EncryptHeader(_headerBuffer, ciphertextHeader);
+                    // Get and encrypt header
+                    _security.HeaderCrypt.CreateHeader(_headerBuffer);
+                    _security.HeaderCrypt.EncryptHeader(_headerBuffer, ciphertextHeader);
 
-                // Write header
-                var savedPos = Inner.Position;
-                Inner.Position = 0L;
-                Inner.Write(ciphertextHeader);
-                Inner.Position = savedPos + ciphertextHeader.Length;
+                    // Write header
+                    var savedPos = Inner.Position;
+                    Inner.Position = 0L;
+                    Inner.Write(ciphertextHeader);
+                    Inner.Position = savedPos + ciphertextHeader.Length;
 
-                return true;
-            }
+                    return true;
+                }
 
             return false;
         }
 
-        private long AlignToChunkStartPosition(long cleartextPosition)
+        private long AlignToChunkStartPosition(long plaintextPosition)
         {
             var maxCiphertextPayloadSize = long.MaxValue - _security.HeaderCrypt.HeaderCiphertextSize;
             var maxChunks = maxCiphertextPayloadSize / _security.ContentCrypt.ChunkCiphertextSize;
-            var chunkNumber = cleartextPosition / _security.ContentCrypt.ChunkCleartextSize;
+            var chunkNumber = plaintextPosition / _security.ContentCrypt.ChunkCleartextSize;
 
             if (chunkNumber > maxChunks)
                 return long.MaxValue;

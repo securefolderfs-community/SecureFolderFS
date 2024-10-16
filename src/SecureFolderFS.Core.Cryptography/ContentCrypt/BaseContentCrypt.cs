@@ -42,6 +42,9 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <inheritdoc/>
         public virtual long CalculateCleartextSize(long ciphertextSize)
         {
+            if (ciphertextSize == 0L)
+                return 0L;
+
             var chunkOverhead = ChunkCiphertextSize - ChunkCleartextSize;
             var chunksCount = ciphertextSize / ChunkCiphertextSize;
             var additionalCiphertextBytes = ciphertextSize % ChunkCiphertextSize;

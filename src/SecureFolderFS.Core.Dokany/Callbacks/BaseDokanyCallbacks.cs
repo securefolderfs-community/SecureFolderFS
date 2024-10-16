@@ -364,7 +364,9 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         {
 #if !DEBUG
             return result;
-#endif
+#else
+            if (Debugger.IsAttached)
+                return result;
 
             if (!Core.FileSystem.Constants.OPT_IN_FOR_OPTIONAL_DEBUG_TRACING)
                 return result;
@@ -376,6 +378,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
             Debug.WriteLine(message);
 
             return result;
+#endif
         }
 
         protected static NtStatus Trace(NtStatus result, string? fileName, IDokanFileInfo info, [CallerMemberName] string methodName = "", params object[]? args)

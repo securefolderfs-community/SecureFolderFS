@@ -8,10 +8,20 @@ using System.Linq;
 
 namespace SecureFolderFS.Core.FileSystem.Chunks
 {
-    /// <inheritdoc cref="IChunkAccess"/>
+    /// <inheritdoc cref="ChunkAccess"/>
     internal sealed class CachingChunkAccess : ChunkAccess
     {
         private readonly Dictionary<long, ChunkBuffer> _chunkCache;
+
+        /// <inheritdoc/>
+        public override bool FlushAvailable
+        {
+            get
+            {
+                lock (_chunkCache)
+                    return _chunkCache.Count > 0;
+            }
+        }
 
         public CachingChunkAccess(ChunkReader chunkReader, ChunkWriter chunkWriter, IContentCrypt contentCrypt, IFileSystemStatistics fileSystemStatistics)
             : base(chunkReader, chunkWriter, contentCrypt, fileSystemStatistics)
