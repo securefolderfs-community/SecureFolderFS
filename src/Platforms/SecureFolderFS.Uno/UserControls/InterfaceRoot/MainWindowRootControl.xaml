@@ -63,24 +63,25 @@
         </Button>
 
         <!--  Taskbar Icon  -->
-        <hni:TaskbarIcon
-            x:Name="TaskbarIcon"
-            Grid.Row="0"
-            ContextMenuMode="SecondWindow"
-            DoubleClickCommand="{x:Bind TaskbarIconDoubleClickCommand, Mode=OneWay}"
-            IconSource="ms-appx:///Assets/Icons/app_icon.ico"
-            MenuActivation="LeftOrRightClick"
-            PopupActivation="DoubleClick"
-            ToolTipText="SecureFolderFS">
-            <hni:TaskbarIcon.ContextFlyout>
-                <MenuFlyout Placement="Top">
-                    <MenuFlyoutItem Click="CloseApp_Click" Text="Exit">
-                        <MenuFlyoutItem.Icon>
-                            <FontIcon Glyph="&#xE8BB;" />
-                        </MenuFlyoutItem.Icon>
-                    </MenuFlyoutItem>
-                </MenuFlyout>
-            </hni:TaskbarIcon.ContextFlyout>
-        </hni:TaskbarIcon>
+        <win:Border Grid.Row="0">
+            <hni:TaskbarIcon
+                x:Name="TaskbarIcon"
+                ContextMenuMode="SecondWindow"
+                DoubleClickCommand="{x:Bind TaskbarIconDoubleClickCommand, Mode=OneWay}"
+                IconSource="ms-appx:///Assets/Icons/app_icon.ico"
+                MenuActivation="LeftOrRightClick"
+                PopupActivation="DoubleClick"
+                ToolTipText="SecureFolderFS">
+                <hni:TaskbarIcon.ContextFlyout>
+                    <MenuFlyout Placement="Top">
+                        <MenuFlyoutItem Click="CloseApp_Click" Text="Exit">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8BB;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </hni:TaskbarIcon.ContextFlyout>
+            </hni:TaskbarIcon>
+        </win:Border>
     </Grid>
 </UserControl>

@@ -49,6 +49,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop.Helpers
         {
             return base.ConfigureServices(settingsFolder)
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
+                .AddSingleton<ISystemService, SkiaSystemService>()
                 .AddSingleton<IVaultService, SkiaVaultService>()
                 .AddSingleton<IApplicationService, SkiaApplicationService>()
                 .AddSingleton<IVaultManagerService, SkiaVaultManagerService>()

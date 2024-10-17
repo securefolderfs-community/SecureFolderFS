@@ -50,6 +50,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.Helpers
         {
             return base.ConfigureServices(settingsFolder)
                 //.AddSingleton<IPrinterService, WindowsPrinterService>()
+                .AddSingleton<ISystemService, MacOsSystemService>()
                 .AddSingleton<IVaultService, MacOsVaultService>()
                 .AddSingleton<IApplicationService, MacOsApplicationService>()
                 .AddSingleton<IVaultManagerService, MacOsVaultManagerService>()
