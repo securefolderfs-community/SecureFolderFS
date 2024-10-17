@@ -14,13 +14,16 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         {
             add
             {
+                if (_desktopLocked is null)
+                    SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
+
                 _desktopLocked += value;
-                SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
             }
             remove
             {
                 _desktopLocked -= value;
-                SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
+                if (_desktopLocked is null)
+                    SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
             }
         }
 

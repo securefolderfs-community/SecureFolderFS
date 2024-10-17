@@ -1,6 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
@@ -9,6 +10,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -19,33 +21,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
 {
     [Inject<INavigationService>(Visibility = "public"), Inject<IOverlayService>, Inject<ISettingsService>]
     [Bindable(true)]
-    public sealed partial class MainHostViewModel : ObservableObject, IViewDesignation, IAsyncInitialize
+    public sealed partial class MainHostViewModel : BaseDesignationViewModel, IAsyncInitialize, IDisposable
     {
-        [ObservableProperty] private string? _Title;
+        private readonly IVaultCollectionModel _vaultCollectionModel;
+        private readonly ISystemMonitorModel _systemMonitorModel;
 
         public VaultListViewModel VaultListViewModel { get; }
 
         public MainHostViewModel(IVaultCollectionModel vaultCollectionModel)
         {
             ServiceProvider = DI.Default;
+            _vaultCollectionModel = vaultCollectionModel;
+            _systemMonitorModel = new SystemMonitorModel(vaultCollectionModel);
+            Title = "MyVaults".ToLocalized();
             VaultListViewModel = new(vaultCollectionModel);
-            vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
+            _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
         }
 
         /// <inheritdoc/>
-        public Task InitAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            return VaultListViewModel.InitAsync(cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public void OnAppearing()
-        {
-        }
-
-        /// <inheritdoc/>
-        public void OnDisappearing()
-        {
+            await VaultListViewModel.InitAsync(cancellationToken);
+            await _systemMonitorModel.InitAsync(cancellationToken);
         }
         
         [RelayCommand]
@@ -54,7 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             await OverlayService.ShowAsync(SettingsOverlayViewModel.Instance);
             await SettingsService.TrySaveAsync();
         }
-        
+
         private void VaultCollectionModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -72,6 +69,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
                     NavigationService.Views.Clear();
                     break;
             }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            _vaultCollectionModel.CollectionChanged += VaultCollectionModel_CollectionChanged;
+            _systemMonitorModel.Dispose();
         }
     }
 }

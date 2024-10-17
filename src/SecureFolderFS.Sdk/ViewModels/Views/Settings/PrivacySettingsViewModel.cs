@@ -18,10 +18,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Settings
             UserSettings.PropertyChanged += UserSettings_PropertyChanged;
         }
 
-        public bool AutoLockVaults
+        public bool DisableRecentAccess
         {
-            get => UserSettings.AutoLockVaults;
-            set => UserSettings.AutoLockVaults = value;
+            get => UserSettings.DisableRecentAccess;
+            set => UserSettings.DisableRecentAccess = value;
+        }
+
+        public bool LockOnSystemLock
+        {
+            get => UserSettings.LockOnSystemLock;
+            set => UserSettings.LockOnSystemLock = value;
         }
 
         public bool IsTelemetryEnabled

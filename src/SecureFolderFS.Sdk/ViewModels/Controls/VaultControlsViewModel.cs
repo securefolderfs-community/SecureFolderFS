@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IFileExplorerService>]
     [Bindable(true)]
-    public sealed partial class VaultControlsViewModel : ObservableObject
+    public sealed partial class VaultControlsViewModel : ObservableObject, IRecipient<VaultLockRequestedMessage>
     {
         private readonly INavigator _dashboardNavigator;
         private readonly INavigationService _vaultNavigation;
@@ -30,6 +30,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             _unlockedVaultViewModel = unlockedVaultViewModel;
             _propertiesViewModel = propertiesViewModel;
             ServiceProvider = DI.Default;
+
+            WeakReferenceMessenger.Default.Register(this);
+        }
+
+        /// <inheritdoc/>
+        public async void Receive(VaultLockRequestedMessage message)
+        {
+            if (!message.VaultModel.Equals(_unlockedVaultViewModel.VaultViewModel.VaultModel))
+                return;
+
+            await LockVaultAsync();
         }
 
         [RelayCommand(AllowConcurrentExecutions = true)]

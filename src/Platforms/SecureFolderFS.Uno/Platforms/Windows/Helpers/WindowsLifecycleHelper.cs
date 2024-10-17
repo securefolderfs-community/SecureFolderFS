@@ -69,8 +69,9 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                .AddSingleton<IPrinterService, WindowsPrinterService>()
                 .AddSingleton<IVaultService, WindowsVaultService>()
+                .AddSingleton<ISystemService, WindowsSystemService>()
+                .AddSingleton<IPrinterService, WindowsPrinterService>()
                 .AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
                 .AddSingleton<IApplicationService, WindowsApplicationService>()
 
