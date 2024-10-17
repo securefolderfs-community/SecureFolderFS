@@ -24,7 +24,7 @@
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
 
     <!-- App Identifier -->
-    <ApplicationId>com.securefolderfs.securefolderfs</ApplicationId>
+    <ApplicationId>org.securefolderfs.securefolderfs</ApplicationId>
 
     <!-- Versions -->
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

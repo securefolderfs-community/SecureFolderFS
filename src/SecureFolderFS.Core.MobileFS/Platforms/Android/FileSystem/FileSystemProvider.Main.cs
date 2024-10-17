@@ -11,7 +11,7 @@ using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projectio
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
     [ContentProvider(["${applicationId}.provider"],
-        Name = "com.securefolderfs.securefolderfs.provider",
+        Name = "org.securefolderfs.securefolderfs.provider",
         Permission = "android.permission.MANAGE_DOCUMENTS",
         Enabled = true,
         Exported = true,

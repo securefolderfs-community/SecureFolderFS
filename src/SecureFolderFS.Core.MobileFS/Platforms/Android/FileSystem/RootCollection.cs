@@ -71,7 +71,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             {
                 // TODO: Make the authority change resistant to avoid unexpected errors
                 // Authority taken from ContentProviderAttribute on FileSystemProvider
-                var rootsUri = DocumentsContract.BuildRootsUri("com.securefolderfs.securefolderfs.provider");
+                var rootsUri = DocumentsContract.BuildRootsUri("org.securefolderfs.securefolderfs.provider");
                 if (rootsUri is not null)
                     _context.ContentResolver?.NotifyChange(rootsUri, null);
             }

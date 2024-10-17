@@ -1,28 +1,18 @@
 using System;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.Uno.Platforms.Desktop.ServiceImplementation
 {
     /// <inheritdoc cref="ISystemService"/>
-    internal sealed class SkiaSystemService : BaseSystemService
+    internal sealed class SkiaSystemService : ISystemService
     {
-        /// <inheritdoc/>
-        protected override void AttachEvent(ref EventHandler? handler, EventHandler? value)
-        {
-            if (!OperatingSystem.IsLinux())
-                return;
-            
-            //throw new NotImplementedException();
-        }
+        private EventHandler? _desktopLocked;
 
         /// <inheritdoc/>
-        protected override void DetachEvent(ref EventHandler? handler, EventHandler? value)
+        public event EventHandler? DesktopLocked // TODO: Implement on linux
         {
-            if (!OperatingSystem.IsLinux())
-                return;
-            
-            //throw new NotImplementedException();
+            add => _desktopLocked += value;
+            remove => _desktopLocked -= value;
         }
     }
 }
