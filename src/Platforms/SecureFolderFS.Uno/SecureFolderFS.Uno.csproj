@@ -1,6 +1,6 @@
 <Project Sdk="Uno.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition=" !$([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net8.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('macOS')) ">$(TargetFrameworks);net8.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('windows')) ">$(TargetFrameworks);net8.0-windows10.0.19041</TargetFrameworks>
     <TargetFrameworks Condition=" $([MSBuild]::IsOSPlatform('linux')) ">$(TargetFrameworks);net8.0-desktop</TargetFrameworks>
 
@@ -23,7 +23,7 @@
     <!-- Application Properties -->
     <ApplicationTitle>SecureFolderFS</ApplicationTitle>
     <AssemblyVersion>0.7.0.0</AssemblyVersion>
-    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>0.7.0.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>org.securefolderfs.SecureFolderFS</ApplicationId>
   </PropertyGroup>
@@ -123,7 +123,7 @@
         <WinAppSdkBuildToolsVersion Condition="$(TargetFramework.Contains('windows10'))">10.0.22621.3233</WinAppSdkBuildToolsVersion>
         <UnoExtensionsVersion Condition="$(TargetFramework.Contains('windows10'))">4.2.2</UnoExtensionsVersion>
         <!-- Remove when the .NET SDK 8.0.403 or later has been released -->
-        <WindowsSdkPackageVersion>10.0.19041.34</WindowsSdkPackageVersion>
+        <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
 
         <!-- Languages -->
         <AppxDefaultResourceQualifiers>Language=en-US;pl-PL;de-DE;es-ES;da-DK;uk-UA;pt-PT;ms-MY;id-ID;hi-IN</AppxDefaultResourceQualifiers>

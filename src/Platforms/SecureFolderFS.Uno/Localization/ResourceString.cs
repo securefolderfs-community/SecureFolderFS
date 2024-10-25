@@ -1,7 +1,6 @@
-using CommunityToolkit.Mvvm.DependencyInjection;
+using System.ComponentModel;
 using Microsoft.UI.Xaml.Markup;
 using SecureFolderFS.Sdk.Services;
-using System.ComponentModel;
 using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Uno.Localization
