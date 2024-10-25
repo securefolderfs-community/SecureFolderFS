@@ -94,7 +94,13 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
 
         private async Task<bool> SetStoreContextAsync()
         {
-            _storeContext ??= await Task.Run(StoreContext.GetDefault);
+            if (_storeContext is null)
+            {
+                _storeContext = await Task.Run(StoreContext.GetDefault);
+                if (_storeContext is not null)
+                    WinRT_InitializeObject(_storeContext);
+            }
+
             return _storeContext is not null;
         }
 
@@ -113,6 +119,15 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
                 StorePackageUpdateState.ErrorWiFiRequired => AppUpdateResultType.FailedNetworkError,
                 _ => AppUpdateResultType.None
             };
+        }
+
+        private static void WinRT_InitializeObject(object obj)
+        {
+            _ = obj;
+#if WINDOWS
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Instance?.MainWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(obj, hwnd);
+#endif
         }
     }
 }

@@ -22,7 +22,7 @@ namespace SecureFolderFS.Storage.Extensions
         public static async Task CopyContentsToAsync(this IFile source, IFile destination, CancellationToken cancellationToken = default)
         {
             await using var sourceStream = await source.OpenStreamAsync(FileAccess.Read, cancellationToken);
-            await using var destinationStream = await destination.OpenStreamAsync(FileAccess.Read, cancellationToken);
+            await using var destinationStream = await destination.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
             await sourceStream.CopyToAsync(destinationStream, cancellationToken);
         }
 
