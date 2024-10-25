@@ -453,11 +453,11 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             return _directoryInfo.FullName.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            var storeCollection = obj as EncryptingDiskStoreCollection;
-            if (storeCollection == null)
+            if (obj is not EncryptingDiskStoreCollection storeCollection)
                 return false;
+            
             return storeCollection._directoryInfo.FullName.Equals(_directoryInfo.FullName, StringComparison.CurrentCultureIgnoreCase);
         }
     }

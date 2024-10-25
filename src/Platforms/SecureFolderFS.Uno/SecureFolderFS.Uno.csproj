@@ -12,7 +12,7 @@
     <!--<TargetFramework>net8.0-windows10.0.19041</TargetFramework>-->
   </PropertyGroup>
 
-  <PropertyGroup>    
+  <PropertyGroup>
     <!-- Build Properties -->
     <OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
@@ -109,7 +109,7 @@
 
         <!-- Packaging -->
         <AppxBundle>Never</AppxBundle>
-        <!--<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>-->  
+        <!--<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>-->
         <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
         <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
         <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>

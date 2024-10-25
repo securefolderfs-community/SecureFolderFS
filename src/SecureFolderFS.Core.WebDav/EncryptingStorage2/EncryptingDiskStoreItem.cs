@@ -211,10 +211,11 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             return _fileInfo.FullName.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (!(obj is EncryptingDiskStoreItem storeItem))
+            if (obj is not EncryptingDiskStoreItem storeItem)
                 return false;
+            
             return storeItem._fileInfo.FullName.Equals(_fileInfo.FullName, StringComparison.CurrentCultureIgnoreCase);
         }
 
