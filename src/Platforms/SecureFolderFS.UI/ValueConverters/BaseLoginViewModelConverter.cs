@@ -2,7 +2,7 @@ using System;
 
 namespace SecureFolderFS.UI.ValueConverters
 {
-    public abstract class BaseLoginViewModelBoolConverter : BaseConverter
+    public abstract class BaseLoginViewModelConverter : BaseConverter
     {
         /// <inheritdoc/>
         protected override object? TryConvert(object? value, Type targetType, object? parameter)

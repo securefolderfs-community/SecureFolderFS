@@ -12,6 +12,8 @@
 
     <Page.Resources>
         <vc:LoginViewModelBoolConverter x:Key="LoginViewModelBoolConverter" />
+        <vc:LoginViewModelVisibilityConverter x:Key="LoginViewModelVisibilityConverter" />
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
     <ScrollViewer>
@@ -49,23 +51,27 @@
                 <!--  Login  -->
                 <StackPanel Spacing="8">
                     <uc:LoginControl CurrentViewModel="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay}" ProvideContinuationButton="True" />
+
+                    <!--  TODO(uno): #18589  -->
                     <HyperlinkButton
                         x:Name="LoginOptions"
                         Padding="4,2"
                         HorizontalAlignment="Center"
-                        x:Load="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
                         Click="LoginOptions_Click"
-                        Content="{l:ResourceString Name=LoginOptions}">
+                        Content="{l:ResourceString Name=LoginOptions}"
+                        Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}">
                         <FlyoutBase.AttachedFlyout>
                             <Flyout>
                                 <StackPanel Spacing="4">
                                     <CheckBox Content="Unlock as read-only" IsEnabled="False" />
                                     <CheckBox Content="Save credentials" IsEnabled="False" />
+
+                                    <!--  TODO(uno): #18589  -->
                                     <Button
                                         x:Name="RestartProcessButton"
-                                        x:Load="{x:Bind ViewModel.LoginViewModel.IsLoginSequence, Mode=OneWay}"
                                         Command="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
-                                        Content="{l:ResourceString Name=RestartLogin}" />
+                                        Content="{l:ResourceString Name=RestartLogin}"
+                                        Visibility="{x:Bind ViewModel.LoginViewModel.IsLoginSequence, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                     <Button
                                         HorizontalAlignment="Stretch"
                                         Command="{x:Bind ViewModel.BeginRecoveryCommand, Mode=OneWay}"

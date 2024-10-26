@@ -18,6 +18,7 @@
 
     <ContentDialog.Resources>
         <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </ContentDialog.Resources>
 
     <Grid>
@@ -26,11 +27,11 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <!--  TODO(uno): #18589  -->
         <Grid
-            x:Name="ChangelogPanel"
             Grid.Row="0"
-            x:Load="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}"
-            RowSpacing="8">
+            RowSpacing="8"
+            Visibility="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter='invert'}">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
@@ -69,11 +70,12 @@
             </HyperlinkButton>
         </Grid>
 
+        <!--  TODO(uno): #18589  -->
         <StackPanel
             x:Name="ErrorPanel"
             Grid.Row="0"
             HorizontalAlignment="Center"
-            x:Load="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
+            Visibility="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
             <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Name=ChangelogError}" />
             <TextBlock
                 HorizontalAlignment="Center"
