@@ -1,23 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Threading.Tasks;
-using OwlCore.Storage.Memory;
-using SecureFolderFS.Core.WebDav;
-using SecureFolderFS.Uno.Helpers;
 using NWebDav.Server.Dispatching;
+using SecureFolderFS.Core.WebDav;
+using SecureFolderFS.Storage.VirtualFileSystem;
+
+#if __MACCATALYST__
+using System.Diagnostics;
+using OwlCore.Storage.Memory;
+using SecureFolderFS.Uno.Helpers;
+#endif
 
 namespace SecureFolderFS.Uno.Platforms.Desktop
 {
     /// <inheritdoc cref="IFileSystem"/>
-    internal sealed partial class MacOsWebDavFileSystem
+    internal sealed partial class MacOsWebDavFileSystem : WebDavFileSystem
     {
-#if HAS_UNO_SKIA && __MACCATALYST__
         /// <inheritdoc/>
         protected override async Task<IVFSRoot> MountAsync(
             int port,
@@ -28,6 +26,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             IRequestDispatcher requestDispatcher,
             CancellationToken cancellationToken)
         {
+#if __MACCATALYST__
             var remotePath = DriveMappingHelpers.GetRemotePath(protocol, "localhost", port, options.VolumeName);
             var mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
 
@@ -40,7 +39,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
 
             // TODO: Currently using MemoryFolder because the check in SystemFolder might sometimes fail
             return new WebDavRootFolder(webDavWrapper, new MemoryFolder(remotePath, options.VolumeName), options);
+#else
+            throw new PlatformNotSupportedException();
+#endif
         }
     }
-#endif
 }
