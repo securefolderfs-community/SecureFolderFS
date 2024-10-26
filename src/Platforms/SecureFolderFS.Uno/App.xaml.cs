@@ -137,7 +137,6 @@ namespace SecureFolderFS.Uno
 
             // TODO: Temporary, set starting size on Windows (until window position store is implemented)
             window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
-
 #else
             global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
 #endif
