@@ -3,30 +3,26 @@ using NWebDav.Server.Http;
 using NWebDav.Server.Locking;
 using NWebDav.Server.Props;
 using NWebDav.Server.Stores;
-using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Paths;
-using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
     internal class EncryptingDiskStoreItem : IDiskStoreItem
     {
         private readonly FileSystemSpecifics _specifics;
-        private readonly IPathConverter _pathConverter;
         private readonly FileInfo _fileInfo;
 
-        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, FileSystemSpecifics specifics, IPathConverter pathConverter)
+        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, FileSystemSpecifics specifics)
         {
             LockingManager = lockingManager;
             IsWritable = isWritable;
             _fileInfo = fileInfo;
             _specifics = specifics;
-            _pathConverter = pathConverter;
         }
 
         public static PropertyManager<EncryptingDiskStoreItem> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreItem>[]
@@ -122,9 +118,9 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         });
 
         public bool IsWritable { get; }
-        public string Name => _pathConverter.GetCleartextFileName(_fileInfo.FullName) ?? string.Empty;
+        public string Name => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
         public string UniqueKey => _fileInfo.FullName;
-        public string FullPath => _pathConverter.ToCleartext(_fileInfo.FullName) ?? string.Empty;
+        public string FullPath => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
         public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
         public Task<Stream> GetWritableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
 
@@ -165,7 +161,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     if (!diskCollection.IsWritable)
                         return new StoreItemResult(HttpStatusCode.Forbidden);
 
-                    var destinationPath = _pathConverter.ToCiphertext(Path.Combine(diskCollection.FullPath, name));
+                    var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(diskCollection.FullPath, name), _specifics);
 
                     // Check if the file already exists
                     var fileExists = File.Exists(destinationPath);

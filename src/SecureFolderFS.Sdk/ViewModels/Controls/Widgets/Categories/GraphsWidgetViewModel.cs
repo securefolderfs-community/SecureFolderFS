@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
     [Bindable(true)]
     public sealed partial class GraphsWidgetViewModel : BaseWidgetViewModel
     {
-        private readonly IReadWriteStatistics _readWriteStatistics;
+        private readonly IFileSystemStatistics _readWriteStatistics;
         private readonly PeriodicTimer _periodicTimer;
         private readonly List<long> _readRates;
         private readonly List<long> _writeRates;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         [ObservableProperty] private GraphControlViewModel _WriteGraphViewModel;
         public bool IsActive { get; set; }
 
-        public GraphsWidgetViewModel(IReadWriteStatistics readWriteStatistics, IWidgetModel widgetModel)
+        public GraphsWidgetViewModel(IFileSystemStatistics readWriteStatistics, IWidgetModel widgetModel)
             : base(widgetModel)
         {
             ReadGraphViewModel = new();

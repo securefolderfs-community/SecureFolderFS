@@ -1,6 +1,6 @@
 ﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
         }
 
         /// <inheritdoc/>
-        public override string GetCleartextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
+        public override string GetPlaintextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
             string cleartextName;
             string stringCiphertext = ciphertextName.ToString();
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
                     statistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
 
                     // Get new cleartext name
-                    var newCleartextName = base.GetCleartextName(ciphertextName, directoryId);
+                    var newCleartextName = base.GetPlaintextName(ciphertextName, directoryId);
                     if (newCleartextName == string.Empty)
                         return string.Empty;
 

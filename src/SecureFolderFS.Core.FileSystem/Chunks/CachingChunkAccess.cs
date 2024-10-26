@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography.ContentCrypt;
 using SecureFolderFS.Core.FileSystem.Buffers;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;

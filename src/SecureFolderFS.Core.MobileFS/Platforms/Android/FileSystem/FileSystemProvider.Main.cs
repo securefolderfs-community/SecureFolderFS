@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                     return null;
 
                 row.Add(Root.ColumnRootId, item.RootId);
-                row.Add(Root.ColumnIcon, Constants.AndroidSaf.IC_LOCK_LOCK);
+                row.Add(Root.ColumnIcon, Constants.Android.Saf.IC_LOCK_LOCK);
                 row.Add(Root.ColumnTitle, item.StorageRoot.StorageName);
                 row.Add(Root.ColumnDocumentId, GetDocumentIdForStorable(item.StorageRoot.Inner, item.RootId));
                 row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));

@@ -6,7 +6,7 @@ using NWebDav.Server.Props;
 using NWebDav.Server.Stores;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,15 +23,13 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         private static readonly XElement s_xDavCollection = new XElement(WebDavNamespaces.DavNs + "collection");
         private readonly DirectoryInfo _directoryInfo;
         private readonly FileSystemSpecifics _specifics;
-        private readonly IPathConverter _pathConverter;
 
-        public EncryptingDiskStoreCollection(ILockingManager lockingManager, DirectoryInfo directoryInfo, bool isWritable, FileSystemSpecifics specifics, IPathConverter pathConverter)
+        public EncryptingDiskStoreCollection(ILockingManager lockingManager, DirectoryInfo directoryInfo, bool isWritable, FileSystemSpecifics specifics)
         {
             LockingManager = lockingManager;
             _directoryInfo = directoryInfo;
             IsWritable = isWritable;
             _specifics = specifics;
-            _pathConverter = pathConverter;
         }
 
         public static PropertyManager<EncryptingDiskStoreCollection> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreCollection>[]
@@ -154,9 +152,9 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         });
 
         public bool IsWritable { get; }
-        public string Name => _pathConverter.GetCleartextFileName(_directoryInfo.FullName) ?? string.Empty;
+        public string Name => NativePathHelpers.GetPlaintextPath(_directoryInfo.FullName, _specifics) ?? string.Empty;
         public string UniqueKey => _directoryInfo.FullName;
-        public string FullPath => _pathConverter.ToCleartext(_directoryInfo.FullName) ?? string.Empty;
+        public string FullPath => NativePathHelpers.GetPlaintextPath(_directoryInfo.FullName, _specifics) ?? string.Empty;
 
         // Disk collections (a.k.a. directories don't have their own data)
         public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult((Stream)null);
@@ -168,15 +166,15 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public Task<IStoreItem> GetItemAsync(string name, IHttpContext context)
         {
             // Determine the full path
-            var fullPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
+            var fullPath = NativePathHelpers.GetCiphertextPath(Path.Combine(FullPath, name), _specifics);
 
             // Check if the item is a file
             if (File.Exists(fullPath))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreItem(LockingManager, new FileInfo(fullPath), IsWritable, _specifics, _pathConverter));
+                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreItem(LockingManager, new FileInfo(fullPath), IsWritable, _specifics));
 
             // Check if the item is a directory
             if (Directory.Exists(fullPath))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(fullPath), IsWritable, _specifics, _pathConverter));
+                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(fullPath), IsWritable, _specifics));
 
             // Item not found
             return Task.FromResult<IStoreItem>(null);
@@ -192,7 +190,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     if (PathHelpers.IsCoreFile(subDirectory.Name))
                         continue;
 
-                    yield return new EncryptingDiskStoreCollection(LockingManager, subDirectory, IsWritable, _specifics, _pathConverter);
+                    yield return new EncryptingDiskStoreCollection(LockingManager, subDirectory, IsWritable, _specifics);
                 }
 
                 // Add all files
@@ -201,7 +199,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     if (PathHelpers.IsCoreFile(file.Name))
                         continue;
 
-                    yield return new EncryptingDiskStoreItem(LockingManager, file, IsWritable, _specifics, _pathConverter);
+                    yield return new EncryptingDiskStoreItem(LockingManager, file, IsWritable, _specifics);
                 }
             }
 
@@ -215,7 +213,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 return Task.FromResult(new StoreItemResult(HttpStatusCode.Forbidden));
 
             // Determine the destination path
-            var destinationPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
+            var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(FullPath, name), _specifics);
 
             // Determine result
             HttpStatusCode result;
@@ -247,7 +245,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             }
 
             // Return result
-            return Task.FromResult(new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _specifics, _pathConverter)));
+            return Task.FromResult(new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _specifics)));
         }
 
         public Task<StoreCollectionResult> CreateCollectionAsync(string name, bool overwrite, IHttpContext context)
@@ -257,7 +255,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 return Task.FromResult(new StoreCollectionResult(HttpStatusCode.Forbidden));
 
             // Determine the destination path
-            var destinationPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
+            var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(FullPath, name), _specifics);
 
             // Check if the directory can be overwritten
             HttpStatusCode result;
@@ -301,7 +299,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             }
 
             // Return the collection
-            return Task.FromResult(new StoreCollectionResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _specifics, _pathConverter)));
+            return Task.FromResult(new StoreCollectionResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _specifics)));
         }
 
         public async Task<StoreItemResult> CopyAsync(IStoreCollection destinationCollection, string name, bool overwrite, IHttpContext context)
@@ -338,8 +336,8 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                         return new StoreItemResult(HttpStatusCode.Forbidden);
 
                     // Determine source and destination paths
-                    var sourcePath = _pathConverter.ToCiphertext(Path.Combine(FullPath, sourceName));
-                    var destinationPath = _pathConverter.ToCiphertext(Path.Combine(destinationDiskStoreCollection.FullPath, destinationName));
+                    var sourcePath = NativePathHelpers.GetCiphertextPath(Path.Combine(FullPath, sourceName), _specifics);
+                    var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(destinationDiskStoreCollection.FullPath, destinationName), _specifics);
 
                     // Check if the file already exists
                     HttpStatusCode result;
@@ -374,12 +372,12 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                         case EncryptingDiskStoreItem _:
                             // Move the file
                             File.Move(sourcePath, destinationPath);
-                            return new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _specifics, _pathConverter));
+                            return new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _specifics));
 
                         case EncryptingDiskStoreCollection _:
                             // Move the directory
                             Directory.Move(sourcePath, destinationPath);
-                            return new StoreItemResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _specifics, _pathConverter));
+                            return new StoreItemResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _specifics));
 
                         default:
                             // Invalid item
@@ -411,7 +409,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 return Task.FromResult(HttpStatusCode.Forbidden);
 
             // Determine the full path
-            var fullPath = _pathConverter.ToCiphertext(Path.Combine(FullPath, name));
+            var fullPath = NativePathHelpers.GetCiphertextPath(Path.Combine(FullPath, name), _specifics);
             try
             {
                 // Check if the file exists

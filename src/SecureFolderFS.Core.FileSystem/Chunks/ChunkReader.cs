@@ -1,9 +1,9 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Buffers;
 using System.Diagnostics;

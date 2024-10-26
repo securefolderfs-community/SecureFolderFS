@@ -68,7 +68,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
 
             InfoBarViewModel.IsOpen = true;
             InfoBarViewModel.Title = "Error".ToLocalized();
-            InfoBarViewModel.CanBeClosed = true;
+            InfoBarViewModel.IsCloseable = true;
             InfoBarViewModel.Message = GetMessageForUpdateState(args.UpdateState);
             InfoBarViewModel.Severity = ViewSeverityType.Error;
         }
@@ -91,7 +91,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             {
                 InfoBarViewModel.IsOpen = true;
                 InfoBarViewModel.Title = "Error".ToLocalized();
-                InfoBarViewModel.CanBeClosed = true;
+                InfoBarViewModel.IsCloseable = true;
                 InfoBarViewModel.Message = result.GetMessage();
                 InfoBarViewModel.Severity = ViewSeverityType.Error;
             }

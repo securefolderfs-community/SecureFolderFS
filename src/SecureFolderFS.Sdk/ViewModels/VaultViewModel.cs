@@ -1,17 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Storage.Extensions;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
-    [Inject<IVaultManagerService>]
+    [Inject<IVaultFileSystemService>, Inject<IVaultService>]
     [Bindable(true)]
     public sealed partial class VaultViewModel : ObservableObject
     {
@@ -30,8 +32,13 @@ namespace SecureFolderFS.Sdk.ViewModels
 
         public async Task<UnlockedVaultViewModel> UnlockAsync(IDisposable unlockContract)
         {
+            // Get the file system
+            var fileSystem = await VaultFileSystemService.GetBestFileSystemAsync();
+            var vaultOptions = VaultFileSystemService.GetFileSystemOptions(VaultModel, fileSystem.Id);
+
             // Create the storage layer
-            var storageRoot = await VaultManagerService.CreateFileSystemAsync(VaultModel, unlockContract, default);
+            var contentFolder = await VaultModel.Folder.GetFolderByNameAsync(VaultService.ContentFolderName);
+            var storageRoot = await fileSystem.MountAsync(contentFolder, unlockContract, vaultOptions);
 
             // Update last access date
             await VaultModel.SetLastAccessDateAsync(DateTime.Now);

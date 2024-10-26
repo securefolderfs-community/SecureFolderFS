@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    [Inject<IVaultManagerService>]
+    [Inject<IVaultService>]
     public sealed partial class MigrationOverlayViewModel : OverlayViewModel, IProgress<double>, IProgress<IResult>, INotifyStateChanged, IAsyncInitialize, IDisposable
     {
         private IDisposable? _unlockContract;
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            _vaultMigrator = await VaultManagerService.GetMigratorAsync(MigrationViewModel.VaultFolder, cancellationToken);
+            _vaultMigrator = await VaultService.GetMigratorAsync(MigrationViewModel.VaultFolder, cancellationToken);
         }
 
         /// <inheritdoc/>

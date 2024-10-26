@@ -20,7 +20,7 @@ using System.Windows.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IVaultService>, Inject<IVaultManagerService>]
+    [Inject<IVaultService>, Inject<IVaultManagerService>, Inject<IVaultCredentialsService>]
     [Bindable(true)]
     public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
@@ -68,7 +68,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (validationResult.Successful)
             {
                 // Get the authentication method enumerator for this vault
-                _loginSequence = new(await VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken));
+                _loginSequence = new(await VaultCredentialsService.GetLoginAsync(_vaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken));
                 IsLoginSequence = _loginSequence.Count > 1;
 
                 // Set up the first authentication method

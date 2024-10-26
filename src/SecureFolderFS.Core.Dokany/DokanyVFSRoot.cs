@@ -1,7 +1,5 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Threading.Tasks;
 
@@ -14,7 +12,7 @@ namespace SecureFolderFS.Core.Dokany
         private bool _disposed;
 
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = Constants.FILE_SYSTEM_NAME;
+        public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
         public DokanyVFSRoot(DokanyWrapper dokanyWrapper, IFolder storageRoot, FileSystemOptions options)
             : base(storageRoot, options)
@@ -28,7 +26,7 @@ namespace SecureFolderFS.Core.Dokany
             if (_disposed)
                 return;
          
-            _disposed = await Task.Run(() => _dokanyWrapper.CloseFileSystem(FileSystemCloseMethod.CloseForcefully));
+            _disposed = await Task.Run(_dokanyWrapper.CloseFileSystem);
             if (_disposed)
                 FileSystemManager.Instance.RemoveRoot(this);
         }

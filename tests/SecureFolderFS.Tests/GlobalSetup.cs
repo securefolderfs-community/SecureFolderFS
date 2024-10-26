@@ -28,9 +28,11 @@ namespace SecureFolderFS.Tests
                 // Singleton services
                 .AddSingleton<IVaultPersistenceService, VaultPersistenceService>(_ => new(settingsFolder))
                 .AddSingleton<IChangelogService, GitHubChangelogService>()
-                .AddSingleton<IVaultService, MockVaultService>()
+                .AddSingleton<IVaultService, VaultService>()
                 //.AddSingleton<IApplicationService, MockApplicationService>()
-                .AddSingleton<IVaultManagerService, MockVaultManagerService>()
+                .AddSingleton<IVaultManagerService, VaultManagerService>()
+                .AddSingleton<IVaultFileSystemService, MockVaultFileSystemService>()
+                .AddSingleton<IVaultCredentialsService, MockVaultCredentialsService>()
                 .AddSingleton<ITelemetryService, DebugTelemetryService>()
                 .AddSingleton<IIapService, DebugIapService>()
                 .AddSingleton<IUpdateService, DebugUpdateService>()

@@ -64,7 +64,7 @@
                 <!--  Version InfoBar  -->
                 <InfoBar
                     Title="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Title, Mode=OneWay}"
-                    IsClosable="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.CanBeClosed, Mode=OneWay}"
+                    IsClosable="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsCloseable, Mode=OneWay}"
                     IsOpen="True"
                     Message="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Message, Mode=OneWay}"
                     Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
@@ -108,7 +108,6 @@
                     </ucab:ActionBlockControl.Icon>
                     <ucab:ActionBlockControl.ActionElement>
                         <ComboBox
-                            x:Name="AppLanguageComboBox"
                             AutomationProperties.Name="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
                             ItemsSource="{x:Bind ViewModel.Languages, Mode=OneWay}"
                             SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">

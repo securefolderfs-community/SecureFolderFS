@@ -7,10 +7,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Settings;
 using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.UI.UserControls.InfoBars;
+using SecureFolderFS.Storage.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -65,50 +64,44 @@ namespace SecureFolderFS.Uno.Views.Settings
             if (ViewModel is null)
                 return;
 
-            var fileSystemAdapter = ViewModel.BannerViewModel.SelectedItem?.FileSystemInfoModel;
-            if (fileSystemAdapter is null)
+            var fileSystem = ViewModel.BannerViewModel.SelectedItem?.FileSystem;
+            if (fileSystem is null)
                 return;
 
-            var adapterResult = await fileSystemAdapter.GetStatusAsync(cancellationToken);
-            if (fileSystemAdapter.Id == Core.Constants.FileSystemId.FS_WEBDAV)
+            if (fileSystem.Id == Core.WebDav.Constants.FileSystem.FS_ID)
             {
-                FileSystemInfoBar = new WebDavInfoBar();
-                FileSystemInfoBar.IsOpen = true;
-                FileSystemInfoBar.Severity = ViewSeverityType.Warning;
-                FileSystemInfoBar.CanBeClosed = false;
+                ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
+                ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
+                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = ViewSeverityType.Warning;
+                ViewModel.BannerViewModel.FileSystemInfoBar.Message = "WebDav is experimental. You may encounter bugs and stability issues. We recommend backing up your data before using WebDav.";
             }
-            else switch (adapterResult.Successful)
+            else
             {
-                case true when FileSystemInfoBar is not null:
-                    FileSystemInfoBar.IsOpen = false;
-                    break;
-
-                case false:
+                var fileSystemResult = await fileSystem.GetStatusAsync(cancellationToken);
+                if (fileSystemResult == FileSystemAvailability.Available)
                 {
-                    FileSystemInfoBar = fileSystemAdapter.Id switch
-                    {
-                        Core.Constants.FileSystemId.FS_DOKAN => new DokanyInfoBar(),
-                        _ => null
-                    };
-                    if (FileSystemInfoBar is null)
-                        return;
-
-                    await Task.Delay(800, cancellationToken);
-                    FileSystemInfoBar.IsOpen = true;
-                    FileSystemInfoBar.Severity = ViewSeverityType.Error;
-                    FileSystemInfoBar.CanBeClosed = false;
-                    FileSystemInfoBar.Message = adapterResult.GetMessage("Invalid state.");
-
-                    break;
+                    ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = false;
+                    return;
                 }
-            }
 
-            IsInfoBarOpen = FileSystemInfoBar?.IsOpen ?? false;
+                ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
+                ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
+                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = ViewSeverityType.Error;
+                ViewModel.BannerViewModel.FileSystemInfoBar.Message = fileSystemResult switch
+                {
+                    FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "Dokany has not been detected. Please install Dokany (v2.0.5) to continue using SecureFolderFS.",
+                    FileSystemAvailability.VersionTooLow => "The installed version of Dokany is outdated. Please update Dokany to the match requested version. (v2.0.5)",
+                    FileSystemAvailability.VersionTooHigh => "The installed version of Dokany is not compatible with SecureFolderFS version. Please install requested version of Dokany. (v2.0.5)",
+                    _ => "SecureFolderFS cannot work with this version. Please install the required version of Dokany. (v2.0.5)"
+                };
+            }
         }
 
         private void Root_Loaded(object sender, RoutedEventArgs e)
         {
             _ = AddTransitionsAsync();
+            return;
+
             async Task AddTransitionsAsync()
             {
                 // Await a short delay for page navigation transition to complete and set ReorderThemeTransition to animate items when layout changes.
@@ -116,21 +109,5 @@ namespace SecureFolderFS.Uno.Views.Settings
                 (sender as Panel)?.ChildrenTransitions?.Add(new ReorderThemeTransition());
             }
         }
-
-        public InfoBarViewModel? FileSystemInfoBar
-        {
-            get => (InfoBarViewModel?)GetValue(FileSystemInfoBarProperty);
-            set => SetValue(FileSystemInfoBarProperty, value);
-        }
-        public static readonly DependencyProperty FileSystemInfoBarProperty =
-            DependencyProperty.Register(nameof(FileSystemInfoBar), typeof(InfoBarViewModel), typeof(PreferencesSettingsPage), new PropertyMetadata(defaultValue: null));
-
-        public bool IsInfoBarOpen
-        {
-            get => (bool)GetValue(IsInfoBarOpenProperty);
-            set => SetValue(IsInfoBarOpenProperty, value);
-        }
-        public static readonly DependencyProperty IsInfoBarOpenProperty =
-            DependencyProperty.Register(nameof(IsInfoBarOpen), typeof(bool), typeof(PreferencesSettingsPage), new PropertyMetadata(defaultValue: false));
     }
 }

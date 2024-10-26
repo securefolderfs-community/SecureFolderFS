@@ -1,6 +1,5 @@
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
@@ -11,7 +10,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.iOS
         private bool _disposed;
         
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = Constants.IOS_FILE_SYSTEM_NAME;
+        public override string FileSystemName { get; } = Constants.IOS.FileSystem.FS_NAME;
 
         public IOSVFSRoot(IFolder storageRoot, FileSystemOptions options)
             : base(storageRoot, options)

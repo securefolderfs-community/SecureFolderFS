@@ -12,16 +12,8 @@ namespace SecureFolderFS.Uno.ValueConverters
             if (value is not bool bValue)
                 return false;
 
-            if (parameter is string strParam && strParam.ToLower() == "invert")
-            {
-                if (value is string str1)
-                    return string.IsNullOrEmpty(str1) ? Visibility.Visible : Visibility.Collapsed;
-
-                return bValue ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            if (value is string str)
-                return !string.IsNullOrEmpty(str) ? Visibility.Visible : Visibility.Collapsed;
+            var invert = parameter is string strParam && strParam.ToLower() == "invert";
+            bValue = invert ? !bValue : bValue;
 
             return bValue ? Visibility.Visible : Visibility.Collapsed;
         }

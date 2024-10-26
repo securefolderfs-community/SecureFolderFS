@@ -1,4 +1,3 @@
-using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
 using Tmds.Fuse;
@@ -15,7 +14,7 @@ namespace SecureFolderFS.Core.FUSE
             _fuseCallbacks = fuseCallbacks;
         }
 
-        public void StartFileSystem(string mountPoint, FuseMountOptions mountOptions)
+        public void StartFileSystem(string mountPoint, FuseOptions mountOptions)
         {
             var rawOptions = "default_permissions";
             if (mountOptions.AllowOtherUserAccess)
@@ -37,12 +36,12 @@ namespace SecureFolderFS.Core.FUSE
             });
         }
 
-        public Task<bool> CloseFileSystemAsync(FileSystemCloseMethod closeMethod)
+        public Task<bool> CloseFileSystemAsync()
         {
             if (_fuseMount == null)
                 throw new InvalidOperationException("The filesystem has not been started.");
 
-            return _fuseMount.UnmountAsync(force: closeMethod == FileSystemCloseMethod.CloseForcefully);
+            return _fuseMount.UnmountAsync(force: true);
         }
     }
 }

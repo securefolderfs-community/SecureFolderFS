@@ -16,7 +16,7 @@ namespace SecureFolderFS.Tests.ServiceTests
         {
             // Arrange
             var v1VaultFolder = await MockVaultHelpers.CreateVaultV1Async();
-            var service = DI.Service<IVaultManagerService>();
+            var service = DI.Service<IVaultService>();
 
             // Act
             var migrator = await service.GetMigratorAsync(v1VaultFolder);

@@ -1,8 +1,7 @@
-﻿using System;
-using NWebDav.Server.Dispatching;
+﻿using NWebDav.Server.Dispatching;
 using NWebDav.Server.HttpListener;
-using SecureFolderFS.Core.FileSystem.Enums;
 using SecureFolderFS.Core.WebDav.Helpers;
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav
 {
-    internal sealed class WebDavWrapper
+    public sealed class WebDavWrapper
     {
         private Thread? _fsThead;
         private readonly HttpListener _httpListener;
@@ -54,9 +53,8 @@ namespace SecureFolderFS.Core.WebDav
             }
         }
 
-        public async Task<bool> CloseFileSystemAsync(FileSystemCloseMethod closeMethod)
+        public async Task<bool> CloseFileSystemAsync()
         {
-            _ = closeMethod; // TODO: Implement close method
             _httpListener.Close();
             await _fileSystemCts.CancelAsync();
 

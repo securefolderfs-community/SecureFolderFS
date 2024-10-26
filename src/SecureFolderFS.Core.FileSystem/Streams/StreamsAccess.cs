@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.CryptFiles;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
-using SecureFolderFS.Core.FileSystem.Statistics;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
 

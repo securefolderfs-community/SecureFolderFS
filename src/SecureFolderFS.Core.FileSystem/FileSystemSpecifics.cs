@@ -1,10 +1,10 @@
-﻿using System;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Core.FileSystem.FileNames;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
 
 namespace SecureFolderFS.Core.FileSystem
 {

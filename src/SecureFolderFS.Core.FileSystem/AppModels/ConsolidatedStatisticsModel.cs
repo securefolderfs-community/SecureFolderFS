@@ -1,5 +1,5 @@
-﻿using SecureFolderFS.Core.FileSystem.Statistics;
-using SecureFolderFS.Shared.Enums;
+﻿using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 
 namespace SecureFolderFS.Core.FileSystem.AppModels

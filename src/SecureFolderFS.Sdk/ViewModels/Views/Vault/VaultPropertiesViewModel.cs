@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
-    [Inject<IOverlayService>, Inject<IVaultService>]
+    [Inject<IOverlayService>, Inject<IVaultService>, Inject<IVaultCredentialsService>]
     [Bindable(true)]
     public sealed partial class VaultPropertiesViewModel : BaseDashboardViewModel
     {
@@ -69,7 +69,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
         {
-            var items = await VaultService.GetLoginAsync(UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken);
+            var items = await VaultCredentialsService.GetLoginAsync(UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken);
             SecurityText = string.Join(" + ", items.Select(x => x.DisplayName));
         }
     }

@@ -1,18 +1,18 @@
-using System;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 using ByteSizeLib;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
     [Bindable(true)]
     public sealed partial class AggregatedDataWidgetViewModel : BaseWidgetViewModel
     {
-        private readonly IReadWriteStatistics _readWriteStatistics;
+        private readonly IFileSystemStatistics _readWriteStatistics;
         private readonly PeriodicTimer _periodicTimer;
         private ByteSize _bytesRead;
         private ByteSize _bytesWritten;
@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         [ObservableProperty] private string? _TotalRead;
         [ObservableProperty] private string? _TotalWrite;
         
-        public AggregatedDataWidgetViewModel(IReadWriteStatistics readWriteStatistics, IWidgetModel widgetModel)
+        public AggregatedDataWidgetViewModel(IFileSystemStatistics readWriteStatistics, IWidgetModel widgetModel)
             : base(widgetModel)
         {
             _readWriteStatistics = readWriteStatistics;

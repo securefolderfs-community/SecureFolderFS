@@ -61,7 +61,6 @@ namespace SecureFolderFS.Core
 
         public static class FileSystemId
         {
-            public const string FS_DOKAN = "DOKANY";
             public const string FS_FUSE = "FUSE";
             public const string FS_WEBDAV = "WEBDAV";
             public const string FS_ANDROID = "ANDROID_DOCUMENTS_PROVIDER";

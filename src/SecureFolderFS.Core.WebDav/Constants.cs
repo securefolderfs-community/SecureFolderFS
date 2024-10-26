@@ -2,7 +2,11 @@
 {
     public static class Constants
     {
-        public const string FILE_SYSTEM_NAME = "WebDav";
+        public static class FileSystem
+        {
+            public const string FS_ID = "WEBDAV";
+            public const string FS_NAME = "WebDav";
+        }
 
         internal static class Headers
         {

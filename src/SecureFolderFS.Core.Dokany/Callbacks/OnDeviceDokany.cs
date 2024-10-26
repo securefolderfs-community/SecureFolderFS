@@ -109,8 +109,8 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var pathExists = true;
                 var pathIsDirectory = false;
 
-                var readWriteAttributes = (access & Constants.FileSystem.DATA_ACCESS) == 0;
-                var readAccess = (access & Constants.FileSystem.DATA_WRITE_ACCESS) == 0;
+                var readWriteAttributes = (access & Constants.Dokan.DATA_ACCESS) == 0;
+                var readAccess = (access & Constants.Dokan.DATA_WRITE_ACCESS) == 0;
 
                 try
                 {
@@ -308,7 +308,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         /// <inheritdoc/>
         public override NtStatus GetDiskFreeSpace(out long freeBytesAvailable, out long totalNumberOfBytes, out long totalNumberOfFreeBytes, IDokanFileInfo info)
         {
-            if (_vaultDriveInfo is null && _vaultDriveInfoTries < Constants.FileSystem.MAX_DRIVE_INFO_CALLS_UNTIL_GIVE_UP)
+            if (_vaultDriveInfo is null && _vaultDriveInfoTries < Constants.Dokan.MAX_DRIVE_INFO_CALLS_UNTIL_GIVE_UP)
             {
                 _vaultDriveInfoTries++;
                 _vaultDriveInfo ??= DriveInfo.GetDrives().SingleOrDefault(di => 

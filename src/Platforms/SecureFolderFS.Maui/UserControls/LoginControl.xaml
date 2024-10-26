@@ -88,13 +88,13 @@
                     <Label
                         FontSize="17"
                         HorizontalOptions="Center"
-                        Text="Vault could not be loaded" />
+                        Text="{l:ResourceString Name=VaultLoadError}" />
                     <Label
                         FontSize="12"
                         HorizontalOptions="Center"
                         HorizontalTextAlignment="Center"
                         Opacity="0.6"
-                        Text="{Binding ErrorMessage, Mode=OneWay}" />
+                        Text="{Binding Message, Mode=OneWay}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>

@@ -1,7 +1,6 @@
 ﻿using DokanNet;
 using DokanNet.Logging;
 using SecureFolderFS.Core.Dokany.Callbacks;
-using SecureFolderFS.Core.FileSystem.Enums;
 
 namespace SecureFolderFS.Core.Dokany
 {
@@ -30,9 +29,8 @@ namespace SecureFolderFS.Core.Dokany
             _dokanInstance = dokanBuilder.Build(_dokanCallbacks);
         }
 
-        public bool CloseFileSystem(FileSystemCloseMethod closeMethod)
+        public bool CloseFileSystem()
         {
-            _ = closeMethod; // TODO: Implement close method
             _dokanInstance?.Dispose();
             _dokanCallbacks.Dispose();
 

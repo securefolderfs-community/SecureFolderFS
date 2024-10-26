@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    [Inject<IVaultService>]
+    [Inject<IVaultService>, Inject<IVaultCredentialsService>]
     public sealed partial class CredentialsOverlayViewModel : OverlayViewModel, IAsyncInitialize, IDisposable
     {
         private readonly KeyChain _keyChain;
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var loginMethods = VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken);
+            var loginMethods = VaultCredentialsService.GetLoginAsync(_vaultModel.Folder, cancellationToken);
             SelectionViewModel.ConfiguredViewModel = _authenticationStage switch
             {
                 AuthenticationType.FirstStageOnly => await loginMethods.FirstOrDefaultAsync(cancellationToken),

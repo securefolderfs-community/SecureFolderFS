@@ -6,8 +6,10 @@ using System.ComponentModel;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
 {
     [Bindable(true)]
-    public abstract class ReportableViewModel : ObservableObject, IProgress<IResult?>, INotifyStateChanged
+    public abstract partial class ReportableViewModel : ObservableObject, IViewable, IProgress<IResult?>, INotifyStateChanged
     {
+        [ObservableProperty] private string? _Title;
+
         /// <inheritdoc/>
         public abstract event EventHandler<EventArgs>? StateChanged;
 

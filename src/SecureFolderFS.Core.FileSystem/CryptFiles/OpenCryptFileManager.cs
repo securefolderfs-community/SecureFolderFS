@@ -2,10 +2,10 @@
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.CryptFiles;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 

@@ -1,6 +1,5 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
@@ -11,7 +10,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         private bool _disposed;
 
         /// <inheritdoc/>
-        public override string FileSystemName { get; } = Constants.ANDROID_FILE_SYSTEM_NAME;
+        public override string FileSystemName { get; } = Constants.Android.FileSystem.FS_NAME;
 
         public AndroidVFSRoot(IFolder storageRoot, FileSystemOptions options)
             : base(storageRoot, options)

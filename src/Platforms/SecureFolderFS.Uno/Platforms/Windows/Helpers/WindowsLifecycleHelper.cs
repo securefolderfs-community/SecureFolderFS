@@ -26,7 +26,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
     {
         /// <inheritdoc/>
         protected override string AppDirectory { get; } =
-#if UNPACKAGED || HAS_UNO_SKIA
+#if WINAPPSDK_PACKAGED
             Directory.GetCurrentDirectory();
 #else
             ApplicationData.Current.LocalFolder.Path;
@@ -69,11 +69,11 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         protected override IServiceCollection ConfigureServices(IModifiableFolder settingsFolder)
         {
             return base.ConfigureServices(settingsFolder)
-                .AddSingleton<IVaultService, WindowsVaultService>()
                 .AddSingleton<ISystemService, WindowsSystemService>()
                 .AddSingleton<IPrinterService, WindowsPrinterService>()
-                .AddSingleton<IVaultManagerService, WindowsVaultManagerService>()
                 .AddSingleton<IApplicationService, WindowsApplicationService>()
+                .AddSingleton<IVaultFileSystemService, WindowsVaultFileSystemService>()
+                .AddSingleton<IVaultCredentialsService, WindowsVaultCredentialsService>()
 
                 // ITelemetryService
 #if DEBUG

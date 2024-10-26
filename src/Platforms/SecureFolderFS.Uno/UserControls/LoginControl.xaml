@@ -151,15 +151,15 @@
                 <TextBlock
                     x:Name="ErrorTitle"
                     HorizontalAlignment="Center"
-                    x:Load="{x:Bind ErrorTitle, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
+                    x:Load="{x:Bind Title, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                     FontSize="20"
                     FontWeight="SemiBold"
-                    Text="{x:Bind ErrorTitle, Mode=OneWay}" />
+                    Text="{x:Bind Title, Mode=OneWay}" />
 
                 <Expander
                     x:Name="ErrorDetails"
                     Width="600"
-                    x:Load="{x:Bind ErrorMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
+                    x:Load="{x:Bind Message, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
                     <Expander.Header>
                         <TextBlock Text="{l:ResourceString Name=ErrorDetails}" />
                     </Expander.Header>
@@ -175,7 +175,7 @@
                             HorizontalTextAlignment="Center"
                             IsTextSelectionEnabled="True"
                             Opacity="0.8"
-                            Text="{x:Bind ErrorMessage, Mode=OneWay}"
+                            Text="{x:Bind Message, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </ScrollViewer>
                 </Expander>

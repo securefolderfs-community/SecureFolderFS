@@ -20,8 +20,8 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         string FileSystemName { get; }
 
         /// <summary>
-        /// Gets the instance of <see cref="IReadWriteStatistics"/> which is used to report the read-write statistics for this storage root.
+        /// Gets the instance of <see cref="IFileSystemStatistics"/> which is used to report the read-write statistics for this storage root.
         /// </summary>
-        IReadWriteStatistics ReadWriteStatistics { get; }
+        IFileSystemStatistics ReadWriteStatistics { get; }
     }
 }

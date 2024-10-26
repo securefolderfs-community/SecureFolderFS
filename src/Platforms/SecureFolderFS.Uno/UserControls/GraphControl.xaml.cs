@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LiveChartsCore;
 using LiveChartsCore.Drawing;
@@ -96,13 +96,13 @@ namespace SecureFolderFS.Uno.UserControls
             Click?.Invoke(sender, e);
         }
 
-        public ICollection? Data
+        public ICollection<double>? Data
         {
-            get => (ICollection?)GetValue(DataProperty);
+            get => (ICollection<double>?)GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register(nameof(Data), typeof(ICollection), typeof(GraphControl), new PropertyMetadata(defaultValue: null));
+            DependencyProperty.Register(nameof(Data), typeof(ICollection<double>), typeof(GraphControl), new PropertyMetadata(defaultValue: null));
 
         public string? GraphHeader
         {
