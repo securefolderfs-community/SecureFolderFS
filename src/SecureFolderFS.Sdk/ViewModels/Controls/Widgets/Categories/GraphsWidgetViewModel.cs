@@ -49,7 +49,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             _readWriteStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
             
             // We don't want to await it, since it's an async based timer
-            _ = InitializeBlockingTimer(cancellationToken);
+            _ = Task.Run(() => InitializeBlockingTimer(cancellationToken));
         }
 
         private async Task InitializeBlockingTimer(CancellationToken cancellationToken)

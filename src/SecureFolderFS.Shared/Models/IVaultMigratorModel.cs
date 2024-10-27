@@ -12,6 +12,6 @@ namespace SecureFolderFS.Shared.Models
 
         Task<IDisposable> UnlockAsync<T>(T credentials, CancellationToken cancellationToken = default);
 
-        Task MigrateAsync(IDisposable unlockContract, ProgressModel progress, CancellationToken cancellationToken = default);
+        Task MigrateAsync(IDisposable unlockContract, ProgressModel<IResult> progress, CancellationToken cancellationToken = default);
     }
 }

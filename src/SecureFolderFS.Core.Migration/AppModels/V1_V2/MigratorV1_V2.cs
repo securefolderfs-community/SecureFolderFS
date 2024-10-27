@@ -66,7 +66,7 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
         }
 
         /// <inheritdoc/>
-        public async Task MigrateAsync(IDisposable unlockContract, ProgressModel progress, CancellationToken cancellationToken = default)
+        public async Task MigrateAsync(IDisposable unlockContract, ProgressModel<IResult> progress, CancellationToken cancellationToken = default)
         {
             if (_v1ConfigDataModel is null)
                 throw new InvalidOperationException($"{nameof(_v1ConfigDataModel)} is null.");

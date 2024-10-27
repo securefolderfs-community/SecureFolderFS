@@ -60,9 +60,9 @@ namespace SecureFolderFS.Uno.UserControls
         public static readonly DependencyProperty PasswordSubmittedCommandProperty =
             DependencyProperty.Register(nameof(PasswordSubmittedCommand), typeof(ICommand), typeof(PasswordControl), new PropertyMetadata(defaultValue: null));
 
-        public string UnsecurePassword
+        public string? UnsecurePassword
         {
-            get => (string)GetValue(UnsecurePasswordProperty);
+            get => (string?)GetValue(UnsecurePasswordProperty);
             set => SetValue(UnsecurePasswordProperty, value);
         }
         public static readonly DependencyProperty UnsecurePasswordProperty =

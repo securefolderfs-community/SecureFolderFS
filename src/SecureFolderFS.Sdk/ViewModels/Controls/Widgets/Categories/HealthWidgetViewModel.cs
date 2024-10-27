@@ -7,7 +7,6 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Scanners;
 using System;
 using System.ComponentModel;
@@ -18,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
     [Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<IResult>, IViewable
+    public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgres>, IViewable
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private IVaultHealthModel? _vaultHealthModel;
@@ -34,7 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             ServiceProvider = DI.Default;
             LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
-            Title = "HealthNoProblems".ToLocalized(); // HealthNoProblems, HealthAttention, HealthProblems
+            Title = "HealthNoProblems".ToLocalized();
             _cts = new();
             _unlockedVaultViewModel = unlockedVaultViewModel;
         }
@@ -44,31 +43,45 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             var contentFolder = await _unlockedVaultViewModel.VaultViewModel.VaultModel.GetContentFolderAsync(cancellationToken);
             var folderScanner = new DeepFolderScanner(contentFolder);
-            _vaultHealthModel = new VaultHealthModel(folderScanner);
+            _vaultHealthModel = new VaultHealthModel(folderScanner, true);
         }
 
         /// <inheritdoc/>
         public void Report(double value)
         {
-            IsProgressing = true;
+            if (!IsProgressing)
+                return;
+
             CurrentProgress = value;
         }
 
         /// <inheritdoc/>
-        public void Report(IResult value)
+        public void Report(TotalProgres value)
         {
-            Title = value.GetMessage();
+            if (!IsProgressing)
+                return;
+
+            if (value.Total == 0)
+                Title = value.TotalScanned == 0 ? "Collecting items..." : $"Collecting items ({value.TotalScanned})";
+            else
+                Title = $"Scanning items ({value.TotalScanned} of {value.Total})";
         }
 
         [RelayCommand]
-        private void StartScanning()
+        private async Task StartScanningAsync()
         {
-            ArgumentNullException.ThrowIfNull(_vaultHealthModel);
+            if (_vaultHealthModel is null)
+                return;
 
+            // Set IsProgressing with small delay
             IsProgressing = true;
-            _ = _vaultHealthModel.ScanAsync(new(this, this), _cts?.Token ?? default).ContinueWith(x =>
+            Title = "Scanning...";
+            await Task.Delay(10);
+
+            _ = _vaultHealthModel.ScanAsync(new(this, this), _cts?.Token ?? default)
+            .ContinueWith(x =>
             {
-                IsProgressing = false;
+                //EndScanning();
             });
         }
 
@@ -78,12 +91,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             _cts?.Cancel();
             _cts?.Dispose();
             _cts = new();
-            IsProgressing = false;
+            EndScanning();
         }
 
         [RelayCommand]
         private void OpenVaultHealth()
         {
+        }
+
+        private void EndScanning()
+        {
+            if (!IsProgressing)
+                return;
+
+            IsProgressing = false;
+            // TODO: Depending on scan results update the status
+            Title = "HealthNoProblems".ToLocalized(); // HealthNoProblems, HealthAttention, HealthProblems
         }
     }
 }

@@ -102,8 +102,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                 SecondaryButtonEnabled = false;
 
                 // Await a short delay for better UX
-                #if !DEBUG
-                #endif
                 await Task.Delay(1000);
 
                 // Migrate
