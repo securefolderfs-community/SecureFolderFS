@@ -17,12 +17,16 @@ namespace SecureFolderFS.Core.FileSystem
         public abstract string FileSystemName { get; }
 
         /// <inheritdoc/>
+        public virtual IHealthStatistics HealthStatistics { get; }
+
+        /// <inheritdoc/>
         public virtual IFileSystemStatistics ReadWriteStatistics { get; }
 
         protected VFSRoot(IFolder storageRoot, FileSystemOptions options)
         {
             Inner = storageRoot;
             StorageName = options.VolumeName;
+            HealthStatistics = options.HealthStatistics;
             ReadWriteStatistics = options.FileSystemStatistics;
 
             // Automatically add created root

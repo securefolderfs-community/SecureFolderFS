@@ -1,5 +1,8 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Scanners;
 using System;
@@ -10,7 +13,8 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultHealthModel"/>
-    public sealed class VaultHealthModel : IVaultHealthModel
+    [Inject<IVaultHealthService>]
+    public sealed partial class VaultHealthModel : IVaultHealthModel
     {
         private readonly List<IChildFile> _scannedFiles;
         private readonly List<IChildFolder> _scannedFolders;
@@ -28,6 +32,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public VaultHealthModel(IFolderScanner<IStorableChild> folderScanner, bool isOptimized)
         {
+            ServiceProvider = DI.Default;
             FolderScanner = folderScanner;
             _isOptimized = isOptimized;
             _scannedFiles = new();
@@ -76,42 +81,40 @@ namespace SecureFolderFS.Sdk.AppModels
 
         private async Task ScanFilesAsync(ProgressModel<TotalProgres> progress, CancellationToken cancellationToken)
         {
-            await Task.Delay(100);
-            await Task.Run(() =>
+            await Parallel.ForEachAsync(_scannedFiles, cancellationToken, async (file, token) =>
             {
-                foreach (var item in _scannedFiles)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                        return;
-
-                    // TODO: Scan a file (perhaps contents?)
-                    _ = item;
-
-                    // Report progress
-                    Interlocked.Increment(ref _totalFoldersScanned);
-                    ReportProgress(progress);
-                }
+                await ScanFileAsync(file, progress, cancellationToken);
             });
         }
 
         private async Task ScanFoldersAsync(ProgressModel<TotalProgres> progress, CancellationToken cancellationToken)
         {
-            await Task.Delay(100);
-            await Task.Run(() =>
+            await Parallel.ForEachAsync(_scannedFolders, cancellationToken, async (folder, token) =>
             {
-                foreach (var item in _scannedFolders)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                        return;
-
-                    // TODO: Scan a folder (DirectoryID)
-                    _ = item;
-
-                    // Report progress
-                    Interlocked.Increment(ref _totalFilesScanned);
-                    ReportProgress(progress);
-                }
+                await ScanFolderAsync(folder, progress, cancellationToken);
             });
+        }
+
+        private async Task ScanFileAsync(IChildFile file, ProgressModel<TotalProgres> progress, CancellationToken cancellationToken)
+        {
+            var result = await VaultHealthService.ScanFileAsync(file, cancellationToken);
+            if (!result.Successful)
+                IssueFound?.Invoke(this, file);
+
+            // Report progress
+            Interlocked.Increment(ref _totalFilesScanned);
+            ReportProgress(progress);
+        }
+
+        private async Task ScanFolderAsync(IChildFolder folder, ProgressModel<TotalProgres> progress, CancellationToken cancellationToken)
+        {
+            var result = await VaultHealthService.ScanFolderAsync(folder, cancellationToken);
+            if (!result.Successful)
+                IssueFound?.Invoke(this, folder);
+
+            // Report progress
+            Interlocked.Increment(ref _totalFoldersScanned);
+            ReportProgress(progress);
         }
 
         private void ReportProgress(ProgressModel<TotalProgres> progress)

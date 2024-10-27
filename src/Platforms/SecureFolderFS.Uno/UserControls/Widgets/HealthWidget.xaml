@@ -13,7 +13,6 @@
     mc:Ignorable="d not_win">
 
     <UserControl.Resources>
-        <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
 
@@ -24,7 +23,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     FontWeight="Medium"
-                    Text="{x:Bind StatusTitle, Mode=OneWay}"
+                    Text="{Binding Path=StatusTitle, Mode=OneWay}"
                     TextTrimming="CharacterEllipsis" />
 
                 <!--  Subtitle  -->
@@ -34,17 +33,17 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Opacity="0.6"
-                        Text="{x:Bind HealthLastCheckedText, Mode=OneWay, FallbackValue='Last checked: Unspecified'}"
+                        Text="{Binding Path=HealthLastCheckedText, Mode=OneWay, FallbackValue='Last checked: Unspecified'}"
                         TextTrimming="CharacterEllipsis"
-                        Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                        Visibility="{Binding Path=IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
 
                     <!--  Progress  -->
                     <ProgressBar
                         Margin="0,8,0,0"
                         VerticalAlignment="Center"
-                        IsIndeterminate="{x:Bind CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
-                        Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Value="{x:Bind CurrentProgress, Mode=OneWay}" />
+                        IsIndeterminate="{Binding Path=CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
+                        Visibility="{Binding Path=IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Value="{Binding Path=CurrentProgress, Mode=OneWay}" />
                 </Grid>
 
             </StackPanel>
@@ -89,6 +88,7 @@
             VerticalContentAlignment="Center"
             Canvas.ZIndex="1" />
 
+        <!--  Options  -->
         <Grid Grid.Column="2">
 
             <!--  Start scanning  -->

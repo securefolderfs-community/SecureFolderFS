@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -25,6 +26,8 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
     {
         public INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
 
+        public SynchronizationContext? Context { get; }
+
         public bool IsDebugging { get; } =
 #if DEBUG
             Debugger.IsAttached;
@@ -41,6 +44,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
         public MainWindowRootControl()
         {
             InitializeComponent();
+            Context = SynchronizationContext.Current;
             ViewModel = new();
         }
 

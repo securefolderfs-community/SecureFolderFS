@@ -20,6 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
     public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgres>, IViewable
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
+        private readonly SynchronizationContext? _context;
         private IVaultHealthModel? _vaultHealthModel;
         private CancellationTokenSource? _cts;
 
@@ -34,6 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             ServiceProvider = DI.Default;
             LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
             Title = "HealthNoProblems".ToLocalized();
+            _context = SynchronizationContext.Current;
             _cts = new();
             _unlockedVaultViewModel = unlockedVaultViewModel;
         }
@@ -52,7 +54,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             if (!IsProgressing)
                 return;
 
-            CurrentProgress = value;
+            _context?.Post(_ =>
+            {
+                CurrentProgress = Math.Round(value);
+            }, null);
         }
 
         /// <inheritdoc/>
@@ -61,10 +66,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             if (!IsProgressing)
                 return;
 
-            if (value.Total == 0)
-                Title = value.TotalScanned == 0 ? "Collecting items..." : $"Collecting items ({value.TotalScanned})";
-            else
-                Title = $"Scanning items ({value.TotalScanned} of {value.Total})";
+            _context?.Post(_ =>
+            {
+                if (value.Total == 0)
+                    Title = value.TotalScanned == 0 ? "Collecting items..." : $"Collecting items ({value.TotalScanned})";
+                else
+                    Title = $"Scanning items ({value.TotalScanned} of {value.Total})";
+            }, null);
         }
 
         [RelayCommand]
@@ -78,11 +86,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             Title = "Scanning...";
             await Task.Delay(10);
 
-            _ = _vaultHealthModel.ScanAsync(new(this, this), _cts?.Token ?? default)
-            .ContinueWith(x =>
-            {
-                //EndScanning();
-            });
+            _ = ScanAsync();
+        }
+
+        private async Task ScanAsync()
+        {
+            if (_vaultHealthModel is null)
+                return;
+
+            await _vaultHealthModel.ScanAsync(new(this, this), _cts?.Token ?? default);
+            EndScanning();
         }
 
         [RelayCommand]
@@ -105,6 +118,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
                 return;
 
             IsProgressing = false;
+            CurrentProgress = 0d;
             // TODO: Depending on scan results update the status
             Title = "HealthNoProblems".ToLocalized(); // HealthNoProblems, HealthAttention, HealthProblems
         }

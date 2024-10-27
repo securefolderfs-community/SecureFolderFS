@@ -1,7 +1,9 @@
 using System;
+using System.Threading;
 using Microsoft.UI.Dispatching;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Uno.UserControls.InterfaceRoot;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
 {
@@ -9,6 +11,12 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoThreadingService : IThreadingService
     {
         private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
+        /// <inheritdoc/>
+        public SynchronizationContext? GetContext()
+        {
+            return (App.Instance?.MainWindow?.Content as MainWindowRootControl)?.Context;
+        }
 
         /// <inheritdoc/>
         public IAwaitable ChangeThreadAsync()

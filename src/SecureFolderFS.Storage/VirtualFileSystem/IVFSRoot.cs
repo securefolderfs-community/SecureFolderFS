@@ -20,6 +20,11 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         string FileSystemName { get; }
 
         /// <summary>
+        /// Gets the instance of <see cref="IHealthStatistics"/> which is used to report health issues of the vault.
+        /// </summary>
+        IHealthStatistics HealthStatistics { get; }
+
+        /// <summary>
         /// Gets the instance of <see cref="IFileSystemStatistics"/> which is used to report the read-write statistics for this storage root.
         /// </summary>
         IFileSystemStatistics ReadWriteStatistics { get; }
