@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.UI.ServiceImplementation
@@ -12,6 +15,18 @@ namespace SecureFolderFS.UI.ServiceImplementation
     /// <inheritdoc cref="IVaultFileSystemService"/>
     public abstract class BaseVaultFileSystemService : IVaultFileSystemService
     {
+        /// <inheritdoc/>
+        public virtual IAsyncValidator<IFile> GetFileValidator(IFolder vaultFolder)
+        {
+            return new FileValidator(vaultFolder);
+        }
+
+        /// <inheritdoc/>
+        public virtual IAsyncValidator<IFolder> GetFolderValidator(IFolder vaultFolder)
+        {
+            return new FolderValidator(vaultFolder);
+        }
+
         /// <inheritdoc/>
         public Task<IFileSystem> GetLocalFileSystemAsync(CancellationToken cancellationToken)
         {

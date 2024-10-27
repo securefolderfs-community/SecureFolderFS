@@ -25,8 +25,8 @@ namespace SecureFolderFS.Sdk.Models
         /// <param name="progressModel">The model to report current progress to.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task ScanAsync(ProgressModel<TotalProgres> progressModel, CancellationToken cancellationToken = default);
+        Task ScanAsync(ProgressModel<TotalProgress> progressModel, CancellationToken cancellationToken = default);
     }
 
-    public readonly record struct TotalProgres(int TotalScanned, int Total);
+    public readonly record struct TotalProgress(int TotalScanned, int Total);
 }

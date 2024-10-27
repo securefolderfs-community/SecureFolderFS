@@ -17,7 +17,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
     [Inject<IVaultService>]
     [Bindable(true)]
-    public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgres>, IViewable
+    public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgress>, IViewable
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private readonly SynchronizationContext? _context;
@@ -33,19 +33,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             : base(widgetModel)
         {
             ServiceProvider = DI.Default;
-            LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
             Title = "HealthNoProblems".ToLocalized();
-            _context = SynchronizationContext.Current;
+            LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
             _cts = new();
+            _context = SynchronizationContext.Current;
             _unlockedVaultViewModel = unlockedVaultViewModel;
         }
 
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            var contentFolder = await _unlockedVaultViewModel.VaultViewModel.VaultModel.GetContentFolderAsync(cancellationToken);
+            var vaultModel = _unlockedVaultViewModel.VaultViewModel.VaultModel;
+            var contentFolder = await vaultModel.GetContentFolderAsync(cancellationToken);
             var folderScanner = new DeepFolderScanner(contentFolder);
-            _vaultHealthModel = new VaultHealthModel(folderScanner, true);
+            _vaultHealthModel = new VaultHealthModel(vaultModel.Folder, folderScanner, true);
         }
 
         /// <inheritdoc/>
@@ -61,7 +62,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         }
 
         /// <inheritdoc/>
-        public void Report(TotalProgres value)
+        public void Report(TotalProgress value)
         {
             if (!IsProgressing)
                 return;

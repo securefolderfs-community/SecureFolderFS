@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Scanners;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,13 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IVaultHealthModel"/>
-    [Inject<IVaultHealthService>]
+    [Inject<IVaultFileSystemService>]
     public sealed partial class VaultHealthModel : IVaultHealthModel
     {
         private readonly List<IChildFile> _scannedFiles;
         private readonly List<IChildFolder> _scannedFolders;
+        private readonly IAsyncValidator<IFile> _fileValidator;
+        private readonly IAsyncValidator<IFolder> _folderValidator;
         private readonly bool _isOptimized;
         private int _updateCount;
         private int _updateInterval;
@@ -30,17 +33,19 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public event EventHandler<IStorableChild>? IssueFound;
 
-        public VaultHealthModel(IFolderScanner<IStorableChild> folderScanner, bool isOptimized)
+        public VaultHealthModel(IFolder vaultFolder, IFolderScanner<IStorableChild> folderScanner, bool isOptimized)
         {
             ServiceProvider = DI.Default;
             FolderScanner = folderScanner;
             _isOptimized = isOptimized;
             _scannedFiles = new();
             _scannedFolders = new();
+            _fileValidator = VaultFileSystemService.GetFileValidator(vaultFolder);
+            _folderValidator = VaultFileSystemService.GetFolderValidator(vaultFolder);
         }
 
         /// <inheritdoc/>
-        public async Task ScanAsync(ProgressModel<TotalProgres> progress, CancellationToken cancellationToken = default)
+        public async Task ScanAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken = default)
         {
             progress.PrecisionProgress?.Report(0d);
             _totalFilesScanned = 0;
@@ -79,45 +84,39 @@ namespace SecureFolderFS.Sdk.AppModels
             GC.Collect();
         }
 
-        private async Task ScanFilesAsync(ProgressModel<TotalProgres> progress, CancellationToken cancellationToken)
+        private async Task ScanFilesAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken)
         {
             await Parallel.ForEachAsync(_scannedFiles, cancellationToken, async (file, token) =>
             {
-                await ScanFileAsync(file, progress, cancellationToken);
+                await ScanAsync<IChildFile>(file, _fileValidator, token);
+
+                // Report progress
+                Interlocked.Increment(ref _totalFilesScanned);
+                ReportProgress(progress);
             });
         }
 
-        private async Task ScanFoldersAsync(ProgressModel<TotalProgres> progress, CancellationToken cancellationToken)
+        private async Task ScanFoldersAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken)
         {
             await Parallel.ForEachAsync(_scannedFolders, cancellationToken, async (folder, token) =>
             {
-                await ScanFolderAsync(folder, progress, cancellationToken);
+                await ScanAsync<IChildFolder>(folder, _folderValidator, token);
+
+                // Report progress
+                Interlocked.Increment(ref _totalFoldersScanned);
+                ReportProgress(progress);
             });
         }
 
-        private async Task ScanFileAsync(IChildFile file, ProgressModel<TotalProgres> progress, CancellationToken cancellationToken)
+        private async Task ScanAsync<TStorable>(TStorable storable, IAsyncValidator<TStorable> asyncValidator, CancellationToken cancellationToken)
+            where TStorable : IStorableChild
         {
-            var result = await VaultHealthService.ScanFileAsync(file, cancellationToken);
+            var result = await asyncValidator.TryValidateAsync(storable, cancellationToken);
             if (!result.Successful)
-                IssueFound?.Invoke(this, file);
-
-            // Report progress
-            Interlocked.Increment(ref _totalFilesScanned);
-            ReportProgress(progress);
+                IssueFound?.Invoke(this, storable);
         }
 
-        private async Task ScanFolderAsync(IChildFolder folder, ProgressModel<TotalProgres> progress, CancellationToken cancellationToken)
-        {
-            var result = await VaultHealthService.ScanFolderAsync(folder, cancellationToken);
-            if (!result.Successful)
-                IssueFound?.Invoke(this, folder);
-
-            // Report progress
-            Interlocked.Increment(ref _totalFoldersScanned);
-            ReportProgress(progress);
-        }
-
-        private void ReportProgress(ProgressModel<TotalProgres> progress)
+        private void ReportProgress(ProgressModel<TotalProgress> progress)
         {
             if (_isOptimized)
             {

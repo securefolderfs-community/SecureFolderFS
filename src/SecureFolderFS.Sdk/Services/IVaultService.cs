@@ -36,7 +36,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets an instance of <see cref="VaultOptions"/> that contains information about the vault.
         /// </summary>
-        /// <param name="vaultFolder">The folder of the vault.</param>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="VaultOptions"/> of the additional vault information.</returns>
         Task<VaultOptions> GetVaultOptionsAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets the appropriate migrator for a vault.
         /// </summary>
-        /// <param name="vaultFolder">The folder of the vault.</param>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IVaultMigratorModel"/> that is used to migrate a vault.</returns>
         Task<IVaultMigratorModel> GetMigratorAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
