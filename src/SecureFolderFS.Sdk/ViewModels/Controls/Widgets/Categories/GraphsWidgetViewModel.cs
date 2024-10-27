@@ -27,12 +27,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         [ObservableProperty] private GraphControlViewModel _WriteGraphViewModel;
         public bool IsActive { get; set; }
 
-        public GraphsWidgetViewModel(IFileSystemStatistics readWriteStatistics, IWidgetModel widgetModel)
+        public GraphsWidgetViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetModel widgetModel)
             : base(widgetModel)
         {
             ReadGraphViewModel = new();
             WriteGraphViewModel = new();
-            _readWriteStatistics = readWriteStatistics;
+            _readWriteStatistics = unlockedVaultViewModel.StorageRoot.ReadWriteStatistics;
 
             _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Graphs.GRAPH_UPDATE_INTERVAL_MS));
             _readRates = [ 0 ];

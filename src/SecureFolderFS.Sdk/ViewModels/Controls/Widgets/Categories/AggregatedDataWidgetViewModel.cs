@@ -20,10 +20,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         [ObservableProperty] private string? _TotalRead;
         [ObservableProperty] private string? _TotalWrite;
         
-        public AggregatedDataWidgetViewModel(IFileSystemStatistics readWriteStatistics, IWidgetModel widgetModel)
+        public AggregatedDataWidgetViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetModel widgetModel)
             : base(widgetModel)
         {
-            _readWriteStatistics = readWriteStatistics;
+            _readWriteStatistics = unlockedVaultViewModel.StorageRoot.ReadWriteStatistics;
             _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Graphs.GRAPH_UPDATE_INTERVAL_MS));
         }
 

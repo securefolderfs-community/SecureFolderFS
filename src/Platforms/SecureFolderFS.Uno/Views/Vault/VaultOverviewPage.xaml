@@ -17,10 +17,13 @@
         <!--  Vault Health  -->
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm2:HealthWidgetViewModel">
             <ucw:HealthWidget
+                CancelCommand="{x:Bind CancelScanningCommand, Mode=OneWay}"
+                CurrentProgress="{x:Bind CurrentProgress, Mode=OneWay}"
                 HealthLastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
+                IsProgressing="{x:Bind IsProgressing, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
                 StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
-                VaultHealthState="{x:Bind VaultHealthState, Mode=OneWay}" />
+                StatusTitle="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>
 
         <!--  Resource Graphs  -->

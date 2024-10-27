@@ -49,7 +49,6 @@ namespace SecureFolderFS.Core.WebDav
             catch (Exception ex)
             {
                 _ = ex;
-                Debugger.Break();
             }
         }
 
