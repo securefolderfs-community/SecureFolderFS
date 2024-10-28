@@ -1,5 +1,6 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
@@ -31,7 +32,7 @@ namespace SecureFolderFS.Sdk.AppModels
         public IFolderScanner<IStorableChild> FolderScanner { get; }
 
         /// <inheritdoc/>
-        public event EventHandler<IStorableChild>? IssueFound;
+        public event EventHandler<HealthIssueEventArgs>? IssueFound;
 
         public VaultHealthModel(IFolder vaultFolder, IFolderScanner<IStorableChild> folderScanner, bool isOptimized)
         {
@@ -124,7 +125,7 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             var result = await asyncValidator.TryValidateAsync(storable, cancellationToken);
             if (!result.Successful)
-                IssueFound?.Invoke(this, storable);
+                IssueFound?.Invoke(this, new(storable, result));
         }
 
         private void ReportProgress(ProgressModel<TotalProgress> progress)

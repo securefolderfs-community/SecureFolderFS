@@ -281,7 +281,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
                 // Create new DirectoryID
                 var directoryId = Guid.NewGuid().ToByteArray();
-                var directoryIdPath = Path.Combine(destinationPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+                var directoryIdPath = Path.Combine(destinationPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
 
                 // Initialize directory with DirectoryID
                 using var directoryIdStream = File.Open(directoryIdPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);

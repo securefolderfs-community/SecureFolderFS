@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Native
             if (parentPath == Path.DirectorySeparatorChar.ToString() || parentPath.Equals(rootPath))
                 return string.Empty;
 
-            return Path.Combine(parentPath, Constants.DIRECTORY_ID_FILENAME);
+            return Path.Combine(parentPath, Constants.Names.DIRECTORY_ID_FILENAME);
         }
 
         public static string MakeRelative(string fullPath, string basePath)

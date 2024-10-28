@@ -45,7 +45,6 @@
                         Visibility="{Binding Path=IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                         Value="{Binding Path=CurrentProgress, Mode=OneWay}" />
                 </Grid>
-
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="WithoutDetailedHealthTemplate" x:DataType="local:HealthWidget">

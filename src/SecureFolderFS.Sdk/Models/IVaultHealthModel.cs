@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Scanners;
 using System;
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Occurs when an issue is found within the file system structure.
         /// </summary>
-        event EventHandler<IStorableChild>? IssueFound;
+        event EventHandler<HealthIssueEventArgs>? IssueFound;
 
         /// <summary>
         /// Starts the scanning of the file system structure and reports errors through <see cref="IssueFound"/> event.

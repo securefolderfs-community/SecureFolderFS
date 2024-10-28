@@ -12,6 +12,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.EventArguments;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
@@ -47,6 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             var contentFolder = await vaultModel.GetContentFolderAsync(cancellationToken);
             var folderScanner = new DeepFolderScanner(contentFolder);
             _vaultHealthModel = new VaultHealthModel(vaultModel.Folder, folderScanner, true);
+            _vaultHealthModel.IssueFound += VaultHealthModel_IssueFound;
         }
 
         /// <inheritdoc/>
@@ -132,6 +134,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             
             // TODO: Depending on scan results update the status
             Title = "HealthNoProblems".ToLocalized(); // HealthNoProblems, HealthAttention, HealthProblems
+        }
+
+        private void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
+        {
+            _ = e;
+        }
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            if (_vaultHealthModel is not null)
+            {
+                _vaultHealthModel.IssueFound -= VaultHealthModel_IssueFound;
+                _vaultHealthModel.Dispose();
+            }
+            base.Dispose();
         }
     }
 }

@@ -87,7 +87,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
 
                             // Create new DirectoryID
                             var directoryId = Guid.NewGuid().ToByteArray();
-                            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+                            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
 
                             // Initialize directory with DirectoryID
                             using var directoryIdStream = File.Open(directoryIdPath, FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
@@ -233,7 +233,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 {
                     if (info.IsDirectory)
                     {
-                        var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+                        var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
                         Specifics.DirectoryIdCache.CacheRemove(directoryIdPath);
                         Directory.Delete(ciphertextPath, true);
                     }

@@ -81,7 +81,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 throw new ArgumentException("The created folder is not modifiable.");
 
             // Get the DirectoryID file
-            var dirIdFile = await createdModifiableFolder.CreateFileAsync(FileSystem.Constants.DIRECTORY_ID_FILENAME, false, cancellationToken);
+            var dirIdFile = await createdModifiableFolder.CreateFileAsync(FileSystem.Constants.Names.DIRECTORY_ID_FILENAME, false, cancellationToken);
             var directoryId = Guid.NewGuid().ToByteArray();
 
             // Initialize directory with DirectoryID

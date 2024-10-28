@@ -5,7 +5,6 @@
         public const string LOCAL_FILE_SYSTEM_NAME = "AbstractStorage";
 
         public const string UNC_NAME = "securefolderfs";
-        public const string DIRECTORY_ID_FILENAME = "dirid.iv";
         public const int FILE_EOF = 0;
         public const int DIRECTORY_ID_SIZE = 16;
         public const ulong INVALID_HANDLE = 0UL;
@@ -20,6 +19,7 @@
         public static class Names
         {
             public const string ENCRYPTED_FILE_EXTENSION = ".sffs";
+            public const string DIRECTORY_ID_FILENAME = "dirid.iv";
         }
 
         public static class Caching

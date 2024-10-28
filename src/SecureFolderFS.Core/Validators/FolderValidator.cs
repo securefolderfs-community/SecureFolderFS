@@ -1,5 +1,7 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,9 +19,13 @@ namespace SecureFolderFS.Core.Validators
         /// <inheritdoc/>
         public async Task ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement folder validation (corrupted/missing directory id, invalid name)
-            await Task.Delay(4);
-            //return Task.CompletedTask;
+            // Check if Directory ID exists
+            var directoryIdFile = await value.GetFileByNameAsync(Core.FileSystem.Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken);
+
+            // Check the size
+            await using var stream = await directoryIdFile.OpenReadAsync(cancellationToken);
+            if (stream.Length != Core.FileSystem.Constants.DIRECTORY_ID_SIZE)
+                throw new FormatException($"The Directory ID size is invalid. Expected: {Core.FileSystem.Constants.DIRECTORY_ID_SIZE}, got: {stream.Length}.");
         }
     }
 }

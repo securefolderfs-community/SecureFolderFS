@@ -270,7 +270,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             // Create new DirectoryID
             var directoryId = Guid.NewGuid().ToByteArray();
-            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
 
             // Initialize directory with DirectoryID
             using var directoryIdStream = File.Create(directoryIdPath);
@@ -434,7 +434,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreFile(x)))
                 return -ENOTEMPTY;
 
-            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.DIRECTORY_ID_FILENAME);
+            var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);
 
             // Remove DirectoryID
             File.Delete(directoryIdPath);
