@@ -1,4 +1,6 @@
+using System;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using NWebDav.Server.Dispatching;
@@ -16,7 +18,6 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
     /// <inheritdoc cref="IFileSystem"/>
     internal sealed partial class MacOsWebDavFileSystem : WebDavFileSystem
     {
-        /// <inheritdoc/>
         protected override async Task<IVFSRoot> MountAsync(
             int port,
             string domain,
@@ -28,17 +29,19 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
         {
 #if __MACCATALYST__
             var remotePath = DriveMappingHelpers.GetRemotePath(protocol, "localhost", port, options.VolumeName);
-            var mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
+            var remoteUri = new Uri(remotePath);
 
-            var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPath);
+            // Mount WebDAV volume via AppleScript
+            Process.Start("/usr/bin/osascript", $"-e mount volume \"{remoteUri.AbsoluteUri}\"");
+            var mountPoint = $"/Volumes/{options.VolumeName}";
+            
+            // Create wrapper
+            var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPoint);
             webDavWrapper.StartFileSystem();
 
-            // TODO: Remove once the port is displayed in the UI.
-            Debug.WriteLine($"WebDAV server started on port {port}.");
-            Debug.WriteLine($"MountableDAV\nmountPath: {mountPath}\nremotePath: {remotePath}");
-
-            // TODO: Currently using MemoryFolder because the check in SystemFolder might sometimes fail
-            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(remotePath, options.VolumeName), options);
+            Debug.WriteLine($"Mounted {remoteUri} on {mountPoint}.");
+            await Task.CompletedTask;
+            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(remoteUri.ToString(), options.VolumeName), options);
 #else
             throw new PlatformNotSupportedException();
 #endif

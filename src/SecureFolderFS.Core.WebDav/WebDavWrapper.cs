@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.WebDav
             await _fileSystemCts.CancelAsync();
 
             if (_mountPath is not null)
-                await DriveMappingHelpers.DisconnectNetworkDriveAsync(_mountPath, true);
+                DriveMappingHelpers.DisconnectNetworkDrive(_mountPath, true);
 
             return true;
         }

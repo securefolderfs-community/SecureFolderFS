@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.WebDav.Helpers
         /// <summary>
         /// Attempts to disconnect a mapped network drive. Doesn't throw on failure.
         /// </summary>
-        public static async Task DisconnectNetworkDriveAsync(string mountPath, bool force)
+        public static void DisconnectNetworkDrive(string mountPath, bool force)
         {
             if (OperatingSystem.IsWindows())
             {
@@ -21,22 +21,7 @@ namespace SecureFolderFS.Core.WebDav.Helpers
             }
             else if (OperatingSystem.IsMacCatalyst())
             {
-                var args = $"umount {mountPath}";
-                var process = new Process()
-                {
-                    StartInfo = new ProcessStartInfo()
-                    {
-                        FileName = "/bin/bash",
-                        Arguments = $"-c \"{args}\"",
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
-                };
-
-                process.Start();
-                await process.WaitForExitAsync();
+                Process.Start("sh", $"-c \"diskutil unmount force \"{mountPath}\"\"");
             }
         }
 
