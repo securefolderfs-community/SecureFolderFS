@@ -32,7 +32,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             var remoteUri = new Uri(remotePath);
 
             // Mount WebDAV volume via AppleScript
-            Process.Start("/usr/bin/osascript", $"-e mount volume \"{remoteUri.AbsoluteUri}\"");
+            Process.Start("/usr/bin/osascript", ["-e", $"mount volume \"{remoteUri.AbsoluteUri}\""]);
             var mountPoint = $"/Volumes/{options.VolumeName}";
             
             // Create wrapper
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
 
             Debug.WriteLine($"Mounted {remoteUri} on {mountPoint}.");
             await Task.CompletedTask;
-            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(remoteUri.ToString(), options.VolumeName), options);
+            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), options);
 #else
             throw new PlatformNotSupportedException();
 #endif

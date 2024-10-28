@@ -25,17 +25,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             }
         
 #if __MACOS__ || __MACCATALYST__
-            using var process = new Process();
-            process.StartInfo = new ProcessStartInfo()
-            {
-                FileName = "open",
-                Arguments = $"\"{folder.Id}/\"",
-                RedirectStandardOutput = false,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            };
-            process.Start();
-            
+            Process.Start("sh", ["-c", $"open {folder.Id}"]);
             return Task.CompletedTask;
 #elif WINDOWS
             return global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
