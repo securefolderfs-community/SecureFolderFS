@@ -14,15 +14,8 @@ namespace SecureFolderFS.UI.ValueConverters
             if (value is not DateTime dateTime)
                 return string.Empty;
             
-            var cultureInfo = DI.Service<ILocalizationService>().CurrentCulture;
-            var dateString = dateTime switch
-            {
-                _ when dateTime.Year == 1 => "Unspecified",
-                _ when dateTime.Date == DateTime.Today => SafetyHelpers.NoThrowResult(() => string.Format("DateToday".ToLocalized(), dateTime.ToString("t", cultureInfo))),
-                _ => null
-            };
-
-            dateString ??= $"{dateTime.ToString("d", cultureInfo)}, {dateTime.ToString("t", cultureInfo)}";
+            var localizationService = DI.Service<ILocalizationService>();
+            var dateString = localizationService.LocalizeDate(dateTime);
             if (parameter is string formatString)
             {
                 var split = formatString.Split('|');

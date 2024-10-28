@@ -33,7 +33,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Opacity="0.6"
-                        Text="{Binding Path=HealthLastCheckedText, Mode=OneWay, FallbackValue='Last checked: Unspecified'}"
+                        Text="{Binding Path=LastCheckedText, Mode=OneWay, FallbackValue='Last checked: Unspecified'}"
                         TextTrimming="CharacterEllipsis"
                         Visibility="{Binding Path=IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
 

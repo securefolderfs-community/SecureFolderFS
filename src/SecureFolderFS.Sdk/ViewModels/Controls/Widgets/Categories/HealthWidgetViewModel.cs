@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
-    [Inject<IVaultService>]
+    [Inject<IVaultService>, Inject<ILocalizationService>]
     [Bindable(true)]
     public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgress>, IViewable
     {
@@ -70,9 +70,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             _context?.Post(_ =>
             {
                 if (value.Total == 0)
-                    Title = value.TotalScanned == 0 ? "Collecting items..." : $"Collecting items ({value.TotalScanned})";
+                    Title = value.TotalScanned == 0
+                        ? "Collecting items..."
+                        : $"Collecting items ({value.TotalScanned})";
                 else
-                    Title = $"Scanning items ({value.TotalScanned} of {value.Total})";
+                    Title = value.TotalScanned == value.Total
+                            ? "Scan completed"
+                            : $"Scanning items ({value.TotalScanned} of {value.Total})";
             }, null);
         }
 
@@ -120,6 +124,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 
             IsProgressing = false;
             CurrentProgress = 0d;
+
+            var now = DateTime.Now;
+            var localizedDate = LocalizationService.LocalizeDate(now);
+            LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
+            // TODO: Save last checked date
+            
             // TODO: Depending on scan results update the status
             Title = "HealthNoProblems".ToLocalized(); // HealthNoProblems, HealthAttention, HealthProblems
         }

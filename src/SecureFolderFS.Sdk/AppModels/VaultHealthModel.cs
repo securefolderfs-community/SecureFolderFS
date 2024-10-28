@@ -77,11 +77,22 @@ namespace SecureFolderFS.Sdk.AppModels
             if (_isOptimized)
             {
                 var totalUpdatesOptimized = (int)((_scannedFiles.Count + _scannedFolders.Count) * 0.2d);
-                _updateInterval = (_scannedFiles.Count + _scannedFolders.Count) / totalUpdatesOptimized;
+                _updateInterval = (_scannedFiles.Count + _scannedFolders.Count) / Math.Max(100, totalUpdatesOptimized);
             }
+            
+            // Report initial progress
+            ReportProgress(progress);
+            
+            // Await a short delay for better UX
+            if (_scannedFiles.Count + _scannedFolders.Count < 200)
+                await Task.Delay(1500, cancellationToken);
 
             await Task.WhenAll(ScanFilesAsync(progress, cancellationToken), ScanFoldersAsync(progress, cancellationToken));
             GC.Collect();
+
+            // Report final progress
+            ReportProgress(progress);
+            await Task.Delay(1500, cancellationToken);
         }
 
         private async Task ScanFilesAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken)

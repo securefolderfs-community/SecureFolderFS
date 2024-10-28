@@ -22,13 +22,13 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
         public static readonly DependencyProperty StatusTitleProperty =
             DependencyProperty.Register(nameof(StatusTitle), typeof(string), typeof(HealthWidget), new PropertyMetadata(null));
 
-        public string? HealthLastCheckedText
+        public string? LastCheckedText
         {
-            get => (string?)GetValue(HealthLastCheckedTextProperty);
-            set => SetValue(HealthLastCheckedTextProperty, value);
+            get => (string?)GetValue(LastCheckedTextProperty);
+            set => SetValue(LastCheckedTextProperty, value);
         }
-        public static readonly DependencyProperty HealthLastCheckedTextProperty =
-            DependencyProperty.Register(nameof(HealthLastCheckedText), typeof(string), typeof(HealthWidget), new PropertyMetadata(null));
+        public static readonly DependencyProperty LastCheckedTextProperty =
+            DependencyProperty.Register(nameof(LastCheckedText), typeof(string), typeof(HealthWidget), new PropertyMetadata(null));
 
         public ICommand? StartScanningCommand
         {
