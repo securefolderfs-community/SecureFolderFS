@@ -109,7 +109,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private void CurrentViewModel_StateChanged(object? sender, EventArgs e)
         {
             if (e is PasswordChangedEventArgs args)
-                CanContinue = args.is;
+                CanContinue = args.IsMatch;
         }
 
         /// <inheritdoc/>
