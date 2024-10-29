@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Scanners;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Models
 {
-    public interface IVaultHealthModel : IDisposable
+    public interface IHealthModel : IDisposable
     {
         /// <summary>
         /// Gets the ciphertext <see cref="IFolderScanner{T}"/> used to scan the vault and its contents.
@@ -28,6 +29,4 @@ namespace SecureFolderFS.Sdk.Models
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task ScanAsync(ProgressModel<TotalProgress> progressModel, CancellationToken cancellationToken = default);
     }
-
-    public readonly record struct TotalProgress(int TotalScanned, int Total);
 }

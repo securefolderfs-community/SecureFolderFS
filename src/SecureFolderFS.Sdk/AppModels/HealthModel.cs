@@ -3,7 +3,6 @@ using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Scanners;
@@ -11,12 +10,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
-    /// <inheritdoc cref="IVaultHealthModel"/>
-    [Inject<IVaultFileSystemService>]
-    public sealed partial class VaultHealthModel : IVaultHealthModel
+    /// <inheritdoc cref="IHealthModel"/>
+    [Inject<IVaultHealthService>]
+    public sealed partial class HealthModel : IHealthModel
     {
         private readonly List<IChildFile> _scannedFiles;
         private readonly List<IChildFolder> _scannedFolders;
@@ -34,15 +34,15 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public event EventHandler<HealthIssueEventArgs>? IssueFound;
 
-        public VaultHealthModel(IFolder vaultFolder, IFolderScanner<IStorableChild> folderScanner, bool isOptimized)
+        public HealthModel(IFolderScanner<IStorableChild> folderScanner, IAsyncValidator<IFile> fileValidator, IAsyncValidator<IFolder> folderValidator)
         {
             ServiceProvider = DI.Default;
             FolderScanner = folderScanner;
-            _isOptimized = isOptimized;
+            _isOptimized = true;
             _scannedFiles = new();
             _scannedFolders = new();
-            _fileValidator = VaultFileSystemService.GetFileValidator(vaultFolder);
-            _folderValidator = VaultFileSystemService.GetFolderValidator(vaultFolder);
+            _fileValidator = fileValidator;
+            _folderValidator = folderValidator;
         }
 
         /// <inheritdoc/>
@@ -56,6 +56,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
             // Start collecting items
             progress.CallbackProgress?.Report(new());
+            await Task.Delay(750, cancellationToken);
 
             await foreach (var item in FolderScanner.ScanFolderAsync(cancellationToken))
             {
@@ -83,10 +84,7 @@ namespace SecureFolderFS.Sdk.AppModels
             
             // Report initial progress
             ReportProgress(progress);
-            
-            // Await a short delay for better UX
-            if (_scannedFiles.Count + _scannedFolders.Count < 200)
-                await Task.Delay(1500, cancellationToken);
+            await Task.Delay(750, cancellationToken);
 
             await Task.WhenAll(ScanFilesAsync(progress, cancellationToken), ScanFoldersAsync(progress, cancellationToken));
             GC.Collect();
@@ -125,7 +123,10 @@ namespace SecureFolderFS.Sdk.AppModels
         {
             var result = await asyncValidator.TryValidateAsync(storable, cancellationToken);
             if (!result.Successful)
-                IssueFound?.Invoke(this, new(storable, result));
+            {
+                var healthIssue = VaultHealthService.GetIssueInfo(storable);
+                IssueFound?.Invoke(this, new(storable, healthIssue, result));
+            }
         }
 
         private void ReportProgress(ProgressModel<TotalProgress> progress)

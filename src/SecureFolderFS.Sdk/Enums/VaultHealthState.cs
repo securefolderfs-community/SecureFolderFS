@@ -15,6 +15,6 @@
         /// <summary>
         /// Problems have been detected with vault's integrity.
         /// </summary>
-        Error = 2
+        IssuesFound = 2
     }
 }

@@ -19,6 +19,8 @@ namespace SecureFolderFS.Core.Validators
         /// <inheritdoc/>
         public async Task ValidateAsync(IFolder value, CancellationToken cancellationToken = default)
         {
+            // TODO: Do not validate if no file name encryption is set
+
             // Check if Directory ID exists
             var directoryIdFile = await value.GetFileByNameAsync(Core.FileSystem.Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken);
 
