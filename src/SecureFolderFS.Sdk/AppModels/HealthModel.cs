@@ -1,8 +1,6 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Scanners;
@@ -10,18 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared;
+using SecureFolderFS.Sdk.Results;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IHealthModel"/>
-    [Inject<IVaultHealthService>]
-    public sealed partial class HealthModel : IHealthModel
+    public sealed class HealthModel : IHealthModel
     {
         private readonly List<IChildFile> _scannedFiles;
         private readonly List<IChildFolder> _scannedFolders;
-        private readonly IAsyncValidator<IFile> _fileValidator;
-        private readonly IAsyncValidator<IFolder> _folderValidator;
+        private readonly IAsyncValidator<IFile, IResult> _fileValidator;
+        private readonly IAsyncValidator<IFolder, IResult> _folderValidator;
         private readonly bool _isOptimized;
         private int _updateCount;
         private int _updateInterval;
@@ -34,9 +31,8 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public event EventHandler<HealthIssueEventArgs>? IssueFound;
 
-        public HealthModel(IFolderScanner<IStorableChild> folderScanner, IAsyncValidator<IFile> fileValidator, IAsyncValidator<IFolder> folderValidator)
+        public HealthModel(IFolderScanner<IStorableChild> folderScanner, IAsyncValidator<IFile, IResult> fileValidator, IAsyncValidator<IFolder, IResult> folderValidator)
         {
-            ServiceProvider = DI.Default;
             FolderScanner = folderScanner;
             _isOptimized = true;
             _scannedFiles = new();
@@ -63,13 +59,18 @@ namespace SecureFolderFS.Sdk.AppModels
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
-                if (item is IChildFile file)
-                    _scannedFiles.Add(file);
-                else if (item is IChildFolder folder)
-                    _scannedFolders.Add(folder);
-                else
+                switch (item)
                 {
-                    continue;
+                    case IChildFile file:
+                        _scannedFiles.Add(file);
+                        break;
+
+                    case IChildFolder folder:
+                        _scannedFolders.Add(folder);
+                        break;
+
+                    default:
+                        continue;
                 }
                 
                 if (!_isOptimized)
@@ -118,15 +119,12 @@ namespace SecureFolderFS.Sdk.AppModels
             });
         }
 
-        private async Task ScanAsync<TStorable>(TStorable storable, IAsyncValidator<TStorable> asyncValidator, CancellationToken cancellationToken)
+        private async Task ScanAsync<TStorable>(TStorable storable, IAsyncValidator<TStorable, IResult> asyncValidator, CancellationToken cancellationToken)
             where TStorable : IStorableChild
         {
-            var result = await asyncValidator.TryValidateAsync(storable, cancellationToken);
-            if (!result.Successful)
-            {
-                var healthIssue = VaultHealthService.GetIssueInfo(storable);
-                IssueFound?.Invoke(this, new(storable, healthIssue, result));
-            }
+            var result = await asyncValidator.ValidateResultAsync(storable, cancellationToken);
+            if (!result.Successful && result is IHealthResult healthResult)
+                IssueFound?.Invoke(this, new(storable, healthResult));
         }
 
         private void ReportProgress(ProgressModel<TotalProgress> progress)

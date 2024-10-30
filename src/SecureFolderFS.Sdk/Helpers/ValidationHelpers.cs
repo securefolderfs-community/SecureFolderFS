@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.Helpers
 {
     public static class ValidationHelpers
     {
-        public static async Task<IResultWithMessage<ViewSeverityType>> ValidateExistingVault(IFolder vaultFolder, CancellationToken cancellationToken)
+        public static async Task<IResultWithMessage<SeverityType>> ValidateExistingVault(IFolder vaultFolder, CancellationToken cancellationToken)
         {
             var vaultService = DI.Service<IVaultService>();
             var validationResult = await vaultService.VaultValidator.TryValidateAsync(vaultFolder, cancellationToken);
@@ -24,26 +24,26 @@ namespace SecureFolderFS.Sdk.Helpers
                 if (validationResult.Exception is NotSupportedException)
                 {
                     // Allow unsupported vaults to be migrated
-                    return new MessageResult<ViewSeverityType>(ViewSeverityType.Warning, "SelectedMayNotBeSupported".ToLocalized());
+                    return new MessageResult<SeverityType>(SeverityType.Warning, "SelectedMayNotBeSupported".ToLocalized());
                 }
 
-                return new MessageResult<ViewSeverityType>(ViewSeverityType.Error, "SelectedInvalidVault".ToLocalized(), false);
+                return new MessageResult<SeverityType>(SeverityType.Error, "SelectedInvalidVault".ToLocalized(), false);
             }
 
-            return new MessageResult<ViewSeverityType>(ViewSeverityType.Success, "SelectedValidVault".ToLocalized());
+            return new MessageResult<SeverityType>(SeverityType.Success, "SelectedValidVault".ToLocalized());
         }
 
-        public static async Task<IResultWithMessage<ViewSeverityType>> ValidateNewVault(IFolder vaultFolder, CancellationToken cancellationToken)
+        public static async Task<IResultWithMessage<SeverityType>> ValidateNewVault(IFolder vaultFolder, CancellationToken cancellationToken)
         {
             var vaultService = DI.Service<IVaultService>();
             var validationResult = await vaultService.VaultValidator.TryValidateAsync(vaultFolder, cancellationToken);
             if (validationResult.Successful || validationResult.Exception is NotSupportedException)
             {
                 // Check if a valid (or unsupported) vault exists at a specified path
-                return new MessageResult<ViewSeverityType>(ViewSeverityType.Warning, "SelectedToBeOverwritten".ToLocalized());
+                return new MessageResult<SeverityType>(SeverityType.Warning, "SelectedToBeOverwritten".ToLocalized());
             }
 
-            return new MessageResult<ViewSeverityType>(ViewSeverityType.Success, "SelectedWillCreate".ToLocalized());
+            return new MessageResult<SeverityType>(SeverityType.Success, "SelectedWillCreate".ToLocalized());
         }
     }
 }

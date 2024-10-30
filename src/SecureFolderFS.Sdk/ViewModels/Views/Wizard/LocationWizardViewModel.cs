@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _SelectedLocation;
-        [ObservableProperty] private ViewSeverityType _Severity;
+        [ObservableProperty] private SeverityType _Severity;
 
         public NewVaultCreationType CreationType { get; }
 
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 // No folder selected
                 if (SelectedFolder is null)
                 {
-                    Severity = ViewSeverityType.Default;
+                    Severity = SeverityType.Default;
                     Message = "SelectFolderToContinue".ToLocalized();
                     return false;
                 }
@@ -88,7 +88,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
                 var isDuplicate = _vaultCollectionModel.Any(x => x.Folder.Id == SelectedFolder.Id);
                 if (isDuplicate)
                 {
-                    Severity = ViewSeverityType.Warning;
+                    Severity = SeverityType.Warning;
                     Message = "VaultAlreadyExists".ToLocalized();
                     return false;
                 }

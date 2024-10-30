@@ -11,12 +11,12 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         #region ReadWrite
 
         /// <summary>
-        /// Gets the <see cref="IProgress{T}"/> that reports the number of bytes read.
+        /// Gets or sets the <see cref="IProgress{T}"/> that reports the number of bytes read.
         /// </summary>
         IProgress<long>? BytesRead { get; set; }
 
         /// <summary>
-        /// Gets the <see cref="IProgress{T}"/> that reports the number of bytes written.
+        /// Gets or sets the <see cref="IProgress{T}"/> that reports the number of bytes written.
         /// </summary>
         IProgress<long>? BytesWritten { get; set; }
 
@@ -25,12 +25,12 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         #region Cryptography
 
         /// <summary>
-        /// Gets the <see cref="IProgress{T}"/> that reports the number of bytes encrypted.
+        /// Gets or sets the <see cref="IProgress{T}"/> that reports the number of bytes encrypted.
         /// </summary>
         IProgress<long>? BytesEncrypted { get; set; }
 
         /// <summary>
-        /// Gets the <see cref="IProgress{T}"/> that reports the number of bytes decrypted.
+        /// Gets or sets the <see cref="IProgress{T}"/> that reports the number of bytes decrypted.
         /// </summary>
         IProgress<long>? BytesDecrypted { get; set; }
 
@@ -39,17 +39,17 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         #region Caching
 
         /// <summary>
-        /// Gets the <see cref="IProgress{T}"/> that reports on cache state of chunks.
+        /// Gets or sets the <see cref="IProgress{T}"/> that reports on cache state of chunks.
         /// </summary>
         IProgress<CacheAccessType>? ChunkCache { get; set; }
 
         /// <summary>
-        /// Gets the <see cref="IProgress{T}"/> that reports on cache state of file names.
+        /// Gets or sets the <see cref="IProgress{T}"/> that reports on cache state of file names.
         /// </summary>
         IProgress<CacheAccessType>? FileNameCache { get; set; }
 
         /// <summary>
-        /// Gets the <see cref="IProgress{T}"/> that reports on cache state of directory IDs.
+        /// Gets or sets the <see cref="IProgress{T}"/> that reports on cache state of directory IDs.
         /// </summary>
         IProgress<CacheAccessType>? DirectoryIdCache { get; set; }
 

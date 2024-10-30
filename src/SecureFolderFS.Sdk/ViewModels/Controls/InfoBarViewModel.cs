@@ -13,6 +13,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private string? _Message;
         [ObservableProperty] private bool _IsCloseable;
-        [ObservableProperty] private ViewSeverityType _Severity;
+        [ObservableProperty] private SeverityType _Severity;
     }
 }

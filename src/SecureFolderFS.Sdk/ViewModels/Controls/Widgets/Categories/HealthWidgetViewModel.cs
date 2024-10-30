@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
-    [Inject<IVaultHealthService>, Inject<ILocalizationService>, Inject<IImageService>]
+    [Inject<ILocalizationService>, Inject<IImageService>]
     [Bindable(true)]
     public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgress>, IViewable
     {
@@ -53,8 +53,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             var vaultModel = _unlockedVaultViewModel.VaultViewModel.VaultModel;
             var contentFolder = await vaultModel.GetContentFolderAsync(cancellationToken);
             var folderScanner = new DeepFolderScanner(contentFolder);
-            var fileValidator = VaultHealthService.GetFileValidator(vaultModel.Folder);
-            var folderValidator = VaultHealthService.GetFolderValidator(vaultModel.Folder);
+            var fileValidator = _unlockedVaultViewModel.StorageRoot.HealthStatistics.FileValidator;
+            var folderValidator = _unlockedVaultViewModel.StorageRoot.HealthStatistics.FolderValidator;
 
             _vaultHealthModel = new HealthModel(folderScanner, fileValidator, folderValidator);
             _vaultHealthModel.IssueFound += VaultHealthModel_IssueFound;
@@ -146,12 +146,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             if (FoundIssues.IsEmpty())
             {
                 Title = "HealthNoProblems".ToLocalized(); // HealthNoProblems, HealthAttention, HealthProblems
-                StatusIcon = await ImageService.GetHealthIconAsync(VaultHealthState.Healthy);
+                StatusIcon = await ImageService.GetHealthIconAsync(SeverityType.Success);
             }
             else
             {
                 Title = "HealthProblems".ToLocalized();
-                StatusIcon = await ImageService.GetHealthIconAsync(VaultHealthState.IssuesFound);
+                StatusIcon = await ImageService.GetHealthIconAsync(SeverityType.Error);
             }
         }
 

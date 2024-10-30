@@ -72,7 +72,7 @@ namespace SecureFolderFS.Uno.Views.Settings
             {
                 ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
                 ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
-                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = ViewSeverityType.Warning;
+                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = SeverityType.Warning;
                 ViewModel.BannerViewModel.FileSystemInfoBar.Message = "WebDav is experimental. You may encounter bugs and stability issues. We recommend backing up your data before using WebDav.";
             }
             else
@@ -86,7 +86,7 @@ namespace SecureFolderFS.Uno.Views.Settings
 
                 ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
                 ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
-                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = ViewSeverityType.Error;
+                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = SeverityType.Error;
                 ViewModel.BannerViewModel.FileSystemInfoBar.Message = fileSystemResult switch
                 {
                     FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "Dokany has not been detected. Please install Dokany (v2.0.5) to continue using SecureFolderFS.",

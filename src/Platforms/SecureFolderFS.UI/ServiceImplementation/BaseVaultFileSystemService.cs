@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.AppModels;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Sdk.Models;
@@ -24,12 +25,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <inheritdoc/>
         public virtual FileSystemOptions GetFileSystemOptions(IVaultModel vaultModel, string fileSystemId)
         {
-            var statistics = new ConsolidatedStatisticsModel();
+            var healthStatistics = new HealthStatistics(vaultModel.Folder);
+            var fileSystemStatistics = new FileSystemStatistics();
+
             return new FileSystemOptions()
             {
                 VolumeName = vaultModel.VaultName, // TODO: Sanitize name
-                HealthStatistics = statistics,
-                FileSystemStatistics = statistics
+                HealthStatistics = healthStatistics,
+                FileSystemStatistics = fileSystemStatistics
             };
         }
     }

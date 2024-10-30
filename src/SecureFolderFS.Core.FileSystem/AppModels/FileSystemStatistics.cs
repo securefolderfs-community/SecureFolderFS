@@ -4,7 +4,8 @@ using System;
 
 namespace SecureFolderFS.Core.FileSystem.AppModels
 {
-    public sealed class ConsolidatedStatisticsModel : IFileSystemStatistics, IHealthStatistics
+    /// <inheritdoc cref="IFileSystemStatistics"/>
+    public sealed class FileSystemStatistics : IFileSystemStatistics
     {
         /// <inheritdoc/>
         public IProgress<long>? BytesRead { get; set; }
@@ -26,14 +27,5 @@ namespace SecureFolderFS.Core.FileSystem.AppModels
 
         /// <inheritdoc/>
         public IProgress<CacheAccessType>? DirectoryIdCache { get; set; }
-
-        /// <inheritdoc/>
-        public IProgress<string>? DirectoryIdNotFound { get; set; }
-
-        /// <inheritdoc/>
-        public IProgress<string>? DirectoryIdInvalid { get; set; }
-
-        /// <inheritdoc/>
-        public IProgress<string>? InvalidPath { get; set; }
     }
 }

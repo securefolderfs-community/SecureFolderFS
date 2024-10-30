@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.AppModels;
 using SecureFolderFS.Core.Dokany;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.FileSystem.AppModels;
@@ -27,25 +28,27 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         /// <inheritdoc/>
         public override FileSystemOptions GetFileSystemOptions(IVaultModel vaultModel, string fileSystemId)
         {
-            var statistics = new ConsolidatedStatisticsModel();
             return fileSystemId switch
             {
                 Core.WebDav.Constants.FileSystem.FS_ID => new WebDavOptions()
                 {
                     VolumeName = vaultModel.VaultName, // TODO: Sanitize name
-                    HealthStatistics = statistics,
-                    FileSystemStatistics = statistics
+                    HealthStatistics = HealthStatistics(),
+                    FileSystemStatistics = FileSystemStatistics()
                 },
 
                 Core.Dokany.Constants.FileSystem.FS_ID => new DokanyOptions()
                 {
                     VolumeName = vaultModel.VaultName, // TODO: Sanitize name
-                    HealthStatistics = statistics,
-                    FileSystemStatistics = statistics
+                    HealthStatistics = HealthStatistics(),
+                    FileSystemStatistics = FileSystemStatistics()
                 },
 
                 _ => base.GetFileSystemOptions(vaultModel, fileSystemId)
             };
+
+            IHealthStatistics HealthStatistics() => new HealthStatistics(vaultModel.Folder);
+            IFileSystemStatistics FileSystemStatistics() => new FileSystemStatistics();
         }
     }
 }

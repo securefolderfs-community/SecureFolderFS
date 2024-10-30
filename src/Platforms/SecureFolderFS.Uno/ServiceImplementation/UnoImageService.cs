@@ -9,7 +9,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
     internal sealed class UnoImageService : IImageService
     {
         /// <inheritdoc/>
-        public Task<IImage> GetHealthIconAsync(VaultHealthState healthState)
+        public Task<IImage> GetHealthIconAsync(SeverityType severity)
         {
             return Task.FromResult<IImage>(null!); // TODO: Implement
         }
