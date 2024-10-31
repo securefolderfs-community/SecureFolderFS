@@ -2,13 +2,11 @@
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Scanners;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Sdk.Results;
 
 namespace SecureFolderFS.Sdk.AppModels
 {
@@ -123,8 +121,8 @@ namespace SecureFolderFS.Sdk.AppModels
             where TStorable : IStorableChild
         {
             var result = await asyncValidator.ValidateResultAsync(storable, cancellationToken);
-            if (!result.Successful && result is IHealthResult healthResult)
-                IssueFound?.Invoke(this, new(storable, healthResult));
+            if (!result.Successful)
+                IssueFound?.Invoke(this, new(storable, result));
         }
 
         private void ReportProgress(ProgressModel<TotalProgress> progress)

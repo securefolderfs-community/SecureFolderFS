@@ -70,7 +70,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
             InfoBarViewModel.Title = "Error".ToLocalized();
             InfoBarViewModel.IsCloseable = true;
             InfoBarViewModel.Message = GetMessageForUpdateState(args.UpdateState);
-            InfoBarViewModel.Severity = SeverityType.Error;
+            InfoBarViewModel.Severity = SeverityType.Critical;
         }
 
         [RelayCommand]
@@ -93,7 +93,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Banners
                 InfoBarViewModel.Title = "Error".ToLocalized();
                 InfoBarViewModel.IsCloseable = true;
                 InfoBarViewModel.Message = result.GetMessage();
-                InfoBarViewModel.Severity = SeverityType.Error;
+                InfoBarViewModel.Severity = SeverityType.Critical;
             }
         }
 

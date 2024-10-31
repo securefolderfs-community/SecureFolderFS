@@ -6,45 +6,48 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Scanners;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
-    [Inject<ILocalizationService>, Inject<IImageService>]
+    [Inject<ILocalizationService>, Inject<IOverlayService>]
     [Bindable(true)]
     public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgress>, IViewable
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
+        private readonly List<HealthIssueViewModel> _savedState;
         private readonly SynchronizationContext? _context;
         private IHealthModel? _vaultHealthModel;
         private CancellationTokenSource? _cts;
 
         [ObservableProperty] private string? _Title;
-        [ObservableProperty] private IImage? _StatusIcon;
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private double _CurrentProgress;
         [ObservableProperty] private string? _LastCheckedText;
-        [ObservableProperty] private ObservableCollection<string> _FoundIssues; // TODO: (1) Add a view model type. (2) Move to a separate VM e.g. HealthDetailsViewModel
+        [ObservableProperty] private HealthOverlayViewModel _HealthOverlayViewModel;
 
         public HealthWidgetViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetModel widgetModel)
             : base(widgetModel)
         {
             ServiceProvider = DI.Default;
-            FoundIssues = new();
-            Title = "HealthNoProblems".ToLocalized();
-            LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
             _cts = new();
+            _savedState = new();
             _context = SynchronizationContext.Current;
             _unlockedVaultViewModel = unlockedVaultViewModel;
+            HealthOverlayViewModel = new(_context);
+            Title = "HealthNoProblems".ToLocalized();
+            LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
         }
 
         /// <inheritdoc/>
@@ -92,10 +95,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         }
 
         [RelayCommand]
+        private async Task OpenVaultHealthAsync()
+        {
+            await OverlayService.ShowAsync(HealthOverlayViewModel);
+        }
+
+        [RelayCommand]
         private async Task StartScanningAsync()
         {
             if (_vaultHealthModel is null)
                 return;
+
+            // Save last scan state
+            _savedState.AddMultiple(HealthOverlayViewModel.FoundIssues);
+            HealthOverlayViewModel.FoundIssues.Clear();
 
             // Set IsProgressing with small delay
             IsProgressing = true;
@@ -107,17 +120,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         }
 
         [RelayCommand]
-        private async Task CancelScanningAsync()
+        private void CancelScanning()
         {
+            // Restore last scan state
+            HealthOverlayViewModel.FoundIssues.AddMultiple(_savedState);
+
             _cts?.CancelAsync();
             _cts?.Dispose();
             _cts = new();
-            await EndScanningAsync();
-        }
-
-        [RelayCommand]
-        private void OpenVaultHealth()
-        {
+            EndScanning();
         }
 
         private async Task ScanAsync(CancellationToken cancellationToken)
@@ -126,10 +137,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
                 return;
 
             await _vaultHealthModel.ScanAsync(new(this, this), cancellationToken);
-            await EndScanningAsync();
+            EndScanning();
         }
 
-        private async Task EndScanningAsync()
+        private void EndScanning()
         {
             if (!IsProgressing)
                 return;
@@ -137,28 +148,28 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             // Reset progress
             IsProgressing = false;
             CurrentProgress = 0d;
+            _savedState.Clear();
 
             // Update date TODO: Persist last checked date
             var localizedDate = LocalizationService.LocalizeDate(DateTime.Now);
             LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
             
-            // Update status TODO: Update icon
-            if (FoundIssues.IsEmpty())
+            // Update status
+            Title = HealthOverlayViewModel.Severity switch
             {
-                Title = "HealthNoProblems".ToLocalized(); // HealthNoProblems, HealthAttention, HealthProblems
-                StatusIcon = await ImageService.GetHealthIconAsync(SeverityType.Success);
-            }
-            else
-            {
-                Title = "HealthProblems".ToLocalized();
-                StatusIcon = await ImageService.GetHealthIconAsync(SeverityType.Error);
-            }
+                SeverityType.Warning => "HealthAttention".ToLocalized(),
+                SeverityType.Critical => "HealthProblems".ToLocalized(),
+                _ => "HealthNoProblems".ToLocalized()
+            };
         }
 
         private void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
         {
-            FoundIssues.Add(e.Result.GetMessage());
-            _ = e;
+            HealthOverlayViewModel.FoundIssues.Add(e.Result switch
+            {
+                IHealthResult healthResult => new(healthResult),
+                _ => new(e.Result, SeverityType.Warning, e.Storable)
+            });
         }
 
         /// <inheritdoc/>
@@ -170,6 +181,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
                 _vaultHealthModel.Dispose();
             }
 
+            HealthOverlayViewModel.Dispose();
             base.Dispose();
         }
     }

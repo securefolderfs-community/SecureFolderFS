@@ -49,7 +49,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             _readWriteStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
             
             // We don't want to await it, since it's an async based timer
-            _ = Task.Run(() => InitializeBlockingTimer(cancellationToken));
+            _ = InitializeBlockingTimer(cancellationToken);
         }
 
         private async Task InitializeBlockingTimer(CancellationToken cancellationToken)
@@ -70,8 +70,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             var read = Convert.ToInt64(ByteSize.FromBytes(_currentReadAmount).MegaBytes);
             var write = Convert.ToInt64(ByteSize.FromBytes(_currentWriteAmount).MegaBytes);
-
-            var now = DateTime.Now;
 
             // Update graph for read
             ReadGraphViewModel.Data.RemoveAt(0);

@@ -86,7 +86,7 @@ namespace SecureFolderFS.Uno.Views.Settings
 
                 ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen = true;
                 ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable = false;
-                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = SeverityType.Error;
+                ViewModel.BannerViewModel.FileSystemInfoBar.Severity = SeverityType.Critical;
                 ViewModel.BannerViewModel.FileSystemInfoBar.Message = fileSystemResult switch
                 {
                     FileSystemAvailability.ModuleUnavailable or FileSystemAvailability.CoreUnavailable => "Dokany has not been detected. Please install Dokany (v2.0.5) to continue using SecureFolderFS.",

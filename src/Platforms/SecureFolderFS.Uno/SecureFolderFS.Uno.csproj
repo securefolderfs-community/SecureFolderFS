@@ -217,6 +217,7 @@
     <None Remove="Dialogs\ChangelogDialog.xaml" />
     <None Remove="Dialogs\CredentialsDialog.xaml" />
     <None Remove="Dialogs\ExplanationDialog.xaml" />
+    <None Remove="Dialogs\HealthDialog.xaml" />
     <None Remove="Dialogs\LicensesDialog.xaml" />
     <None Remove="Dialogs\MigrationDialog.xaml" />
     <None Remove="Dialogs\PaymentDialog.xaml" />
@@ -273,6 +274,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Dialogs\HealthDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Dialogs\AgreementDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -449,6 +454,7 @@
     <UpToDateCheckInput Remove="Dialogs\ChangelogDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\CredentialsDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\ExplanationDialog.xaml" />
+    <UpToDateCheckInput Remove="Dialogs\HealthDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\LicensesDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\MigrationDialog.xaml" />
     <UpToDateCheckInput Remove="Dialogs\PaymentDialog.xaml" />

@@ -1,0 +1,17 @@
+﻿<ContentDialog
+    x:Class="SecureFolderFS.Uno.Dialogs.HealthDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:SecureFolderFS.Uno.Helpers"
+    xmlns:l="using:SecureFolderFS.Uno.Localization"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Found issues"
+    DefaultButton="Primary"
+    RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
+    SecondaryButtonText="{l:ResourceString Name=Close}"
+    Style="{ThemeResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <TextBlock Text="Health Dialog" />
+</ContentDialog>

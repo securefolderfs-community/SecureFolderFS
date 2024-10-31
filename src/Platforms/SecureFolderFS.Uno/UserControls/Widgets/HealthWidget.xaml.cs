@@ -1,6 +1,7 @@
 using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SecureFolderFS.Sdk.Enums;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,6 +14,14 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
         {
             InitializeComponent();
         }
+
+        public SeverityType Severity
+        {
+            get => (SeverityType)GetValue(SeverityProperty);
+            set => SetValue(SeverityProperty, value);
+        }
+        public static readonly DependencyProperty SeverityProperty =
+            DependencyProperty.Register(nameof(Severity), typeof(SeverityType), typeof(HealthWidget), new PropertyMetadata(SeverityType.Default));
 
         public string? StatusTitle
         {

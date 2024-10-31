@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.Helpers
                     return new MessageResult<SeverityType>(SeverityType.Warning, "SelectedMayNotBeSupported".ToLocalized());
                 }
 
-                return new MessageResult<SeverityType>(SeverityType.Error, "SelectedInvalidVault".ToLocalized(), false);
+                return new MessageResult<SeverityType>(SeverityType.Critical, "SelectedInvalidVault".ToLocalized(), false);
             }
 
             return new MessageResult<SeverityType>(SeverityType.Success, "SelectedValidVault".ToLocalized());

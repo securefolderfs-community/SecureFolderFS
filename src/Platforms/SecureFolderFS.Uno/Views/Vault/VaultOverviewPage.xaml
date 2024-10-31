@@ -22,6 +22,7 @@
                 IsProgressing="{x:Bind IsProgressing, Mode=OneWay}"
                 LastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
+                Severity="{x:Bind HealthOverlayViewModel.Severity, Mode=OneWay}"
                 StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
                 StatusTitle="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>

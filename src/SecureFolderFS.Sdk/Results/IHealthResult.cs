@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Shared.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,11 @@ namespace SecureFolderFS.Sdk.Results
     /// <inheritdoc cref="IResult{T}"/>
     public interface IHealthResult : IResult<IStorable>
     {
+        /// <summary>
+        /// Gets the severity of the issue.
+        /// </summary>
+        SeverityType Severity { get; }
+
         /// <summary>
         /// Tries to resolve the health issue, if possible.
         /// </summary>

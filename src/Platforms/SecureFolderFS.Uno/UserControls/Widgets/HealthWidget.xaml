@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
+        <vc:SeverityHealthIconConverter x:Key="SeverityHealthIconConverter" />
 
         <DataTemplate x:Key="WithDetailedHealthTemplate" x:DataType="local:HealthWidget">
             <StackPanel Margin="0,-4,0,0" DataContext="{Binding ElementName=HealthControl}">
@@ -66,17 +67,14 @@
                 Height="64"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Stretch="UniformToFill">
-                <win:Image.Source>
-                    <SvgImageSource UriSource="ms-appx://SecureFolderFS.UI/Assets/AppAssets/green_shield.svg" />
-                </win:Image.Source>
-            </win:Image>
+                Source="{x:Bind Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
+                Stretch="UniformToFill" />
             <not_win:Image
                 Width="64"
                 Height="64"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Source="/Assets/AppAssets/green_shield.png"
+                Source="{x:Bind Severity, Mode=OneWay, Converter={StaticResource SeverityHealthIconConverter}}"
                 Stretch="UniformToFill" />
         </Grid>
 

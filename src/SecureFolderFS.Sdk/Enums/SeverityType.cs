@@ -20,6 +20,6 @@
         /// <summary>
         /// Error status.
         /// </summary>
-        Error = 3
+        Critical = 3
     }
 }
