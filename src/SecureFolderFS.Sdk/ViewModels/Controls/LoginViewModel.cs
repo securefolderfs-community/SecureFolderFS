@@ -115,12 +115,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private void RestartLoginProcess()
         {
-            _loginSequence?.Reset();
+            // Dispose built keychain
             _keyChain.Dispose();
 
-            var result = ProceedAuthentication();
-            if (!result.Successful)
-                CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
+            // Reset login sequence only if chain is longer than one authentication
+            if (_loginSequence?.Count > 1)
+            {
+                _loginSequence?.Reset();
+                var result = ProceedAuthentication();
+                if (!result.Successful)
+                    CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
+            }
         }
 
         private async Task<bool> TryUnlockAsync(CancellationToken cancellationToken = default)
@@ -174,7 +179,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         {
             if (e is CredentialsProvisionChangedEventArgs provisionArgs)
             {
-                // TODO
+                // TODO: Implement provisioning
                 _ = provisionArgs.ClearProvision;
                 _ = provisionArgs.SignedProvision;
             }
@@ -193,7 +198,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             if (!result.Successful && CurrentViewModel is not ErrorViewModel)
             {
                 // Reached the end in which case we should try to unlock the vault
-                if (!await TryUnlockAsync() && _loginSequence?.Count > 1)
+                if (!await TryUnlockAsync())
                 {
                     // If login failed, restart the process
                     RestartLoginProcess();

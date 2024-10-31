@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,7 +10,7 @@ using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Uno.UserControls.Migration
 {
-    public sealed partial class MigratorV1_V2 : UserControl, IWrapper<object?>
+    public sealed partial class MigratorV1_V2 : UserControl, IWrapper<object?>, IProgress<IResult?>
     {
         public MigratorV1_V2()
         {
@@ -18,6 +19,13 @@ namespace SecureFolderFS.Uno.UserControls.Migration
 
         /// <inheritdoc/>
         public object? Inner => Password.GetPassword();
+
+        /// <inheritdoc/>
+        public void Report(IResult? value)
+        {
+            if (!value?.Successful ?? false)
+                Password.ShowInvalidPasswordMessage = true;
+        }
 
         private void Password_PasswordSubmitted(object sender, RoutedEventArgs e)
         {

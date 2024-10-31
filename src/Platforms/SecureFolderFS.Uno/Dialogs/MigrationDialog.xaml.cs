@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -58,9 +59,19 @@ namespace SecureFolderFS.Uno.Dialogs
             }
             else if (e is ErrorReportedEventArgs args)
             {
-                MigrationView.Visibility = Visibility.Collapsed;
-                ErrorView.Visibility = Visibility.Visible;
-                ErrorMessage.Text = args.Result.GetMessage();
+                if (args.Result.Exception is CryptographicException)
+                {
+                    if (AuthenticationView.ContentTemplateRoot is not IProgress<IResult?> reporter)
+                        return;
+
+                    reporter.Report(args.Result);
+                }
+                else
+                {
+                    MigrationView.Visibility = Visibility.Collapsed;
+                    ErrorView.Visibility = Visibility.Visible;
+                    ErrorMessage.Text = args.Result.GetMessage();
+                }
             }
         }
 
