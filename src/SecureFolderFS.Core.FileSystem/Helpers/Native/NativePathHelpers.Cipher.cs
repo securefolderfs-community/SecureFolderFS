@@ -27,7 +27,12 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Native
 
             // Return the (full) path, if not using name encryption
             if (specifics.Security.NameCrypt is null)
+            {
+                if (plaintextRelativePath.StartsWith(Path.DirectorySeparatorChar))
+                    return specifics.ContentFolder.Id + plaintextRelativePath;
+
                 return Path.Combine(specifics.ContentFolder.Id, plaintextRelativePath);
+            }
 
             var finalPath = specifics.ContentFolder.Id;
             foreach (var namePart in plaintextRelativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
