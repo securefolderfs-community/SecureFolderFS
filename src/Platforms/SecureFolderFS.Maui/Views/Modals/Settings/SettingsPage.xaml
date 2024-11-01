@@ -30,7 +30,7 @@
                             </Border>
                         </uc:SplitCell.RightSide>
                     </uc:SplitCell>
-                    <SwitchCell On="{Binding PrivacyViewModel.AutoLockVaults, Mode=TwoWay}" Text="{l:ResourceString Name=AutoLock}" />
+                    <SwitchCell On="{Binding PrivacyViewModel.LockOnSystemLock, Mode=TwoWay}" Text="{l:ResourceString Name=AutoLock}" />
                     <SwitchCell On="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" Text="{l:ResourceString Name=Telemetry}" />
                 </TableSection>
 

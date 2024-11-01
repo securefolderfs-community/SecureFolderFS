@@ -13,8 +13,12 @@
         <None Remove="Assets\AppAssets\app_icon.png" />
         <None Remove="Assets\AppAssets\app_title.png" />
         <None Remove="Assets\AppAssets\app_title.svg" />
-        <None Remove="Assets\AppAssets\green_shield.svg" />
-        <None Remove="Assets\AppAssets\green_shield.png" />
+        <None Remove="Assets\AppAssets\Shields\error_shield.svg" />
+        <None Remove="Assets\AppAssets\Shields\error_shield.png" />
+        <None Remove="Assets\AppAssets\Shields\success_shield.png" />
+        <None Remove="Assets\AppAssets\Shields\success_shield.svg" />
+        <None Remove="Assets\AppAssets\Shields\warning_shield.png" />
+        <None Remove="Assets\AppAssets\Shields\warning_shield.svg" />
         <None Remove="Assets\AppAssets\Media\ExplanationVideoDark.mov" />
         <None Remove="Assets\Licenses\FluentAvalonia LICENSE" />
         <None Remove="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE" />
@@ -45,7 +49,13 @@
         <EmbeddedResource Include="Assets\AppAssets\vault_light.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="Assets\AppAssets\green_shield.svg">
+        <EmbeddedResource Include="Assets\AppAssets\Shields\error_shield.svg">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\AppAssets\Shields\success_shield.svg">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\AppAssets\Shields\warning_shield.svg">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\Tmds.Fuse LICENSE" />
@@ -147,7 +157,13 @@
         <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="Assets\AppAssets\green_shield.png">
+        <EmbeddedResource Include="Assets\AppAssets\Shields\error_shield.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\AppAssets\Shields\success_shield.png">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\AppAssets\Shields\warning_shield.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\AppAssets\app_icon.svg" />

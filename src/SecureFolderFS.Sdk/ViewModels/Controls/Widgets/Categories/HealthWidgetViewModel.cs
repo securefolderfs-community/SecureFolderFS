@@ -11,13 +11,13 @@ using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Scanners;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
@@ -69,10 +69,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             if (!IsProgressing)
                 return;
 
-            _context?.Post(_ =>
-            {
-                CurrentProgress = Math.Round(value);
-            }, null);
+            _context?.Post(_ => CurrentProgress = Math.Round(value), null);
         }
 
         /// <inheritdoc/>
@@ -106,13 +103,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             if (_vaultHealthModel is null)
                 return;
 
+            // Set IsProgressing status
+            HealthOverlayViewModel.IsScanning = true; // TODO: Move to separate ScanViewModel (name tbd) to avoid duplication of properties
+            IsProgressing = true;
+            Title = "Scanning...";
+
             // Save last scan state
             _savedState.AddMultiple(HealthOverlayViewModel.FoundIssues);
             HealthOverlayViewModel.FoundIssues.Clear();
 
-            // Set IsProgressing with small delay
-            IsProgressing = true;
-            Title = "Scanning...";
+            // Wait a small delay for UI to update
             await Task.Delay(10);
 
             _ = ScanAsync(_cts?.Token ?? default);
@@ -147,6 +147,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 
             // Reset progress
             IsProgressing = false;
+            HealthOverlayViewModel.IsScanning = false; // TODO: Move to separate ScanViewModel (name tbd) to avoid duplication of properties
             CurrentProgress = 0d;
             _savedState.Clear();
 

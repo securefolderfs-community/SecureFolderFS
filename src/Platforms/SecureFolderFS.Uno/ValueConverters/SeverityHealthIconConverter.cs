@@ -10,16 +10,26 @@ namespace SecureFolderFS.Uno.ValueConverters
         /// <inheritdoc/>
         protected override object? SuccessIcon { get; } =
 #if WINDOWS && !HAS_UNO
-            new SvgImageSource(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/green_shield.svg"));
+            new SvgImageSource(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/success_shield.svg"));
 #else
-            new SvgImageSource(new("/Assets/AppAssets/green_shield.png"));
+            new BitmapImage(new("/Assets/AppAssets/Shields/success_shield.png"));
 #endif
 
         /// <inheritdoc/>
-        protected override object? WarningIcon { get; } = null;
+        protected override object? WarningIcon { get; } =
+#if WINDOWS && !HAS_UNO
+            new SvgImageSource(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/warning_shield.svg"));
+#else
+            new BitmapImage(new("/Assets/AppAssets/Shields/warning_shield.png"));
+#endif
 
         /// <inheritdoc/>
-        protected override object? CriticalIcon { get; } = null;
+        protected override object? CriticalIcon { get; } =
+#if WINDOWS && !HAS_UNO
+            new SvgImageSource(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/error_shield.svg"));
+#else
+            new BitmapImage(new("/Assets/AppAssets/Shields/error_shield.png"));
+#endif
 
         /// <inheritdoc/>
         public object? Convert(object value, Type targetType, object parameter, string language)

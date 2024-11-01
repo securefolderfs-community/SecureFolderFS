@@ -18,7 +18,7 @@
                 <Image
                     Margin="-4,0,0,0"
                     HeightRequest="48"
-                    Source="green_shield.png" />
+                    Source="success_shield.png" />
                 <Label
                     FontAttributes="Bold"
                     FontSize="18"

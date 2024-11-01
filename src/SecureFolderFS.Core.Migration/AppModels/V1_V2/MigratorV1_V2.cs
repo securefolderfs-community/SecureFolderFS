@@ -48,7 +48,6 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             _v1KeystoreDataModel = await _streamSerializer.DeserializeAsync<Stream, VaultKeystoreDataModel>(keystoreStream, cancellationToken);
             if (_v1KeystoreDataModel is null)
                 throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
-
             
             var kek = new byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
             using var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
