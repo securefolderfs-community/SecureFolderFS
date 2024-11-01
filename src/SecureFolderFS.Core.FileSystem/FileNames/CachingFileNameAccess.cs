@@ -10,68 +10,68 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
     /// <inheritdoc cref="FileNameAccess"/>
     internal sealed class CachingFileNameAccess : FileNameAccess
     {
-        private readonly Dictionary<NameWithDirectoryId, string> _cleartextNames;
+        private readonly Dictionary<NameWithDirectoryId, string> _PlaintextNames;
         private readonly Dictionary<NameWithDirectoryId, string> _ciphertextNames;
 
         public CachingFileNameAccess(Security security, IFileSystemStatistics fileSystemStatistics)
             : base(security, fileSystemStatistics)
         {
-            _cleartextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CLEARTEXT_FILENAMES);
+            _PlaintextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_Plaintext_FILENAMES);
             _ciphertextNames = new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES);
         }
 
         /// <inheritdoc/>
         public override string GetPlaintextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            string cleartextName;
+            string PlaintextName;
             string stringCiphertext = ciphertextName.ToString();
 
-            lock (_cleartextNames)
+            lock (_PlaintextNames)
             {
-                if (!_cleartextNames.TryGetValue(new(directoryId.ToArray(), stringCiphertext), out cleartextName!))
+                if (!_PlaintextNames.TryGetValue(new(directoryId.ToArray(), stringCiphertext), out PlaintextName!))
                 {
                     // Not found in cache
                     statistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
 
-                    // Get new cleartext name
-                    var newCleartextName = base.GetPlaintextName(ciphertextName, directoryId);
-                    if (newCleartextName == string.Empty)
+                    // Get new plaintext name
+                    var newPlaintextName = base.GetPlaintextName(ciphertextName, directoryId);
+                    if (newPlaintextName == string.Empty)
                         return string.Empty;
 
                     // Update cache
-                    SetCleartextName(newCleartextName, stringCiphertext, directoryId);
+                    SetPlaintextName(newPlaintextName, stringCiphertext, directoryId);
 
-                    return newCleartextName;
+                    return newPlaintextName;
                 }
             }
 
             statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
             statistics.FileNameCache?.Report(CacheAccessType.CacheHit);
 
-            // Return existing cleartext name
-            return cleartextName;
+            // Return existing plaintext name
+            return PlaintextName;
         }
 
         /// <inheritdoc/>
-        public override string GetCiphertextName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
+        public override string GetCiphertextName(ReadOnlySpan<char> PlaintextName, ReadOnlySpan<byte> directoryId)
         {
             string ciphertextName;
-            string stringCleartext = cleartextName.ToString();
+            string stringPlaintext = PlaintextName.ToString();
 
             lock (_ciphertextNames)
             {
-                if (!_ciphertextNames.TryGetValue(new(directoryId.ToArray(), stringCleartext), out ciphertextName!))
+                if (!_ciphertextNames.TryGetValue(new(directoryId.ToArray(), stringPlaintext), out ciphertextName!))
                 {
                     // Not found in cache
                     statistics.FileNameCache?.Report(CacheAccessType.CacheMiss);
 
                     // Get new ciphertext name
-                    var newCiphertextName = base.GetCiphertextName(cleartextName, directoryId);
+                    var newCiphertextName = base.GetCiphertextName(PlaintextName, directoryId);
                     if (newCiphertextName == string.Empty)
                         return string.Empty;
 
                     // Update cache
-                    SetCiphertextName(newCiphertextName, stringCleartext, directoryId);
+                    SetCiphertextName(newCiphertextName, stringPlaintext, directoryId);
 
                     return newCiphertextName;
                 }
@@ -84,20 +84,20 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
             return ciphertextName;
         }
 
-        private void SetCleartextName(string cleartextName, string ciphertextName, ReadOnlySpan<byte> directoryId)
+        private void SetPlaintextName(string PlaintextName, string ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            if (_cleartextNames.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_CLEARTEXT_FILENAMES)
-                _cleartextNames.Remove(_cleartextNames.Keys.First(), out _);
+            if (_PlaintextNames.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_Plaintext_FILENAMES)
+                _PlaintextNames.Remove(_PlaintextNames.Keys.First(), out _);
 
-            _cleartextNames[new(directoryId.ToArray(), ciphertextName)] = cleartextName;
+            _PlaintextNames[new(directoryId.ToArray(), ciphertextName)] = PlaintextName;
         }
 
-        private void SetCiphertextName(string ciphertextName, string cleartextName, ReadOnlySpan<byte> directoryId)
+        private void SetCiphertextName(string ciphertextName, string PlaintextName, ReadOnlySpan<byte> directoryId)
         {
             if (_ciphertextNames.Count >= FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES)
                 _ciphertextNames.Remove(_ciphertextNames.Keys.First(), out _);
 
-            _ciphertextNames[new(directoryId.ToArray(), cleartextName)] = ciphertextName;
+            _ciphertextNames[new(directoryId.ToArray(), PlaintextName)] = ciphertextName;
         }
     }
 }

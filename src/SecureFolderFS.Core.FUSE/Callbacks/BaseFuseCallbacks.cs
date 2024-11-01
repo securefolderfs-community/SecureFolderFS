@@ -22,6 +22,6 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         /// </remarks>
         public FuseOptions? MountOptions { get; set; }
 
-        protected abstract string? GetCiphertextPath(ReadOnlySpan<byte> cleartextName);
+        protected abstract string? GetCiphertextPath(ReadOnlySpan<byte> PlaintextName);
     }
 }

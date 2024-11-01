@@ -47,7 +47,7 @@ namespace SecureFolderFS.Core.FileSystem
             {
                 ContentFolder = contentFolder,
                 PlaintextFileNameCache = options.EnableFileNameCache
-                    ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CLEARTEXT_FILENAMES, options.FileSystemStatistics.FileNameCache)
+                    ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_Plaintext_FILENAMES, options.FileSystemStatistics.FileNameCache)
                     : new(false, options.FileSystemStatistics.FileNameCache),
                 CiphertextFileNameCache = options.EnableFileNameCache
                     ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES, options.FileSystemStatistics.FileNameCache)

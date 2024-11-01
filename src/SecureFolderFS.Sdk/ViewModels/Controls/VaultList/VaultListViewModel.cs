@@ -55,6 +55,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                     RemoveVault(vaultModel);
                     break;
 
+                case NotifyCollectionChangedAction.Move:
+                    Items.Move(e.OldStartingIndex, e.NewStartingIndex);
+                    break;
+
                 case NotifyCollectionChangedAction.Reset:
                     SelectedItem = null;
                     Items.Clear();

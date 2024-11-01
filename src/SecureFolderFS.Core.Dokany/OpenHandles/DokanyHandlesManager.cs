@@ -25,18 +25,18 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             // Open ciphertext stream
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
 
-            // Open cleartext stream on top of ciphertext stream
-            var cleartextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
+            // Open plaintext stream on top of ciphertext stream
+            var PlaintextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
 
-            if (cleartextStream is null)
+            if (PlaintextStream is null)
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // Flush ChunkAccess if opened with Truncate flag
             if (mode == FileMode.Truncate)
-                cleartextStream.Flush();
+                PlaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new Win32FileHandle(cleartextStream); // TODO: For now it's Win32FileHandle
+            var fileHandle = new Win32FileHandle(PlaintextStream); // TODO: For now it's Win32FileHandle
             var handleId = handlesGenerator.ThreadSafeIncrement();
 
             // Lock collection and add handle

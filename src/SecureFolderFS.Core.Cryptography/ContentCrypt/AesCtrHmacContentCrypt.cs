@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         private readonly SecretKey _macKey;
 
         /// <inheritdoc/>
-        public override int ChunkCleartextSize { get; } = CHUNK_CLEARTEXT_SIZE;
+        public override int ChunkPlaintextSize { get; } = CHUNK_Plaintext_SIZE;
 
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;
@@ -29,31 +29,31 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         }
 
         /// <inheritdoc/>
-        public override void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
+        public override void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
         {
             // Chunk nonce
             secureRandom.GetBytes(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
 
             // Encrypt
             AesCtr128.Encrypt(
-                cleartextChunk,
+                plaintextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
-                ciphertextChunk.Slice(CHUNK_NONCE_SIZE, cleartextChunk.Length));
+                ciphertextChunk.Slice(CHUNK_NONCE_SIZE, plaintextChunk.Length));
 
             // Calculate MAC
             CalculateChunkMac(
                 header.GetHeaderNonce(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
-                ciphertextChunk.Slice(CHUNK_NONCE_SIZE, cleartextChunk.Length),
+                ciphertextChunk.Slice(CHUNK_NONCE_SIZE, plaintextChunk.Length),
                 chunkNumber,
-                ciphertextChunk.Slice(CHUNK_NONCE_SIZE + cleartextChunk.Length, CHUNK_MAC_SIZE));
+                ciphertextChunk.Slice(CHUNK_NONCE_SIZE + plaintextChunk.Length, CHUNK_MAC_SIZE));
         }
 
         /// <inheritdoc/>
         [SkipLocalsInit]
         public override bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber,
-            ReadOnlySpan<byte> header, Span<byte> cleartextChunk)
+            ReadOnlySpan<byte> header, Span<byte> plaintextChunk)
         {
             // Allocate byte* for MAC
             Span<byte> mac = stackalloc byte[CHUNK_MAC_SIZE];
@@ -75,7 +75,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
                 ciphertextChunk.GetChunkPayload(),
                 header.GetHeaderContentKey(),
                 ciphertextChunk.GetChunkNonce(),
-                cleartextChunk);
+                plaintextChunk);
 
             return true;
         }

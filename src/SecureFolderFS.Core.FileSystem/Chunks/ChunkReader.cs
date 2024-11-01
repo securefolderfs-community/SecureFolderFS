@@ -29,16 +29,16 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         }
 
         /// <summary>
-        /// Reads chunk at specified <paramref name="chunkNumber"/> into <paramref name="cleartextChunk"/>.
+        /// Reads chunk at specified <paramref name="chunkNumber"/> into <paramref name="PlaintextChunk"/>.
         /// </summary>
         /// <param name="chunkNumber">The chunk number to read at.</param>
-        /// <param name="cleartextChunk">The cleartext chunk to write to.</param>
-        /// <returns>The amount of cleartext bytes or -1 if integrity error occurred.</returns>
-        public int ReadChunk(long chunkNumber, Span<byte> cleartextChunk)
+        /// <param name="PlaintextChunk">The plaintext chunk to write to.</param>
+        /// <returns>The amount of plaintext bytes or -1 if integrity error occurred.</returns>
+        public int ReadChunk(long chunkNumber, Span<byte> PlaintextChunk)
         {
             // Calculate sizes
             var ciphertextSize = _security.ContentCrypt.ChunkCiphertextSize;
-            var cleartextSize = _security.ContentCrypt.ChunkCleartextSize;
+            var PlaintextSize = _security.ContentCrypt.ChunkPlaintextSize;
             var ciphertextPosition = _security.HeaderCrypt.HeaderCiphertextSize + (chunkNumber * ciphertextSize);
 
             // Rent buffer
@@ -69,8 +69,8 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 // Check if the reserved part is all zeros in which case the decryption will be skipped (the chunk was extended)
                 if (SpanExtensions.IsAllZeros(chunkReserved))
                 {
-                    cleartextChunk.Clear();
-                    return read - (ciphertextSize - cleartextSize);
+                    PlaintextChunk.Clear();
+                    return read - (ciphertextSize - PlaintextSize);
                 }
 
                 // Decrypt
@@ -78,7 +78,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     realCiphertextChunk.Slice(0, read),
                     chunkNumber,
                     _fileHeader,
-                    cleartextChunk);
+                    PlaintextChunk);
 
                 _fileSystemStatistics.BytesDecrypted?.Report(read);
 
@@ -89,7 +89,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     return -1;
                 }
 
-                return read - (ciphertextSize - cleartextSize);
+                return read - (ciphertextSize - PlaintextSize);
             }
             finally
             {

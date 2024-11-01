@@ -27,7 +27,7 @@
             public const int RECOMMENDED_SIZE_CHUNK = 6;
             public const int RECOMMENDED_SIZE_DIRECTORYID = 1000;
             public const int RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES = 2000;
-            public const int RECOMMENDED_SIZE_CLEARTEXT_FILENAMES = 2000;
+            public const int RECOMMENDED_SIZE_Plaintext_FILENAMES = 2000;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace SecureFolderFS.Core.CryptFiles
         /// Creates a new instance of <see cref="OpenCryptFile"/>.
         /// </summary>
         /// <param name="id">The unique ID of the file.</param>
-        /// <param name="headerBuffer">The cleartext header of the file.</param>
+        /// <param name="headerBuffer">The plaintext header of the file.</param>
         /// <returns>If successful, returns an instance of <see cref="OpenCryptFile"/>.</returns>
         public OpenCryptFile NewCryptFile(string id, BufferHolder headerBuffer)
         {

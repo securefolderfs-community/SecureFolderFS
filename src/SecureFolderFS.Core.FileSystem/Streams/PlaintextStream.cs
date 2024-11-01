@@ -7,10 +7,10 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
-namespace SecureFolderFS.Core.Streams
+namespace SecureFolderFS.Core.FileSystem.Streams
 {
-    /// <inheritdoc cref="CleartextStream"/>
-    internal sealed class CleartextStream : Stream, IWrapper<Stream>
+    /// <inheritdoc cref="PlaintextStream"/>
+    internal sealed class PlaintextStream : Stream, IWrapper<Stream>
     {
         private readonly Security _security;
         private readonly ChunkAccess _chunkAccess;
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Core.Streams
             set => Seek(value, SeekOrigin.Begin);
         }
 
-        public CleartextStream(
+        public PlaintextStream(
             Stream ciphertextStream,
             Security security,
             ChunkAccess chunkAccess,
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Core.Streams
             _chunkAccess = chunkAccess;
             _headerBuffer = headerBuffer;
             _notifyStreamClosed = notifyStreamClosed;
-            _Length = _security.ContentCrypt.CalculateCleartextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
+            _Length = _security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
         }
 
         /// <inheritdoc/>
@@ -90,7 +90,7 @@ namespace SecureFolderFS.Core.Streams
 
             var read = 0;
             var positionInBuffer = 0;
-            var plaintextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
+            var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
             var adjustedBuffer = buffer.Slice(0, (int)Math.Min(buffer.Length, lengthToEof));
 
             while (positionInBuffer < adjustedBuffer.Length)
@@ -152,7 +152,7 @@ namespace SecureFolderFS.Core.Streams
             if (!TryWriteHeader() && !TryReadHeader())
                 throw new CryptographicException();
 
-            var plaintextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
+            var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
 
             // Determine whether to extend or truncate the file
             if (value < Length)
@@ -173,7 +173,7 @@ namespace SecureFolderFS.Core.Streams
                 _chunkAccess.Flush();
 
                 // Calculate plaintext size here because plaintext Length might not be initialized yet
-                var plaintextFileSize = _security.ContentCrypt.CalculateCleartextSize(Inner.Length - _security.HeaderCrypt.HeaderCiphertextSize);
+                var plaintextFileSize = _security.ContentCrypt.CalculatePlaintextSize(Inner.Length - _security.HeaderCrypt.HeaderCiphertextSize);
                 var lastChunkNumber = plaintextFileSize / plaintextChunkSize;
                 var amountToWrite = plaintextFileSize % plaintextChunkSize != 0 ? (int)Math.Min(plaintextChunkSize, value - plaintextFileSize) : 0;
 
@@ -250,7 +250,7 @@ namespace SecureFolderFS.Core.Streams
             if (!TryWriteHeader() && !TryReadHeader())
                 throw new CryptographicException();
 
-            var plaintextChunkSize = _security.ContentCrypt.ChunkCleartextSize;
+            var plaintextChunkSize = _security.ContentCrypt.ChunkPlaintextSize;
             var written = 0;
             var positionInBuffer = 0;
 
@@ -341,7 +341,7 @@ namespace SecureFolderFS.Core.Streams
         {
             var maxCiphertextPayloadSize = long.MaxValue - _security.HeaderCrypt.HeaderCiphertextSize;
             var maxChunks = maxCiphertextPayloadSize / _security.ContentCrypt.ChunkCiphertextSize;
-            var chunkNumber = plaintextPosition / _security.ContentCrypt.ChunkCleartextSize;
+            var chunkNumber = plaintextPosition / _security.ContentCrypt.ChunkPlaintextSize;
 
             if (chunkNumber > maxChunks)
                 return long.MaxValue;

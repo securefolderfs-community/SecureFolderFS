@@ -393,7 +393,7 @@
     <value>Privacy</value>
   </data>
   <data name="ShowEncryptedVault" xml:space="preserve">
-    <value>Show encrypted vault in File Explorer</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="Social" xml:space="preserve">
     <value>Social</value>

@@ -198,12 +198,45 @@
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
-                            <!--  TODO: Determine the description and icon and update the item: "Show in Files"  -->
+                            <!--  Show in Explorer  -->
                             <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Name=ShowEncryptedVault}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
+
+                            <!--  Customize  -->
+                            <MenuFlyoutItem IsEnabled="False" Text="Customize">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE70F;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Move up/down  -->
+                            <MenuFlyoutSeparator x:Name="MoveSeparator" x:Load="{x:Bind CanMove, Mode=OneWay}" />
+                            <MenuFlyoutItem
+                                x:Name="MoveUp"
+                                x:Load="{x:Bind CanMoveUp, Mode=OneWay}"
+                                Command="{x:Bind MoveItemCommand, Mode=OneWay}"
+                                CommandParameter="up"
+                                Text="Move up">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE70E;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                x:Name="MoveDown"
+                                x:Load="{x:Bind CanMoveDown, Mode=OneWay}"
+                                Command="{x:Bind MoveItemCommand, Mode=OneWay}"
+                                CommandParameter="down"
+                                Text="Move down">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE70D;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Remove  -->
+                            <MenuFlyoutSeparator />
                             <MenuFlyoutItem
                                 Command="{x:Bind RemoveVaultCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind CanRemoveVault, Mode=OneWay}"

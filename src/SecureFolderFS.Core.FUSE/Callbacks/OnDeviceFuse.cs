@@ -198,7 +198,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
                     return -errno;
 
                 if (File.Exists(ciphertextPath))
-                    stat.st_size = Math.Max(0, Specifics.Security.ContentCrypt.CalculateCleartextSize(stat.st_size - Specifics.Security.HeaderCrypt.HeaderCiphertextSize));
+                    stat.st_size = Math.Max(0, Specifics.Security.ContentCrypt.CalculatePlaintextSize(stat.st_size - Specifics.Security.HeaderCrypt.HeaderCiphertextSize));
 
                 return 0;
             }
@@ -612,12 +612,12 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             return buffer.Length;
         }
 
-        protected override unsafe string? GetCiphertextPath(ReadOnlySpan<byte> cleartextName)
+        protected override unsafe string? GetCiphertextPath(ReadOnlySpan<byte> PlaintextName)
         {
-            fixed (byte *cleartextNamePtr = cleartextName)
+            fixed (byte *PlaintextNamePtr = PlaintextName)
             {
                 var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-                return NativePathHelpers.GetCiphertextPath(Encoding.UTF8.GetString(cleartextNamePtr, cleartextName.Length), Specifics, directoryId);
+                return NativePathHelpers.GetCiphertextPath(Encoding.UTF8.GetString(PlaintextNamePtr, PlaintextName.Length), Specifics, directoryId);
             }
         }
     }

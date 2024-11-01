@@ -43,7 +43,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             },
             new DavGetContentLength<EncryptingDiskStoreItem>
             {
-                Getter = (context, item) => Math.Max(0, item._specifics.Security.ContentCrypt.CalculateCleartextSize(item._fileInfo.Length - item._specifics.Security.HeaderCrypt.HeaderCiphertextSize))
+                Getter = (context, item) => Math.Max(0, item._specifics.Security.ContentCrypt.CalculatePlaintextSize(item._fileInfo.Length - item._specifics.Security.HeaderCrypt.HeaderCiphertextSize))
             },
             new DavGetContentType<EncryptingDiskStoreItem>
             {

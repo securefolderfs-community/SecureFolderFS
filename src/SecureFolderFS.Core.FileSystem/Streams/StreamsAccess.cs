@@ -29,7 +29,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             try
             {
                 // Get or create encrypted file from the file system
-                var openCryptFile = _cryptFileManager.TryGet(id) ?? _cryptFileManager.NewCryptFile(id, new HeaderBuffer(_security.HeaderCrypt.HeaderCleartextSize));
+                var openCryptFile = _cryptFileManager.TryGet(id) ?? _cryptFileManager.NewCryptFile(id, new HeaderBuffer(_security.HeaderCrypt.HeaderPlaintextSize));
 
                 // Open a new stream for that file registering existing ciphertext stream
                 return openCryptFile.OpenStream(ciphertextStream);

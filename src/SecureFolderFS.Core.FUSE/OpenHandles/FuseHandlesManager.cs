@@ -34,17 +34,17 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
                 Options = options
             });
 
-            // Open cleartext stream on top of ciphertext stream
-            var cleartextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
-            if (cleartextStream is null)
+            // Open plaintext stream on top of ciphertext stream
+            var PlaintextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
+            if (PlaintextStream is null)
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // Flush ChunkAccess if the opened to Truncate
             if (mode == FileMode.Truncate)
-                cleartextStream.Flush();
+                PlaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new FuseFileHandle(cleartextStream, access, mode, Path.GetDirectoryName(ciphertextPath)!);
+            var fileHandle = new FuseFileHandle(PlaintextStream, access, mode, Path.GetDirectoryName(ciphertextPath)!);
             var handle = handlesGenerator.ThreadSafeIncrement();
 
             lock (handles)

@@ -272,7 +272,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                     LastAccessTime = finfo.LastAccessTime,
                     LastWriteTime = finfo.LastWriteTime,
                     Length = finfo is FileInfo fileInfo2
-                        ? Specifics.Security.ContentCrypt.CalculateCleartextSize(Math.Max(0L, fileInfo2.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize))
+                        ? Specifics.Security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, fileInfo2.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize))
                         : 0L
                 };
 
@@ -366,7 +366,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                         LastAccessTime = item.LastAccessTime,
                         LastWriteTime = item.LastWriteTime,
                         Length = item is FileInfo fileInfo
-                            ? Specifics.Security.ContentCrypt.CalculateCleartextSize(Math.Max(0L, fileInfo.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize))
+                            ? Specifics.Security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, fileInfo.Length - Specifics.Security.HeaderCrypt.HeaderCiphertextSize))
                             : 0L
                     });
                 }
@@ -797,10 +797,10 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         }
 
         /// <inheritdoc/>
-        protected override string? GetCiphertextPath(string cleartextName)
+        protected override string? GetCiphertextPath(string PlaintextName)
         {
             var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
-            return NativePathHelpers.GetCiphertextPath(cleartextName, Specifics, directoryId);
+            return NativePathHelpers.GetCiphertextPath(PlaintextName, Specifics, directoryId);
         }
     }
 }
