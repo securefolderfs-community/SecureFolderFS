@@ -32,7 +32,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         private CancellationTokenSource? _cts;
 
         [ObservableProperty] private string? _Title;
-        [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private double _CurrentProgress;
         [ObservableProperty] private string? _LastCheckedText;
         [ObservableProperty] private HealthOverlayViewModel _HealthOverlayViewModel;
@@ -66,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         /// <inheritdoc/>
         public void Report(double value)
         {
-            if (!IsProgressing)
+            if (!HealthOverlayViewModel.IsProgressing)
                 return;
 
             _context?.Post(_ => CurrentProgress = Math.Round(value), null);
@@ -75,7 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         /// <inheritdoc/>
         public void Report(TotalProgress value)
         {
-            if (!IsProgressing)
+            if (!HealthOverlayViewModel.IsProgressing)
                 return;
 
             _context?.Post(_ =>
@@ -104,8 +103,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
                 return;
 
             // Set IsProgressing status
-            HealthOverlayViewModel.IsScanning = true; // TODO: Move to separate ScanViewModel (name tbd) to avoid duplication of properties
-            IsProgressing = true;
+            HealthOverlayViewModel.IsProgressing = true;
             Title = "Scanning...";
 
             // Save last scan state
@@ -142,12 +140,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 
         private void EndScanning()
         {
-            if (!IsProgressing)
+            if (!HealthOverlayViewModel.IsProgressing)
                 return;
 
             // Reset progress
-            IsProgressing = false;
-            HealthOverlayViewModel.IsScanning = false; // TODO: Move to separate ScanViewModel (name tbd) to avoid duplication of properties
+            HealthOverlayViewModel.IsProgressing = false;
             CurrentProgress = 0d;
             _savedState.Clear();
 

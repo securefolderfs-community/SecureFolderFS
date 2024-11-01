@@ -234,6 +234,7 @@
     <None Remove="UserControls\BannerControl.xaml" />
     <None Remove="UserControls\DebugControls\DebugDashboardRepresentationControl.xaml" />
     <None Remove="UserControls\DebugControls\DebugLoginRepresentationControl.xaml" />
+    <None Remove="UserControls\ErrorControl.xaml" />
     <None Remove="UserControls\GraphControl.xaml" />
     <None Remove="UserControls\InstallationControl.xaml" />
     <None Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />
@@ -471,6 +472,7 @@
     <UpToDateCheckInput Remove="UserControls\BannerControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\DebugControls\DebugDashboardRepresentationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\DebugControls\DebugLoginRepresentationControl.xaml" />
+    <UpToDateCheckInput Remove="UserControls\ErrorControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\GraphControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InstallationControl.xaml" />
     <UpToDateCheckInput Remove="UserControls\InterfaceHost\MainAppHostControl.xaml" />

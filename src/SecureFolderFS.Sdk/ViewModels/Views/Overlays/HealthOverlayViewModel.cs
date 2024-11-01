@@ -4,11 +4,9 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
@@ -18,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     {
         private readonly SynchronizationContext? _context;
 
-        [ObservableProperty] private bool _IsScanning;
+        [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private SeverityType _Severity;
 
         public ObservableCollection<HealthIssueViewModel> FoundIssues { get; }
@@ -30,7 +28,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
         }
 
-        partial void OnIsScanningChanged(bool value)
+        partial void OnIsProgressingChanged(bool value)
         {
             _ = value;
             UpdateSeverity(FoundIssues);
@@ -38,7 +36,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 
         private void FoundIssues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if (IsScanning)
+            if (IsProgressing)
                 return;
 
             if (FoundIssues.IsEmpty())

@@ -70,7 +70,7 @@ namespace SecureFolderFS.Uno.Dialogs
                 {
                     MigrationView.Visibility = Visibility.Collapsed;
                     ErrorView.Visibility = Visibility.Visible;
-                    ErrorMessage.Text = args.Result.GetMessage();
+                    ErrorView.ExceptionMessage = args.Result.GetMessage();
                 }
             }
         }

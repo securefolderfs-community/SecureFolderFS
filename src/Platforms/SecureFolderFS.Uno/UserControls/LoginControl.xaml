@@ -7,6 +7,7 @@
     xmlns:local="using:SecureFolderFS.Uno.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.UI.ViewModels"
     xmlns:vm2="using:SecureFolderFS.Uno.ViewModels"
@@ -140,46 +141,11 @@
 
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm3:ErrorViewModel">
-            <StackPanel Spacing="4">
-                <InfoBar
-                    Title="{l:ResourceString Name=Error}"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Message="{l:ResourceString Name=VaultLoadError}"
-                    Severity="Error" />
-
-                <TextBlock
-                    x:Name="ErrorTitle"
-                    HorizontalAlignment="Center"
-                    x:Load="{x:Bind Title, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
-                    FontSize="20"
-                    FontWeight="SemiBold"
-                    Text="{x:Bind Title, Mode=OneWay}" />
-
-                <Expander
-                    x:Name="ErrorDetails"
-                    Width="600"
-                    x:Load="{x:Bind Message, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}">
-                    <Expander.Header>
-                        <TextBlock Text="{l:ResourceString Name=ErrorDetails}" />
-                    </Expander.Header>
-                    <ScrollViewer
-                        Height="200"
-                        MaxWidth="600"
-                        Padding="4"
-                        HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            FontSize="12"
-                            HorizontalTextAlignment="Center"
-                            IsTextSelectionEnabled="True"
-                            Opacity="0.8"
-                            Text="{x:Bind Message, Mode=OneWay}"
-                            TextWrapping="Wrap" />
-                    </ScrollViewer>
-                </Expander>
-            </StackPanel>
+            <uc:ErrorControl
+                Title="{l:ResourceString Name=VaultLoadError}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                ExceptionMessage="{x:Bind Message, Mode=OneWay}" />
         </DataTemplate>
     </UserControl.Resources>
 

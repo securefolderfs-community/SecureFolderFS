@@ -19,7 +19,7 @@
             <ucw:HealthWidget
                 CancelCommand="{x:Bind CancelScanningCommand, Mode=OneWay}"
                 CurrentProgress="{x:Bind CurrentProgress, Mode=OneWay}"
-                IsProgressing="{x:Bind IsProgressing, Mode=OneWay}"
+                IsProgressing="{x:Bind HealthOverlayViewModel.IsProgressing, Mode=OneWay}"
                 LastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
                 Severity="{x:Bind HealthOverlayViewModel.Severity, Mode=OneWay}"
