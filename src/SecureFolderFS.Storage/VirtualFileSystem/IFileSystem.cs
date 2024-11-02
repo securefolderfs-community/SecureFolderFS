@@ -2,6 +2,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +27,6 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IResult"/> that represents the status of the file system provider.</returns>
         Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
         
-        Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, FileSystemOptions options, CancellationToken cancellationToken = default);
+        Task<IVFSRoot> MountAsync(IFolder vaultFolder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default);
     }
 }

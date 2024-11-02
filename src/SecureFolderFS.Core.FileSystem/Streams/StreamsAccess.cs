@@ -23,8 +23,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// </summary>
         /// <param name="id">The unique ID of the file.</param>
         /// <param name="ciphertextStream">The ciphertext stream to wrap by the plaintext stream.</param>
+        /// <param name="takeFailureOwnership">Determines whether to close the <paramref name="ciphertextStream"/> when a new plaintext stream fails to open.</param>
         /// <returns>If successful, returns a new instance of plaintext <see cref="Stream"/>.</returns>
-        public Stream OpenPlaintextStream(string id, Stream ciphertextStream)
+        public Stream OpenPlaintextStream(string id, Stream ciphertextStream, bool takeFailureOwnership = true)
         {
             try
             {
@@ -36,7 +37,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             }
             catch (Exception)
             {
-                ciphertextStream.Dispose();
+                if (takeFailureOwnership)
+                    ciphertextStream.Dispose();
+
                 throw;
             }
         }

@@ -1,3 +1,4 @@
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
 
@@ -6,8 +7,8 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class FuseHandlesManager : BaseHandlesManager
     {
-        public FuseHandlesManager(StreamsAccess streamsAccess)
-            : base(streamsAccess)
+        public FuseHandlesManager(StreamsAccess streamsAccess, bool isReadOnly)
+            : base(streamsAccess, isReadOnly)
         {
         }
 
@@ -23,6 +24,13 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
         /// <inheritdoc/>
         public override ulong OpenFileHandle(string ciphertextPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
         {
+            // Make sure the handles manager was not disposed
+            if (disposed)
+                return FileSystem.Constants.INVALID_HANDLE;
+
+            if (!isReadOnly && mode.IsWriteFlag())
+                return FileSystem.Constants.INVALID_HANDLE;
+
             // Open ciphertext stream
             var ciphertextStream = new FileStream(ciphertextPath, new FileStreamOptions
             {
@@ -35,16 +43,16 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
             });
 
             // Open plaintext stream on top of ciphertext stream
-            var PlaintextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
-            if (PlaintextStream is null)
+            var plaintextStream = streamsAccess.TryOpenPlaintextStream(ciphertextPath, ciphertextStream);
+            if (plaintextStream is null)
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // Flush ChunkAccess if the opened to Truncate
             if (mode == FileMode.Truncate)
-                PlaintextStream.Flush();
+                plaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new FuseFileHandle(PlaintextStream, access, mode, Path.GetDirectoryName(ciphertextPath)!);
+            var fileHandle = new FuseFileHandle(plaintextStream, access, mode, Path.GetDirectoryName(ciphertextPath)!);
             var handle = handlesGenerator.ThreadSafeIncrement();
 
             lock (handles)

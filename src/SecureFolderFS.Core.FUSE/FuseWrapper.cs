@@ -29,8 +29,8 @@ namespace SecureFolderFS.Core.FUSE
             if (mountOptions.PrintDebugInformation)
                 rawOptions += ",debug";
 
-            _fuseCallbacks.MountOptions = mountOptions;
-            _fuseMount = Fuse.Mount(mountPoint, _fuseCallbacks, new MountOptions
+            _fuseCallbacks.FuseOptions = mountOptions;
+            _fuseMount = Fuse.Mount(mountPoint, _fuseCallbacks, new MountOptions()
             {
                 Options = rawOptions
             });

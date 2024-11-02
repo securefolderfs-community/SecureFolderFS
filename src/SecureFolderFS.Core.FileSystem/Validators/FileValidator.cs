@@ -5,16 +5,16 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Validators
+namespace SecureFolderFS.Core.FileSystem.Validators
 {
     /// <inheritdoc cref="IAsyncValidator{T, TResult}"/>
     public sealed class FileValidator : IAsyncValidator<IFile, IResult>
     {
-        private readonly IFolder _vaultFolder;
+        private readonly IFolder _contentFolder;
 
-        public FileValidator(IFolder vaultFolder)
+        public FileValidator(IFolder contentFolder)
         {
-            _vaultFolder = vaultFolder;
+            _contentFolder = contentFolder;
         }
 
         /// <inheritdoc/>

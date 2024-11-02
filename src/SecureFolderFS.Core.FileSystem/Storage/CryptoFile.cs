@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Exceptions;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,9 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <inheritdoc/>
         public virtual async Task<Stream> OpenStreamAsync(FileAccess access, CancellationToken cancellationToken = default)
         {
+            if (specifics.FileSystemOptions.IsReadOnly && access.HasFlag(FileAccess.Write))
+                throw FileSystemExceptions.FileSystemReadOnly;
+
             var stream = await Inner.OpenStreamAsync(access, cancellationToken);
             return CreatePlaintextStream(stream);
         }

@@ -7,12 +7,12 @@ using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.EncryptingStorage2;
-using SecureFolderFS.Core.WebDav.Enums;
 using SecureFolderFS.Core.WebDav.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,28 +36,19 @@ namespace SecureFolderFS.Core.WebDav
         }
 
         /// <inheritdoc/>
-        public virtual async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, FileSystemOptions options, CancellationToken cancellationToken = default)
+        public virtual async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, options);
-            var domain = "localhost";
-            var protocol = "http";
-            var port = 4949;
-
-            if (options is WebDavOptions webDavOptions)
-            {
-                port = webDavOptions.PreferredPort;
-                domain = webDavOptions.Domain;
-                protocol = webDavOptions.Protocol == WebDavProtocolMode.Http ? "http" : "https";
-            }
+            var webDavOptions = WebDavOptions.ToOptions(options, folder);
+            var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, webDavOptions);
 
             // Check if the port is available
-            if (!PortHelpers.IsPortAvailable(port))
-                port = PortHelpers.GetNextAvailablePort(port);
+            if (!PortHelpers.IsPortAvailable(webDavOptions.Port))
+                webDavOptions.SetPortInternal(PortHelpers.GetNextAvailablePort(webDavOptions.Port));
 
-            var prefix = $"{protocol}://{domain}:{port}/";
+            var prefix = $"{webDavOptions.Protocol}://{webDavOptions.Domain}:{webDavOptions.Port}/";
             var httpListener = new HttpListener();
 
             httpListener.Prefixes.Add(prefix);
@@ -68,25 +59,19 @@ namespace SecureFolderFS.Core.WebDav
             var davFolder = new DavFolder(cryptoFolder);
 
             // TODO: Remove the following line once the new DavStorage is fully implemented.
-            var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics);
+            var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.FileSystemOptions.IsReadOnly);
             var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.FileSystemOptions.VolumeName, encryptingDiskStore), davFolder, new RequestHandlerProvider(), null);
 
             return await MountAsync(
-                port,
-                domain,
-                protocol,
                 httpListener,
-                options,
+                webDavOptions,
                 dispatcher,
                 cancellationToken);
         }
 
         protected abstract Task<IVFSRoot> MountAsync(
-            int port,
-            string domain,
-            string protocol,
             HttpListener listener,
-            FileSystemOptions options,
+            WebDavOptions options,
             IRequestDispatcher requestDispatcher,
             CancellationToken cancellationToken);
     }

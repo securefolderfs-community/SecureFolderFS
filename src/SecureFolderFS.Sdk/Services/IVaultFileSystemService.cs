@@ -1,7 +1,4 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Storage.VirtualFileSystem;
+﻿using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +22,5 @@ namespace SecureFolderFS.Sdk.Services
         /// </remarks>
         /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="IFileSystem"/> of available file systems.</returns>
         IAsyncEnumerable<IFileSystem> GetFileSystemsAsync(CancellationToken cancellationToken);
-
-        FileSystemOptions GetFileSystemOptions(IVaultModel vaultModel, string fileSystemId);
     }
 }

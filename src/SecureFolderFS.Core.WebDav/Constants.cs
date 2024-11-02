@@ -19,11 +19,6 @@
             public const string DEPTH = "Depth";
         }
 
-        internal static class WebDavOptions
-        {
-            public const string DAV_COMPLIANCE_LEVEL = "1";
-        }
-
         internal static class WebDavNamespaces
         {
             public const string DAV_NAMESPACE = "Dav:";

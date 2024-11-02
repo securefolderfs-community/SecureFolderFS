@@ -7,6 +7,7 @@ using NWebDav.Server.Dispatching;
 using OwlCore.Storage.Memory;
 using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.WebDav;
+using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.Uno.Helpers;
 
@@ -17,15 +18,12 @@ namespace SecureFolderFS.Uno.Platforms.Windows
     {
         /// <inheritdoc/>
         protected override async Task<IVFSRoot> MountAsync(
-            int port,
-            string domain,
-            string protocol,
             HttpListener listener,
-            FileSystemOptions options,
+            WebDavOptions options,
             IRequestDispatcher requestDispatcher,
             CancellationToken cancellationToken)
         {
-            var remotePath = DriveMappingHelpers.GetRemotePath(protocol, "localhost", port, options.VolumeName);
+            var remotePath = DriveMappingHelpers.GetRemotePath(options.Protocol, "localhost", options.Port, options.VolumeName);
             var mountPath = await DriveMappingHelpers.GetMountPathForRemotePathAsync(remotePath);
             if (mountPath is null)
             {
@@ -40,7 +38,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
             webDavWrapper.StartFileSystem();
 
             // TODO: Remove once the port is displayed in the UI.
-            Debug.WriteLine($"WebDAV server started on port {port}.");
+            Debug.WriteLine($"WebDAV server started on port {options.Port}.");
 
             // TODO: Currently using MemoryFolder because the check in SystemFolder might sometimes fail
             return new WindowsWebDavVFSRoot(webDavWrapper, new MemoryFolder(remotePath, options.VolumeName), options);

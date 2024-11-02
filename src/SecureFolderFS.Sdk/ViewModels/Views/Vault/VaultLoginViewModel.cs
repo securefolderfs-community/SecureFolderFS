@@ -22,6 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultLoginViewModel : BaseVaultViewModel, INavigatable
     {
+        [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private LoginViewModel _LoginViewModel;
 
         public INavigationService VaultNavigation { get; }
@@ -64,7 +65,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             try
             {
                 // Navigate away
-                var unlockedVaultViewModel = await VaultViewModel.UnlockAsync(unlockContract);
+                var unlockedVaultViewModel = await VaultViewModel.UnlockAsync(unlockContract, IsReadOnly);
                 NavigationRequested?.Invoke(this, new UnlockNavigationRequestedEventArgs(unlockedVaultViewModel, this));
 
                 // Show vault tutorial

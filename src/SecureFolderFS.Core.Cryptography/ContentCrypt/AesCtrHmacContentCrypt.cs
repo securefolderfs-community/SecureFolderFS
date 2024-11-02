@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         private readonly SecretKey _macKey;
 
         /// <inheritdoc/>
-        public override int ChunkPlaintextSize { get; } = CHUNK_Plaintext_SIZE;
+        public override int ChunkPlaintextSize { get; } = CHUNK_PLAINTEXT_SIZE;
 
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;

@@ -29,7 +29,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <param name="chunkNumber">The chunk number part of encrypted data.</param>
         /// <param name="header">The header of the whole data.</param>
         /// <param name="ciphertextChunk">The encrypted data to be written to.</param>
-        void EncryptChunk(ReadOnlySpan<byte> PlaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk);
+        void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk);
 
         /// <summary>
         /// Decrypts the <paramref name="ciphertextChunk"/> and writes <paramref name="PlaintextChunk"/> with decrypted data.
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         /// <param name="header">The header of the whole data.</param>
         /// <param name="PlaintextChunk">The decrypted data to be written to.</param>
         /// <returns>True if decryption was successful; otherwise false if an integrity error occurred.</returns>
-        bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> PlaintextChunk);
+        bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> plaintextChunk);
 
         /// <summary>
         /// Calculates the ciphertext size from <paramref name="PlaintextSize"/>.

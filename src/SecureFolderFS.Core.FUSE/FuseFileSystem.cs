@@ -24,24 +24,20 @@ namespace SecureFolderFS.Core.FUSE
         public partial Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, FileSystemOptions options, CancellationToken cancellationToken = default)
+        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
+            var fuseOptions = FuseOptions.ToOptions(options, folder);
             if (!Directory.Exists(MountDirectory))
                 Directory.CreateDirectory(MountDirectory);
 
-            if (options is not FuseOptions fuseOptions)
-                throw new ArgumentException($"Parameter {nameof(options)} does not implement {nameof(FuseOptions)}.");
-
-            if (fuseOptions.AllowOtherUserAccess && fuseOptions.AllowRootUserAccess)
-                throw new ArgumentException($"{nameof(FuseOptions)}.{nameof(fuseOptions.AllowOtherUserAccess)} and " +
-                                            $"{nameof(FuseOptions)}.{nameof(fuseOptions.AllowRootUserAccess)} are mutually exclusive.");
+            if (fuseOptions is { AllowOtherUserAccess: true, AllowRootUserAccess: true })
+                throw new ArgumentException($"{nameof(FuseOptions)}.{nameof(fuseOptions.AllowOtherUserAccess)} and {nameof(FuseOptions)}.{nameof(fuseOptions.AllowRootUserAccess)} are mutually exclusive.");
 
             if ((fuseOptions.AllowOtherUserAccess || fuseOptions.AllowRootUserAccess) && !CanAllowOtherUsers())
-                throw new ArgumentException($"{nameof(fuseOptions.AllowOtherUserAccess)} has been specified but user_allow_other is not uncommented " +
-                                            "in /etc/fuse.conf.");
+                throw new ArgumentException($"{nameof(fuseOptions.AllowOtherUserAccess)} has been specified but user_allow_other is not uncommented in /etc/fuse.conf.");
 
             var mountPoint = fuseOptions.MountPoint;
             if (mountPoint == null)
@@ -52,18 +48,18 @@ namespace SecureFolderFS.Core.FUSE
             if (mountPoint != null && IsMountPoint(mountPoint))
                 throw new ArgumentException("A filesystem is already mounted in the specified path.");
 
-            mountPoint ??= GetFreeMountPoint(options.VolumeName);
+            mountPoint ??= GetFreeMountPoint(fuseOptions.VolumeName);
             if (!Directory.Exists(mountPoint))
                 Directory.CreateDirectory(mountPoint);
 
-            var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, options);
-            var handlesManager = new FuseHandlesManager(specifics.StreamsAccess);
+            var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fuseOptions);
+            var handlesManager = new FuseHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions.IsReadOnly);
             var fuseCallbacks = new OnDeviceFuse(specifics, handlesManager);
             var fuseWrapper = new FuseWrapper(fuseCallbacks);
             fuseWrapper.StartFileSystem(mountPoint, fuseOptions);
 
             await Task.CompletedTask;
-            return new FuseVFSRoot(fuseWrapper, new SystemFolder(mountPoint), options);
+            return new FuseVFSRoot(fuseWrapper, new SystemFolder(mountPoint), fuseOptions);
         }
     }
 }

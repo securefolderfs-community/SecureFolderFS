@@ -647,4 +647,10 @@
   <data name="VaultAlreadyExists" xml:space="preserve">
     <value>The selected vault already exists</value>
   </data>
+  <data name="UnlockAsReadOnly" xml:space="preserve">
+    <value>Unlock as read-only</value>
+  </data>
+  <data name="VaultReadOnlyMode" xml:space="preserve">
+    <value>The vault is in read-only mode</value>
+  </data>
 </root>

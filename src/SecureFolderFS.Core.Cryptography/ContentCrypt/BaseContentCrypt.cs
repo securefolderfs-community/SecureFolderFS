@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         public abstract void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk);
 
         /// <inheritdoc/>
-        public abstract bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> PlaintextChunk);
+        public abstract bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> plaintextChunk);
 
         /// <inheritdoc/>
         public virtual long CalculateCiphertextSize(long plaintextSize)

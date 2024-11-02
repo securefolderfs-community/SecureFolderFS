@@ -14,14 +14,16 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
     public abstract class BaseHandlesManager : IDisposable
     {
         protected bool disposed;
+        protected readonly bool isReadOnly;
         protected readonly object handlesLock = new();
         protected readonly StreamsAccess streamsAccess;
         protected readonly HandlesGenerator handlesGenerator;
         protected readonly Dictionary<ulong, IDisposable> handles;
 
-        protected BaseHandlesManager(StreamsAccess streamsAccess)
+        protected BaseHandlesManager(StreamsAccess streamsAccess, bool isReadOnly)
         {
             this.streamsAccess = streamsAccess;
+            this.isReadOnly = isReadOnly;
             this.handlesGenerator = new();
             this.handles = new();
         }
@@ -66,7 +68,7 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
         }
 
         /// <summary>
-        /// Removes <paramref name="handleId"/> from the manager and disposes of the <see cref="ObjectHandle"/>.
+        /// Removes <paramref name="handleId"/> from the manager and disposes of the associated handle.
         /// </summary>
         /// <param name="handleId">The ID of the handle.</param>
         public virtual void CloseHandle(ulong handleId)

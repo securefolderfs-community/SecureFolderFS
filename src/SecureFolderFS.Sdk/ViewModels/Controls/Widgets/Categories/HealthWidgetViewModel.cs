@@ -55,8 +55,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             var vaultModel = _unlockedVaultViewModel.VaultViewModel.VaultModel;
             var contentFolder = await vaultModel.GetContentFolderAsync(cancellationToken);
             var folderScanner = new DeepFolderScanner(contentFolder);
-            var fileValidator = _unlockedVaultViewModel.StorageRoot.HealthStatistics.FileValidator;
-            var folderValidator = _unlockedVaultViewModel.StorageRoot.HealthStatistics.FolderValidator;
+            var fileValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.FileValidator;
+            var folderValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.FolderValidator;
 
             _vaultHealthModel = new HealthModel(folderScanner, fileValidator, folderValidator);
             _vaultHealthModel.IssueFound += VaultHealthModel_IssueFound;

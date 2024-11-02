@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.FileSystem.OpenHandles;
+﻿using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
 using System.IO;
 
@@ -7,8 +8,8 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class DokanyHandlesManager : BaseHandlesManager
     {
-        public DokanyHandlesManager(StreamsAccess streamsAccess)
-            : base(streamsAccess)
+        public DokanyHandlesManager(StreamsAccess streamsAccess, bool isReadOnly)
+            : base(streamsAccess, isReadOnly)
         {
         }
 
@@ -26,17 +27,16 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
             var ciphertextStream = new FileStream(ciphertextPath, mode, access, share, 4096, options);
 
             // Open plaintext stream on top of ciphertext stream
-            var PlaintextStream = streamsAccess.OpenPlaintextStream(ciphertextPath, ciphertextStream);
-
-            if (PlaintextStream is null)
+            var plaintextStream = streamsAccess.TryOpenPlaintextStream(ciphertextPath, ciphertextStream);
+            if (plaintextStream is null)
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // Flush ChunkAccess if opened with Truncate flag
             if (mode == FileMode.Truncate)
-                PlaintextStream.Flush();
+                plaintextStream.Flush();
 
             // Create handle
-            var fileHandle = new Win32FileHandle(PlaintextStream); // TODO: For now it's Win32FileHandle
+            var fileHandle = new Win32FileHandle(plaintextStream); // TODO: For now it's Win32FileHandle
             var handleId = handlesGenerator.ThreadSafeIncrement();
 
             // Lock collection and add handle

@@ -11,7 +11,7 @@ namespace SecureFolderFS.Shared.Extensions
             if (value is TOut outValue)
                 return outValue;
 
-            return defaultValue is not null ? defaultValue() : default;
+            return defaultValue is not null ? defaultValue.Invoke() : default;
         }
     }
 }

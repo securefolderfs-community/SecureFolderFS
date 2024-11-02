@@ -39,9 +39,9 @@ namespace SecureFolderFS.Core.Routines.Operational
         public void SetCredentials(SecretKey passkey)
         {
             // Allocate shallow keys which will be later disposed of
-            using var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
-            using var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
-            var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
+            using var encKey = new SecureKey(KeyChains.ENCKEY_LENGTH);
+            using var macKey = new SecureKey(KeyChains.MACKEY_LENGTH);
+            var salt = new byte[KeyChains.SALT_LENGTH];
 
             // Fill keys
             using var secureRandom = RandomNumberGenerator.Create();

@@ -27,14 +27,14 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         }
 
         /// <summary>
-        /// Writes <paramref name="PlaintextChunk"/> into chunk at specified <paramref name="chunkNumber"/>.
+        /// Writes <paramref name="plaintextChunk"/> into chunk at specified <paramref name="chunkNumber"/>.
         /// </summary>
         /// <param name="chunkNumber">The chunk number to write to.</param>
-        /// <param name="PlaintextChunk">The plaintext chunk to read from.</param>
-        public void WriteChunk(long chunkNumber, ReadOnlySpan<byte> PlaintextChunk)
+        /// <param name="plaintextChunk">The plaintext chunk to read from.</param>
+        public void WriteChunk(long chunkNumber, ReadOnlySpan<byte> plaintextChunk)
         {
             // Calculate size of ciphertext
-            var ciphertextSize = Math.Min(PlaintextChunk.Length + (_security.ContentCrypt.ChunkCiphertextSize - _security.ContentCrypt.ChunkPlaintextSize), _security.ContentCrypt.ChunkCiphertextSize);
+            var ciphertextSize = Math.Min(plaintextChunk.Length + (_security.ContentCrypt.ChunkCiphertextSize - _security.ContentCrypt.ChunkPlaintextSize), _security.ContentCrypt.ChunkCiphertextSize);
 
             // Calculate position in ciphertext stream
             var streamPosition = _security.HeaderCrypt.HeaderCiphertextSize + chunkNumber * _security.ContentCrypt.ChunkCiphertextSize;
@@ -45,12 +45,12 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
             // Encrypt
             _security.ContentCrypt.EncryptChunk(
-                PlaintextChunk,
+                plaintextChunk,
                 chunkNumber,
                 _fileHeader,
                 realCiphertextChunk);
 
-            _fileSystemStatistics.BytesEncrypted?.Report(PlaintextChunk.Length);
+            _fileSystemStatistics.BytesEncrypted?.Report(plaintextChunk.Length);
 
             // Get and write to ciphertext stream
             var ciphertextStream = _streamsManager.GetReadWriteStream();
@@ -58,7 +58,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             ciphertextStream.Position = streamPosition;
             ciphertextStream.Write(realCiphertextChunk);
 
-            _fileSystemStatistics.BytesWritten?.Report(PlaintextChunk.Length);
+            _fileSystemStatistics.BytesWritten?.Report(plaintextChunk.Length);
 
             // Return array
             ArrayPool<byte>.Shared.Return(ciphertextChunk);

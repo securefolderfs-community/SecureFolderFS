@@ -1,18 +1,18 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.Validators;
+using SecureFolderFS.Core.FileSystem.Validators;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 
-namespace SecureFolderFS.Core.AppModels
+namespace SecureFolderFS.Core.FileSystem.AppModels
 {
     /// <inheritdoc cref="IHealthStatistics"/>
     public sealed class HealthStatistics : IHealthStatistics
     {
-        public HealthStatistics(IFolder vaultFolder)
+        public HealthStatistics(IFolder contentFolder)
         {
-            FileValidator = new FileValidator(vaultFolder);
-            FolderValidator = new FolderValidator(vaultFolder);
+            FileValidator = new FileValidator(contentFolder);
+            FolderValidator = new FolderValidator(contentFolder);
         }
 
         /// <inheritdoc/>

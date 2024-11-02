@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
+using SecureFolderFS.Core.FileSystem.Exceptions;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.IO;
@@ -116,6 +117,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         [SkipLocalsInit]
         public override void Write(ReadOnlySpan<byte> buffer)
         {
+            if (!CanWrite)
+                throw FileSystemExceptions.StreamReadOnly;
+
             // Don't initiate write if the buffer is empty
             if (buffer.IsEmpty)
                 return;
@@ -144,6 +148,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// <inheritdoc/>
         public override void SetLength(long value)
         {
+            if (!CanWrite)
+                throw FileSystemExceptions.StreamReadOnly;
+
             // Ignore resizing the same length
             if (value == Length)
                 return;
@@ -234,9 +241,6 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// <inheritdoc/>
         public override void Flush()
         {
-            if (!CanWrite)
-                return;
-
             // Only flush when there's a need to
             if (_chunkAccess.FlushAvailable)
             {
@@ -312,6 +316,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         [SkipLocalsInit]
         private bool TryWriteHeader()
         {
+            if (!CanWrite)
+                throw FileSystemExceptions.StreamReadOnly;
+
             lock (_writeLock)
                 if (!_headerBuffer.IsHeaderReady && CanWrite && Inner.Length == 0L)
                 {

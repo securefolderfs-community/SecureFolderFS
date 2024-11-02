@@ -32,10 +32,10 @@
             <ucw:GraphsWidget
                 ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}"
                 ReadGraphIsExtended="{x:Bind ReadGraphViewModel.IsExtended, Mode=TwoWay}"
-                ReadGraphSubheader="{x:Bind ReadGraphViewModel.GraphSubheader, Mode=OneWay}"
+                ReadGraphSubheader="{x:Bind ReadGraphViewModel.GraphSubHeader, Mode=OneWay}"
                 WriteGraphData="{x:Bind WriteGraphViewModel.Data, Mode=OneWay}"
                 WriteGraphIsExtended="{x:Bind WriteGraphViewModel.IsExtended, Mode=TwoWay}"
-                WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubheader, Mode=OneWay}" />
+                WriteGraphSubheader="{x:Bind WriteGraphViewModel.GraphSubHeader, Mode=OneWay}" />
         </DataTemplate>
     </Page.Resources>
 
@@ -60,6 +60,16 @@
 
             <!--  Vault options  -->
             <StackPanel Spacing="4">
+
+                <!--  Vault read-only InfoBar  -->
+                <InfoBar
+                    x:Name="ReadOnlyInfoBar"
+                    x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.IsReadOnly, Mode=OneWay}"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Message="{l:ResourceString Name=VaultReadOnlyMode}"
+                    Severity="Informational" />
+
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
                     Title="{l:ResourceString Name=ViewVault}"

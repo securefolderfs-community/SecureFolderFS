@@ -11,6 +11,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,12 +31,13 @@ namespace SecureFolderFS.Core.Dokany
         public partial Task<FileSystemAvailability> GetStatusAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, FileSystemOptions options, CancellationToken cancellationToken = default)
+        public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, options);
+            var dokanyOptions = DokanyOptions.ToOptions(options, folder);
+            var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, dokanyOptions);
             var volumeModel = new DokanyVolumeModel()
             {
                 FileSystemName = Constants.Dokan.FS_TYPE_ID,
@@ -48,17 +50,19 @@ namespace SecureFolderFS.Core.Dokany
                                      | FileSystemFeatures.UnicodeOnDisk
             };
 
-            var mountPath = (options as DokanyOptions)?.MountPath ?? PathHelpers.GetFreeMountPath(options.VolumeName);
-            if (mountPath is null)
+            if (dokanyOptions.MountPoint is null)
+                dokanyOptions.SetMountPointInternal(PathHelpers.GetFreeMountPath(dokanyOptions.VolumeName));
+            
+            if (dokanyOptions.MountPoint is null)
                 throw new DirectoryNotFoundException("No available free mount points for vault file system.");
 
-            var handlesManager = new DokanyHandlesManager(specifics.StreamsAccess);
+            var handlesManager = new DokanyHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions.IsReadOnly);
             var dokanyCallbacks = new OnDeviceDokany(specifics, handlesManager, volumeModel);
             var dokanyWrapper = new DokanyWrapper(dokanyCallbacks);
-            dokanyWrapper.StartFileSystem(mountPath);
+            dokanyWrapper.StartFileSystem(dokanyOptions.MountPoint);
 
             await Task.CompletedTask;
-            return new DokanyVFSRoot(dokanyWrapper, new SystemFolder(mountPath), options);
+            return new DokanyVFSRoot(dokanyWrapper, new SystemFolder(dokanyOptions.MountPoint), dokanyOptions);
         }
     }
 }

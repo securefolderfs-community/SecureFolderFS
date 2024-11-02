@@ -11,7 +11,6 @@ using System.Collections.Generic;
 
 namespace SecureFolderFS.Core.CryptFiles
 {
-    /// <inheritdoc cref="ICryptFileManager"/>
     internal sealed class OpenCryptFileManager : IDisposable
     {
         private readonly Security _security;

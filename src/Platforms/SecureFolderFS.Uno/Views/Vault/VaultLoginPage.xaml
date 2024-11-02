@@ -63,7 +63,7 @@
                         <FlyoutBase.AttachedFlyout>
                             <Flyout>
                                 <StackPanel Spacing="4">
-                                    <CheckBox Content="Unlock as read-only" IsEnabled="False" />
+                                    <CheckBox Content="{l:ResourceString Name=UnlockAsReadOnly}" IsChecked="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}" />
                                     <CheckBox Content="Save credentials" IsEnabled="False" />
 
                                     <!--  TODO(uno): #18589  -->

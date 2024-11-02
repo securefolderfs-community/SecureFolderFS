@@ -85,11 +85,11 @@ namespace SecureFolderFS.Uno.UserControls.DebugControls
                 return;
 
             _graphsWidgetViewModel.IsActive = false;
-            _graphsWidgetViewModel.ReadGraphViewModel.GraphSubheader = "209mb/s";
+            _graphsWidgetViewModel.ReadGraphViewModel.GraphSubHeader = "209mb/s";
             _graphsWidgetViewModel.ReadGraphViewModel.Data.Clear();
             _graphsWidgetViewModel.ReadGraphViewModel.Data.AddMultiple([ 4, 3, 6, 3, 20, 12, 30, 39 ]);
 
-            _graphsWidgetViewModel.WriteGraphViewModel.GraphSubheader = "104,8mb/s";
+            _graphsWidgetViewModel.WriteGraphViewModel.GraphSubHeader = "104,8mb/s";
             _graphsWidgetViewModel.WriteGraphViewModel.Data.Clear();
             _graphsWidgetViewModel.WriteGraphViewModel.Data.AddMultiple([ 4, 3, 6, 3, 20, 12, 30, 39]);
         }

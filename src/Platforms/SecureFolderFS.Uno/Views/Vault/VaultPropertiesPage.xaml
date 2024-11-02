@@ -6,10 +6,24 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Page.Resources>
+
     <StackPanel Spacing="4">
+        <!--  Vault read-only InfoBar  -->
+        <InfoBar
+            x:Name="ReadOnlyInfoBar"
+            x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.IsReadOnly, Mode=OneWay}"
+            IsClosable="False"
+            IsOpen="True"
+            Message="{l:ResourceString Name=VaultReadOnlyMode}"
+            Severity="Informational" />
+
         <ucab:ActionBlockControl
             Title="{l:ResourceString Name=VaultInformation}"
             BlockMode="Expandable"
@@ -33,19 +47,19 @@
                     <StackPanel Grid.Column="1" Spacing="4">
                         <TextBlock
                             IsTextSelectionEnabled="True"
-                            Opacity="0.8"
+                            Opacity="0.6"
                             Text="{x:Bind ViewModel.SecurityText, Mode=OneWay}" />
                         <TextBlock
                             IsTextSelectionEnabled="True"
-                            Opacity="0.8"
+                            Opacity="0.6"
                             Text="{x:Bind ViewModel.ContentCipherText, Mode=OneWay}" />
                         <TextBlock
                             IsTextSelectionEnabled="True"
-                            Opacity="0.8"
+                            Opacity="0.6"
                             Text="{x:Bind ViewModel.FileNameCipherText, Mode=OneWay}" />
                         <TextBlock
                             IsTextSelectionEnabled="True"
-                            Opacity="0.8"
+                            Opacity="0.6"
                             Text="{x:Bind ViewModel.ActiveFileSystemText, Mode=OneWay}" />
                     </StackPanel>
                 </Grid>

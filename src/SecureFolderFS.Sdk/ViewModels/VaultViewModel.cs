@@ -6,7 +6,9 @@ using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -29,15 +31,21 @@ namespace SecureFolderFS.Sdk.ViewModels
             LastAccessDate = vaultModel.LastAccessDate;
         }
 
-        public async Task<UnlockedVaultViewModel> UnlockAsync(IDisposable unlockContract)
+        public async Task<UnlockedVaultViewModel> UnlockAsync(IDisposable unlockContract, bool isReadOnly)
         {
             // Get the file system
             var fileSystem = await VaultFileSystemService.GetBestFileSystemAsync();
-            var vaultOptions = VaultFileSystemService.GetFileSystemOptions(VaultModel, fileSystem.Id);
+
+            // Configure options
+            var options = new Dictionary<string, object>()
+            {
+                { nameof(FileSystemOptions.IsReadOnly), isReadOnly },
+                { nameof(FileSystemOptions.VolumeName), VaultModel.VaultName } // TODO: Sanitize name
+            };
 
             // Create the storage layer
             var contentFolder = await VaultModel.GetContentFolderAsync();
-            var storageRoot = await fileSystem.MountAsync(contentFolder, unlockContract, vaultOptions);
+            var storageRoot = await fileSystem.MountAsync(contentFolder, unlockContract, options);
 
             // Update last access date
             await VaultModel.SetLastAccessDateAsync(DateTime.Now);

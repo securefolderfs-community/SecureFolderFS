@@ -64,7 +64,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
                     newSeverity = item.Severity;
             }
 
-            _context?.Post(_ => Severity = newSeverity, null);
+            _Severity = newSeverity;
+            _context?.Post(_ => OnPropertyChanged(nameof(Severity)), null);
         }
 
         /// <inheritdoc/>

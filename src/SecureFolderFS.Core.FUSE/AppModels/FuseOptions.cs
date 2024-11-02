@@ -1,9 +1,12 @@
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FUSE.AppModels
 {
     /// <inheritdoc cref="FileSystemOptions"/>
-    public class FuseOptions : FileSystemOptions
+    public sealed class FuseOptions : FileSystemOptions
     {
         /// <summary>
         /// Gets the path where the file system should be mounted. If a null value is given, default mount point will be used.
@@ -37,13 +40,27 @@ namespace SecureFolderFS.Core.FUSE.AppModels
         public bool AllowOtherUserAccess { get; init; }
 
         /// <summary>
-        /// Gets whether the filesystem is read-only.
-        /// </summary>
-        public bool IsReadOnly { get; init; }
-
-        /// <summary>
         /// Gets whether to print debugging information to the console.
         /// </summary>
-        public bool PrintDebugInformation { get; init; }
+        public bool PrintDebugInformation { get; init; } // TODO: Use ILogger in the base class
+
+        public static FuseOptions ToOptions(IDictionary<string, object> options, IFolder contentFolder)
+        {
+            return new()
+            {
+                VolumeName = (string?)options.Get(nameof(VolumeName)) ?? throw new ArgumentNullException(nameof(VolumeName)),
+                HealthStatistics = (IHealthStatistics?)options.Get(nameof(HealthStatistics)) ?? new HealthStatistics(contentFolder),
+                FileSystemStatistics = (IFileSystemStatistics?)options.Get(nameof(FileSystemStatistics)) ?? new FileSystemStatistics(),
+                IsReadOnly = (bool?)options.Get(nameof(IsReadOnly)) ?? false,
+                IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,
+                IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? true,
+
+                // FUSE specific
+                MountPoint = (string?)options.Get(nameof(MountPoint)),
+                AllowRootUserAccess = (bool?)options.Get(nameof(AllowRootUserAccess)) ?? false,
+                AllowOtherUserAccess = (bool?)options.Get(nameof(AllowOtherUserAccess)) ?? false,
+                PrintDebugInformation = (bool?)options.Get(nameof(AllowOtherUserAccess)) ?? false
+            };
+        }
     }
 }

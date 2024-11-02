@@ -26,26 +26,26 @@
             {
                 internal static class XChaCha20Poly1305
                 {
-                    public const int CHUNK_Plaintext_SIZE = 32 * 1024; // 32768
+                    public const int CHUNK_PLAINTEXT_SIZE = 32 * 1024; // 32768
                     public const int CHUNK_NONCE_SIZE = 24;
                     public const int CHUNK_TAG_SIZE = 16;
-                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_Plaintext_SIZE + CHUNK_TAG_SIZE;
+                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_PLAINTEXT_SIZE + CHUNK_TAG_SIZE;
                 }
 
                 internal static class AesGcm
                 {
-                    public const int CHUNK_Plaintext_SIZE = 32 * 1024; // 32768
+                    public const int CHUNK_PLAINTEXT_SIZE = 32 * 1024; // 32768
                     public const int CHUNK_NONCE_SIZE = 12;
                     public const int CHUNK_TAG_SIZE = 16;
-                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_Plaintext_SIZE + CHUNK_TAG_SIZE;
+                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_PLAINTEXT_SIZE + CHUNK_TAG_SIZE;
                 }
 
                 internal static class AesCtrHmac
                 {
-                    public const int CHUNK_Plaintext_SIZE = 32 * 1024; // 32768
+                    public const int CHUNK_PLAINTEXT_SIZE = 32 * 1024; // 32768
                     public const int CHUNK_NONCE_SIZE = 16;
                     public const int CHUNK_MAC_SIZE = 32;
-                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_Plaintext_SIZE + CHUNK_MAC_SIZE;
+                    public const int CHUNK_CIPHERTEXT_SIZE = CHUNK_NONCE_SIZE + CHUNK_PLAINTEXT_SIZE + CHUNK_MAC_SIZE;
                 }
             }
 

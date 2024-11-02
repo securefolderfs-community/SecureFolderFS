@@ -46,15 +46,15 @@ namespace SecureFolderFS.Core.FileSystem
             return new()
             {
                 ContentFolder = contentFolder,
-                PlaintextFileNameCache = options.EnableFileNameCache
+                PlaintextFileNameCache = options.IsCachingFileNames
                     ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_Plaintext_FILENAMES, options.FileSystemStatistics.FileNameCache)
                     : new(false, options.FileSystemStatistics.FileNameCache),
-                CiphertextFileNameCache = options.EnableFileNameCache
+                CiphertextFileNameCache = options.IsCachingFileNames
                     ? new(FileSystem.Constants.Caching.RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES, options.FileSystemStatistics.FileNameCache)
                     : new(false, options.FileSystemStatistics.FileNameCache),
                 DirectoryIdCache = new(true, options.FileSystemStatistics.DirectoryIdCache),
                 FileSystemOptions = options,
-                StreamsAccess = StreamsAccess.CreateNew(security, options.EnableChunkCache, options.FileSystemStatistics),
+                StreamsAccess = StreamsAccess.CreateNew(security, options.IsCachingChunks, options.FileSystemStatistics),
                 Security = security
             };
         }

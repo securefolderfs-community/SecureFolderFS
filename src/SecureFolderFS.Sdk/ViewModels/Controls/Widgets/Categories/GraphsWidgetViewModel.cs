@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
     [Bindable(true)]
     public sealed partial class GraphsWidgetViewModel : BaseWidgetViewModel
     {
-        private readonly IFileSystemStatistics _readWriteStatistics;
+        private readonly IFileSystemStatistics _fileSystemStatistics;
         private readonly PeriodicTimer _periodicTimer;
         private readonly List<long> _readRates;
         private readonly List<long> _writeRates;
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             ReadGraphViewModel = new();
             WriteGraphViewModel = new();
-            _readWriteStatistics = unlockedVaultViewModel.StorageRoot.ReadWriteStatistics;
+            _fileSystemStatistics = unlockedVaultViewModel.StorageRoot.Options.FileSystemStatistics;
 
             _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Graphs.GRAPH_UPDATE_INTERVAL_MS));
             _readRates = [ 0 ];
@@ -45,8 +45,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             await ReadGraphViewModel.InitAsync(cancellationToken);
             await WriteGraphViewModel.InitAsync(cancellationToken);
 
-            _readWriteStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
-            _readWriteStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
+            _fileSystemStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
+            _fileSystemStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
             
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
@@ -99,8 +99,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _readWriteStatistics.BytesRead = null;
-            _readWriteStatistics.BytesWritten = null;
+            _fileSystemStatistics.BytesRead = null;
+            _fileSystemStatistics.BytesWritten = null;
             _periodicTimer.Dispose();
         }
     }

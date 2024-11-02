@@ -31,7 +31,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (string.IsNullOrEmpty(storable.Name))
             {
                 var safRoot = _rootCollection?.GetRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
-                row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.StorageName ?? storable.Name);
+                row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.Options.VolumeName ?? storable.Name);
             }
             else
                 row.Add(Document.ColumnDisplayName, storable.Name);
