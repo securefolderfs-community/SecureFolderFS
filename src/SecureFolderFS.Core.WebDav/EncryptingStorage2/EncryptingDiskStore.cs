@@ -1,4 +1,4 @@
-﻿using NWebDav.Server.Http;
+﻿using Microsoft.Extensions.Logging;
 using NWebDav.Server.Locking;
 using NWebDav.Server.Stores;
 using SecureFolderFS.Core.FileSystem;
@@ -9,14 +9,26 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
-    internal sealed class EncryptingDiskStore : DiskStore
+    internal sealed class EncryptingDiskStore : DiskStoreBase
     {
         private readonly FileSystemSpecifics _specifics;
 
-        public EncryptingDiskStore(string directory, FileSystemSpecifics specifics, bool isWritable = true, ILockingManager? lockingManager = null)
-            : base(directory, isWritable, lockingManager)
+        /// <inheritdoc/>
+        public override bool IsWritable { get; }
+
+        /// <inheritdoc/>
+        public override string BaseDirectory { get; }
+
+        public EncryptingDiskStore(
+            FileSystemSpecifics specifics,
+            DiskStoreItemPropertyManager itemPropertyManager,
+            DiskStoreCollectionPropertyManager collectionPropertyManager,
+            ILoggerFactory loggerFactory)
+            : base(collectionPropertyManager, itemPropertyManager, loggerFactory)
         {
             _specifics = specifics;
+            IsWritable = !specifics.FileSystemOptions.IsReadOnly;
+            BaseDirectory = specifics.ContentFolder.Id;
         }
 
         public override Task<IStoreItem> GetItemAsync(Uri uri, IHttpContext context)

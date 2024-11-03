@@ -17,4 +17,8 @@
     <ProjectReference Include="..\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dispatching\" />
+  </ItemGroup>
+
 </Project>

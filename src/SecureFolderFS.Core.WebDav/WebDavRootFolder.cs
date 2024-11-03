@@ -1,34 +1,40 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using System;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav
 {
     /// <inheritdoc cref="IVFSRoot"/>
-    public sealed class WebDavRootFolder : VFSRoot
+    public class WebDavRootFolder : VFSRoot
     {
-        private readonly WebDavWrapper _webDavWrapper;
-        private bool _disposed;
+        protected readonly IAsyncDisposable webDavInstance;
+        protected bool disposed;
 
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public WebDavRootFolder(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemOptions options)
+        public WebDavRootFolder(IAsyncDisposable webDavInstance, IFolder storageRoot, FileSystemOptions options)
             : base(storageRoot, options)
         {
-            _webDavWrapper = webDavWrapper;
+            this.webDavInstance = webDavInstance;
         }
 
         /// <inheritdoc/>
-        public override async ValueTask DisposeAsync()
+        public sealed override async ValueTask DisposeAsync()
         {
-            if (_disposed)
+            if (disposed)
                 return;
 
-            _disposed = await _webDavWrapper.CloseFileSystemAsync();
-            if (_disposed)
-                FileSystemManager.Instance.RemoveRoot(this);
+            disposed = true;
+            await DisposeInternalAsync();
+        }
+
+        protected virtual async ValueTask DisposeInternalAsync()
+        {
+            await webDavInstance.DisposeAsync();
+            FileSystemManager.Instance.RemoveRoot(this);
         }
     }
 }
