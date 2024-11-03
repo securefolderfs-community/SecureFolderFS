@@ -36,6 +36,7 @@
     <PackageReference Include="Microsoft.AppCenter.Crashes" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
 

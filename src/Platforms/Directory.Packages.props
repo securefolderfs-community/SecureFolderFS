@@ -20,6 +20,7 @@
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
     <PackageVersion Include="Octokit" Version="13.0.1" />
+    <PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.9-preview.2.2" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     <PackageVersion Include="The49.Maui.BottomSheet" Version="8.0.3" />
     <PackageVersion Include="Uno.CommunityToolkit.WinUI" Version="7.1.200" />
