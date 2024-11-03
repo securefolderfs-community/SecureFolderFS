@@ -20,11 +20,10 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
         /// <inheritdoc/>
         public override IEnumerable<string> GetContentCiphers()
         {
-            // XChaCha20-Poly1305 is not supported in NSec implementation for iOS (Catalyst)
-            // Trackers:
-            // - https://nsec.rocks/docs/install#supported-platforms
+            // TODO: AES-GCM is supported in NET 9 for Catalyst
+            //yield return Core.Cryptography.Constants.CipherId.AES_GCM;
             
-            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
+            yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
         }
 
         /// <inheritdoc/>
