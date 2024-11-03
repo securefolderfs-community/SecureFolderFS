@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NWebDav.Server.Dispatching;
 using SecureFolderFS.Core.WebDav;
+using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 #if __MACCATALYST__
@@ -19,16 +20,13 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
     internal sealed partial class MacOsWebDavFileSystem : WebDavFileSystem
     {
         protected override async Task<IVFSRoot> MountAsync(
-            int port,
-            string domain,
-            string protocol,
             HttpListener listener,
-            FileSystemOptions options,
+            WebDavOptions options,
             IRequestDispatcher requestDispatcher,
             CancellationToken cancellationToken)
         {
 #if __MACCATALYST__
-            var remotePath = DriveMappingHelpers.GetRemotePath(protocol, "localhost", port, options.VolumeName);
+            var remotePath = DriveMappingHelpers.GetRemotePath(options.Protocol, "localhost", options.Port, options.VolumeName);
             var remoteUri = new Uri(remotePath);
 
             // Mount WebDAV volume via AppleScript

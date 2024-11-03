@@ -17,8 +17,8 @@
         <DataTemplate x:Key="PasswordTemplate" x:DataType="vm:PasswordCreationViewModel">
             <ContentView>
                 <VerticalStackLayout Spacing="16">
-                    <local:PasswordControl Title="{l:ResourceString Name=NewPassword}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
-                    <local:PasswordControl Title="{l:ResourceString Name=RepeatPassword}" UnsecurePassword="{Binding SecondaryPassword, Mode=TwoWay}" />
+                    <local:PasswordControl Title="{l:ResourceString Rid=NewPassword}" UnsecurePassword="{Binding PrimaryPassword, Mode=TwoWay}" />
+                    <local:PasswordControl Title="{l:ResourceString Rid=RepeatPassword}" UnsecurePassword="{Binding SecondaryPassword, Mode=TwoWay}" />
                 </VerticalStackLayout>
             </ContentView>
         </DataTemplate>
@@ -43,7 +43,7 @@
                     <Label
                         HorizontalOptions="Center"
                         Opacity="0.6"
-                        Text="{l:ResourceString Name=SetupKeyFile}" />
+                        Text="{l:ResourceString Rid=SetupKeyFile}" />
 
                     <!--  Authenticate  -->
                     <OnPlatform x:TypeArguments="View">
@@ -51,13 +51,13 @@
                             <mdc:Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 HorizontalOptions="Center"
-                                Text="{l:ResourceString Name=Setup}" />
+                                Text="{l:ResourceString Rid=Setup}" />
                         </On>
                         <On Platform="iOS">
                             <Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 HorizontalOptions="Center"
-                                Text="{l:ResourceString Name=Setup}" />
+                                Text="{l:ResourceString Rid=Setup}" />
                         </On>
                     </OnPlatform>
                 </VerticalStackLayout>

@@ -22,7 +22,7 @@
                 <Label
                     FontAttributes="Bold"
                     FontSize="18"
-                    Text="{l:ResourceString Name=HealthNoProblems}"
+                    Text="{l:ResourceString Rid=HealthNoProblems}"
                     VerticalOptions="Center" />
             </HorizontalStackLayout>
         </DataTemplate>
@@ -36,14 +36,14 @@
                 </Grid.ColumnDefinitions>
 
                 <VerticalStackLayout Grid.Column="0">
-                    <Label Opacity="0.6" Text="{l:ResourceString Name=TotalRead}" />
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=TotalRead}" />
                     <Label
                         FontAttributes="Bold"
                         FontSize="22"
                         Text="0Mb" />
                 </VerticalStackLayout>
                 <VerticalStackLayout Grid.Column="1">
-                    <Label Opacity="0.6" Text="{l:ResourceString Name=TotalWrite}" />
+                    <Label Opacity="0.6" Text="{l:ResourceString Rid=TotalWrite}" />
                     <Label
                         FontAttributes="Bold"
                         FontSize="22"
@@ -78,14 +78,14 @@
                         Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}"
                         HeightRequest="48"
                         Style="{DynamicResource FilledTonalButtonStyle}"
-                        Text="{l:ResourceString Name=ViewInFiles}"
+                        Text="{l:ResourceString Rid=ViewInFiles}"
                         WidthRequest="180" />
                     <mdc:Button
                         Grid.Column="1"
                         Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}"
                         HeightRequest="48"
                         Style="{DynamicResource FilledTonalButtonStyle}"
-                        Text="{l:ResourceString Name=LockVault}"
+                        Text="{l:ResourceString Rid=LockVault}"
                         WidthRequest="180" />
                 </Grid>
             </On>
@@ -96,39 +96,39 @@
             <TableRoot>
                 <OnPlatform x:TypeArguments="TableSection">
                     <On Platform="iOS">
-                        <TableSection Title="{l:ResourceString Name=QuickActions}">
-                            <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" Text="{l:ResourceString Name=ViewInFiles}" />
-                            <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" Text="{l:ResourceString Name=LockVault}" />
+                        <TableSection Title="{l:ResourceString Rid=QuickActions}">
+                            <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.RevealFolderCommand}" Text="{l:ResourceString Rid=ViewInFiles}" />
+                            <TextCell Command="{Binding OverviewViewModel.VaultControlsViewModel.LockVaultCommand}" Text="{l:ResourceString Rid=LockVault}" />
                         </TableSection>
                     </On>
                     <On Platform="Android">
                         <TableSection />
                     </On>
                 </OnPlatform>
-                <TableSection Title="{l:ResourceString Name=VaultProperties}">
+                <TableSection Title="{l:ResourceString Rid=VaultProperties}">
                     <uc:SplitCell
                         IsEnabled="False"
-                        LeftText="{l:ResourceString Name=Security}"
+                        LeftText="{l:ResourceString Rid=Security}"
                         RightText="{Binding PropertiesViewModel.SecurityText, Mode=OneWay}" />
                     <uc:SplitCell
                         IsEnabled="False"
-                        LeftText="{l:ResourceString Name=DataEncryption}"
+                        LeftText="{l:ResourceString Rid=DataEncryption}"
                         RightText="{Binding PropertiesViewModel.ContentCipherText, Mode=OneWay}" />
                     <uc:SplitCell
                         IsEnabled="False"
-                        LeftText="{l:ResourceString Name=FileNameEncryption}"
+                        LeftText="{l:ResourceString Rid=FileNameEncryption}"
                         RightText="{Binding PropertiesViewModel.FileNameCipherText, Mode=OneWay}" />
                 </TableSection>
-                <TableSection Title="{l:ResourceString Name=Authentication}">
+                <TableSection Title="{l:ResourceString Rid=Authentication}">
                     <TextCell
                         Command="{Binding PropertiesViewModel.ChangeFirstAuthenticationCommand}"
-                        Detail="{l:ResourceString Name=ChangeCredentialsDescription}"
-                        Text="{l:ResourceString Name=ChangeCredentials}" />
+                        Detail="{l:ResourceString Rid=ChangeCredentialsDescription}"
+                        Text="{l:ResourceString Rid=ChangeCredentials}" />
                     <TextCell
                         Command="{Binding PropertiesViewModel.ChangeSecondAuthenticationCommand}"
-                        Detail="{l:ResourceString Name=TwoFactorDescription}"
-                        Text="{l:ResourceString Name=TwoFactor}" />
-                    <TextCell Command="{Binding PropertiesViewModel.ViewRecoveryCommand}" Text="{l:ResourceString Name=RecoveryCodes}" />
+                        Detail="{l:ResourceString Rid=TwoFactorDescription}"
+                        Text="{l:ResourceString Rid=TwoFactor}" />
+                    <TextCell Command="{Binding PropertiesViewModel.ViewRecoveryCommand}" Text="{l:ResourceString Rid=RecoveryCodes}" />
                 </TableSection>
             </TableRoot>
         </TableView>

@@ -26,38 +26,38 @@
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=DisableRecentAccess}"
+                Title="{l:ResourceString Rid=DisableRecentAccess}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=DisableRecentAccessDescription}">
+                Description="{l:ResourceString Rid=DisableRecentAccessDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE81C;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=DisableRecentAccess}"
+                        AutomationProperties.Name="{l:ResourceString Rid=DisableRecentAccess}"
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.DisableRecentAccess, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=AutoLock}"
+                Title="{l:ResourceString Rid=AutoLock}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=AutoLockDescription}">
+                Description="{l:ResourceString Rid=AutoLockDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE72E;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=AutoLock}"
+                        AutomationProperties.Name="{l:ResourceString Rid=AutoLock}"
                         IsOn="{x:Bind ViewModel.LockOnSystemLock, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=Telemetry}"
+                Title="{l:ResourceString Rid=Telemetry}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=TelemetryDescription}">
+                Description="{l:ResourceString Rid=TelemetryDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE9D2;" />
                 </ucab:ActionBlockControl.Icon>
@@ -65,7 +65,7 @@
                     <ToggleSwitch
                         x:Name="EnableTelemetry"
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=Telemetry}"
+                        AutomationProperties.Name="{l:ResourceString Rid=Telemetry}"
                         IsOn="{x:Bind ViewModel.IsTelemetryEnabled, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>

@@ -67,15 +67,15 @@
                     x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.IsReadOnly, Mode=OneWay}"
                     IsClosable="False"
                     IsOpen="True"
-                    Message="{l:ResourceString Name=VaultReadOnlyMode}"
+                    Message="{l:ResourceString Rid=VaultReadOnlyMode}"
                     Severity="Informational" />
 
                 <!--  Open in File Explorer  -->
                 <ucab:ActionBlockControl
-                    Title="{l:ResourceString Name=ViewVault}"
+                    Title="{l:ResourceString Rid=ViewVault}"
                     BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.RevealFolderCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=ViewVaultDescription}">
+                    Description="{l:ResourceString Rid=ViewVaultDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xEC50;" />
                     </ucab:ActionBlockControl.Icon>
@@ -86,10 +86,10 @@
 
                 <!--  Vault properties  -->
                 <ucab:ActionBlockControl
-                    Title="{l:ResourceString Name=VaultProperties}"
+                    Title="{l:ResourceString Rid=VaultProperties}"
                     BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.OpenPropertiesCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=VaultPropertiesDescription}">
+                    Description="{l:ResourceString Rid=VaultPropertiesDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE946;" />
                     </ucab:ActionBlockControl.Icon>
@@ -100,10 +100,10 @@
 
                 <!--  Lock vault  -->
                 <ucab:ActionBlockControl
-                    Title="{l:ResourceString Name=LockVault}"
+                    Title="{l:ResourceString Rid=LockVault}"
                     BlockMode="Clickable"
                     ClickCommand="{x:Bind ViewModel.VaultControlsViewModel.LockVaultCommand, Mode=OneWay}"
-                    Description="{l:ResourceString Name=LockVaultDescription}">
+                    Description="{l:ResourceString Rid=LockVaultDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xE72E;" />
                     </ucab:ActionBlockControl.Icon>

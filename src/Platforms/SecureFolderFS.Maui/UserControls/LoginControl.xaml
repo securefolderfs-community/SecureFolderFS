@@ -27,13 +27,13 @@
                             <mdc:Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                                Text="{l:ResourceString Name=Continue}" />
+                                Text="{l:ResourceString Rid=Continue}" />
                         </On>
                         <On Platform="iOS">
                             <Button
                                 Command="{Binding ProvideCredentialsCommand}"
                                 IsVisible="{Binding ProvideContinuationButton, Mode=OneWay, Source={x:Reference Name=ThisLoginControl}}"
-                                Text="{l:ResourceString Name=Continue}" />
+                                Text="{l:ResourceString Rid=Continue}" />
                         </On>
                     </OnPlatform>
                 </VerticalStackLayout>
@@ -88,7 +88,7 @@
                     <Label
                         FontSize="17"
                         HorizontalOptions="Center"
-                        Text="{l:ResourceString Name=VaultLoadError}" />
+                        Text="{l:ResourceString Rid=VaultLoadError}" />
                     <Label
                         FontSize="12"
                         HorizontalOptions="Center"

@@ -119,7 +119,7 @@
             <Button
                 VerticalAlignment="Center"
                 Command="{x:Bind CancelCommand, Mode=OneWay}"
-                Content="{l:ResourceString Name=Cancel}"
+                Content="{l:ResourceString Rid=Cancel}"
                 Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
         </Grid>
 

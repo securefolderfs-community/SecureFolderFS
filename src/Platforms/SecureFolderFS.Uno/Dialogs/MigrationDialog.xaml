@@ -19,7 +19,7 @@
     PrimaryButtonClick="MigrationDialog_PrimaryButtonClick"
     PrimaryButtonText="{x:Bind ViewModel.PrimaryButtonText, Mode=OneWay}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
-    SecondaryButtonText="{l:ResourceString Name=Close}"
+    SecondaryButtonText="{l:ResourceString Rid=Close}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
@@ -74,14 +74,14 @@
                 <Button
                     HorizontalAlignment="Center"
                     Command="{x:Bind ViewModel.MigrateCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Migrate}"
+                    Content="{l:ResourceString Rid=Migrate}"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </StackPanel>
 
         <StackPanel x:Name="CompletedView" Visibility="Collapsed">
             <InfoBar
-                Title="{l:ResourceString Name=VaultMigrated}"
+                Title="{l:ResourceString Rid=VaultMigrated}"
                 IsClosable="False"
                 IsOpen="True"
                 Severity="Success" />

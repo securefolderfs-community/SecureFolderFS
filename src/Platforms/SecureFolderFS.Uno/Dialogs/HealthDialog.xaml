@@ -9,7 +9,7 @@
     Title="Found issues"
     DefaultButton="Primary"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
-    SecondaryButtonText="{l:ResourceString Name=Close}"
+    SecondaryButtonText="{l:ResourceString Rid=Close}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 

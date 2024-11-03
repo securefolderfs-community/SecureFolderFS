@@ -36,7 +36,7 @@
                 VerticalAlignment="Center"
                 FontSize="16"
                 FontWeight="SemiBold"
-                Text="{l:ResourceString Name=Licenses}" />
+                Text="{l:ResourceString Rid=Licenses}" />
 
             <Button
                 Width="34"
@@ -45,7 +45,7 @@
                 Padding="0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                AutomationProperties.Name="{l:ResourceString Name=Close}"
+                AutomationProperties.Name="{l:ResourceString Rid=Close}"
                 Background="Transparent"
                 BorderThickness="0"
                 Click="CloseButton_Click"
@@ -62,11 +62,11 @@
                             <ucab:ActionBlockControl.ActionElement>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <HyperlinkButton
-                                        Content="{l:ResourceString Name=Website}"
+                                        Content="{l:ResourceString Rid=Website}"
                                         NavigateUri="{x:Bind ProjectWebsiteUri}"
                                         Visibility="{x:Bind ProjectWebsiteUri, Converter={StaticResource NullToVisibilityConverter}}" />
                                     <HyperlinkButton
-                                        Content="{l:ResourceString Name=License}"
+                                        Content="{l:ResourceString Rid=License}"
                                         NavigateUri="{x:Bind LicenseUris, Converter={StaticResource OnlyFirstElementOrNullConverter}}"
                                         Visibility="{Binding NavigateUri, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource NullToVisibilityConverter}}" />
                                 </StackPanel>

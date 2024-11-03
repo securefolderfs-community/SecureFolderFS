@@ -45,7 +45,7 @@
                         HorizontalAlignment="Center"
                         FontSize="14"
                         Opacity="0.6"
-                        Text="{l:ResourceString Name=VaultLocked}" />
+                        Text="{l:ResourceString Rid=VaultLocked}" />
                 </StackPanel>
 
                 <!--  Login  -->
@@ -58,24 +58,24 @@
                         Padding="4,2"
                         HorizontalAlignment="Center"
                         Click="LoginOptions_Click"
-                        Content="{l:ResourceString Name=LoginOptions}"
+                        Content="{l:ResourceString Rid=LoginOptions}"
                         Visibility="{x:Bind ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelVisibilityConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}">
                         <FlyoutBase.AttachedFlyout>
                             <Flyout>
                                 <StackPanel Spacing="4">
-                                    <CheckBox Content="{l:ResourceString Name=UnlockAsReadOnly}" IsChecked="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}" />
+                                    <CheckBox Content="{l:ResourceString Rid=UnlockAsReadOnly}" IsChecked="{x:Bind ViewModel.IsReadOnly, Mode=TwoWay}" />
                                     <CheckBox Content="Save credentials" IsEnabled="False" />
 
                                     <!--  TODO(uno): #18589  -->
                                     <Button
                                         x:Name="RestartProcessButton"
                                         Command="{x:Bind ViewModel.LoginViewModel.RestartLoginProcessCommand, Mode=OneWay}"
-                                        Content="{l:ResourceString Name=RestartLogin}"
+                                        Content="{l:ResourceString Rid=RestartLogin}"
                                         Visibility="{x:Bind ViewModel.LoginViewModel.IsLoginSequence, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                     <Button
                                         HorizontalAlignment="Stretch"
                                         Command="{x:Bind ViewModel.BeginRecoveryCommand, Mode=OneWay}"
-                                        Content="{l:ResourceString Name=RecoverAccess}" />
+                                        Content="{l:ResourceString Rid=RecoverAccess}" />
                                 </StackPanel>
                             </Flyout>
                         </FlyoutBase.AttachedFlyout>

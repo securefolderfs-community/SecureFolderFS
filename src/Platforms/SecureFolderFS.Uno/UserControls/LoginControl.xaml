@@ -36,7 +36,7 @@
                     HorizontalAlignment="Center"
                     Click="ContinueButton_Click"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Continue}"
+                    Content="{l:ResourceString Rid=Continue}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -55,14 +55,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="{l:ResourceString Name=LoginKeyFile}" />
+                    Text="{l:ResourceString Rid=LoginKeyFile}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Authenticate}"
+                    Content="{l:ResourceString Rid=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -81,14 +81,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="{l:ResourceString Name=LoginWindowsHello}" />
+                    Text="{l:ResourceString Rid=LoginWindowsHello}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Authenticate}"
+                    Content="{l:ResourceString Rid=Authenticate}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{Binding Path=ProvideContinuationButton, ElementName=ThisLoginControl, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
@@ -101,7 +101,7 @@
                 <InfoBar
                     IsClosable="False"
                     IsOpen="True"
-                    Message="{l:ResourceString Name=VaultNeedsMigration}"
+                    Message="{l:ResourceString Rid=VaultNeedsMigration}"
                     Severity="Informational" />
 
                 <!--  Migrate  -->
@@ -110,7 +110,7 @@
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind OpenMigrationOverlayCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Migrate}"
+                    Content="{l:ResourceString Rid=Migrate}"
                     Style="{ThemeResource AccentButtonStyle}" />
 
                 <!--  Version info  -->
@@ -142,7 +142,7 @@
         <!--  Error Template  -->
         <DataTemplate x:Key="ErrorTemplate" x:DataType="vm3:ErrorViewModel">
             <uc:ErrorControl
-                Title="{l:ResourceString Name=VaultLoadError}"
+                Title="{l:ResourceString Rid=VaultLoadError}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 ExceptionMessage="{x:Bind Message, Mode=OneWay}" />

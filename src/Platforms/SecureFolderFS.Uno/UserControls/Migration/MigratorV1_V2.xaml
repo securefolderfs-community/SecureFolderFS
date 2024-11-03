@@ -21,7 +21,7 @@
             x:Name="ContinueButton"
             HorizontalAlignment="Center"
             Click="Password_PasswordSubmitted"
-            Content="{l:ResourceString Name=Continue}"
+            Content="{l:ResourceString Rid=Continue}"
             Style="{ThemeResource AccentButtonStyle}"
             Visibility="{x:Bind ProvideContinuationButton, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
     </StackPanel>

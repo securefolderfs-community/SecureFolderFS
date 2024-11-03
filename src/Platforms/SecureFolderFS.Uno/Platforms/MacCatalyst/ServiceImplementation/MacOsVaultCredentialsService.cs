@@ -18,6 +18,16 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
     internal sealed class MacOsVaultCredentialsService : BaseVaultCredentialsService
     {
         /// <inheritdoc/>
+        public override IEnumerable<string> GetContentCiphers()
+        {
+            // XChaCha20-Poly1305 is not supported in NSec implementation for iOS (Catalyst)
+            // Trackers:
+            // - https://nsec.rocks/docs/install#supported-platforms
+            
+            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
+        }
+
+        /// <inheritdoc/>
         public override async IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var vaultReader = new VaultReader(vaultFolder, StreamSerializer.Instance);

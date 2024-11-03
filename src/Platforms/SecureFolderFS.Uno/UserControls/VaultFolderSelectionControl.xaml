@@ -29,6 +29,6 @@
             Grid.Column="1"
             VerticalAlignment="Center"
             Command="{x:Bind OpenCommand, Mode=OneWay}"
-            Content="{l:ResourceString Name=Open}" />
+            Content="{l:ResourceString Rid=Open}" />
     </Grid>
 </UserControl>

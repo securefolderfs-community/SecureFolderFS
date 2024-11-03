@@ -79,7 +79,7 @@
         <NavigationView.AutoSuggestBox>
             <AutoSuggestBox
                 ItemsSource="{x:Bind ViewModel.VaultListViewModel.SearchViewModel.SearchItems, Mode=OneWay}"
-                PlaceholderText="{l:ResourceString Name=Search}"
+                PlaceholderText="{l:ResourceString Rid=Search}"
                 QueryIcon="Find"
                 QuerySubmitted="SidebarSearchBox_QuerySubmitted"
                 TextChanged="SidebarSearchBox_TextChanged" />
@@ -101,7 +101,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    AutomationProperties.Name="{l:ResourceString Name=NewVault}"
+                    AutomationProperties.Name="{l:ResourceString Rid=NewVault}"
                     Command="{x:Bind ViewModel.VaultListViewModel.AddNewVaultCommand, Mode=OneWay}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay}">
@@ -110,7 +110,7 @@
                             Margin="2,0,2,-4"
                             FontSize="16"
                             Glyph="&#xECC8;" />
-                        <TextBlock Text="{l:ResourceString Name=NewVault}" />
+                        <TextBlock Text="{l:ResourceString Rid=NewVault}" />
                     </StackPanel>
                 </Button>
 
@@ -124,7 +124,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    AutomationProperties.Name="{l:ResourceString Name=NewVault}"
+                    AutomationProperties.Name="{l:ResourceString Rid=NewVault}"
                     Command="{x:Bind ViewModel.VaultListViewModel.AddNewVaultCommand, Mode=OneWay}"
                     Style="{ThemeResource AccentButtonStyle}"
                     Visibility="{x:Bind Sidebar.IsPaneOpen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
@@ -140,7 +140,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    AutomationProperties.Name="{l:ResourceString Name=Settings}"
+                    AutomationProperties.Name="{l:ResourceString Rid=Settings}"
                     Background="Transparent"
                     BorderThickness="0"
                     Command="{x:Bind ViewModel.OpenSettingsCommand, Mode=OneWay}"
@@ -199,7 +199,7 @@
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
                             <!--  Show in Explorer  -->
-                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Name=ShowEncryptedVault}">
+                            <MenuFlyoutItem Command="{x:Bind RevealFolderCommand, Mode=OneWay}" Text="{l:ResourceString Rid=ShowEncryptedVault}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xED25;" />
                                 </MenuFlyoutItem.Icon>
@@ -213,23 +213,23 @@
                             </MenuFlyoutItem>
 
                             <!--  Move up/down  -->
-                            <MenuFlyoutSeparator x:Name="MoveSeparator" x:Load="{x:Bind CanMove, Mode=OneWay}" />
+                            <MenuFlyoutSeparator Visibility="{x:Bind CanMove, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <MenuFlyoutItem
                                 x:Name="MoveUp"
-                                x:Load="{x:Bind CanMoveUp, Mode=OneWay}"
                                 Command="{x:Bind MoveItemCommand, Mode=OneWay}"
                                 CommandParameter="up"
-                                Text="Move up">
+                                Text="Move up"
+                                Visibility="{x:Bind CanMoveUp, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE70E;" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutItem
                                 x:Name="MoveDown"
-                                x:Load="{x:Bind CanMoveDown, Mode=OneWay}"
                                 Command="{x:Bind MoveItemCommand, Mode=OneWay}"
                                 CommandParameter="down"
-                                Text="Move down">
+                                Text="Move down"
+                                Visibility="{x:Bind CanMoveDown, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE70D;" />
                                 </MenuFlyoutItem.Icon>
@@ -240,7 +240,7 @@
                             <MenuFlyoutItem
                                 Command="{x:Bind RemoveVaultCommand, Mode=OneWay}"
                                 IsEnabled="{x:Bind CanRemoveVault, Mode=OneWay}"
-                                Text="{l:ResourceString Name=RemoveFromList}">
+                                Text="{l:ResourceString Rid=RemoveFromList}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE738;" />
                                 </MenuFlyoutItem.Icon>

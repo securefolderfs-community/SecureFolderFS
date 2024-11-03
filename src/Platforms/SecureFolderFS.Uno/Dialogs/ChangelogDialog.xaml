@@ -9,9 +9,9 @@
     xmlns:not_win="http://uno.ui/skia"
     xmlns:tuc="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    Title="{l:ResourceString Name=WhatsNew}"
+    Title="{l:ResourceString Rid=WhatsNew}"
     DefaultButton="Primary"
-    PrimaryButtonText="{l:ResourceString Name=ChangelogCloseButton}"
+    PrimaryButtonText="{l:ResourceString Rid=ChangelogCloseButton}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d not_win">
@@ -27,11 +27,11 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--  TODO(uno): #18589  -->
         <Grid
+            x:Name="RootGrid"
             Grid.Row="0"
-            RowSpacing="8"
-            Visibility="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter='invert'}">
+            x:Load="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToBoolConverter}, ConverterParameter='invert'}"
+            RowSpacing="8">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
@@ -58,10 +58,10 @@
 
             <HyperlinkButton
                 Grid.Row="1"
-                AutomationProperties.Name="{l:ResourceString Name=ViewOnGitHub}"
+                AutomationProperties.Name="{l:ResourceString Rid=ViewOnGitHub}"
                 NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />
+                    <TextBlock Text="{l:ResourceString Rid=ViewOnGitHub}" />
                     <FontIcon
                         Margin="0,0,0,-2"
                         FontSize="14"
@@ -70,13 +70,12 @@
             </HyperlinkButton>
         </Grid>
 
-        <!--  TODO(uno): #18589  -->
         <StackPanel
             x:Name="ErrorPanel"
             Grid.Row="0"
             HorizontalAlignment="Center"
-            Visibility="{x:Bind ViewModel.ErrorText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-            <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Name=ChangelogError}" />
+            x:Load="{x:Bind ViewModel.ErrorText, Mode=OneWay}">
+            <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=ChangelogError}" />
             <TextBlock
                 HorizontalAlignment="Center"
                 FontSize="12"
@@ -90,10 +89,10 @@
                 HorizontalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="8">
-                <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand, Mode=OneWay}" Content="{l:ResourceString Name=Retry}" />
-                <HyperlinkButton AutomationProperties.Name="{l:ResourceString Name=ViewOnGitHub}" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
+                <HyperlinkButton Command="{x:Bind ViewModel.RetryCommand, Mode=OneWay}" Content="{l:ResourceString Rid=Retry}" />
+                <HyperlinkButton AutomationProperties.Name="{l:ResourceString Rid=ViewOnGitHub}" NavigateUri="https://github.com/securefolderfs-community/SecureFolderFS/releases">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <TextBlock Text="{l:ResourceString Name=ViewOnGitHub}" />
+                        <TextBlock Text="{l:ResourceString Rid=ViewOnGitHub}" />
                         <FontIcon
                             Margin="0,0,0,-2"
                             FontSize="14"

@@ -1,4 +1,5 @@
 using System;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
 using SecureFolderFS.UI.ValueConverters;
@@ -12,7 +13,7 @@ namespace SecureFolderFS.Uno.ValueConverters
 #if WINDOWS && !HAS_UNO
             new SvgImageSource(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/success_shield.svg"));
 #else
-            new BitmapImage(new("/Assets/AppAssets/Shields/success_shield.png"));
+            new BitmapImage(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/success_shield.png"));
 #endif
 
         /// <inheritdoc/>
@@ -20,7 +21,7 @@ namespace SecureFolderFS.Uno.ValueConverters
 #if WINDOWS && !HAS_UNO
             new SvgImageSource(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/warning_shield.svg"));
 #else
-            new BitmapImage(new("/Assets/AppAssets/Shields/warning_shield.png"));
+            new BitmapImage(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/warning_shield.png"));
 #endif
 
         /// <inheritdoc/>
@@ -28,7 +29,7 @@ namespace SecureFolderFS.Uno.ValueConverters
 #if WINDOWS && !HAS_UNO
             new SvgImageSource(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/error_shield.svg"));
 #else
-            new BitmapImage(new("/Assets/AppAssets/Shields/error_shield.png"));
+            new BitmapImage(new("ms-appx://SecureFolderFS.UI/Assets/AppAssets/Shields/error_shield.png"));
 #endif
 
         /// <inheritdoc/>

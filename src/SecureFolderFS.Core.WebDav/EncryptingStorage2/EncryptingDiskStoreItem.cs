@@ -138,11 +138,17 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 {
                     await inputStream.CopyToAsync(outputStream).ConfigureAwait(false);
                 }
+
                 return HttpStatusCode.OK;
             }
             catch (IOException ioException) when (ioException.IsDiskFull())
             {
                 return HttpStatusCode.InsufficientStorage;
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+                throw;
             }
         }
 

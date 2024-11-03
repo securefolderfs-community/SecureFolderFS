@@ -16,7 +16,7 @@
 
     <StackPanel MinWidth="500" Spacing="4">
         <InfoBar
-            Title="{l:ResourceString Name=Error}"
+            Title="{l:ResourceString Rid=Error}"
             IsClosable="False"
             IsOpen="True"
             Message="{x:Bind Title, Mode=OneWay}"
@@ -27,7 +27,7 @@
             x:Load="{x:Bind ExceptionMessage, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
             IsExpanded="True">
             <Expander.Header>
-                <TextBlock Text="{l:ResourceString Name=ErrorDetails}" />
+                <TextBlock Text="{l:ResourceString Rid=ErrorDetails}" />
             </Expander.Header>
             <ScrollViewer
                 Height="200"

@@ -56,7 +56,7 @@
             Height="32"
             Margin="0,0,16,0"
             Padding="8"
-            AutomationProperties.Name="{l:ResourceString Name=Back}"
+            AutomationProperties.Name="{l:ResourceString Rid=Back}"
             Background="Transparent"
             BorderThickness="0"
             Click="GoBack_Click"

@@ -31,11 +31,11 @@
                     <TextBlock
                         FontSize="21"
                         FontWeight="SemiBold"
-                        Text="{l:ResourceString Name=FileSystemProvider}" />
+                        Text="{l:ResourceString Rid=FileSystemProvider}" />
                     <TextBlock
                         FontSize="11"
                         Opacity="0.8"
-                        Text="{l:ResourceString Name=FileSystemProviderDescription}" />
+                        Text="{l:ResourceString Rid=FileSystemProviderDescription}" />
                 </StackPanel>
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
@@ -86,9 +86,9 @@
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=AutoStart}"
+                Title="{l:ResourceString Rid=AutoStart}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=AutoStartDescription}"
+                Description="{l:ResourceString Rid=AutoStartDescription}"
                 IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF71C;" />
@@ -96,7 +96,7 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=AutoStart}"
+                        AutomationProperties.Name="{l:ResourceString Rid=AutoStart}"
                         IsOn="{x:Bind ViewModel.StartOnSystemStartup, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
@@ -115,30 +115,30 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=RestoreLastSession}"
+                Title="{l:ResourceString Rid=RestoreLastSession}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=RestoreLastSessionDescription}">
+                Description="{l:ResourceString Rid=RestoreLastSessionDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE7E8;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=RestoreLastSession}"
+                        AutomationProperties.Name="{l:ResourceString Rid=RestoreLastSession}"
                         IsOn="{x:Bind ViewModel.ContinueOnLastVault, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=OpenVaultFolder}"
+                Title="{l:ResourceString Rid=OpenVaultFolder}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=OpenVaultFolderDescription}">
+                Description="{l:ResourceString Rid=OpenVaultFolderDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xED25;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=OpenVaultFolder}"
+                        AutomationProperties.Name="{l:ResourceString Rid=OpenVaultFolder}"
                         IsOn="{x:Bind ViewModel.OpenFolderOnUnlock, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>

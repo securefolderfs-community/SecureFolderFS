@@ -41,7 +41,7 @@
                 FontSize="20"
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center"
-                Text="{l:ResourceString Name=VaultLocked}"
+                Text="{l:ResourceString Rid=VaultLocked}"
                 VerticalOptions="Center" />
         </VerticalStackLayout>
 
@@ -53,13 +53,13 @@
                     <Button
                         Command="{Binding ViewModel.BeginRecoveryCommand}"
                         IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
-                        Text="{l:ResourceString Name=RecoverAccess}" />
+                        Text="{l:ResourceString Rid=RecoverAccess}" />
                 </On>
                 <On Platform="Android">
                     <mdc:Button
                         Command="{Binding ViewModel.BeginRecoveryCommand}"
                         IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
-                        Text="{l:ResourceString Name=RecoverAccess}" />
+                        Text="{l:ResourceString Rid=RecoverAccess}" />
                 </On>
             </OnPlatform>
         </VerticalStackLayout>

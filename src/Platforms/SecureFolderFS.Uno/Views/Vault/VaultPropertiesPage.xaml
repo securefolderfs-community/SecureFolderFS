@@ -21,11 +21,11 @@
             x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.IsReadOnly, Mode=OneWay}"
             IsClosable="False"
             IsOpen="True"
-            Message="{l:ResourceString Name=VaultReadOnlyMode}"
+            Message="{l:ResourceString Rid=VaultReadOnlyMode}"
             Severity="Informational" />
 
         <ucab:ActionBlockControl
-            Title="{l:ResourceString Name=VaultInformation}"
+            Title="{l:ResourceString Rid=VaultInformation}"
             BlockMode="Expandable"
             IsExpanded="True">
             <ucab:ActionBlockControl.Icon>
@@ -39,10 +39,10 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="4">
-                        <TextBlock Text="{l:ResourceString Name=Security}" />
-                        <TextBlock Text="{l:ResourceString Name=DataEncryption}" />
-                        <TextBlock Text="{l:ResourceString Name=FileNameEncryption}" />
-                        <TextBlock Text="{l:ResourceString Name=ActiveFileSystem}" />
+                        <TextBlock Text="{l:ResourceString Rid=Security}" />
+                        <TextBlock Text="{l:ResourceString Rid=DataEncryption}" />
+                        <TextBlock Text="{l:ResourceString Rid=FileNameEncryption}" />
+                        <TextBlock Text="{l:ResourceString Rid=ActiveFileSystem}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Spacing="4">
                         <TextBlock
@@ -67,30 +67,30 @@
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl
-            Title="{l:ResourceString Name=ChangeCredentials}"
+            Title="{l:ResourceString Rid=ChangeCredentials}"
             BlockMode="Clickable"
             ClickCommand="{x:Bind ViewModel.ChangeFirstAuthenticationCommand, Mode=OneWay}"
-            Description="{l:ResourceString Name=ChangeCredentialsDescription}">
+            Description="{l:ResourceString Rid=ChangeCredentialsDescription}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE8D7;" />
             </ucab:ActionBlockControl.Icon>
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl
-            Title="{l:ResourceString Name=TwoFactor}"
+            Title="{l:ResourceString Rid=TwoFactor}"
             BlockMode="Clickable"
             ClickCommand="{x:Bind ViewModel.ChangeSecondAuthenticationCommand, Mode=OneWay}"
-            Description="{l:ResourceString Name=TwoFactorDescription}">
+            Description="{l:ResourceString Rid=TwoFactorDescription}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xEC19;" />
             </ucab:ActionBlockControl.Icon>
         </ucab:ActionBlockControl>
 
         <ucab:ActionBlockControl
-            Title="{l:ResourceString Name=RecoveryCodes}"
+            Title="{l:ResourceString Rid=RecoveryCodes}"
             BlockMode="Clickable"
             ClickCommand="{x:Bind ViewModel.ViewRecoveryCommand, Mode=OneWay}"
-            Description="{l:ResourceString Name=RecoveryCodesDescription}">
+            Description="{l:ResourceString Rid=RecoveryCodesDescription}">
             <ucab:ActionBlockControl.Icon>
                 <FontIcon Glyph="&#xE777;" />
             </ucab:ActionBlockControl.Icon>
