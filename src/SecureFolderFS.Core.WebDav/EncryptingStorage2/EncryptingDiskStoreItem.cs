@@ -121,10 +121,10 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public string Name => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
         public string UniqueKey => _fileInfo.FullName;
         public string FullPath => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
-        public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
-        public Task<Stream> GetWritableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
+        public Task<Stream> GetReadableStreamAsync(HttpListenerContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
+        public Task<Stream> GetWritableStreamAsync(HttpListenerContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
 
-        public async Task<HttpStatusCode> UploadFromStreamAsync(IHttpContext context, Stream inputStream)
+        public async Task<HttpStatusCode> UploadFromStreamAsync(HttpListenerContext context, Stream inputStream)
         {
             // Check if the item is writable
             if (!IsWritable)
@@ -155,7 +155,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public IPropertyManager PropertyManager => DefaultPropertyManager;
         public ILockingManager LockingManager { get; }
 
-        public async Task<StoreItemResult> CopyAsync(IStoreCollection destination, string name, bool overwrite, IHttpContext context)
+        public async Task<StoreItemResult> CopyAsync(IStoreCollection destination, string name, bool overwrite, HttpListenerContext context)
         {
             try
             {

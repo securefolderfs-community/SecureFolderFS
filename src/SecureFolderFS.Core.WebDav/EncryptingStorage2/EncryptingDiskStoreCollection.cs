@@ -157,13 +157,13 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public string FullPath => NativePathHelpers.GetPlaintextPath(_directoryInfo.FullName, _specifics) ?? string.Empty;
 
         // Disk collections (a.k.a. directories don't have their own data)
-        public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult((Stream)null);
-        public Task<HttpStatusCode> UploadFromStreamAsync(IHttpContext context, Stream inputStream) => Task.FromResult(HttpStatusCode.Conflict);
+        public Task<Stream> GetReadableStreamAsync(HttpListenerContext context) => Task.FromResult((Stream)null);
+        public Task<HttpStatusCode> UploadFromStreamAsync(HttpListenerContext context, Stream inputStream) => Task.FromResult(HttpStatusCode.Conflict);
 
         public IPropertyManager PropertyManager => DefaultPropertyManager;
         public ILockingManager LockingManager { get; }
 
-        public Task<IStoreItem> GetItemAsync(string name, IHttpContext context)
+        public Task<IStoreItem> GetItemAsync(string name, HttpListenerContext context)
         {
             // Determine the full path
             var fullPath = NativePathHelpers.GetCiphertextPath(Path.Combine(FullPath, name), _specifics);
@@ -180,7 +180,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             return Task.FromResult<IStoreItem>(null);
         }
 
-        public Task<IEnumerable<IStoreItem>> GetItemsAsync(IHttpContext context)
+        public Task<IEnumerable<IStoreItem>> GetItemsAsync(HttpListenerContext context)
         {
             IEnumerable<IStoreItem> GetItemsInternal()
             {
@@ -206,7 +206,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             return Task.FromResult(GetItemsInternal());
         }
 
-        public Task<StoreItemResult> CreateItemAsync(string name, bool overwrite, IHttpContext context)
+        public Task<StoreItemResult> CreateItemAsync(string name, bool overwrite, HttpListenerContext context)
         {
             // Return error
             if (!IsWritable)
@@ -248,7 +248,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             return Task.FromResult(new StoreItemResult(result, new EncryptingDiskStoreItem(LockingManager, new FileInfo(destinationPath), IsWritable, _specifics)));
         }
 
-        public Task<StoreCollectionResult> CreateCollectionAsync(string name, bool overwrite, IHttpContext context)
+        public Task<StoreCollectionResult> CreateCollectionAsync(string name, bool overwrite, HttpListenerContext context)
         {
             // Return error
             if (!IsWritable)
@@ -302,20 +302,20 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             return Task.FromResult(new StoreCollectionResult(result, new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(destinationPath), IsWritable, _specifics)));
         }
 
-        public async Task<StoreItemResult> CopyAsync(IStoreCollection destinationCollection, string name, bool overwrite, IHttpContext context)
+        public async Task<StoreItemResult> CopyAsync(IStoreCollection destinationCollection, string name, bool overwrite, HttpListenerContext context)
         {
             // Just create the folder itself
             var result = await destinationCollection.CreateCollectionAsync(name, overwrite, context).ConfigureAwait(false);
             return new StoreItemResult(result.Result, result.Collection);
         }
 
-        public bool SupportsFastMove(IStoreCollection destination, string destinationName, bool overwrite, IHttpContext context)
+        public bool SupportsFastMove(IStoreCollection destination, string destinationName, bool overwrite, HttpListenerContext context)
         {
             // We can only move disk-store collections
             return destination is EncryptingDiskStoreCollection;
         }
 
-        public async Task<StoreItemResult> MoveItemAsync(string sourceName, IStoreCollection destinationCollection, string destinationName, bool overwrite, IHttpContext context)
+        public async Task<StoreItemResult> MoveItemAsync(string sourceName, IStoreCollection destinationCollection, string destinationName, bool overwrite, HttpListenerContext context)
         {
             // Return error
             if (!IsWritable)
@@ -402,7 +402,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             }
         }
 
-        public Task<HttpStatusCode> DeleteItemAsync(string name, IHttpContext context)
+        public Task<HttpStatusCode> DeleteItemAsync(string name, HttpListenerContext context)
         {
             // Return error
             if (!IsWritable)

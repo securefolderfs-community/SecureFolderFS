@@ -1,10 +1,10 @@
-﻿using NWebDav.Server.Http;
-using NWebDav.Server.Locking;
+﻿using NWebDav.Server.Locking;
 using NWebDav.Server.Stores;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using System;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
@@ -19,7 +19,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             _specifics = specifics;
         }
 
-        public override Task<IStoreItem> GetItemAsync(Uri uri, IHttpContext context)
+        public override Task<IStoreItem> GetItemAsync(Uri uri, HttpListenerContext context)
         {
             // Determine the path from the uri
             var path = GetPathFromUri(uri);
@@ -36,7 +36,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             return Task.FromResult<IStoreItem>(null);
         }
 
-        public override Task<IStoreCollection> GetCollectionAsync(Uri uri, IHttpContext context)
+        public override Task<IStoreCollection> GetCollectionAsync(Uri uri, HttpListenerContext context)
         {
             // Determine the path from the uri
             var path = GetPathFromUri(uri);
