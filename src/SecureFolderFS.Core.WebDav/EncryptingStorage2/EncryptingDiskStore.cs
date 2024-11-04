@@ -1,15 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using NWebDav.Server.Locking;
 using NWebDav.Server.Stores;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Native;
+using SecureFolderFS.Core.WebDav.Base;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
-    internal sealed class EncryptingDiskStore : DiskStoreBase
+    internal sealed class EncryptingDiskStore : DiskStoreBase2
     {
         private readonly FileSystemSpecifics _specifics;
 
@@ -31,34 +30,30 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             BaseDirectory = specifics.ContentFolder.Id;
         }
 
-        public override Task<IStoreItem> GetItemAsync(Uri uri, IHttpContext context)
+        public override T? CreateFromPath<T>(string path)
+            where T : class
         {
-            // Determine the path from the uri
-            var path = GetPathFromUri(uri);
+            if (typeof(T).IsAssignableFrom(typeof(IStoreCollection)))
+            {
+                return (T?)(object)new EncryptingDiskStoreCollection(new DirectoryInfo(path));
+            }
+            //else if (typeof(T).IsAssignableFrom(typeof(IStoreFile))) // TODO: Add a StoreFile
+            else
+            {
+                // Check if it's a directory
+                if (Directory.Exists(path))
+                    return (T?)(object)new EncryptingDiskStoreCollection(new DirectoryInfo(path));
 
-            // Check if it's a directory
-            if (Directory.Exists(path))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(path), IsWritable, _specifics));
+                // Check if it's a file
+                if (File.Exists(path))
+                    return (T?)(object)new EncryptingDiskStoreItem(new FileInfo(path));
 
-            // Check if it's a file
-            if (File.Exists(path))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreItem(LockingManager, new FileInfo(path), IsWritable, _specifics));
-
-            // The item doesn't exist
-            return Task.FromResult<IStoreItem>(null);
+                // The item doesn't exist
+                return null;
+            }
         }
 
-        public override Task<IStoreCollection> GetCollectionAsync(Uri uri, IHttpContext context)
-        {
-            // Determine the path from the uri
-            var path = GetPathFromUri(uri);
-            if (!Directory.Exists(path))
-                return Task.FromResult<IStoreCollection>(null);
-
-            // Return the item
-            return Task.FromResult<IStoreCollection>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(path), IsWritable, _specifics));
-        }
-
+        /// <inheritdoc/>
         protected override string GetPathFromUri(Uri uri)
         {
             var path = base.GetPathFromUri(uri);

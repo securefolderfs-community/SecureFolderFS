@@ -18,7 +18,7 @@ using System.Xml.Linq;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
-    internal sealed class EncryptingDiskStoreCollection : IDiskStoreCollection
+    internal sealed class EncryptingDiskStoreCollection : IStoreCollection
     {
         private static readonly XElement s_xDavCollection = new XElement(WebDavNamespaces.DavNs + "collection");
         private readonly DirectoryInfo _directoryInfo;

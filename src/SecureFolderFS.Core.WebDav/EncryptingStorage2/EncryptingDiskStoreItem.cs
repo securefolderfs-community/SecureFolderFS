@@ -1,229 +1,118 @@
-﻿using NWebDav.Server.Helpers;
-using NWebDav.Server.Http;
-using NWebDav.Server.Locking;
+﻿using Microsoft.Extensions.Logging;
+using NWebDav.Server;
+using NWebDav.Server.Helpers;
 using NWebDav.Server.Props;
 using NWebDav.Server.Stores;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using System;
 using System.IO;
-using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
-    internal class EncryptingDiskStoreItem : IDiskStoreItem
+    internal class EncryptingDiskStoreItem : IStoreItem
     {
         private readonly FileSystemSpecifics _specifics;
-        private readonly FileInfo _fileInfo;
+        private readonly ILogger<DiskStoreItem> _logger;
 
-        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, FileSystemSpecifics specifics)
+        /// <inheritdoc/>
+        public string Name { get; }
+
+        /// <inheritdoc/>
+        public string UniqueKey { get; }
+
+        /// <inheritdoc/>
+        public IPropertyManager PropertyManager { get; }
+
+        public FileInfo FileInfo { get; } // TODO: Not from interface
+        public bool IsWritable { get; } // TODO: Not from interface
+
+        public EncryptingDiskStoreItem(FileInfo fileInfo, DiskStoreItemPropertyManager propertyManager, FileSystemSpecifics specifics, ILogger<DiskStoreItem> logger)
         {
-            LockingManager = lockingManager;
-            IsWritable = isWritable;
-            _fileInfo = fileInfo;
+            _logger = logger;
             _specifics = specifics;
+            IsWritable = !specifics.FileSystemOptions.IsReadOnly;
+            UniqueKey = NativePathHelpers.GetPlaintextPath(fileInfo.FullName, specifics) ?? string.Empty;
+            Name = Path.GetFileName(UniqueKey);
+            FileInfo = fileInfo;
+            PropertyManager = propertyManager;
         }
 
-        public static PropertyManager<EncryptingDiskStoreItem> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreItem>[]
+        /// <inheritdoc/>
+        public async Task<Stream> GetReadableStreamAsync(CancellationToken cancellationToken)
         {
-            // RFC-2518 properties
-            new DavCreationDate<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => item._fileInfo.CreationTimeUtc,
-                Setter = (context, item, value) =>
-                {
-                    item._fileInfo.CreationTimeUtc = value;
-                    return HttpStatusCode.OK;
-                }
-            },
-            new DavDisplayName<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => item.Name
-            },
-            new DavGetContentLength<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => Math.Max(0, item._specifics.Security.ContentCrypt.CalculatePlaintextSize(item._fileInfo.Length - item._specifics.Security.HeaderCrypt.HeaderCiphertextSize))
-            },
-            new DavGetContentType<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => item.DetermineContentType()
-            },
-            new DavGetEtag<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => $"{item._fileInfo.Length}-{item._fileInfo.LastWriteTimeUtc.ToFileTime()}"
-            },
-            new DavGetLastModified<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => item._fileInfo.LastWriteTimeUtc,
-                Setter = (context, item, value) =>
-                {
-                    item._fileInfo.LastWriteTimeUtc = value;
-                    return HttpStatusCode.OK;
-                }
-            },
-            new DavGetResourceType<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => null
-            },
+            await Task.CompletedTask;
+            return _specifics.StreamsAccess.OpenPlaintextStream(FileInfo.FullName, FileInfo.OpenRead());
+        }
 
-            // Default locking property handling via the LockingManager
-            new DavLockDiscoveryDefault<EncryptingDiskStoreItem>(),
-            new DavSupportedLockDefault<EncryptingDiskStoreItem>(),
-
-            // Hopmann/Lippert collection properties
-            // (although not a collection, the IsHidden property might be valuable)
-            new DavExtCollectionIsHidden<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => (item._fileInfo.Attributes & FileAttributes.Hidden) != 0
-            },
-
-            // Win32 extensions
-            new Win32CreationTime<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => item._fileInfo.CreationTimeUtc,
-                Setter = (context, item, value) =>
-                {
-                    item._fileInfo.CreationTimeUtc = value;
-                    return HttpStatusCode.OK;
-                }
-            },
-            new Win32LastAccessTime<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => item._fileInfo.LastAccessTimeUtc,
-                Setter = (context, item, value) =>
-                {
-                    item._fileInfo.LastAccessTimeUtc = value;
-                    return HttpStatusCode.OK;
-                }
-            },
-            new Win32LastModifiedTime<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => item._fileInfo.LastWriteTimeUtc,
-                Setter = (context, item, value) =>
-                {
-                    item._fileInfo.LastWriteTimeUtc = value;
-                    return HttpStatusCode.OK;
-                }
-            },
-            new Win32FileAttributes<EncryptingDiskStoreItem>
-            {
-                Getter = (context, item) => item._fileInfo.Attributes,
-                Setter = (context, item, value) =>
-                {
-                    item._fileInfo.Attributes = value;
-                    return HttpStatusCode.OK;
-                }
-            }
-        });
-
-        public bool IsWritable { get; }
-        public string Name => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
-        public string UniqueKey => _fileInfo.FullName;
-        public string FullPath => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
-        public Task<Stream> GetReadableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
-        public Task<Stream> GetWritableStreamAsync(IHttpContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
-
-        public async Task<HttpStatusCode> UploadFromStreamAsync(IHttpContext context, Stream inputStream)
+        /// <inheritdoc/>
+        public async Task<DavStatusCode> UploadFromStreamAsync(Stream inputStream, CancellationToken cancellationToken)
         {
             // Check if the item is writable
             if (!IsWritable)
-                return HttpStatusCode.Forbidden;
+                return DavStatusCode.Conflict;
 
-            // Copy the stream
             try
             {
                 // Copy the information to the destination stream
-                using (var outputStream = await GetWritableStreamAsync(context).ConfigureAwait(false))
+                var outputStream = _specifics.StreamsAccess.OpenPlaintextStream(FileInfo.FullName, FileInfo.OpenWrite());
+                await using (outputStream.ConfigureAwait(false))
                 {
-                    await inputStream.CopyToAsync(outputStream).ConfigureAwait(false);
+                    // Copy the stream
+                    await inputStream.CopyToAsync(outputStream, cancellationToken).ConfigureAwait(false);
                 }
 
-                return HttpStatusCode.OK;
+                return DavStatusCode.Ok;
             }
             catch (IOException ioException) when (ioException.IsDiskFull())
             {
-                return HttpStatusCode.InsufficientStorage;
-            }
-            catch (Exception ex)
-            {
-                _ = ex;
-                throw;
+                return DavStatusCode.InsufficientStorage;
             }
         }
 
-        public IPropertyManager PropertyManager => DefaultPropertyManager;
-        public ILockingManager LockingManager { get; }
-
-        public async Task<StoreItemResult> CopyAsync(IStoreCollection destination, string name, bool overwrite, IHttpContext context)
+        /// <inheritdoc/>
+        public async Task<StoreItemResult> CopyAsync(IStoreCollection destination, string name, bool overwrite, CancellationToken cancellationToken)
         {
             try
             {
                 // If the destination is also a disk-store, then we can use the FileCopy API
                 // (it's probably a bit more efficient than copying in C#)
-                if (destination is DiskStoreCollection diskCollection)
+                if (destination is EncryptingDiskStoreCollection diskCollection)
                 {
                     // Check if the collection is writable
                     if (!diskCollection.IsWritable)
-                        return new StoreItemResult(HttpStatusCode.Forbidden);
+                        return new StoreItemResult(DavStatusCode.PreconditionFailed);
 
                     var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(diskCollection.FullPath, name), _specifics);
 
                     // Check if the file already exists
                     var fileExists = File.Exists(destinationPath);
                     if (fileExists && !overwrite)
-                        return new StoreItemResult(HttpStatusCode.PreconditionFailed);
+                        return new StoreItemResult(DavStatusCode.PreconditionFailed);
 
                     // Copy the file
-                    File.Copy(_fileInfo.FullName, destinationPath, true);
+                    File.Copy(FileInfo.FullName, destinationPath, true);
 
                     // Return the appropriate status
-                    return new StoreItemResult(fileExists ? HttpStatusCode.NoContent : HttpStatusCode.Created);
+                    return new StoreItemResult(fileExists ? DavStatusCode.NoContent : DavStatusCode.Created);
                 }
                 else
                 {
                     // Create the item in the destination collection
-                    var result = await destination.CreateItemAsync(name, overwrite, context).ConfigureAwait(false);
-
-                    // Check if the item could be created
-                    if (result.Item != null)
+                    var sourceStream = await GetReadableStreamAsync(cancellationToken).ConfigureAwait(false);
+                    await using (sourceStream.ConfigureAwait(false))
                     {
-                        using (var sourceStream = await GetWritableStreamAsync(context).ConfigureAwait(false))
-                        {
-                            var copyResult = await result.Item.UploadFromStreamAsync(context, sourceStream).ConfigureAwait(false);
-                            if (copyResult != HttpStatusCode.OK)
-                                return new StoreItemResult(copyResult, result.Item);
-                        }
+                        return await destination.CreateItemAsync(name, sourceStream, overwrite, cancellationToken).ConfigureAwait(false);
                     }
-
-                    // Return result
-                    return new StoreItemResult(result.Result, result.Item);
                 }
             }
             catch (Exception exc)
             {
-                // TODO(wd): Add logging
-                //s_log.Log(LogLevel.Error, () => "Unexpected exception while copying data.", exc);
-                return new StoreItemResult(HttpStatusCode.InternalServerError);
+                _logger.LogError(exc, "Unexpected exception while copying data.");
+                return new StoreItemResult(DavStatusCode.InternalServerError);
             }
-        }
-
-        public override int GetHashCode()
-        {
-            return _fileInfo.FullName.GetHashCode();
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not EncryptingDiskStoreItem storeItem)
-                return false;
-            
-            return storeItem._fileInfo.FullName.Equals(_fileInfo.FullName, StringComparison.CurrentCultureIgnoreCase);
-        }
-
-        private string DetermineContentType()
-        {
-            return MimeTypeHelper.GetMimeType(Name);
         }
     }
 }

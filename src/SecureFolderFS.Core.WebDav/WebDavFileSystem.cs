@@ -61,33 +61,11 @@ namespace SecureFolderFS.Core.WebDav
             webDavInstance.UseNWebDav();
             _ = webDavInstance.RunAsync(url);
 
-
             return await MountAsync(
-                httpListener,
                 webDavOptions,
                 webDavInstance,
                 cancellationToken);
 
-
-
-
-
-
-
-            var httpListener = new HttpListener();
-
-            httpListener.Prefixes.Add(prefix);
-            httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-
-
-
-            // TODO: Implement FileSystemSpecifics
-            var cryptoFolder = (IFolder)null!; // new CryptoFolder(contentFolder, streamsAccess, pathConverter, directoryIdCache);
-
-            var davFolder = new DavFolder(cryptoFolder);
-
-            var srv = new ServiceCollection()
-                .AddNWebDav()
 
             // TODO: Remove the following line once the new DavStorage is fully implemented.
             var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.FileSystemOptions.IsReadOnly);
@@ -95,7 +73,6 @@ namespace SecureFolderFS.Core.WebDav
         }
 
         protected abstract Task<IVFSRoot> MountAsync(
-            HttpListener listener,
             WebDavOptions options,
             IAsyncDisposable webDavInstance,
             CancellationToken cancellationToken);
