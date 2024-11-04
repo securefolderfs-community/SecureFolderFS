@@ -3,7 +3,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using NWebDav.Server.Dispatching;
 using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -20,9 +19,8 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
     internal sealed partial class MacOsWebDavFileSystem : WebDavFileSystem
     {
         protected override async Task<IVFSRoot> MountAsync(
-            HttpListener listener,
             WebDavOptions options,
-            IRequestDispatcher requestDispatcher,
+            IAsyncDisposable webDavInstance,
             CancellationToken cancellationToken)
         {
 #if __MACCATALYST__
@@ -32,14 +30,9 @@ namespace SecureFolderFS.Uno.Platforms.Desktop
             // Mount WebDAV volume via AppleScript
             Process.Start("/usr/bin/osascript", ["-e", $"mount volume \"{remoteUri.AbsoluteUri}\""]);
             var mountPoint = $"/Volumes/{options.VolumeName}";
-            
-            // Create wrapper
-            var webDavWrapper = new WebDavWrapper(listener, requestDispatcher, mountPoint);
-            webDavWrapper.StartFileSystem();
 
-            Debug.WriteLine($"Mounted {remoteUri} on {mountPoint}.");
             await Task.CompletedTask;
-            return new WebDavRootFolder(webDavWrapper, new MemoryFolder(mountPoint, options.VolumeName), options);
+            return new WebDavRootFolder(webDavInstance, new MemoryFolder(mountPoint, options.VolumeName), options);
 #else
             throw new PlatformNotSupportedException();
 #endif

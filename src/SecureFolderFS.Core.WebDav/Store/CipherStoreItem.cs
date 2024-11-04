@@ -10,12 +10,13 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
+namespace SecureFolderFS.Core.WebDav.Store
 {
-    internal class EncryptingDiskStoreItem : IStoreItem
+    internal class CipherStoreItem : IStoreItem
     {
         private readonly FileSystemSpecifics _specifics;
-        private readonly ILogger<DiskStoreItem> _logger;
+        private readonly CipherStore _store;
+        private readonly ILogger _logger;
 
         /// <inheritdoc/>
         public string Name { get; }
@@ -29,10 +30,11 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public FileInfo FileInfo { get; } // TODO: Not from interface
         public bool IsWritable { get; } // TODO: Not from interface
 
-        public EncryptingDiskStoreItem(FileInfo fileInfo, DiskStoreItemPropertyManager propertyManager, FileSystemSpecifics specifics, ILogger<DiskStoreItem> logger)
+        public CipherStoreItem(FileInfo fileInfo, IPropertyManager propertyManager, FileSystemSpecifics specifics, CipherStore store, ILogger logger)
         {
-            _logger = logger;
             _specifics = specifics;
+            _store = store;
+            _logger = logger;
             IsWritable = !specifics.FileSystemOptions.IsReadOnly;
             UniqueKey = NativePathHelpers.GetPlaintextPath(fileInfo.FullName, specifics) ?? string.Empty;
             Name = Path.GetFileName(UniqueKey);
@@ -79,13 +81,13 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             {
                 // If the destination is also a disk-store, then we can use the FileCopy API
                 // (it's probably a bit more efficient than copying in C#)
-                if (destination is EncryptingDiskStoreCollection diskCollection)
+                if (destination is CipherStoreCollection diskCollection)
                 {
                     // Check if the collection is writable
                     if (!diskCollection.IsWritable)
                         return new StoreItemResult(DavStatusCode.PreconditionFailed);
 
-                    var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(diskCollection.FullPath, name), _specifics);
+                    var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(diskCollection.UniqueKey, name), _specifics);
 
                     // Check if the file already exists
                     var fileExists = File.Exists(destinationPath);

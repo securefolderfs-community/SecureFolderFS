@@ -1,21 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using NWebDav.Server;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.WebDav.AppModels;
-using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Core.WebDav.Extensions;
 using SecureFolderFS.Core.WebDav.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
 using SecureFolderFS.Storage.VirtualFileSystem;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav
 {
@@ -52,7 +49,7 @@ namespace SecureFolderFS.Core.WebDav
             var builder = WebApplication.CreateBuilder();
             builder.Services
                 .AddNWebDav()
-                .AddEncryptingDiskStore(x =>
+                .AddCipherStore(x =>
                 {
                     x.Specifics = specifics;
                 });
@@ -65,11 +62,6 @@ namespace SecureFolderFS.Core.WebDav
                 webDavOptions,
                 webDavInstance,
                 cancellationToken);
-
-
-            // TODO: Remove the following line once the new DavStorage is fully implemented.
-            var encryptingDiskStore = new EncryptingDiskStore(specifics.ContentFolder.Id, specifics, !specifics.FileSystemOptions.IsReadOnly);
-            var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.FileSystemOptions.VolumeName, encryptingDiskStore), davFolder, new RequestHandlerProvider(), null);
         }
 
         protected abstract Task<IVFSRoot> MountAsync(

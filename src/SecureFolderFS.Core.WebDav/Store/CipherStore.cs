@@ -1,14 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.IO;
+using Microsoft.Extensions.Logging;
+using NWebDav.Server.Props;
 using NWebDav.Server.Stores;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Native;
-using SecureFolderFS.Core.WebDav.Base;
-using System;
-using System.IO;
 
-namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
+namespace SecureFolderFS.Core.WebDav.Store
 {
-    internal sealed class EncryptingDiskStore : DiskStoreBase2
+    internal sealed class CipherStore : CipherStoreBase
     {
         private readonly FileSystemSpecifics _specifics;
 
@@ -18,12 +18,12 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         /// <inheritdoc/>
         public override string BaseDirectory { get; }
 
-        public EncryptingDiskStore(
+        public CipherStore(
             FileSystemSpecifics specifics,
-            DiskStoreItemPropertyManager itemPropertyManager,
-            DiskStoreCollectionPropertyManager collectionPropertyManager,
-            ILoggerFactory loggerFactory)
-            : base(collectionPropertyManager, itemPropertyManager, loggerFactory)
+            IPropertyManager itemPropertyManager,
+            IPropertyManager collectionPropertyManager,
+            ILogger logger)
+            : base(collectionPropertyManager, itemPropertyManager, logger)
         {
             _specifics = specifics;
             IsWritable = !specifics.FileSystemOptions.IsReadOnly;
@@ -35,18 +35,18 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         {
             if (typeof(T).IsAssignableFrom(typeof(IStoreCollection)))
             {
-                return (T?)(object)new EncryptingDiskStoreCollection(new DirectoryInfo(path));
+                return (T?)(object)new CipherStoreCollection(new(path), collectionPropertyManager, _specifics, this, logger);
             }
-            //else if (typeof(T).IsAssignableFrom(typeof(IStoreFile))) // TODO: Add a StoreFile
+            //else if (typeof(T).IsAssignableFrom(typeof(IStoreFile))) // TODO: Add an IStoreFile
             else
             {
-                // Check if it's a directory
-                if (Directory.Exists(path))
-                    return (T?)(object)new EncryptingDiskStoreCollection(new DirectoryInfo(path));
-
                 // Check if it's a file
                 if (File.Exists(path))
-                    return (T?)(object)new EncryptingDiskStoreItem(new FileInfo(path));
+                    return (T?)(object)new CipherStoreItem(new(path), itemPropertyManager, _specifics, this, logger);
+                
+                // Check if it's a directory
+                if (Directory.Exists(path))
+                    return (T?)(object)new CipherStoreCollection(new(path), collectionPropertyManager, _specifics, this, logger);
 
                 // The item doesn't exist
                 return null;

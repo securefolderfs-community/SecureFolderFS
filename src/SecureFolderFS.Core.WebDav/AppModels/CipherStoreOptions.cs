@@ -2,7 +2,7 @@
 
 namespace SecureFolderFS.Core.WebDav.AppModels
 {
-    internal sealed class EncryptingStoreOptions
+    internal sealed class CipherStoreOptions
     {
         public FileSystemSpecifics? Specifics { get; set; }
     }
