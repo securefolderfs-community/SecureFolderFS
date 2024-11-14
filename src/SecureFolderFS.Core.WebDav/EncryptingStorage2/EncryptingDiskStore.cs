@@ -4,7 +4,7 @@ using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using System;
 using System.IO;
-using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
@@ -19,24 +19,24 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             _specifics = specifics;
         }
 
-        public override Task<IStoreItem> GetItemAsync(Uri uri, HttpListenerContext context)
+        public override Task<IStoreItem?> GetItemAsync(Uri uri, CancellationToken cancellationToken)
         {
             // Determine the path from the uri
             var path = GetPathFromUri(uri);
 
             // Check if it's a directory
             if (Directory.Exists(path))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(path), IsWritable, _specifics));
+                return Task.FromResult<IStoreItem?>(new EncryptingDiskStoreCollection(LockingManager, new DirectoryInfo(path), IsWritable, _specifics));
 
             // Check if it's a file
             if (File.Exists(path))
-                return Task.FromResult<IStoreItem>(new EncryptingDiskStoreItem(LockingManager, new FileInfo(path), IsWritable, _specifics));
+                return Task.FromResult<IStoreItem?>(new EncryptingDiskStoreFile(LockingManager, new FileInfo(path), IsWritable, _specifics));
 
             // The item doesn't exist
-            return Task.FromResult<IStoreItem>(null);
+            return Task.FromResult<IStoreItem?>(null);
         }
 
-        public override Task<IStoreCollection> GetCollectionAsync(Uri uri, HttpListenerContext context)
+        public override Task<IStoreCollection?> GetCollectionAsync(Uri uri, CancellationToken cancellationToken)
         {
             // Determine the path from the uri
             var path = GetPathFromUri(uri);

@@ -1,5 +1,4 @@
 ﻿using NWebDav.Server.Helpers;
-using NWebDav.Server.Http;
 using NWebDav.Server.Locking;
 using NWebDav.Server.Props;
 using NWebDav.Server.Stores;
@@ -8,16 +7,17 @@ using SecureFolderFS.Core.FileSystem.Helpers.Native;
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 {
-    internal class EncryptingDiskStoreItem : IDiskStoreItem
+    internal class EncryptingDiskStoreFile : IStoreFile
     {
         private readonly FileSystemSpecifics _specifics;
         private readonly FileInfo _fileInfo;
 
-        public EncryptingDiskStoreItem(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, FileSystemSpecifics specifics)
+        public EncryptingDiskStoreFile(ILockingManager lockingManager, FileInfo fileInfo, bool isWritable, FileSystemSpecifics specifics)
         {
             LockingManager = lockingManager;
             IsWritable = isWritable;
@@ -25,10 +25,10 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             _specifics = specifics;
         }
 
-        public static PropertyManager<EncryptingDiskStoreItem> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreItem>[]
+        public static PropertyManager<EncryptingDiskStoreFile> DefaultPropertyManager { get; } = new(new DavProperty<EncryptingDiskStoreFile>[]
         {
             // RFC-2518 properties
-            new DavCreationDate<EncryptingDiskStoreItem>
+            new DavCreationDate<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => item._fileInfo.CreationTimeUtc,
                 Setter = (context, item, value) =>
@@ -37,23 +37,23 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     return HttpStatusCode.OK;
                 }
             },
-            new DavDisplayName<EncryptingDiskStoreItem>
+            new DavDisplayName<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => item.Name
             },
-            new DavGetContentLength<EncryptingDiskStoreItem>
+            new DavGetContentLength<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => Math.Max(0, item._specifics.Security.ContentCrypt.CalculatePlaintextSize(item._fileInfo.Length - item._specifics.Security.HeaderCrypt.HeaderCiphertextSize))
             },
-            new DavGetContentType<EncryptingDiskStoreItem>
+            new DavGetContentType<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => item.DetermineContentType()
             },
-            new DavGetEtag<EncryptingDiskStoreItem>
+            new DavGetEtag<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => $"{item._fileInfo.Length}-{item._fileInfo.LastWriteTimeUtc.ToFileTime()}"
             },
-            new DavGetLastModified<EncryptingDiskStoreItem>
+            new DavGetLastModified<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => item._fileInfo.LastWriteTimeUtc,
                 Setter = (context, item, value) =>
@@ -62,24 +62,24 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     return HttpStatusCode.OK;
                 }
             },
-            new DavGetResourceType<EncryptingDiskStoreItem>
+            new DavGetResourceType<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => null
             },
 
             // Default locking property handling via the LockingManager
-            new DavLockDiscoveryDefault<EncryptingDiskStoreItem>(),
-            new DavSupportedLockDefault<EncryptingDiskStoreItem>(),
+            new DavLockDiscoveryDefault<EncryptingDiskStoreFile>(),
+            new DavSupportedLockDefault<EncryptingDiskStoreFile>(),
 
             // Hopmann/Lippert collection properties
             // (although not a collection, the IsHidden property might be valuable)
-            new DavExtCollectionIsHidden<EncryptingDiskStoreItem>
+            new DavExtCollectionIsHidden<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => (item._fileInfo.Attributes & FileAttributes.Hidden) != 0
             },
 
             // Win32 extensions
-            new Win32CreationTime<EncryptingDiskStoreItem>
+            new Win32CreationTime<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => item._fileInfo.CreationTimeUtc,
                 Setter = (context, item, value) =>
@@ -88,7 +88,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     return HttpStatusCode.OK;
                 }
             },
-            new Win32LastAccessTime<EncryptingDiskStoreItem>
+            new Win32LastAccessTime<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => item._fileInfo.LastAccessTimeUtc,
                 Setter = (context, item, value) =>
@@ -97,7 +97,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     return HttpStatusCode.OK;
                 }
             },
-            new Win32LastModifiedTime<EncryptingDiskStoreItem>
+            new Win32LastModifiedTime<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => item._fileInfo.LastWriteTimeUtc,
                 Setter = (context, item, value) =>
@@ -106,7 +106,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     return HttpStatusCode.OK;
                 }
             },
-            new Win32FileAttributes<EncryptingDiskStoreItem>
+            new Win32FileAttributes<EncryptingDiskStoreFile>
             {
                 Getter = (context, item) => item._fileInfo.Attributes,
                 Setter = (context, item, value) =>
@@ -118,13 +118,12 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         });
 
         public bool IsWritable { get; }
-        public string Name => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
-        public string UniqueKey => _fileInfo.FullName;
-        public string FullPath => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
-        public Task<Stream> GetReadableStreamAsync(HttpListenerContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
-        public Task<Stream> GetWritableStreamAsync(HttpListenerContext context) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
+        public string Name => Path.GetFileName(Id);
+        public string Id => NativePathHelpers.GetPlaintextPath(_fileInfo.FullName, _specifics) ?? string.Empty;
+        public Task<Stream> GetReadableStreamAsync(CancellationToken cancellationToken) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.OpenRead()));
+        public Task<Stream> GetWritableStreamAsync(CancellationToken cancellationToken) => Task.FromResult<Stream?>(_specifics.StreamsAccess.OpenPlaintextStream(_fileInfo.FullName, _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite)));
 
-        public async Task<HttpStatusCode> UploadFromStreamAsync(HttpListenerContext context, Stream inputStream)
+        public async Task<HttpStatusCode> UploadFromStreamAsync(Stream inputStream, CancellationToken cancellationToken)
         {
             // Check if the item is writable
             if (!IsWritable)
@@ -134,7 +133,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
             try
             {
                 // Copy the information to the destination stream
-                using (var outputStream = await GetWritableStreamAsync(context).ConfigureAwait(false))
+                using (var outputStream = await GetWritableStreamAsync(cancellationToken).ConfigureAwait(false))
                 {
                     await inputStream.CopyToAsync(outputStream).ConfigureAwait(false);
                 }
@@ -155,7 +154,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
         public IPropertyManager PropertyManager => DefaultPropertyManager;
         public ILockingManager LockingManager { get; }
 
-        public async Task<StoreItemResult> CopyAsync(IStoreCollection destination, string name, bool overwrite, HttpListenerContext context)
+        public async Task<StoreItemResult> CopyAsync(IStoreCollection destination, string name, bool overwrite, CancellationToken cancellationToken)
         {
             try
             {
@@ -167,7 +166,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                     if (!diskCollection.IsWritable)
                         return new StoreItemResult(HttpStatusCode.Forbidden);
 
-                    var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(diskCollection.FullPath, name), _specifics);
+                    var destinationPath = NativePathHelpers.GetCiphertextPath(Path.Combine(diskCollection.Id, name), _specifics);
 
                     // Check if the file already exists
                     var fileExists = File.Exists(destinationPath);
@@ -183,17 +182,22 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 else
                 {
                     // Create the item in the destination collection
-                    var result = await destination.CreateItemAsync(name, overwrite, context).ConfigureAwait(false);
+                    var result = await destination.CreateItemAsync(name, overwrite, cancellationToken).ConfigureAwait(false);
 
                     // Check if the item could be created
-                    if (result.Item != null)
+                    if (result.Item is IStoreFile storeFile)
                     {
-                        using (var sourceStream = await GetWritableStreamAsync(context).ConfigureAwait(false))
+                        using (var sourceStream = await GetWritableStreamAsync(cancellationToken).ConfigureAwait(false))
                         {
-                            var copyResult = await result.Item.UploadFromStreamAsync(context, sourceStream).ConfigureAwait(false);
+                            var copyResult = await storeFile.UploadFromStreamAsync(sourceStream, cancellationToken).ConfigureAwait(false);
                             if (copyResult != HttpStatusCode.OK)
                                 return new StoreItemResult(copyResult, result.Item);
                         }
+                    }
+                    else
+                    {
+                        // Item is directory
+                        return new(HttpStatusCode.Conflict, result.Item);
                     }
 
                     // Return result
@@ -215,7 +219,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
 
         public override bool Equals(object? obj)
         {
-            if (obj is not EncryptingDiskStoreItem storeItem)
+            if (obj is not EncryptingDiskStoreFile storeItem)
                 return false;
             
             return storeItem._fileInfo.FullName.Equals(_fileInfo.FullName, StringComparison.CurrentCultureIgnoreCase);
