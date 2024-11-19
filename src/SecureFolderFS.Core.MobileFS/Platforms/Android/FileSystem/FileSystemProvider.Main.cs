@@ -34,18 +34,31 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var matrix = new MatrixCursor(projection ?? DefaultRootProjection);
             foreach (var item in _rootCollection?.Roots ?? Enumerable.Empty<SafRoot>())
             {
-                var row = matrix.NewRow();
-                if (row is null)
-                    return null;
-
-                row.Add(Root.ColumnRootId, item.RootId);
-                row.Add(Root.ColumnIcon, Constants.Android.Saf.IC_LOCK_LOCK);
-                row.Add(Root.ColumnTitle, item.StorageRoot.Options.VolumeName);
-                row.Add(Root.ColumnDocumentId, GetDocumentIdForStorable(item.StorageRoot.Inner, item.RootId));
-                row.Add(Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+                AddRoot(matrix, item, Constants.Android.Saf.IC_LOCK_LOCK);
             }
 
             return matrix;
+        }
+
+        /// <inheritdoc/>
+        public override string? CreateDocument(string? parentDocumentId, string? mimeType, string? displayName)
+        {
+            parentDocumentId = parentDocumentId == "null" ? null : parentDocumentId;
+            if (parentDocumentId is null || displayName is null)
+                return null;
+            
+            var parentStorable = GetStorableForDocumentId(parentDocumentId);
+            if (parentStorable is not IModifiableFolder parentFolder)
+                return null;
+
+            var createdItem = (IStorableChild)(mimeType switch
+            {
+                Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName, false).ConfigureAwait(false).GetAwaiter().GetResult(),
+                _ => parentFolder.CreateFileAsync(displayName, false).ConfigureAwait(false).GetAwaiter().GetResult()
+            });
+            
+            var rootId = parentDocumentId.Split(':', 2)[0];
+            return $"{rootId}:{createdItem.Id}";
         }
 
         /// <inheritdoc/>
@@ -109,6 +122,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public override ICursor? QueryDocument(string? documentId, string[]? projection)
         {
+            documentId = documentId == "null" ? null : documentId;
             var matrix = new MatrixCursor(projection ?? DefaultDocumentProjection);
             if (documentId is null)
                 return matrix;
@@ -117,13 +131,14 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (storable is null)
                 return matrix;
 
-            AddStorable(matrix, storable, documentId);
+            AddDocument(matrix, storable, documentId);
             return matrix;
         }
 
         /// <inheritdoc/>
         public override ICursor? QueryChildDocuments(string? parentDocumentId, string[]? projection, string? sortOrder)
         {
+            parentDocumentId = parentDocumentId == "null" ? null : parentDocumentId;
             var matrix = new MatrixCursor(projection ?? DefaultDocumentProjection);
             if (parentDocumentId is null)
                 return matrix;
@@ -135,7 +150,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var items = folder.GetItemsAsync().ToArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             foreach (var item in items)
             {
-                AddStorable(matrix, item, null);
+                AddDocument(matrix, item, null);
             }
 
             return matrix;

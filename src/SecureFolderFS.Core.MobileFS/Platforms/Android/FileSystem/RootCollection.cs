@@ -21,12 +21,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             FileSystemManager.Instance.CollectionChanged += FileSystemManager_CollectionChanged;
         }
 
-        public SafRoot? GetRootForRootId(string rootId)
+        public SafRoot? GetSafRootForRootId(string rootId)
         {
             return Roots.FirstOrDefault(x => x.RootId == rootId);
         }
 
-        public SafRoot? GetRootForStorable(IStorable storable)
+        public SafRoot? GetSafRootForStorable(IStorable storable)
         {
             foreach (var safRoot in Roots)
             {

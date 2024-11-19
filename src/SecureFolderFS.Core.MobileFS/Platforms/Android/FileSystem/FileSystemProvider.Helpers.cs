@@ -9,7 +9,23 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 {
     internal sealed partial class FileSystemProvider
     {
-        private bool AddStorable(MatrixCursor matrix, IStorable storable, string? documentId)
+        private bool AddRoot(MatrixCursor matrix, SafRoot safRoot, int iconRid)
+        {
+            var row = matrix.NewRow();
+            if (row is null)
+                return false;
+
+            var rootFolderId = GetDocumentIdForStorable(safRoot.StorageRoot.Inner, safRoot.RootId);
+            row.Add(DocumentsContract.Root.ColumnRootId, safRoot.RootId);
+            row.Add(DocumentsContract.Root.ColumnDocumentId, rootFolderId);
+            row.Add(DocumentsContract.Root.ColumnTitle, safRoot.StorageRoot.Options.VolumeName);
+            row.Add(DocumentsContract.Root.ColumnIcon, iconRid);
+            row.Add(DocumentsContract.Root.ColumnFlags, (int)(DocumentRootFlags.LocalOnly | DocumentRootFlags.SupportsCreate));
+
+            return true;
+        }
+        
+        private bool AddDocument(MatrixCursor matrix, IStorable storable, string? documentId)
         {
             documentId ??= GetDocumentIdForStorable(storable, null);
             var row = matrix.NewRow();
@@ -17,33 +33,31 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return false;
 
             // TODO(saf): Implement columns
-            row.Add(Document.ColumnSize, 6);
-            row.Add(Document.ColumnLastModified, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
-
             row.Add(Document.ColumnDocumentId, documentId);
-            row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
-
-            if (storable is not IFolder)
-                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.SupportsDelete | DocumentContractFlags.SupportsWrite));
-            else
-                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.DirSupportsCreate | DocumentContractFlags.DirPrefersLastModified | DocumentContractFlags.DirPrefersGrid));
-
             if (string.IsNullOrEmpty(storable.Name))
             {
-                var safRoot = _rootCollection?.GetRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
+                var safRoot = _rootCollection?.GetSafRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
                 row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.Options.VolumeName ?? storable.Name);
             }
             else
                 row.Add(Document.ColumnDisplayName, storable.Name);
+            
+            row.Add(Document.ColumnSize, 6);
+            row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
 
+            if (storable is IFile)
+                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.SupportsDelete | DocumentContractFlags.SupportsWrite));
+            else
+                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.DirSupportsCreate | DocumentContractFlags.DirPrefersGrid));
+            
             return true;
         }
 
         private string? GetDocumentIdForStorable(IStorable storable, string? rootId)
         {
             var safRoot = rootId is not null
-                ? _rootCollection?.GetRootForRootId(rootId)
-                : _rootCollection?.GetRootForStorable(storable);
+                ? _rootCollection?.GetSafRootForRootId(rootId)
+                : _rootCollection?.GetSafRootForStorable(storable);
 
             if (safRoot is null)
                 return null;
@@ -59,16 +73,23 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (_rootCollection is null)
                 return null;
 
-            var split = documentId.Split(':');
+            // Split the documentId into two:
+            // 1. RootID - The source root of the document provider where the item belongs
+            // 2. Path - The path to an item
+            var split = documentId.Split(':', 2);
             if (split.Length < 2)
-                throw new FileNotFoundException("Invalid document ID: " + documentId);
+                return null;
 
+            // Extract RootID and Path
             var rootId = split[0];
-            var safRoot = _rootCollection.GetRootForRootId(rootId);
+            var path = split[1];
+            
+            // Get root
+            var safRoot = _rootCollection.GetSafRootForRootId(rootId);
             if (safRoot is null)
                 return null;
 
-            var path = split[1];
+            // Return base folder if the path is empty
             if (string.IsNullOrEmpty(path))
                 return safRoot.StorageRoot.Inner;
 
