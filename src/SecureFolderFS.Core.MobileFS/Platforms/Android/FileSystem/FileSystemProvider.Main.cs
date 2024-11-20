@@ -2,10 +2,10 @@
 using Android.Content;
 using Android.Database;
 using Android.OS;
+using Android.OS.Storage;
 using Android.Provider;
 using OwlCore.Storage;
 using SecureFolderFS.Storage.Extensions;
-using static Android.Provider.DocumentsContract;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
@@ -46,17 +46,18 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             parentDocumentId = parentDocumentId == "null" ? null : parentDocumentId;
             if (parentDocumentId is null || displayName is null)
                 return null;
-            
+
             var parentStorable = GetStorableForDocumentId(parentDocumentId);
             if (parentStorable is not IModifiableFolder parentFolder)
                 return null;
 
             var createdItem = (IStorableChild)(mimeType switch
             {
-                Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName, false).ConfigureAwait(false).GetAwaiter().GetResult(),
+                DocumentsContract.Document.MimeTypeDir => parentFolder.CreateFolderAsync(displayName, false)
+                    .ConfigureAwait(false).GetAwaiter().GetResult(),
                 _ => parentFolder.CreateFileAsync(displayName, false).ConfigureAwait(false).GetAwaiter().GetResult()
             });
-            
+
             var rootId = parentDocumentId.Split(':', 2)[0];
             return $"{rootId}:{createdItem.Id}";
         }
@@ -64,6 +65,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         /// <inheritdoc/>
         public override ParcelFileDescriptor? OpenDocument(string? documentId, string? mode, CancellationSignal? signal)
         {
+            documentId = documentId == "null" ? null : documentId;
             if (documentId is null)
                 return null;
 
@@ -72,49 +74,36 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 return null;
 
             var fileAccess = ToFileAccess(mode);
-            if (fileAccess is null)
-                return null;
-
-            var stream = childFile.TryOpenStreamAsync(fileAccess.Value).ConfigureAwait(false).GetAwaiter().GetResult();
+            var stream = childFile.TryOpenStreamAsync(fileAccess).ConfigureAwait(false).GetAwaiter().GetResult();
             if (stream is null)
                 return null;
 
-            var pipe = ParcelFileDescriptor.CreatePipe();
-            if (pipe is null)
+            var storageManager = (StorageManager?)this.Context?.GetSystemService(Context.StorageService);
+            if (storageManager is null)
                 return null;
 
-            var readingPipe = pipe[0];
-            var writingPipe = pipe[1];
+            var parcelFileMode = ToParcelFileMode(mode);
+            return storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper));
 
-            try
+            static ParcelFileMode ToParcelFileMode(string? fileMode)
             {
-                using var output = new ParcelFileDescriptor.AutoCloseOutputStream(writingPipe);
-                var buffer = new byte[8192];
-                int bytesRead;
-                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                return fileMode switch
                 {
-                    output.Write(buffer, 0, bytesRead);
-                }
-                output.Flush();
-            }
-            catch (IOException e)
-            {
-                System.Diagnostics.Debug.WriteLine("Error writing to pipe: " + e.Message);
+                    "r" => ParcelFileMode.ReadOnly,
+                    "w" => ParcelFileMode.WriteOnly,
+                    "rw" => ParcelFileMode.ReadWrite,
+                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}")
+                };
             }
 
-            return readingPipe;
-
-            static FileAccess? ToFileAccess(string? mode)
+            static FileAccess ToFileAccess(string? fileMode)
             {
-                if (string.IsNullOrEmpty(mode))
-                    return null;
-
-                return mode switch
+                return fileMode switch
                 {
                     "r" => FileAccess.Read,
                     "w" => FileAccess.Write,
                     "rw" => FileAccess.ReadWrite,
-                    _ => FileAccess.Read
+                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}")
                 };
             }
         }

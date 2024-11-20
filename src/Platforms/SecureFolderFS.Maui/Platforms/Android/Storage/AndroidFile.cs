@@ -1,7 +1,9 @@
 using Android.App;
 using Android.Content;
 using Android.Provider;
+using Android.Runtime;
 using AndroidX.DocumentFile.Provider;
+using Java.IO;
 using OwlCore.Storage;
 using AndroidUri = Android.Net.Uri;
 
@@ -32,10 +34,22 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 return Task.FromResult(stream);
             }
 
-            stream = accessMode == FileAccess.Read
-                ? activity.ContentResolver?.OpenInputStream(Inner)
-                : activity.ContentResolver?.OpenOutputStream(Inner);
+            if (accessMode == FileAccess.Read)
+            {
+                stream = activity.ContentResolver?.OpenInputStream(Inner);
+            }
+            else
+            {
+                var fd = activity.ContentResolver?.OpenFileDescriptor(Inner, accessMode switch
+                {
+                    FileAccess.ReadWrite => "rw",
+                    _ => "w"
+                });
 
+                var nativeStream = new FileInputStream(fd.FileDescriptor);
+                stream = new InputStreamInvoker(nativeStream);
+            }
+            
             if (stream is null)
                 return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
 
