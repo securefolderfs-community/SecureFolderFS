@@ -29,7 +29,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             catch (Exception)
             {
                 // TODO: Implement more exception handlers
-                throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
+                return 0;
+                //throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
             }
         }
         
@@ -52,7 +53,8 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             catch (Exception)
             {
                 // TODO: Implement more exception handlers
-                throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
+                return 0;
+                //throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
             }
         }
 
@@ -66,7 +68,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             catch (Exception)
             {
                 // TODO: Implement more exception handlers
-                throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
+                //throw new ErrnoException(nameof(OnRead), OsConstants.Eio);
             }
         }
 
