@@ -23,7 +23,7 @@
     },
     "SecureFolderFS (Desktop WSL2)": {
       "commandName": "WSL2",
-      "commandLineArgs": "{ProjectDir}/bin/Debug/net8.0-desktop/SecureFolderFS.Uno.dll",
+      "commandLineArgs": "{ProjectDir}/bin/Debug/net9.0-desktop/SecureFolderFS.Uno.dll",
       "distributionName": "",
       "compatibleTargetFramework": "desktop",
       "environmentVariables": {
