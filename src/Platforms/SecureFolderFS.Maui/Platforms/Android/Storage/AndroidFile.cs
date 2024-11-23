@@ -3,7 +3,6 @@ using Android.Content;
 using Android.Provider;
 using Android.Runtime;
 using AndroidX.DocumentFile.Provider;
-using Java.IO;
 using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Streams;
 using AndroidUri = Android.Net.Uri;
@@ -41,17 +40,12 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             }
             else
             {
-                var nativeMode = accessMode switch
-                {
-                    FileAccess.Write => "rw", // We want to open Write in ReadWrite mode for CanSeek support
-                    FileAccess.ReadWrite => "rw",
-                    _ => throw new ArgumentOutOfRangeException(nameof(accessMode))
-                };
-                
                 var inputStream = (activity.ContentResolver?.OpenInputStream(Inner) as InputStreamInvoker)?.BaseInputStream;
                 var outputStream = (activity.ContentResolver?.OpenOutputStream(Inner) as OutputStreamInvoker)?.BaseOutputStream;
+                if (inputStream is null || outputStream is null)
+                    return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
 
-                var combinedInputStream = new CombinedInputStream(inputStream, outputStream, GetFileSize(activity.ContentResolver, Inner));
+                var combinedInputStream = new InputOutputStream(inputStream, outputStream, GetFileSize(activity.ContentResolver, Inner));
                 stream = combinedInputStream;
             }
             
@@ -96,15 +90,18 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             return null;
         }
         
-        private static long GetFileSize(ContentResolver contentResolver, AndroidUri uri)
+        private static long GetFileSize(ContentResolver? contentResolver, AndroidUri uri)
         {
+            if (contentResolver is null)
+                return 0L;
+            
             try
             {
                 // Try to get file size using content resolver
                 using var cursor = contentResolver.Query(uri, null, null, null, null);
                 if (cursor != null && cursor.MoveToFirst())
                 {
-                    int sizeIndex = cursor.GetColumnIndex(OpenableColumns.Size);
+                    int sizeIndex = cursor.GetColumnIndex(IOpenableColumns.Size);
                     if (sizeIndex != -1)
                     {
                         return cursor.GetLong(sizeIndex);

@@ -13,6 +13,12 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
         }
 
         /// <inheritdoc/>
+        public override long OnGetSize()
+        {
+            return _stream.Length;
+        }
+
+        /// <inheritdoc/>
         public override int OnRead(long offset, int size, byte[]? data)
         {
             try
