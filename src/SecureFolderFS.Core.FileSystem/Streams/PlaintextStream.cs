@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
@@ -56,7 +57,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             _chunkAccess = chunkAccess;
             _headerBuffer = headerBuffer;
             _notifyStreamClosed = notifyStreamClosed;
-            _Length = _security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
+            
+            if (CanSeek)
+                _Length = _security.ContentCrypt.CalculatePlaintextSize(Math.Max(0L, ciphertextStream.Length - _security.HeaderCrypt.HeaderCiphertextSize));
         }
 
         /// <inheritdoc/>
@@ -124,7 +127,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             if (buffer.IsEmpty)
                 return;
 
-            if (Position > Length)
+            if (CanSeek && Position > Length)
             {
                 // TODO: Maybe throw an exception?
 
@@ -141,7 +144,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
             else
             {
                 // Write contents
-                WriteInternal(buffer, Position);
+                WriteInternal(buffer, CanSeek ? Position : 0L);
             }
         }
 
@@ -150,6 +153,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         {
             if (!CanWrite)
                 throw FileSystemExceptions.StreamReadOnly;
+
+            if (!CanSeek)
+                throw FileSystemExceptions.StreamNotSeekable;
 
             // Ignore resizing the same length
             if (value == Length)
@@ -208,6 +214,9 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
+            if (!CanSeek)
+                throw FileSystemExceptions.StreamNotSeekable;
+            
             var seekPosition = origin switch
             {
                 SeekOrigin.Begin => offset,
@@ -277,11 +286,14 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 written += length;
             }
 
-            // Update length after writing
-            _Length = Math.Max(position + written, Length);
+            if (CanSeek)
+            {
+                // Update length after writing
+                _Length = Math.Max(position + written, Length);
 
-            // Update position after writing
-            _Position += written;
+                // Update position after writing
+                _Position += written;
+            }
 
             // Update last write time
             if (Inner is FileStream fileStream)
@@ -291,7 +303,7 @@ namespace SecureFolderFS.Core.FileSystem.Streams
         [SkipLocalsInit]
         private bool TryReadHeader()
         {
-            if (!_headerBuffer.IsHeaderReady && CanRead && Inner.Length >= _security.HeaderCrypt.HeaderCiphertextSize)
+            if (!_headerBuffer.IsHeaderReady && CanRead && CanSeek)
             {
                 // Allocate ciphertext header
                 Span<byte> ciphertextHeader = stackalloc byte[_security.HeaderCrypt.HeaderCiphertextSize];
@@ -320,8 +332,12 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                 throw FileSystemExceptions.StreamReadOnly;
 
             lock (_writeLock)
-                if (!_headerBuffer.IsHeaderReady && CanWrite && Inner.Length == 0L)
+                if (!_headerBuffer.IsHeaderReady && CanWrite)
                 {
+                    // Check if there is data already written only when we can seek
+                    if (CanSeek && Inner.Length > 0L)
+                        return false;
+                    
                     // Make sure we save the header state
                     _headerBuffer.IsHeaderReady = true;
 
@@ -333,10 +349,17 @@ namespace SecureFolderFS.Core.FileSystem.Streams
                     _security.HeaderCrypt.EncryptHeader(_headerBuffer, ciphertextHeader);
 
                     // Write header
-                    var savedPos = Inner.Position;
-                    Inner.Position = 0L;
-                    Inner.Write(ciphertextHeader);
-                    Inner.Position = savedPos + ciphertextHeader.Length;
+                    if (CanSeek)
+                    {
+                        var savedPos = Inner.Position;
+                        Inner.Position = 0L;
+                        Inner.Write(ciphertextHeader);
+                        Inner.Position = savedPos + ciphertextHeader.Length;
+                    }
+                    else
+                    {
+                        Inner.Write(ciphertextHeader);
+                    }
 
                     return true;
                 }

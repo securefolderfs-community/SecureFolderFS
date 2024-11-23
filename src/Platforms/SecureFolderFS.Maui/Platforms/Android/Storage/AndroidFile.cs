@@ -5,6 +5,7 @@ using Android.Runtime;
 using AndroidX.DocumentFile.Provider;
 using Java.IO;
 using OwlCore.Storage;
+using SecureFolderFS.Core.MobileFS.Platforms.Android.Streams;
 using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
@@ -40,14 +41,18 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             }
             else
             {
-                var fd = activity.ContentResolver?.OpenFileDescriptor(Inner, accessMode switch
+                var nativeMode = accessMode switch
                 {
+                    FileAccess.Write => "rw", // We want to open Write in ReadWrite mode for CanSeek support
                     FileAccess.ReadWrite => "rw",
-                    _ => "w"
-                });
+                    _ => throw new ArgumentOutOfRangeException(nameof(accessMode))
+                };
+                
+                var inputStream = (activity.ContentResolver?.OpenInputStream(Inner) as InputStreamInvoker)?.BaseInputStream;
+                var outputStream = (activity.ContentResolver?.OpenOutputStream(Inner) as OutputStreamInvoker)?.BaseOutputStream;
 
-                var nativeStream = new FileInputStream(fd.FileDescriptor);
-                stream = new InputStreamInvoker(nativeStream);
+                var combinedInputStream = new CombinedInputStream(inputStream, outputStream, GetFileSize(activity.ContentResolver, Inner));
+                stream = combinedInputStream;
             }
             
             if (stream is null)
@@ -89,6 +94,30 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             }
 
             return null;
+        }
+        
+        private static long GetFileSize(ContentResolver contentResolver, AndroidUri uri)
+        {
+            try
+            {
+                // Try to get file size using content resolver
+                using var cursor = contentResolver.Query(uri, null, null, null, null);
+                if (cursor != null && cursor.MoveToFirst())
+                {
+                    int sizeIndex = cursor.GetColumnIndex(OpenableColumns.Size);
+                    if (sizeIndex != -1)
+                    {
+                        return cursor.GetLong(sizeIndex);
+                    }
+                }
+            }
+            catch
+            {
+                // Fallback method if content resolver fails
+            }
+
+            // If size can't be determined, return -1
+            return -1;
         }
     }
 }

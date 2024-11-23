@@ -19,7 +19,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
     [IntentFilter(["android.content.action.DOCUMENTS_PROVIDER"])]
     internal sealed partial class FileSystemProvider : DocumentsProvider
     {
+        private readonly StorageManagerCompat _storageManager;
         private RootCollection? _rootCollection;
+
+        public FileSystemProvider()
+        {
+            _storageManager = new(Platform.AppContext);
+        }
 
         /// <inheritdoc/>
         public override bool OnCreate()
@@ -78,12 +84,26 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (stream is null)
                 return null;
 
-            var storageManager = (StorageManager?)this.Context?.GetSystemService(Context.StorageService);
-            if (storageManager is null)
-                return null;
+            var parcelFileMode = ToParcelFileMode(mode);
+            return _storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper));
             
-            var parcelFileMode = ParcelFileDescriptor.ParseMode(mode);
-            return storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper!));
+            // var storageManager = (StorageManager?)this.Context?.GetSystemService(Context.StorageService);
+            // if (storageManager is null)
+            //     return null;
+            //
+            // var parcelFileMode = ToParcelFileMode(mode);
+            // return storageManager.OpenProxyFileDescriptor(parcelFileMode, new ReadWriteCallbacks(stream), new Handler(Looper.MainLooper!));
+
+            static ParcelFileMode ToParcelFileMode(string? fileMode)
+            {
+                return fileMode switch
+                {
+                    "r" => ParcelFileMode.ReadOnly,
+                    "w" => ParcelFileMode.WriteOnly,
+                    "rw" => ParcelFileMode.ReadWrite,
+                    _ => throw new ArgumentException($"Unsupported mode: {fileMode}")
+                };
+            }
             
             static FileAccess ToFileAccess(string? fileMode)
             {
