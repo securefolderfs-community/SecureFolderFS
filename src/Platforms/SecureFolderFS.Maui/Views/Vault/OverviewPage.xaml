@@ -29,7 +29,7 @@
 
         <!--  Data statistics widget  -->
         <DataTemplate x:Key="AggregatedDataWidgetTemplate" x:DataType="vm:AggregatedDataWidgetViewModel">
-            <Grid>
+            <Grid ColumnSpacing="24">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -102,7 +102,12 @@
                         </TableSection>
                     </On>
                     <On Platform="Android">
-                        <TableSection />
+                        <TableSection Title="{l:ResourceString Rid=QuickActions}">
+                            <TextCell
+                                Command="{Binding OverviewViewModel.VaultControlsViewModel.BrowseCommand}"
+                                Detail="View contents of your vault"
+                                Text="Open file browser" />
+                        </TableSection>
                     </On>
                 </OnPlatform>
                 <TableSection Title="{l:ResourceString Rid=VaultProperties}">

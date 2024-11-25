@@ -1,40 +1,57 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
-using System.Collections;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Inject<IOverlayService>]
     [Bindable(true)]
-    public partial class BrowserViewModel : ObservableObject
+    public partial class BrowserViewModel : ObservableObject, IViewDesignation, INavigatable
     {
-        [ObservableProperty] private IViewable? _CurrentView;
+        [ObservableProperty] private string? _Title;
+        [ObservableProperty] private FolderViewModel? _CurrentFolder;
+        
+        /// <inheritdoc/>
+        public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
-        public BrowserViewModel()
+        public BrowserViewModel(FolderViewModel folderViewModel)
         {
             ServiceProvider = DI.Default;
+            CurrentFolder = folderViewModel;
+        }
+        
+        /// <inheritdoc/>
+        public virtual void OnAppearing()
+        {
+        }
+
+        /// <inheritdoc/>
+        public virtual void OnDisappearing()
+        {
         }
 
         [RelayCommand]
         protected virtual async Task NewFolderAsync(CancellationToken cancellationToken)
         {
-            if (CurrentView is not FolderViewModel { Folder: IModifiableFolder modifiableFolder } folderViewModel)
+            if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
 
             // TODO: Add NewFolderOverlayViewModel
             _ = modifiableFolder;
             var result = await OverlayService.ShowAsync(null!);
             if (result is IResult<IFolder> { Successful: true, Value: not null } folderResult)
-                folderViewModel.Items.Add(new FolderViewModel(folderResult.Value));
+                CurrentFolder.Items.Add(new FolderViewModel(folderResult.Value, null));
         }
 
         [RelayCommand]
@@ -55,7 +72,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         [RelayCommand]
         protected virtual async Task MoveAsync(IEnumerable items, CancellationToken cancellationToken)
         {
-            if (CurrentView is not FolderViewModel { Folder: IModifiableFolder modifiableFolder } folderViewModel)
+            if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
 
             // TODO: Add MoveOverlayViewModel
@@ -74,9 +91,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         [RelayCommand]
         protected virtual async Task DeleteAsync(IEnumerable items, CancellationToken cancellationToken)
         {
-            if (CurrentView is not FolderViewModel { Folder: IModifiableFolder modifiableFolder } folderViewModel)
+            if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
-
+            
             // TODO: Add DeletionOverlayViewModel
             var result = await OverlayService.ShowAsync(null!);
             if (!result.Successful)
@@ -85,7 +102,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             foreach (IStorableChild item in items)
             {
                 await modifiableFolder.DeleteAsync(item, cancellationToken);
-                folderViewModel.Items.RemoveMatch(x => x.Inner.Id == item.Id);
+                CurrentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id);
             }
         }
     }

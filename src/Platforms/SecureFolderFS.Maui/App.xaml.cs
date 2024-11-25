@@ -33,6 +33,8 @@ namespace SecureFolderFS.Maui
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
+            APES.UI.XF.ContextMenuContainer.Init();
+            
             var appShell = Task.Run(GetAppShellAsync).ConfigureAwait(false).GetAwaiter().GetResult();
             return new Window(appShell);
         }

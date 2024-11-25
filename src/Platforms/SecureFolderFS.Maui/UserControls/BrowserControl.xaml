@@ -1,0 +1,67 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.BrowserControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:apes="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views.Browser;assembly=SecureFolderFS.Sdk"
+    x:Name="RootControl">
+
+    <ContentView.Resources>
+        <vc:FileIconConverter x:Key="FileIconConverter" />
+        <DataTemplate x:Key="FileItemTemplate" x:DataType="vm:FileViewModel">
+            <ViewCell>
+                <VerticalStackLayout>
+                    <Image />
+                    <Label Text="{Binding Title, Mode=OneWay}" />
+                </VerticalStackLayout>
+            </ViewCell>
+        </DataTemplate>
+        <DataTemplate x:Key="FolderItemTemplate" x:DataType="vm:FolderViewModel">
+            <ViewCell>
+                <VerticalStackLayout>
+                    <Image />
+                    <Label Text="{Binding Title, Mode=OneWay}" />
+                </VerticalStackLayout>
+            </ViewCell>
+        </DataTemplate>
+    </ContentView.Resources>
+
+    <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
+        <ListView ItemsSource="{Binding ItemsSource, Mode=OneWay}" SelectionMode="None">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:BrowserItemViewModel">
+                    <ViewCell>
+                        <apes:ContextMenuContainer>
+                            <apes:ContextMenuContainer.MenuItems>
+                                <apes:ContextMenuItem Text="Abc" />
+                                <apes:ContextMenuItem Text="def" />
+                            </apes:ContextMenuContainer.MenuItems>
+                            <apes:ContextMenuContainer.Content>
+                                <Grid
+                                    x:Name="SourceGrid"
+                                    Padding="16,4"
+                                    ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ContentView
+                                        Grid.Column="0"
+                                        Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Title, Mode=OneWay}"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </apes:ContextMenuContainer.Content>
+                        </apes:ContextMenuContainer>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</ContentView>

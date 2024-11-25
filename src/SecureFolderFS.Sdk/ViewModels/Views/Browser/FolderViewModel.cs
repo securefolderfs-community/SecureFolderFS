@@ -4,12 +4,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Bindable(true)]
-    public class FolderViewModel : BrowserItemViewModel
+    public class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
+        protected readonly INavigator navigator;
+        
         /// <summary>
         /// Gets the folder associated with this view model.
         /// </summary>
@@ -23,8 +26,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override IStorable Inner => Folder;
 
-        public FolderViewModel(IFolder folder)
+        public FolderViewModel(IFolder folder, INavigator navigator)
         {
+            this.navigator = navigator;
             Folder = folder;
             Title = folder.Name;
             Items = new();
@@ -38,12 +42,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 Items.Add(item switch
                 {
                     IFile file => new FileViewModel(file),
-                    IFolder folder => new FolderViewModel(folder),
+                    IFolder folder => new FolderViewModel(folder, navigator),
                     _ => throw new ArgumentOutOfRangeException(nameof(item))
                 });
             }
 
             // TODO: Load thumbnail
+        }
+        
+        /// <inheritdoc/>
+        public virtual void OnAppearing()
+        {
+        }
+
+        /// <inheritdoc/>
+        public virtual void OnDisappearing()
+        {
         }
     }
 }
