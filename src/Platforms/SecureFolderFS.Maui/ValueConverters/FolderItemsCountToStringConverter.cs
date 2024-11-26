@@ -1,21 +1,23 @@
 using System.Globalization;
-using SecureFolderFS.UI.ValueConverters;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {
-    /// <inheritdoc cref="BaseDateTimeToStringConverter"/>
-    internal sealed class DateTimeToStringConverter : BaseDateTimeToStringConverter, IValueConverter
+    internal sealed class FolderItemsCountToStringConverter : IValueConverter
     {
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return TryConvert(value, targetType, parameter);
+            if (value is not int intValue)
+                return null;
+            
+            // TODO: Localize text (use different strings for singular and plural forms)
+            return $"{intValue} elements"; 
         }
 
         /// <inheritdoc/>
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return TryConvertBack(value, targetType, parameter);
+            throw new NotImplementedException();
         }
     }
 }

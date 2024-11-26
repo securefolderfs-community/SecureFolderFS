@@ -4,13 +4,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Bindable(true)]
-    public class FolderViewModel : BrowserItemViewModel, IViewDesignation
+    public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
         public INavigator Navigator { get; }
         
