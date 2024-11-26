@@ -9,7 +9,7 @@ namespace SecureFolderFS.Shared.ComponentModel
         /// </summary>
         /// <param name="view">The target to navigate to.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful, returns true; otherwise false.</returns>
-        Task<bool> NavigateAsync(IViewDesignation view);
+        Task<bool> NavigateAsync(IViewDesignation? view);
 
         /// <summary>
         /// Tries to navigate to the previous target, if possible.

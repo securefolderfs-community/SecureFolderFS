@@ -12,7 +12,6 @@ using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
@@ -23,20 +22,22 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private readonly INavigator _dashboardNavigator;
         private readonly INavigationService _vaultNavigation;
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
-        private readonly BrowserViewModel _browserViewModel;
+        private readonly BrowserViewModel? _browserViewModel;
         private VaultPropertiesViewModel? _propertiesViewModel;
 
-        public VaultControlsViewModel(INavigationService vaultNavigation, INavigator dashboardNavigator, UnlockedVaultViewModel unlockedVaultViewModel, VaultPropertiesViewModel? propertiesViewModel = null)
+        public VaultControlsViewModel(
+            INavigationService vaultNavigation,
+            INavigator dashboardNavigator,
+            UnlockedVaultViewModel unlockedVaultViewModel,
+            BrowserViewModel? browserViewModel = null,
+            VaultPropertiesViewModel? propertiesViewModel = null)
         {
             ServiceProvider = DI.Default;
             _vaultNavigation = vaultNavigation;
             _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
+            _browserViewModel = browserViewModel;
             _propertiesViewModel = propertiesViewModel;
-
-            var folder = unlockedVaultViewModel.StorageRoot.Inner;
-            var folderViewModel = new FolderViewModel(folder, null).WithInitAsync();
-            _browserViewModel = new(folderViewModel);
 
             WeakReferenceMessenger.Default.Register(this);
         }
@@ -59,7 +60,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         [RelayCommand]
         private async Task BrowseAsync(CancellationToken cancellationToken)
         {
-            await _dashboardNavigator.NavigateAsync(_browserViewModel);
+            if (_browserViewModel is not null)
+                await _dashboardNavigator.NavigateAsync(_browserViewModel);
         }
 
         [RelayCommand]

@@ -1,9 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using OwlCore.Storage;
-using SecureFolderFS.Shared.ComponentModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
@@ -18,5 +19,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
+        
+        [RelayCommand]
+        protected abstract Task OpenAsync(CancellationToken cancellationToken);
     }
 }

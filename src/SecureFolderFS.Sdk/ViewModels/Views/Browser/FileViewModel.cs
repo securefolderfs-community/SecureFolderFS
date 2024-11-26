@@ -26,8 +26,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
             // TODO: Load thumbnail
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        protected override Task OpenAsync(CancellationToken cancellationToken)
+        {
+            // TODO: Open file
+            return Task.CompletedTask;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
     internal sealed partial class RootNavigationControl : ContentNavigationControl
     {
         /// <inheritdoc/>
-        protected override Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTarget : default where TTransition : class
+        protected override Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget>(TTarget? target) where TTarget : default
         {
             // Use transitions only when the initial page view model is not MainAppHostViewModel 
             if ((MainContent.Content is null && target is not MainHostViewModel)

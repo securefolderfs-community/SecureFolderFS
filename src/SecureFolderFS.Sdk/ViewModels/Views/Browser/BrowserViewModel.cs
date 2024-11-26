@@ -20,14 +20,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
     public partial class BrowserViewModel : ObservableObject, IViewDesignation, INavigatable
     {
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private VaultViewModel _VaultViewModel;
         [ObservableProperty] private FolderViewModel? _CurrentFolder;
+        
+        public IFolder BaseFolder { get; }
         
         /// <inheritdoc/>
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
-        public BrowserViewModel(FolderViewModel folderViewModel)
+        public BrowserViewModel(FolderViewModel folderViewModel, IFolder baseFolder, VaultViewModel vaultViewModel)
         {
             ServiceProvider = DI.Default;
+            BaseFolder = baseFolder;
+            VaultViewModel = vaultViewModel;
             CurrentFolder = folderViewModel;
         }
         
@@ -41,6 +46,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         {
         }
 
+        partial void OnCurrentFolderChanged(FolderViewModel? value)
+        {
+            Title = value?.Title;
+            if (string.IsNullOrEmpty(Title))
+                Title = VaultViewModel.VaultName;
+        }
+
         [RelayCommand]
         protected virtual async Task NewFolderAsync(CancellationToken cancellationToken)
         {
@@ -51,7 +63,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             _ = modifiableFolder;
             var result = await OverlayService.ShowAsync(null!);
             if (result is IResult<IFolder> { Successful: true, Value: not null } folderResult)
-                CurrentFolder.Items.Add(new FolderViewModel(folderResult.Value, null));
+                CurrentFolder.Items.Add(new FolderViewModel(folderResult.Value, CurrentFolder.Navigator));
         }
 
         [RelayCommand]

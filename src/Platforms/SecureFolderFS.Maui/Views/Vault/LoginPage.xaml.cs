@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.EventArguments;
@@ -54,6 +55,11 @@ namespace SecureFolderFS.Maui.Views.Vault
             // Initialize DashboardViewModel and use the same navigation for dashboard
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
+
+            var folder = args.UnlockedVaultViewModel.StorageRoot.Inner;
+            var folderViewModel = new FolderViewModel(folder, DI.Service<INavigationService>());
+            _ = folderViewModel.ListContentsAsync();
+            var browserViewModel = new BrowserViewModel(folderViewModel, folder, args.UnlockedVaultViewModel.VaultViewModel);
             
             // Since both overview and properties are on the same page,
             // initialize and navigate the views to keep them in cache
@@ -61,9 +67,14 @@ namespace SecureFolderFS.Maui.Views.Vault
             var propertiesViewModel = new VaultPropertiesViewModel(args.UnlockedVaultViewModel);
             var overviewViewModel = new VaultOverviewViewModel(
                 args.UnlockedVaultViewModel,
-                new(ViewModel.VaultNavigation, ViewModel.VaultNavigation, args.UnlockedVaultViewModel, propertiesViewModel),
-                new(args.UnlockedVaultViewModel,
-                    new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder)));
+                new(ViewModel.VaultNavigation,
+                    ViewModel.VaultNavigation,
+                    args.UnlockedVaultViewModel,
+                    browserViewModel,
+                    propertiesViewModel),
+                    new(
+                        args.UnlockedVaultViewModel,
+                        new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder)));
             
             // Set Title to 'fake' navigation
             dashboardViewModel.Title = overviewViewModel.Title;

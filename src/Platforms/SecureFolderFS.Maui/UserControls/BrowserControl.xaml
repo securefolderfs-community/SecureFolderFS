@@ -2,7 +2,7 @@
     x:Class="SecureFolderFS.Maui.UserControls.BrowserControl"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:apes="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
+    xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views.Browser;assembly=SecureFolderFS.Sdk"
@@ -33,12 +33,17 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:BrowserItemViewModel">
                     <ViewCell>
-                        <apes:ContextMenuContainer>
-                            <apes:ContextMenuContainer.MenuItems>
-                                <apes:ContextMenuItem Text="Abc" />
-                                <apes:ContextMenuItem Text="def" />
-                            </apes:ContextMenuContainer.MenuItems>
-                            <apes:ContextMenuContainer.Content>
+                        <apesui:ContextMenuContainer>
+                            <apesui:ContextMenuContainer.MenuItems>
+                                <apesui:ContextMenuItem Text="Rename">
+                                    <apesui:ContextMenuItem.Icon />
+                                </apesui:ContextMenuItem>
+                                <apesui:ContextMenuItem
+                                    Command="{Binding}"
+                                    IsDestructive="True"
+                                    Text="Delete" />
+                            </apesui:ContextMenuContainer.MenuItems>
+                            <apesui:ContextMenuContainer.Content>
                                 <Grid
                                     x:Name="SourceGrid"
                                     Padding="16,4"
@@ -57,8 +62,11 @@
                                         Text="{Binding Title, Mode=OneWay}"
                                         VerticalOptions="Center" />
                                 </Grid>
-                            </apes:ContextMenuContainer.Content>
-                        </apes:ContextMenuContainer>
+                            </apesui:ContextMenuContainer.Content>
+                            <apesui:ContextMenuContainer.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenCommand}" />
+                            </apesui:ContextMenuContainer.GestureRecognizers>
+                        </apesui:ContextMenuContainer>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

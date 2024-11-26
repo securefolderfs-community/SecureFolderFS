@@ -5,13 +5,14 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Bindable(true)]
     public class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
-        protected readonly INavigator navigator;
+        public INavigator Navigator { get; }
         
         /// <summary>
         /// Gets the folder associated with this view model.
@@ -28,26 +29,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
         public FolderViewModel(IFolder folder, INavigator navigator)
         {
-            this.navigator = navigator;
             Folder = folder;
+            Navigator = navigator;
             Title = folder.Name;
             Items = new();
         }
 
         /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        public override Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            // TODO: Load thumbnail
+            return Task.CompletedTask;
+        }
+
+        public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
             await foreach (var item in Folder.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 Items.Add(item switch
                 {
-                    IFile file => new FileViewModel(file),
-                    IFolder folder => new FolderViewModel(folder, navigator),
+                    IFile file => new FileViewModel(file).WithInitAsync(),
+                    IFolder folder => new FolderViewModel(folder, Navigator).WithInitAsync(),
                     _ => throw new ArgumentOutOfRangeException(nameof(item))
                 });
             }
-
-            // TODO: Load thumbnail
         }
         
         /// <inheritdoc/>
@@ -58,6 +63,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public virtual void OnDisappearing()
         {
+        }
+
+        /// <inheritdoc/>
+        protected override async Task OpenAsync(CancellationToken cancellationToken)
+        {
+            if (Items.IsEmpty())
+                _ = ListContentsAsync(cancellationToken);
+            
+            await Navigator.NavigateAsync(this);
         }
     }
 }

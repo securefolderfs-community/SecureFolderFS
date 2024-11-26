@@ -32,7 +32,7 @@ namespace SecureFolderFS.Uno.UserControls.DebugControls
             InitializeComponent();
 
             _rootControl = App.Instance?.MainWindow?.Content as MainWindowRootControl;
-            _rootNavigationControl = (_rootControl?.RootNavigationService as INavigationControlContract)?.NavigationControl;
+            _rootNavigationControl = (_rootControl?.RootNavigationService as INavigationControlContract)?.Navigator;
             ResetView();
         }
 
