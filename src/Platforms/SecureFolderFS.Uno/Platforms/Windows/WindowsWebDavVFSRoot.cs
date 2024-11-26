@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.WebDav;
 using SecureFolderFS.Storage.VirtualFileSystem;
+using SecureFolderFS.Core.WebDav;
 
 #if WINDOWS
 using System;
@@ -15,39 +14,27 @@ using SecureFolderFS.Uno.UnsafeNative;
 namespace SecureFolderFS.Uno.Platforms.Windows
 {
     /// <inheritdoc cref="IVFSRoot"/>
-    internal sealed class WindowsWebDavVFSRoot : VFSRoot
+    internal sealed class WindowsWebDavVFSRoot : WebDavRootFolder
     {
-        private const uint WM_CLOSE = 0x0010;
-
-        private readonly WebDavWrapper _webDavWrapper;
-        private bool _disposed;
-
-        /// <inheritdoc/>
-        public override string FileSystemName { get; } = Core.WebDav.Constants.FileSystem.FS_NAME;
-
-        public WindowsWebDavVFSRoot(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemOptions options)
-            : base(storageRoot, options)
+        public WindowsWebDavVFSRoot(IAsyncDisposable webDavInstance, IFolder storageRoot, FileSystemOptions options)
+            : base(webDavInstance, storageRoot, options)
         {
-            _webDavWrapper = webDavWrapper;
         }
 
         /// <inheritdoc/>
-        public override async ValueTask DisposeAsync()
+        protected override async ValueTask DisposeInternalAsync()
         {
-            if (_disposed)
-                return;
+            await base.DisposeInternalAsync();
 
-            _disposed = await _webDavWrapper.CloseFileSystemAsync();
-            if (_disposed)
-            {
-                FileSystemManager.Instance.RemoveRoot(this);
-                await CloseExplorerShellAsync(Inner.Id);
-            }
+            // Close the shell on Windows
+            await CloseExplorerShellAsync(Inner.Id);
         }
 
         private static async Task CloseExplorerShellAsync(string path)
         {
 #if WINDOWS
+            const uint WM_CLOSE = 0x0010;
+
             try
             {
                 var formattedPath = PathHelpers.EnsureNoTrailingPathSeparator(path);

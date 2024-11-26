@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;ARM64;x64;x86</Platforms>
@@ -15,6 +15,10 @@
     <ProjectReference Include="..\SecureFolderFS.Core.Cryptography\SecureFolderFS.Core.Cryptography.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Core.FileSystem\SecureFolderFS.Core.FileSystem.csproj" />
     <ProjectReference Include="..\SecureFolderFS.Storage\SecureFolderFS.Storage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dispatching\" />
   </ItemGroup>
 
 </Project>
