@@ -46,8 +46,8 @@
                             <apesui:ContextMenuContainer.Content>
                                 <Grid
                                     x:Name="SourceGrid"
-                                    Padding="16,4"
-                                    ColumnSpacing="16">
+                                    Padding="12,4"
+                                    ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition />
@@ -59,6 +59,7 @@
                                         VerticalOptions="Center" />
                                     <Label
                                         Grid.Column="1"
+                                        FontSize="15"
                                         Text="{Binding Title, Mode=OneWay}"
                                         VerticalOptions="Center" />
                                 </Grid>

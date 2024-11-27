@@ -31,11 +31,22 @@ namespace SecureFolderFS.Maui.Views.Vault
         /// <inheritdoc/>
         public async Task<bool> NavigateAsync(IViewDesignation? view)
         {
+            if (view is not FolderViewModel folderViewModel)
+                return false;
+            
+            // Make last item non-leading
+            if (ViewModel?.Breadcrumbs?.LastOrDefault() is { } lastNavigationItem)
+                lastNavigationItem.IsLeading = false;
+            
+            // Add navigated-to folder to Breadcrumb
+            ViewModel?.Breadcrumbs?.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
+            
 #if ANDROID
             // On Android: Navigate by changing current folder (i.e. ViewModel source)
             if (ViewModel is not null)
             {
-                await AnimateViewChangeAsync(view as FolderViewModel);
+                // Animate navigation
+                await AnimateViewChangeAsync(folderViewModel);
                 return true;
             }
 #elif IOS
@@ -52,9 +63,22 @@ namespace SecureFolderFS.Maui.Views.Vault
                 return false;
 
             var index = navigationService.IndexInNavigation;
-            var folderViewModel = navigationService.Views[Math.Max(--index, 0)] as FolderViewModel;
+            if (navigationService.Views[Math.Max(--index, 0)] is not FolderViewModel folderViewModel)
+                return false;
+            
+            // Animate navigation
             await AnimateViewChangeAsync(folderViewModel);
 
+            // Remove last navigated-to breadcrumb
+            var last = ViewModel?.Breadcrumbs?.LastOrDefault();
+            if (last is not null)
+                ViewModel?.Breadcrumbs?.Remove(last);
+
+            // Make last navigated-to breadcrumb leading
+            last = ViewModel?.Breadcrumbs?.LastOrDefault();
+            if (last is not null)
+                last.IsLeading = true;
+            
             return true;
         }
 
@@ -65,8 +89,19 @@ namespace SecureFolderFS.Maui.Views.Vault
                 return false;
 
             var index = navigationService.IndexInNavigation;
-            var folderViewModel = navigationService.Views[Math.Min(++index, Math.Max(navigationService.Views.Count, 0))] as FolderViewModel;
+            if (navigationService.Views[Math.Min(++index, Math.Max(navigationService.Views.Count, 0))] is not FolderViewModel folderViewModel)
+                return false;
+            
+            // Animate navigation
             await AnimateViewChangeAsync(folderViewModel);
+            
+            // Make last navigated-to breadcrumb non-leading
+            var last = ViewModel?.Breadcrumbs?.LastOrDefault();
+            if (last is not null)
+                last.IsLeading = false;
+            
+            // Add new breadcrumb
+            ViewModel?.Breadcrumbs?.Add(new(folderViewModel.Title, ViewModel.NavigateBreadcrumbCommand));
 
             return true;
         }

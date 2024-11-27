@@ -31,7 +31,11 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Text="Pathbar" />
+        <uc:BreadcrumbBar
+            Grid.Row="0"
+            Margin="56,0,0,0"
+            HeightRequest="32"
+            ItemsSource="{Binding ViewModel.Breadcrumbs, Mode=OneWay}" />
 
         <uc:BrowserControl
             x:Name="Browser"

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,32 +8,37 @@ using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Inject<IOverlayService>]
     [Bindable(true)]
-    public partial class BrowserViewModel : ObservableObject, IViewDesignation, INavigatable
+    public partial class BrowserViewModel : ObservableObject, IViewDesignation
     {
+        private readonly INavigator _navigator;
+        
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
         [ObservableProperty] private FolderViewModel? _CurrentFolder;
+        [ObservableProperty] private ObservableCollection<BreadcrumbItemViewModel> _Breadcrumbs;
         
         public IFolder BaseFolder { get; }
-        
-        /// <inheritdoc/>
-        public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
         public BrowserViewModel(FolderViewModel folderViewModel, IFolder baseFolder, VaultViewModel vaultViewModel)
         {
             ServiceProvider = DI.Default;
+            _navigator = folderViewModel.Navigator;
             BaseFolder = baseFolder;
             VaultViewModel = vaultViewModel;
             CurrentFolder = folderViewModel;
+            Breadcrumbs = new()
+            {
+                new(vaultViewModel.VaultName, NavigateBreadcrumbCommand)
+            };
         }
         
         /// <inheritdoc/>
@@ -51,6 +56,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             Title = value?.Title;
             if (string.IsNullOrEmpty(Title))
                 Title = VaultViewModel.VaultName;
+        }
+
+        [RelayCommand]
+        protected virtual async Task NavigateBreadcrumbAsync(BreadcrumbItemViewModel? itemViewModel, CancellationToken cancellationToken)
+        {
+            if (itemViewModel is null)
+                return;
+
+            var lastIndex = Breadcrumbs.Count - 1;
+            var breadcrumbIndex = Breadcrumbs.IndexOf(itemViewModel);
+            var difference = lastIndex - breadcrumbIndex;
+            for (var i = 0; i < difference; i++)
+            {
+                await _navigator.GoBackAsync();
+            }
         }
 
         [RelayCommand]
