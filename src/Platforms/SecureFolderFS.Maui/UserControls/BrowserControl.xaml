@@ -39,15 +39,15 @@
                                     <apesui:ContextMenuItem.Icon />
                                 </apesui:ContextMenuItem>
                                 <apesui:ContextMenuItem
-                                    Command="{Binding}"
+                                    Command="{Binding DeleteCommand}"
                                     IsDestructive="True"
                                     Text="Delete" />
                             </apesui:ContextMenuContainer.MenuItems>
                             <apesui:ContextMenuContainer.Content>
                                 <Grid
                                     x:Name="SourceGrid"
-                                    Padding="12,4"
-                                    ColumnSpacing="12">
+                                    Padding="13,4"
+                                    ColumnSpacing="13">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition />

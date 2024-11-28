@@ -59,14 +59,20 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         }
 
         /// <inheritdoc/>
-        public Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(IStorableChild item, CancellationToken cancellationToken = default)
         {
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            // TODO: Get and delete the ciphertext item on disk, not plaintext representation
             // TODO: Invalidate cache on success
-            return modifiableFolder.DeleteAsync(item, cancellationToken);
+            // TODO: Get by ID instead of name
+            
+            // We need to get the equivalent on the disk
+            var ciphertextName = await EncryptNameAsync(item.Name, Inner);
+            var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
+            
+            // Delete the ciphertext item
+            await modifiableFolder.DeleteAsync(ciphertextItem, cancellationToken);
         }
 
         /// <inheritdoc/>

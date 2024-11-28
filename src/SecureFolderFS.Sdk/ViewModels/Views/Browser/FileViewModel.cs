@@ -17,7 +17,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// </summary>
         public IFile File { get; }
 
-        public FileViewModel(IFile file)
+        public FileViewModel(IFile file, FolderViewModel? parentFolder)
+            : base(parentFolder)
         {
             File = file;
             Title = file.Name;

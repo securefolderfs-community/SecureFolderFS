@@ -24,6 +24,7 @@ namespace SecureFolderFS.Maui.ServiceImplementation
             {
                 WizardOverlayViewModel => new MainWizardPage(navigation),
                 SettingsOverlayViewModel => new SettingsPage(navigation),
+                NewItemOverlayViewModel => new NewItemPrompt(),
                 RecoveryOverlayViewModel => new RecoveryPrompt(),
                 CredentialsOverlayViewModel => new CredentialsPopup(),
                 PreviewRecoveryOverlayViewModel => new PreviewRecoveryPopup(),

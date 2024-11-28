@@ -56,10 +56,10 @@ namespace SecureFolderFS.Maui.Views.Vault
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
 
-            var folder = args.UnlockedVaultViewModel.StorageRoot.Inner;
-            var folderViewModel = new FolderViewModel(folder, DI.Service<INavigationService>());
+            var rootFolder = args.UnlockedVaultViewModel.StorageRoot.Inner;
+            var folderViewModel = new FolderViewModel(rootFolder, DI.Service<INavigationService>(), null);
             _ = folderViewModel.ListContentsAsync();
-            var browserViewModel = new BrowserViewModel(folderViewModel, folder, args.UnlockedVaultViewModel.VaultViewModel);
+            var browserViewModel = new BrowserViewModel(folderViewModel, rootFolder, args.UnlockedVaultViewModel.VaultViewModel);
             
             // Since both overview and properties are on the same page,
             // initialize and navigate the views to keep them in cache

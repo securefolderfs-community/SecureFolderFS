@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
@@ -7,9 +6,9 @@ using SecureFolderFS.UI.Utils;
 
 namespace SecureFolderFS.Maui.Prompts
 {
-    internal sealed class RecoveryPrompt : IOverlayControl
+    internal sealed class NewItemPrompt : IOverlayControl
     {
-        public RecoveryOverlayViewModel? ViewModel { get; private set; }
+        public NewItemOverlayViewModel? ViewModel { get; private set; }
         
         /// <inheritdoc/>
         public async Task<IResult> ShowAsync()
@@ -18,15 +17,14 @@ namespace SecureFolderFS.Maui.Prompts
                 return Result.Failure(null);
             
             var page = Shell.Current.CurrentPage;
-            ViewModel.RecoveryKey = await page.DisplayPromptAsync(
+            ViewModel.ItemName = await page.DisplayPromptAsync(
                 ViewModel.Title,
                 ViewModel.Message,
                 "Confirm".ToLocalized(),
                 "Cancel".ToLocalized());
             
-            var result = await ViewModel.RecoverAsync(default);
-            if (!result)
-                return Result.Failure(new CryptographicException(ViewModel.ErrorMessage));
+            if (string.IsNullOrWhiteSpace(ViewModel.ItemName))
+                return Result.Failure(null);
 
             return Result.Success;
         }
@@ -34,7 +32,7 @@ namespace SecureFolderFS.Maui.Prompts
         /// <inheritdoc/>
         public void SetView(IViewable viewable)
         {
-            ViewModel = (RecoveryOverlayViewModel)viewable;
+            ViewModel = (NewItemOverlayViewModel)viewable;
         }
 
         /// <inheritdoc/>

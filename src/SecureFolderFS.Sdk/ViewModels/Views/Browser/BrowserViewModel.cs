@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
@@ -9,6 +10,7 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -74,67 +76,38 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         }
 
         [RelayCommand]
-        protected virtual async Task NewFolderAsync(CancellationToken cancellationToken)
+        protected virtual async Task NewItemAsync(string? itemType, CancellationToken cancellationToken)
         {
-            if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
+            if (itemType is null)
                 return;
 
-            // TODO: Add NewFolderOverlayViewModel
-            _ = modifiableFolder;
-            var result = await OverlayService.ShowAsync(null!);
-            if (result is IResult<IFolder> { Successful: true, Value: not null } folderResult)
-                CurrentFolder.Items.Add(new FolderViewModel(folderResult.Value, CurrentFolder.Navigator));
-        }
-
-        [RelayCommand]
-        protected virtual async Task CopyAsync(IEnumerable items, CancellationToken cancellationToken)
-        {
-            // TODO: Add CopyOverlayViewModel
-            var result = await OverlayService.ShowAsync(null!);
-            if (result is not IResult<IFolder> { Successful: true, Value: ICreateCopyOf folderCreateCopyOf /*IDirectCopy directCopy*/ })
+            itemType = itemType.ToLower();
+            if (itemType is not ("folder" or "file"))
                 return;
-
-            foreach (IStorableChild item in items)
-            {
-                // TODO(ns)
-                //folderCreateCopyOf.CreateCopyOfAsync(item, default, cancellationToken);
-            }
-        }
-
-        [RelayCommand]
-        protected virtual async Task MoveAsync(IEnumerable items, CancellationToken cancellationToken)
-        {
-            if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
-                return;
-
-            // TODO: Add MoveOverlayViewModel
-            var result = await OverlayService.ShowAsync(null!);
-            if (result is not IResult<IFolder> { Successful: true, Value: IMoveFrom folderMoveFrom })
-                return;
-
-            foreach (IStorableChild item in items)
-            {
-                // TODO(ns)
-                //await folderMoveFrom.MoveFromAsync(item, modifiableFolder, default, cancellationToken);
-                //folderViewModel.Items.RemoveMatch(x => x.Inner.Id == item.Id);
-            }
-        }
-
-        [RelayCommand]
-        protected virtual async Task DeleteAsync(IEnumerable items, CancellationToken cancellationToken)
-        {
+            
             if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
                 return;
             
-            // TODO: Add DeletionOverlayViewModel
-            var result = await OverlayService.ShowAsync(null!);
-            if (!result.Successful)
+            var viewModel = new NewItemOverlayViewModel();
+            var result = await OverlayService.ShowAsync(viewModel);
+            if (!result.Successful || viewModel.ItemName is null)
                 return;
 
-            foreach (IStorableChild item in items)
+            switch (itemType)
             {
-                await modifiableFolder.DeleteAsync(item, cancellationToken);
-                CurrentFolder.Items.RemoveMatch(x => x.Inner.Id == item.Id);
+                case "file":
+                {
+                    var file = await modifiableFolder.CreateFileAsync(viewModel.ItemName, false, cancellationToken);
+                    CurrentFolder.Items.Add(new FileViewModel(file, CurrentFolder));
+                    break;
+                }
+
+                case "folder":
+                {
+                    var folder = await modifiableFolder.CreateFolderAsync(viewModel.ItemName, false, cancellationToken);
+                    CurrentFolder.Items.Add(new FolderViewModel(folder, CurrentFolder.Navigator, CurrentFolder));
+                    break;
+                }
             }
         }
     }

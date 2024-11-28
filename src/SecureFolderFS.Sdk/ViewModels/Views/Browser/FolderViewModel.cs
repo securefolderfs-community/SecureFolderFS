@@ -28,7 +28,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override IStorable Inner => Folder;
 
-        public FolderViewModel(IFolder folder, INavigator navigator)
+        public FolderViewModel(IFolder folder, INavigator navigator, FolderViewModel? parentFolder)
+            : base(parentFolder)
         {
             Folder = folder;
             Navigator = navigator;
@@ -49,8 +50,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             {
                 Items.Add(item switch
                 {
-                    IFile file => new FileViewModel(file).WithInitAsync(),
-                    IFolder folder => new FolderViewModel(folder, Navigator).WithInitAsync(),
+                    IFile file => new FileViewModel(file, this).WithInitAsync(),
+                    IFolder folder => new FolderViewModel(folder, Navigator, this).WithInitAsync(),
                     _ => throw new ArgumentOutOfRangeException(nameof(item))
                 });
             }

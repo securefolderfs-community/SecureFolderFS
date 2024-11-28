@@ -12,6 +12,19 @@
         <vc:FolderItemsCountToStringConverter x:Key="FolderItemsCountToStringConverter" />
     </ContentPage.Resources>
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding ViewModel.NewItemCommand}"
+            CommandParameter="File"
+            Order="Secondary"
+            Text="Create new file" />
+        <ToolbarItem
+            Command="{Binding ViewModel.NewItemCommand}"
+            CommandParameter="Folder"
+            Order="Secondary"
+            Text="Create new folder" />
+    </ContentPage.ToolbarItems>
+
     <Shell.TitleView>
         <VerticalStackLayout VerticalOptions="Center">
             <Label
