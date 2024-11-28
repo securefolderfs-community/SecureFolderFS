@@ -1,5 +1,4 @@
 ﻿using NWebDav.Server.Dispatching;
-using NWebDav.Server.HttpListener;
 using SecureFolderFS.Core.WebDav.Helpers;
 using System;
 using System.Diagnostics;
@@ -42,8 +41,7 @@ namespace SecureFolderFS.Core.WebDav
                     if (httpListenerContext.Request.IsAuthenticated)
                         Debugger.Break();
 
-                    var context = new HttpContext(httpListenerContext);
-                    await _requestDispatcher.DispatchRequestAsync(context, _fileSystemCts.Token);
+                    await _requestDispatcher.DispatchRequestAsync(httpListenerContext, _fileSystemCts.Token);
                 }
             }
             catch (Exception ex)
