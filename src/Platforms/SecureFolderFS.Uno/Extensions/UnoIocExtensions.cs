@@ -13,7 +13,6 @@ namespace SecureFolderFS.Uno.Extensions
         {
             return serviceCollection
                 .AddSingleton<ISettingsService, SettingsService>(_ => new(new AppSettings(settingsFolder), new UserSettings(settingsFolder)))
-                .AddSingleton<IImageService, UnoImageService>()
                 .AddSingleton<IOverlayService, UnoDialogService>()
                 .AddSingleton<IStorageService, UnoStorageService>()
                 .AddSingleton<IClipboardService, UnoClipboardService>()

@@ -3,11 +3,16 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
+    [Inject<IOverlayService>]
     [Bindable(true)]
-    public class FileViewModel : BrowserItemViewModel
+    public partial class FileViewModel : BrowserItemViewModel
     {
         /// <inheritdoc/>
         public override IStorable Inner => File;
@@ -20,6 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         public FileViewModel(IFile file, FolderViewModel? parentFolder)
             : base(parentFolder)
         {
+            ServiceProvider = DI.Default;
             File = file;
             Title = file.Name;
         }
@@ -32,10 +38,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         }
 
         /// <inheritdoc/>
-        protected override Task OpenAsync(CancellationToken cancellationToken)
+        protected override async Task OpenAsync(CancellationToken cancellationToken)
         {
-            // TODO: Open file
-            return Task.CompletedTask;
+            using var viewModel = new PreviewerOverlayViewModel();
+            await viewModel.LoadFromStorableAsync(Inner, cancellationToken);
+
+            await OverlayService.ShowAsync(viewModel);
         }
     }
 }

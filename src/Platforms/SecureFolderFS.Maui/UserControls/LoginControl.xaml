@@ -101,7 +101,7 @@
     </ContentView.Resources>
 
     <Grid x:Name="RootGrid" x:DataType="local:LoginControl">
-        <local:ContentPresentation ViewContent="{Binding CurrentViewModel, Mode=OneWay}">
+        <local:ContentPresentation Presentation="{Binding CurrentViewModel, Mode=OneWay}">
             <local:ContentPresentation.TemplateSelector>
                 <ts:LoginTemplateSelector
                     ErrorTemplate="{StaticResource ErrorTemplate}"

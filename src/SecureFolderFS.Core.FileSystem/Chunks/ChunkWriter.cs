@@ -52,9 +52,11 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
             _fileSystemStatistics.BytesEncrypted?.Report(plaintextChunk.Length);
 
-            // Get and write to ciphertext stream
+            // Get available read-write stream or throw
             var ciphertextStream = _streamsManager.GetReadWriteStream();
             _ = ciphertextStream ?? throw new UnavailableStreamException();
+            
+            // Write to stream at correct chunk
             ciphertextStream.Position = streamPosition;
             ciphertextStream.Write(realCiphertextChunk);
 

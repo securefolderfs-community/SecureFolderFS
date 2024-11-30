@@ -17,7 +17,7 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
             var transitionFinalizer = await ApplyTransitionAsync(view);
 
             // Navigate by setting the content
-            Presentation.ViewContent = view;
+            Presentation.Presentation = view;
 
             // End the transition
             if (transitionFinalizer is not null)
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
         /// <inheritdoc/>
         public void Dispose()
         {
-            (Presentation.ViewContent as IDisposable)?.Dispose();
+            (Presentation.Presentation as IDisposable)?.Dispose();
         }
 
         public DataTemplateSelector? TemplateSelector

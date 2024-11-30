@@ -44,8 +44,8 @@
         <uc:ContentPresentation
             Grid.Row="1"
             HorizontalOptions="Fill"
-            VerticalOptions="Center"
-            ViewContent="{Binding ViewModel.CurrentViewModel, Mode=OneWay}">
+            Presentation="{Binding ViewModel.CurrentViewModel, Mode=OneWay}"
+            VerticalOptions="Center">
             <uc:ContentPresentation.TemplateSelector>
                 <ts:RecoveryPreviewTemplateSelector LoginTemplate="{StaticResource LoginTemplate}" RecoveryTemplate="{StaticResource RecoveryTemplate}" />
             </uc:ContentPresentation.TemplateSelector>

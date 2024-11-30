@@ -66,21 +66,7 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
             OnPropertyChanged(nameof(ViewModel));
             OnPropertyChanged(nameof(OverlayViewModel));
         }
-
-        private void Shell_Navigated(object? sender, ShellNavigatedEventArgs e)
-        {
-            if (e.Current.Location.OriginalString.Contains("NavigationPage"))
-                return;
-                
-            Shell.Current.Navigated -= Shell_Navigated;
-            if (OverlayViewModel is not null)
-                OverlayViewModel.NavigationRequested -= ViewModel_NavigationRequested;
-            
-            _modalTcs.TrySetResult(OverlayViewModel?.CurrentViewModel is SummaryWizardViewModel
-                ? Result.Success
-                : Result.Failure(null));
-        }
-
+        
         /// <inheritdoc/>
         public async Task HideAsync()
         {
@@ -94,6 +80,20 @@ namespace SecureFolderFS.Maui.Views.Modals.Wizard
                 OverlayViewModel.CurrentViewModel = ViewModel;
             
             base.OnAppearing();
+        }
+
+        private void Shell_Navigated(object? sender, ShellNavigatedEventArgs e)
+        {
+            if (e.Current.Location.OriginalString.Contains("NavigationPage"))
+                return;
+                
+            Shell.Current.Navigated -= Shell_Navigated;
+            if (OverlayViewModel is not null)
+                OverlayViewModel.NavigationRequested -= ViewModel_NavigationRequested;
+            
+            _modalTcs.TrySetResult(OverlayViewModel?.CurrentViewModel is SummaryWizardViewModel
+                ? Result.Success
+                : Result.Failure(null));
         }
 
         private async void ViewModel_NavigationRequested(object? sender, Shared.EventArguments.NavigationRequestedEventArgs e)

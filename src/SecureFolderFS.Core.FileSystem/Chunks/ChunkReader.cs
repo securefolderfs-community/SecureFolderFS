@@ -38,7 +38,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         {
             // Calculate sizes
             var ciphertextSize = _security.ContentCrypt.ChunkCiphertextSize;
-            var PlaintextSize = _security.ContentCrypt.ChunkPlaintextSize;
+            var plaintextSize = _security.ContentCrypt.ChunkPlaintextSize;
             var ciphertextPosition = _security.HeaderCrypt.HeaderCiphertextSize + (chunkNumber * ciphertextSize);
 
             // Rent buffer
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 if (SpanExtensions.IsAllZeros(chunkReserved))
                 {
                     plaintextChunk.Clear();
-                    return read - (ciphertextSize - PlaintextSize);
+                    return read - (ciphertextSize - plaintextSize);
                 }
 
                 // Decrypt
@@ -89,7 +89,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     return -1;
                 }
 
-                return read - (ciphertextSize - PlaintextSize);
+                return read - (ciphertextSize - plaintextSize);
             }
             finally
             {
