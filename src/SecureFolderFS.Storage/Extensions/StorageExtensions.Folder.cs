@@ -10,6 +10,46 @@ namespace SecureFolderFS.Storage.Extensions
     public static partial class StorageExtensions
     {
         /// <summary>
+        /// Creates a copy of the provided folder within this folder.
+        /// </summary>
+        /// <param name="destinationFolder">The folder where the copy is created.</param>
+        /// <param name="folderToCopy">The folder to be copied into this folder.</param>
+        /// <param name="overwrite"><code>true</code> if any existing destination folder can be overwritten; otherwise, <c>false</c>.</param>
+        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        public static async Task<IModifiableFolder> CreateCopyOfAsync(this IModifiableFolder destinationFolder, IFolder folderToCopy, bool overwrite, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Create the corresponding folder in the destination
+            var copiedFolder = (IModifiableFolder)await destinationFolder.CreateFolderAsync(folderToCopy.Name, overwrite, cancellationToken);
+
+            // Iterate through all items in the source folder
+            await foreach (var item in folderToCopy.GetItemsAsync(StorableType.All, cancellationToken))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                switch (item)
+                {
+                    case IFile file:
+                    {
+                        // Copy the file to the destination folder
+                        await copiedFolder.CreateCopyOfAsync(file, overwrite, cancellationToken);
+                        break;
+                    }
+                    
+                    case IFolder subFolder:
+                    {
+                        // Recursively copy the subfolder
+                        await copiedFolder.CreateCopyOfAsync(subFolder, overwrite, cancellationToken);
+                        break;
+                    }
+                }
+            }
+
+            return copiedFolder;
+        }
+        
+        /// <summary>
         /// Gets a file in the current directory by name.
         /// </summary>
         /// <param name="folder">The folder to get items from.</param>

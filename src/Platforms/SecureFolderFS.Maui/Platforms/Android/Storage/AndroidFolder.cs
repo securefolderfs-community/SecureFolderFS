@@ -139,7 +139,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 .ConfigureAwait(false);
 
             if (target is null)
-                throw new DirectoryNotFoundException($"No storage item with the name '{name}' could be found.");
+                throw new FileNotFoundException($"No storage item with the name '{name}' could be found.");
 
             return target;
         }

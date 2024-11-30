@@ -23,6 +23,16 @@
             CommandParameter="Folder"
             Order="Secondary"
             Text="Create new folder" />
+        <ToolbarItem
+            Command="{Binding ViewModel.ImportItemCommand}"
+            CommandParameter="File"
+            Order="Secondary"
+            Text="Import file" />
+        <ToolbarItem
+            Command="{Binding ViewModel.ImportItemCommand}"
+            CommandParameter="Folder"
+            Order="Secondary"
+            Text="Import folder" />
     </ContentPage.ToolbarItems>
 
     <Shell.TitleView>

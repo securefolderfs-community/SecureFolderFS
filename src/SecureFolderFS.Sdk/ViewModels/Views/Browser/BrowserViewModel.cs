@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,11 +11,11 @@ using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
-    [Inject<IOverlayService>]
+    [Inject<IOverlayService>, Inject<IFileExplorerService>]
     [Bindable(true)]
     public partial class BrowserViewModel : ObservableObject, IViewDesignation
     {
@@ -106,6 +104,45 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 {
                     var folder = await modifiableFolder.CreateFolderAsync(viewModel.ItemName, false, cancellationToken);
                     CurrentFolder.Items.Add(new FolderViewModel(folder, CurrentFolder.Navigator, CurrentFolder));
+                    break;
+                }
+            }
+        }
+
+        [RelayCommand]
+        protected virtual async Task ImportItemAsync(string? itemType, CancellationToken cancellationToken)
+        {
+            if (itemType is null)
+                return;
+
+            itemType = itemType.ToLower();
+            if (itemType is not ("folder" or "file"))
+                return;
+            
+            if (CurrentFolder?.Folder is not IModifiableFolder modifiableFolder)
+                return;
+
+            switch (itemType)
+            {
+                case "file":
+                {
+                    var file = await FileExplorerService.PickFileAsync(null, false, cancellationToken);
+                    if (file is null)
+                        return;
+
+                    var copiedFile = await modifiableFolder.CreateCopyOfAsync(file, false, cancellationToken);
+                    CurrentFolder.Items.Add(new FileViewModel(copiedFile, CurrentFolder));
+                    break;
+                }
+
+                case "folder":
+                {
+                    var folder = await FileExplorerService.PickFolderAsync(false, cancellationToken);
+                    if (folder is null)
+                        return;
+                    
+                    var copiedFolder = await modifiableFolder.CreateCopyOfAsync(folder, false, cancellationToken);
+                    CurrentFolder.Items.Add(new FolderViewModel(copiedFolder, CurrentFolder.Navigator, CurrentFolder));
                     break;
                 }
             }
