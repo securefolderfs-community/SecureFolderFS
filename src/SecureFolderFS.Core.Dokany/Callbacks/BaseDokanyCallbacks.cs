@@ -338,7 +338,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
         public abstract NtStatus SetFileSecurity(string fileName, FileSystemSecurity security, AccessControlSections sections, IDokanFileInfo info);
 
         // TODO: Add checks for nullable in places where this function is called
-        protected abstract string? GetCiphertextPath(string PlaintextName);
+        protected abstract string? GetCiphertextPath(string plaintextName);
 
         protected void CloseHandle(IDokanFileInfo info)
         {

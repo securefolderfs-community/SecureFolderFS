@@ -1,19 +1,18 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using OwlCore.Storage;
-using SecureFolderFS.Sdk.Enums;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.Services
 {
     public interface IImageService
     {
         /// <summary>
-        /// Gets an image representing the health state of a vault.
+        /// Reads an image file and returns a new instance of <see cref="IImage"/>
         /// </summary>
-        /// <param name="file">The <see cref="SeverityType"/> to get the icon for.</param>
+        /// <param name="file">The <see cref="IFile"/> to read.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the appropriate icon for the health state.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is the image read from file.</returns>
         Task<IImage> ReadImageFileAsync(IFile file, CancellationToken cancellationToken);
     }
 }
