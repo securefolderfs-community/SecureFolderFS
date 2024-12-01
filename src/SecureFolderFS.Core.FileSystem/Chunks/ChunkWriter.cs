@@ -55,6 +55,10 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
             // Get available read-write stream or throw
             var ciphertextStream = _streamsManager.GetReadWriteStream();
             _ = ciphertextStream ?? throw new UnavailableStreamException();
+
+            // Check position bounds
+            if (streamPosition > ciphertextStream.Length)
+                return;
             
             // Write to stream at correct chunk
             ciphertextStream.Position = streamPosition;
