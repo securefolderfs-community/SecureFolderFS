@@ -19,8 +19,9 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         };
 
         /// <inheritdoc/>
-        protected override bool NavigateFrame(Type pageType, object parameter, NavigationTransitionInfo? transitionInfo)
+        protected override bool NavigateFrame(Type pageType, object parameter)
         {
+            NavigationTransitionInfo? transitionInfo = null;
             if (_isFirstTime)
             {
                 _isFirstTime = false;

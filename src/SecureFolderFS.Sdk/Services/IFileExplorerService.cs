@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="filter">The filter to apply when picking files.</param>
         /// <param name="persist">Determines whether to persist access to the picked item or not.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been picked, returns <see cref="ILocatableFile"/>; otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a file has been picked, returns <see cref="IFile"/>; otherwise null.</returns>
         Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace SecureFolderFS.Sdk.Services
         /// </summary>
         /// <param name="persist">Determines whether to persist access to the picked item or not.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a folder has been picked, returns <see cref="ILocatableFolder"/>; otherwise null.</returns>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If successful and a folder has been picked, returns <see cref="IFolder"/>; otherwise null.</returns>
         Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default);
     }
 }
