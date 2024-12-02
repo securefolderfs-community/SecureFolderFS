@@ -101,9 +101,13 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (storable is IFolder)
                 return Document.MimeTypeDir;
 
-            // Get extension without the starting . (dot)
-            var extension = IOPath.GetExtension(storable.Name).Substring(1);
-            return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension) ?? string.Empty;
+            // Get the extension
+            var extension = IOPath.GetExtension(storable.Name);
+            if (string.IsNullOrEmpty(extension))
+                return "application/octet-stream";
+
+            // Remove the starting . (dot)
+            return MimeTypeMap.Singleton?.GetMimeTypeFromExtension(extension.Substring(1)) ?? string.Empty;
         }
     }
 }

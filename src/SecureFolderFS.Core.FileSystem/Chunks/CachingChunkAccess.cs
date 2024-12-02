@@ -11,7 +11,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
     /// <inheritdoc cref="ChunkAccess"/>
     internal sealed class CachingChunkAccess : ChunkAccess
     {
-        private readonly Dictionary<long, ChunkBuffer> _chunkCache;
+        private readonly OrderedDictionary<long, ChunkBuffer> _chunkCache;
 
         /// <inheritdoc/>
         public override bool FlushAvailable
