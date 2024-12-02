@@ -68,6 +68,7 @@
     <PackageReference Include="AathifMahir.Maui.MauiIcons.Cupertino" />
     <PackageReference Include="AathifMahir.Maui.MauiIcons.Material" />
     <PackageReference Include="CommunityToolkit.Maui" />
+    <PackageReference Include="CommunityToolkit.Maui.MediaElement" />
     <PackageReference Include="ContextMenuContainer" />
     <PackageReference Include="IconPacks.Material" />
     <PackageReference Include="Material.Components.Maui" />

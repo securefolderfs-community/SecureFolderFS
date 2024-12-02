@@ -26,13 +26,14 @@ namespace SecureFolderFS.Maui
                 })
 
                 // Plugins
-                .UseMauiCommunityToolkit()          // https://github.com/CommunityToolkit/Maui
-                .UseBottomSheet()                   // https://github.com/the49ltd/The49.Maui.BottomSheet
-                .ConfigureContextMenuContainer()    // https://github.com/anpin/ContextMenuContainer
+                .UseMauiCommunityToolkitMediaElement()  // https://github.com/CommunityToolkit/Maui
+                .UseMauiCommunityToolkit()              // https://github.com/CommunityToolkit/Maui
+                .UseBottomSheet()                       // https://github.com/the49ltd/The49.Maui.BottomSheet
+                .ConfigureContextMenuContainer()        // https://github.com/anpin/ContextMenuContainer
 
 #if ANDROID
-                .UseMaterialMauiIcons()             // https://github.com/AathifMahir/MauiIcons
-                .UseMaterialComponents()            // https://github.com/mdc-maui/mdc-maui
+                .UseMaterialMauiIcons()                 // https://github.com/AathifMahir/MauiIcons
+                .UseMaterialComponents()                // https://github.com/mdc-maui/mdc-maui
 #elif IOS
                 .UseCupertinoMauiIcons()
 #endif

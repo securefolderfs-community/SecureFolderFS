@@ -1,9 +1,9 @@
+using CommunityToolkit.Maui.Views;
 using SecureFolderFS.Maui.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.UI.Utils;
-
 #if IOS
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -62,6 +62,14 @@ namespace SecureFolderFS.Maui.Views.Modals
         /// <inheritdoc/>
         protected override void OnDisappearing()
         {
+            if ((Presentation.Content as ContentView)?.Content is not MediaElement mediaElement)
+                return;
+
+            mediaElement.Stop();
+            mediaElement.Handler?.DisconnectHandler();
+            mediaElement.Dispose();
+            mediaElement.Source = null;
+            
             _modalTcs.TrySetResult(Result.Success);
             base.OnDisappearing();
         }

@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals"
+    xmlns:mt="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
@@ -12,7 +13,14 @@
 
     <local:BaseModalPage.Resources>
         <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
+        <vc:MediaToSourceConverter x:Key="MediaToSourceConverter" />
 
+        <DataTemplate x:Key="VideoTemplate" x:DataType="vm:VideoPreviewerViewModel">
+            <mt:MediaElement
+                ShouldAutoPlay="True"
+                ShouldLoopPlayback="True"
+                Source="{Binding Source, Mode=OneWay, Converter={StaticResource MediaToSourceConverter}}" />
+        </DataTemplate>
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
             <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
         </DataTemplate>
@@ -28,9 +36,12 @@
     </local:BaseModalPage.Resources>
 
     <local:BaseModalPage.ModalContent>
-        <uc:ContentPresentation Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}">
+        <uc:ContentPresentation x:Name="Presentation" Presentation="{Binding ViewModel.PreviewerViewModel, Mode=OneWay}">
             <uc:ContentPresentation.TemplateSelector>
-                <ts:PreviewerTemplateSelector ImageTemplate="{StaticResource ImageTemplate}" TextTemplate="{StaticResource TextTemplate}" />
+                <ts:PreviewerTemplateSelector
+                    ImageTemplate="{StaticResource ImageTemplate}"
+                    TextTemplate="{StaticResource TextTemplate}"
+                    VideoTemplate="{StaticResource VideoTemplate}" />
             </uc:ContentPresentation.TemplateSelector>
         </uc:ContentPresentation>
     </local:BaseModalPage.ModalContent>

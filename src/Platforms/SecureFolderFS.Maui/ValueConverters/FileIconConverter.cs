@@ -2,7 +2,7 @@ using System.Globalization;
 using MauiIcons.Core;
 using MauiIcons.Material;
 using SecureFolderFS.Sdk.ViewModels.Views.Browser;
-using IImage = Microsoft.Maui.IImage;
+using IImage = SecureFolderFS.Shared.ComponentModel.IImage;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {

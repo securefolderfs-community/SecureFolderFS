@@ -13,12 +13,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
     internal sealed class AndroidFile : AndroidStorable, IChildFile
     {
         /// <inheritdoc/>
+        public override string Name { get; }
+
+        /// <inheritdoc/>
         protected override DocumentFile? Document { get; }
 
         public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
             : base(uri, activity, parent, permissionRoot, bookmarkId)
         {
             Document = DocumentFile.FromSingleUri(activity, uri);
+            Name = Document?.Name ?? base.Name;
         }
 
         /// <inheritdoc/>

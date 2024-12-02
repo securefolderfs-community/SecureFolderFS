@@ -12,30 +12,26 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Previewers
 {
     [Inject<IMediaService>]
     [Bindable(true)]
-    public sealed partial class ImagePreviewerViewModel : BasePreviewerViewModel<IImage>, IDisposable
+    public sealed partial class VideoPreviewerViewModel : BasePreviewerViewModel<IDisposable>, IDisposable
     {
-        private readonly IFile? _file;
+        private readonly IFile _file;
         
-        public ImagePreviewerViewModel(IFile file)
+        public VideoPreviewerViewModel(IFile file)
         {
-            ServiceProvider = DI.Default;
             _file = file;
-            // We do not want to set the Title property for an image
-        }
-
-        public ImagePreviewerViewModel(IImage image)
-        {
             ServiceProvider = DI.Default;
-            Source = image;
         }
-
+        
         /// <inheritdoc/>
         public override async Task InitAsync(CancellationToken cancellationToken = default)
         {
-            if (_file is not null)
-                Source = await MediaService.ReadImageFileAsync(_file, cancellationToken);
+            var streamedVideo = await MediaService.StreamVideoAsync(_file, cancellationToken);
+            if (streamedVideo is IAsyncInitialize asyncInitialize)
+                await asyncInitialize.InitAsync(cancellationToken);
+            
+            Source = streamedVideo;
         }
-
+        
         /// <inheritdoc/>
         public void Dispose()
         {

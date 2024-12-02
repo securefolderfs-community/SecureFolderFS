@@ -16,6 +16,7 @@ namespace SecureFolderFS.Maui.TemplateSelectors
             return item switch
             {
                 ImagePreviewerViewModel => ImageTemplate,
+                VideoPreviewerViewModel => VideoTemplate,
                 TextPreviewerViewModel => TextTemplate,
                 _ => null
             };

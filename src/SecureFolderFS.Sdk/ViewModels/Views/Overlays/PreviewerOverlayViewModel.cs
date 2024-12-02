@@ -26,6 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             var previewer = (IAsyncInitialize?)(classification.TypeHint switch
             {
                 TypeHint.Image => new ImagePreviewerViewModel(file),
+                TypeHint.Media => new VideoPreviewerViewModel(file),
                 TypeHint.PlainText => new TextPreviewerViewModel(file),
                 _ => null
             });
