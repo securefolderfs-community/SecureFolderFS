@@ -1,20 +1,22 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using OwlCore.Storage;
 using OwlCore.Storage.Memory;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Tests.ServiceImplementation;
+using SecureFolderFS.UI;
 using SecureFolderFS.UI.ServiceImplementation;
 
 namespace SecureFolderFS.Tests
 {
-    [TestClass]
+    [SetUpFixture]
     public class GlobalSetup
     {
-        [AssemblyInitialize]
-        public static void GlobalInitialize(TestContext testContext)
+        [OneTimeSetUp]
+        public static void GlobalInitialize()
         {
-            var settingsFolderPath = Path.Combine(Path.DirectorySeparatorChar.ToString(), UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
+            var settingsFolderPath = Path.Combine(Path.DirectorySeparatorChar.ToString(), Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new MemoryFolder(settingsFolderPath, Path.GetFileName(settingsFolderPath));
 
             var serviceProvider = BuildServiceProvider(settingsFolder);

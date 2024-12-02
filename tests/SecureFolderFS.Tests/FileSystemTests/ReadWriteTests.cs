@@ -1,16 +1,18 @@
-﻿using OwlCore.Storage;
+﻿using FluentAssertions;
+using NUnit.Framework;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Tests.FileSystemTests
 {
-    [TestClass]
+    [TestFixture]
     public class ReadWriteTests : BaseFileSystemTests
     {
         private IVFSRoot? _storageRoot;
 
-        [ClassInitialize]
+        [SetUp]
         public async Task Initialize()
         {
             var vaultFileSystemService = DI.Service<IVaultFileSystemService>();
@@ -19,10 +21,10 @@ namespace SecureFolderFS.Tests.FileSystemTests
             _storageRoot = await MountVault(localFileSystem);
         }
 
-        [TestMethod]
+        [Test]
         public async Task Write_SmallFile_Read_SameContent_NoThrow()
         {
-            Assert.IsNotNull(_storageRoot);
+            ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
             const string dataString = "test";
@@ -38,16 +40,16 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var compareString = await file.ReadTextAsync();
 
             // Assert
-            Assert.IsTrue(dataString.SequenceEqual(compareString));
+            dataString.SequenceEqual(compareString).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Test]
         public async Task Write_LargeFile_Read_SameContent_NoThrow()
         {
-            Assert.IsNotNull(_storageRoot);
+            ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
-            var data = new byte[50_000];
+            var data = new byte[100_000];
             Random.Shared.NextBytes(data);
             if (_storageRoot.Inner is not IModifiableFolder modifiableFolder)
             {
@@ -61,7 +63,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             var compareData = await file.ReadBytesAsync(default);
 
             // Assert
-            Assert.IsTrue(data.SequenceEqual(compareData));
+            data.SequenceEqual(compareData).Should().BeTrue();
         }
     }
 }
