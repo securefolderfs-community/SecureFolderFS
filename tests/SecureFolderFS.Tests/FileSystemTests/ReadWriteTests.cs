@@ -49,7 +49,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
             // Arrange
-            var data = new byte[100_000];
+            var data = new byte[300_000];
             Random.Shared.NextBytes(data);
             if (_storageRoot.Inner is not IModifiableFolder modifiableFolder)
             {

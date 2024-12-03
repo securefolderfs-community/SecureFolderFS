@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using SecureFolderFS.Shared.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem.Streams
 {
