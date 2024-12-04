@@ -15,9 +15,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         private readonly IResult _result;
         private readonly IStorable _storable;
 
-        [ObservableProperty] private SeverityType _Severity;
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private string? _Message;
+        [ObservableProperty] private SeverityType _Severity;
 
         public HealthIssueViewModel(IHealthResult healthResult)
             : this(healthResult, healthResult.Severity, healthResult.Value!)
