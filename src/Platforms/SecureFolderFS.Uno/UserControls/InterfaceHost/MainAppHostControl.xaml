@@ -178,10 +178,7 @@
                     AutomationProperties.Name="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
                     ToolTipService.ToolTip="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}">
                     <NavigationViewItem.Icon>
-                        <IconSourceElement
-                            Width="16"
-                            Height="16"
-                            IconSource="{x:Bind CustomIcon, Mode=OneWay, Converter={StaticResource IconSourceConverter}, ConverterParameter='&#xF540;'}" />
+                        <IconSourceElement IconSource="{x:Bind CustomIcon, Mode=OneWay, Converter={StaticResource IconSourceConverter}, ConverterParameter='&#xF540;'}" />
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
                         <StackPanel>

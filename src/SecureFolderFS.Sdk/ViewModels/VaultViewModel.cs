@@ -10,7 +10,9 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Helpers;
 
 namespace SecureFolderFS.Sdk.ViewModels
 {
@@ -36,11 +38,14 @@ namespace SecureFolderFS.Sdk.ViewModels
             // Get the file system
             var fileSystem = await VaultFileSystemService.GetBestFileSystemAsync();
 
+            // Format volume name
+            var volumeName = FormattingHelpers.SanitizeVolumeName(VaultModel.VaultName, VaultModel.Folder.Name);
+
             // Configure options
             var options = new Dictionary<string, object>()
             {
                 { nameof(FileSystemOptions.IsReadOnly), isReadOnly },
-                { nameof(FileSystemOptions.VolumeName), VaultModel.VaultName } // TODO: Sanitize name
+                { nameof(FileSystemOptions.VolumeName), volumeName }
             };
 
             // Create the storage layer
