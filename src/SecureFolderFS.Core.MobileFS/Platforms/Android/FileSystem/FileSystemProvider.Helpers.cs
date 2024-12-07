@@ -2,6 +2,8 @@
 using Android.Provider;
 using Android.Webkit;
 using OwlCore.Storage;
+using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.StorageProperties;
 using static Android.Provider.DocumentsContract;
 using IOPath = System.IO.Path;
 
@@ -25,32 +27,65 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             return true;
         }
         
-        private bool AddDocument(MatrixCursor matrix, IStorable storable, string? documentId)
+        private async Task<bool> AddDocumentAsync(MatrixCursor matrix, IStorable storable, string? documentId)
         {
             documentId ??= GetDocumentIdForStorable(storable, null);
             var row = matrix.NewRow();
             if (row is null)
                 return false;
 
-            // TODO(saf): Implement columns
-            row.Add(Document.ColumnDocumentId, documentId);
-            if (string.IsNullOrEmpty(storable.Name))
-            {
-                var safRoot = _rootCollection?.GetSafRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
-                row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.Options.VolumeName ?? storable.Name);
-            }
-            else
-                row.Add(Document.ColumnDisplayName, storable.Name);
-            
-            row.Add(Document.ColumnSize, 6);
-            row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
-
-            if (storable is IFile)
-                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.SupportsDelete | DocumentContractFlags.SupportsWrite));
-            else
-                row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.DirSupportsCreate | DocumentContractFlags.DirPrefersGrid));
+            AddDocumentId();
+            AddDisplayName();
+            await AddSizeAsync();
+            AddMimeType();
+            AddFlags();
             
             return true;
+
+            async Task AddSizeAsync()
+            {
+                if (storable is not IStorableProperties storableProperties)
+                {
+                    row.Add(Document.ColumnSize, 0);
+                    return;
+                }
+
+                var basicProperties = await storableProperties.TryGetPropertiesAsync();
+                if (basicProperties is not ISizeProperties sizeProperties)
+                {
+                    row.Add(Document.ColumnSize, 0);
+                    return;
+                }
+
+                var sizeProperty = await sizeProperties.GetSizeAsync();
+                if (sizeProperty is null)
+                {
+                    row.Add(Document.ColumnSize, 0);
+                    return;
+                }
+
+                row.Add(Document.ColumnSize, sizeProperty.Value);
+            }
+            void AddFlags()
+            {
+                if (storable is IFile)
+                
+                    row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.SupportsDelete | DocumentContractFlags.SupportsWrite));
+                else
+                    row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.DirSupportsCreate | DocumentContractFlags.DirPrefersGrid));
+            }
+            void AddMimeType() => row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
+            void AddDocumentId() => row.Add(Document.ColumnDocumentId, documentId);
+            void AddDisplayName()
+            {
+                if (string.IsNullOrEmpty(storable.Name))
+                {
+                    var safRoot = _rootCollection?.GetSafRootForRootId(documentId?.Split(':')[0] ?? string.Empty);
+                    row.Add(Document.ColumnDisplayName, safRoot?.StorageRoot.Options.VolumeName ?? storable.Name);
+                }
+                else
+                    row.Add(Document.ColumnDisplayName, storable.Name);
+            }
         }
 
         private string? GetDocumentIdForStorable(IStorable storable, string? rootId)

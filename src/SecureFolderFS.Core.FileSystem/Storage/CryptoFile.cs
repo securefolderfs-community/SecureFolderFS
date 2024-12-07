@@ -1,8 +1,11 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Exceptions;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Exceptions;
+using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
@@ -22,6 +25,18 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 
             var stream = await Inner.OpenStreamAsync(access, cancellationToken);
             return CreatePlaintextStream(stream);
+        }
+        
+        /// <inheritdoc/>
+        public override async Task<IBasicProperties> GetPropertiesAsync()
+        {
+            if (Inner is not IStorableProperties storableProperties)
+                throw new NotSupportedException($"Properties on {nameof(CryptoFile)}.{nameof(Inner)} are not supported.");
+
+            var innerProperties = await storableProperties.GetPropertiesAsync();
+            properties ??= new CryptoFileProperties(specifics, innerProperties);
+            
+            return properties;
         }
 
         /// <summary>

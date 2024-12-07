@@ -5,15 +5,17 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     /// <inheritdoc cref="IStorable"/>
-    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild
+    public abstract class CryptoStorable<TCapability> : IWrapper<TCapability>, IStorableChild, IStorableProperties
         where TCapability : IStorable
     {
         protected readonly CryptoFolder? parent;
         protected readonly FileSystemSpecifics specifics;
+        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public TCapability Inner { get; }
@@ -64,6 +66,9 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 
             return (IFolder?)Wrap(ciphertextParent, plaintextName);
         }
+
+        /// <inheritdoc/>
+        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         protected virtual IWrapper<IFile> Wrap(IFile file, params object[] objects)
         {

@@ -3,6 +3,8 @@ using Android.Provider;
 using Android.Webkit;
 using AndroidX.DocumentFile.Provider;
 using OwlCore.Storage;
+using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 using Activity = Android.App.Activity;
 using AndroidUri = Android.Net.Uri;
 
@@ -146,6 +148,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 throw new FileNotFoundException($"No storage item with the name '{name}' could be found.");
 
             return target;
+        }
+        
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            if (Document is null)
+                return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
+
+            properties ??= new AndroidFileProperties(Document);
+            return Task.FromResult(properties);
         }
     }
 }

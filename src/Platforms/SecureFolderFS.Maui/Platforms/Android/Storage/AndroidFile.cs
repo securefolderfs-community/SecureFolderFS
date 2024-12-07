@@ -5,6 +5,8 @@ using Android.Runtime;
 using AndroidX.DocumentFile.Provider;
 using OwlCore.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.Streams;
+using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
@@ -57,6 +59,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 return Task.FromException<Stream>(new UnauthorizedAccessException($"Could not open a stream to: '{Id}'."));
 
             return Task.FromResult(stream);
+        }
+        
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            if (Document is null)
+                return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
+
+            properties ??= new AndroidFileProperties(Document);
+            return Task.FromResult(properties);
         }
 
         private static bool IsVirtualFile(Context context, AndroidUri uri)

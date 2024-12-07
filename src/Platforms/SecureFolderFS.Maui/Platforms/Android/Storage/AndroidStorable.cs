@@ -1,21 +1,23 @@
+using System.Diagnostics;
 using Android.Content;
-using Android.Provider;
 using AndroidX.DocumentFile.Provider;
-using CommunityToolkit.Maui.Core.Extensions;
 using OwlCore.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage;
+using SecureFolderFS.Storage.StorageProperties;
+using SecureFolderFS.UI;
 using Activity = Android.App.Activity;
 using AndroidUri = Android.Net.Uri;
 
 namespace SecureFolderFS.Maui.Platforms.Android.Storage
 {
     /// <inheritdoc cref="IStorableChild"/>
-    internal abstract class AndroidStorable : IStorableChild, IBookmark, IWrapper<AndroidUri>
+    internal abstract class AndroidStorable : IStorableChild, IStorableProperties, IBookmark, IWrapper<AndroidUri>
     {
         protected readonly Activity activity;
         protected readonly AndroidFolder? parent;
         protected readonly AndroidUri permissionRoot;
+        protected IBasicProperties? properties;
 
         /// <inheritdoc/>
         public AndroidUri Inner { get; }
@@ -60,7 +62,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 activity.ContentResolver?.TakePersistableUriPermission(Inner,
                     ActivityFlags.GrantWriteUriPermission | ActivityFlags.GrantReadUriPermission);
 
-                BookmarkId = $"{UI.Constants.STORABLE_BOOKMARK_RID}{Id}";
+                BookmarkId = $"{Constants.STORABLE_BOOKMARK_RID}{Id}";
             }
             catch (Exception ex)
             {
@@ -87,6 +89,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
 
             return Task.CompletedTask;
         }
+        
+        /// <inheritdoc/>
+        public abstract Task<IBasicProperties> GetPropertiesAsync();
 
         protected static string? GetColumnValue(Context context, AndroidUri contentUri, string column, string? selection = null, string[]? selectionArgs = null)
         {
@@ -104,7 +109,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
             catch (Exception ex)
             {
                 _ = ex;
-                System.Diagnostics.Debugger.Break();
+                Debugger.Break();
             }
 
             return null;

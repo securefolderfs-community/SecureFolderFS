@@ -1,11 +1,13 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
@@ -87,7 +89,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
                 throw new ArgumentException("The created folder is not modifiable.");
 
             // Get the DirectoryID file
-            var dirIdFile = await createdModifiableFolder.CreateFileAsync(FileSystem.Constants.Names.DIRECTORY_ID_FILENAME, false, cancellationToken);
+            var dirIdFile = await createdModifiableFolder.CreateFileAsync(Constants.Names.DIRECTORY_ID_FILENAME, false, cancellationToken);
             var directoryId = Guid.NewGuid().ToByteArray();
 
             // Initialize directory with DirectoryID
@@ -110,6 +112,18 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             var file = await modifiableFolder.CreateFileAsync(encryptedName, overwrite, cancellationToken);
 
             return (IChildFile)Wrap(file, name);
+        }
+        
+        /// <inheritdoc/>
+        public override async Task<IBasicProperties> GetPropertiesAsync()
+        {
+            if (Inner is not IStorableProperties storableProperties)
+                throw new NotSupportedException($"Properties on {nameof(CryptoFolder)}.{nameof(Inner)} are not supported.");
+
+            var innerProperties = await storableProperties.GetPropertiesAsync();
+            properties ??= new CryptoFileProperties(specifics, innerProperties);
+            
+            return properties;
         }
     }
 }

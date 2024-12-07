@@ -129,7 +129,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (storable is null)
                 return matrix;
 
-            AddDocument(matrix, storable, documentId);
+            AddDocumentAsync(matrix, storable, documentId).ConfigureAwait(false).GetAwaiter().GetResult();
             return matrix;
         }
 
@@ -148,7 +148,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             var items = folder.GetItemsAsync().ToArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             foreach (var item in items)
             {
-                AddDocument(matrix, item, null);
+                AddDocumentAsync(matrix, item, null).ConfigureAwait(false).GetAwaiter().GetResult();
             }
 
             return matrix;
