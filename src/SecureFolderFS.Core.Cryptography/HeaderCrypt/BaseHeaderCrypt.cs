@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         public abstract int HeaderCiphertextSize { get; }
 
         /// <inheritdoc/>
-        public abstract int HeaderCleartextSize { get; }
+        public abstract int HeaderPlaintextSize { get; }
 
         protected BaseHeaderCrypt(SecretKey encKey, SecretKey macKey)
         {
@@ -25,13 +25,13 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         }
 
         /// <inheritdoc/>
-        public abstract void CreateHeader(Span<byte> cleartextHeader);
+        public abstract void CreateHeader(Span<byte> plaintextHeader);
 
         /// <inheritdoc/>
-        public abstract void EncryptHeader(ReadOnlySpan<byte> cleartextHeader, Span<byte> ciphertextHeader);
+        public abstract void EncryptHeader(ReadOnlySpan<byte> plaintextHeader, Span<byte> ciphertextHeader);
 
         /// <inheritdoc/>
-        public abstract bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> cleartextHeader);
+        public abstract bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> plaintextHeader);
 
         /// <inheritdoc/>
         public virtual void Dispose()

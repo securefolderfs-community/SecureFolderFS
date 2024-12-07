@@ -45,12 +45,6 @@ namespace SecureFolderFS.Core.Routines.Operational
             return new RecoverRoutine(VaultReader);
         }
 
-        public IStorageRoutine BuildStorage()
-        {
-            CheckVaultValidation();
-            return new StorageRoutine();
-        }
-
         public IModifyCredentialsRoutine ModifyCredentials()
         {
             CheckVaultValidation();

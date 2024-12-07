@@ -12,7 +12,7 @@
     Title="{x:Bind ViewModel.Title, Mode=OneWay}"
     HorizontalAlignment="Stretch"
     HorizontalContentAlignment="Stretch"
-    CloseButtonText="{l:ResourceString Name=Close}"
+    CloseButtonText="{l:ResourceString Rid=Close}"
     Closing="ContentDialog_Closing"
     DefaultButton="Primary"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"

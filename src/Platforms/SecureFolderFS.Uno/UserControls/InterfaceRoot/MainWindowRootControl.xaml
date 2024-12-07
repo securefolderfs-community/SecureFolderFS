@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hni="using:H.NotifyIcon"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:not_win="http://uno.ui/not_win"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
@@ -44,5 +45,43 @@
                 <ts:InterfaceHostTemplateSelector MainAppHostDataTemplate="{StaticResource MainAppHostDataTemplate}" NoVaultsAppHostDataTemplate="{StaticResource NoVaultsAppHostDataTemplate}" />
             </uc3:RootNavigationControl.TemplateSelector>
         </uc3:RootNavigationControl>
+
+        <!--  Debugging Button  -->
+        <Button
+            x:Name="DebugButton"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Width="32"
+            Height="32"
+            Padding="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            x:FieldModifier="public"
+            x:Load="{x:Bind IsDebugging, Mode=OneWay}"
+            Click="DebugButton_Click">
+            <FontIcon Glyph="&#xEBE8;" />
+        </Button>
+
+        <!--  Taskbar Icon  -->
+        <win:Border Grid.Row="0">
+            <hni:TaskbarIcon
+                x:Name="TaskbarIcon"
+                ContextMenuMode="SecondWindow"
+                DoubleClickCommand="{x:Bind TaskbarIconDoubleClickCommand, Mode=OneWay}"
+                IconSource="ms-appx:///Assets/Icons/app_icon.ico"
+                MenuActivation="LeftOrRightClick"
+                PopupActivation="DoubleClick"
+                ToolTipText="SecureFolderFS">
+                <hni:TaskbarIcon.ContextFlyout>
+                    <MenuFlyout Placement="Top">
+                        <MenuFlyoutItem Click="CloseApp_Click" Text="Exit">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8BB;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </hni:TaskbarIcon.ContextFlyout>
+            </hni:TaskbarIcon>
+        </win:Border>
     </Grid>
 </UserControl>

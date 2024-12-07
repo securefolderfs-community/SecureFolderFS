@@ -20,7 +20,7 @@ using System.Windows.Input;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IVaultService>, Inject<IVaultManagerService>]
+    [Inject<IVaultService>, Inject<IVaultManagerService>, Inject<IVaultCredentialsService>]
     [Bindable(true)]
     public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
@@ -60,11 +60,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             //      2b. Offer to unlock (from 'provide keystore' view) using recovery key, if possible
             //
 
+            // Dispose previous state, if any
+            _keyChain.Dispose();
+            _loginSequence?.Dispose();
+
             var validationResult = await VaultService.VaultValidator.TryValidateAsync(_vaultModel.Folder, cancellationToken);
             if (validationResult.Successful)
             {
                 // Get the authentication method enumerator for this vault
-                _loginSequence = new(await VaultService.GetLoginAsync(_vaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken));
+                _loginSequence = new(await VaultCredentialsService.GetLoginAsync(_vaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken));
                 IsLoginSequence = _loginSequence.Count > 1;
 
                 // Set up the first authentication method
@@ -181,9 +185,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
             else if (e is MigrationCompletedEventArgs)
             {
-                _keyChain.Dispose();
-                _loginSequence?.Dispose();
-
                 await InitAsync();
             }
         }

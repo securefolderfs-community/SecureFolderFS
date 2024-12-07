@@ -9,7 +9,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
         protected readonly RandomNumberGenerator secureRandom;
 
         /// <inheritdoc/>
-        public abstract int ChunkCleartextSize { get; }
+        public abstract int ChunkPlaintextSize { get; }
 
         /// <inheritdoc/>
         public abstract int ChunkCiphertextSize { get; }
@@ -19,38 +19,41 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
         protected BaseContentCrypt()
         {
-            this.secureRandom = RandomNumberGenerator.Create();
+            secureRandom = RandomNumberGenerator.Create();
         }
 
         /// <inheritdoc/>
-        public abstract void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk);
+        public abstract void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk);
 
         /// <inheritdoc/>
-        public abstract bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> cleartextChunk);
+        public abstract bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> plaintextChunk);
 
         /// <inheritdoc/>
-        public virtual long CalculateCiphertextSize(long cleartextSize)
+        public virtual long CalculateCiphertextSize(long plaintextSize)
         {
-            var overheadPerChunk = ChunkCiphertextSize - ChunkCleartextSize;
-            var fullChunksCount = cleartextSize / ChunkCleartextSize;
-            var additionalCleartextBytes = cleartextSize % ChunkCleartextSize;
-            var additionalCiphertextBytes = (additionalCleartextBytes == 0L) ? 0L : additionalCleartextBytes + overheadPerChunk;
+            var overheadPerChunk = ChunkCiphertextSize - ChunkPlaintextSize;
+            var fullChunksCount = plaintextSize / ChunkPlaintextSize;
+            var additionalPlaintextBytes = plaintextSize % ChunkPlaintextSize;
+            var additionalCiphertextBytes = (additionalPlaintextBytes == 0L) ? 0L : additionalPlaintextBytes + overheadPerChunk;
 
             return ChunkCiphertextSize * fullChunksCount + additionalCiphertextBytes;
         }
 
         /// <inheritdoc/>
-        public virtual long CalculateCleartextSize(long ciphertextSize)
+        public virtual long CalculatePlaintextSize(long ciphertextSize)
         {
-            var chunkOverhead = ChunkCiphertextSize - ChunkCleartextSize;
+            if (ciphertextSize == 0L)
+                return 0L;
+
+            var chunkOverhead = ChunkCiphertextSize - ChunkPlaintextSize;
             var chunksCount = ciphertextSize / ChunkCiphertextSize;
             var additionalCiphertextBytes = ciphertextSize % ChunkCiphertextSize;
 
             if (additionalCiphertextBytes > 0 && additionalCiphertextBytes <= chunkOverhead)
                 return -1L;
 
-            var additionalCleartextBytes = (additionalCiphertextBytes == 0L) ? 0L : additionalCiphertextBytes - chunkOverhead;
-            var final = ChunkCleartextSize * chunksCount + additionalCleartextBytes;
+            var additionalPlaintextBytes = (additionalCiphertextBytes == 0L) ? 0L : additionalCiphertextBytes - chunkOverhead;
+            var final = ChunkPlaintextSize * chunksCount + additionalPlaintextBytes;
 
             return final >= 0L ? final : -1L;
         }

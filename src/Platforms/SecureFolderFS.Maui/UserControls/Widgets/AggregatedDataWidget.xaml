@@ -1,0 +1,33 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.Widgets.AggregatedDataWidget"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
+    x:Name="RootControl">
+
+    <Grid
+        x:DataType="local:AggregatedDataWidget"
+        BindingContext="{x:Reference RootControl}"
+        ColumnSpacing="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <VerticalStackLayout Grid.Column="0">
+            <Label Opacity="0.6" Text="{l:ResourceString Rid=TotalRead}" />
+            <Label
+                FontAttributes="Bold"
+                FontSize="22"
+                Text="{Binding TotalRead, Mode=OneWay}" />
+        </VerticalStackLayout>
+        <VerticalStackLayout Grid.Column="1">
+            <Label Opacity="0.6" Text="{l:ResourceString Rid=TotalWrite}" />
+            <Label
+                FontAttributes="Bold"
+                FontSize="22"
+                Text="{Binding TotalWrite, Mode=OneWay}" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentView>

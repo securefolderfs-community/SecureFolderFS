@@ -32,23 +32,25 @@
         <!--  Banner  -->
         <uc:BannerControl Grid.Row="0">
             <uc:BannerControl.LeftSide>
-                <win:Image
-                    Width="230"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/AppTitle.svg" />
-                <not_win:Image
-                    Width="230"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Source="/Assets/AppAssets/AppTitle.png" />
+                <Grid>
+                    <win:Image
+                        Width="230"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Source="ms-appx://SecureFolderFS.UI/Assets/AppAssets/app_title.svg" />
+                    <not_win:Image
+                        Width="192"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Source="/Assets/AppAssets/app_title.png" />
+                </Grid>
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
                 <StackPanel
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <Button AutomationProperties.Name="{l:ResourceString Name=Version}">
+                    <Button AutomationProperties.Name="{l:ResourceString Rid=Version}">
                         <Button.Flyout>
                             <Flyout Placement="Bottom">
                                 <Grid
@@ -68,13 +70,13 @@
                                     <TextBlock
                                         Grid.Row="0"
                                         FontWeight="SemiBold"
-                                        Text="{l:ResourceString Name=CopyVersion}" />
+                                        Text="{l:ResourceString Rid=CopyVersion}" />
 
                                     <!--  Description  -->
                                     <TextBlock
                                         Grid.Row="1"
                                         Opacity="0.8"
-                                        Text="{l:ResourceString Name=CopyVersionMessage}"
+                                        Text="{l:ResourceString Rid=CopyVersionMessage}"
                                         TextWrapping="WrapWholeWords" />
 
                                     <!--  Options  -->
@@ -89,32 +91,32 @@
                                         <Button
                                             Grid.Row="0"
                                             HorizontalAlignment="Stretch"
-                                            AutomationProperties.Name="{l:ResourceString Name=CopyAppVersion}"
+                                            AutomationProperties.Name="{l:ResourceString Rid=CopyAppVersion}"
                                             Click="CopyAppVersion_Click">
                                             <Grid x:Name="CopyAppVersionGrid">
-                                                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Name=CopyAppVersion}" />
+                                                <TextBlock HorizontalAlignment="Center" Text="{l:ResourceString Rid=CopyAppVersion}" />
                                                 <StackPanel
                                                     Orientation="Horizontal"
                                                     Spacing="4"
                                                     Visibility="Collapsed">
                                                     <FontIcon Glyph="&#xE73E;" />
-                                                    <TextBlock Text="{l:ResourceString Name=Copied}" />
+                                                    <TextBlock Text="{l:ResourceString Rid=Copied}" />
                                                 </StackPanel>
                                             </Grid>
                                         </Button>
                                         <Button
                                             Grid.Row="1"
                                             HorizontalAlignment="Stretch"
-                                            AutomationProperties.Name="{l:ResourceString Name=CopySystemVersion}"
+                                            AutomationProperties.Name="{l:ResourceString Rid=CopySystemVersion}"
                                             Click="CopySystemVersion_Click">
                                             <Grid x:Name="CopySystemVersionGrid">
-                                                <TextBlock Text="{l:ResourceString Name=CopySystemVersion}" />
+                                                <TextBlock Text="{l:ResourceString Rid=CopySystemVersion}" />
                                                 <StackPanel
                                                     Orientation="Horizontal"
                                                     Spacing="4"
                                                     Visibility="Collapsed">
                                                     <FontIcon Glyph="&#xE73E;" />
-                                                    <TextBlock Text="{l:ResourceString Name=Copied}" />
+                                                    <TextBlock Text="{l:ResourceString Rid=Copied}" />
                                                 </StackPanel>
                                             </Grid>
                                         </Button>
@@ -128,7 +130,7 @@
                                 FontSize="14"
                                 Glyph="&#xE946;" />
                             <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                <TextBlock FontWeight="SemiBold" Text="{l:ResourceString Name=Version}" />
+                                <TextBlock FontWeight="SemiBold" Text="{l:ResourceString Rid=Version}" />
                                 <TextBlock
                                     FontSize="12"
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
@@ -147,7 +149,7 @@
                                 <TextBlock
                                     FontSize="12"
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                    Text="{l:ResourceString Name=ViewRepository}" />
+                                    Text="{l:ResourceString Rid=ViewRepository}" />
                             </StackPanel>
                         </StackPanel>
                     </Button>
@@ -157,9 +159,9 @@
 
         <StackPanel Grid.Row="1" Spacing="4">
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=Social}"
+                Title="{l:ResourceString Rid=Social}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=SocialDescription}">
+                Description="{l:ResourceString Rid=SocialDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE8BD;" />
                 </ucab:ActionBlockControl.Icon>
@@ -170,10 +172,10 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=PrivacyPolicy}"
+                Title="{l:ResourceString Rid=PrivacyPolicy}"
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.OpenPrivacyPolicyCommand, Mode=OneWay}"
-                Description="{l:ResourceString Name=PrivacyPolicyDescription}">
+                Description="{l:ResourceString Rid=PrivacyPolicyDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xEA18;" />
                 </ucab:ActionBlockControl.Icon>
@@ -182,10 +184,10 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=Changelog}"
+                Title="{l:ResourceString Rid=Changelog}"
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.OpenChangelogCommand, Mode=OneWay}"
-                Description="{l:ResourceString Name=ChangelogDescription}">
+                Description="{l:ResourceString Rid=ChangelogDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE8FD;" />
                 </ucab:ActionBlockControl.Icon>
@@ -194,10 +196,10 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=OpenLogLocation}"
+                Title="{l:ResourceString Rid=OpenLogLocation}"
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.OpenLogLocationCommand, Mode=OneWay}"
-                Description="{l:ResourceString Name=OpenLogLocationDescription}">
+                Description="{l:ResourceString Rid=OpenLogLocationDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE838;" />
                 </ucab:ActionBlockControl.Icon>
@@ -206,10 +208,10 @@
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=ThirdPartyLicenses}"
+                Title="{l:ResourceString Rid=ThirdPartyLicenses}"
                 BlockMode="Clickable"
                 ClickCommand="{x:Bind ViewModel.OpenLicensesCommand, Mode=OneWay}"
-                Description="{l:ResourceString Name=ThirdPartyLicensesDescription}">
+                Description="{l:ResourceString Rid=ThirdPartyLicensesDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF000;" />
                 </ucab:ActionBlockControl.Icon>

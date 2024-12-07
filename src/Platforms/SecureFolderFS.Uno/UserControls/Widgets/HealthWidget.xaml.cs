@@ -1,8 +1,7 @@
+using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SecureFolderFS.Sdk.Enums;
-using System;
-using System.Windows.Input;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -16,21 +15,29 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
             InitializeComponent();
         }
 
-        public VaultHealthState VaultHealthState
+        public SeverityType Severity
         {
-            get => (VaultHealthState)GetValue(VaultHealthStateProperty);
-            set => SetValue(VaultHealthStateProperty, value);
+            get => (SeverityType)GetValue(SeverityProperty);
+            set => SetValue(SeverityProperty, value);
         }
-        public static readonly DependencyProperty VaultHealthStateProperty =
-            DependencyProperty.Register(nameof(VaultHealthState), typeof(VaultHealthState), typeof(HealthWidget), new PropertyMetadata(defaultValue: null));
+        public static readonly DependencyProperty SeverityProperty =
+            DependencyProperty.Register(nameof(Severity), typeof(SeverityType), typeof(HealthWidget), new PropertyMetadata(SeverityType.Default));
 
-        public string HealthLastCheckedText
+        public string? StatusTitle
         {
-            get => (string)GetValue(HealthLastCheckedTextProperty);
-            set => SetValue(HealthLastCheckedTextProperty, value);
+            get => (string?)GetValue(StatusTitleProperty);
+            set => SetValue(StatusTitleProperty, value);
         }
-        public static readonly DependencyProperty HealthLastCheckedTextProperty =
-            DependencyProperty.Register(nameof(HealthLastCheckedText), typeof(string), typeof(HealthWidget), new PropertyMetadata(null));
+        public static readonly DependencyProperty StatusTitleProperty =
+            DependencyProperty.Register(nameof(StatusTitle), typeof(string), typeof(HealthWidget), new PropertyMetadata(null));
+
+        public string? LastCheckedText
+        {
+            get => (string?)GetValue(LastCheckedTextProperty);
+            set => SetValue(LastCheckedTextProperty, value);
+        }
+        public static readonly DependencyProperty LastCheckedTextProperty =
+            DependencyProperty.Register(nameof(LastCheckedText), typeof(string), typeof(HealthWidget), new PropertyMetadata(null));
 
         public ICommand? StartScanningCommand
         {
@@ -47,5 +54,29 @@ namespace SecureFolderFS.Uno.UserControls.Widgets
         }
         public static readonly DependencyProperty OpenVaultHealthCommandProperty =
             DependencyProperty.Register(nameof(OpenVaultHealthCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(defaultValue: null));
+
+        public ICommand? CancelCommand
+        {
+            get => (ICommand?)GetValue(CancelCommandProperty);
+            set => SetValue(CancelCommandProperty, value);
+        }
+        public static readonly DependencyProperty CancelCommandProperty =
+            DependencyProperty.Register(nameof(CancelCommand), typeof(ICommand), typeof(HealthWidget), new PropertyMetadata(null));
+
+        public bool IsProgressing
+        {
+            get => (bool)GetValue(IsProgressingProperty);
+            set => SetValue(IsProgressingProperty, value);
+        }
+        public static readonly DependencyProperty IsProgressingProperty =
+            DependencyProperty.Register(nameof(IsProgressing), typeof(bool), typeof(HealthWidget), new PropertyMetadata(false));
+
+        public double CurrentProgress
+        {
+            get => (double)GetValue(CurrentProgressProperty);
+            set => SetValue(CurrentProgressProperty, value);
+        }
+        public static readonly DependencyProperty CurrentProgressProperty =
+            DependencyProperty.Register(nameof(CurrentProgress), typeof(double), typeof(HealthWidget), new PropertyMetadata(0d));
     }
 }

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
 {
-    [Inject<IVaultManagerService>, Inject<IVaultService>]
+    [Inject<IVaultManagerService>, Inject<IVaultService>, Inject<IVaultCredentialsService>]
     [Bindable(true)]
     public sealed partial class CredentialsResetViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 return;
 
             AuthenticationOptions.Clear();
-            await foreach (var item in VaultService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken))
+            await foreach (var item in VaultCredentialsService.GetCreationAsync(_vaultFolder, vaultOptions.VaultId, cancellationToken))
                 AuthenticationOptions.Add(item);
 
             RegisterViewModel.CurrentViewModel = AuthenticationOptions.FirstOrDefault();
@@ -71,7 +71,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 Version = configuredOptions.Version
             };
 
-            await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, _unlockContract, key, newOptions, cancellationToken);
+            await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, _unlockContract, key, newOptions, cancellationToken);
         }
 
         private void RegisterViewModel_CredentialsProvided(object? sender, CredentialsProvidedEventArgs e)

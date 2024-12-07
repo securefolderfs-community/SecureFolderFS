@@ -3,8 +3,8 @@ using SecureFolderFS.UI.ValueConverters;
 
 namespace SecureFolderFS.Maui.ValueConverters
 {
-    /// <inheritdoc cref="BaseLoginViewModelBoolConverter"/>
-    internal sealed class LoginViewModelBoolConverter : BaseLoginViewModelBoolConverter, IValueConverter
+    /// <inheritdoc cref="BaseLoginViewModelConverter"/>
+    internal sealed class LoginViewModelBoolConverter : BaseLoginViewModelConverter, IValueConverter
     {
         /// <inheritdoc/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

@@ -4,12 +4,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
     [Bindable(true)]
-    public class FolderViewModel : BrowserItemViewModel
+    public partial class FolderViewModel : BrowserItemViewModel, IViewDesignation
     {
+        public INavigator Navigator { get; }
+        
         /// <summary>
         /// Gets the folder associated with this view model.
         /// </summary>
@@ -23,27 +28,52 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override IStorable Inner => Folder;
 
-        public FolderViewModel(IFolder folder)
+        public FolderViewModel(IFolder folder, INavigator navigator, FolderViewModel? parentFolder)
+            : base(parentFolder)
         {
             Folder = folder;
+            Navigator = navigator;
             Title = folder.Name;
             Items = new();
         }
 
         /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        public override Task InitAsync(CancellationToken cancellationToken = default)
+        {
+            // TODO: Load thumbnail
+            return Task.CompletedTask;
+        }
+
+        public async Task ListContentsAsync(CancellationToken cancellationToken = default)
         {
             await foreach (var item in Folder.GetItemsAsync(StorableType.All, cancellationToken))
             {
                 Items.Add(item switch
                 {
-                    IFile file => new FileViewModel(file),
-                    IFolder folder => new FolderViewModel(folder),
+                    IFile file => new FileViewModel(file, this).WithInitAsync(),
+                    IFolder folder => new FolderViewModel(folder, Navigator, this).WithInitAsync(),
                     _ => throw new ArgumentOutOfRangeException(nameof(item))
                 });
             }
+        }
+        
+        /// <inheritdoc/>
+        public virtual void OnAppearing()
+        {
+        }
 
-            // TODO: Load thumbnail
+        /// <inheritdoc/>
+        public virtual void OnDisappearing()
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override async Task OpenAsync(CancellationToken cancellationToken)
+        {
+            if (Items.IsEmpty())
+                _ = ListContentsAsync(cancellationToken);
+            
+            await Navigator.NavigateAsync(this);
         }
     }
 }

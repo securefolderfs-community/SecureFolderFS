@@ -1,7 +1,12 @@
 using System;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
@@ -16,9 +21,19 @@ using SecureFolderFS.Uno.Helpers;
 
 namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
 {
+    [INotifyPropertyChanged]
     public sealed partial class MainWindowRootControl : UserControl
     {
-        private INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
+        public INavigationService RootNavigationService { get; } = DI.Service<INavigationService>();
+
+        public SynchronizationContext? Context { get; }
+
+        public bool IsDebugging { get; } =
+#if DEBUG
+            Debugger.IsAttached;
+#else
+            false;
+#endif
 
         public MainViewModel? ViewModel
         {
@@ -29,6 +44,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
         public MainWindowRootControl()
         {
             InitializeComponent();
+            Context = SynchronizationContext.Current;
             ViewModel = new();
         }
 
@@ -69,6 +85,40 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceRoot
                 // Show no vaults screen
                 await RootNavigationService.TryNavigateAsync(() => new EmptyHostViewModel(RootNavigationService, ViewModel.VaultCollectionModel), false);
             }
+        }
+
+        private void DebugButton_Click(object sender, RoutedEventArgs e)
+        {
+#if DEBUG
+            var window = new Window()
+            {
+                Content = new DebugWindowRootControl(),
+#if !__IOS__
+                Title = $"{nameof(SecureFolderFS)} Debug Window",
+#endif
+            };
+#if WINDOWS
+            window.AppWindow?.MoveAndResize(new(100, 100, 700, 900));
+#endif
+
+            global::Uno.UI.WindowExtensions.EnableHotReload(window);
+            window.Activate();
+#endif
+        }
+
+        [RelayCommand]
+        private void TaskbarIconDoubleClick()
+        {
+            App.Instance?.MainWindow?.Activate();
+        }
+
+        private void CloseApp_Click(object sender, RoutedEventArgs e)
+        {
+            if (App.Instance is null)
+                return;
+
+            App.Instance.UseForceClose = true;
+            Application.Current.Exit();
         }
     }
 }

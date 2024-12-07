@@ -15,7 +15,7 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         public override int HeaderCiphertextSize { get; } = HEADER_SIZE;
 
         /// <inheritdoc/>
-        public override int HeaderCleartextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
+        public override int HeaderPlaintextSize { get; } = HEADER_NONCE_SIZE + HEADER_CONTENTKEY_SIZE;
 
         public AesCtrHmacHeaderCrypt(SecretKey encKey, SecretKey macKey)
             : base(encKey, macKey)
@@ -23,38 +23,38 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
         }
 
         /// <inheritdoc/>
-        public override void CreateHeader(Span<byte> cleartextHeader)
+        public override void CreateHeader(Span<byte> plaintextHeader)
         {
             // Nonce
-            secureRandom.GetNonZeroBytes(cleartextHeader.Slice(0, HEADER_NONCE_SIZE));
+            secureRandom.GetNonZeroBytes(plaintextHeader.Slice(0, HEADER_NONCE_SIZE));
 
             // Content key
-            secureRandom.GetBytes(cleartextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
+            secureRandom.GetBytes(plaintextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
         }
 
         /// <inheritdoc/>
-        public override void EncryptHeader(ReadOnlySpan<byte> cleartextHeader, Span<byte> ciphertextHeader)
+        public override void EncryptHeader(ReadOnlySpan<byte> plaintextHeader, Span<byte> ciphertextHeader)
         {
             // Nonce
-            cleartextHeader.Slice(0, HEADER_NONCE_SIZE).CopyTo(ciphertextHeader);
+            plaintextHeader.Slice(0, HEADER_NONCE_SIZE).CopyTo(ciphertextHeader);
 
             // Encrypt
             AesCtr128.Encrypt(
-                cleartextHeader.GetHeaderContentKey(),
+                plaintextHeader.GetHeaderContentKey(),
                 encKey,
-                cleartextHeader.GetHeaderNonce(),
+                plaintextHeader.GetHeaderNonce(),
                 ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE));
 
             // Calculate MAC
             CalculateHeaderMac(
-                cleartextHeader.GetHeaderNonce(),
+                plaintextHeader.GetHeaderNonce(),
                 ciphertextHeader.Slice(HEADER_NONCE_SIZE, HEADER_CONTENTKEY_SIZE),
-                ciphertextHeader.Slice(cleartextHeader.Length)); // cleartextHeader.Length already includes HEADER_NONCE_SIZE
+                ciphertextHeader.Slice(plaintextHeader.Length)); // plaintextHeader.Length already includes HEADER_NONCE_SIZE
         }
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public override bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> cleartextHeader)
+        public override bool DecryptHeader(ReadOnlySpan<byte> ciphertextHeader, Span<byte> plaintextHeader)
         {
             // Allocate byte* for MAC
             Span<byte> mac = stackalloc byte[HEADER_MAC_SIZE];
@@ -70,14 +70,14 @@ namespace SecureFolderFS.Core.Cryptography.HeaderCrypt
                 return false;
 
             // Nonce
-            ciphertextHeader.GetHeaderNonce().CopyTo(cleartextHeader);
+            ciphertextHeader.GetHeaderNonce().CopyTo(plaintextHeader);
 
             // Decrypt
             AesCtr128.Decrypt(
                 ciphertextHeader.GetHeaderContentKey(),
                 encKey,
                 ciphertextHeader.GetHeaderNonce(),
-                cleartextHeader.Slice(HEADER_NONCE_SIZE));
+                plaintextHeader.Slice(HEADER_NONCE_SIZE));
 
             return true;
         }

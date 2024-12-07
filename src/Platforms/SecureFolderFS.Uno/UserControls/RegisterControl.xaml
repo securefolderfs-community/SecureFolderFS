@@ -19,11 +19,11 @@
             <StackPanel Spacing="16">
                 <local:PasswordControl
                     x:Name="FirstPassword"
-                    Title="{l:ResourceString Name=NewPassword}"
+                    Title="{l:ResourceString Rid=NewPassword}"
                     UnsecurePassword="{x:Bind PrimaryPassword, Mode=TwoWay}" />
                 <local:PasswordControl
                     x:Name="SecondPassword"
-                    Title="{l:ResourceString Name=RepeatPassword}"
+                    Title="{l:ResourceString Rid=RepeatPassword}"
                     UnsecurePassword="{x:Bind SecondaryPassword, Mode=TwoWay}" />
             </StackPanel>
         </DataTemplate>
@@ -41,14 +41,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="{l:ResourceString Name=SetupKeyFile}" />
+                    Text="{l:ResourceString Rid=SetupKeyFile}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Setup}"
+                    Content="{l:ResourceString Rid=Setup}"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </DataTemplate>
@@ -66,14 +66,14 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Opacity="0.8"
-                    Text="{l:ResourceString Name=SetupWindowsHello}" />
+                    Text="{l:ResourceString Rid=SetupWindowsHello}" />
 
                 <!--  Authenticate  -->
                 <Button
                     Padding="24,6"
                     HorizontalAlignment="Center"
                     Command="{x:Bind ProvideCredentialsCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Setup}"
+                    Content="{l:ResourceString Rid=Setup}"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </win:DataTemplate>

@@ -1,7 +1,7 @@
 ﻿using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.SecureStore;
-using SecureFolderFS.Shared.Helpers;
 using System;
+using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -31,14 +31,14 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
             // Encrypt
             var encryptedName = EncryptFileName(bytes.Slice(0, count), directoryId);
 
-            // Encode with url64
-            return EncodingHelpers.EncodeBaseUrl64(Convert.ToBase64String(encryptedName));
+            // Encode with Base64Url
+            return Base64Url.EncodeToString(encryptedName);
         }
 
         /// <inheritdoc/>
         public virtual string? DecryptName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            var ciphertextNameBuffer = Convert.FromBase64String(EncodingHelpers.DecodeBaseUrl64(ciphertextName.ToString()));
+            var ciphertextNameBuffer = Base64Url.DecodeFromChars(ciphertextName);
             var plaintextNameBuffer = DecryptFileName(ciphertextNameBuffer, directoryId);
             if (plaintextNameBuffer is null)
                 return null;

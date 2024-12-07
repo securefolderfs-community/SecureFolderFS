@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
-    [Inject<IVaultService>, Inject<IVaultManagerService>]
+    [Inject<IVaultCredentialsService>, Inject<IVaultManagerService>]
     [Bindable(true)]
     public sealed partial class CredentialsWizardViewModel : BaseWizardViewModel
     {
@@ -99,8 +99,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
         public override async void OnAppearing()
         {
             // Get ciphers
-            EnumerateCiphers(VaultService.GetContentCiphers(), ContentCiphers);
-            EnumerateCiphers(VaultService.GetFileNameCiphers(), FileNameCiphers);
+            EnumerateCiphers(VaultCredentialsService.GetContentCiphers(), ContentCiphers);
+            EnumerateCiphers(VaultCredentialsService.GetFileNameCiphers(), FileNameCiphers);
 
             // Set default cipher options
             ContentCipher = ContentCiphers.FirstOrDefault();
@@ -108,7 +108,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 
             // Get authentication options
             AuthenticationOptions.Clear();
-            await foreach (var item in VaultService.GetCreationAsync(Folder, _vaultId))
+            await foreach (var item in VaultCredentialsService.GetCreationAsync(Folder, _vaultId))
                 AuthenticationOptions.Add(item);
 
             // Set default authentication option

@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Sdk.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
@@ -17,6 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     {
         private readonly IFolder _vaultFolder;
 
+        [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _RecoveryKey;
         [ObservableProperty] private string? _ErrorMessage;
 
@@ -25,6 +27,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         public RecoveryOverlayViewModel(IFolder vaultFolder)
         {
             ServiceProvider = DI.Default;
+            Title = "RecoverAccess".ToLocalized();
+            Message = "EnterRecoveryKey".ToLocalized();
             _vaultFolder = vaultFolder;
         }
 
@@ -40,7 +44,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
             }
             catch (Exception)
             {
-                ErrorMessage = "The provided recovery key is invalid";
+                // TODO: Localize
+                ErrorMessage = "The provided recovery key is invalid.";
                 return false;
             }
         }

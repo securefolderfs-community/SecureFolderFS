@@ -1,0 +1,75 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.BrowserControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:apesui="clr-namespace:APES.UI.XF;assembly=APES.UI.XF"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Views.Browser;assembly=SecureFolderFS.Sdk"
+    x:Name="RootControl">
+
+    <ContentView.Resources>
+        <vc:FileIconConverter x:Key="FileIconConverter" />
+        <DataTemplate x:Key="FileItemTemplate" x:DataType="vm:FileViewModel">
+            <ViewCell>
+                <VerticalStackLayout>
+                    <Image />
+                    <Label Text="{Binding Title, Mode=OneWay}" />
+                </VerticalStackLayout>
+            </ViewCell>
+        </DataTemplate>
+        <DataTemplate x:Key="FolderItemTemplate" x:DataType="vm:FolderViewModel">
+            <ViewCell>
+                <VerticalStackLayout>
+                    <Image />
+                    <Label Text="{Binding Title, Mode=OneWay}" />
+                </VerticalStackLayout>
+            </ViewCell>
+        </DataTemplate>
+    </ContentView.Resources>
+
+    <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">
+        <ListView ItemsSource="{Binding ItemsSource, Mode=OneWay}" SelectionMode="None">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:BrowserItemViewModel">
+                    <ViewCell>
+                        <apesui:ContextMenuContainer>
+                            <apesui:ContextMenuContainer.MenuItems>
+                                <apesui:ContextMenuItem Text="Rename" />
+                                <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
+                                <apesui:ContextMenuItem
+                                    Command="{Binding DeleteCommand}"
+                                    IsDestructive="True"
+                                    Text="Delete" />
+                            </apesui:ContextMenuContainer.MenuItems>
+                            <apesui:ContextMenuContainer.Content>
+                                <Grid
+                                    x:Name="SourceGrid"
+                                    Padding="13,4"
+                                    ColumnSpacing="13">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ContentView
+                                        Grid.Column="0"
+                                        Content="{Binding Thumbnail, Converter={StaticResource FileIconConverter}, ConverterParameter={x:Reference SourceGrid}}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        FontSize="15"
+                                        Text="{Binding Title, Mode=OneWay}"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </apesui:ContextMenuContainer.Content>
+                            <apesui:ContextMenuContainer.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenCommand}" />
+                            </apesui:ContextMenuContainer.GestureRecognizers>
+                        </apesui:ContextMenuContainer>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</ContentView>

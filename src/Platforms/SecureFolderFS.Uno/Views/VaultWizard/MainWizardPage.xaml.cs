@@ -18,8 +18,8 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
     [INotifyPropertyChanged]
     public sealed partial class MainWizardPage : Page
     {
-        private readonly LocationWizardViewModel _createNewViewModel = new(NewVaultCreationType.CreateNew);
-        private readonly LocationWizardViewModel _addExistingViewModel = new(NewVaultCreationType.AddExisting);
+        private LocationWizardViewModel? _createNewViewModel;
+        private LocationWizardViewModel? _addExistingViewModel;
         private Button? _lastClickedButton;
 
         [ObservableProperty] private LocationWizardViewModel? _CurrentViewModel;
@@ -41,6 +41,8 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             {
                 ViewModel = viewModel;
                 ViewModel.CreationType = NewVaultCreationType.CreateNew; // Default value for the view
+                _createNewViewModel = new(viewModel.VaultCollectionModel, NewVaultCreationType.CreateNew);
+                _addExistingViewModel = new(viewModel.VaultCollectionModel, NewVaultCreationType.AddExisting);
                 CurrentViewModel = _createNewViewModel;
                 ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
             }
@@ -83,7 +85,8 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
             // Change type
             ViewModel.CreationType = tag == "CREATE" ? NewVaultCreationType.CreateNew : NewVaultCreationType.AddExisting;
             CurrentViewModel = ViewModel.CreationType == NewVaultCreationType.CreateNew ? _createNewViewModel : _addExistingViewModel;
-            ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
+            if (CurrentViewModel is not null)
+                ViewModel.CanContinue = await CurrentViewModel.UpdateStatusAsync();
 
             // Apply styles
             button.Style = (Style?)App.Instance?.Resources["AccentButtonStyle"];

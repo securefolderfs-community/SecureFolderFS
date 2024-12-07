@@ -21,6 +21,11 @@ namespace SecureFolderFS.Sdk.Services.Settings
         bool StartOnSystemStartup { get; set; }
 
         /// <summary>
+        /// Gets or sets the value that determines whether to put the app to background system Task Bar when closing the window.
+        /// </summary>
+        bool ReduceToBackground { get; set; }
+
+        /// <summary>
         /// Gets or sets the value that determines whether to continue on the previously selected vault.
         /// </summary>
         bool ContinueOnLastVault { get; set; }
@@ -37,12 +42,17 @@ namespace SecureFolderFS.Sdk.Services.Settings
         /// <summary>
         /// Gets or sets the value that determines whether to lock all unlocked vaults when the system is locked.
         /// </summary>
-        bool AutoLockVaults { get; set; }
+        bool LockOnSystemLock { get; set; }
 
         /// <summary>
         /// Gets or sets the value that determines whether to use telemetry.
         /// </summary>
         bool IsTelemetryEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value that determines whether to periodically clear or untrack system-wide recently accessed items.
+        /// </summary>
+        bool DisableRecentAccess { get; set; }
 
         #endregion
     }

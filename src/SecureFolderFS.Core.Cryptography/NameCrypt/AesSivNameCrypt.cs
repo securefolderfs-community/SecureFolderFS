@@ -13,9 +13,9 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
         }
 
         /// <inheritdoc/>
-        protected override byte[] EncryptFileName(ReadOnlySpan<byte> cleartextFileNameBuffer, ReadOnlySpan<byte> directoryId)
+        protected override byte[] EncryptFileName(ReadOnlySpan<byte> plaintextFileNameBuffer, ReadOnlySpan<byte> directoryId)
         {
-            return aesSiv128.Encrypt(cleartextFileNameBuffer, directoryId);
+            return aesSiv128.Encrypt(plaintextFileNameBuffer, directoryId);
         }
 
         /// <inheritdoc/>

@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
-using SecureFolderFS.Sdk.Messages;
-using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
@@ -25,6 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     [Bindable(true)]
     public sealed partial class VaultLoginViewModel : BaseVaultViewModel, INavigatable
     {
+        [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private LoginViewModel _LoginViewModel;
 
         public INavigationService VaultNavigation { get; }
@@ -32,13 +30,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
-        public VaultLoginViewModel(IVaultModel vaultModel, INavigationService vaultNavigation)
-            : base(vaultModel)
+        public VaultLoginViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)
+            : base(vaultViewModel)
         {
             ServiceProvider = DI.Default;
-            Title = vaultModel.VaultName;
+            Title = vaultViewModel.VaultName;
             VaultNavigation = vaultNavigation;
-            _LoginViewModel = new(vaultModel, LoginViewType.Full);
+            _LoginViewModel = new(vaultViewModel.VaultModel, LoginViewType.Full);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
 
@@ -51,13 +49,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task BeginRecoveryAsync(CancellationToken cancellationToken)
         {
-            var recoveryOverlay = new RecoveryOverlayViewModel(VaultModel.Folder);
+            var recoveryOverlay = new RecoveryOverlayViewModel(VaultViewModel.VaultModel.Folder);
             var result = await OverlayService.ShowAsync(recoveryOverlay);
-            if (!result.Positive())
+            if (!result.Positive() || recoveryOverlay.UnlockContract is null)
+            {
+                recoveryOverlay.Dispose();
                 return;
-
-            if (recoveryOverlay.UnlockContract is null)
-                return;
+            }
 
             await UnlockAsync(recoveryOverlay.UnlockContract);
         }
@@ -66,17 +64,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             try
             {
-                // Create the storage layer
-                var storageRoot = await VaultManagerService.CreateFileSystemAsync(VaultModel, unlockContract, default);
-
-                // Update last access date
-                await VaultModel.SetLastAccessDateAsync(DateTime.Now);
-
-                // Notify that the vault has been unlocked
-                WeakReferenceMessenger.Default.Send(new VaultUnlockedMessage(VaultModel));
-
                 // Navigate away
-                var unlockedVaultViewModel = new UnlockedVaultViewModel(storageRoot, VaultModel);
+                var unlockedVaultViewModel = await VaultViewModel.UnlockAsync(unlockContract, IsReadOnly);
                 NavigationRequested?.Invoke(this, new UnlockNavigationRequestedEventArgs(unlockedVaultViewModel, this));
 
                 // Show vault tutorial

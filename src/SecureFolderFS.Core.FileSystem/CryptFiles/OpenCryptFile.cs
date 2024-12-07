@@ -2,7 +2,6 @@
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Chunks;
 using SecureFolderFS.Core.FileSystem.Streams;
-using SecureFolderFS.Core.Streams;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
@@ -45,23 +44,23 @@ namespace SecureFolderFS.Core.FileSystem.CryptFiles
         }
 
         /// <summary>
-        /// Opens a new <see cref="CleartextStream"/> on top of <paramref name="ciphertextStream"/>.
+        /// Opens a new <see cref="PlaintextStream"/> on top of <paramref name="ciphertextStream"/>.
         /// </summary>
         /// <param name="ciphertextStream">The ciphertext stream to be wrapped by encrypting stream.</param>
-        /// <returns>A new instance of <see cref="CleartextStream"/>.</returns>
-        public CleartextStream OpenStream(Stream ciphertextStream)
+        /// <returns>A new instance of <see cref="PlaintextStream"/>.</returns>
+        public PlaintextStream OpenStream(Stream ciphertextStream)
         {
             // Register ciphertext stream
-            if (_openedStreams.ContainsKey(ciphertextStream))
-                _openedStreams[ciphertextStream]++;
+            if (_openedStreams.TryGetValue(ciphertextStream, out var value))
+                _openedStreams[ciphertextStream] = ++value;
             else
                 _openedStreams.Add(ciphertextStream, 1L);
 
             // Make sure to also add it to streams manager
             _streamsManager.AddStream(ciphertextStream);
             
-            // Open the cleartext stream
-            return new CleartextStream(ciphertextStream, _security, _chunkAccess, _headerBuffer, NotifyClosed);
+            // Open the plaintext stream
+            return new PlaintextStream(ciphertextStream, _security, _chunkAccess, _headerBuffer, NotifyClosed);
         }
 
         private void NotifyClosed(Stream ciphertextStream)

@@ -9,22 +9,21 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
     [Bindable(true)]
     public sealed partial class ErrorViewModel : ReportableViewModel
     {
-        [ObservableProperty] private string? _ErrorTitle;
-        [ObservableProperty] private string? _ErrorMessage;
+        [ObservableProperty] private string? _Message;
 
         /// <inheritdoc/>
         public override event EventHandler<EventArgs>? StateChanged;
 
-        public ErrorViewModel(string? errorTitle, string? errorMessage)
+        public ErrorViewModel(string? title, string? message)
         {
-            _ErrorTitle = errorTitle;
-            _ErrorMessage = errorMessage;
+            Title = title;
+            Message = message;
         }
 
         /// <inheritdoc/>
         public override void Report(IResult? result)
         {
-            ErrorMessage = result?.GetMessage();
+            Message = result?.GetMessage();
         }
     }
 }

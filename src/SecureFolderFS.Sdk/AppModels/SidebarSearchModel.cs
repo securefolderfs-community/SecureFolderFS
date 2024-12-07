@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.AppModels
             var splitQuery = query.ToLowerInvariant().Split(' ');
             foreach (var item in _items)
             {
-                var found = splitQuery.All(item.VaultModel.VaultName.Contains);
+                var found = splitQuery.All(item.VaultViewModel.VaultName.Contains);
                 if (found)
                     yield return item;
             }
