@@ -59,9 +59,6 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\Tmds.Fuse LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\FluentAvalonia LICENSE">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
         <EmbeddedResource Include="Assets\Licenses\MicrosoftExtensionsDependencyInjection LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
@@ -154,9 +151,6 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
         <None Remove="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE" />
-        <EmbeddedResource Include="Assets\Licenses\FluentAvaloniaFluentIcons LICENSE">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
         <EmbeddedResource Include="Assets\AppAssets\Shields\error_shield.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>

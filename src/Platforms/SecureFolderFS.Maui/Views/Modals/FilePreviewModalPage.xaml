@@ -23,9 +23,9 @@
                 Source="{Binding Source, Mode=OneWay, Converter={StaticResource MediaToSourceConverter}}" />
         </DataTemplate>
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
-            <uc:PinchToZoomContainer>
+            <uc:PanPinchContainer>
                 <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
-            </uc:PinchToZoomContainer>
+            </uc:PanPinchContainer>
         </DataTemplate>
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
             <ScrollView
