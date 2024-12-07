@@ -7,49 +7,20 @@
     xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:ucw="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:OverviewPage">
 
     <ContentPage.Resources>
+        <!--  Health Widget  -->
         <DataTemplate x:Key="HealthWidgetTemplate" x:DataType="vm:HealthWidgetViewModel">
-            <!--  Health Widget  -->
-            <HorizontalStackLayout Spacing="4">
-                <Image
-                    Margin="-4,0,0,0"
-                    HeightRequest="48"
-                    Source="success_shield.png" />
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="18"
-                    Text="{l:ResourceString Rid=HealthNoProblems}"
-                    VerticalOptions="Center" />
-            </HorizontalStackLayout>
+            <ucw:HealthWidget />
         </DataTemplate>
 
-        <!--  Data statistics widget  -->
+        <!--  Aggregated Data Statistics Widget  -->
         <DataTemplate x:Key="AggregatedDataWidgetTemplate" x:DataType="vm:AggregatedDataWidgetViewModel">
-            <Grid ColumnSpacing="24">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-
-                <VerticalStackLayout Grid.Column="0">
-                    <Label Opacity="0.6" Text="{l:ResourceString Rid=TotalRead}" />
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="22"
-                        Text="0Mb" />
-                </VerticalStackLayout>
-                <VerticalStackLayout Grid.Column="1">
-                    <Label Opacity="0.6" Text="{l:ResourceString Rid=TotalWrite}" />
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="22"
-                        Text="0Mb" />
-                </VerticalStackLayout>
-            </Grid>
+            <ucw:AggregatedDataWidget TotalRead="{Binding TotalRead, Mode=OneWay}" TotalWrite="{Binding TotalWrite, Mode=OneWay}" />
         </DataTemplate>
     </ContentPage.Resources>
 

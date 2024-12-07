@@ -14,6 +14,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
     {
         private readonly IFileSystemStatistics _fileSystemStatistics;
         private readonly PeriodicTimer _periodicTimer;
+        private ulong _pendingBytesRead;
+        private ulong _pendingBytesWritten;
         private ByteSize _bytesRead;
         private ByteSize _bytesWritten;
 
@@ -32,8 +34,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             _bytesRead = new();
             _bytesWritten = new();
-            _fileSystemStatistics.BytesRead = new Progress<long>(x => _bytesRead.AddBytes(x));
-            _fileSystemStatistics.BytesWritten = new Progress<long>(x => _bytesWritten.AddBytes(x));
+            TotalRead = "0 B";
+            TotalWrite = "0 B";
+            
+            _fileSystemStatistics.BytesRead = new Progress<long>(x =>
+            {
+                if (x > 0)
+                    _pendingBytesRead += (ulong)x;
+            });
+            _fileSystemStatistics.BytesWritten = new Progress<long>(x =>
+            {
+                if (x > 0)
+                    _pendingBytesWritten += (ulong)x;
+            });
             
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
@@ -45,8 +58,19 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             while (await _periodicTimer.WaitForNextTickAsync(cancellationToken))
             {
-                TotalRead = _bytesRead.ToString();
-                TotalWrite = _bytesWritten.ToString();
+                if (_pendingBytesRead > 0UL)
+                {
+                    _bytesRead = _bytesRead.AddBytes(_pendingBytesRead);
+                    TotalRead = _bytesRead.ToString();
+                    _pendingBytesRead = 0UL;
+                }
+                
+                if (_pendingBytesWritten > 0UL)
+                {
+                    _bytesWritten = _bytesWritten.AddBytes(_pendingBytesWritten);
+                    TotalWrite = _bytesWritten.ToString();
+                    _pendingBytesWritten = 0UL;
+                }
             }
         }
         
