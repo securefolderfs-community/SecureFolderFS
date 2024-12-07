@@ -29,11 +29,11 @@ namespace SecureFolderFS.Storage.Scanners
             {
                 yield return item;
 
-                if (item is IFolder folder)
-                {
-                    await foreach (var subItem in RecursiveScanAsync(folder, cancellationToken))
-                        yield return subItem;
-                }
+                if (item is not IFolder folder)
+                    continue;
+
+                await foreach (var subItem in RecursiveScanAsync(folder, cancellationToken))
+                    yield return subItem;
             }
         }
     }

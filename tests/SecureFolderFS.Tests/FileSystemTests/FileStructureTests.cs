@@ -7,7 +7,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 namespace SecureFolderFS.Tests.FileSystemTests
 {
     [TestFixture]
-    public class DataStructureTests : BaseFileSystemTests
+    public class FileStructureTests : BaseFileSystemTests
     {
         private IVFSRoot? _storageRoot;
 
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
         }
 
         [Test]
-        public async Task Create_FolderWith_SubFile_SubFolder_Delete_EachItem_Throw()
+        public async Task Create_FolderWith_SubFile_SubFolder_Delete_EachItem_ShouldThrow()
         {
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
@@ -48,7 +48,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
         }
 
         [Test]
-        public async Task Create_FolderWith_SubFile_SubFolder_Delete_Folder_Throw()
+        public async Task Create_FolderWith_SubFile_SubFolder_Delete_Folder_ShouldThrow()
         {
             ArgumentNullException.ThrowIfNull(_storageRoot);
 
