@@ -34,6 +34,10 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             if (row is null)
                 return false;
 
+            var safRoot = _rootCollection?.GetSafRootForStorable(storable);
+            if (safRoot is null)
+                return false;
+            
             AddDocumentId();
             AddDisplayName();
             await AddSizeAsync();
@@ -68,11 +72,31 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
             }
             void AddFlags()
             {
-                if (storable is IFile)
+                var baseFlags = (DocumentContractFlags)0;
+                if (!safRoot.StorageRoot.Options.IsReadOnly)
+                {
+                    baseFlags |= DocumentContractFlags.SupportsCopy
+                                 | DocumentContractFlags.SupportsMove
+                                 // | DocumentContractFlags.SupportsRename // TODO: Add support for rename
+                                 | DocumentContractFlags.SupportsDelete
+                                 | DocumentContractFlags.SupportsRemove;
+                }
                 
-                    row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.SupportsDelete | DocumentContractFlags.SupportsWrite));
+                if (storable is IFile)
+                {
+                    if (!safRoot.StorageRoot.Options.IsReadOnly)
+                        baseFlags |= DocumentContractFlags.SupportsWrite;
+                    
+                    row.Add(Document.ColumnFlags, (int)baseFlags);
+                }
                 else
-                    row.Add(Document.ColumnFlags, (int)(DocumentContractFlags.DirSupportsCreate | DocumentContractFlags.DirPrefersGrid));
+                {
+                    baseFlags |= DocumentContractFlags.DirPrefersGrid;
+                    if (!safRoot.StorageRoot.Options.IsReadOnly)
+                        baseFlags |= DocumentContractFlags.DirSupportsCreate;
+                    
+                    row.Add(Document.ColumnFlags, (int)baseFlags);
+                }
             }
             void AddMimeType() => row.Add(Document.ColumnMimeType, GetMimeForStorable(storable));
             void AddDocumentId() => row.Add(Document.ColumnDocumentId, documentId);

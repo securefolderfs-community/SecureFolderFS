@@ -153,5 +153,100 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
 
             return matrix;
         }
+
+        /// <inheritdoc/>
+        public override void RemoveDocument(string? documentId, string? parentDocumentId)
+        {
+            DeleteDocument(documentId);
+        }
+
+        /// <inheritdoc/>
+        public override void DeleteDocument(string? documentId)
+        {
+            documentId = documentId == "null" ? null : documentId;
+            if (documentId is null)
+                return;
+            
+            var storable = GetStorableForDocumentId(documentId);
+            if (storable is not IStorableChild storableChild)
+                return;
+
+            var parentFolder = storableChild.GetParentAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            if (parentFolder is not IModifiableFolder modifiableFolder)
+                return;
+
+            // Revoke permissions first
+            RevokeDocumentPermission(documentId);
+            
+            // Perform deletion
+            modifiableFolder.DeleteAsync(storableChild).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc/>
+        public override string? MoveDocument(string? sourceDocumentId, string? sourceParentDocumentId, string? targetParentDocumentId)
+        {
+            sourceDocumentId = sourceDocumentId == "null" ? null : sourceDocumentId;
+            sourceParentDocumentId = sourceParentDocumentId == "null" ? null : sourceParentDocumentId;
+            targetParentDocumentId = targetParentDocumentId == "null" ? null : targetParentDocumentId;
+            if (sourceDocumentId is null || targetParentDocumentId is null || sourceParentDocumentId is null)
+                return null;
+
+            var destinationStorable = GetStorableForDocumentId(targetParentDocumentId);
+            if (destinationStorable is not IModifiableFolder destinationFolder)
+                return null;
+
+            var sourceParentStorable = GetStorableForDocumentId(sourceParentDocumentId);
+            if (sourceParentStorable is not IModifiableFolder sourceParentFolder)
+                return null;
+            
+            var sourceStorable = GetStorableForDocumentId(sourceDocumentId);
+            switch (sourceStorable)
+            {
+                case IChildFile file:
+                {
+                    var movedFile = destinationFolder.MoveFromAsync(file, sourceParentFolder, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return Path.Combine(targetParentDocumentId, movedFile.Name);
+                }
+                
+                case IChildFolder folder:
+                {
+                    var movedFolder = destinationFolder.MoveFromAsync(folder, sourceParentFolder, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return Path.Combine(targetParentDocumentId, movedFolder.Name);
+                }
+                
+                default: return null;
+            }
+        }
+
+        /// <inheritdoc/>
+        public override string? CopyDocument(string? sourceDocumentId, string? targetParentDocumentId)
+        {
+            sourceDocumentId = sourceDocumentId == "null" ? null : sourceDocumentId;
+            targetParentDocumentId = targetParentDocumentId == "null" ? null : targetParentDocumentId;
+            if (sourceDocumentId is null || targetParentDocumentId is null)
+                return null;
+
+            var destinationStorable = GetStorableForDocumentId(targetParentDocumentId);
+            if (destinationStorable is not IModifiableFolder destinationFolder)
+                return null;
+            
+            var sourceStorable = GetStorableForDocumentId(sourceDocumentId);
+            switch (sourceStorable)
+            {
+                case IFile file:
+                {
+                    var copiedFile = destinationFolder.CreateCopyOfAsync(file, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return Path.Combine(targetParentDocumentId, copiedFile.Name);
+                }
+                
+                case IFolder folder:
+                {
+                    var copiedFolder = destinationFolder.CreateCopyOfAsync(folder, false).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return Path.Combine(targetParentDocumentId, copiedFolder.Name);
+                }
+                
+                default: return null;
+            }
+        }
     }
 }

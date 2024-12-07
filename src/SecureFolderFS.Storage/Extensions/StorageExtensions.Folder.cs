@@ -2,6 +2,7 @@
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -47,6 +48,52 @@ namespace SecureFolderFS.Storage.Extensions
             }
 
             return copiedFolder;
+        }
+
+        /// <summary>
+        /// Moves a folder from the source folder into the destination folder. Returns the new folder that resides in the destination folder.
+        /// </summary>
+        /// <param name="destinationFolder">The folder where the folder is moved to.</param>
+        /// <param name="folderToMove">The folder being moved into this folder.</param>
+        /// <param name="source">The folder that <paramref name="folderToMove"/> is being moved from.</param>
+        /// <param name="overwrite"><code>true</code> if the destination folder can be overwritten; otherwise, <c>false</c>.</param>
+        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        public static async Task<IModifiableFolder> MoveFromAsync(this IModifiableFolder destinationFolder, IChildFolder folderToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Check if a folder with the same name already exists in the destination
+            if (!overwrite)
+            {
+                try
+                {
+                    var existing = await destinationFolder.GetFirstByNameAsync(folderToMove.Name, cancellationToken);
+                    if (existing is not null)
+                        throw new FileAlreadyExistsException(folderToMove.Name);
+                }
+                catch (DirectoryNotFoundException)
+                {
+                }
+            }
+
+            // If the destination folder supports optimized moving, use it
+            // if (destinationFolder is IMoveFrom fastPath)
+            //     return await fastPath.MoveFromAsync(folderToMove, source, overwrite, cancellationToken,
+            //         fallback: MoveFromFallbackAsync);
+
+            // Perform a manual move (fallback)
+            return await MoveFromFallbackAsync(destinationFolder, folderToMove, source, overwrite, cancellationToken);
+
+            async Task<IModifiableFolder> MoveFromFallbackAsync(IModifiableFolder destinationFolder, IChildFolder folderToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken = default)
+            {
+                // Create a copy of the folder in the destination
+                var movedFolder = await destinationFolder.CreateCopyOfAsync(folderToMove, overwrite, cancellationToken);
+
+                // Delete the original folder
+                await source.DeleteAsync(folderToMove, cancellationToken);
+
+                return movedFolder;
+            }
         }
         
         /// <summary>
