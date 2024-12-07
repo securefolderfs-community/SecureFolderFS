@@ -35,9 +35,8 @@
                     <ViewCell>
                         <apesui:ContextMenuContainer>
                             <apesui:ContextMenuContainer.MenuItems>
-                                <apesui:ContextMenuItem Text="Rename">
-                                    <apesui:ContextMenuItem.Icon />
-                                </apesui:ContextMenuItem>
+                                <apesui:ContextMenuItem Text="Rename" />
+                                <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
                                 <apesui:ContextMenuItem
                                     Command="{Binding DeleteCommand}"
                                     IsDestructive="True"

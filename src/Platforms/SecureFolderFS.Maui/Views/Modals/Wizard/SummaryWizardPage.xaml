@@ -9,9 +9,9 @@
     xmlns:mi_material="clr-namespace:MauiIcons.Material;assembly=MauiIcons.Material"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:SummaryWizardPage"
-    PrimaryCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
-    PrimaryEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
-    PrimaryText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
+    CloseCommand="{Binding OverlayViewModel.ContinuationCommand, Mode=OneWay}"
+    CloseEnabled="{Binding ViewModel.CanContinue, Mode=OneWay}"
+    CloseText="{Binding OverlayViewModel.PrimaryButtonText, Mode=OneWay}">
 
     <md:BaseModalPage.ModalContent>
         <VerticalStackLayout

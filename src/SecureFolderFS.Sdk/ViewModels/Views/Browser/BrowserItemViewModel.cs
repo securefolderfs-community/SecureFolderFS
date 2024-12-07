@@ -4,10 +4,15 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.Extensions;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
+    [Inject<IFileExplorerService>]
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : ObservableObject, IWrapper<IStorable>, IViewable, IAsyncInitialize
     {
@@ -24,6 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
         protected BrowserItemViewModel(FolderViewModel? parentFolder)
         {
+            ServiceProvider = DI.Default;
             ParentFolder = parentFolder;
         }
 
@@ -38,6 +44,33 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
             // TODO: Show an overlay to ask the user. Deletion is always permanent
             await modifiableFolder.DeleteAsync((IStorableChild)Inner, cancellationToken);
+            ParentFolder.Items.Remove(this);
+        }
+
+        [RelayCommand]
+        protected virtual async Task ExportAsync(CancellationToken cancellationToken)
+        {
+            if (ParentFolder?.Folder is not IModifiableFolder parentModifiableFolder)
+                return;
+            
+            var destinationFolder = await FileExplorerService.PickFolderAsync(false, cancellationToken);
+            if (destinationFolder is not IModifiableFolder modifiableFolder)
+                return;
+            
+            switch (Inner)
+            {
+                case IFile file:
+                    await modifiableFolder.CreateCopyOfAsync(file, false, cancellationToken);
+                    break;
+                
+                case IFolder folder:
+                    await modifiableFolder.CreateCopyOfAsync(folder, false, cancellationToken);
+                    break;
+                
+                default: return;
+            }
+                
+            await parentModifiableFolder.DeleteAsync((IStorableChild)Inner, cancellationToken);
             ParentFolder.Items.Remove(this);
         }
         

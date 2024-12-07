@@ -9,7 +9,8 @@
     xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
     xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Previewers;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.PreviewerViewModel.Title, Mode=OneWay}"
-    x:DataType="local:FilePreviewModalPage">
+    x:DataType="local:FilePreviewModalPage"
+    IsImmersive="True">
 
     <local:BaseModalPage.Resources>
         <vc:ImageToSourceConverter x:Key="ImageToSourceConverter" />
@@ -22,7 +23,9 @@
                 Source="{Binding Source, Mode=OneWay, Converter={StaticResource MediaToSourceConverter}}" />
         </DataTemplate>
         <DataTemplate x:Key="ImageTemplate" x:DataType="vm:ImagePreviewerViewModel">
-            <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+            <uc:PinchToZoomContainer>
+                <Image Source="{Binding Source, Mode=OneWay, Converter={StaticResource ImageToSourceConverter}}" />
+            </uc:PinchToZoomContainer>
         </DataTemplate>
         <DataTemplate x:Key="TextTemplate" x:DataType="vm:TextPreviewerViewModel">
             <ScrollView

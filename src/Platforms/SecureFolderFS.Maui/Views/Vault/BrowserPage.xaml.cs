@@ -106,6 +106,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool OnBackButtonPressed()
         {
             if (ViewModel?.CurrentFolder is null)
