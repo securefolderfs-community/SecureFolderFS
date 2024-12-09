@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
@@ -16,6 +17,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : ObservableObject, IWrapper<IStorable>, IViewable, IAsyncInitialize
     {
+        protected readonly TransferViewModel transferViewModel;
+        
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private IImage? _Thumbnail;
 
@@ -25,16 +28,24 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <summary>
         /// Gets the parent <see cref="FolderViewModel"/> that this item resides in, if any.
         /// </summary>
-        protected FolderViewModel? ParentFolder { get; }
+        public FolderViewModel? ParentFolder { get; }
 
-        protected BrowserItemViewModel(FolderViewModel? parentFolder)
+        protected BrowserItemViewModel(TransferViewModel transferViewModel, FolderViewModel? parentFolder)
         {
             ServiceProvider = DI.Default;
             ParentFolder = parentFolder;
+            this.transferViewModel = transferViewModel;
         }
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
+
+        [RelayCommand]
+        protected virtual async Task MoveAsync(CancellationToken cancellationToken)
+        {
+            transferViewModel.IsTransferring = true;
+            transferViewModel.TranferredItems.Add(this);
+        }
 
         [RelayCommand]
         protected virtual async Task DeleteAsync(CancellationToken cancellationToken)
@@ -69,7 +80,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 
                 default: return;
             }
-                
+
             await parentModifiableFolder.DeleteAsync((IStorableChild)Inner, cancellationToken);
             ParentFolder.Items.Remove(this);
         }

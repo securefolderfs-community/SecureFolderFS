@@ -28,8 +28,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override IStorable Inner => Folder;
 
-        public FolderViewModel(IFolder folder, INavigator navigator, FolderViewModel? parentFolder)
-            : base(parentFolder)
+        public FolderViewModel(IFolder folder, INavigator navigator, TransferViewModel transferViewModel, FolderViewModel? parentFolder)
+            : base(transferViewModel, parentFolder)
         {
             Folder = folder;
             Navigator = navigator;
