@@ -84,7 +84,7 @@ namespace SecureFolderFS.UI.ViewModels
             // The 'data' parameter is not needed in this type of authentication
             _ = data;
 
-            var keyFile = await FileExplorerService.PickFileAsync([ ".key", "*" ], cancellationToken);
+            var keyFile = await FileExplorerService.PickFileAsync([ ".key", "*" ], false, cancellationToken);
             if (keyFile is null)
                 throw new OperationCanceledException("The user did not pick a file.");
 

@@ -1,9 +1,9 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Buffers;
 using System.Diagnostics;
@@ -29,16 +29,16 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         }
 
         /// <summary>
-        /// Reads chunk at specified <paramref name="chunkNumber"/> into <paramref name="cleartextChunk"/>.
+        /// Reads chunk at specified <paramref name="chunkNumber"/> into <paramref name="plaintextChunk"/>.
         /// </summary>
         /// <param name="chunkNumber">The chunk number to read at.</param>
-        /// <param name="cleartextChunk">The cleartext chunk to write to.</param>
-        /// <returns>The amount of cleartext bytes or -1 if integrity error occurred.</returns>
-        public int ReadChunk(long chunkNumber, Span<byte> cleartextChunk)
+        /// <param name="plaintextChunk">The plaintext chunk to write to.</param>
+        /// <returns>The amount of plaintext bytes or -1 if integrity error occurred.</returns>
+        public int ReadChunk(long chunkNumber, Span<byte> plaintextChunk)
         {
             // Calculate sizes
             var ciphertextSize = _security.ContentCrypt.ChunkCiphertextSize;
-            var cleartextSize = _security.ContentCrypt.ChunkCleartextSize;
+            var plaintextSize = _security.ContentCrypt.ChunkPlaintextSize;
             var ciphertextPosition = _security.HeaderCrypt.HeaderCiphertextSize + (chunkNumber * ciphertextSize);
 
             // Rent buffer
@@ -49,12 +49,16 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 var realCiphertextChunk = ciphertextChunk.AsSpan(0, ciphertextSize);
 
                 // Get available read stream or throw
-                var ciphertextFileStream = _streamsManager.GetReadOnlyStream();
-                _ = ciphertextFileStream ?? throw new UnavailableStreamException();
+                var ciphertextStream = _streamsManager.GetReadOnlyStream();
+                _ = ciphertextStream ?? throw new UnavailableStreamException();
+
+                // Check position bounds
+                if (ciphertextPosition > ciphertextStream.Length)
+                    return 0;
 
                 // Read from stream at correct chunk
-                ciphertextFileStream.Position = ciphertextPosition;
-                var read = ciphertextFileStream.Read(realCiphertextChunk);
+                ciphertextStream.Position = ciphertextPosition;
+                var read = ciphertextStream.Read(realCiphertextChunk);
 
                 // Check for end of file
                 if (read == FileSystem.Constants.FILE_EOF)
@@ -69,8 +73,8 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                 // Check if the reserved part is all zeros in which case the decryption will be skipped (the chunk was extended)
                 if (SpanExtensions.IsAllZeros(chunkReserved))
                 {
-                    cleartextChunk.Clear();
-                    return read - (ciphertextSize - cleartextSize);
+                    plaintextChunk.Clear();
+                    return read - (ciphertextSize - plaintextSize);
                 }
 
                 // Decrypt
@@ -78,7 +82,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     realCiphertextChunk.Slice(0, read),
                     chunkNumber,
                     _fileHeader,
-                    cleartextChunk);
+                    plaintextChunk);
 
                 _fileSystemStatistics.BytesDecrypted?.Report(read);
 
@@ -89,7 +93,7 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
                     return -1;
                 }
 
-                return read - (ciphertextSize - cleartextSize);
+                return read - (ciphertextSize - plaintextSize);
             }
             finally
             {

@@ -3,6 +3,8 @@ using Android.Provider;
 using Android.Webkit;
 using AndroidX.DocumentFile.Provider;
 using OwlCore.Storage;
+using SecureFolderFS.Maui.Platforms.Android.Storage.StorageProperties;
+using SecureFolderFS.Storage.StorageProperties;
 using Activity = Android.App.Activity;
 using AndroidUri = Android.Net.Uri;
 
@@ -12,12 +14,16 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
     internal sealed class AndroidFolder : AndroidStorable, IModifiableFolder, IChildFolder, IGetFirstByName // TODO: Implement: IGetFirstByName, IGetItem
     {
         /// <inheritdoc/>
+        public override string Name { get; }
+        
+        /// <inheritdoc/>
         protected override DocumentFile? Document { get; }
 
         public AndroidFolder(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
             : base(uri, activity, parent, permissionRoot, bookmarkId)
         {
             Document = DocumentFile.FromTreeUri(activity, uri);
+            Name = Document?.Name ?? base.Name;
         }
 
         /// <inheritdoc/>
@@ -139,9 +145,19 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
                 .ConfigureAwait(false);
 
             if (target is null)
-                throw new DirectoryNotFoundException($"No storage item with the name '{name}' could be found.");
+                throw new FileNotFoundException($"No storage item with the name '{name}' could be found.");
 
             return target;
+        }
+        
+        /// <inheritdoc/>
+        public override Task<IBasicProperties> GetPropertiesAsync()
+        {
+            if (Document is null)
+                return Task.FromException<IBasicProperties>(new ArgumentNullException(nameof(Document)));
+
+            properties ??= new AndroidFileProperties(Document);
+            return Task.FromResult(properties);
         }
     }
 }

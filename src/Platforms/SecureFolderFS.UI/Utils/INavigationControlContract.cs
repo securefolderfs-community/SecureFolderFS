@@ -1,4 +1,5 @@
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.UI.Utils
 {
@@ -8,6 +9,6 @@ namespace SecureFolderFS.UI.Utils
         /// <summary>
         /// Sets the control used for navigation.
         /// </summary>
-        public INavigationControl? NavigationControl { set; }
+        public INavigator? Navigator { get; set; }
     }
 }

@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="SecureFolderFS.Uno.UserControls.DebugControls.DebugDashboardRepresentationControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+
+    <Grid>
+        <!--  Overview  -->
+        <StackPanel
+            x:Name="Rt_Overview"
+            x:Load="{x:Bind IsOverviewVisible, Mode=OneWay}"
+            Spacing="8">
+
+            <!--  Health Widget  -->
+            <ucab:ActionBlockControl Title="Health Widget" BlockMode="Expandable">
+                <ucab:ActionBlockControl.ExpanderContent>
+                    <Grid ColumnSpacing="32" RowSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Text="Date Checked" />
+
+
+                        <TextBox
+                            x:Name="Dbg_HealthWidget_DateChecked"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            TextChanged="HealthWidgetDateChecked_TextChanged" />
+                    </Grid>
+                </ucab:ActionBlockControl.ExpanderContent>
+            </ucab:ActionBlockControl>
+
+            <!--  Graphs Widget  -->
+            <ucab:ActionBlockControl Title="Graphs Widget" BlockMode="Expandable">
+                <ucab:ActionBlockControl.ExpanderContent>
+                    <StackPanel Spacing="8">
+                        <Button Click="SetGraphsViewMockup_Click" Content="Set Graphs View Mockup" />
+                        <Button Click="RestoreGraphs_Click" Content="Restore Graphs" />
+                    </StackPanel>
+                </ucab:ActionBlockControl.ExpanderContent>
+            </ucab:ActionBlockControl>
+        </StackPanel>
+    </Grid>
+</UserControl>

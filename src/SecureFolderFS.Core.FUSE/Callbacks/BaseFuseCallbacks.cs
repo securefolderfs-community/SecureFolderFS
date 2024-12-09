@@ -20,8 +20,8 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
         /// <remarks>
         /// Null before the filesystem has been mounted.
         /// </remarks>
-        public FuseMountOptions? MountOptions { get; set; }
+        public FuseOptions? FuseOptions { get; set; } // TODO: Get instance from Specifics.FileSystemOptions and cast to FuseOptions
 
-        protected abstract string? GetCiphertextPath(ReadOnlySpan<byte> cleartextName);
+        protected abstract string? GetCiphertextPath(ReadOnlySpan<byte> plaintextName);
     }
 }

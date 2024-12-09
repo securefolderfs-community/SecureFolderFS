@@ -6,7 +6,5 @@ namespace SecureFolderFS.Sdk.EventArguments
     /// <summary>
     /// Event arguments for back navigation requests.
     /// </summary>
-    public sealed class BackNavigationRequestedEventArgs(IViewable? origin) : NavigationRequestedEventArgs(origin)
-    {
-    }
+    public sealed class BackNavigationRequestedEventArgs(IViewable? origin) : NavigationRequestedEventArgs(origin);
 }

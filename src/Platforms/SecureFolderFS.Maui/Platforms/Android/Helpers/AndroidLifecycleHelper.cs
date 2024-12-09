@@ -17,15 +17,14 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
         protected override string AppDirectory { get; } = Microsoft.Maui.Storage.FileSystem.Current.AppDataDirectory;
 
         /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // Request permissions
-            //await RequestPermissionsAsync<Permissions.StorageWrite>();
-
             // Initialize settings
             var settingsFolderPath = Path.Combine(AppDirectory, SecureFolderFS.UI.Constants.FileNames.SETTINGS_FOLDER_NAME);
             var settingsFolder = new SystemFolder(Directory.CreateDirectory(settingsFolderPath));
             ConfigureServices(settingsFolder);
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
@@ -40,8 +39,9 @@ namespace SecureFolderFS.Maui.Platforms.Android.Helpers
             return base.ConfigureServices(settingsFolder)
                     //.AddSingleton<IPrinterService, WindowsPrinterService>()
                     .AddSingleton<IApplicationService, AndroidApplicationService>()
-                    .AddSingleton<IVaultService, AndroidVaultService>()
-                    .AddSingleton<IVaultManagerService, AndroidVaultManagerService>()
+                    .AddSingleton<ISystemService, AndroidSystemService>()
+                    .AddSingleton<IVaultCredentialsService, AndroidVaultCredentialsService>()
+                    .AddSingleton<IVaultFileSystemService, AndroidVaultFileSystemService>()
                     .AddSingleton<IStorageService, AndroidStorageService>()
                     .AddSingleton<IFileExplorerService, AndroidFileExplorerService>()
                     .AddSingleton<ITelemetryService, DebugTelemetryService>()

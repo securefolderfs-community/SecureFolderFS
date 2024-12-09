@@ -95,7 +95,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 Version = configuredOptions.Version
             };
 
-            await VaultManagerService.ChangeAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
+            await VaultManagerService.ModifyAuthenticationAsync(_vaultFolder, UnlockContract, key, newOptions, cancellationToken);
             if (ConfiguredViewModel is not null)
                 await ConfiguredViewModel.RevokeAsync(null, cancellationToken);
         }

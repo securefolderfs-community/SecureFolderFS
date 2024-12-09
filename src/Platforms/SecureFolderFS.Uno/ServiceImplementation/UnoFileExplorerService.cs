@@ -25,17 +25,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             }
         
 #if __MACOS__ || __MACCATALYST__
-            using var process = new Process();
-            process.StartInfo = new ProcessStartInfo()
-            {
-                FileName = "open",
-                Arguments = $"\"{folder.Id}/\"",
-                RedirectStandardOutput = false,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            };
-            process.Start();
-            
+            Process.Start("sh", ["-c", $"open {folder.Id}"]);
             return Task.CompletedTask;
 #elif WINDOWS
             return global::Windows.System.Launcher.LaunchFolderPathAsync(folder.Id).AsTask(cancellationToken);
@@ -71,7 +61,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, CancellationToken cancellationToken = default)
+        public async Task<IFile?> PickFileAsync(IEnumerable<string>? filter, bool persist = true, CancellationToken cancellationToken = default)
         {
             var filePicker = new FileOpenPicker();
             WinRT_InitializeObject(filePicker);
@@ -93,7 +83,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<IFolder?> PickFolderAsync(CancellationToken cancellationToken = default)
+        public async Task<IFolder?> PickFolderAsync(bool persist = true, CancellationToken cancellationToken = default)
         {
             var folderPicker = new FolderPicker();
             WinRT_InitializeObject(folderPicker);

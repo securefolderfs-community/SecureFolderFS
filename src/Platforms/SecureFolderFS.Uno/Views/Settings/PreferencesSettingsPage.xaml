@@ -2,13 +2,10 @@
     x:Class="SecureFolderFS.Uno.Views.Settings.PreferencesSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:anim="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
     xmlns:uc="using:SecureFolderFS.Uno.UserControls"
-    xmlns:uc2="using:SecureFolderFS.UI.UserControls.InfoBars"
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Banners"
@@ -16,52 +13,7 @@
 
     <Page.Resources>
         <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
-
-        <DataTemplate x:Key="DokanyUnavailableInfoBarTemplate" x:DataType="uc2:DokanyInfoBar">
-            <InfoBar
-                IsClosable="{x:Bind CanBeClosed, Mode=OneWay}"
-                IsOpen="True"
-                Message="{x:Bind Message, Mode=OneWay}"
-                Severity="{x:Bind Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
-                Visibility="{x:Bind IsOpen, Mode=OneWay}">
-                <InfoBar.Content>
-                    <Grid Padding="16,8,16,8">
-                        <HyperlinkButton
-                            Margin="0,-16,0,0"
-                            HorizontalAlignment="Right"
-                            Content="{l:ResourceString Name=Website}"
-                            NavigateUri="https://github.com/dokan-dev/dokany/releases/tag/v2.0.5.1000" />
-                    </Grid>
-                </InfoBar.Content>
-                <!--<anim:Implicit.ShowAnimations>
-                    <anim:TranslationAnimation
-                        From="0,-15,0"
-                        To="0"
-                        Duration="0:0:0.4" />
-                    <anim:OpacityAnimation
-                        From="0"
-                        To="1.0"
-                        Duration="0:0:0.6" />
-                </anim:Implicit.ShowAnimations>
-                <anim:Implicit.HideAnimations>
-                    <anim:OpacityAnimation
-                        From="1.0"
-                        To="0.0"
-                        Duration="0:0:0.2" />
-                    <anim:TranslationAnimation
-                        From="0"
-                        To="0,-15,0"
-                        Duration="0:0:0.2" />
-                </anim:Implicit.HideAnimations>-->
-            </InfoBar>
-        </DataTemplate>
-        <DataTemplate x:Key="WebDavExperimentalInfoBarTemplate" x:DataType="uc2:WebDavInfoBar">
-            <InfoBar
-                IsClosable="{x:Bind CanBeClosed, Mode=OneWay}"
-                IsOpen="True"
-                Message="{x:Bind Message, Mode=OneWay}"
-                Severity="{x:Bind Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}" />
-        </DataTemplate>
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
     <Grid Loaded="Root_Loaded" RowSpacing="12">
@@ -79,11 +31,11 @@
                     <TextBlock
                         FontSize="21"
                         FontWeight="SemiBold"
-                        Text="{l:ResourceString Name=FileSystemProvider}" />
+                        Text="{l:ResourceString Rid=FileSystemProvider}" />
                     <TextBlock
                         FontSize="11"
                         Opacity="0.8"
-                        Text="{l:ResourceString Name=FileSystemProviderDescription}" />
+                        Text="{l:ResourceString Rid=FileSystemProviderDescription}" />
                 </StackPanel>
             </uc:BannerControl.LeftSide>
             <uc:BannerControl.RightSide>
@@ -101,44 +53,42 @@
             </uc:BannerControl.RightSide>
             <uc:BannerControl.AdditionalBottomContent>
                 <!--  File system InfoBar  -->
-                <ContentControl
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch"
-                    Content="{x:Bind FileSystemInfoBar, Mode=OneWay}"
-                    Visibility="{x:Bind IsInfoBarOpen, Mode=OneWay}">
-                    <ContentControl.ContentTemplateSelector>
-                        <ts:FileSystemInfoBarTemplateSelector DokanyUnavailableInfoBarTemplate="{StaticResource DokanyUnavailableInfoBarTemplate}" WebDavExperimentalInfoBarTemplate="{StaticResource WebDavExperimentalInfoBarTemplate}" />
-                    </ContentControl.ContentTemplateSelector>
+                <InfoBar
+                    IsClosable="{x:Bind ViewModel.BannerViewModel.FileSystemInfoBar.IsCloseable, Mode=OneWay}"
+                    IsOpen="True"
+                    Message="{x:Bind ViewModel.BannerViewModel.FileSystemInfoBar.Message, Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.BannerViewModel.FileSystemInfoBar.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
+                    Visibility="{x:Bind ViewModel.BannerViewModel.FileSystemInfoBar.IsOpen, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <!--<anim:Implicit.ShowAnimations>
-                        <anim:TranslationAnimation
-                            From="0,-15,0"
-                            To="0"
-                            Duration="0:0:0.4" />
-                        <anim:OpacityAnimation
-                            From="0"
-                            To="1.0"
-                            Duration="0:0:0.6" />
-                    </anim:Implicit.ShowAnimations>
-                    <anim:Implicit.HideAnimations>
-                        <anim:OpacityAnimation
-                            From="1.0"
-                            To="0.0"
-                            Duration="0:0:0.2" />
-                        <anim:TranslationAnimation
-                            From="0"
-                            To="0,-15,0"
-                            Duration="0:0:0.2" />
-                    </anim:Implicit.HideAnimations>-->
-                </ContentControl>
+                          <anim:TranslationAnimation
+                              From="0,-15,0"
+                              To="0"
+                              Duration="0:0:0.4" />
+                          <anim:OpacityAnimation
+                              From="0"
+                              To="1.0"
+                              Duration="0:0:0.6" />
+                      </anim:Implicit.ShowAnimations>
+                      <anim:Implicit.HideAnimations>
+                          <anim:OpacityAnimation
+                              From="1.0"
+                              To="0.0"
+                              Duration="0:0:0.2" />
+                          <anim:TranslationAnimation
+                              From="0"
+                              To="0,-15,0"
+                              Duration="0:0:0.2" />
+                      </anim:Implicit.HideAnimations>-->
+                </InfoBar>
             </uc:BannerControl.AdditionalBottomContent>
         </uc:BannerControl>
 
         <!--  Other settings  -->
         <StackPanel Grid.Row="1" Spacing="4">
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=AutoStart}"
+                Title="{l:ResourceString Rid=AutoStart}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=AutoStartDescription}"
+                Description="{l:ResourceString Rid=AutoStartDescription}"
                 IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xF71C;" />
@@ -146,35 +96,49 @@
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=AutoStart}"
+                        AutomationProperties.Name="{l:ResourceString Rid=AutoStart}"
                         IsOn="{x:Bind ViewModel.StartOnSystemStartup, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=RestoreLastSession}"
+                Title="Put to background"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=RestoreLastSessionDescription}">
+                Description="Reduce the app to System Tray when closing the window">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="&#xE75B;" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <ToggleSwitch
+                        MinWidth="0"
+                        AutomationProperties.Name="Put to background"
+                        IsOn="{x:Bind ViewModel.ReduceToBackground, Mode=TwoWay}" />
+                </ucab:ActionBlockControl.ActionElement>
+            </ucab:ActionBlockControl>
+            <ucab:ActionBlockControl
+                Title="{l:ResourceString Rid=RestoreLastSession}"
+                BlockMode="Default"
+                Description="{l:ResourceString Rid=RestoreLastSessionDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE7E8;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=RestoreLastSession}"
+                        AutomationProperties.Name="{l:ResourceString Rid=RestoreLastSession}"
                         IsOn="{x:Bind ViewModel.ContinueOnLastVault, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=OpenVaultFolder}"
+                Title="{l:ResourceString Rid=OpenVaultFolder}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=OpenVaultFolderDescription}">
+                Description="{l:ResourceString Rid=OpenVaultFolderDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xED25;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ToggleSwitch
                         MinWidth="0"
-                        AutomationProperties.Name="{l:ResourceString Name=OpenVaultFolder}"
+                        AutomationProperties.Name="{l:ResourceString Rid=OpenVaultFolder}"
                         IsOn="{x:Bind ViewModel.OpenFolderOnUnlock, Mode=TwoWay}" />
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>

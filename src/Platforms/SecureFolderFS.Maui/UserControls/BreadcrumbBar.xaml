@@ -1,0 +1,46 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.BreadcrumbBar"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vc="clr-namespace:SecureFolderFS.Maui.ValueConverters"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
+    x:Name="ThisControl">
+
+    <ContentView.Resources>
+        <vc:BoolInvertConverter x:Key="BoolInvertConverter" />
+        <vc:BreadcrumbConverter x:Key="BreadcrumbConverter" />
+    </ContentView.Resources>
+
+    <CollectionView
+        x:DataType="local:BreadcrumbBar"
+        BindingContext="{x:Reference ThisControl}"
+        ItemsSource="{Binding ItemsSource, Mode=OneWay}"
+        SelectionMode="None"
+        VerticalOptions="Center">
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="vm:BreadcrumbItemViewModel">
+                <HorizontalStackLayout>
+                    <Label
+                        FontAttributes="{Binding IsLeading, Converter={StaticResource BreadcrumbConverter}, ConverterParameter='FontAttributes'}"
+                        FontSize="15"
+                        Text="{Binding Title, Mode=OneWay}"
+                        VerticalOptions="Center" />
+                    <Label
+                        Margin="12,0"
+                        FontSize="15"
+                        IsVisible="{Binding IsLeading, Mode=OneWay, Converter={StaticResource BoolInvertConverter}}"
+                        Text="&gt;"
+                        VerticalOptions="Center" />
+
+                    <HorizontalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Command, Mode=OneWay}" CommandParameter="{Binding}" />
+                    </HorizontalStackLayout.GestureRecognizers>
+                </HorizontalStackLayout>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Horizontal" />
+        </CollectionView.ItemsLayout>
+    </CollectionView>
+</ContentView>

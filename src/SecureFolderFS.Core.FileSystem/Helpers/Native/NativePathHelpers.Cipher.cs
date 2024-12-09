@@ -13,6 +13,30 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Native
         /// </summary>
         /// <param name="plaintextRelativePath">The relative plaintext path to an item.</param>
         /// <param name="specifics">The specifics.</param>
+        /// <returns>A full ciphertext path.</returns>
+        public static string GetCiphertextPath(string plaintextRelativePath, FileSystemSpecifics specifics)
+        {
+            var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+            return GetCiphertextPath(plaintextRelativePath, specifics, directoryId);
+        }
+
+        /// <summary>
+        /// Decrypts and gets the plaintext path from provided <paramref name="ciphertextPath"/>.
+        /// </summary>
+        /// <param name="ciphertextPath">The relative plaintext path to an item.</param>
+        /// <param name="specifics">The specifics.</param>
+        /// <returns>A relative plaintext path.</returns>
+        public static string? GetPlaintextPath(string ciphertextPath, FileSystemSpecifics specifics)
+        {
+            var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
+            return GetPlaintextPath(ciphertextPath, specifics, directoryId);
+        }
+
+        /// <summary>
+        /// Encrypts and gets the ciphertext path from provided <paramref name="plaintextRelativePath"/>.
+        /// </summary>
+        /// <param name="plaintextRelativePath">The relative plaintext path to an item.</param>
+        /// <param name="specifics">The specifics.</param>
         /// <param name="expendableDirectoryId">A <see cref="Span{T}"/> of size <see cref="Constants.DIRECTORY_ID_SIZE"/> which will be used to hold the Directory ID data.</param>
         /// <remarks>
         /// The <paramref name="expendableDirectoryId"/> parameter should be initialized with a correct size.

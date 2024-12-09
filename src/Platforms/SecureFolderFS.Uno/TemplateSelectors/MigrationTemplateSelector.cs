@@ -13,7 +13,7 @@ namespace SecureFolderFS.Uno.TemplateSelectors
             return item?.FormatVersion switch
             {
                 Core.Constants.Vault.Versions.V1 => MigratorV1_V2,
-                _ => base.SelectTemplateCore(item)
+                _ => base.SelectTemplateCore(item, container)
             };
         }
     }

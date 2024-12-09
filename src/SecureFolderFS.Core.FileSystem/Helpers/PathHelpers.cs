@@ -10,7 +10,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsCoreFile(string fileName)
         {
-            return fileName.Contains(Constants.DIRECTORY_ID_FILENAME, StringComparison.Ordinal);
+            return fileName.Contains(Constants.Names.DIRECTORY_ID_FILENAME, StringComparison.Ordinal);
         }
         
         #region Legacy helpers (To be removed)

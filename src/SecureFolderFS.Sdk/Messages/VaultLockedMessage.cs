@@ -8,7 +8,7 @@ namespace SecureFolderFS.Sdk.Messages
     public sealed class VaultLockedMessage(IVaultModel vaultModel)
     {
         /// <summary>
-        /// Gets the <see cref="IVaultModel"/> of the locked vault.
+        /// Gets the <see cref="IVaultModel"/> of the vault that was locked.
         /// </summary>
         public IVaultModel VaultModel { get; } = vaultModel;
     }

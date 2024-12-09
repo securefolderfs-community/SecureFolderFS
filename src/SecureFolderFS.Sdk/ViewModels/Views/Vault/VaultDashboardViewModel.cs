@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public void Receive(VaultLockedMessage message)
         {
             // Free resources that are used by the dashboard
-            if (VaultModel.Equals(message.VaultModel))
+            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
                 Dispose();
         }
 

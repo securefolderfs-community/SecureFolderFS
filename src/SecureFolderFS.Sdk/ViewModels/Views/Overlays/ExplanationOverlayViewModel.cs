@@ -22,7 +22,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            // We don't want to await it, since it's an async based timer
+            // We don't want to await it, since the timer is supposed to run in the background
             _ = InitializeBlockingTimer(cancellationToken);
             return Task.CompletedTask;
         }

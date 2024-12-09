@@ -13,7 +13,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
     internal sealed class XChaChaContentCrypt : BaseContentCrypt
     {
         /// <inheritdoc/>
-        public override int ChunkCleartextSize { get; } = CHUNK_CLEARTEXT_SIZE;
+        public override int ChunkPlaintextSize { get; } = CHUNK_PLAINTEXT_SIZE;
 
         /// <inheritdoc/>
         public override int ChunkCiphertextSize { get; } = CHUNK_CIPHERTEXT_SIZE;
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public override void EncryptChunk(ReadOnlySpan<byte> cleartextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
+        public override void EncryptChunk(ReadOnlySpan<byte> plaintextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> ciphertextChunk)
         {
             // Chunk nonce
             secureRandom.GetBytes(ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE));
@@ -34,7 +34,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
             // Encrypt
             XChaCha20Poly1305.Encrypt(
-                cleartextChunk,
+                plaintextChunk,
                 header.GetHeaderContentKey(),
                 ciphertextChunk.Slice(0, CHUNK_NONCE_SIZE),
                 ciphertextChunk.Slice(CHUNK_NONCE_SIZE),
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
 
         /// <inheritdoc/>
         [SkipLocalsInit]
-        public override unsafe bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> cleartextChunk)
+        public override unsafe bool DecryptChunk(ReadOnlySpan<byte> ciphertextChunk, long chunkNumber, ReadOnlySpan<byte> header, Span<byte> plaintextChunk)
         {
             // Big Endian chunk number and file header nonce
             Span<byte> associatedData = stackalloc byte[sizeof(long) + HEADER_NONCE_SIZE];
@@ -55,7 +55,7 @@ namespace SecureFolderFS.Core.Cryptography.ContentCrypt
                 ciphertextChunk.GetChunkPayloadWithTag(),
                 header.GetHeaderContentKey(),
                 ciphertextChunk.GetChunkNonce(),
-                cleartextChunk.Slice(0, ciphertextChunk.Length - (CHUNK_NONCE_SIZE + CHUNK_TAG_SIZE)),
+                plaintextChunk.Slice(0, ciphertextChunk.Length - (CHUNK_NONCE_SIZE + CHUNK_TAG_SIZE)),
                 associatedData);
         }
     }

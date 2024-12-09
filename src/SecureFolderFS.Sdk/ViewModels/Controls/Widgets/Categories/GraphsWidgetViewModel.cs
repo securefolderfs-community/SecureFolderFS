@@ -1,4 +1,5 @@
 ﻿using ByteSizeLib;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
@@ -12,9 +13,9 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
     [Bindable(true)]
-    public sealed class GraphsWidgetViewModel : BaseWidgetViewModel
+    public sealed partial class GraphsWidgetViewModel : BaseWidgetViewModel
     {
-        private readonly IReadWriteStatistics _readWriteStatistics;
+        private readonly IFileSystemStatistics _fileSystemStatistics;
         private readonly PeriodicTimer _periodicTimer;
         private readonly List<long> _readRates;
         private readonly List<long> _writeRates;
@@ -22,16 +23,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         private long _currentWriteAmount;
         private int _updateTimeCount;
 
-        public GraphControlViewModel ReadGraphViewModel { get; }
+        [ObservableProperty] private GraphControlViewModel _ReadGraphViewModel;
+        [ObservableProperty] private GraphControlViewModel _WriteGraphViewModel;
+        [ObservableProperty] private bool _IsActive;
 
-        public GraphControlViewModel WriteGraphViewModel { get; }
-
-        public GraphsWidgetViewModel(IReadWriteStatistics readWriteStatistics, IWidgetModel widgetModel)
+        public GraphsWidgetViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetModel widgetModel)
             : base(widgetModel)
         {
+            IsActive = true;
             ReadGraphViewModel = new();
             WriteGraphViewModel = new();
-            _readWriteStatistics = readWriteStatistics;
+            _fileSystemStatistics = unlockedVaultViewModel.StorageRoot.Options.FileSystemStatistics;
 
             _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Graphs.GRAPH_UPDATE_INTERVAL_MS));
             _readRates = [ 0 ];
@@ -44,8 +46,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             await ReadGraphViewModel.InitAsync(cancellationToken);
             await WriteGraphViewModel.InitAsync(cancellationToken);
 
-            _readWriteStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
-            _readWriteStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
+            _fileSystemStatistics.BytesRead = new Progress<long>(x => _currentReadAmount += x);
+            _fileSystemStatistics.BytesWritten = new Progress<long>(x => _currentWriteAmount += x);
             
             // We don't want to await it, since it's an async based timer
             _ = InitializeBlockingTimer(cancellationToken);
@@ -55,6 +57,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             while (await _periodicTimer.WaitForNextTickAsync(cancellationToken))
             {
+                if (!IsActive)
+                    continue;
+
                 _readRates.AddWithMaxCapacity(_currentReadAmount, Constants.Graphs.GRAPH_REFRESH_RATE);
                 _writeRates.AddWithMaxCapacity(_currentWriteAmount, Constants.Graphs.GRAPH_REFRESH_RATE);
 
@@ -66,8 +71,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         {
             var read = Convert.ToInt64(ByteSize.FromBytes(_currentReadAmount).MegaBytes);
             var write = Convert.ToInt64(ByteSize.FromBytes(_currentWriteAmount).MegaBytes);
-
-            var now = DateTime.Now;
 
             // Update graph for read
             ReadGraphViewModel.Data.RemoveAt(0);
@@ -97,8 +100,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         /// <inheritdoc/>
         public override void Dispose()
         {
-            _readWriteStatistics.BytesRead = null;
-            _readWriteStatistics.BytesWritten = null;
+            _fileSystemStatistics.BytesRead = null;
+            _fileSystemStatistics.BytesWritten = null;
             _periodicTimer.Dispose();
         }
     }
