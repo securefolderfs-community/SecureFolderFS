@@ -17,8 +17,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : ObservableObject, IWrapper<IStorable>, IViewable, IAsyncInitialize
     {
-        protected readonly TransferViewModel transferViewModel;
-        
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private IImage? _Thumbnail;
 
@@ -30,11 +28,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// </summary>
         public FolderViewModel? ParentFolder { get; }
 
-        protected BrowserItemViewModel(TransferViewModel transferViewModel, FolderViewModel? parentFolder)
+        protected BrowserItemViewModel(FolderViewModel? parentFolder)
         {
             ServiceProvider = DI.Default;
             ParentFolder = parentFolder;
-            this.transferViewModel = transferViewModel;
         }
 
         /// <inheritdoc/>
@@ -43,7 +40,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         [RelayCommand]
         protected virtual async Task MoveAsync(CancellationToken cancellationToken)
         {
-            transferViewModel.IsTransferring = true;
+            if (ParentFolder?.TransferViewModel is not { IsProgressing: false } transferViewModel)
+                return;
+            
+            transferViewModel.IsProgressing = true;
             transferViewModel.TranferredItems.Add(this);
         }
 

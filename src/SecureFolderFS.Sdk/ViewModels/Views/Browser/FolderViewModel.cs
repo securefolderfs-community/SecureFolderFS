@@ -15,6 +15,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
     {
         public INavigator Navigator { get; }
         
+        public TransferViewModel TransferViewModel { get; }
+        
         /// <summary>
         /// Gets the folder associated with this view model.
         /// </summary>
@@ -29,11 +31,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         public override IStorable Inner => Folder;
 
         public FolderViewModel(IFolder folder, INavigator navigator, TransferViewModel transferViewModel, FolderViewModel? parentFolder)
-            : base(transferViewModel, parentFolder)
+            : base(parentFolder)
         {
             Folder = folder;
             Navigator = navigator;
             Title = folder.Name;
+            TransferViewModel = transferViewModel;
             Items = new();
         }
 
@@ -51,7 +54,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 Items.Add(item switch
                 {
                     IFile file => new FileViewModel(file, this).WithInitAsync(),
-                    IFolder folder => new FolderViewModel(folder, Navigator, this).WithInitAsync(),
+                    IFolder folder => new FolderViewModel(folder, Navigator, TransferViewModel, this).WithInitAsync(),
                     _ => throw new ArgumentOutOfRangeException(nameof(item))
                 });
             }

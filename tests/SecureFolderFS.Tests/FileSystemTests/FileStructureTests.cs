@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;

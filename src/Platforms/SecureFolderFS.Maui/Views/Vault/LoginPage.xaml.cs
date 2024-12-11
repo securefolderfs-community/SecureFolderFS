@@ -57,7 +57,7 @@ namespace SecureFolderFS.Maui.Views.Vault
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
 
             var rootFolder = args.UnlockedVaultViewModel.StorageRoot.Inner;
-            var folderViewModel = new FolderViewModel(rootFolder, DI.Service<INavigationService>(), null);
+            var folderViewModel = new FolderViewModel(rootFolder, DI.Service<INavigationService>(), null, null);
             _ = folderViewModel.ListContentsAsync();
             var browserViewModel = new BrowserViewModel(folderViewModel, rootFolder, args.UnlockedVaultViewModel.VaultViewModel);
             

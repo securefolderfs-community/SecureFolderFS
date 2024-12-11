@@ -71,8 +71,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <HorizontalStackLayout VerticalOptions="End">
-            <Label />
-        </HorizontalStackLayout>
     </Grid>
 </ContentView>

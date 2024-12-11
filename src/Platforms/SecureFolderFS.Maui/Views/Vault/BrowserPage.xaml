@@ -64,5 +64,12 @@
             x:Name="Browser"
             Grid.Row="1"
             ItemsSource="{Binding ViewModel.CurrentFolder.Items, Mode=OneWay}" />
+
+        <uc:TransferControl
+            Title="{Binding ViewModel.CurrentFolder.TransferViewModel.Title, Mode=OneWay}"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            PrimaryButtonText="Transfer"
+            VerticalOptions="End" />
     </Grid>
 </ContentPage>

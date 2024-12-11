@@ -1,22 +1,24 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
-    public sealed partial class TransferViewModel : ObservableObject
+    public sealed partial class TransferViewModel : ObservableObject, IViewable
     {
-        [ObservableProperty] private bool _IsTransferring;
-        [ObservableProperty] private TransferType _TransferType;
+        [ObservableProperty] private string? _Title;
+        [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private ObservableCollection<BrowserItemViewModel> _TranferredItems;
 
-        [RelayCommand]
-        private async Task TransferAsync(CancellationToken cancellationToken)
+        private async Task RegisterTransferAsync(IEnumerable<BrowserItemViewModel> items, CancellationToken cancellationToken)
         {
-            switch (TransferType)
+            var transferType = TransferType.Copy;
+            switch (transferType)
             {
                 case TransferType.Copy:
                 {

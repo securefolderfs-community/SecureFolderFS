@@ -103,7 +103,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 case "folder":
                 {
                     var folder = await modifiableFolder.CreateFolderAsync(viewModel.ItemName, false, cancellationToken);
-                    CurrentFolder.Items.Add(new FolderViewModel(folder, CurrentFolder.Navigator, CurrentFolder));
+                    CurrentFolder.Items.Add(new FolderViewModel(folder, CurrentFolder.Navigator, null, CurrentFolder));
                     break;
                 }
             }
@@ -142,7 +142,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                         return;
                     
                     var copiedFolder = await modifiableFolder.CreateCopyOfAsync(folder, false, cancellationToken);
-                    CurrentFolder.Items.Add(new FolderViewModel(copiedFolder, CurrentFolder.Navigator, CurrentFolder));
+                    CurrentFolder.Items.Add(new FolderViewModel(copiedFolder, CurrentFolder.Navigator, null, CurrentFolder));
                     break;
                 }
             }
