@@ -4,6 +4,7 @@ using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
 using SecureFolderFS.Core.Migration.DataModels;
+using SecureFolderFS.Core.Migration.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -16,7 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
+namespace SecureFolderFS.Core.Migration.AppModels
 {
     /// <inheritdoc cref="IVaultMigratorModel"/>
     internal sealed class MigratorV1_V2 : IVaultMigratorModel
@@ -50,7 +51,7 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             _v1KeystoreDataModel = await _streamSerializer.DeserializeAsync<Stream, VaultKeystoreDataModel>(keystoreStream, cancellationToken);
             if (_v1KeystoreDataModel is null)
                 throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
-            
+
             var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
             using var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
             using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
@@ -111,39 +112,17 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             await using var configStream = await configFile.OpenReadWriteAsync(cancellationToken);
 
             // Create backup
-            await CreateConfigBackup(configStream, cancellationToken);
-            await CreateKeystoreBackup(cancellationToken);
+            if (VaultFolder is IModifiableFolder modifiableFolder)
+            {
+                await BackupHelpers.CreateConfigBackup(modifiableFolder, configStream, cancellationToken);
+                await BackupHelpers.CreateKeystoreBackup(modifiableFolder, cancellationToken);
+            }
 
             await using var serializedStream = await _streamSerializer.SerializeAsync(v2ConfigDataModel, cancellationToken);
             await serializedStream.CopyToAsync(configStream, cancellationToken);
 
             // End progress report
             progress.PrecisionProgress?.Report(100d);
-        }
-
-        private async Task CreateConfigBackup(Stream configStream, CancellationToken cancellationToken)
-        {
-            if (VaultFolder is not IModifiableFolder modifiableFolder)
-                return;
-
-            var backupConfigName = $"{Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME}.bkup";
-            var backupConfigFile = await modifiableFolder.CreateFileAsync(backupConfigName, true, cancellationToken);
-            await using var backupConfigStream = await backupConfigFile.OpenWriteAsync(cancellationToken);
-
-            await configStream.CopyToAsync(backupConfigStream, cancellationToken);
-            configStream.Position = 0L;
-        }
-
-        private async Task CreateKeystoreBackup(CancellationToken cancellationToken)
-        {
-            if (VaultFolder is not IModifiableFolder modifiableFolder)
-                return;
-
-            var keystoreFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, cancellationToken);
-            var backupKeystoreName = $"{Constants.Vault.Names.VAULT_KEYSTORE_FILENAME}.bkup";
-            var backupKeystoreFile = await modifiableFolder.CreateFileAsync(backupKeystoreName, true, cancellationToken);
-
-            await keystoreFile.CopyContentsToAsync(backupKeystoreFile, cancellationToken);
         }
 
         private static string GetContentCipherId(int v1ContentCipherScheme)

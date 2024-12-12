@@ -68,6 +68,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
             return configVersion.Version switch
             {
                 Core.Constants.Vault.Versions.V1 => Migrators.GetMigratorV1_V2(vaultFolder, StreamSerializer.Instance),
+                Core.Constants.Vault.Versions.V2 => Migrators.GetMigratorV2_V3(vaultFolder, StreamSerializer.Instance),
                 _ => throw new ArgumentOutOfRangeException(nameof(configVersion.Version))
             };
         }
