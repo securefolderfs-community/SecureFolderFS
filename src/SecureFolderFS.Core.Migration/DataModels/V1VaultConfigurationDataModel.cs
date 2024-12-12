@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
+namespace SecureFolderFS.Core.Migration.DataModels
 {
     [Serializable]
     [EditorBrowsable(EditorBrowsableState.Never)]

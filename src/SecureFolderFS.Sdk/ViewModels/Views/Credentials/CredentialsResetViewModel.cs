@@ -67,6 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Credentials
                 AuthenticationMethod = [ RegisterViewModel.CurrentViewModel.Id ],
                 ContentCipherId = configuredOptions.ContentCipherId,
                 FileNameCipherId = configuredOptions.FileNameCipherId,
+                NameEncodingId = configuredOptions.NameEncodingId,
                 VaultId = configuredOptions.VaultId,
                 Version = configuredOptions.Version
             };

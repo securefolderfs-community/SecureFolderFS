@@ -8,6 +8,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
     [Bindable(true)]
     public abstract partial class ReportableViewModel : ObservableObject, IViewable, IProgress<IResult?>, INotifyStateChanged
     {
+        /// <inheritdoc cref="IViewable.Title"/>
         [ObservableProperty] private string? _Title;
 
         /// <inheritdoc/>

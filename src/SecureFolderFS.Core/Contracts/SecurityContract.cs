@@ -10,7 +10,12 @@ namespace SecureFolderFS.Core.Contracts
         private Security? _security;
 
         /// <inheritdoc/>
-        public Security Inner => _security ??= Security.CreateNew(EncKey, MacKey, ConfigurationDataModel.ContentCipherId, ConfigurationDataModel.FileNameCipherId);
+        public Security Inner => _security ??= Security.CreateNew(
+            encKey: EncKey,
+            macKey: MacKey,
+            contentCipherId: ConfigurationDataModel.ContentCipherId,
+            fileNameCipherId: ConfigurationDataModel.FileNameCipherId,
+            fileNameEncodingId: ConfigurationDataModel.FileNameEncodingId);
 
         public SecurityContract(SecretKey encKey, SecretKey macKey, VaultKeystoreDataModel keystoreDataModel, VaultConfigurationDataModel configurationDataModel)
             : base(encKey, macKey, keystoreDataModel, configurationDataModel)

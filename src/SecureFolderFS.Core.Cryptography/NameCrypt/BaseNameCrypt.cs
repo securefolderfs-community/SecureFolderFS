@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Core.Cryptography.Cipher;
+﻿using Lex4K;
+using SecureFolderFS.Core.Cryptography.Cipher;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using System;
 using System.Buffers.Text;
@@ -11,10 +12,12 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
     internal abstract class BaseNameCrypt : INameCrypt
     {
         protected readonly AesSiv128 aesSiv128;
+        protected readonly string fileNameEncodingId;
 
-        protected BaseNameCrypt(SecretKey encKey, SecretKey macKey)
+        protected BaseNameCrypt(SecretKey encKey, SecretKey macKey, string fileNameEncodingId)
         {
-            aesSiv128 = AesSiv128.CreateInstance(encKey, macKey);
+            this.aesSiv128 = AesSiv128.CreateInstance(encKey, macKey);
+            this.fileNameEncodingId = fileNameEncodingId;
         }
 
         /// <inheritdoc/>
@@ -29,26 +32,52 @@ namespace SecureFolderFS.Core.Cryptography.NameCrypt
             var count = Encoding.UTF8.GetBytes(plaintextName, bytes);
 
             // Encrypt
-            var encryptedName = EncryptFileName(bytes.Slice(0, count), directoryId);
+            var ciphertextNameBuffer = EncryptFileName(bytes.Slice(0, count), directoryId);
 
-            // Encode with Base64Url
-            return Base64Url.EncodeToString(encryptedName);
+            // Encode string
+            return Encode(ciphertextNameBuffer);
         }
 
         /// <inheritdoc/>
         public virtual string? DecryptName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
-            var ciphertextNameBuffer = Base64Url.DecodeFromChars(ciphertextName);
+            // Decode buffer
+            var ciphertextNameBuffer = Decode(ciphertextName);
+
+            // Decrypt
             var plaintextNameBuffer = DecryptFileName(ciphertextNameBuffer, directoryId);
             if (plaintextNameBuffer is null)
                 return null;
 
+            // Get string from plaintext buffer
             return Encoding.UTF8.GetString(plaintextNameBuffer);
         }
 
         protected abstract byte[] EncryptFileName(ReadOnlySpan<byte> plaintextFileNameBuffer, ReadOnlySpan<byte> directoryId);
 
         protected abstract byte[]? DecryptFileName(ReadOnlySpan<byte> ciphertextFileNameBuffer, ReadOnlySpan<byte> directoryId);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private string Encode(ReadOnlySpan<byte> bytes)
+        {
+            return fileNameEncodingId switch
+            {
+                Constants.CipherId.ENCODING_BASE64URL => Base64Url.EncodeToString(bytes),
+                Constants.CipherId.ENCODING_BASE4K => Base4K.EncodeChainToString(bytes),
+                _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private ReadOnlySpan<byte> Decode(ReadOnlySpan<char> encoded)
+        {
+            return fileNameEncodingId switch
+            {
+                Constants.CipherId.ENCODING_BASE64URL => Base64Url.DecodeFromChars(encoded),
+                Constants.CipherId.ENCODING_BASE4K => Base4K.DecodeChainToNewBuffer(encoded),
+                _ => throw new ArgumentOutOfRangeException(nameof(fileNameEncodingId))
+            };
+        }
 
         /// <inheritdoc/>
         public virtual void Dispose()

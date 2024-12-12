@@ -1,12 +1,13 @@
-﻿using System;
+﻿using SecureFolderFS.Core.DataModels;
+using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using static SecureFolderFS.Core.Constants.Vault;
 
-namespace SecureFolderFS.Core.DataModels
+namespace SecureFolderFS.Core.Migration.DataModels
 {
     [Serializable]
-    public sealed class VaultConfigurationDataModel : VersionDataModel
+    public sealed class V2VaultConfigurationDataModel : VersionDataModel
     {
         /// <summary>
         /// Gets the ID for content encryption.
@@ -21,21 +22,6 @@ namespace SecureFolderFS.Core.DataModels
         [JsonPropertyName(Associations.ASSOC_FILENAME_CIPHER_ID)]
         [DefaultValue("")]
         public required string FileNameCipherId { get; init; }
-
-        /// <summary>
-        /// Gets the ID for file name encoding.
-        /// </summary>
-        //[JsonPropertyName(Associations.ASSOC_FILENAME_ENCODING_ID)]
-        //[DefaultValue("")]
-        [JsonIgnore]
-        public string FileNameEncodingId { get; set; } = Cryptography.Constants.CipherId.ENCODING_BASE64URL;
-
-        ///// <summary>
-        ///// Gets the specialization of the vault that hints how the user data should be handled.
-        ///// </summary>
-        //[JsonPropertyName(Associations.ASSOC_SPECIALIZATION)]
-        //[DefaultValue("")]
-        //public required string Specialization { get; init; } = string.Empty;
 
         /// <summary>
         /// Gets the information about the authentication method used for this vault.

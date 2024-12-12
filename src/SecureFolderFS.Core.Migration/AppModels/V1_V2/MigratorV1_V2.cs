@@ -1,8 +1,9 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography.Cipher;
+using SecureFolderFS.Core.Cryptography.Helpers;
 using SecureFolderFS.Core.Cryptography.SecureStore;
 using SecureFolderFS.Core.DataModels;
-using SecureFolderFS.Core.VaultAccess;
+using SecureFolderFS.Core.Migration.DataModels;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Shared.Models;
@@ -11,6 +12,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -49,9 +51,9 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             if (_v1KeystoreDataModel is null)
                 throw new FormatException($"{nameof(VaultKeystoreDataModel)} was not in the correct format.");
             
-            var kek = new byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
-            using var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
-            using var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
+            var kek = new byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
+            using var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
+            using var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
 
             Argon2id.DeriveKey(password.ToArray(), _v1KeystoreDataModel.Salt, kek);
 
@@ -77,7 +79,7 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             progress.PrecisionProgress?.Report(0d);
 
             var vaultId = Guid.NewGuid().ToString();
-            var v2ConfigDataModel = new VaultConfigurationDataModel()
+            var v2ConfigDataModel = new V2VaultConfigurationDataModel()
             {
                 AuthenticationMethod = Constants.Vault.Authentication.AUTH_PASSWORD,
                 ContentCipherId = GetContentCipherId(_v1ConfigDataModel.ContentCipherScheme),
@@ -88,7 +90,22 @@ namespace SecureFolderFS.Core.Migration.AppModels.V1_V2
             };
 
             // Calculate and update configuration MAC
-            VaultParser.CalculateConfigMac(v2ConfigDataModel, encAndMacKey.MacKey, v2ConfigDataModel.PayloadMac);
+
+            var encKey = encAndMacKey.EncKey;
+            var macKey = encAndMacKey.MacKey;
+
+            // Initialize HMAC
+            using var hmacSha256 = new HMACSHA256(macKey.Key);
+
+            // Update HMAC
+            hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(v2ConfigDataModel.ContentCipherId)));
+            hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(v2ConfigDataModel.FileNameCipherId)));
+            hmacSha256.AppendData(Encoding.UTF8.GetBytes(v2ConfigDataModel.Uid));
+            hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(v2ConfigDataModel.AuthenticationMethod));
+
+            // Fill the hash to payload
+            hmacSha256.GetCurrentHash(v2ConfigDataModel.PayloadMac);
 
             var configFile = await VaultFolder.GetFileByNameAsync(Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, cancellationToken);
             await using var configStream = await configFile.OpenReadWriteAsync(cancellationToken);

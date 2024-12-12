@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets all filename ciphers that are supported by SecureFolderFS.
         /// </summary>
-        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs  of filename ciphers.</returns>
+        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of filename ciphers.</returns>
         IEnumerable<string> GetFileNameCiphers();
 
         // TODO: Needs docs

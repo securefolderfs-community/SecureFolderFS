@@ -27,6 +27,7 @@ namespace SecureFolderFS.Core.VaultAccess
             hmacSha256.AppendData(BitConverter.GetBytes(Constants.Vault.Versions.LATEST_VERSION));                              // Version
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.ContentCipherId(configDataModel.ContentCipherId)));        // ContentCipherScheme
             hmacSha256.AppendData(BitConverter.GetBytes(CryptHelpers.FileNameCipherId(configDataModel.FileNameCipherId)));      // FileNameCipherScheme
+            //hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.FileNameEncodingId));                                // FileNameEncodingId // TODO: (v3) Hash Encoding ID
             hmacSha256.AppendData(Encoding.UTF8.GetBytes(configDataModel.Uid));                                                 // Id
             hmacSha256.AppendFinalData(Encoding.UTF8.GetBytes(configDataModel.AuthenticationMethod));                           // AuthMethod
 
@@ -43,11 +44,11 @@ namespace SecureFolderFS.Core.VaultAccess
         [SkipLocalsInit]
         public static (SecretKey encKey, SecretKey macKey) DeriveKeystore(SecretKey passkey, VaultKeystoreDataModel keystoreDataModel)
         {
-            var encKey = new SecureKey(Cryptography.Constants.KeyChains.ENCKEY_LENGTH);
-            var macKey = new SecureKey(Cryptography.Constants.KeyChains.MACKEY_LENGTH);
+            var encKey = new SecureKey(Cryptography.Constants.KeyTraits.ENCKEY_LENGTH);
+            var macKey = new SecureKey(Cryptography.Constants.KeyTraits.MACKEY_LENGTH);
 
             // Derive KEK
-            Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
+            Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
             Argon2id.DeriveKey(passkey.Key, keystoreDataModel.Salt, kek);
 
             // Unwrap keys
@@ -74,7 +75,7 @@ namespace SecureFolderFS.Core.VaultAccess
             byte[] salt)
         {
             // Derive KEK
-            Span<byte> kek = stackalloc byte[Cryptography.Constants.ARGON2_KEK_LENGTH];
+            Span<byte> kek = stackalloc byte[Cryptography.Constants.KeyTraits.ARGON2_KEK_LENGTH];
             Argon2id.DeriveKey(passkey, salt, kek);
 
             // Wrap keys

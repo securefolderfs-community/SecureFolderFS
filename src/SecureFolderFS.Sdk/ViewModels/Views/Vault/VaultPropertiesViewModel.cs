@@ -34,7 +34,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             var vaultOptions = await VaultService.GetVaultOptionsAsync(UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder, cancellationToken);
             ContentCipherText = string.IsNullOrEmpty(vaultOptions.ContentCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.ContentCipherId ?? "Unknown");
-            FileNameCipherText = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown");
+            FileNameCipherText = string.IsNullOrEmpty(vaultOptions.FileNameCipherId) ? "NoEncryption".ToLocalized() : (vaultOptions.FileNameCipherId ?? "Unknown") + $" + {vaultOptions.NameEncodingId}";
             ActiveFileSystemText = UnlockedVaultViewModel.StorageRoot.FileSystemName;
 
             await UpdateSecurityTextAsync(cancellationToken);
