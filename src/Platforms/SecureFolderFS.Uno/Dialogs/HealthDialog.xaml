@@ -6,6 +6,7 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories"
     Title="Found issues"
     DefaultButton="Primary"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
@@ -13,5 +14,22 @@
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
-    <TextBlock Text="Health Dialog" />
+    <Grid>
+        <!--<StackPanel Spacing="32">
+            <TextBlock Text="No issues found" />
+        </StackPanel>-->
+
+        <ListView
+            IsItemClickEnabled="False"
+            ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
+            SelectionMode="None">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:HealthIssueViewModel">
+                    <Grid>
+                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Message, Mode=OneWay}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
 </ContentDialog>
