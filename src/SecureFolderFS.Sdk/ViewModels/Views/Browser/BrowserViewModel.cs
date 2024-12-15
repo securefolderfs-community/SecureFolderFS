@@ -1,17 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
@@ -88,7 +89,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
             
             var viewModel = new NewItemOverlayViewModel();
             var result = await OverlayService.ShowAsync(viewModel);
-            if (!result.Successful || viewModel.ItemName is null)
+            if (result.Aborted() || viewModel.ItemName is null)
                 return;
 
             switch (itemType)

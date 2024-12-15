@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
-using OwlCore.Storage;
+﻿using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
@@ -41,7 +41,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         {
             using var viewModel = new PreviewerOverlayViewModel();
             await viewModel.LoadFromStorableAsync(Inner, cancellationToken);
-
             await OverlayService.ShowAsync(viewModel);
         }
     }

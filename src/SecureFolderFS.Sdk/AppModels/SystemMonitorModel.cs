@@ -47,9 +47,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 return;
 
             foreach (var item in VaultCollectionModel)
-            {
                 WeakReferenceMessenger.Default.Send(new VaultLockRequestedMessage(item));
-            }
         }
 
         private void UserSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e)

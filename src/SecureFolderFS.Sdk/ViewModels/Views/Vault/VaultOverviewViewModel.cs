@@ -39,6 +39,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public override void Dispose()
         {
             WidgetsViewModel.Dispose();
+            VaultControlsViewModel.Dispose();
         }
     }
 }

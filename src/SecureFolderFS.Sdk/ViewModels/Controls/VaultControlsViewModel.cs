@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,7 +18,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
     [Inject<IFileExplorerService>]
     [Bindable(true)]
-    public sealed partial class VaultControlsViewModel : ObservableObject, IRecipient<VaultLockRequestedMessage>
+    public sealed partial class VaultControlsViewModel : ObservableObject, IRecipient<VaultLockRequestedMessage>, IDisposable
     {
         private readonly INavigator _dashboardNavigator;
         private readonly INavigationService _vaultNavigation;
@@ -89,6 +90,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
             }
 
             await _dashboardNavigator.NavigateAsync(_propertiesViewModel);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
         }
     }
 }

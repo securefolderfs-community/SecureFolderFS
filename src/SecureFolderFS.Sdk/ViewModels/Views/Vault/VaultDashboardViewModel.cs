@@ -60,6 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public override void Dispose()
         {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
             DashboardNavigation.NavigationChanged -= DashboardNavigation_NavigationChanged;
             DashboardNavigation.Dispose();
         }
