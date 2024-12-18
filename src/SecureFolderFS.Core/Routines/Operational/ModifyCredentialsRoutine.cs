@@ -48,6 +48,7 @@ namespace SecureFolderFS.Core.Routines.Operational
                 Version = options.Get(Associations.ASSOC_VERSION).TryCast<int?>() ?? throw GetException(nameof(Associations.ASSOC_VERSION)),
                 ContentCipherId = options.Get(Associations.ASSOC_CONTENT_CIPHER_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_CONTENT_CIPHER_ID)),
                 FileNameCipherId = options.Get(Associations.ASSOC_FILENAME_CIPHER_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_FILENAME_CIPHER_ID)),
+                FileNameEncodingId = options.Get(Associations.ASSOC_FILENAME_ENCODING_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_FILENAME_ENCODING_ID)),
                 AuthenticationMethod = options.Get(Associations.ASSOC_AUTHENTICATION).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_AUTHENTICATION)),
                 Uid = options.Get(Associations.ASSOC_VAULT_ID).TryCast<string?>() ?? throw GetException(nameof(Associations.ASSOC_VAULT_ID)),
                 PayloadMac = new byte[HMACSHA256.HashSizeInBytes]
@@ -67,7 +68,7 @@ namespace SecureFolderFS.Core.Routines.Operational
 
             // Generate new salt
             using var secureRandom = RandomNumberGenerator.Create();
-            var salt = new byte[Cryptography.Constants.KeyChains.SALT_LENGTH];
+            var salt = new byte[Cryptography.Constants.KeyTraits.SALT_LENGTH];
             secureRandom.GetNonZeroBytes(salt);
 
             // Encrypt new keystore

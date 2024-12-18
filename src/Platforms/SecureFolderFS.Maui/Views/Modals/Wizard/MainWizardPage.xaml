@@ -22,14 +22,14 @@
             <OnPlatform x:TypeArguments="View">
                 <On Platform="Android">
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-                        <mdc:Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
-                        <mdc:Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
+                        <mdc:Button Clicked="Existing_Clicked" Text="{l:ResourceString Rid=AddExisting}" />
+                        <mdc:Button Clicked="New_Clicked" Text="{l:ResourceString Rid=CreateNew}" />
                     </HorizontalStackLayout>
                 </On>
                 <On Platform="iOS">
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-                        <Button Clicked="Existing_Clicked" Text="{l:ResourceString Name=AddExisting}" />
-                        <Button Clicked="New_Clicked" Text="{l:ResourceString Name=CreateNew}" />
+                        <Button Clicked="Existing_Clicked" Text="{l:ResourceString Rid=AddExisting}" />
+                        <Button Clicked="New_Clicked" Text="{l:ResourceString Rid=CreateNew}" />
                     </HorizontalStackLayout>
                 </On>
             </OnPlatform>

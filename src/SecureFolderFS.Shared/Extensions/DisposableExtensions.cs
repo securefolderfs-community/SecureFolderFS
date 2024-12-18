@@ -5,9 +5,9 @@ namespace SecureFolderFS.Shared.Extensions
 {
     public static class DisposableExtensions
     {
-        public static async Task TryDisposeAsync(object obj)
+        public static async Task TryDisposeAsync(object presumedDisposable)
         {
-            switch (obj)
+            switch (presumedDisposable)
             {
                 case IAsyncDisposable asyncDisposable:
                     await asyncDisposable.DisposeAsync();
@@ -19,9 +19,9 @@ namespace SecureFolderFS.Shared.Extensions
             }
         }
 
-        public static void TryDispose(object obj)
+        public static void TryDispose(object presumedDisposable)
         {
-            switch (obj)
+            switch (presumedDisposable)
             {
                 case IDisposable disposable:
                     disposable.Dispose();

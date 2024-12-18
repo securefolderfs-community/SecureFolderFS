@@ -2,7 +2,11 @@
 {
     public static class Constants
     {
-        public const string FILE_SYSTEM_NAME = "WebDav";
+        public static class FileSystem
+        {
+            public const string FS_ID = "WEBDAV";
+            public const string FS_NAME = "WebDav";
+        }
 
         internal static class Headers
         {
@@ -13,11 +17,6 @@
             public const string CONTENT_LENGTH = "Content-Length";
             public const string ACCEPT_RANGES = "Accept-Ranges";
             public const string DEPTH = "Depth";
-        }
-
-        internal static class WebDavOptions
-        {
-            public const string DAV_COMPLIANCE_LEVEL = "1";
         }
 
         internal static class WebDavNamespaces

@@ -34,6 +34,52 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
+        public void Move(int oldIndex, int newIndex)
+        {
+            var item = base[oldIndex];
+            base.RemoveItem(oldIndex);
+            base.InsertItem(newIndex, item);
+
+            CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Move, item, oldIndex, newIndex));
+        }
+
+        /// <inheritdoc/>
+        public async Task LoadAsync(CancellationToken cancellationToken = default)
+        {
+            await Task.WhenAll(VaultConfigurations.LoadAsync(cancellationToken), VaultWidgets.LoadAsync(cancellationToken));
+
+            // Clear previous vaults
+            Items.Clear();
+
+            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
+            foreach (var item in VaultConfigurations.SavedVaults)
+            {
+                if (item.PersistableId is null)
+                    continue;
+
+                try
+                {
+                    var folder = await StorageService.GetPersistedAsync<IFolder>(item.PersistableId, cancellationToken);
+                    var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
+
+                    Items.Add(vaultModel);
+                    CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, vaultModel));
+                }
+                catch (Exception ex)
+                {
+                    _ = ex;
+                    continue;
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        public Task SaveAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.WhenAll(VaultConfigurations.SaveAsync(cancellationToken), VaultWidgets.SaveAsync(cancellationToken));
+        }
+
+        /// <inheritdoc/>
         protected override void ClearItems()
         {
             if (VaultConfigurations.SavedVaults is not null)
@@ -96,42 +142,6 @@ namespace SecureFolderFS.Sdk.AppModels
             var oldItem = this[index];
             base.SetItem(index, item);
             CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Replace, item, oldItem, index));
-        }
-
-        /// <inheritdoc/>
-        public async Task LoadAsync(CancellationToken cancellationToken = default)
-        {
-            await Task.WhenAll(VaultConfigurations.LoadAsync(cancellationToken), VaultWidgets.LoadAsync(cancellationToken));
-
-            // Clear previous vaults
-            Items.Clear();
-
-            VaultConfigurations.SavedVaults ??= new List<VaultDataModel>();
-            foreach (var item in VaultConfigurations.SavedVaults)
-            {
-                if (item.PersistableId is null)
-                    continue;
-
-                try
-                {
-                    var folder = await StorageService.GetPersistedAsync<IFolder>(item.PersistableId, cancellationToken);
-                    var vaultModel = new VaultModel(folder, item.VaultName, item.LastAccessDate);
-
-                    Items.Add(vaultModel);
-                    CollectionChanged?.Invoke(this, new(NotifyCollectionChangedAction.Add, vaultModel));
-                }
-                catch (Exception ex)
-                {
-                    _ = ex;
-                    continue;
-                }
-            }
-        }
-
-        /// <inheritdoc/>
-        public Task SaveAsync(CancellationToken cancellationToken = default)
-        {
-            return Task.WhenAll(VaultConfigurations.SaveAsync(cancellationToken), VaultWidgets.SaveAsync(cancellationToken));
         }
     }
 }

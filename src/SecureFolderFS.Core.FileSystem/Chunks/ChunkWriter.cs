@@ -1,8 +1,8 @@
 ﻿using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.Buffers;
 using SecureFolderFS.Core.FileSystem.Exceptions;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Buffers;
 
@@ -27,14 +27,14 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
         }
 
         /// <summary>
-        /// Writes <paramref name="cleartextChunk"/> into chunk at specified <paramref name="chunkNumber"/>.
+        /// Writes <paramref name="plaintextChunk"/> into chunk at specified <paramref name="chunkNumber"/>.
         /// </summary>
         /// <param name="chunkNumber">The chunk number to write to.</param>
-        /// <param name="cleartextChunk">The cleartext chunk to read from.</param>
-        public void WriteChunk(long chunkNumber, ReadOnlySpan<byte> cleartextChunk)
+        /// <param name="plaintextChunk">The plaintext chunk to read from.</param>
+        public void WriteChunk(long chunkNumber, ReadOnlySpan<byte> plaintextChunk)
         {
             // Calculate size of ciphertext
-            var ciphertextSize = Math.Min(cleartextChunk.Length + (_security.ContentCrypt.ChunkCiphertextSize - _security.ContentCrypt.ChunkCleartextSize), _security.ContentCrypt.ChunkCiphertextSize);
+            var ciphertextSize = Math.Min(plaintextChunk.Length + (_security.ContentCrypt.ChunkCiphertextSize - _security.ContentCrypt.ChunkPlaintextSize), _security.ContentCrypt.ChunkCiphertextSize);
 
             // Calculate position in ciphertext stream
             var streamPosition = _security.HeaderCrypt.HeaderCiphertextSize + chunkNumber * _security.ContentCrypt.ChunkCiphertextSize;
@@ -45,20 +45,26 @@ namespace SecureFolderFS.Core.FileSystem.Chunks
 
             // Encrypt
             _security.ContentCrypt.EncryptChunk(
-                cleartextChunk,
+                plaintextChunk,
                 chunkNumber,
                 _fileHeader,
                 realCiphertextChunk);
 
-            _fileSystemStatistics.BytesEncrypted?.Report(cleartextChunk.Length);
+            _fileSystemStatistics.BytesEncrypted?.Report(plaintextChunk.Length);
 
-            // Get and write to ciphertext stream
+            // Get available read-write stream or throw
             var ciphertextStream = _streamsManager.GetReadWriteStream();
             _ = ciphertextStream ?? throw new UnavailableStreamException();
+
+            // Check position bounds
+            if (streamPosition > ciphertextStream.Length)
+                return;
+            
+            // Write to stream at correct chunk
             ciphertextStream.Position = streamPosition;
             ciphertextStream.Write(realCiphertextChunk);
 
-            _fileSystemStatistics.BytesWritten?.Report(cleartextChunk.Length);
+            _fileSystemStatistics.BytesWritten?.Report(plaintextChunk.Length);
 
             // Return array
             ArrayPool<byte>.Shared.Return(ciphertextChunk);

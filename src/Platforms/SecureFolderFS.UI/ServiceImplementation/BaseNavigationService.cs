@@ -16,10 +16,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public IViewDesignation? CurrentView { get; protected set; }
 
         /// <inheritdoc/>
-        public ICollection<IViewDesignation> Views { get; protected set; }
+        public List<IViewDesignation> Views { get; protected set; }
 
         /// <inheritdoc/>
-        public INavigationControl? NavigationControl { get; set; }
+        public INavigator? Navigator { get; set; }
 
         /// <inheritdoc/>
         public event EventHandler<IViewDesignation?>? NavigationChanged;
@@ -27,7 +27,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         /// <summary>
         /// Gets the value that determines whether this service is initialized and can handle navigation.
         /// </summary>
-        public virtual bool IsInitialized => NavigationControl is not null;
+        public virtual bool IsInitialized => Navigator is not null;
 
         protected BaseNavigationService()
         {
@@ -35,7 +35,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> NavigateAsync(IViewDesignation view)
+        public virtual async Task<bool> NavigateAsync(IViewDesignation? view)
         {
             if (!IsInitialized)
                 return false;
@@ -44,19 +44,19 @@ namespace SecureFolderFS.UI.ServiceImplementation
             CurrentView?.OnDisappearing();
 
             // Notify the new target that it's been navigated to
-            view.OnAppearing();
+            view?.OnAppearing();
             
             // Update current target
             CurrentView = view;
-
-            // Add new target
-            if (!Views.Contains(view))
-                Views.Add(view);
             
             // Start actual navigation
             var navigationResult = await BeginNavigationAsync(view, NavigationType.Chained);
             if (!navigationResult)
                 return false;
+            
+            // Add new target
+            if (view is not null && !Views.Contains(view))
+                Views.Add(view);
 
             // Notify that navigation has occurred
             NavigationChanged?.Invoke(this, view);
@@ -98,7 +98,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
                 // Notify that navigation has occurred
                 NavigationChanged?.Invoke(this, CurrentView);
             }
-
+            
             return navigationResult;
         }
 
@@ -120,7 +120,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public virtual void Dispose()
         {
             CurrentView = null;
-            NavigationControl?.Dispose();
+            (Navigator as IDisposable)?.Dispose();
 
             Views.DisposeElements();
             Views.Clear();

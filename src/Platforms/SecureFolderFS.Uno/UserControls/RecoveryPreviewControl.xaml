@@ -18,10 +18,10 @@
             Grid.Row="0"
             IsClosable="False"
             IsOpen="True"
-            Message="{l:ResourceString Name=MasterKeyDescription}" />
+            Message="{l:ResourceString Rid=MasterKeyDescription}" />
 
         <ucab:ActionBlockControl
-            Title="{l:ResourceString Name=RevealMasterKey}"
+            Title="{l:ResourceString Rid=RevealMasterKey}"
             Grid.Row="1"
             BlockMode="Expandable"
             ExpanderExpandingCommand="{x:Bind RevealCommand, Mode=OneWay}"
@@ -53,7 +53,7 @@
                                 Margin="0,0,0,-4"
                                 FontSize="16"
                                 Glyph="&#xE749;" />
-                            <TextBlock Text="{l:ResourceString Name=Print}" />
+                            <TextBlock Text="{l:ResourceString Rid=Print}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>

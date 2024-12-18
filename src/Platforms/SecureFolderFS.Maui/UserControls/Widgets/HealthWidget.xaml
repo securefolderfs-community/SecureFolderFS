@@ -1,0 +1,23 @@
+﻿<ContentView
+    x:Class="SecureFolderFS.Maui.UserControls.Widgets.HealthWidget"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:l="clr-namespace:SecureFolderFS.Maui.Localization"
+    xmlns:local="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
+    x:Name="RootControl">
+
+    <HorizontalStackLayout
+        x:DataType="local:HealthWidget"
+        BindingContext="{x:Reference RootControl}"
+        Spacing="4">
+        <Image
+            Margin="-4,0,0,0"
+            HeightRequest="48"
+            Source="success_shield.png" />
+        <Label
+            FontAttributes="Bold"
+            FontSize="18"
+            Text="{l:ResourceString Rid=HealthNoProblems}"
+            VerticalOptions="Center" />
+    </HorizontalStackLayout>
+</ContentView>

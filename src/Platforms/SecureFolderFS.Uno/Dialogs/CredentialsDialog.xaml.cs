@@ -77,11 +77,7 @@ namespace SecureFolderFS.Uno.Dialogs
             {
                 try
                 {
-                    if (credentialsConfirmation.IsRemoving)
-                        await credentialsConfirmation.RemoveAsync(default);
-                    else
-                        await credentialsConfirmation.ConfirmAsync(default);
-                        
+                    await credentialsConfirmation.ConfirmAsync(default);
                     await HideAsync();
                 }
                 catch (Exception ex)

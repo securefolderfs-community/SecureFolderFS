@@ -37,7 +37,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public void Receive(VaultLockedMessage message)
         {
             // Free resources that are used by the dashboard
-            if (VaultModel.Equals(message.VaultModel))
+            if (VaultViewModel.VaultModel.Equals(message.VaultModel))
                 Dispose();
         }
 
@@ -60,6 +60,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         /// <inheritdoc/>
         public override void Dispose()
         {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
             DashboardNavigation.NavigationChanged -= DashboardNavigation_NavigationChanged;
             DashboardNavigation.Dispose();
         }

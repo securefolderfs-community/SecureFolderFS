@@ -22,6 +22,6 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Gets the collection of all previously navigated-to targets.
         /// </summary>
-        ICollection<IViewDesignation> Views { get; }
+        List<IViewDesignation> Views { get; }
     }
 }
