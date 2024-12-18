@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         private readonly IVaultModel _vaultModel;
         private readonly AuthenticationType _authenticationStage;
 
-        [ObservableProperty] private bool _CanContinue;
+        [ObservableProperty] private bool _CanContinue; // TODO: Use OverlayViewModel.IsPrimaryButtonEnabled
         [ObservableProperty] private LoginViewModel _LoginViewModel;
         [ObservableProperty] private RegisterViewModel _RegisterViewModel;
         [ObservableProperty] private CredentialsSelectionViewModel _SelectionViewModel;

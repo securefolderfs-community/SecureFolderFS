@@ -74,7 +74,7 @@
                                         Visibility="{x:Bind ViewModel.LoginViewModel.IsLoginSequence, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                     <Button
                                         HorizontalAlignment="Stretch"
-                                        Command="{x:Bind ViewModel.BeginRecoveryCommand, Mode=OneWay}"
+                                        Command="{x:Bind ViewModel.LoginViewModel.RecoverAccessCommand, Mode=OneWay}"
                                         Content="{l:ResourceString Rid=RecoverAccess}" />
                                 </StackPanel>
                             </Flyout>

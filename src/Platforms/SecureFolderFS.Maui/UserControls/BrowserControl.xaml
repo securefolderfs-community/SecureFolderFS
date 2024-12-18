@@ -10,22 +10,6 @@
 
     <ContentView.Resources>
         <vc:FileIconConverter x:Key="FileIconConverter" />
-        <DataTemplate x:Key="FileItemTemplate" x:DataType="vm:FileViewModel">
-            <ViewCell>
-                <VerticalStackLayout>
-                    <Image />
-                    <Label Text="{Binding Title, Mode=OneWay}" />
-                </VerticalStackLayout>
-            </ViewCell>
-        </DataTemplate>
-        <DataTemplate x:Key="FolderItemTemplate" x:DataType="vm:FolderViewModel">
-            <ViewCell>
-                <VerticalStackLayout>
-                    <Image />
-                    <Label Text="{Binding Title, Mode=OneWay}" />
-                </VerticalStackLayout>
-            </ViewCell>
-        </DataTemplate>
     </ContentView.Resources>
 
     <Grid x:DataType="local:BrowserControl" BindingContext="{x:Reference RootControl}">

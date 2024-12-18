@@ -1,26 +1,28 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.Attributes;
-using SecureFolderFS.Sdk.Enums;
-using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
-using SecureFolderFS.Shared;
-using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.Shared.Extensions;
-using SecureFolderFS.Shared.Models;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.AppModels;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.EventArguments;
+using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls
 {
-    [Inject<IVaultService>, Inject<IVaultManagerService>, Inject<IVaultCredentialsService>]
+    [Inject<IVaultService>, Inject<IVaultManagerService>, Inject<IVaultCredentialsService>, Inject<IOverlayService>]
     [Bindable(true)]
     public sealed partial class LoginViewModel : ObservableObject, IAsyncInitialize, IDisposable
     {
@@ -99,16 +101,29 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         private async Task RecoverAccessAsync(string? recoveryKey, CancellationToken cancellationToken)
         {
             if (recoveryKey is null)
-                return;
+            {
+                var recoveryOverlay = new RecoveryOverlayViewModel(_vaultModel.Folder);
+                var result = await OverlayService.ShowAsync(recoveryOverlay);
+                if (!result.Positive() || recoveryOverlay.UnlockContract is null)
+                {
+                    recoveryOverlay.Dispose();
+                    return;
+                }
 
-            try
-            {
-                var unlockContract = await VaultManagerService.RecoverAsync(_vaultModel.Folder, recoveryKey, cancellationToken);
-                VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder, true));
+                VaultUnlocked?.Invoke(this, new(recoveryOverlay.UnlockContract, _vaultModel.Folder, true));
             }
-            catch (Exception ex)
+            else
             {
-                _ = ex;
+                try
+                {
+                    var unlockContract = await VaultManagerService.RecoverAsync(_vaultModel.Folder, recoveryKey, cancellationToken);
+                    VaultUnlocked?.Invoke(this, new(unlockContract, _vaultModel.Folder, true));
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Report to user
+                    _ = ex;
+                }
             }
         }
 

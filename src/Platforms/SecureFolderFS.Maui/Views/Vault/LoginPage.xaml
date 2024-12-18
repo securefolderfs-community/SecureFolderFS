@@ -51,14 +51,15 @@
             <OnPlatform x:TypeArguments="View">
                 <On Platform="iOS">
                     <Button
-                        Command="{Binding ViewModel.BeginRecoveryCommand}"
+                        Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
                         IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
                         Text="{l:ResourceString Rid=RecoverAccess}" />
                 </On>
                 <On Platform="Android">
                     <mdc:Button
-                        Command="{Binding ViewModel.BeginRecoveryCommand}"
+                        Command="{Binding ViewModel.LoginViewModel.RecoverAccessCommand}"
                         IsVisible="{Binding ViewModel.LoginViewModel.CurrentViewModel, Mode=OneWay, Converter={StaticResource LoginViewModelBoolConverter}, ConverterParameter='MigrationViewModel,ErrorViewModel|invert'}"
+                        Style="{DynamicResource TextButtonStyle}"
                         Text="{l:ResourceString Rid=RecoverAccess}" />
                 </On>
             </OnPlatform>
