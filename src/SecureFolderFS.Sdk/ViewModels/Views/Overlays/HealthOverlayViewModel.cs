@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
 using SecureFolderFS.Shared.Extensions;
@@ -12,20 +13,26 @@ using System.Threading;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    public sealed partial class HealthOverlayViewModel : OverlayViewModel, IDisposable
+    public sealed partial class HealthOverlayViewModel : BaseDesignationViewModel, IUnlockedViewContext, IDisposable
     {
         private readonly SynchronizationContext? _context;
 
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private SeverityType _Severity;
+        [ObservableProperty] private ObservableCollection<HealthIssueViewModel> _FoundIssues;
 
-        public ObservableCollection<HealthIssueViewModel> FoundIssues { get; }
+        /// <inheritdoc/>
+        public UnlockedVaultViewModel UnlockedVaultViewModel { get; }
 
-        public HealthOverlayViewModel(SynchronizationContext? context)
+        /// <inheritdoc/>
+        public VaultViewModel VaultViewModel => UnlockedVaultViewModel.VaultViewModel;
+
+        public HealthOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel, SynchronizationContext? context)
         {
             _context = context;
-            FoundIssues = new();
-            FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
+            UnlockedVaultViewModel = unlockedVaultViewModel;
+            _FoundIssues = new();
+            _FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
         }
 
         partial void OnIsProgressingChanged(bool value)

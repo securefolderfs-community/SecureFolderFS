@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using OwlCore.Storage.System.IO;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels;
@@ -60,7 +61,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 return;
             
             // Find existing target or create new
-            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel) ?? false);
+            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(vaultViewModel.VaultModel) ?? false);
             if (target is null)
             {
                 var vaultLoginViewModel = new VaultLoginViewModel(vaultViewModel, ViewModel.NavigationService);

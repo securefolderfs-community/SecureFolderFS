@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
-using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -57,11 +57,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Host
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Remove when e.OldItems is not null && e.OldItems[0] is IVaultModel vaultModel:
-                    if (NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultViewModel.VaultModel.Equals(vaultModel) ?? false) is not BaseVaultViewModel viewModel)
+                    if (NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(vaultModel) ?? false) is not { } viewModel)
                         return;
 
                     NavigationService.Views.Remove(viewModel);
-                    viewModel.Dispose();
+                    (viewModel as IDisposable)?.Dispose();
                     break;
                 
                 case NotifyCollectionChangedAction.Reset:

@@ -3,7 +3,7 @@
 namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
 {
     [Bindable(true)]
-    public sealed class AgreementOverlayViewModel : OverlayViewModel
+    public sealed class AgreementOverlayViewModel : BaseDesignationViewModel
     {
     }
 }

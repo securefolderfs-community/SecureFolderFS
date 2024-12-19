@@ -70,7 +70,6 @@ namespace SecureFolderFS.Uno.Views.Vault
 
             var dashboardNavigation = DI.Service<INavigationService>();
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
-            _ = dashboardViewModel.InitAsync();
 
             await ViewModel.VaultNavigation.TryNavigateAndForgetAsync(dashboardViewModel);
         }

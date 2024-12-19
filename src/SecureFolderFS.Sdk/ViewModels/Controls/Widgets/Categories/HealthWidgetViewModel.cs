@@ -44,7 +44,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             _savedState = new();
             _context = SynchronizationContext.Current;
             _unlockedVaultViewModel = unlockedVaultViewModel;
-            HealthOverlayViewModel = new(_context);
+            HealthOverlayViewModel = new(unlockedVaultViewModel, _context);
             Title = "HealthNoProblems".ToLocalized();
             LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
         }

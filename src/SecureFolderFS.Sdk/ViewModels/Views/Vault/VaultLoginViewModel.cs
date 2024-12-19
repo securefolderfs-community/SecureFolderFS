@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
@@ -20,7 +21,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Inject<IOverlayService>, Inject<ISettingsService>, Inject<IVaultManagerService>]
     [Bindable(true)]
-    public sealed partial class VaultLoginViewModel : BaseVaultViewModel, INavigatable
+    public sealed partial class VaultLoginViewModel : BaseDesignationViewModel, IVaultViewContext, INavigatable, IAsyncInitialize, IDisposable
     {
         [ObservableProperty] private bool _IsReadOnly;
         [ObservableProperty] private LoginViewModel _LoginViewModel;
@@ -28,20 +29,23 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public INavigationService VaultNavigation { get; }
 
         /// <inheritdoc/>
+        public VaultViewModel VaultViewModel { get; }
+
+        /// <inheritdoc/>
         public event EventHandler<NavigationRequestedEventArgs>? NavigationRequested;
 
         public VaultLoginViewModel(VaultViewModel vaultViewModel, INavigationService vaultNavigation)
-            : base(vaultViewModel)
         {
             ServiceProvider = DI.Default;
             Title = vaultViewModel.VaultName;
             VaultNavigation = vaultNavigation;
+            VaultViewModel = vaultViewModel;
             _LoginViewModel = new(vaultViewModel.VaultModel, LoginViewType.Full);
             _LoginViewModel.VaultUnlocked += LoginViewModel_VaultUnlocked;
         }
 
         /// <inheritdoc/>
-        public override async Task InitAsync(CancellationToken cancellationToken = default)
+        public async Task InitAsync(CancellationToken cancellationToken = default)
         {
             await LoginViewModel.InitAsync(cancellationToken);
         }
@@ -92,7 +96,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         }
 
         /// <inheritdoc/>
-        public override void Dispose()
+        public void Dispose()
         {
             LoginViewModel.VaultUnlocked -= LoginViewModel_VaultUnlocked;
             LoginViewModel.Dispose();
