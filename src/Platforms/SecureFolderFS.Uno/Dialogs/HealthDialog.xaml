@@ -20,13 +20,30 @@
         </StackPanel>-->
 
         <ListView
+            Width="464"
             IsItemClickEnabled="False"
             ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
             SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:HealthIssueViewModel">
-                    <Grid>
-                        <TextBlock IsTextSelectionEnabled="True" Text="{x:Bind Message, Mode=OneWay}" />
+                    <Grid ColumnSpacing="24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <FontIcon
+                            Grid.Column="0"
+                            FontSize="24"
+                            Glyph="&#xE8AC;" />
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock FontWeight="Semibold" Text="Broken file name" />
+                            <TextBlock Opacity="0.8" Text="Export under a new name" />
+                        </StackPanel>
+
+                        <Button Grid.Column="2" Content="Resolve" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

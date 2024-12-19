@@ -70,7 +70,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private async Task UpdateSecurityTextAsync(CancellationToken cancellationToken)
         {
             var items = await VaultCredentialsService.GetLoginAsync(UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder, cancellationToken).ToArrayAsync(cancellationToken);
-            SecurityText = string.Join(" + ", items.Select(x => x.DisplayName));
+            SecurityText = string.Join(" + ", items.Select(x => x.Title));
         }
     }
 }

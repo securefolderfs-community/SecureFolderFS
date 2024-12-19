@@ -52,7 +52,7 @@ namespace SecureFolderFS.Maui.Popups
                 // Modify existing
                 modifyExistingSection.Add(new TextCell()
                 {
-                    Text = selectionViewModel.ConfiguredViewModel.DisplayName,
+                    Text = selectionViewModel.ConfiguredViewModel.Title,
                     Detail = "ChangeCurrentAuthentication".ToLocalized(),
                     Command = selectionViewModel.ItemSelectedCommand
                 });
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Maui.Popups
             {
                 allOptionsSection.Add(new TextCell()
                 {
-                    Text = item.DisplayName,
+                    Text = item.Title,
                     Detail = item.Description,
                     Command = selectionViewModel.ItemSelectedCommand,
                     CommandParameter = item
