@@ -80,7 +80,7 @@ namespace SecureFolderFS.Uno.Views.Vault
                     var vaultOverviewViewModel = new VaultOverviewViewModel(
                         ViewModel.UnlockedVaultViewModel,
                         new(ViewModel.VaultNavigation, ViewModel.DashboardNavigation, ViewModel.UnlockedVaultViewModel),
-                        new(ViewModel.UnlockedVaultViewModel, new WidgetsCollectionModel(ViewModel.VaultModel.Folder)));
+                        new(ViewModel.UnlockedVaultViewModel, new WidgetsCollectionModel(ViewModel.VaultViewModel.VaultModel.Folder)));
 
                     _ = vaultOverviewViewModel.InitAsync();
                     return vaultOverviewViewModel;

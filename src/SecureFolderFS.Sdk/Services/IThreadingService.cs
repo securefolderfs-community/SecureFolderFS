@@ -1,4 +1,5 @@
-﻿using SecureFolderFS.Shared.ComponentModel;
+﻿using System.Threading;
+using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.Sdk.Services
 {
@@ -7,6 +8,12 @@ namespace SecureFolderFS.Sdk.Services
     /// </summary>
     public interface IThreadingService
     {
+        /// <summary>
+        /// Gets the <see cref="SynchronizationContext"/> of the UI thread.
+        /// </summary>
+        /// <returns>The UI thread context, if available.</returns>
+        SynchronizationContext? GetContext();
+
         /// <summary>
         /// Changes current thread to execute on UI thread.
         /// </summary>

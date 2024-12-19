@@ -12,16 +12,16 @@ namespace SecureFolderFS.Maui.Localization
         /// <summary>
         /// Gets or sets the name identifier that is associated with a resource.
         /// </summary>
-        public string? Name { get; set; }
+        public string? Rid { get; set; }
 
         /// <inheritdoc/>
         public object ProvideValue(IServiceProvider serviceProvider)
         {
             LocalizationService ??= DI.OptionalService<ILocalizationService>();
             if (LocalizationService is null)
-                return $"{{{Name}}}";
+                return $"{{{Rid}}}";
 
-            return LocalizationService.TryGetString(Name ?? string.Empty) ?? $"{{{Name}}}";
+            return LocalizationService.TryGetString(Rid ?? string.Empty) ?? $"{{{Rid}}}";
         }
     }
 }

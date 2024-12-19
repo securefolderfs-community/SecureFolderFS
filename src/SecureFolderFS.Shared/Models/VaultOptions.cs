@@ -21,6 +21,11 @@
         public string? FileNameCipherId { get; init; }
 
         /// <summary>
+        /// Gets the ID of the encoding method to use during filename encryption and decryption.
+        /// </summary>
+        public string? NameEncodingId { get; init; }
+
+        /// <summary>
         /// Gets the unique identifier of the vault.
         /// </summary>
         public string? VaultId { get; init; }

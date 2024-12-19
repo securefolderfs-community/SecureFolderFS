@@ -6,11 +6,12 @@ namespace SecureFolderFS.Shared.Extensions
     public static class DictionaryExtensions
     {
         public static TValue? Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+            where TValue : class?
         {
             if (dictionary.TryGetValue(key, out var value))
                 return value;
 
-            return default;
+            return null;
         }
 
         public static TKV? GetByKeyOrValue<TKV>(this IDictionary<TKV, TKV> dictionary, TKV tkv)

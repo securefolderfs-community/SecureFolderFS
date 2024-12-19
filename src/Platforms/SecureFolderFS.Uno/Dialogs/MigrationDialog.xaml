@@ -7,7 +7,8 @@
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
-    xmlns:uc="using:SecureFolderFS.Uno.UserControls.Migration"
+    xmlns:uc="using:SecureFolderFS.Uno.UserControls"
+    xmlns:uc2="using:SecureFolderFS.Uno.UserControls.Migration"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Authentication"
     x:Name="ThisDialog"
@@ -18,7 +19,7 @@
     PrimaryButtonClick="MigrationDialog_PrimaryButtonClick"
     PrimaryButtonText="{x:Bind ViewModel.PrimaryButtonText, Mode=OneWay}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
-    SecondaryButtonText="{l:ResourceString Name=Close}"
+    SecondaryButtonText="{l:ResourceString Rid=Close}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
@@ -26,7 +27,7 @@
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
         <DataTemplate x:Key="MigratorV1_V2" x:DataType="vm:MigrationViewModel">
-            <uc:MigratorV1_V2
+            <uc2:MigratorV1_V2
                 MigrateCommand="{Binding ViewModel.AuthenticateMigrationCommand, Mode=OneWay, ElementName=ThisDialog}"
                 ProvideContinuationButton="False"
                 VaultFolder="{x:Bind VaultFolder, Mode=OneWay}"
@@ -73,48 +74,19 @@
                 <Button
                     HorizontalAlignment="Center"
                     Command="{x:Bind ViewModel.MigrateCommand, Mode=OneWay}"
-                    Content="{l:ResourceString Name=Migrate}"
+                    Content="{l:ResourceString Rid=Migrate}"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </StackPanel>
 
         <StackPanel x:Name="CompletedView" Visibility="Collapsed">
             <InfoBar
-                Title="{l:ResourceString Name=VaultMigrated}"
+                Title="{l:ResourceString Rid=VaultMigrated}"
                 IsClosable="False"
                 IsOpen="True"
                 Severity="Success" />
         </StackPanel>
-        <StackPanel
-            x:Name="ErrorView"
-            Spacing="4"
-            Visibility="Collapsed">
-            <InfoBar
-                Title="{l:ResourceString Name=Error}"
-                IsClosable="False"
-                IsOpen="True"
-                Message="{l:ResourceString Name=ErrorOccurred}"
-                Severity="Error" />
-            <Expander IsExpanded="True">
-                <Expander.Header>
-                    <TextBlock Text="{l:ResourceString Name=ErrorDetails}" />
-                </Expander.Header>
-                <ScrollViewer
-                    Height="200"
-                    MaxWidth="600"
-                    Padding="4"
-                    HorizontalScrollBarVisibility="Auto"
-                    VerticalScrollBarVisibility="Auto">
-                    <TextBlock
-                        x:Name="ErrorMessage"
-                        HorizontalAlignment="Center"
-                        FontSize="12"
-                        HorizontalTextAlignment="Center"
-                        IsTextSelectionEnabled="True"
-                        Opacity="0.8"
-                        TextWrapping="Wrap" />
-                </ScrollViewer>
-            </Expander>
-        </StackPanel>
+
+        <uc:ErrorControl x:Name="ErrorView" Visibility="Collapsed" />
     </Grid>
 </ContentDialog>

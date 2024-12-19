@@ -25,6 +25,14 @@ namespace SecureFolderFS.Shared.Extensions
 
             return item;
         }
+
+        public static void AddMultiple<T>(this ICollection<T> collection, IEnumerable<T> enumerable)
+        {
+            foreach (var item in enumerable)
+            {
+                collection.Add(item);
+            }
+        }
         
         public static bool RemoveMatch<T>(this IList<T> list, Func<T, bool> predicate)
         {

@@ -26,7 +26,7 @@ namespace SecureFolderFS.UI.ViewModels
         protected PasswordViewModel()
             : base(Core.Constants.Vault.Authentication.AUTH_PASSWORD)
         {
-            DisplayName = "Password".ToLocalized();
+            Title = "Password".ToLocalized();
             Icon = "\uE8AC";
         }
 
@@ -75,7 +75,7 @@ namespace SecureFolderFS.UI.ViewModels
         /// <inheritdoc/>
         public override void Dispose()
         {
-            PrimaryPassword = null;
+            _PrimaryPassword = null;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
     /// <summary>
     /// The base class that manages UI navigation using <see cref="ContentControl"/>.
     /// </summary>
-    public abstract partial class ContentNavigationControl : UserControl, INavigationControl
+    public abstract partial class ContentNavigationControl : UserControl, INavigator, IDisposable
     {
         protected ContentNavigationControl()
         {
@@ -21,15 +21,13 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default)
-            where TTransition : class
-            where TTarget : IViewDesignation
+        public async Task<bool> NavigateAsync(IViewDesignation? view)
         {
             // Get the transition finalizer which will be used to end the transition
-            var transitionFinalizer = await ApplyTransitionAsync(target, transition);
+            var transitionFinalizer = await ApplyTransitionAsync(view);
 
             // Navigate by setting the content
-            MainContent.Content = target;
+            MainContent.Content = view;
 
             // End the transition
             if (transitionFinalizer is not null)
@@ -38,10 +36,22 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
             return true;
         }
 
-        protected abstract Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTransition : class;
+        /// <inheritdoc/>
+        public Task<bool> GoBackAsync()
+        {
+            return Task.FromResult(false);
+        }
 
         /// <inheritdoc/>
-        public virtual void Dispose()
+        public Task<bool> GoForwardAsync()
+        {
+            return Task.FromResult(false);
+        }
+
+        protected abstract Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget>(TTarget? target);
+
+        /// <inheritdoc/>
+        public new void Dispose()
         {
             (MainContent.Content as IDisposable)?.Dispose();
         }

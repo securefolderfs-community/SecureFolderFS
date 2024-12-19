@@ -64,7 +64,12 @@
 
     <OnPlatform x:TypeArguments="View">
         <On Platform="Android">
-            <Border BackgroundColor="White" BindingContext="{x:Reference Root}">
+            <Border
+                x:Name="ModalBorder"
+                BackgroundColor="White"
+                BindingContext="{x:Reference Root}"
+                Stroke="Transparent"
+                StrokeThickness="0">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="24,24,0,0" />
                 </Border.StrokeShape>
@@ -81,6 +86,7 @@
                         Padding="16"
                         FontAttributes="Bold"
                         FontSize="22"
+                        IsVisible="{Binding Title, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                         Text="{Binding Title, Mode=OneWay}" />
 
                     <ContentView
@@ -91,10 +97,12 @@
 
                     <!--  Buttons  -->
                     <Grid
+                        x:Name="ButtonsGrid"
                         Grid.Row="2"
                         Padding="8"
                         ColumnSpacing="8"
-                        HorizontalOptions="Fill">
+                        HorizontalOptions="Fill"
+                        IsVisible="False">
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />

@@ -44,7 +44,7 @@
             <uc:BannerControl.RightSide>
                 <Grid>
                     <Button
-                        AutomationProperties.Name="{l:ResourceString Name=CheckForUpdates}"
+                        AutomationProperties.Name="{l:ResourceString Rid=CheckForUpdates}"
                         Command="{x:Bind ViewModel.BannerViewModel.UpdateAppCommand, Mode=OneWay}"
                         IsEnabled="{x:Bind ViewModel.BannerViewModel.AreUpdatesSupported, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
@@ -55,7 +55,7 @@
                             <TextBlock
                                 VerticalAlignment="Center"
                                 FontWeight="SemiBold"
-                                Text="{l:ResourceString Name=CheckForUpdates}" />
+                                Text="{l:ResourceString Rid=CheckForUpdates}" />
                         </StackPanel>
                     </Button>
                 </Grid>
@@ -64,7 +64,7 @@
                 <!--  Version InfoBar  -->
                 <InfoBar
                     Title="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Title, Mode=OneWay}"
-                    IsClosable="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.CanBeClosed, Mode=OneWay}"
+                    IsClosable="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.IsCloseable, Mode=OneWay}"
                     IsOpen="True"
                     Message="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Message, Mode=OneWay}"
                     Severity="{x:Bind ViewModel.BannerViewModel.InfoBarViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}"
@@ -100,21 +100,20 @@
             Spacing="4">
             <StackPanel>
                 <ucab:ActionBlockControl
-                    Title="{l:ResourceString Name=Language}"
+                    Title="{l:ResourceString Rid=Language}"
                     BlockMode="Default"
-                    Description="{l:ResourceString Name=LanguageDescription}">
+                    Description="{l:ResourceString Rid=LanguageDescription}">
                     <ucab:ActionBlockControl.Icon>
                         <FontIcon Glyph="&#xF2B7;" />
                     </ucab:ActionBlockControl.Icon>
                     <ucab:ActionBlockControl.ActionElement>
                         <ComboBox
-                            x:Name="AppLanguageComboBox"
                             AutomationProperties.Name="{x:Bind ViewModel.SelectedLanguage, Mode=OneWay}"
                             ItemsSource="{x:Bind ViewModel.Languages, Mode=OneWay}"
                             SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="vm:LanguageViewModel">
-                                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" />
+                                    <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
@@ -122,7 +121,7 @@
                     <ucab:ActionBlockControl.CustomDescription />
                 </ucab:ActionBlockControl>
                 <InfoBar
-                    Title="{l:ResourceString Name=RestartRequired}"
+                    Title="{l:ResourceString Rid=RestartRequired}"
                     IsClosable="False"
                     IsOpen="True"
                     Severity="Warning"
@@ -150,28 +149,28 @@
                 </InfoBar>
             </StackPanel>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=Theme}"
+                Title="{l:ResourceString Rid=Theme}"
                 BlockMode="Default"
-                Description="{l:ResourceString Name=ThemeDescription}">
+                Description="{l:ResourceString Rid=ThemeDescription}">
                 <ucab:ActionBlockControl.Icon>
                     <FontIcon Glyph="&#xE790;" />
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ActionElement>
                     <ComboBox
                         x:Name="AppThemeComboBox"
-                        AutomationProperties.Name="{l:ResourceString Name=Theme}"
+                        AutomationProperties.Name="{l:ResourceString Rid=Theme}"
                         SelectedIndex="{x:Bind SelectedThemeIndex}"
                         SelectionChanged="AppThemeComboBox_SelectionChanged">
                         <ComboBox.Items>
-                            <ComboBoxItem Content="{l:ResourceString Name=ThemeSystemDefault}" />
-                            <ComboBoxItem Content="{l:ResourceString Name=ThemeLight}" />
-                            <ComboBoxItem Content="{l:ResourceString Name=ThemeDark}" />
+                            <ComboBoxItem Content="{l:ResourceString Rid=ThemeSystemDefault}" />
+                            <ComboBoxItem Content="{l:ResourceString Rid=ThemeLight}" />
+                            <ComboBoxItem Content="{l:ResourceString Rid=ThemeDark}" />
                         </ComboBox.Items>
                     </ComboBox>
                 </ucab:ActionBlockControl.ActionElement>
             </ucab:ActionBlockControl>
             <ucab:ActionBlockControl
-                Title="{l:ResourceString Name=ManageSettings}"
+                Title="{l:ResourceString Rid=ManageSettings}"
                 BlockMode="Expandable"
                 IsEnabled="False">
                 <ucab:ActionBlockControl.Icon>
@@ -179,7 +178,7 @@
                 </ucab:ActionBlockControl.Icon>
                 <ucab:ActionBlockControl.ExpanderContent>
                     <StackPanel Margin="-16" Spacing="1">
-                        <ucab:ActionBlockControl Title="{l:ResourceString Name=ImportSettings}" BlockMode="Clickable">
+                        <ucab:ActionBlockControl Title="{l:ResourceString Rid=ImportSettings}" BlockMode="Clickable">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xE8B5;" />
                             </ucab:ActionBlockControl.Icon>
@@ -187,7 +186,7 @@
                                 <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                             </ucab:ActionBlockControl.ActionElement>
                         </ucab:ActionBlockControl>
-                        <ucab:ActionBlockControl Title="{l:ResourceString Name=ExportSettings}" BlockMode="Clickable">
+                        <ucab:ActionBlockControl Title="{l:ResourceString Rid=ExportSettings}" BlockMode="Clickable">
                             <ucab:ActionBlockControl.Icon>
                                 <FontIcon Glyph="&#xEDE2;" />
                             </ucab:ActionBlockControl.Icon>

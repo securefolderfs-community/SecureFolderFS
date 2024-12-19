@@ -13,7 +13,7 @@
         <OnPlatform x:TypeArguments="View">
             <On Platform="Android">
                 <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="32">
-                    <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
+                    <Label FontSize="16" Text="{l:ResourceString Rid=MasterKeyDescription}" />
 
                     <VerticalStackLayout Spacing="8">
                         <mdc:Card Style="{DynamicResource FilledCardStyle}">
@@ -22,7 +22,7 @@
                                 <Label
                                     FontFamily="Courier New"
                                     LineBreakMode="CharacterWrap"
-                                    Text="{Binding MasterKey, Mode=OneWay, Source={x:Reference ThisRecoveryControl}}" />
+                                    Text="{Binding RecoveryKey, Mode=OneWay, Source={x:Reference ThisRecoveryControl}}" />
                             </VerticalStackLayout>
                         </mdc:Card>
                         <mdc:Button
@@ -36,7 +36,7 @@
             </On>
             <On Platform="iOS">
                 <VerticalStackLayout BindingContext="{x:Reference ThisRecoveryControl}" Spacing="32">
-                    <Label FontSize="16" Text="{l:ResourceString Name=MasterKeyDescription}" />
+                    <Label FontSize="16" Text="{l:ResourceString Rid=MasterKeyDescription}" />
 
                     <VerticalStackLayout Spacing="4">
                         <Label Opacity="0.6" Text="Recovery key" />
@@ -47,7 +47,7 @@
                             <Label
                                 FontFamily="Courier New"
                                 LineBreakMode="CharacterWrap"
-                                Text="{Binding MasterKey, Mode=OneWay}" />
+                                Text="{Binding RecoveryKey, Mode=OneWay}" />
                         </Border>
                         <Button
                             Command="{Binding ExportCommand, Mode=OneWay}"

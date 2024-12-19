@@ -1,13 +1,17 @@
 ﻿using OwlCore.Storage;
-using System;
+using SecureFolderFS.Sdk.Attributes;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Shared;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
+    [Inject<IOverlayService>]
     [Bindable(true)]
-    public class FileViewModel : BrowserItemViewModel
+    public partial class FileViewModel : BrowserItemViewModel
     {
         /// <inheritdoc/>
         public override IStorable Inner => File;
@@ -17,8 +21,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// </summary>
         public IFile File { get; }
 
-        public FileViewModel(IFile file)
+        public FileViewModel(IFile file, FolderViewModel? parentFolder)
+            : base(parentFolder)
         {
+            ServiceProvider = DI.Default;
             File = file;
             Title = file.Name;
         }
@@ -26,8 +32,16 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override Task InitAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
             // TODO: Load thumbnail
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        protected override async Task OpenAsync(CancellationToken cancellationToken)
+        {
+            using var viewModel = new PreviewerOverlayViewModel();
+            await viewModel.LoadFromStorableAsync(Inner, cancellationToken);
+            await OverlayService.ShowAsync(viewModel);
         }
     }
 }

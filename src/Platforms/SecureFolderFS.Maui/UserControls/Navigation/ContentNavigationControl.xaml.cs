@@ -1,26 +1,23 @@
 using SecureFolderFS.Shared.ComponentModel;
-using SecureFolderFS.UI.Utils;
 
 namespace SecureFolderFS.Maui.UserControls.Navigation
 {
-    public abstract partial class ContentNavigationControl : ContentView, INavigationControl
+    public abstract partial class ContentNavigationControl : ContentView, INavigator, IDisposable
     {
         public ContentNavigationControl()
         {
             InitializeComponent();
             RootGrid.BindingContext = this;
         }
-
+        
         /// <inheritdoc/>
-        public async Task<bool> NavigateAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default)
-            where TTarget : IViewDesignation
-            where TTransition : class
+        public async Task<bool> NavigateAsync(IViewDesignation? view)
         {
             // Get the transition finalizer which will be used to end the transition
-            var transitionFinalizer = await ApplyTransitionAsync(target, transition);
+            var transitionFinalizer = await ApplyTransitionAsync(view);
 
             // Navigate by setting the content
-            Presentation.ViewContent = target;
+            Presentation.Presentation = view;
 
             // End the transition
             if (transitionFinalizer is not null)
@@ -29,12 +26,24 @@ namespace SecureFolderFS.Maui.UserControls.Navigation
             return true;
         }
 
-        protected abstract Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget, TTransition>(TTarget? target, TTransition? transition = default) where TTransition : class;
+        /// <inheritdoc/>
+        public Task<bool> GoBackAsync()
+        {
+            return Task.FromResult(false);
+        }
+
+        /// <inheritdoc/>
+        public Task<bool> GoForwardAsync()
+        {
+            return Task.FromResult(false);
+        }
+        
+        protected abstract Task<IAsyncDisposable?> ApplyTransitionAsync<TTarget>(TTarget? target);
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            (Presentation.ViewContent as IDisposable)?.Dispose();
+            (Presentation.Presentation as IDisposable)?.Dispose();
         }
 
         public DataTemplateSelector? TemplateSelector

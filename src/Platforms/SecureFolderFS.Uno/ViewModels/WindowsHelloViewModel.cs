@@ -38,7 +38,7 @@ namespace SecureFolderFS.Uno.ViewModels
         protected WindowsHelloViewModel(IFolder vaultFolder, string vaultId)
             : base(Core.Constants.Vault.Authentication.AUTH_WINDOWS_HELLO)
         {
-            DisplayName = "WindowsHello".ToLocalized();
+            Title = "WindowsHello".ToLocalized();
             VaultFolder = vaultFolder;
             VaultId = vaultId;
             Icon = "\uEB68";

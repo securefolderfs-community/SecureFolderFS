@@ -6,14 +6,14 @@
     xmlns:h="using:SecureFolderFS.Uno.Helpers"
     xmlns:l="using:SecureFolderFS.Uno.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{l:ResourceString Name=RecoverAccess}"
+    Title="{l:ResourceString Rid=RecoverAccess}"
     Width="600"
     HorizontalAlignment="Stretch"
     HorizontalContentAlignment="Stretch"
-    CloseButtonText="{l:ResourceString Name=Cancel}"
+    CloseButtonText="{l:ResourceString Rid=Cancel}"
     DefaultButton="Primary"
     PrimaryButtonClick="RecoveryDialog_PrimaryButtonClick"
-    PrimaryButtonText="{l:ResourceString Name=Recover}"
+    PrimaryButtonText="{l:ResourceString Rid=Recover}"
     RequestedTheme="{x:Bind h:UnoThemeHelper.Instance.CurrentElementTheme, Mode=OneWay}"
     Style="{ThemeResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
@@ -24,7 +24,7 @@
     </ContentDialog.Resources>
 
     <StackPanel Spacing="8">
-        <TextBlock Text="{l:ResourceString Name=EnterRecoveryKey}" />
+        <TextBlock Text="{l:ResourceString Rid=EnterRecoveryKey}" />
         <TextBox
             AcceptsReturn="True"
             FontFamily="Consolas"
@@ -37,7 +37,7 @@
                     Margin="0,0,0,-4"
                     FontSize="16"
                     Glyph="&#xE77F;" />
-                <TextBlock Text="{l:ResourceString Name=Paste}" />
+                <TextBlock Text="{l:ResourceString Rid=Paste}" />
             </StackPanel>
         </Button>
     </StackPanel>

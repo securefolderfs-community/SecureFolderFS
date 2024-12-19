@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Wizard
 {
     [Bindable(true)]
-    public abstract partial class BaseWizardViewModel : ObservableObject, IViewDesignation
+    public abstract partial class BaseWizardViewModel : ObservableObject, IViewDesignation // TODO: Use IOverlayControls
     {
         /// <inheritdoc cref="IViewable.Title"/>
         [ObservableProperty] private string? _Title;

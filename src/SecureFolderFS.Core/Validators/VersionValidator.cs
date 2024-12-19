@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.Validators
         {
             var versionDataModel = await _serializer.DeserializeAsync<Stream, VersionDataModel?>(value, cancellationToken);
             if (versionDataModel is null)
-                throw new SerializationException("Couldn't deserialize configuration buffer to version data model.");
+                throw new SerializationException($"Couldn't deserialize configuration buffer to {nameof(VersionDataModel)}.");
 
             if (versionDataModel.Version > LATEST_VERSION)
                 throw new FormatException("Unknown vault version.");

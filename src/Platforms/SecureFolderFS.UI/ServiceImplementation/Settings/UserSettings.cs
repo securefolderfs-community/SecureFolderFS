@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         /// <inheritdoc/>
         public virtual string PreferredFileSystemId
         {
-            get => GetSetting(static () => Core.Constants.FileSystemId.FS_WEBDAV);
+            get => GetSetting(static () => "WEBDAV"); // TODO: Use a constant
             set => SetSetting(value);
         }
 
@@ -36,6 +36,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         public virtual bool StartOnSystemStartup
         {
             get => GetSetting(static () => false);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public virtual bool ReduceToBackground
+        {
+            get => GetSetting(static () => true);
             set => SetSetting(value);
         }
 
@@ -58,16 +65,23 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         #region Privacy
 
         /// <inheritdoc/>
-        public virtual bool AutoLockVaults
+        public virtual bool IsTelemetryEnabled
+        {
+            get => GetSetting(() => true);
+            set => SetSetting(value);
+        }
+
+        /// <inheritdoc/>
+        public virtual bool LockOnSystemLock
         {
             get => GetSetting(() => false);
             set => SetSetting(value);
         }
 
         /// <inheritdoc/>
-        public virtual bool IsTelemetryEnabled
+        public virtual bool DisableRecentAccess
         {
-            get => GetSetting(() => true);
+            get => GetSetting(() => false);
             set => SetSetting(value);
         }
 
@@ -77,12 +91,13 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         {
             var eventName = e.PropertyName switch
             {
-                nameof(AutoLockVaults) => $"{nameof(AutoLockVaults)}: {AutoLockVaults}",
+                nameof(LockOnSystemLock) => $"{nameof(LockOnSystemLock)}: {LockOnSystemLock}",
                 nameof(IsTelemetryEnabled) => $"{nameof(IsTelemetryEnabled)}: {IsTelemetryEnabled}",
                 nameof(PreferredFileSystemId) => $"{nameof(PreferredFileSystemId)}: {PreferredFileSystemId}",
                 nameof(StartOnSystemStartup) => $"{nameof(StartOnSystemStartup)}: {StartOnSystemStartup}",
                 nameof(ContinueOnLastVault) => $"{nameof(ContinueOnLastVault)}: {ContinueOnLastVault}",
                 nameof(OpenFolderOnUnlock) => $"{nameof(OpenFolderOnUnlock)}: {OpenFolderOnUnlock}",
+                nameof(ReduceToBackground) => $"{nameof(ReduceToBackground)}: {ReduceToBackground}",
                 _ => null
             };
 

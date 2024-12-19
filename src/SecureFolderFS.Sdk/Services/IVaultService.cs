@@ -1,6 +1,4 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System.Collections.Generic;
@@ -20,6 +18,11 @@ namespace SecureFolderFS.Sdk.Services
         int LatestVaultVersion { get; }
 
         /// <summary>
+        /// Gets the name of the vault's content folder.
+        /// </summary>
+        string ContentFolderName { get; }
+
+        /// <summary>
         /// Gets the <see cref="IAsyncValidator{T}"/> of type <see cref="IFolder"/> used to validate vaults.
         /// </summary>
         IAsyncValidator<IFolder> VaultValidator { get; }
@@ -32,39 +35,25 @@ namespace SecureFolderFS.Sdk.Services
         bool IsNameReserved(string? name);
 
         /// <summary>
-        /// Gets all file systems that are supported by SecureFolderFS.
+        /// Gets all encoding options that are supported by SecureFolderFS.
         /// </summary>
-        /// <remarks>
-        /// Returned file systems that are available, may not be supported on this device. 
-        /// Use <see cref="IFileSystemInfoModel.GetStatusAsync"/> to check if a given file system is supported.
-        /// </remarks>
-        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="IFileSystemInfoModel"/> of available file systems.</returns>
-        IEnumerable<IFileSystemInfoModel> GetFileSystems();
-
-        /// <summary>
-        /// Gets all content ciphers that are supported by SecureFolderFS.
-        /// </summary>
-        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of content ciphers.</returns>
-        IEnumerable<string> GetContentCiphers();
-
-        /// <summary>
-        /// Gets all filename ciphers that are supported by SecureFolderFS.
-        /// </summary>
-        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs  of filename ciphers.</returns>
-        IEnumerable<string> GetFileNameCiphers();
+        /// <returns>Returns <see cref="IEnumerable{T}"/> of type <see cref="string"/> that represents IDs of encodings.</returns>
+        IEnumerable<string> GetEncodingOptions();
 
         /// <summary>
         /// Gets an instance of <see cref="VaultOptions"/> that contains information about the vault.
         /// </summary>
-        /// <param name="vaultFolder">The folder of the vault.</param>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="VaultOptions"/> of the additional vault information.</returns>
         Task<VaultOptions> GetVaultOptionsAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
 
-        // TODO: Needs docs
-
-        IAsyncEnumerable<AuthenticationViewModel> GetLoginAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
-
-        IAsyncEnumerable<AuthenticationViewModel> GetCreationAsync(IFolder vaultFolder, string vaultId, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Gets the appropriate migrator for a vault.
+        /// </summary>
+        /// <param name="vaultFolder">The <see cref="IFolder"/> that represents the vault.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. Value is <see cref="IVaultMigratorModel"/> that is used to migrate a vault.</returns>
+        Task<IVaultMigratorModel> GetMigratorAsync(IFolder vaultFolder, CancellationToken cancellationToken = default);
     }
 }

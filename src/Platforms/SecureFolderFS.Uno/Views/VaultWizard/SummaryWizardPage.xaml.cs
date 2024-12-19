@@ -33,7 +33,6 @@ namespace SecureFolderFS.Uno.Views.VaultWizard
         public SummaryWizardPage()
         {
             InitializeComponent();
-
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

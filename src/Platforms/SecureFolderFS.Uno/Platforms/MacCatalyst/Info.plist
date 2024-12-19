@@ -15,7 +15,9 @@
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
 		<key>XSAppIconAssets</key>
-		<string>Assets.xcassets/icon.appiconset</string>
+		<string>Assets.xcassets/iconapp.appiconset</string>
+		<key>CFBundleDisplayName</key>
+		<string>SecureFolderFS</string>
 
 		<!--
 		Adjust this to your application's encryption usage.

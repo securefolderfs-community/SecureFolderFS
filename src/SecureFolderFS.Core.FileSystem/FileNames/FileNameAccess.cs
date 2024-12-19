@@ -1,13 +1,13 @@
 ﻿using SecureFolderFS.Core.Cryptography;
-using SecureFolderFS.Core.FileSystem.Statistics;
 using SecureFolderFS.Shared.Enums;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.FileNames
 {
     /// <summary>
-    /// Accesses cleartext and ciphertext names of files and folders found on the encrypting file system.
+    /// Accesses plaintext and ciphertext names of files and folders found on the encrypting file system.
     /// </summary>
     internal class FileNameAccess
     {
@@ -21,12 +21,12 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
         }
 
         /// <summary>
-        /// Gets cleartext name from associated <paramref name="ciphertextName"/>.
+        /// Gets plaintext name from associated <paramref name="ciphertextName"/>.
         /// </summary>
         /// <param name="ciphertextName">The associated ciphertext name.</param>
         /// <param name="directoryId">The ID of a directory where the item is stored.</param>
-        /// <returns>If successful, returns a cleartext representation of the name; otherwise empty.</returns>
-        public virtual string GetCleartextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
+        /// <returns>If successful, returns a plaintext representation of the name; otherwise empty.</returns>
+        public virtual string GetPlaintextName(ReadOnlySpan<char> ciphertextName, ReadOnlySpan<byte> directoryId)
         {
             statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
 
@@ -34,24 +34,24 @@ namespace SecureFolderFS.Core.FileSystem.FileNames
             if (nameWithoutExt.IsEmpty)
                 return string.Empty;
 
-            var cleartextName = security.NameCrypt!.DecryptName(nameWithoutExt, directoryId);
-            if (cleartextName is null)
+            var plaintextName = security.NameCrypt!.DecryptName(nameWithoutExt, directoryId);
+            if (plaintextName is null)
                 return string.Empty;
 
-            return cleartextName;
+            return plaintextName;
         }
 
         /// <summary>
-        /// Gets ciphertext name from associated <paramref name="cleartextName"/>.
+        /// Gets ciphertext name from associated <paramref name="plaintextName"/>.
         /// </summary>
-        /// <param name="cleartextName">The associated cleartext name.</param>
+        /// <param name="plaintextName">The associated plaintext name.</param>
         /// <param name="directoryId">The ID of a directory where the item is stored.</param>
         /// <returns>If successful, returns a ciphertext representation of the name; otherwise empty.</returns>
-        public virtual string GetCiphertextName(ReadOnlySpan<char> cleartextName, ReadOnlySpan<byte> directoryId)
+        public virtual string GetCiphertextName(ReadOnlySpan<char> plaintextName, ReadOnlySpan<byte> directoryId)
         {
             statistics.FileNameCache?.Report(CacheAccessType.CacheAccess);
 
-            var ciphertextName = security.NameCrypt!.EncryptName(cleartextName, directoryId);
+            var ciphertextName = security.NameCrypt!.EncryptName(plaintextName, directoryId);
             return Path.ChangeExtension(ciphertextName, Constants.Names.ENCRYPTED_FILE_EXTENSION);
         }
     }

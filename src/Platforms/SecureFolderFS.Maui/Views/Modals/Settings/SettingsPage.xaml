@@ -6,15 +6,16 @@
     xmlns:local="clr-namespace:SecureFolderFS.Maui.Views.Modals.Settings"
     xmlns:md="clr-namespace:SecureFolderFS.Maui.Views.Modals"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls;assembly=SecureFolderFS.Sdk"
     x:Name="ThisPage"
-    Title="{l:ResourceString Name=Settings}"
+    Title="{l:ResourceString Rid=Settings}"
     x:DataType="local:SettingsPage">
 
     <VerticalStackLayout>
         <TableView>
             <TableRoot>
-                <TableSection Title="{l:ResourceString Name=SettingsGeneral}">
-                    <uc:SplitCell LeftText="{l:ResourceString Name=Language}">
+                <TableSection Title="{l:ResourceString Rid=SettingsGeneral}">
+                    <uc:SplitCell LeftText="{l:ResourceString Rid=Language}">
                         <uc:SplitCell.RightSide>
                             <Border>
                                 <Border.Stroke>
@@ -23,25 +24,25 @@
 
                                 <Picker
                                     BindingContext="{x:Reference ThisPage}"
-                                    ItemDisplayBinding="{Binding DisplayName, Mode=OneWay}"
+                                    ItemDisplayBinding="{Binding Title, Mode=OneWay, x:DataType={x:Type vm:LanguageViewModel}}"
                                     ItemsSource="{Binding GeneralViewModel.Languages, Mode=OneWay}"
                                     SelectedItem="{Binding GeneralViewModel.SelectedLanguage, Mode=TwoWay}"
                                     WidthRequest="96" />
                             </Border>
                         </uc:SplitCell.RightSide>
                     </uc:SplitCell>
-                    <SwitchCell On="{Binding PrivacyViewModel.AutoLockVaults, Mode=TwoWay}" Text="{l:ResourceString Name=AutoLock}" />
-                    <SwitchCell On="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" Text="{l:ResourceString Name=Telemetry}" />
+                    <SwitchCell On="{Binding PrivacyViewModel.LockOnSystemLock, Mode=TwoWay}" Text="{l:ResourceString Rid=AutoLock}" />
+                    <SwitchCell On="{Binding PrivacyViewModel.IsTelemetryEnabled, Mode=TwoWay}" Text="{l:ResourceString Rid=Telemetry}" />
                 </TableSection>
 
-                <TableSection Title="{l:ResourceString Name=SettingsAbout}">
+                <TableSection Title="{l:ResourceString Rid=SettingsAbout}">
                     <uc:SplitCell
                         Command="{Binding AboutViewModel.CopyAppVersionCommand}"
-                        LeftText="{l:ResourceString Name=Version}"
+                        LeftText="{l:ResourceString Rid=Version}"
                         RightText="{Binding AboutViewModel.AppVersion, Mode=OneWay}" />
                     <uc:SplitCell
                         Command="{Binding AboutViewModel.CopySystemVersionCommand}"
-                        LeftText="{l:ResourceString Name=SystemVersion}"
+                        LeftText="{l:ResourceString Rid=SystemVersion}"
                         RightText="{Binding AboutViewModel.SystemVersion, Mode=OneWay}" />
                 </TableSection>
             </TableRoot>
