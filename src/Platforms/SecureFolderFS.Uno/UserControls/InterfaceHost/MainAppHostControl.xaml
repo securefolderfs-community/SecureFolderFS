@@ -18,7 +18,7 @@
         <vc:BoolToStringConverter x:Key="BoolToStringConverter" />
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <vc:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-        <vc:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <vc:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <vc:IconSourceConverter x:Key="IconSourceConverter" />
     </UserControl.Resources>
 
@@ -56,6 +56,8 @@
                     Click="PaneShowButton_Click"
                     CornerRadius="0 6 6 0"
                     Visibility="Collapsed">
+
+                    <!--  TODO: Blocked by Uno - https://github.com/unoplatform/uno/pull/18267  -->
                     <!--<anim:Implicit.ShowAnimations>
                         <anim:TranslationAnimation
                             EasingMode="EaseOut"
@@ -182,6 +184,12 @@
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
                         <StackPanel>
+                            <StackPanel.ChildrenTransitions>
+                                <TransitionCollection>
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </StackPanel.ChildrenTransitions>
+
                             <!--  Vault name  -->
                             <TextBlock
                                 FontWeight="SemiBold"
@@ -191,10 +199,10 @@
                             <!--  Last opened  -->
                             <TextBlock
                                 x:Name="LastOpenedText"
-                                x:Load="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToBoolConverter}}"
                                 FontSize="12"
                                 Opacity="0.6"
-                                Text="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}" />
+                                Text="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"
+                                Visibility="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
                         </StackPanel>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>

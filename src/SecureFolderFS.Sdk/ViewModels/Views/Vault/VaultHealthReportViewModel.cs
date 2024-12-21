@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Enums;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
 using SecureFolderFS.Shared.Extensions;
 using System;
@@ -10,10 +11,10 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
 
-namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
+namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Bindable(true)]
-    public sealed partial class HealthOverlayViewModel : BaseDesignationViewModel, IUnlockedViewContext, IDisposable
+    public sealed partial class VaultHealthReportViewModel : BaseDesignationViewModel, IUnlockedViewContext, IDisposable
     {
         private readonly SynchronizationContext? _context;
 
@@ -27,10 +28,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
         /// <inheritdoc/>
         public VaultViewModel VaultViewModel => UnlockedVaultViewModel.VaultViewModel;
 
-        public HealthOverlayViewModel(UnlockedVaultViewModel unlockedVaultViewModel, SynchronizationContext? context)
+        public VaultHealthReportViewModel(UnlockedVaultViewModel unlockedVaultViewModel, SynchronizationContext? context)
         {
             _context = context;
             UnlockedVaultViewModel = unlockedVaultViewModel;
+            Title = "HealthReport".ToLocalized();
             _FoundIssues = new();
             _FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
         }

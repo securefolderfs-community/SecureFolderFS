@@ -19,10 +19,10 @@
             <ucw:HealthWidget
                 CancelCommand="{x:Bind CancelScanningCommand, Mode=OneWay}"
                 CurrentProgress="{x:Bind CurrentProgress, Mode=OneWay}"
-                IsProgressing="{x:Bind HealthOverlayViewModel.IsProgressing, Mode=OneWay}"
+                IsProgressing="{x:Bind HealthReportViewModel.IsProgressing, Mode=OneWay}"
                 LastCheckedText="{x:Bind LastCheckedText, Mode=OneWay}"
                 OpenVaultHealthCommand="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
-                Severity="{x:Bind HealthOverlayViewModel.Severity, Mode=OneWay}"
+                Severity="{x:Bind HealthReportViewModel.Severity, Mode=OneWay}"
                 StartScanningCommand="{x:Bind StartScanningCommand, Mode=OneWay}"
                 StatusTitle="{x:Bind Title, Mode=OneWay}" />
         </DataTemplate>

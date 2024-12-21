@@ -653,4 +653,8 @@
   <data name="VaultReadOnlyMode" xml:space="preserve">
     <value>The vault is in read-only mode</value>
   </data>
+  <data name="HealthReport" xml:space="preserve">
+    <value>Health report</value>
+    <comment>Title for health report view</comment>
+  </data>
 </root>

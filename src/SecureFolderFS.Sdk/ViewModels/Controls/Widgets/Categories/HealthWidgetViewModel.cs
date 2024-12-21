@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
+using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
@@ -21,30 +21,32 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 {
-    [Inject<ILocalizationService>, Inject<IOverlayService>]
+    [Inject<ILocalizationService>]
     [Bindable(true)]
     public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgress>, IViewable
     {
         private readonly UnlockedVaultViewModel _unlockedVaultViewModel;
         private readonly List<HealthIssueViewModel> _savedState;
         private readonly SynchronizationContext? _context;
+        private readonly INavigator _dashboardNavigator;
         private IHealthModel? _vaultHealthModel;
         private CancellationTokenSource? _cts;
 
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private double _CurrentProgress;
         [ObservableProperty] private string? _LastCheckedText;
-        [ObservableProperty] private HealthOverlayViewModel _HealthOverlayViewModel;
+        [ObservableProperty] private VaultHealthReportViewModel _HealthReportViewModel;
 
-        public HealthWidgetViewModel(UnlockedVaultViewModel unlockedVaultViewModel, IWidgetModel widgetModel)
+        public HealthWidgetViewModel(UnlockedVaultViewModel unlockedVaultViewModel, INavigator dashboardNavigator, IWidgetModel widgetModel)
             : base(widgetModel)
         {
             ServiceProvider = DI.Default;
             _cts = new();
             _savedState = new();
             _context = SynchronizationContext.Current;
+            _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
-            HealthOverlayViewModel = new(unlockedVaultViewModel, _context);
+            HealthReportViewModel = new(unlockedVaultViewModel, _context);
             Title = "HealthNoProblems".ToLocalized();
             LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
         }
@@ -65,7 +67,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         /// <inheritdoc/>
         public void Report(double value)
         {
-            if (!HealthOverlayViewModel.IsProgressing)
+            if (!HealthReportViewModel.IsProgressing)
                 return;
 
             _context?.Post(_ => CurrentProgress = Math.Round(value), null);
@@ -74,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         /// <inheritdoc/>
         public void Report(TotalProgress value)
         {
-            if (!HealthOverlayViewModel.IsProgressing)
+            if (!HealthReportViewModel.IsProgressing)
                 return;
 
             _context?.Post(_ =>
@@ -93,7 +95,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         [RelayCommand]
         private async Task OpenVaultHealthAsync()
         {
-            await OverlayService.ShowAsync(HealthOverlayViewModel);
+            await _dashboardNavigator.NavigateAsync((IViewDesignation)HealthReportViewModel);
         }
 
         [RelayCommand]
@@ -103,12 +105,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
                 return;
 
             // Set IsProgressing status
-            HealthOverlayViewModel.IsProgressing = true;
+            HealthReportViewModel.IsProgressing = true;
             Title = "Scanning...";
 
             // Save last scan state
-            _savedState.AddMultiple(HealthOverlayViewModel.FoundIssues);
-            HealthOverlayViewModel.FoundIssues.Clear();
+            _savedState.AddMultiple(HealthReportViewModel.FoundIssues);
+            HealthReportViewModel.FoundIssues.Clear();
 
             // Wait a small delay for UI to update
             await Task.Delay(10);
@@ -121,7 +123,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         private void CancelScanning()
         {
             // Restore last scan state
-            HealthOverlayViewModel.FoundIssues.AddMultiple(_savedState);
+            HealthReportViewModel.FoundIssues.AddMultiple(_savedState);
 
             _cts?.CancelAsync();
             _cts?.Dispose();
@@ -140,11 +142,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 
         private void EndScanning()
         {
-            if (!HealthOverlayViewModel.IsProgressing)
+            if (!HealthReportViewModel.IsProgressing)
                 return;
 
             // Reset progress
-            HealthOverlayViewModel.IsProgressing = false;
+            HealthReportViewModel.IsProgressing = false;
             CurrentProgress = 0d;
             _savedState.Clear();
 
@@ -153,7 +155,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
             
             // Update status
-            Title = HealthOverlayViewModel.Severity switch
+            Title = HealthReportViewModel.Severity switch
             {
                 SeverityType.Warning => "HealthAttention".ToLocalized(),
                 SeverityType.Critical => "HealthProblems".ToLocalized(),
@@ -163,7 +165,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 
         private void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
         {
-            HealthOverlayViewModel.FoundIssues.Add(e.Result switch
+            HealthReportViewModel.FoundIssues.Add(e.Result switch
             {
                 IHealthResult healthResult => new(healthResult),
                 _ => new(e.Result, SeverityType.Warning, e.Storable)
@@ -179,7 +181,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
                 _vaultHealthModel.Dispose();
             }
 
-            HealthOverlayViewModel.Dispose();
+            HealthReportViewModel.Dispose();
             base.Dispose();
         }
     }

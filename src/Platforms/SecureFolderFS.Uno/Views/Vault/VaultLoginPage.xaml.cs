@@ -33,6 +33,7 @@ namespace SecureFolderFS.Uno.Views.Vault
             InitializeComponent();
         }
 
+        /// <inheritdoc/>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (e.Parameter is VaultLoginViewModel viewModel)

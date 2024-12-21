@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="ByteSize" Version="2.1.2" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
   </ItemGroup>
 

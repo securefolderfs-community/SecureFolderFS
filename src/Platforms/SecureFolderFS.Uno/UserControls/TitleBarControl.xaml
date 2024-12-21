@@ -30,9 +30,8 @@
                 CharacterSpacing="32"
                 FontSize="9"
                 FontWeight="Thin"
-                Loaded="VersionTitle_Loaded"
                 Opacity="0.8"
-                Text="BETA" />
+                Text="Release Candidate" />
         </StackPanel>
     </Border>
 </UserControl>

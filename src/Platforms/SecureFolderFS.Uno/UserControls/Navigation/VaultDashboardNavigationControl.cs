@@ -15,7 +15,8 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
         public override Dictionary<Type, Type> TypeBinding { get; } = new()
         {
             { typeof(VaultOverviewViewModel), typeof(VaultOverviewPage) },
-            { typeof(VaultPropertiesViewModel), typeof(VaultPropertiesPage) }
+            { typeof(VaultPropertiesViewModel), typeof(VaultPropertiesPage) },
+            { typeof(VaultHealthReportViewModel), typeof(VaultHealthPage) }
         };
 
         /// <inheritdoc/>
@@ -32,6 +33,7 @@ namespace SecureFolderFS.Uno.UserControls.Navigation
                 transitionInfo ??= parameter switch
                 {
                     VaultPropertiesViewModel => new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight },
+                    VaultHealthReportViewModel => new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight },
                     VaultOverviewViewModel => new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft },
                     _ => new EntranceNavigationTransitionInfo()
                 };
