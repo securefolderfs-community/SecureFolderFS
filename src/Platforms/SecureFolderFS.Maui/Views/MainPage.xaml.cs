@@ -1,7 +1,7 @@
-using SecureFolderFS.Maui.AppModels;
+using MauiIcons.Core;
 using SecureFolderFS.Maui.ServiceImplementation;
 using SecureFolderFS.Maui.UserControls.Navigation;
-using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.ViewModels.Controls.VaultList;
 using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Maui.Views
             Instance = this;
             BindingContext = this;
             _ = ViewModel.InitAsync();
-            _ = new MauiIcons.Core.MauiIcon(); // Workaround for XFC0000
+            _ = new MauiIcon(); // Workaround for XFC0000
 
             InitializeComponent();
         }
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Maui.Views
             if (e.Item is not VaultListItemViewModel itemViewModel)
                 return;
 
-            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as BaseVaultViewModel)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
+            var target = ViewModel.NavigationService.Views.FirstOrDefault(x => (x as IVaultViewContext)?.VaultViewModel.VaultModel.Equals(itemViewModel.VaultViewModel.VaultModel) ?? false);
             if (target is null)
             {
                 var vaultLoginViewModel = new VaultLoginViewModel(itemViewModel.VaultViewModel, ViewModel.NavigationService);

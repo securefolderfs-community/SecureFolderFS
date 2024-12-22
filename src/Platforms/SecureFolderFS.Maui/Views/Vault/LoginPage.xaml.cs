@@ -74,6 +74,7 @@ namespace SecureFolderFS.Maui.Views.Vault
                     propertiesViewModel),
                     new(
                         args.UnlockedVaultViewModel,
+                        ViewModel.VaultNavigation,
                         new WidgetsCollectionModel(args.UnlockedVaultViewModel.VaultViewModel.VaultModel.Folder)));
             
             // Set Title to 'fake' navigation
