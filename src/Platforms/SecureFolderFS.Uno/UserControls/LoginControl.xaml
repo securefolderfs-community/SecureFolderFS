@@ -145,7 +145,7 @@
                 Title="{l:ResourceString Rid=VaultLoadError}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                ExceptionMessage="{x:Bind Message, Mode=OneWay}" />
+                ExceptionMessage="{x:Bind ExceptionMessage, Mode=OneWay}" />
         </DataTemplate>
     </UserControl.Resources>
 

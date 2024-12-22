@@ -19,6 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         private readonly SynchronizationContext? _context;
 
         [ObservableProperty] private bool _IsProgressing;
+        [ObservableProperty] private double _CurrentProgress;
         [ObservableProperty] private SeverityType _Severity;
         [ObservableProperty] private ObservableCollection<HealthIssueViewModel> _FoundIssues;
 
@@ -48,33 +49,33 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             if (IsProgressing)
                 return;
 
-            if (FoundIssues.IsEmpty())
+            UpdateSeverity(e is
             {
-                _context?.Post(_ => Severity = SeverityType.Success, null);
-                return;
-            }
-
-            var enumerable = e is { Action: NotifyCollectionChangedAction.Add, NewItems: not null } ? e.NewItems : FoundIssues;
-            UpdateSeverity(enumerable);
+                Action:
+                    NotifyCollectionChangedAction.Add or
+                    NotifyCollectionChangedAction.Replace or
+                    NotifyCollectionChangedAction.Move,
+                NewItems: not null
+            } ? e.NewItems : FoundIssues);
         }
 
         private void UpdateSeverity(IEnumerable enumerable)
         {
-            if (FoundIssues.IsEmpty())
+            var severity = Severity;
+            if (severity != SeverityType.Success && FoundIssues.IsEmpty())
             {
                 _context?.Post(_ => Severity = SeverityType.Success, null);
                 return;
             }
 
-            var newSeverity = Severity;
             foreach (HealthIssueViewModel item in enumerable)
             {
-                if (newSeverity < item.Severity)
-                    newSeverity = item.Severity;
+                if (severity < item.Severity)
+                    severity = item.Severity;
             }
 
-            _Severity = newSeverity;
-            _context?.Post(_ => OnPropertyChanged(nameof(Severity)), null);
+            if (Severity != severity)
+                _context?.Post(_ => Severity = severity, null);
         }
 
         /// <inheritdoc/>

@@ -76,7 +76,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 // Set up the first authentication method
                 var result = ProceedAuthentication();
                 if (!result.Successful)
-                    CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
+                    CurrentViewModel = new ErrorViewModel(result);
             }
             else
             {
@@ -87,11 +87,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     CurrentViewModel = _loginViewMode switch
                     {
                         LoginViewType.Full => new MigrationViewModel(_vaultModel, currentVersion),
-                        _ => new ErrorViewModel("You'll need to migrate this vault before it can be used.", null)
+                        _ => new ErrorViewModel("You'll need to migrate this vault before it can be used.") // TODO: Localize
                     };
                 }
                 else
-                    CurrentViewModel = new ErrorViewModel(null, validationResult.GetMessage());
+                    CurrentViewModel = new ErrorViewModel(validationResult);
             }
 
             // TODO: VaultWatcherModel.InitAsync is never called
@@ -139,7 +139,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 _loginSequence?.Reset();
                 var result = ProceedAuthentication();
                 if (!result.Successful)
-                    CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
+                    CurrentViewModel = new ErrorViewModel(result);
             }
         }
 
@@ -186,7 +186,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                 if (result.Successful)
                     return;
 
-                CurrentViewModel = new ErrorViewModel(null, result.GetMessage());
+                CurrentViewModel = new ErrorViewModel(result);
             }
         }
 

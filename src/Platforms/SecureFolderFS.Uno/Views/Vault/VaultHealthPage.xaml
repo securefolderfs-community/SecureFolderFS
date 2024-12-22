@@ -4,8 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <vc:CountToStringConverter x:Key="CountToStringConverter" />
+        <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
+        <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Page.Resources>
 
     <!--<StackPanel Spacing="32">
         <TextBlock Text="No issues found" />
@@ -23,13 +30,39 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Spacing="8">
-            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="1 found issue" />
+        <Grid Grid.Row="0" RowSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Style="{StaticResource BodyStrongTextBlockStyle}"
+                Text="{x:Bind ViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issues'}" />
+            <ProgressRing
+                Grid.Row="0"
+                Grid.Column="1"
+                Width="16"
+                Height="16"
+                IsActive="True"
+                IsIndeterminate="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
+                Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
+
             <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
                 Margin="-20,0"
                 BorderBrush="{ThemeResource ControlFillColorSecondaryBrush}"
                 BorderThickness="0,1,0,1" />
-        </StackPanel>
+        </Grid>
 
         <ListView
             Grid.Row="1"
@@ -53,14 +86,28 @@
                         <FontIcon Grid.Column="0" Glyph="&#xE8AC;" />
 
                         <StackPanel Grid.Column="1">
-                            <TextBlock FontWeight="Semibold" Text="Broken file name" />
+                            <TextBlock FontWeight="Semibold" Text="{x:Bind Title, Mode=OneWay}" />
                             <TextBlock
                                 FontSize="12"
                                 Opacity="0.8"
-                                Text="Export under a new name" />
+                                Text="{x:Bind ErrorMessage, Mode=OneWay}" />
                         </StackPanel>
 
-                        <Button Grid.Column="2" Content="Resolve" />
+                        <Button
+                            Grid.Column="2"
+                            Command="{x:Bind ResolveCommand, Mode=OneWay}"
+                            Content="Resolve"
+                            IsEnabled="{x:Bind CanResolve, Mode=OneWay}" />
+
+                        <Grid.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE8C8;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </Grid.ContextFlyout>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

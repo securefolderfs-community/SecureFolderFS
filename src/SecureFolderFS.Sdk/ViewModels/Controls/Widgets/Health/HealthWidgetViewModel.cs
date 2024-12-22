@@ -33,7 +33,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         private CancellationTokenSource? _cts;
 
         [ObservableProperty] private string? _Title;
-        [ObservableProperty] private double _CurrentProgress;
         [ObservableProperty] private string? _LastCheckedText;
         [ObservableProperty] private VaultHealthReportViewModel _HealthReportViewModel;
 
@@ -70,7 +69,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             if (!HealthReportViewModel.IsProgressing)
                 return;
 
-            _context?.Post(_ => CurrentProgress = Math.Round(value), null);
+            _context?.Post(_ => HealthReportViewModel.CurrentProgress = Math.Round(value), null);
         }
 
         /// <inheritdoc/>
@@ -95,7 +94,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
         [RelayCommand]
         private async Task OpenVaultHealthAsync()
         {
-            await _dashboardNavigator.NavigateAsync((IViewDesignation)HealthReportViewModel);
+            await _dashboardNavigator.NavigateAsync(HealthReportViewModel);
         }
 
         [RelayCommand]
@@ -147,13 +146,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 
             // Reset progress
             HealthReportViewModel.IsProgressing = false;
-            CurrentProgress = 0d;
+            HealthReportViewModel.CurrentProgress = 0d;
             _savedState.Clear();
 
             // Update date TODO: Persist last checked date
             var localizedDate = LocalizationService.LocalizeDate(DateTime.Now);
             LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
-            
+
             // Update status
             Title = HealthReportViewModel.Severity switch
             {
@@ -165,11 +164,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
 
         private void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
         {
-            HealthReportViewModel.FoundIssues.Add(e.Result switch
+            _context?.Post(_ =>
             {
-                IHealthResult healthResult => new(healthResult),
-                _ => new(e.Result, SeverityType.Warning, e.Storable)
-            });
+                HealthReportViewModel.FoundIssues.Add(e.Result switch
+                {
+                    IHealthResult healthResult => new(healthResult),
+                    _ => new(e.Result, SeverityType.Warning, e.Storable)
+                });
+            }, null);
         }
 
         /// <inheritdoc/>

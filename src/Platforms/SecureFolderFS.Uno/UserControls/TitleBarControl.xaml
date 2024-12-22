@@ -31,7 +31,7 @@
                 FontSize="9"
                 FontWeight="Thin"
                 Opacity="0.8"
-                Text="Release Candidate" />
+                Text="Beta5" />
         </StackPanel>
     </Border>
 </UserControl>

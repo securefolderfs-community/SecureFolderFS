@@ -86,35 +86,24 @@
             Canvas.ZIndex="1" />
 
         <!--  Options  -->
-        <Grid Grid.Column="2">
+        <StackPanel
+            Grid.Column="2"
+            Margin="0,-6,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="4">
 
             <!--  Start scanning  -->
-            <StackPanel
-                Margin="0,-6,0,0"
-                HorizontalAlignment="Right"
+            <Button
+                Height="36"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="4"
-                Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
-                <Button
-                    Height="36"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Command="{x:Bind StartScanningCommand, Mode=OneWay}"
-                    Content="Start scanning"
-                    IsEnabled="True" />
-                <Button
-                    Width="36"
-                    Height="36"
-                    Padding="0"
-                    HorizontalAlignment="Center"
-                    Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
-                    IsEnabled="True"
-                    ToolTipService.ToolTip="Go to Vault Health">
-                    <FontIcon FontSize="15" Glyph="&#xE76C;" />
-                </Button>
-            </StackPanel>
+                VerticalContentAlignment="Center"
+                Command="{x:Bind StartScanningCommand, Mode=OneWay}"
+                Content="Start scanning"
+                IsEnabled="True"
+                Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
 
             <!--  Cancel  -->
             <Button
@@ -122,7 +111,18 @@
                 Command="{x:Bind CancelCommand, Mode=OneWay}"
                 Content="{l:ResourceString Rid=Cancel}"
                 Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-        </Grid>
+
+            <Button
+                Width="36"
+                Height="36"
+                Padding="0"
+                HorizontalAlignment="Center"
+                Command="{x:Bind OpenVaultHealthCommand, Mode=OneWay}"
+                IsEnabled="True"
+                ToolTipService.ToolTip="Go to Vault Health">
+                <FontIcon FontSize="15" Glyph="&#xE76C;" />
+            </Button>
+        </StackPanel>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>

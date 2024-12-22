@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.Results
 {
     /// <inheritdoc cref="IResult{T}"/>
-    public interface IHealthResult : IResult<IStorable>
+    public interface IHealthResult : IResult<IStorable>, IViewable, IResultWithMessage
     {
         /// <summary>
         /// Gets the severity of the issue.

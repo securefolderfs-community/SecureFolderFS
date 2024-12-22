@@ -77,7 +77,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
                 throw new ArgumentException($"{nameof(unlockContract)} is not of correct type.");
 
             // Begin progress report
-            progress.PrecisionProgress?.Report(0d);
+            progress.PercentageProgress?.Report(0d);
 
             var vaultId = Guid.NewGuid().ToString();
             var v3ConfigDataModel = new VaultConfigurationDataModel()
@@ -123,7 +123,7 @@ namespace SecureFolderFS.Core.Migration.AppModels
             await serializedStream.CopyToAsync(configStream, cancellationToken);
 
             // End progress report
-            progress.PrecisionProgress?.Report(100d);
+            progress.PercentageProgress?.Report(100d);
         }
     }
 }

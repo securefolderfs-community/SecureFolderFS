@@ -24,10 +24,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
         }
 
         [RelayCommand]
-        private async Task ExportAsync(string? exportHint, CancellationToken cancellationToken)
+        private async Task ExportAsync(string? exportOption, CancellationToken cancellationToken)
         {
             _ = VaultName ?? throw new ArgumentNullException(nameof(VaultName));
-            switch (exportHint?.ToLowerInvariant())
+            switch (exportOption?.ToLowerInvariant())
             {
                 case "print":
                 {
@@ -40,7 +40,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
 
                 case "copy":
                 {
-                    await ClipboardService.SetTextAsync(RecoveryKey ?? string.Empty, cancellationToken);
+                    if (await ClipboardService.IsSupportedAsync())
+                        await ClipboardService.SetTextAsync(RecoveryKey ?? string.Empty, cancellationToken);
                     break;
                 }
 
@@ -49,8 +50,6 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls
                     // TODO: Share
                     break;
                 }
-
-                default: break;
             }
         }
     }

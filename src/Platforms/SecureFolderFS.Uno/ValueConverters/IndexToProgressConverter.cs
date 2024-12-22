@@ -1,10 +1,11 @@
-﻿using Microsoft.UI.Xaml.Data;
 using System;
+using Microsoft.UI.Xaml.Data;
 
 namespace SecureFolderFS.Uno.ValueConverters
 {
     internal sealed class IndexToProgressConverter : IValueConverter
     {
+        /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is not int currentIndex)
@@ -16,19 +17,19 @@ namespace SecureFolderFS.Uno.ValueConverters
 
             progressIndex += 1;
 
-            var progval = progressIndex * 2; // because each prog has 2 states
-            var newval = currentIndex - progval;
+            var progress = progressIndex * 2; // Because each progress has 2 states
+            var newValue = currentIndex - progress;
 
-            if (newval == -1)
+            if (newValue == -1)
                 return 50.0d;
 
-            if (newval >= 0)
+            if (newValue >= 0)
                 return 100.0d;
-
 
             return 0.0d;
         }
 
+        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();

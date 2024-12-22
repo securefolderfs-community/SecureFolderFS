@@ -42,7 +42,8 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task ScanAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken = default)
         {
-            progress.PrecisionProgress?.Report(0d);
+            progress.PercentageProgress?.Report(0d);
+
             _totalFilesScanned = 0;
             _totalFoldersScanned = 0;
             _scannedFiles.Clear();
@@ -136,7 +137,7 @@ namespace SecureFolderFS.Sdk.AppModels
                 _updateCount = 0;
             }
 
-            progress.PrecisionProgress?.Report((double)(_totalFilesScanned + _totalFoldersScanned) / (_scannedFiles.Count + _scannedFolders.Count) * 100d);
+            progress.PercentageProgress?.Report((double)(_totalFilesScanned + _totalFoldersScanned) / (_scannedFiles.Count + _scannedFolders.Count) * 100d);
             progress.CallbackProgress?.Report(new(_totalFilesScanned + _totalFoldersScanned, _scannedFiles.Count + _scannedFolders.Count));
         }
 
