@@ -9,7 +9,8 @@
     xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:ucw="using:SecureFolderFS.Uno.UserControls.Widgets"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets"
-    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories"
+    xmlns:vm2="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health"
+    xmlns:vm3="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -28,7 +29,7 @@
         </DataTemplate>
 
         <!--  Resource Graphs  -->
-        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm2:GraphsWidgetViewModel">
+        <DataTemplate x:Key="GraphsWidgetTemplate" x:DataType="vm3:GraphsWidgetViewModel">
             <ucw:GraphsWidget
                 ReadGraphData="{x:Bind ReadGraphViewModel.Data, Mode=OneWay}"
                 ReadGraphIsExtended="{x:Bind ReadGraphViewModel.IsExtended, Mode=TwoWay}"

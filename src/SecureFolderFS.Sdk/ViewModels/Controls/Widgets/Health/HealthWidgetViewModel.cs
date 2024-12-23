@@ -8,6 +8,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
 using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -19,7 +20,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 {
     [Inject<ILocalizationService>]
     [Bindable(true)]
@@ -168,8 +169,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
             {
                 HealthReportViewModel.FoundIssues.Add(e.Result switch
                 {
-                    IHealthResult healthResult => new(healthResult),
-                    _ => new(e.Result, SeverityType.Warning, e.Storable)
+                    HealthIssueViewModel viewModel => viewModel,
+                    _ => new(e.Result.Inner, "Unknown error")
                 });
             }, null);
         }

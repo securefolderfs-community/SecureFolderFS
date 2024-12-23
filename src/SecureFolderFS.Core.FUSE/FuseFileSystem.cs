@@ -2,6 +2,8 @@
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Validators;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
 using SecureFolderFS.Core.FUSE.OpenHandles;
@@ -53,6 +55,8 @@ namespace SecureFolderFS.Core.FUSE
                 Directory.CreateDirectory(mountPoint);
 
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fuseOptions);
+            fuseOptions.SetupValidators(specifics);
+
             var handlesManager = new FuseHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions.IsReadOnly);
             var fuseCallbacks = new OnDeviceFuse(specifics, handlesManager);
             var fuseWrapper = new FuseWrapper(fuseCallbacks);

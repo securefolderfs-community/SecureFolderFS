@@ -1,5 +1,4 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.AppModels;
+﻿using SecureFolderFS.Core.FileSystem.AppModels;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
@@ -19,12 +18,12 @@ namespace SecureFolderFS.Core.Dokany.AppModels
 
         internal void SetMountPointInternal(string? value) => _mountPoint = value;
 
-        public static DokanyOptions ToOptions(IDictionary<string, object> options, IFolder contentFolder)
+        public static DokanyOptions ToOptions(IDictionary<string, object> options)
         {
             return new()
             {
                 VolumeName = (string?)options.Get(nameof(VolumeName)) ?? throw new ArgumentNullException(nameof(VolumeName)),
-                HealthStatistics = (IHealthStatistics?)options.Get(nameof(HealthStatistics)) ?? new HealthStatistics(contentFolder),
+                HealthStatistics = (IHealthStatistics?)options.Get(nameof(HealthStatistics)) ?? new HealthStatistics(),
                 FileSystemStatistics = (IFileSystemStatistics?)options.Get(nameof(FileSystemStatistics)) ?? new FileSystemStatistics(),
                 IsReadOnly = (bool?)options.Get(nameof(IsReadOnly)) ?? false,
                 IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,

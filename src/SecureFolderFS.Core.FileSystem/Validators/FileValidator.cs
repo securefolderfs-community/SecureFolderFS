@@ -8,34 +8,36 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.FileSystem.Validators
 {
     /// <inheritdoc cref="IAsyncValidator{T, TResult}"/>
-    public sealed class FileValidator : IAsyncValidator<IFile, IResult>
+    public sealed class FileValidator : BaseFileSystemValidator<IFile>
     {
-        private readonly IFolder _contentFolder;
-
-        public FileValidator(IFolder contentFolder)
+        public FileValidator(FileSystemSpecifics specifics)
+            : base(specifics)
         {
-            _contentFolder = contentFolder;
         }
 
         /// <inheritdoc/>
-        public Task ValidateAsync(IFile value, CancellationToken cancellationToken = default)
+        public override async Task ValidateAsync(IFile value, CancellationToken cancellationToken = default)
         {
-            // TODO: Implement file validation (invalid chunks, invalid name, checksum mismatch, etc...?)
-            return Task.CompletedTask;
+            // Check the name
+            if (value is IChildFile childFile)
+                await ValidateNameAsync(childFile, cancellationToken);
+
+            // TODO: Implement file validation (invalid chunks, checksum mismatch, etc...?)
         }
 
         /// <inheritdoc/>
-        public async Task<IResult> ValidateResultAsync(IFile value, CancellationToken cancellationToken = default)
+        public override async Task<IWrapper<IResult>> ValidateResultAsync(IFile value, CancellationToken cancellationToken = default)
         {
             try
             {
                 await ValidateAsync(value, cancellationToken);
-                return Result.Success;
+                return new Wrapper<IResult>(Result.Success);
             }
             catch (Exception ex)
             {
                 _ = ex;
-                return Result.Failure(ex); // TODO: Return appropriate IHealthResult based on the exception
+                // TODO: Return a ViewModel
+                return new Wrapper<IResult>(Result.Failure(ex)); // TODO: Return appropriate IHealthResult based on the exception
             }
         }
     }

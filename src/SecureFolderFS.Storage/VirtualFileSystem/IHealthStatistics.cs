@@ -9,12 +9,12 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <summary>
         /// Gets the file health validator associated with this instance.
         /// </summary>
-        IAsyncValidator<IFile, IResult> FileValidator { get; }
+        IAsyncValidator<IFile, IWrapper<IResult>>? FileValidator { get; set; }
 
         /// <summary>
         /// Gets the file health validator associated with this instance.
         /// </summary>
-        IAsyncValidator<IFolder, IResult> FolderValidator { get; }
+        IAsyncValidator<IFolder, IWrapper<IResult>>? FolderValidator { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="IProgress{T}"/> that reports when the file containing DirectoryID was not found.

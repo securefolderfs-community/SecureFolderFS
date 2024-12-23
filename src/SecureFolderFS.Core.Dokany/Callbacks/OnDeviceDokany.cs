@@ -346,7 +346,7 @@ namespace SecureFolderFS.Core.Dokany.Callbacks
                 var directory = new DirectoryInfo(ciphertextPath);
                 List<FileInformation>? fileList = null;
 
-                var directoryId = AbstractPathHelpers.AllocateDirectoryId(Specifics, fileName);
+                var directoryId = AbstractPathHelpers.AllocateDirectoryId(Specifics.Security, fileName);
                 var itemsEnumerable = Specifics.Security.NameCrypt is null ? directory.EnumerateFileSystemInfos(searchPattern) : directory.EnumerateFileSystemInfos();
 
                 foreach (var item in itemsEnumerable)

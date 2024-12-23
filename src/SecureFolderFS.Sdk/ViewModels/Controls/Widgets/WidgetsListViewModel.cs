@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;
+using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;

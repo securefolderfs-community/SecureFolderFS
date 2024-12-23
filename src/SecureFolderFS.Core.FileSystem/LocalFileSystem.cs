@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem
 {
@@ -31,14 +32,15 @@ namespace SecureFolderFS.Core.FileSystem
         /// <inheritdoc/>
         public async Task<IVFSRoot> MountAsync(IFolder folder, IDisposable unlockContract, IDictionary<string, object> options, CancellationToken cancellationToken = default)
         {
+            await Task.CompletedTask;
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var fileSystemOptions = FileSystemOptions.ToOptions(options, () => new HealthStatistics(folder), static () => new FileSystemStatistics());
+            var fileSystemOptions = FileSystemOptions.ToOptions(options, () => new HealthStatistics(), static () => new FileSystemStatistics());
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fileSystemOptions);
-            var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
+            fileSystemOptions.SetupValidators(specifics);
 
-            await Task.CompletedTask;
+            var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
             return new LocalVFSRoot(specifics, storageRoot, fileSystemOptions);
         }
     }

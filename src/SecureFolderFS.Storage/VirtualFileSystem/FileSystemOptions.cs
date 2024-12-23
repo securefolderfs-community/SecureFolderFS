@@ -39,34 +39,39 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// </summary>
         public bool IsCachingFileNames { get; init; } = true;
 
+        /// <summary>
+        /// Converts a dictionary of options to a <see cref="FileSystemOptions"/> instance.
+        /// </summary>
+        /// <param name="options">The dictionary of options.</param>
+        /// <param name="healthStatistics">The function to get health statistics.</param>
+        /// <param name="fileSystemStatistics">The function to get file system statistics.</param>
+        /// <returns>A <see cref="FileSystemOptions"/> instance.</returns>
         public static FileSystemOptions ToOptions(
             IDictionary<string, object> options,
             Func<IHealthStatistics> healthStatistics,
             Func<IFileSystemStatistics> fileSystemStatistics)
         {
-            return new()
+            return new FileSystemOptions
             {
-                VolumeName = (string?)options.Get(nameof(VolumeName)) ?? throw new ArgumentNullException(nameof(VolumeName)),
-                HealthStatistics = (IHealthStatistics?)options.Get(nameof(HealthStatistics)) ?? healthStatistics.Invoke(),
-                FileSystemStatistics = (IFileSystemStatistics?)options.Get(nameof(FileSystemStatistics)) ?? fileSystemStatistics.Invoke(),
-                IsReadOnly = (bool?)options.Get(nameof(IsReadOnly)) ?? false,
-                IsCachingChunks = (bool?)options.Get(nameof(IsCachingChunks)) ?? true,
-                IsCachingFileNames = (bool?)options.Get(nameof(IsCachingFileNames)) ?? true,
+                VolumeName = GetOption<string>(options, nameof(VolumeName)) ?? throw new ArgumentNullException(nameof(VolumeName)),
+                HealthStatistics = GetOption<IHealthStatistics>(options, nameof(HealthStatistics)) ?? healthStatistics.Invoke(),
+                FileSystemStatistics = GetOption<IFileSystemStatistics>(options, nameof(FileSystemStatistics)) ?? fileSystemStatistics.Invoke(),
+                IsReadOnly = GetOption<bool?>(options, nameof(IsReadOnly)) ?? false,
+                IsCachingChunks = GetOption<bool?>(options, nameof(IsCachingChunks)) ?? true,
+                IsCachingFileNames = GetOption<bool?>(options, nameof(IsCachingFileNames)) ?? true,
             };
         }
 
-        public virtual T? GetOption<T>(string name)
+        /// <summary>
+        /// Gets an option from the dictionary.
+        /// </summary>
+        /// <typeparam name="T">The type of the option.</typeparam>
+        /// <param name="options">The dictionary of options.</param>
+        /// <param name="name">The name of the option.</param>
+        /// <returns>The option value if found; otherwise, the default value of <typeparamref name="T"/>.</returns>
+        private static T? GetOption<T>(IDictionary<string, object> options, string name)
         {
-            return (T)(object)(name switch
-            {
-                nameof(VolumeName) => VolumeName,
-                nameof(HealthStatistics) => HealthStatistics,
-                nameof(FileSystemStatistics) => FileSystemStatistics,
-                nameof(IsReadOnly) => IsReadOnly,
-                nameof(IsCachingChunks) => IsCachingChunks,
-                nameof(IsCachingFileNames) => IsCachingFileNames,
-                _ => throw new ArgumentOutOfRangeException(nameof(name))
-            });
+            return options.Get(name) is T value ? value : default;
         }
     }
 }

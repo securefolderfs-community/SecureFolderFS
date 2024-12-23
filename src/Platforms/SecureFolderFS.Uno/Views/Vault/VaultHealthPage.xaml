@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
-    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories"
+    xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -80,7 +80,6 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <FontIcon Grid.Column="0" Glyph="&#xE8AC;" />
@@ -92,12 +91,6 @@
                                 Opacity="0.8"
                                 Text="{x:Bind ErrorMessage, Mode=OneWay}" />
                         </StackPanel>
-
-                        <Button
-                            Grid.Column="2"
-                            Command="{x:Bind ResolveCommand, Mode=OneWay}"
-                            Content="Resolve"
-                            IsEnabled="{x:Bind CanResolve, Mode=OneWay}" />
 
                         <Grid.ContextFlyout>
                             <MenuFlyout>

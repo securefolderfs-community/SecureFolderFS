@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
 {
     [Bindable(true)]
     public sealed partial class GraphControlViewModel : ObservableObject, IProgress<double>, IAsyncInitialize

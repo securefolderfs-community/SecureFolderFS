@@ -17,12 +17,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
             if (specifics.Security.NameCrypt is null)
                 return plaintextStorable.Id;
 
-            IChildFolder? currentParent;
             var currentStorable = plaintextStorable;
             var expendableDirectoryId = new byte[Constants.DIRECTORY_ID_SIZE];
             var finalPath = string.Empty;
 
-            while ((currentParent = await currentStorable.GetParentAsync() as IChildFolder) is not null)
+            while (await currentStorable.GetParentAsync() is IChildFolder currentParent)
             {
                 if (currentParent is not IWrapper<IFolder> { Inner: { } ciphertextParent })
                     return null;
@@ -42,12 +41,11 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
             if (specifics.Security.NameCrypt is null)
                 return ciphertextStorable.Id;
 
-            IChildFolder? currentParent;
             var currentStorable = ciphertextStorable;
             var expendableDirectoryId = new byte[Constants.DIRECTORY_ID_SIZE];
             var finalPath = string.Empty;
 
-            while ((currentParent = await currentStorable.GetParentAsync() as IChildFolder) is not null)
+            while (await currentStorable.GetParentAsync() is IChildFolder currentParent)
             {
                 if (!currentParent.Id.Contains(specifics.ContentFolder.Id))
                     break;

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories
+namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
 {
     [Bindable(true)]
     public sealed partial class GraphsWidgetViewModel : BaseWidgetViewModel

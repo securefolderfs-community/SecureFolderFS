@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecureFolderFS.Core.Cryptography;
+using System;
 using System.IO;
 
 namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
@@ -8,9 +9,9 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
     /// </summary>
     public static partial class AbstractPathHelpers
     {
-        public static byte[] AllocateDirectoryId(FileSystemSpecifics specifics, string? path = null)
+        public static byte[] AllocateDirectoryId(Security security, string? path = null)
         {
-            if (specifics.Security.NameCrypt is null)
+            if (security.NameCrypt is null)
                 return Array.Empty<byte>();
 
             if (path == Path.DirectorySeparatorChar.ToString())

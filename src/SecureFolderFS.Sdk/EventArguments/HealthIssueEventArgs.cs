@@ -7,7 +7,7 @@ namespace SecureFolderFS.Sdk.EventArguments
     /// <summary>
     /// Event arguments for vault health issues.
     /// </summary>
-    public sealed class HealthIssueEventArgs(IStorable storable, IResult result) : EventArgs
+    public sealed class HealthIssueEventArgs(IStorable storable, IWrapper<IResult> result) : EventArgs
     {
         /// <summary>
         /// Gets the affected <see cref="IStorable"/>.
@@ -15,8 +15,8 @@ namespace SecureFolderFS.Sdk.EventArguments
         public IStorable Storable { get; } = storable;
 
         /// <summary>
-        /// Gets the <see cref="IResult"/> of the validation.
+        /// Gets the <see cref="IWrapper{T}"/> with <see cref="IResult"/> of the validation.
         /// </summary>
-        public IResult Result { get; } = result;
+        public IWrapper<IResult> Result { get; } = result;
     }
 }
