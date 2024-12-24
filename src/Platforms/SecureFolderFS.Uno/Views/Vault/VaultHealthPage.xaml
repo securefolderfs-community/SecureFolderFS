@@ -14,9 +14,10 @@
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
+
     <Grid
         Margin="0,0,0,12"
-        Padding="20,8"
+        Padding="20,8,20,12"
         Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
         CornerRadius="{StaticResource ControlCornerRadius}"
         RowSpacing="12">
@@ -66,6 +67,12 @@
             IsItemClickEnabled="False"
             ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
             SelectionMode="None">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="4" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:HealthIssueViewModel">
                     <Grid

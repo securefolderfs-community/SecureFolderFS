@@ -3,7 +3,6 @@ using SecureFolderFS.Core.FileSystem.Helpers.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 

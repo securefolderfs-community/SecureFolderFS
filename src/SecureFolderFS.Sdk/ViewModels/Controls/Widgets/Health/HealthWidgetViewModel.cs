@@ -113,7 +113,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             // Wait a small delay for UI to update
             await Task.Delay(10);
 
-            _ = ScanAsync(_cts?.Token ?? default);
+            _ = Task.Run(() => ScanAsync(_cts?.Token ?? default));
             await Task.Yield();
         }
 
@@ -143,22 +143,25 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (!HealthReportViewModel.IsProgressing)
                 return;
 
-            // Reset progress
-            HealthReportViewModel.IsProgressing = false;
-            HealthReportViewModel.CurrentProgress = 0d;
-            _savedState.Clear();
-
-            // Update date TODO: Persist last checked date
-            var localizedDate = LocalizationService.LocalizeDate(DateTime.Now);
-            LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
-
-            // Update status
-            Title = HealthReportViewModel.Severity switch
+            _context?.Post(_ =>
             {
-                SeverityType.Warning => "HealthAttention".ToLocalized(),
-                SeverityType.Critical => "HealthProblems".ToLocalized(),
-                _ => "HealthNoProblems".ToLocalized()
-            };
+                // Reset progress
+                HealthReportViewModel.IsProgressing = false;
+                HealthReportViewModel.CurrentProgress = 0d;
+                _savedState.Clear();
+
+                // Update date TODO: Persist last checked date
+                var localizedDate = LocalizationService.LocalizeDate(DateTime.Now);
+                LastCheckedText = string.Format("LastChecked".ToLocalized(), localizedDate);
+
+                // Update status
+                Title = HealthReportViewModel.Severity switch
+                {
+                    SeverityType.Warning => "HealthAttention".ToLocalized(),
+                    SeverityType.Critical => "HealthProblems".ToLocalized(),
+                    _ => "HealthNoProblems".ToLocalized()
+                };
+            }, null);
         }
 
         private async void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)

@@ -45,61 +45,64 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public async Task ScanAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken = default)
         {
-            progress.PercentageProgress?.Report(0d);
-
-            _totalFilesScanned = 0;
-            _totalFoldersScanned = 0;
-            _scannedFiles.Clear();
-            _scannedFolders.Clear();
-
-            // Start collecting items
-            progress.CallbackProgress?.Report(new());
-            await Task.Delay(750, cancellationToken);
-
-            await foreach (var item in FolderScanner.ScanFolderAsync(cancellationToken))
+            await Task.Run(async () =>
             {
-                if (cancellationToken.IsCancellationRequested)
-                    return;
+                progress.PercentageProgress?.Report(0d);
 
-                switch (item)
+                _totalFilesScanned = 0;
+                _totalFoldersScanned = 0;
+                _scannedFiles.Clear();
+                _scannedFolders.Clear();
+
+                // Start collecting items
+                progress.CallbackProgress?.Report(new());
+                await Task.Delay(750, cancellationToken);
+
+                await foreach (var item in FolderScanner.ScanFolderAsync(cancellationToken))
                 {
-                    case IChildFile file:
-                        _scannedFiles.Add(file);
-                        break;
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
 
-                    case IChildFolder folder:
-                        _scannedFolders.Add(folder);
-                        break;
+                    switch (item)
+                    {
+                        case IChildFile file:
+                            _scannedFiles.Add(file);
+                            break;
 
-                    default:
-                        continue;
+                        case IChildFolder folder:
+                            _scannedFolders.Add(folder);
+                            break;
+
+                        default:
+                            continue;
+                    }
+
+                    if (!_isOptimized)
+                        progress.CallbackProgress?.Report(new(_scannedFolders.Count + _scannedFiles.Count, 0));
                 }
-                
-                if (!_isOptimized)
-                    progress.CallbackProgress?.Report(new(_scannedFolders.Count + _scannedFiles.Count, 0));
-            }
 
-            if (_isOptimized)
-            {
-                var totalUpdatesOptimized = (int)((_scannedFiles.Count + _scannedFolders.Count) * 0.2d);
-                _updateInterval = (_scannedFiles.Count + _scannedFolders.Count) / Math.Max(100, totalUpdatesOptimized);
-            }
-            
-            // Report initial progress
-            ReportProgress(progress);
-            await Task.Delay(750, cancellationToken);
+                if (_isOptimized)
+                {
+                    var totalUpdatesOptimized = (int)((_scannedFiles.Count + _scannedFolders.Count) * 0.2d);
+                    _updateInterval = (_scannedFiles.Count + _scannedFolders.Count) / Math.Max(100, totalUpdatesOptimized);
+                }
 
-            if (!_isParallelized)
-            {
-                await ScanFilesAsync(progress, cancellationToken);
-                await ScanFoldersAsync(progress, cancellationToken);
-            }
-            else
-                await Task.WhenAll(ScanFilesAsync(progress, cancellationToken), ScanFoldersAsync(progress, cancellationToken));
+                // Report initial progress
+                ReportProgress(progress);
+                await Task.Delay(750, cancellationToken);
 
-            // Report final progress
-            ReportProgress(progress);
-            await Task.Delay(1500, cancellationToken);
+                if (!_isParallelized)
+                {
+                    await ScanFilesAsync(progress, cancellationToken);
+                    await ScanFoldersAsync(progress, cancellationToken);
+                }
+                else
+                    await Task.WhenAll(ScanFilesAsync(progress, cancellationToken), ScanFoldersAsync(progress, cancellationToken));
+
+                // Report final progress
+                ReportProgress(progress);
+                await Task.Delay(1500, cancellationToken);
+            }, cancellationToken);
         }
 
         private async Task ScanFilesAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken)
