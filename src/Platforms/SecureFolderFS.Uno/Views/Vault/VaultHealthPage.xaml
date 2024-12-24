@@ -14,10 +14,6 @@
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Page.Resources>
 
-    <!--<StackPanel Spacing="32">
-        <TextBlock Text="No issues found" />
-    </StackPanel>-->
-
     <Grid
         Margin="0,0,0,12"
         Padding="20,8"
@@ -76,13 +72,14 @@
                         Padding="16,8"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         ColumnSpacing="16"
-                        CornerRadius="{StaticResource ControlCornerRadius}">
+                        CornerRadius="{StaticResource ControlCornerRadius}"
+                        ToolTipService.ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <FontIcon Grid.Column="0" Glyph="&#xE8AC;" />
+                        <FontIcon Grid.Column="0" Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
 
                         <StackPanel Grid.Column="1">
                             <TextBlock FontWeight="Semibold" Text="{x:Bind Title, Mode=OneWay}" />

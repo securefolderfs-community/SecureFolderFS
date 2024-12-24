@@ -26,7 +26,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Native
 
         public static string MakeRelative(string fullPath, string basePath)
         {
-            return PathHelpers.EnsureNoLeadingPathSeparator(Path.DirectorySeparatorChar + fullPath.Replace(basePath, ""));
+            return PathHelpers.EnsureNoLeadingPathSeparator(Path.DirectorySeparatorChar + fullPath.Replace(basePath, string.Empty));
         }
 
         public static bool GetDirectoryId(string ciphertextChildPath, FileSystemSpecifics specifics, Span<byte> directoryId)

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.FileSystem.Validators
 {
     /// <inheritdoc cref="IAsyncValidator{T, TResult}"/>
-    public abstract class BaseFileSystemValidator<T> : IAsyncValidator<T, IWrapper<IResult>>
+    public abstract class BaseFileSystemValidator<T> : IAsyncValidator<T, IResult>
     {
         protected FileSystemSpecifics specifics;
 
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         public abstract Task ValidateAsync(T value, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract Task<IWrapper<IResult>> ValidateResultAsync(T value, CancellationToken cancellationToken = default);
+        public abstract Task<IResult> ValidateResultAsync(T value, CancellationToken cancellationToken = default);
 
         protected async Task ValidateNameAsync(IStorableChild storable, CancellationToken cancellationToken)
         {
@@ -32,7 +32,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
 
             var decryptedName = await DecryptNameAsync(storable, cancellationToken);
             if (decryptedName is null)
-                throw new CryptographicException("The item name is invalid.");
+                throw new FormatException("The item name is invalid.");
         }
 
         protected async Task<string?> DecryptNameAsync(IStorableChild storable, CancellationToken cancellationToken)
@@ -42,13 +42,24 @@ namespace SecureFolderFS.Core.FileSystem.Validators
 
             var parentFolder = await storable.GetParentAsync(cancellationToken);
             if (parentFolder is null)
-               return null;
+                return null;
 
             var ciphertextName = storable.Name;
             var directoryId = AbstractPathHelpers.AllocateDirectoryId(specifics.Security, ciphertextName);
-            var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId);
 
-            return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
+            try
+            {
+                var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId);
+                return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
+            }
+            catch (FileNotFoundException)
+            {
+                // We want to suppress FileNotFoundException that might be raised when the DirectoryID file is not found.
+                // This case should be already handled in the folder validator
+
+                // Return an empty string to prevent raising exceptions due to the name being null
+                return string.Empty;
+            }
         }
     }
 }

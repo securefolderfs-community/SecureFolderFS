@@ -3,7 +3,6 @@ using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Validators;
 using SecureFolderFS.Core.FUSE.AppModels;
 using SecureFolderFS.Core.FUSE.Callbacks;
 using SecureFolderFS.Core.FUSE.OpenHandles;
@@ -31,7 +30,7 @@ namespace SecureFolderFS.Core.FUSE
             if (unlockContract is not IWrapper<Security> wrapper)
                 throw new ArgumentException($"The {nameof(unlockContract)} is invalid.");
 
-            var fuseOptions = FuseOptions.ToOptions(options, folder);
+            var fuseOptions = FuseOptions.ToOptions(options);
             if (!Directory.Exists(MountDirectory))
                 Directory.CreateDirectory(MountDirectory);
 

@@ -25,7 +25,7 @@
         public static class Caching
         {
             public const int RECOMMENDED_SIZE_CHUNK = 6;
-            public const int RECOMMENDED_SIZE_DIRECTORYID = 1000;
+            public const int RECOMMENDED_SIZE_DIRECTORY_ID = 1000;
             public const int RECOMMENDED_SIZE_CIPHERTEXT_FILENAMES = 2000;
             public const int RECOMMENDED_SIZE_Plaintext_FILENAMES = 2000;
         }

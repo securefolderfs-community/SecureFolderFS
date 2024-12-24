@@ -1,4 +1,5 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
@@ -18,6 +19,9 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         /// <inheritdoc/>
         public override async Task ValidateAsync(IFile value, CancellationToken cancellationToken = default)
         {
+            if (PathHelpers.IsCoreFile(value.Name))
+                return;
+
             // Check the name
             if (value is IChildFile childFile)
                 await ValidateNameAsync(childFile, cancellationToken);
@@ -26,18 +30,16 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         }
 
         /// <inheritdoc/>
-        public override async Task<IWrapper<IResult>> ValidateResultAsync(IFile value, CancellationToken cancellationToken = default)
+        public override async Task<IResult> ValidateResultAsync(IFile value, CancellationToken cancellationToken = default)
         {
             try
             {
                 await ValidateAsync(value, cancellationToken);
-                return new Wrapper<IResult>(Result.Success);
+                return Result.Success;
             }
             catch (Exception ex)
             {
-                _ = ex;
-                // TODO: Return a ViewModel
-                return new Wrapper<IResult>(Result.Failure(ex)); // TODO: Return appropriate IHealthResult based on the exception
+                return Result.Failure(ex);
             }
         }
     }

@@ -5,6 +5,7 @@ using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Scanners;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,9 +16,10 @@ namespace SecureFolderFS.Sdk.AppModels
     {
         private readonly List<IChildFile> _scannedFiles;
         private readonly List<IChildFolder> _scannedFolders;
-        private readonly IAsyncValidator<IFile, IWrapper<IResult>>? _fileValidator;
-        private readonly IAsyncValidator<IFolder, IWrapper<IResult>>? _folderValidator;
+        private readonly IAsyncValidator<IFile, IResult>? _fileValidator;
+        private readonly IAsyncValidator<IFolder, IResult>? _folderValidator;
         private readonly bool _isOptimized;
+        private readonly bool _isParallelized;
         private int _updateCount;
         private int _updateInterval;
         private volatile int _totalFilesScanned;
@@ -29,10 +31,11 @@ namespace SecureFolderFS.Sdk.AppModels
         /// <inheritdoc/>
         public event EventHandler<HealthIssueEventArgs>? IssueFound;
 
-        public HealthModel(IFolderScanner<IStorableChild> folderScanner, IAsyncValidator<IFile, IWrapper<IResult>>? fileValidator, IAsyncValidator<IFolder, IWrapper<IResult>>? folderValidator)
+        public HealthModel(IFolderScanner<IStorableChild> folderScanner, IAsyncValidator<IFile, IResult>? fileValidator, IAsyncValidator<IFolder, IResult>? folderValidator)
         {
             FolderScanner = folderScanner;
             _isOptimized = true;
+            _isParallelized = false;
             _scannedFiles = new();
             _scannedFolders = new();
             _fileValidator = fileValidator;
@@ -86,8 +89,13 @@ namespace SecureFolderFS.Sdk.AppModels
             ReportProgress(progress);
             await Task.Delay(750, cancellationToken);
 
-            await Task.WhenAll(ScanFilesAsync(progress, cancellationToken), ScanFoldersAsync(progress, cancellationToken));
-            GC.Collect();
+            if (!_isParallelized)
+            {
+                await ScanFilesAsync(progress, cancellationToken);
+                await ScanFoldersAsync(progress, cancellationToken);
+            }
+            else
+                await Task.WhenAll(ScanFilesAsync(progress, cancellationToken), ScanFoldersAsync(progress, cancellationToken));
 
             // Report final progress
             ReportProgress(progress);
@@ -99,14 +107,26 @@ namespace SecureFolderFS.Sdk.AppModels
             if (_fileValidator is null)
                 return;
 
-            await Parallel.ForEachAsync(_scannedFiles, cancellationToken, async (file, token) =>
+            if (_isParallelized)
             {
-                await ScanAsync<IChildFile>(file, _fileValidator, token);
+                await Parallel.ForEachAsync(_scannedFiles, cancellationToken, async (file, token) =>
+                    await ScanFileAsync(file, token));
+            }
+            else
+            {
+                foreach (var file in _scannedFiles)
+                    await ScanFileAsync(file, cancellationToken);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            async Task ScanFileAsync(IChildFile file, CancellationToken token)
+            {
+                await ScanAsync<IChildFile>(file, _fileValidator!, token);
 
                 // Report progress
                 Interlocked.Increment(ref _totalFilesScanned);
                 ReportProgress(progress);
-            });
+            }
         }
 
         private async Task ScanFoldersAsync(ProgressModel<TotalProgress> progress, CancellationToken cancellationToken)
@@ -114,21 +134,33 @@ namespace SecureFolderFS.Sdk.AppModels
             if (_folderValidator is null)
                 return;
 
-            await Parallel.ForEachAsync(_scannedFolders, cancellationToken, async (folder, token) =>
+            if (_isParallelized)
             {
-                await ScanAsync<IChildFolder>(folder, _folderValidator, token);
+                await Parallel.ForEachAsync(_scannedFolders, cancellationToken, async (folder, token) =>
+                    await ScanFolderAsync(folder, token));
+            }
+            else
+            {
+                foreach (var folder in _scannedFolders)
+                    await ScanFolderAsync(folder, cancellationToken);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            async Task ScanFolderAsync(IChildFolder folder, CancellationToken token)
+            {
+                await ScanAsync<IChildFolder>(folder, _folderValidator!, token);
 
                 // Report progress
                 Interlocked.Increment(ref _totalFoldersScanned);
                 ReportProgress(progress);
-            });
+            }
         }
 
-        private async Task ScanAsync<TStorable>(TStorable storable, IAsyncValidator<TStorable, IWrapper<IResult>> asyncValidator, CancellationToken cancellationToken)
+        private async Task ScanAsync<TStorable>(TStorable storable, IAsyncValidator<TStorable, IResult> asyncValidator, CancellationToken cancellationToken)
             where TStorable : IStorableChild
         {
             var result = await asyncValidator.ValidateResultAsync(storable, cancellationToken);
-            if (!result.Inner.Successful)
+            if (!result.Successful)
                 IssueFound?.Invoke(this, new(storable, result));
         }
 

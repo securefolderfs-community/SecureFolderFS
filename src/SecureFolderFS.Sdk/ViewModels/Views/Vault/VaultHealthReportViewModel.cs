@@ -61,10 +61,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         private void UpdateSeverity(IEnumerable enumerable)
         {
+#pragma warning disable MVVMTK0034
             var severity = Severity;
             if (severity != SeverityType.Success && FoundIssues.IsEmpty())
             {
-                _context?.Post(_ => Severity = SeverityType.Success, null);
+                _Severity = SeverityType.Success;
+                _context?.Post(_ => OnPropertyChanged(nameof(Severity)), null);
                 return;
             }
 
@@ -75,7 +77,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             }
 
             if (Severity != severity)
-                _context?.Post(_ => Severity = severity, null);
+            {
+                _Severity = severity;
+                _context?.Post(_ => OnPropertyChanged(nameof(Severity)), null);
+            }
+#pragma warning restore MVVMTK0034
         }
 
         /// <inheritdoc/>

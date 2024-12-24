@@ -27,6 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             : base(result)
         {
             ServiceProvider = DI.Default;
+            Severity = SeverityType.Warning;
             Inner = result;
             Title = title;
         } 

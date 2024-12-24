@@ -1,4 +1,6 @@
-﻿using SecureFolderFS.Storage.VirtualFileSystem;
+﻿using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
+using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,5 +24,13 @@ namespace SecureFolderFS.Sdk.Services
         /// </remarks>
         /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="IFileSystem"/> of available file systems.</returns>
         IAsyncEnumerable<IFileSystem> GetFileSystemsAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the <see cref="HealthIssueViewModel"/> implementation for associated <see cref="IResult"/> from item validation.
+        /// </summary>
+        /// <param name="result">The result of validation.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If available, value is <see cref="HealthIssueViewModel"/>; otherwise false.</returns>
+        Task<HealthIssueViewModel?> GetIssueViewModelAsync(IResult result, CancellationToken cancellationToken = default);
     }
 }

@@ -8,7 +8,6 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Diagnostics;
 using System.IO;
-using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Uno.UnsafeNative;
 #endif
 
@@ -50,9 +49,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
 #if WINDOWS
             try
             {
-                var formattedPath = PathHelpers.EnsureNoTrailingPathSeparator(path);
                 var shellWindows = new SHDocVw.ShellWindows();
-
                 foreach (SHDocVw.InternetExplorer ie in shellWindows)
                 {
                     var formattedName = Path.GetFileNameWithoutExtension(ie.FullName);
@@ -61,7 +58,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
 
                     var url = ie.LocationURL.Replace('/', Path.DirectorySeparatorChar);
                     var formattedUrl = Uri.UnescapeDataString(url);
-                    if (!formattedUrl.Contains(formattedPath))
+                    if (!formattedUrl.Contains(path))
                         continue;
 
                     var windowClosed = false;

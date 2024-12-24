@@ -6,9 +6,7 @@ using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Models;
-using SecureFolderFS.Sdk.Results;
 using SecureFolderFS.Sdk.Services;
-using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
@@ -22,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 {
-    [Inject<ILocalizationService>]
+    [Inject<ILocalizationService>, Inject<IVaultFileSystemService>]
     [Bindable(true)]
     public sealed partial class HealthWidgetViewModel : BaseWidgetViewModel, IProgress<double>, IProgress<TotalProgress>, IViewable
     {
@@ -163,15 +161,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             };
         }
 
-        private void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
+        private async void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
         {
+            var issueViewModel = await VaultFileSystemService.GetIssueViewModelAsync(e.Result);
             _context?.Post(_ =>
             {
-                HealthReportViewModel.FoundIssues.Add(e.Result switch
-                {
-                    HealthIssueViewModel viewModel => viewModel,
-                    _ => new(e.Result.Inner, "Unknown error")
-                });
+                HealthReportViewModel.FoundIssues.Add(issueViewModel ?? new(e.Result, "Unknown error"));
             }, null);
         }
 
