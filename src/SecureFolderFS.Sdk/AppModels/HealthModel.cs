@@ -26,12 +26,12 @@ namespace SecureFolderFS.Sdk.AppModels
         private volatile int _totalFoldersScanned;
 
         /// <inheritdoc/>
-        public IFolderScanner<IStorableChild> FolderScanner { get; }
+        public IFolderScanner FolderScanner { get; }
 
         /// <inheritdoc/>
         public event EventHandler<HealthIssueEventArgs>? IssueFound;
 
-        public HealthModel(IFolderScanner<IStorableChild> folderScanner, IAsyncValidator<IFile, IResult>? fileValidator, IAsyncValidator<IFolder, IResult>? folderValidator)
+        public HealthModel(IFolderScanner folderScanner, IAsyncValidator<IFile, IResult>? fileValidator, IAsyncValidator<IFolder, IResult>? folderValidator)
         {
             FolderScanner = folderScanner;
             _isOptimized = true;

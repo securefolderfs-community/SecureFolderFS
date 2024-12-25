@@ -1,5 +1,4 @@
-﻿using OwlCore.Storage;
-using SecureFolderFS.Sdk.AppModels;
+﻿using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Scanners;
@@ -12,9 +11,9 @@ namespace SecureFolderFS.Sdk.Models
     public interface IHealthModel : IDisposable
     {
         /// <summary>
-        /// Gets the ciphertext <see cref="IFolderScanner{T}"/> used to scan the vault and its contents.
+        /// Gets the ciphertext <see cref="IFolderScanner"/> used to scan the vault and its contents.
         /// </summary>
-        IFolderScanner<IStorableChild> FolderScanner { get; }
+        IFolderScanner FolderScanner { get; }
 
         /// <summary>
         /// Occurs when an issue is found within the file system structure.

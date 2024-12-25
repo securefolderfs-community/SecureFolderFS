@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace SecureFolderFS.Storage.Scanners
 {
-    /// <inheritdoc cref="IFolderScanner{T}"/>
-    public class DeepFolderScanner : IFolderScanner<IStorableChild>
+    /// <inheritdoc cref="IFolderScanner"/>
+    public class DeepFolderScanner : IFolderScanner
     {
         /// <inheritdoc/>
         public IFolder RootFolder { get; }
