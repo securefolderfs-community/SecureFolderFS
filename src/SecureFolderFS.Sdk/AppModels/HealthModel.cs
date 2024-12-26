@@ -1,6 +1,9 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Models;
+using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Scanners;
 using System;
@@ -12,7 +15,8 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.AppModels
 {
     /// <inheritdoc cref="IHealthModel"/>
-    public sealed class HealthModel : IHealthModel, IProgress<IResult>
+    [Inject<IVaultService>]
+    public sealed partial class HealthModel : IHealthModel, IProgress<IResult>
     {
         private readonly IFolderScanner _folderScanner;
         private readonly List<IChildFile> _scannedFiles;
@@ -29,6 +33,7 @@ namespace SecureFolderFS.Sdk.AppModels
 
         public HealthModel(IFolderScanner folderScanner, ProgressModel<TotalProgress> progress, IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? structureValidator)
         {
+            ServiceProvider = DI.Default;
             _scannedFiles = new();
             _scannedFolders = new();
             _folderScanner = folderScanner;
@@ -56,6 +61,9 @@ namespace SecureFolderFS.Sdk.AppModels
                 {
                     if (cancellationToken.IsCancellationRequested)
                         return;
+
+                    if (VaultService.IsNameReserved(item.Name))
+                        continue;
 
                     switch (item)
                     {

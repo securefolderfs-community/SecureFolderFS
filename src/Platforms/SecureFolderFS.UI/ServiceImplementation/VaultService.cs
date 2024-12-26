@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Core.Migration;
 using SecureFolderFS.Core.Validators;
 using SecureFolderFS.Core.VaultAccess;
@@ -29,9 +30,10 @@ namespace SecureFolderFS.UI.ServiceImplementation
         public virtual bool IsNameReserved(string? name)
         {
             return name is not null && (
-                   name.Equals(Core.Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, StringComparison.OrdinalIgnoreCase) ||
-                   name.Equals(Core.Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase) ||
-                   name.Equals(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, StringComparison.OrdinalIgnoreCase));
+                    PathHelpers.IsCoreFile(name) ||
+                    name.Equals(Core.Constants.Vault.Names.VAULT_KEYSTORE_FILENAME, StringComparison.OrdinalIgnoreCase) ||
+                    name.Equals(Core.Constants.Vault.Names.VAULT_CONFIGURATION_FILENAME, StringComparison.OrdinalIgnoreCase) ||
+                    name.Equals(Core.Constants.Vault.Names.VAULT_CONTENT_FOLDERNAME, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <inheritdoc/>

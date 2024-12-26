@@ -75,7 +75,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
             }
 
             var directoryIdFile = await folderOfDirectoryId.GetFileByNameAsync(Constants.Names.DIRECTORY_ID_FILENAME);
-            await using var directoryIdStream = await directoryIdFile.OpenReadAsync();
+            await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.Read, FileShare.Read);
             
             int read;
             if (specifics.DirectoryIdCache.IsAvailable)

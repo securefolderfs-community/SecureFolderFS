@@ -44,7 +44,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             }
             catch (Exception ex)
             {
-                return Result.Failure(ex);
+                return Result<IStorable>.Failure(storable, ex);
             }
         }
 

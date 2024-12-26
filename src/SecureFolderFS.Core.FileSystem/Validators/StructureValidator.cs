@@ -4,6 +4,7 @@ using SecureFolderFS.Shared.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureFolderFS.Core.FileSystem.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem.Validators
 {
@@ -23,6 +24,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         /// <inheritdoc/>
         public override Task ValidateAsync((IFolder, IProgress<IResult>?) value, CancellationToken cancellationToken = default)
         {
+            // TODO: Implement
             throw new NotImplementedException();
         }
 
@@ -35,8 +37,11 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             var folderResult = await _folderValidator.ValidateResultAsync(scannedFolder, cancellationToken).ConfigureAwait(false);
             reporter?.Report(folderResult);
 
-            await foreach (var item in scannedFolder.GetItemsAsync(StorableType.All, cancellationToken))
+            await foreach (var item in scannedFolder.GetItemsAsync(StorableType.All, cancellationToken).ConfigureAwait(false))
             {
+                if (PathHelpers.IsCoreFile(item.Name))
+                    continue;
+
                 if (item is IChildFile file)
                 {
                     var result = await _fileValidator.ValidateResultAsync(file, cancellationToken).ConfigureAwait(false);
