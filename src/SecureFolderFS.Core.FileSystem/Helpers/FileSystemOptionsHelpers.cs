@@ -10,6 +10,7 @@ namespace SecureFolderFS.Core.FileSystem.Helpers
         {
             fileSystemOptions.HealthStatistics.FileValidator ??= new FileValidator(specifics);
             fileSystemOptions.HealthStatistics.FolderValidator ??= new FolderValidator(specifics);
+            fileSystemOptions.HealthStatistics.StructureValidator ??= new StructureValidator(specifics, fileSystemOptions.HealthStatistics.FileValidator, fileSystemOptions.HealthStatistics.FolderValidator);
         }
     }
 }

@@ -11,22 +11,21 @@ namespace SecureFolderFS.Core.FileSystem.Validators
     /// <inheritdoc cref="IAsyncValidator{T, TResult}"/>
     public sealed class FileValidator : BaseFileSystemValidator<IFile>
     {
+        private IResult<StorableType> FileSuccess { get; } = Result<StorableType>.Success(StorableType.File);
+
         public FileValidator(FileSystemSpecifics specifics)
             : base(specifics)
         {
         }
 
         /// <inheritdoc/>
-        public override async Task ValidateAsync(IFile value, CancellationToken cancellationToken = default)
+        public override Task ValidateAsync(IFile value, CancellationToken cancellationToken = default)
         {
             if (PathHelpers.IsCoreFile(value.Name))
-                return;
-
-            // Check the name
-            if (value is IChildFile childFile)
-                await ValidateNameAsync(childFile, cancellationToken);
+                return Task.CompletedTask;
 
             // TODO: Implement file validation (invalid chunks, checksum mismatch, etc...?)
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
@@ -34,12 +33,12 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         {
             try
             {
-                await ValidateAsync(value, cancellationToken);
-                return Result.Success;
+                await ValidateAsync(value, cancellationToken).ConfigureAwait(false);
+                return FileSuccess;
             }
             catch (Exception ex)
             {
-                return Result.Failure(ex);
+                return Result<IStorable>.Failure(value, ex);
             }
         }
     }

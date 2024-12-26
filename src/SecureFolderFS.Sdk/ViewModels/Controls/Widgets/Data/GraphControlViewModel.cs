@@ -29,7 +29,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         /// <inheritdoc/>
         public Task InitAsync(CancellationToken cancellationToken = default)
         {
-            for (var i = 0; i < Constants.Graphs.MAX_GRAPH_POINTS; i++)
+            for (var i = 0; i < Constants.Widgets.Graphs.MAX_GRAPH_POINTS; i++)
                 Data.Add(0d);
 
             return Task.CompletedTask;

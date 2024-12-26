@@ -15,6 +15,9 @@ namespace SecureFolderFS.Core.FileSystem.AppModels
         public IAsyncValidator<IFolder, IResult>? FolderValidator { get; set; }
 
         /// <inheritdoc/>
+        public IAsyncValidator<(IFolder, IProgress<IResult>?), IResult>? StructureValidator { get; set; }
+
+        /// <inheritdoc/>
         public IProgress<string>? DirectoryIdNotFound { get; set; }
 
         /// <inheritdoc/>

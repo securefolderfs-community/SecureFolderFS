@@ -2,18 +2,26 @@
 {
     public static class Constants
     {
-        public static class Graphs
-        {
-            public const int MAX_GRAPH_POINTS = 30;
-            public const int GRAPH_UPDATE_INTERVAL_MS = 200; // 0.2s
-            public const int GRAPH_REFRESH_RATE = 1000 / GRAPH_UPDATE_INTERVAL_MS;
-        }
-
         public static class Widgets
         {
             public const string HEALTH_WIDGET_ID = "health_widget";
             public const string GRAPHS_WIDGET_ID = "graphs_widget";
             public const string AGGREGATED_DATA_WIDGET_ID = "aggregatedStatistics_widget";
+
+            public static class Graphs
+            {
+                public const int MAX_GRAPH_POINTS = 30;
+                public const int GRAPH_UPDATE_INTERVAL_MS = 200; // 0.2s
+                public const int GRAPH_REFRESH_RATE = 1000 / GRAPH_UPDATE_INTERVAL_MS;
+            }
+
+            public static class Health
+            {
+                public static bool ARE_UPDATES_OPTIMIZED = true;
+                public static bool IS_SCANNING_PARALLELIZED = false;
+                public static bool IS_DISCOVERY_ASSUMED_FAST = true;
+                public static double INTERVAL_MULTIPLIER = 0.2d;
+            }
         }
 
         public static class Dialogs

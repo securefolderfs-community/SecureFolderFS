@@ -1,6 +1,7 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.Helpers.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
+using SecureFolderFS.Shared.Models;
 using System;
 using System.IO;
 using System.Threading;
@@ -29,9 +30,22 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             if (specifics.Security.NameCrypt is null)
                 return;
 
-            var decryptedName = await DecryptNameAsync(storable, cancellationToken);
+            var decryptedName = await DecryptNameAsync(storable, cancellationToken).ConfigureAwait(false);
             if (decryptedName is null)
                 throw new FormatException("The item name is invalid.");
+        }
+
+        protected async Task<IResult> ValidateNameResultAsync(IStorableChild storable, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await ValidateNameAsync(storable, cancellationToken).ConfigureAwait(false);
+                return Result.Success;
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex);
+            }
         }
 
         protected async Task<string?> DecryptNameAsync(IStorableChild storable, CancellationToken cancellationToken)
@@ -39,7 +53,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
             if (specifics.Security.NameCrypt is null)
                 return null;
 
-            var parentFolder = await storable.GetParentAsync(cancellationToken);
+            var parentFolder = await storable.GetParentAsync(cancellationToken).ConfigureAwait(false);
             if (parentFolder is null)
                 return null;
 
@@ -48,7 +62,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
 
             try
             {
-                var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId);
+                var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId).ConfigureAwait(false);
                 return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
             }
             catch (FileNotFoundException)

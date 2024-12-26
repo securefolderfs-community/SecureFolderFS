@@ -26,7 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
             : base(widgetModel)
         {
             _fileSystemStatistics = unlockedVaultViewModel.StorageRoot.Options.FileSystemStatistics;
-            _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Graphs.GRAPH_UPDATE_INTERVAL_MS));
+            _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Widgets.Graphs.GRAPH_UPDATE_INTERVAL_MS));
         }
 
         /// <inheritdoc/>

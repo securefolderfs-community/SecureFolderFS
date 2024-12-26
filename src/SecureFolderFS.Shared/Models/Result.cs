@@ -56,6 +56,12 @@ namespace SecureFolderFS.Shared.Models
         {
         }
 
+        protected Result(T value, Exception exception)
+            : base(exception)
+        {
+            Value = value;
+        }
+
         /// <summary>
         /// Creates a new <see cref="Result{T}"/> with a value.
         /// </summary>
@@ -76,5 +82,13 @@ namespace SecureFolderFS.Shared.Models
         /// <param name="value">The vault of the result.</param>
         /// <returns>A new failed <see cref="Result{T}"/>.</returns>
         public static Result<T> Failure(T value) => new(value);
+
+        /// <summary>
+        /// Creates a new <see cref="Result{T}"/> with an exception and the <typeparamref name="T"/> value that usually indicates the origin of the error.
+        /// </summary>
+        /// <param name="value">The vault of the result.</param>
+        /// <param name="exception">The <see cref="System.Exception"/> instance of the operation.</param>
+        /// <returns>A new failed <see cref="Result{T}"/>.</returns>
+        public static Result<T> Failure(T value, Exception exception) => new(value, exception);
     }
 }

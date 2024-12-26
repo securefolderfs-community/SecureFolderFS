@@ -45,8 +45,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             _dashboardNavigator = dashboardNavigator;
             _unlockedVaultViewModel = unlockedVaultViewModel;
             HealthReportViewModel = new(unlockedVaultViewModel, _context);
-            Title = "HealthNoProblems".ToLocalized();
             LastCheckedText = string.Format("LastChecked".ToLocalized(), "Unspecified");
+            Title = "HealthNoProblems".ToLocalized();
         }
 
         /// <inheritdoc/>
@@ -55,10 +55,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             var vaultModel = _unlockedVaultViewModel.VaultViewModel.VaultModel;
             var contentFolder = await vaultModel.GetContentFolderAsync(cancellationToken);
             var folderScanner = new DeepFolderScanner(contentFolder);
-            var fileValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.FileValidator;
-            var folderValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.FolderValidator;
+            var structureValidator = _unlockedVaultViewModel.StorageRoot.Options.HealthStatistics.StructureValidator;
 
-            _vaultHealthModel = new HealthModel(folderScanner, fileValidator, folderValidator);
+            if (_vaultHealthModel is not null)
+            {
+                _vaultHealthModel.IssueFound -= VaultHealthModel_IssueFound;
+                _vaultHealthModel.Dispose();
+            }
+            _vaultHealthModel = new HealthModel(folderScanner, new(this, this), structureValidator);
             _vaultHealthModel.IssueFound += VaultHealthModel_IssueFound;
         }
 
@@ -134,7 +138,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (_vaultHealthModel is null)
                 return;
 
-            await _vaultHealthModel.ScanAsync(new(this, this), cancellationToken);
+            await _vaultHealthModel.ScanAsync(cancellationToken).ConfigureAwait(false);
             EndScanning();
         }
 
@@ -166,6 +170,9 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 
         private async void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
         {
+            if (e.Result.Successful)
+                return;
+
             var issueViewModel = await VaultFileSystemService.GetIssueViewModelAsync(e.Result);
             _context?.Post(_ =>
             {

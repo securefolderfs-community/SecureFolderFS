@@ -35,7 +35,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
             WriteGraphViewModel = new();
             _fileSystemStatistics = unlockedVaultViewModel.StorageRoot.Options.FileSystemStatistics;
 
-            _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Graphs.GRAPH_UPDATE_INTERVAL_MS));
+            _periodicTimer = new(TimeSpan.FromMilliseconds(Constants.Widgets.Graphs.GRAPH_UPDATE_INTERVAL_MS));
             _readRates = [ 0 ];
             _writeRates = [ 0 ];
         }
@@ -60,8 +60,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
                 if (!IsActive)
                     continue;
 
-                _readRates.AddWithMaxCapacity(_currentReadAmount, Constants.Graphs.GRAPH_REFRESH_RATE);
-                _writeRates.AddWithMaxCapacity(_currentWriteAmount, Constants.Graphs.GRAPH_REFRESH_RATE);
+                _readRates.AddWithMaxCapacity(_currentReadAmount, Constants.Widgets.Graphs.GRAPH_REFRESH_RATE);
+                _writeRates.AddWithMaxCapacity(_currentWriteAmount, Constants.Widgets.Graphs.GRAPH_REFRESH_RATE);
 
                 CalculateStatistics();
             }
@@ -85,7 +85,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
             _currentWriteAmount = 0;
 
             _updateTimeCount++;
-            if (_updateTimeCount == Constants.Graphs.GRAPH_REFRESH_RATE)
+            if (_updateTimeCount == Constants.Widgets.Graphs.GRAPH_REFRESH_RATE)
             {
                 _updateTimeCount = 0;
 

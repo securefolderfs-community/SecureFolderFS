@@ -30,11 +30,21 @@ namespace SecureFolderFS.UI.ServiceImplementation
             // TODO: Use custom implementations of the view model with options to resolve issues
             return result.Exception switch
             {
-                EndOfStreamException => new(result, "Invalid directory ID") { ErrorMessage = "Regenerate invalid directory ID", Icon = "\uE8B7" },
-                FileNotFoundException => new(result, "Missing directory ID") { ErrorMessage = "Regenerate missing directory ID", Icon = "\uE8B7" },
+                AggregateException aggregate => aggregate.InnerException switch
+                {
+                    EndOfStreamException => new(result, "Invalid directory ID") { ErrorMessage = "Regenerate invalid directory ID", Icon = "\uE8B7" },
+                    FileNotFoundException => new(result, "Missing directory ID") { ErrorMessage = "Regenerate missing directory ID", Icon = "\uE8B7" },
+                    { } ex => GetDefault(ex),
+                    _ => GetDefault(aggregate)
+                },
                 FormatException => new(result, "Invalid item name") { ErrorMessage = "Choose a new name", Icon = "\uE8AC" },
-                { } ex => new HealthIssueViewModel(result, ex.GetType().ToString()) { Icon = "\uE783" }
+                { } ex => GetDefault(ex)
             };
+
+            HealthIssueViewModel GetDefault(Exception ex)
+            {
+                return new HealthIssueViewModel(result, ex.GetType().ToString()) { Icon = "\uE783" };
+            }
         }
 
         /// <inheritdoc/>
