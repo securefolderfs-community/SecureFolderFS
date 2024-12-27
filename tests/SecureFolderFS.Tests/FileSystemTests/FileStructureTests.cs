@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Shared;
@@ -44,8 +43,8 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await subFolder.DeleteAsync(createdFolder);
 
             // Assert
-            await Assert.ThatAsync(async () => await subFolder.GetFirstByNameAsync("SUB_FILE"), Throws.Exception);
-            await Assert.ThatAsync(async () => await subFolder.GetFirstByNameAsync("SUB_FOLDER"), Throws.Exception);
+            Assert.ThrowsAsync<FileNotFoundException>(async () => await subFolder.GetFirstByNameAsync("SUB_FILE"));
+            Assert.ThrowsAsync<FileNotFoundException>(async () => await subFolder.GetFirstByNameAsync("SUB_FOLDER"));
         }
 
         [Test]
@@ -70,7 +69,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             await modifiableFolder.DeleteAsync((IStorableChild)subFolder);
 
             // Assert
-            await Assert.ThatAsync(async () => await modifiableFolder.GetFirstByNameAsync("FOLDER"), Throws.Exception);
+            Assert.ThrowsAsync<FileNotFoundException>(async () => await modifiableFolder.GetFirstByNameAsync("FOLDER"));
         }
     }
 }
