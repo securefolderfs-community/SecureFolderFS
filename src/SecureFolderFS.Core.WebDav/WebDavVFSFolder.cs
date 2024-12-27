@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Core.WebDav
 {
     /// <inheritdoc cref="IVFSRoot"/>
-    public sealed class WebDavRootFolder : VFSRoot
+    public sealed class WebDavVFSFolder : VFSRoot
     {
         private readonly WebDavWrapper _webDavWrapper;
         private bool _disposed;
@@ -14,7 +14,7 @@ namespace SecureFolderFS.Core.WebDav
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public WebDavRootFolder(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemOptions options)
+        public WebDavVFSFolder(WebDavWrapper webDavWrapper, IFolder storageRoot, FileSystemOptions options)
             : base(storageRoot, options)
         {
             _webDavWrapper = webDavWrapper;

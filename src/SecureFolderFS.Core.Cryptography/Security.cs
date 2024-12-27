@@ -28,16 +28,6 @@ namespace SecureFolderFS.Core.Cryptography
             _macKey = macKey;
         }
 
-        public SecretKey CopyEncryptionKey()
-        {
-            return _encKey.CreateCopy();
-        }
-
-        public SecretKey CopyMacKey()
-        {
-            return _macKey.CreateCopy();
-        }
-
         /// <summary>
         /// Creates a new instance of <see cref="Security"/> object that provides content encryption and cipher access.
         /// </summary>

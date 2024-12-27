@@ -1,10 +1,10 @@
 ﻿using OwlCore.Storage;
+using SecureFolderFS.Core.FileSystem.Helpers;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem.Validators
 {

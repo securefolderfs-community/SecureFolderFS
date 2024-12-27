@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Core.Dokany;
+using SecureFolderFS.Core.ProjFS;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ServiceImplementation;
@@ -17,6 +18,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.ServiceImplementation
         {
             await Task.CompletedTask;
             yield return new WindowsWebDavFileSystem();
+            yield return new WPFSFileSystem();
             yield return new DokanyFileSystem();
         }
     }
