@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
-using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.UI.ViewModels.Authentication;
 using SecureFolderFS.Uno.ViewModels;
 
 namespace SecureFolderFS.Uno.TemplateSelectors

@@ -1,6 +1,4 @@
-﻿using SecureFolderFS.Sdk.AppModels;
-using SecureFolderFS.Sdk.EventArguments;
-using SecureFolderFS.Shared.ComponentModel;
+﻿using SecureFolderFS.Sdk.EventArguments;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

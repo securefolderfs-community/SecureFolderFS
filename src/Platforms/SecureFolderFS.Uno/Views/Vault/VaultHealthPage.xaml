@@ -4,16 +4,125 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ts="using:SecureFolderFS.Uno.TemplateSelectors"
+    xmlns:ucab="using:SecureFolderFS.Uno.UserControls.ActionBlocks"
     xmlns:vc="using:SecureFolderFS.Uno.ValueConverters"
     xmlns:vm="using:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health"
+    xmlns:vm2="using:SecureFolderFS.UI.ViewModels.Health"
     mc:Ignorable="d">
 
     <Page.Resources>
         <vc:CountToStringConverter x:Key="CountToStringConverter" />
         <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    </Page.Resources>
 
+        <!--  Cascading Issues  -->
+        <DataTemplate x:Key="CascadingIssuesTemplate" x:DataType="vm2:HealthCascadingIssuesViewModel">
+            <ucab:ActionBlockControl
+                Title="{x:Bind Title, Mode=OneWay}"
+                BlockMode="Expandable"
+                Description="{x:Bind ErrorMessage, Mode=OneWay}"
+                ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ExpanderContent>
+                    <Border Margin="-16">
+                        <ListView
+                            Margin="-16,0"
+                            IsItemClickEnabled="False"
+                            ItemsSource="{x:Bind Issues, Mode=OneWay}"
+                            SelectionMode="None">
+                            <ListView.ItemTemplateSelector>
+                                <ts:HealthIssueTemplateSelector
+                                    CascadingIssuesTemplate="{StaticResource CascadingIssuesTemplate}"
+                                    IssueTemplate="{StaticResource IssueTemplate}"
+                                    RenameIssueTemplate="{StaticResource RenameIssueTemplate}" />
+                            </ListView.ItemTemplateSelector>
+                        </ListView>
+                    </Border>
+                </ucab:ActionBlockControl.ExpanderContent>
+                <ucab:ActionBlockControl.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </ucab:ActionBlockControl.ContextFlyout>
+            </ucab:ActionBlockControl>
+        </DataTemplate>
+
+        <!--  Name Issue  -->
+        <DataTemplate x:Key="RenameIssueTemplate" x:DataType="vm2:HealthRenameIssueViewModel">
+            <ucab:ActionBlockControl
+                Title="{x:Bind Title, Mode=OneWay}"
+                BlockMode="Default"
+                Description="{x:Bind ErrorMessage, Mode=OneWay}"
+                ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Grid.Column="0" Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ActionElement>
+                    <Grid MaxWidth="200">
+                        <TextBlock
+                            FontSize="14"
+                            Opacity="0.8"
+                            Text="{x:Bind ItemName, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{x:Bind ItemName, Mode=OneWay}" />
+                    </Grid>
+                </ucab:ActionBlockControl.ActionElement>
+                <ucab:ActionBlockControl.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </ucab:ActionBlockControl.ContextFlyout>
+            </ucab:ActionBlockControl>
+        </DataTemplate>
+
+        <!--  Base Issue  -->
+        <DataTemplate x:Key="IssueTemplate" x:DataType="vm:HealthIssueViewModel">
+            <ucab:ActionBlockControl
+                Title="{x:Bind Title, Mode=OneWay}"
+                BlockMode="Default"
+                Description="{x:Bind ErrorMessage, Mode=OneWay}"
+                ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
+                <ucab:ActionBlockControl.Icon>
+                    <FontIcon Grid.Column="0" Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
+                </ucab:ActionBlockControl.Icon>
+                <ucab:ActionBlockControl.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </ucab:ActionBlockControl.ContextFlyout>
+            </ucab:ActionBlockControl>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid
         Margin="0,0,0,12"
@@ -72,42 +181,12 @@
                     <StackPanel Spacing="4" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
-
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="vm:HealthIssueViewModel">
-                    <Grid
-                        Padding="16,8"
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        ColumnSpacing="16"
-                        CornerRadius="{StaticResource ControlCornerRadius}"
-                        ToolTipService.ToolTip="{x:Bind ExceptionMessage, Mode=OneWay}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <FontIcon Grid.Column="0" Glyph="{x:Bind Icon, Mode=OneWay, FallbackValue='&#xE783;'}" />
-
-                        <StackPanel Grid.Column="1">
-                            <TextBlock FontWeight="Semibold" Text="{x:Bind Title, Mode=OneWay}" />
-                            <TextBlock
-                                FontSize="12"
-                                Opacity="0.8"
-                                Text="{x:Bind ErrorMessage, Mode=OneWay}" />
-                        </StackPanel>
-
-                        <Grid.ContextFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE8C8;" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                            </MenuFlyout>
-                        </Grid.ContextFlyout>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <ListView.ItemTemplateSelector>
+                <ts:HealthIssueTemplateSelector
+                    CascadingIssuesTemplate="{StaticResource CascadingIssuesTemplate}"
+                    IssueTemplate="{StaticResource IssueTemplate}"
+                    RenameIssueTemplate="{StaticResource RenameIssueTemplate}" />
+            </ListView.ItemTemplateSelector>
         </ListView>
     </Grid>
 </Page>

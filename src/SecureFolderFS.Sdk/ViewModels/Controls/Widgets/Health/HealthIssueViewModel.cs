@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Services;
@@ -15,22 +16,33 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 {
     [Inject<IClipboardService>]
     [Bindable(true)]
-    public partial class HealthIssueViewModel : ErrorViewModel, IWrapper<IResult>
+    public partial class HealthIssueViewModel : ErrorViewModel, IWrapper<IStorable>
     {
         [ObservableProperty] private string? _Icon; // TODO: Change to IImage
         [ObservableProperty] private SeverityType _Severity;
 
-        /// <inheritdoc/>
-        public IResult Inner { get; protected set; }
+        /// <summary>
+        /// Gets the <see cref="IResult"/> associated with this view model.
+        /// </summary>
+        protected IResult? Result { get; set; }
 
-        public HealthIssueViewModel(IResult result, string title)
-            : base(result)
+        /// <inheritdoc/>
+        public IStorable Inner { get; }
+
+        public HealthIssueViewModel(IStorable storable, IResult? result, string? title = null)
+            : this(storable, title ?? "Unknown error")
+        {
+            Result = result;
+        }
+
+        public HealthIssueViewModel(IStorable storable, string title)
+            : base(title)
         {
             ServiceProvider = DI.Default;
             Severity = SeverityType.Warning;
-            Inner = result;
+            Inner = storable;
             Title = title;
-        } 
+        }
 
         /// <inheritdoc/>
         protected override void UpdateStatus(IResult? result)
@@ -39,7 +51,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (result is null)
                 return;
 
-            Inner = result;
+            Result = result;
             base.UpdateStatus(result);
         }
 
@@ -47,7 +59,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
         protected virtual async Task CopyErrorAsync(CancellationToken cancellationToken)
         {
             if (await ClipboardService.IsSupportedAsync())
-                await ClipboardService.SetTextAsync(ExceptionMessage ?? Inner.GetExceptionMessage(), cancellationToken);
+                await ClipboardService.SetTextAsync(ExceptionMessage
+                                                    ?? Result?.GetExceptionMessage()
+                                                    ?? ErrorMessage
+                                                    ?? "Unknown error", cancellationToken);
+        }
+
+        [RelayCommand]
+        protected virtual async Task CopyPathAsync(CancellationToken cancellationToken)
+        {
+            if (await ClipboardService.IsSupportedAsync())
+                await ClipboardService.SetTextAsync(Inner.Id, cancellationToken);
         }
     }
 }

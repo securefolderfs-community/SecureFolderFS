@@ -8,7 +8,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.Extensions;
 
-namespace SecureFolderFS.UI.ViewModels
+namespace SecureFolderFS.UI.ViewModels.Authentication
 {
     /// <inheritdoc cref="KeyFileViewModel"/>
     [Bindable(true)]

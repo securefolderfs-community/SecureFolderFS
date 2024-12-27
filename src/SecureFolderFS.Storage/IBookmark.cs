@@ -6,6 +6,9 @@ namespace SecureFolderFS.Storage
 {
     public interface IBookmark : IStorable
     {
+        /// <summary>
+        /// Gets the unique ID used to represent a bookmark to this storable.
+        /// </summary>
         string? BookmarkId { get; }
 
         /// <summary>

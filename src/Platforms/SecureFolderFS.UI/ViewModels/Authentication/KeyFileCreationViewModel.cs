@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SecureFolderFS.Sdk.EventArguments;
 
-namespace SecureFolderFS.UI.ViewModels
+namespace SecureFolderFS.UI.ViewModels.Authentication
 {
     /// <inheritdoc cref="KeyFileViewModel"/>
     [Bindable(true)]

@@ -14,7 +14,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <summary>
         /// Tries to open the provided <paramref name="folder"/> in platform's default file explorer.
         /// </summary>
-        /// <param name="folder">The folder to open file explorer in.</param>
+        /// <param name="folder">The folder to open the file explorer at.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         Task TryOpenInFileExplorerAsync(IFolder folder, CancellationToken cancellationToken = default);

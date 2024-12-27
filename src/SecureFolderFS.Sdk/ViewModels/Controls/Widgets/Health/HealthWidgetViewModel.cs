@@ -170,14 +170,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 
         private async void VaultHealthModel_IssueFound(object? sender, HealthIssueEventArgs e)
         {
-            if (e.Result.Successful)
+            if (e.Result.Successful || e.Storable is null)
                 return;
 
-            var issueViewModel = await VaultFileSystemService.GetIssueViewModelAsync(e.Result);
-            _context?.Post(_ =>
-            {
-                HealthReportViewModel.FoundIssues.Add(issueViewModel ?? new(e.Result, "Unknown error"));
-            }, null);
+            var issueViewModel = await VaultFileSystemService.GetIssueViewModelAsync(e.Result, e.Storable);
+            _context?.Post(_ => HealthReportViewModel.FoundIssues.Add(issueViewModel ?? new(e.Storable, e.Result)), null);
         }
 
         /// <inheritdoc/>

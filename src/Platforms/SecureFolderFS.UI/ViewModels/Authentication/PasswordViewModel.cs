@@ -9,7 +9,7 @@ using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 
-namespace SecureFolderFS.UI.ViewModels
+namespace SecureFolderFS.UI.ViewModels.Authentication
 {
     /// <inheritdoc cref="AuthenticationViewModel"/>
     [Bindable(true)]

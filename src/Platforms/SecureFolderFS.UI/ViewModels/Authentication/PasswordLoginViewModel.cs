@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Shared.ComponentModel;
 
-namespace SecureFolderFS.UI.ViewModels
+namespace SecureFolderFS.UI.ViewModels.Authentication
 {
     /// <inheritdoc cref="PasswordLoginViewModel"/>
     [Bindable(true)]

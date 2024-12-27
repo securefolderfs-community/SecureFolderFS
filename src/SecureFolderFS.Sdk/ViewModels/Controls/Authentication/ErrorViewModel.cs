@@ -27,7 +27,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Authentication
             Title = title;
         }
 
-        public ErrorViewModel(IResult error)
+        public ErrorViewModel(IResult? error)
         {
             Report(error);
         }
