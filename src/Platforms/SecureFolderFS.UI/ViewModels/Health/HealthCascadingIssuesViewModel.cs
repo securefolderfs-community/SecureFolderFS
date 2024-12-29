@@ -30,7 +30,10 @@ namespace SecureFolderFS.UI.ViewModels.Health
             Issues.Clear();
             await foreach (var item in Folder.GetItemsAsync(StorableType.All, cancellationToken))
             {
-                Issues.Add(new HealthRenameIssueViewModel(item, null, "Name error"));
+                Issues.Add(new HealthRenameIssueViewModel(item, Shared.Models.Result.Failure(null), "Invalid name")
+                {
+                    ErrorMessage = "Generate a new name"
+                });
             }
         }
     }

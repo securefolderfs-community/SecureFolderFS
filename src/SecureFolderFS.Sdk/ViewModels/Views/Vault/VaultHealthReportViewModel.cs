@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
@@ -10,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
@@ -18,6 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
     {
         private readonly SynchronizationContext? _context;
 
+        [ObservableProperty] private bool _CanResolve;
         [ObservableProperty] private bool _IsProgressing;
         [ObservableProperty] private double _CurrentProgress;
         [ObservableProperty] private SeverityType _Severity;
@@ -42,6 +45,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         {
             _ = value;
             UpdateSeverity(FoundIssues);
+        }
+
+        [RelayCommand]
+        private async Task ResolveAsync(CancellationToken cancellationToken)
+        {
+            await Task.CompletedTask;
         }
 
         private void FoundIssues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

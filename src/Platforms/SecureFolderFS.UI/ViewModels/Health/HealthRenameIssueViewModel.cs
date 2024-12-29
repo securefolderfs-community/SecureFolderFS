@@ -8,13 +8,26 @@ namespace SecureFolderFS.UI.ViewModels.Health
     /// <inheritdoc cref="HealthIssueViewModel"/>
     public sealed partial class HealthRenameIssueViewModel : HealthIssueViewModel
     {
+        private readonly string _originalName;
+
         [ObservableProperty] private bool _IsEditing;
         [ObservableProperty] private string? _ItemName;
+
+        public bool WasNameChanged => !_originalName.Equals(ItemName);
 
         public HealthRenameIssueViewModel(IStorable storable, IResult result, string? title = null)
             : base(storable, result, title)
         {
+            _originalName = storable.Name;
             ItemName = storable.Name;
+        }
+
+        partial void OnIsEditingChanged(bool value)
+        {
+            if (!value && string.IsNullOrWhiteSpace(ItemName))
+                ItemName = _originalName;
+
+            ErrorMessage = WasNameChanged ? "A custom name will be applied" : "Generate new name";
         }
     }
 }

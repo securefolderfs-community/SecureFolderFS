@@ -46,7 +46,7 @@
                     <MenuFlyout>
                         <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE8C8;" />
+                                <FontIcon Glyph="&#xE62F;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
@@ -74,16 +74,28 @@
                         <TextBlock
                             FontSize="14"
                             Opacity="0.8"
+                            Tapped="NameText_Tapped"
                             Text="{x:Bind ItemName, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="{x:Bind ItemName, Mode=OneWay}" />
+                            ToolTipService.ToolTip="{x:Bind ItemName, Mode=OneWay}"
+                            Visibility="{x:Bind IsEditing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+
+                        <TextBox
+                            x:Name="NameEdit"
+                            Width="200"
+                            IsEnabled="{x:Bind IsEditing, Mode=OneWay}"
+                            IsEnabledChanged="NameEdit_IsEnabledChanged"
+                            LostFocus="NameEdit_LostFocus"
+                            PreviewKeyDown="NameEdit_PreviewKeyDown"
+                            Text="{x:Bind ItemName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{x:Bind IsEditing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </Grid>
                 </ucab:ActionBlockControl.ActionElement>
                 <ucab:ActionBlockControl.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE8C8;" />
+                                <FontIcon Glyph="&#xE62F;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
@@ -110,7 +122,7 @@
                     <MenuFlyout>
                         <MenuFlyoutItem Command="{x:Bind CopyPathCommand, Mode=OneWay}" Text="Copy path">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE8C8;" />
+                                <FontIcon Glyph="&#xE62F;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutItem Command="{x:Bind CopyErrorCommand, Mode=OneWay}" Text="Copy error">
@@ -124,69 +136,83 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid
-        Margin="0,0,0,12"
-        Padding="20,8,20,12"
-        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-        CornerRadius="{StaticResource ControlCornerRadius}"
-        RowSpacing="12">
-
+    <Grid Margin="0,0,0,4" RowSpacing="12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" RowSpacing="8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <Grid
+            Grid.Row="0"
+            Padding="20,8,20,12"
+            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+            CornerRadius="{StaticResource ControlCornerRadius}"
+            RowSpacing="12">
+
             <Grid.RowDefinitions>
-                <RowDefinition />
                 <RowDefinition Height="Auto" />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="0"
-                Style="{StaticResource BodyStrongTextBlockStyle}"
-                Text="{x:Bind ViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issues'}" />
-            <ProgressRing
-                Grid.Row="0"
-                Grid.Column="1"
-                Width="16"
-                Height="16"
-                IsActive="True"
-                IsIndeterminate="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
-                Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-                Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
+            <Grid Grid.Row="0" RowSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <Border
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                    Text="{x:Bind ViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issues'}" />
+                <ProgressRing
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Width="16"
+                    Height="16"
+                    IsActive="True"
+                    IsIndeterminate="{x:Bind ViewModel.CurrentProgress, Mode=OneWay, Converter={StaticResource ProgressIsDeterminateConverter}}"
+                    Visibility="{x:Bind ViewModel.IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="-20,0"
+                    BorderBrush="{ThemeResource ControlFillColorSecondaryBrush}"
+                    BorderThickness="0,1,0,1" />
+            </Grid>
+
+            <ListView
                 Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Margin="-20,0"
-                BorderBrush="{ThemeResource ControlFillColorSecondaryBrush}"
-                BorderThickness="0,1,0,1" />
+                Margin="-16,0"
+                IsItemClickEnabled="False"
+                ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
+                SelectionMode="None">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="4" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplateSelector>
+                    <ts:HealthIssueTemplateSelector
+                        CascadingIssuesTemplate="{StaticResource CascadingIssuesTemplate}"
+                        IssueTemplate="{StaticResource IssueTemplate}"
+                        RenameIssueTemplate="{StaticResource RenameIssueTemplate}" />
+                </ListView.ItemTemplateSelector>
+            </ListView>
         </Grid>
 
-        <ListView
+        <Button
             Grid.Row="1"
-            Margin="-16,0"
-            IsItemClickEnabled="False"
-            ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
-            SelectionMode="None">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Spacing="4" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemTemplateSelector>
-                <ts:HealthIssueTemplateSelector
-                    CascadingIssuesTemplate="{StaticResource CascadingIssuesTemplate}"
-                    IssueTemplate="{StaticResource IssueTemplate}"
-                    RenameIssueTemplate="{StaticResource RenameIssueTemplate}" />
-            </ListView.ItemTemplateSelector>
-        </ListView>
+            Width="124"
+            Command="{x:Bind ViewModel.ResolveCommand, Mode=OneWay}"
+            Content="Resolve"
+            IsEnabled="{x:Bind ViewModel.CanResolve, Mode=OneWay}" />
     </Grid>
 </Page>

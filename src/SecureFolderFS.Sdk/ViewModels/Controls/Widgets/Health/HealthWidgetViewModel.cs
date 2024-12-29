@@ -131,6 +131,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             _cts?.Dispose();
             _cts = new();
             EndScanning();
+            _context?.Post(_ => HealthReportViewModel.CanResolve = false, null);
         }
 
         private async Task ScanAsync(CancellationToken cancellationToken)
@@ -138,8 +139,10 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             if (_vaultHealthModel is null)
                 return;
 
+            _context?.Post(_ => HealthReportViewModel.CanResolve = false, null);
             await _vaultHealthModel.ScanAsync(cancellationToken).ConfigureAwait(false);
             EndScanning();
+            _context?.Post(_ => HealthReportViewModel.CanResolve = true, null);
         }
 
         private void EndScanning()
