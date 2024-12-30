@@ -56,7 +56,7 @@ namespace SecureFolderFS.Core.FUSE
             var specifics = FileSystemSpecifics.CreateNew(wrapper.Inner, folder, fuseOptions);
             fuseOptions.SetupValidators(specifics);
 
-            var handlesManager = new FuseHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions.IsReadOnly);
+            var handlesManager = new FuseHandlesManager(specifics.StreamsAccess, specifics.FileSystemOptions);
             var fuseCallbacks = new OnDeviceFuse(specifics, handlesManager);
             var fuseWrapper = new FuseWrapper(fuseCallbacks);
             fuseWrapper.StartFileSystem(mountPoint, fuseOptions);

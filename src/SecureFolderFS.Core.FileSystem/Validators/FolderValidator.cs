@@ -28,6 +28,9 @@ namespace SecureFolderFS.Core.FileSystem.Validators
                 if (PathHelpers.IsCoreFile(value.Name))
                     return;
 
+                if (value.Id.Equals(specifics.ContentFolder.Id, StringComparison.OrdinalIgnoreCase))
+                    return;
+
                 // Check if Directory ID exists
                 var directoryIdFile = await value.GetFileByNameAsync(Core.FileSystem.Constants.Names.DIRECTORY_ID_FILENAME, cancellationToken).ConfigureAwait(false);
 

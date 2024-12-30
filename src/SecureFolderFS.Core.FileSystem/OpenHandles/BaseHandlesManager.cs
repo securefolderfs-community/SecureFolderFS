@@ -1,5 +1,6 @@
 ﻿using SecureFolderFS.Core.FileSystem.Streams;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,16 +15,16 @@ namespace SecureFolderFS.Core.FileSystem.OpenHandles
     public abstract class BaseHandlesManager : IDisposable
     {
         protected bool disposed;
-        protected readonly bool isReadOnly;
         protected readonly object handlesLock = new();
         protected readonly StreamsAccess streamsAccess;
         protected readonly HandlesGenerator handlesGenerator;
+        protected readonly FileSystemOptions fileSystemOptions;
         protected readonly Dictionary<ulong, IDisposable> handles;
 
-        protected BaseHandlesManager(StreamsAccess streamsAccess, bool isReadOnly)
+        protected BaseHandlesManager(StreamsAccess streamsAccess, FileSystemOptions fileSystemOptions)
         {
             this.streamsAccess = streamsAccess;
-            this.isReadOnly = isReadOnly;
+            this.fileSystemOptions = fileSystemOptions;
             this.handlesGenerator = new();
             this.handles = new();
         }

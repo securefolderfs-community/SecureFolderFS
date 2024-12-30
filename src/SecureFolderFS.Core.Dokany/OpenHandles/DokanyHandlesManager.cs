@@ -1,6 +1,7 @@
 ﻿using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Storage.VirtualFileSystem;
 using System.IO;
 
 namespace SecureFolderFS.Core.Dokany.OpenHandles
@@ -8,8 +9,8 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class DokanyHandlesManager : BaseHandlesManager
     {
-        public DokanyHandlesManager(StreamsAccess streamsAccess, bool isReadOnly)
-            : base(streamsAccess, isReadOnly)
+        public DokanyHandlesManager(StreamsAccess streamsAccess, FileSystemOptions fileSystemOptions)
+            : base(streamsAccess, fileSystemOptions)
         {
         }
 
@@ -18,6 +19,9 @@ namespace SecureFolderFS.Core.Dokany.OpenHandles
         {
             // Make sure the handles manager was not disposed
             if (disposed)
+                return FileSystem.Constants.INVALID_HANDLE;
+
+            if (fileSystemOptions.IsReadOnly && mode.IsWriteFlag())
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // TODO: Temporary fix for file share issue

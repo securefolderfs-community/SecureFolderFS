@@ -57,6 +57,10 @@ namespace SecureFolderFS.Sdk.AppModels
                 _progress.CallbackProgress?.Report(new());
                 await Task.Delay(750, cancellationToken);
 
+                // Do not forget to add the RootFolder
+                AddScannedItem(_folderScanner.RootFolder);
+
+                // Continue enumeration as usual
                 await foreach (var item in _folderScanner.ScanFolderAsync(cancellationToken).ConfigureAwait(false))
                 {
                     if (cancellationToken.IsCancellationRequested)
@@ -65,22 +69,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     if (VaultService.IsNameReserved(item.Name))
                         continue;
 
-                    switch (item)
-                    {
-                        case IChildFile file:
-                            _scannedFiles.Add(file);
-                            break;
-
-                        case IChildFolder folder:
-                            _scannedFolders.Add(folder);
-                            break;
-
-                        default:
-                            continue;
-                    }
-
-                    if (!Constants.Widgets.Health.ARE_UPDATES_OPTIMIZED)
-                        _progress.CallbackProgress?.Report(new(_scannedFolders.Count + _scannedFiles.Count, 0));
+                    AddScannedItem(item);
                 }
 
                 if (Constants.Widgets.Health.ARE_UPDATES_OPTIMIZED)
@@ -100,6 +89,25 @@ namespace SecureFolderFS.Sdk.AppModels
                 ReportProgress(_progress);
                 await Task.Delay(1500, cancellationToken);
             }, cancellationToken).ConfigureAwait(false);
+        }
+
+        private void AddScannedItem(IStorable storable)
+        {
+            switch (storable)
+            {
+                case IChildFile file:
+                    _scannedFiles.Add(file);
+                    break;
+
+                case IChildFolder folder:
+                    _scannedFolders.Add(folder);
+                    break;
+
+                default: return;
+            }
+
+            if (!Constants.Widgets.Health.ARE_UPDATES_OPTIMIZED)
+                _progress.CallbackProgress?.Report(new(_scannedFolders.Count + _scannedFiles.Count, 0));
         }
 
         /// <inheritdoc/>

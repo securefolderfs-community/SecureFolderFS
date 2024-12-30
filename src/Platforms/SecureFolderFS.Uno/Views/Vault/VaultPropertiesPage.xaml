@@ -18,7 +18,7 @@
         <!--  Vault read-only InfoBar  -->
         <InfoBar
             x:Name="ReadOnlyInfoBar"
-            x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.IsReadOnly, Mode=OneWay}"
+            x:Load="{x:Bind ViewModel.UnlockedVaultViewModel.Options.IsReadOnly, Mode=OneWay}"
             IsClosable="False"
             IsOpen="True"
             Message="{l:ResourceString Rid=VaultReadOnlyMode}"

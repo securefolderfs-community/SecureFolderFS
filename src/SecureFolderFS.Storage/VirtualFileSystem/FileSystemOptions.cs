@@ -1,13 +1,15 @@
 ﻿using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace SecureFolderFS.Storage.VirtualFileSystem
 {
     /// <summary>
     /// Specifies file system related options to use.
     /// </summary>
-    public class FileSystemOptions
+    public class FileSystemOptions : INotifyPropertyChanged
     {
         /// <summary>
         /// Gets or sets the name to use for the volume.
@@ -27,17 +29,20 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         /// <summary>
         /// Gets or sets whether to use a read-only file system.
         /// </summary>
-        public bool IsReadOnly { get; init; }
+        public bool IsReadOnly { get; protected set => SetField(ref field, value); }
 
         /// <summary>
         /// Gets or sets whether to enable caching for decrypted content chunks.
         /// </summary>
-        public bool IsCachingChunks { get; init; } = true;
+        public bool IsCachingChunks { get; protected set => SetField(ref field, value); } = true;
 
         /// <summary>
         /// Gets or sets whether to enable caching for ciphertext and plaintext names.
         /// </summary>
-        public bool IsCachingFileNames { get; init; } = true;
+        public bool IsCachingFileNames { get; protected set => SetField(ref field, value); } = true;
+
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Converts a dictionary of options to a <see cref="FileSystemOptions"/> instance.
@@ -72,6 +77,16 @@ namespace SecureFolderFS.Storage.VirtualFileSystem
         private static T? GetOption<T>(IDictionary<string, object> options, string name)
         {
             return options.Get(name) is T value ? value : default;
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return true;
         }
     }
 }

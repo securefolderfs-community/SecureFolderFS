@@ -1,14 +1,15 @@
 using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.OpenHandles;
 using SecureFolderFS.Core.FileSystem.Streams;
+using SecureFolderFS.Storage.VirtualFileSystem;
 
 namespace SecureFolderFS.Core.FUSE.OpenHandles
 {
     /// <inheritdoc cref="BaseHandlesManager"/>
     internal sealed class FuseHandlesManager : BaseHandlesManager
     {
-        public FuseHandlesManager(StreamsAccess streamsAccess, bool isReadOnly)
-            : base(streamsAccess, isReadOnly)
+        public FuseHandlesManager(StreamsAccess streamsAccess, FileSystemOptions fileSystemOptions)
+            : base(streamsAccess, fileSystemOptions)
         {
         }
 
@@ -28,11 +29,11 @@ namespace SecureFolderFS.Core.FUSE.OpenHandles
             if (disposed)
                 return FileSystem.Constants.INVALID_HANDLE;
 
-            if (!isReadOnly && mode.IsWriteFlag())
+            if (fileSystemOptions.IsReadOnly && mode.IsWriteFlag())
                 return FileSystem.Constants.INVALID_HANDLE;
 
             // Open ciphertext stream
-            var ciphertextStream = new FileStream(ciphertextPath, new FileStreamOptions
+            var ciphertextStream = new FileStream(ciphertextPath, new FileStreamOptions()
             {
                 // A file cannot be opened with both FileMode.Append and FileMode.Read, but opening it with
                 // FileMode.Write would cause an error when writing, as the stream needs to be readable.

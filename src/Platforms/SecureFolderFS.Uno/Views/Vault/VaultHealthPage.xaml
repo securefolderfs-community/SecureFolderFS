@@ -208,11 +208,20 @@
             </ListView>
         </Grid>
 
-        <Button
+        <StackPanel
             Grid.Row="1"
-            Width="124"
-            Command="{x:Bind ViewModel.ResolveCommand, Mode=OneWay}"
-            Content="Resolve"
-            IsEnabled="{x:Bind ViewModel.CanResolve, Mode=OneWay}" />
+            Orientation="Horizontal"
+            Spacing="8">
+            <Button
+                Width="124"
+                Command="{x:Bind ViewModel.ResolveCommand, Mode=OneWay}"
+                Content="Resolve"
+                IsEnabled="{x:Bind ViewModel.CanResolve, Mode=OneWay}" />
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="12"
+                Opacity="0.8"
+                Text="During repair, vault will be set into read-only mode." />
+        </StackPanel>
     </Grid>
 </Page>
