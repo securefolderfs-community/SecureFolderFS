@@ -25,6 +25,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         [ObservableProperty] private string? _Title;
         [ObservableProperty] private VaultViewModel _VaultViewModel;
         [ObservableProperty] private FolderViewModel? _CurrentFolder;
+        [ObservableProperty] private TransferViewModel? _TransferViewModel;
         [ObservableProperty] private ObservableCollection<BreadcrumbItemViewModel> _Breadcrumbs;
         
         public IFolder BaseFolder { get; }
@@ -104,7 +105,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 case "folder":
                 {
                     var folder = await modifiableFolder.CreateFolderAsync(viewModel.ItemName, false, cancellationToken);
-                    CurrentFolder.Items.Add(new FolderViewModel(folder, CurrentFolder.Navigator, null, CurrentFolder));
+                    CurrentFolder.Items.Add(new FolderViewModel(folder, CurrentFolder.Navigator, TransferViewModel, CurrentFolder));
                     break;
                 }
             }
@@ -143,7 +144,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                         return;
                     
                     var copiedFolder = await modifiableFolder.CreateCopyOfAsync(folder, false, cancellationToken);
-                    CurrentFolder.Items.Add(new FolderViewModel(copiedFolder, CurrentFolder.Navigator, null, CurrentFolder));
+                    CurrentFolder.Items.Add(new FolderViewModel(copiedFolder, CurrentFolder.Navigator, TransferViewModel, CurrentFolder));
                     break;
                 }
             }

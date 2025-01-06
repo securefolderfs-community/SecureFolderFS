@@ -8,7 +8,8 @@
     xmlns:ts="clr-namespace:SecureFolderFS.Maui.TemplateSelectors"
     xmlns:uc="clr-namespace:SecureFolderFS.Maui.UserControls"
     xmlns:ucw="clr-namespace:SecureFolderFS.Maui.UserControls.Widgets"
-    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Categories;assembly=SecureFolderFS.Sdk"
+    xmlns:vm="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;assembly=SecureFolderFS.Sdk"
+    xmlns:vm2="clr-namespace:SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data;assembly=SecureFolderFS.Sdk"
     Title="{Binding ViewModel.Title, Mode=OneWay}"
     x:DataType="local:OverviewPage">
 
@@ -19,7 +20,7 @@
         </DataTemplate>
 
         <!--  Aggregated Data Statistics Widget  -->
-        <DataTemplate x:Key="AggregatedDataWidgetTemplate" x:DataType="vm:AggregatedDataWidgetViewModel">
+        <DataTemplate x:Key="AggregatedDataWidgetTemplate" x:DataType="vm2:AggregatedDataWidgetViewModel">
             <ucw:AggregatedDataWidget TotalRead="{Binding TotalRead, Mode=OneWay}" TotalWrite="{Binding TotalWrite, Mode=OneWay}" />
         </DataTemplate>
     </ContentPage.Resources>

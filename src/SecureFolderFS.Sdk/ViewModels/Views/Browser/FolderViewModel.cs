@@ -15,7 +15,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
     {
         public INavigator Navigator { get; }
         
-        public TransferViewModel TransferViewModel { get; }
+        public TransferViewModel? TransferViewModel { get; }
         
         /// <summary>
         /// Gets the folder associated with this view model.
@@ -30,7 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override IStorable Inner => Folder;
 
-        public FolderViewModel(IFolder folder, INavigator navigator, TransferViewModel transferViewModel, FolderViewModel? parentFolder)
+        public FolderViewModel(IFolder folder, INavigator navigator, TransferViewModel? transferViewModel, FolderViewModel? parentFolder)
             : base(parentFolder)
         {
             Folder = folder;

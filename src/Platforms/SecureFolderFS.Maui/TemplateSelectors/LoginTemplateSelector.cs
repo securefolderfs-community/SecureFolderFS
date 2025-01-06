@@ -1,5 +1,5 @@
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
-using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.UI.ViewModels.Authentication;
 
 namespace SecureFolderFS.Maui.TemplateSelectors
 {

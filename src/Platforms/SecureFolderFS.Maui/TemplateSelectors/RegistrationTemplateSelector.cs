@@ -1,4 +1,4 @@
-using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.UI.ViewModels.Authentication;
 
 namespace SecureFolderFS.Maui.TemplateSelectors
 {

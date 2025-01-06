@@ -1,11 +1,12 @@
 using System.Runtime.CompilerServices;
 using OwlCore.Storage;
+using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.VaultAccess;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Authentication;
 using SecureFolderFS.UI.ServiceImplementation;
-using SecureFolderFS.UI.ViewModels;
+using SecureFolderFS.UI.ViewModels.Authentication;
 
 namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
 {
@@ -20,7 +21,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.ServiceImplementation
             // - https://github.com/ektrah/nsec/issues/81
             // - https://nsec.rocks/docs/install#supported-platforms
 
-            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
+            yield return Constants.CipherId.AES_GCM;
         }
 
         /// <inheritdoc/>
