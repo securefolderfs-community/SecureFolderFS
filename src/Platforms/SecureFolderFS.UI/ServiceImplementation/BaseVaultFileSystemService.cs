@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
@@ -48,6 +49,14 @@ namespace SecureFolderFS.UI.ServiceImplementation
             {
                 return new HealthIssueViewModel(storable, result, ex.GetType().ToString()) { Icon = "\uE783" };
             }
+        }
+
+        /// <inheritdoc/>
+        public Task ResolveIssuesAsync(IEnumerable<HealthIssueViewModel> issues, CancellationToken cancellationToken = default)
+        {
+            var issuesList = issues.ToList();
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>

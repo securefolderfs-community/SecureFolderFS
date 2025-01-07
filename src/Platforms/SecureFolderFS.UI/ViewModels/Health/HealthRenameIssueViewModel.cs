@@ -27,7 +27,7 @@ namespace SecureFolderFS.UI.ViewModels.Health
             if (!value && string.IsNullOrWhiteSpace(ItemName))
                 ItemName = _originalName;
 
-            ErrorMessage = WasNameChanged ? "A custom name will be applied" : "Generate new name";
+            ErrorMessage = WasNameChanged ? "A custom name will be applied" : "Generate a new name";
         }
     }
 }

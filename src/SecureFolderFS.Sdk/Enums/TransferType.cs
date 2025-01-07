@@ -3,6 +3,7 @@ namespace SecureFolderFS.Sdk.Enums
     public enum TransferType
     {
         Copy = 0,
-        Move = 1
+        Move = 1,
+        Delete = 2
     }
 }

@@ -34,5 +34,7 @@ namespace SecureFolderFS.Sdk.Services
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation. If available, value is <see cref="HealthIssueViewModel"/>; otherwise false.</returns>
         Task<HealthIssueViewModel?> GetIssueViewModelAsync(IResult result, IStorable storable, CancellationToken cancellationToken = default);
+
+        Task ResolveIssuesAsync(IEnumerable<HealthIssueViewModel> issues, CancellationToken cancellationToken = default);
     }
 }

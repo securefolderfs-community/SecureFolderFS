@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
+using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections;
@@ -16,6 +19,7 @@ using System.Threading.Tasks;
 namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 {
     [Bindable(true)]
+    [Inject<IVaultFileSystemService>]
     public sealed partial class VaultHealthReportViewModel : BaseDesignationViewModel, IUnlockedViewContext, IDisposable
     {
         private readonly SynchronizationContext? _context;
@@ -34,11 +38,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
 
         public VaultHealthReportViewModel(UnlockedVaultViewModel unlockedVaultViewModel, SynchronizationContext? context)
         {
-            _context = context;
+            ServiceProvider = DI.Default;
             UnlockedVaultViewModel = unlockedVaultViewModel;
             Title = "HealthReport".ToLocalized();
-            _FoundIssues = new();
-            _FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
+            FoundIssues = new();
+            FoundIssues.CollectionChanged += FoundIssues_CollectionChanged;
+            _context = context;
         }
 
         partial void OnIsProgressingChanged(bool value)
@@ -50,7 +55,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ResolveAsync(CancellationToken cancellationToken)
         {
-            await Task.CompletedTask;
+            await VaultFileSystemService.ResolveIssuesAsync(FoundIssues, cancellationToken);
         }
 
         private void FoundIssues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
