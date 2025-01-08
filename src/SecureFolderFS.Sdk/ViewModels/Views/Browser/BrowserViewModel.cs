@@ -1,18 +1,19 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls;
+using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
@@ -30,13 +31,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         
         public IFolder BaseFolder { get; }
 
-        public BrowserViewModel(FolderViewModel folderViewModel, IFolder baseFolder, VaultViewModel vaultViewModel)
+        public BrowserViewModel(INavigator navigator, IFolder baseFolder, VaultViewModel vaultViewModel)
         {
             ServiceProvider = DI.Default;
-            _navigator = folderViewModel.Navigator;
+            _navigator = navigator;
             BaseFolder = baseFolder;
             VaultViewModel = vaultViewModel;
-            CurrentFolder = folderViewModel;
             Breadcrumbs = new()
             {
                 new(vaultViewModel.VaultName, NavigateBreadcrumbCommand)
@@ -105,7 +105,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 case "folder":
                 {
                     var folder = await modifiableFolder.CreateFolderAsync(viewModel.ItemName, false, cancellationToken);
-                    CurrentFolder.Items.Add(new FolderViewModel(folder, CurrentFolder.Navigator, TransferViewModel, CurrentFolder));
+                    CurrentFolder.Items.Add(new FolderViewModel(folder, CurrentFolder, TransferViewModel));
                     break;
                 }
             }
@@ -144,7 +144,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                         return;
                     
                     var copiedFolder = await modifiableFolder.CreateCopyOfAsync(folder, false, cancellationToken);
-                    CurrentFolder.Items.Add(new FolderViewModel(copiedFolder, CurrentFolder.Navigator, TransferViewModel, CurrentFolder));
+                    CurrentFolder.Items.Add(new FolderViewModel(copiedFolder, CurrentFolder, TransferViewModel));
                     break;
                 }
             }

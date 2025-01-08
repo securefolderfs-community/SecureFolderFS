@@ -2,7 +2,9 @@
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
+using System.ComponentModel;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,6 +12,45 @@ namespace SecureFolderFS.Storage.Extensions
 {
     public static partial class StorageExtensions
     {
+        /// <summary>
+        /// Creates a copy of the provided storable within this folder.
+        /// </summary>
+        /// <typeparam name="TStorable">The type of storable, whether a <see cref="IFile"/> or a <see cref="IFolder"/>.</typeparam>
+        /// <param name="destinationFolder">The folder where the copy is created.</param>
+        /// <param name="itemToCopy">The storable to be copied into this folder.</param>
+        /// <param name="overwrite"><code>true</code> if any existing destination folder can be overwritten; otherwise, <c>false</c>.</param>
+        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        public static async Task<TStorable> CreateCopyOfStorableAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToCopy, bool overwrite = false, CancellationToken cancellationToken = default)
+            where TStorable : IStorable
+        {
+            return itemToCopy switch
+            {
+                IFile fileToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(fileToCopy, overwrite, cancellationToken),
+                IFolder folderToCopy => (TStorable)await destinationFolder.CreateCopyOfAsync(folderToCopy, overwrite, cancellationToken),
+                _ => throw new ArgumentOutOfRangeException(nameof(itemToCopy))
+            };
+        }
+        
+        /// <summary>
+        /// Moves a storable from the source folder into the destination folder. Returns the new storable that resides in the destination folder.
+        /// </summary>
+        /// <typeparam name="TStorable">The type of storable, whether a <see cref="IFile"/> or a <see cref="IFolder"/>.</typeparam>
+        /// <param name="destinationFolder">The folder where the storable is moved to.</param>
+        /// <param name="itemToMove">The storable being moved into this folder.</param>
+        /// <param name="source">The folder that <paramref name="itemToMove"/> is being moved from.</param>
+        /// <param name="overwrite"><code>true</code> if the destination folder can be overwritten; otherwise, <c>false</c>.</param>
+        /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
+        public static async Task<TStorable> MoveStorableFromAsync<TStorable>(this IModifiableFolder destinationFolder, TStorable itemToMove, IModifiableFolder source, bool overwrite, CancellationToken cancellationToken = default)
+            where TStorable : IStorableChild
+        {
+            return itemToMove switch
+            {
+                IChildFile fileToMove => (TStorable)await destinationFolder.MoveFromAsync(fileToMove, source, overwrite, cancellationToken),
+                IChildFolder folderToMove => (TStorable)await destinationFolder.MoveFromAsync(folderToMove, source, overwrite, cancellationToken),
+                _ => throw new ArgumentOutOfRangeException(nameof(itemToMove))
+            };
+        }        
+        
         /// <summary>
         /// Creates a copy of the provided folder within this folder.
         /// </summary>

@@ -1,10 +1,10 @@
-﻿using OwlCore.Storage;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+using OwlCore.Storage;
+using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 
@@ -30,6 +30,11 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <inheritdoc/>
         public override IStorable Inner => Folder;
 
+        public FolderViewModel(IFolder folder, FolderViewModel parentFolder, TransferViewModel? transferViewModel)
+            : this(folder, parentFolder.Navigator, transferViewModel, parentFolder)
+        {
+        }
+
         public FolderViewModel(IFolder folder, INavigator navigator, TransferViewModel? transferViewModel, FolderViewModel? parentFolder)
             : base(parentFolder)
         {
@@ -54,7 +59,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 Items.Add(item switch
                 {
                     IFile file => new FileViewModel(file, this).WithInitAsync(),
-                    IFolder folder => new FolderViewModel(folder, Navigator, TransferViewModel, this).WithInitAsync(),
+                    IFolder folder => new FolderViewModel(folder, this, TransferViewModel).WithInitAsync(),
                     _ => throw new ArgumentOutOfRangeException(nameof(item))
                 });
             }

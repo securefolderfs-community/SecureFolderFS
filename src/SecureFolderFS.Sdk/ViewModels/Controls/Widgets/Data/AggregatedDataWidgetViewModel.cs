@@ -34,8 +34,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         {
             _bytesRead = new();
             _bytesWritten = new();
-            TotalRead = "0 B";
-            TotalWrite = "0 B";
+            TotalRead = "0B";
+            TotalWrite = "0B";
             
             _fileSystemStatistics.BytesRead = new Progress<long>(x =>
             {
@@ -61,14 +61,14 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
                 if (_pendingBytesRead > 0UL)
                 {
                     _bytesRead = _bytesRead.AddBytes(_pendingBytesRead);
-                    TotalRead = _bytesRead.ToString();
+                    TotalRead = _bytesRead.ToString().Replace(" ", string.Empty);
                     _pendingBytesRead = 0UL;
                 }
                 
                 if (_pendingBytesWritten > 0UL)
                 {
                     _bytesWritten = _bytesWritten.AddBytes(_pendingBytesWritten);
-                    TotalWrite = _bytesWritten.ToString();
+                    TotalWrite = _bytesWritten.ToString().Replace(" ", string.Empty);
                     _pendingBytesWritten = 0UL;
                 }
             }

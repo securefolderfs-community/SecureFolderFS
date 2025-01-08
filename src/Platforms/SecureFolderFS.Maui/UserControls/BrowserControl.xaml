@@ -21,6 +21,8 @@
                             <apesui:ContextMenuContainer.MenuItems>
                                 <apesui:ContextMenuItem Text="Rename" />
                                 <apesui:ContextMenuItem Command="{Binding ExportCommand}" Text="Export" />
+                                <apesui:ContextMenuItem Command="{Binding MoveCommand}" Text="Move" />
+                                <apesui:ContextMenuItem Command="{Binding CopyCommand}" Text="Copy" />
                                 <apesui:ContextMenuItem
                                     Command="{Binding DeleteCommand}"
                                     IsDestructive="True"

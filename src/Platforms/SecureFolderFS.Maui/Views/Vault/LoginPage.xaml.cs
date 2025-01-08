@@ -4,6 +4,7 @@ using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.EventArguments;
 using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Controls.Transfer;
 using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
@@ -57,13 +58,14 @@ namespace SecureFolderFS.Maui.Views.Vault
             var dashboardViewModel = new VaultDashboardViewModel(args.UnlockedVaultViewModel, ViewModel.VaultNavigation, dashboardNavigation);
 
             var rootFolder = args.UnlockedVaultViewModel.StorageRoot.Inner;
-            var transferViewModel = new TransferViewModel();
-            var folderViewModel = new FolderViewModel(rootFolder, DI.Service<INavigationService>(), transferViewModel, null);
+            var navigator = DI.Service<INavigationService>();
+            var browserViewModel = new BrowserViewModel(navigator, rootFolder, args.UnlockedVaultViewModel.VaultViewModel);
+            var transferViewModel = new TransferViewModel(browserViewModel);
+            var folderViewModel = new FolderViewModel(rootFolder, navigator, transferViewModel, null);
             _ = folderViewModel.ListContentsAsync();
-            var browserViewModel = new BrowserViewModel(folderViewModel, rootFolder, args.UnlockedVaultViewModel.VaultViewModel)
-            {
-                TransferViewModel = transferViewModel
-            };
+            
+            browserViewModel.TransferViewModel = transferViewModel;
+            browserViewModel.CurrentFolder = folderViewModel;
             
             // Since both overview and properties are on the same page,
             // initialize and navigate the views to keep them in cache

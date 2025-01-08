@@ -10,6 +10,7 @@
 
     <ContentPage.Resources>
         <vc:FolderItemsCountToStringConverter x:Key="FolderItemsCountToStringConverter" />
+        <vc:TransferTypeToOperationStringConverter x:Key="TransferTypeToOperationStringConverter" />
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
@@ -69,7 +70,10 @@
             Title="{Binding ViewModel.CurrentFolder.TransferViewModel.Title, Mode=OneWay}"
             Grid.Row="0"
             Grid.RowSpan="2"
-            PrimaryButtonText="Transfer"
+            CancelCommand="{Binding ViewModel.CurrentFolder.TransferViewModel.CancelCommand, Mode=OneWay}"
+            IsVisible="{Binding ViewModel.CurrentFolder.TransferViewModel.IsVisible, Mode=OneWay}"
+            PrimaryButtonText="{Binding ViewModel.CurrentFolder.TransferViewModel.TransferType, Mode=OneWay, Converter={StaticResource TransferTypeToOperationStringConverter}}"
+            PrimaryCommand="{Binding ViewModel.CurrentFolder.TransferViewModel.ConfirmCommand, Mode=OneWay}"
             VerticalOptions="End" />
     </Grid>
 </ContentPage>

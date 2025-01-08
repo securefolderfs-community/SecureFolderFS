@@ -12,7 +12,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
     public sealed partial class GraphControlViewModel : ObservableObject, IProgress<double>, IAsyncInitialize
     {
         [ObservableProperty] private bool _IsExtended;
-        [ObservableProperty] private string? _GraphSubHeader = "0mb/s";
+        [ObservableProperty] private string? _GraphSubHeader = "0MB/s";
         [ObservableProperty] private ObservableCollection<double> _Data;
 
         public GraphControlViewModel()
@@ -23,7 +23,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Data
         /// <inheritdoc/>
         public void Report(double value)
         {
-            GraphSubHeader = $"{value.ToString("0.#")}mb/s";
+            GraphSubHeader = $"{value.ToString("0.#")}MB/s";
         }
 
         /// <inheritdoc/>
