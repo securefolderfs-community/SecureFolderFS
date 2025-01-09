@@ -30,6 +30,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             VaultNavigation = vaultNavigation;
             DashboardNavigation = dashboardNavigation;
             DashboardNavigation.NavigationChanged += DashboardNavigation_NavigationChanged;
+            VaultViewModel.PropertyChanged += VaultViewModel_PropertyChanged;
 
             WeakReferenceMessenger.Default.Register(this);
         }
@@ -40,6 +41,17 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             // Free resources that are used by the dashboard
             if (UnlockedVaultViewModel.VaultViewModel.VaultModel.Equals(message.VaultModel))
                 Dispose();
+        }
+
+        private void VaultViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (DashboardNavigation.CurrentView is not VaultOverviewViewModel)
+                return;
+
+            if (e.PropertyName != nameof(VaultViewModel.VaultName))
+                return;
+
+            Title = VaultViewModel.VaultName;
         }
 
         [RelayCommand]
@@ -62,6 +74,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         public void Dispose()
         {
             WeakReferenceMessenger.Default.UnregisterAll(this);
+            VaultViewModel.PropertyChanged -= VaultViewModel_PropertyChanged;
             DashboardNavigation.NavigationChanged -= DashboardNavigation_NavigationChanged;
             DashboardNavigation.Dispose();
         }

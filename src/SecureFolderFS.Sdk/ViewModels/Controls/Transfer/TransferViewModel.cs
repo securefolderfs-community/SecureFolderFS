@@ -1,15 +1,17 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SecureFolderFS.Sdk.AppModels;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Views.Browser;
 using SecureFolderFS.Shared.ComponentModel;
+using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.Transfer
 {
+    [Bindable(true)]
     public sealed partial class TransferViewModel : ObservableObject, IViewable, IProgress<TotalProgress>
     {
         private readonly BrowserViewModel _browserViewModel;

@@ -17,6 +17,7 @@ using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.UI.Helpers;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -84,6 +85,57 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
                 _isInitialized = true;
                 await ViewModel.InitAsync();
             }
+        }
+
+        private void Rename_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuFlyoutItem menuItem)
+                return;
+
+            if (menuItem is not { DataContext: VaultListItemViewModel itemViewModel })
+                return;
+
+            itemViewModel.IsRenaming = true;
+        }
+
+        private async void RenameBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (sender is not TextBox { DataContext: VaultListItemViewModel itemViewModel } textBox)
+                return;
+
+            switch (e.Key)
+            {
+                case VirtualKey.Enter:
+                {
+                    e.Handled = true;
+                    await itemViewModel.RenameCommand.ExecuteAsync(textBox.Text);
+                    break;
+                }
+
+                case VirtualKey.Escape:
+                {
+                    itemViewModel.IsRenaming = false;
+                    break;
+                }
+            }
+        }
+
+        private void RenameBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is not TextBox { DataContext: VaultListItemViewModel itemViewModel } textBox)
+                return;
+
+            textBox.Focus(FocusState.Programmatic);
+            textBox.Text = itemViewModel.VaultViewModel.VaultName;
+            textBox.SelectAll();
+        }
+
+        private void RenameBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is not TextBox { DataContext: VaultListItemViewModel itemViewModel })
+                return;
+
+            itemViewModel.IsRenaming = false;
         }
 
         private async void MainAppHostControl_Loaded(object sender, RoutedEventArgs e)

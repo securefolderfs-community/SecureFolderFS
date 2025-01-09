@@ -33,6 +33,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             WidgetsViewModel = widgetsViewModel;
             VaultControlsViewModel = vaultControlsViewModel;
             Title = unlockedVaultViewModel.VaultViewModel.VaultName;
+            VaultViewModel.PropertyChanged += VaultViewModel_PropertyChanged;
         }
 
         /// <inheritdoc/>
@@ -44,10 +45,20 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
             await WidgetsViewModel.InitAsync(cancellationToken);
         }
 
+        private void VaultViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(VaultViewModel.VaultName))
+                return;
+
+            Title = VaultViewModel.VaultName;
+        }
+
+
         /// <inheritdoc/>
         public void Dispose()
         {
             WidgetsViewModel.Dispose();
+            VaultViewModel.PropertyChanged -= VaultViewModel_PropertyChanged;
             VaultControlsViewModel.Dispose();
         }
     }

@@ -183,27 +183,37 @@
                         <IconSourceElement IconSource="{x:Bind CustomIcon, Mode=OneWay, Converter={StaticResource IconSourceConverter}, ConverterParameter='&#xF540;'}" />
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.Content>
-                        <StackPanel>
-                            <StackPanel.ChildrenTransitions>
-                                <TransitionCollection>
-                                    <RepositionThemeTransition />
-                                </TransitionCollection>
-                            </StackPanel.ChildrenTransitions>
+                        <Grid DataContext="{x:Bind}">
+                            <StackPanel Visibility="{x:Bind IsRenaming, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                                <StackPanel.ChildrenTransitions>
+                                    <TransitionCollection>
+                                        <RepositionThemeTransition />
+                                    </TransitionCollection>
+                                </StackPanel.ChildrenTransitions>
 
-                            <!--  Vault name  -->
-                            <TextBlock
-                                FontWeight="SemiBold"
-                                Text="{x:Bind VaultViewModel.VaultModel.VaultName, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                <!--  Vault name  -->
+                                <TextBlock
+                                    FontWeight="SemiBold"
+                                    Text="{x:Bind VaultViewModel.VaultName, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis" />
 
-                            <!--  Last opened  -->
-                            <TextBlock
-                                x:Name="LastOpenedText"
-                                FontSize="12"
-                                Opacity="0.6"
-                                Text="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"
-                                Visibility="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
-                        </StackPanel>
+                                <!--  Last opened  -->
+                                <TextBlock
+                                    x:Name="LastOpenedText"
+                                    FontSize="12"
+                                    Opacity="0.6"
+                                    Text="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource DateTimeToStringConverter}}"
+                                    Visibility="{x:Bind VaultViewModel.LastAccessDate, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" />
+                            </StackPanel>
+                            <TextBox
+                                x:Name="RenameBox"
+                                VerticalAlignment="Center"
+                                x:Load="{x:Bind IsRenaming, Mode=OneWay}"
+                                KeyDown="RenameBox_KeyDown"
+                                Loaded="RenameBox_Loaded"
+                                LostFocus="RenameBox_LostFocus"
+                                Text="{x:Bind VaultViewModel.VaultName, Mode=OneWay}" />
+                        </Grid>
                     </NavigationViewItem.Content>
                     <NavigationViewItem.ContextFlyout>
                         <MenuFlyout>
@@ -214,11 +224,22 @@
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
 
-                            <!--  Customize  -->
+                            <!--  Rename  -->
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem
+                                Click="Rename_Click"
+                                DataContext="{x:Bind}"
+                                Text="{l:ResourceString Rid=Rename}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8AC;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <!--  Change icon  -->
                             <MenuFlyoutItem
                                 Command="{x:Bind CustomizeCommand, Mode=OneWay}"
                                 CommandParameter="Icon"
-                                Text="Customize">
+                                Text="Change icon">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE70F;" />
                                 </MenuFlyoutItem.Icon>
@@ -230,7 +251,7 @@
                                 x:Name="MoveUp"
                                 Command="{x:Bind MoveItemCommand, Mode=OneWay}"
                                 CommandParameter="up"
-                                Text="Move up"
+                                Text="{l:ResourceString Rid=MoveUp}"
                                 Visibility="{x:Bind CanMoveUp, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE70E;" />
@@ -240,7 +261,7 @@
                                 x:Name="MoveDown"
                                 Command="{x:Bind MoveItemCommand, Mode=OneWay}"
                                 CommandParameter="down"
-                                Text="Move down"
+                                Text="{l:ResourceString Rid=MoveDown}"
                                 Visibility="{x:Bind CanMoveDown, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE70D;" />

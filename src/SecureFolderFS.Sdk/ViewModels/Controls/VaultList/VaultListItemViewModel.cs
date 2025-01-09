@@ -12,9 +12,11 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Helpers;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 
 namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
 {
@@ -24,6 +26,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
     {
         private readonly IVaultCollectionModel _vaultCollectionModel;
 
+        [ObservableProperty] private bool _IsRenaming;
         [ObservableProperty] private bool _CanMove;
         [ObservableProperty] private bool _CanMoveUp;
         [ObservableProperty] private bool _CanMoveDown;
@@ -98,13 +101,38 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
                     if (sourceIconFile is null)
                         return;
 
+                    // TODO: Resize icon (don't load large icons)
+                    // TODO: Add .ico file with desktop.ini
                     var destinationIconFile = await modifiableFolder.CreateFileAsync(Constants.Vault.VAULT_ICON_FILENAME, true, cancellationToken);
                     await sourceIconFile.CopyContentsToAsync(destinationIconFile, cancellationToken);
                     await UpdateIconAsync(cancellationToken);
 
                     break;
                 }
+
+                case "name": // TODO: Use this on mobile platforms where having an overlay is desirable
+                {
+                    var overlayViewModel = new RenameOverlayViewModel("Rename".ToLocalized());
+                    var result = await OverlayService.ShowAsync(overlayViewModel);
+                    if (!result.Positive())
+                        return;
+
+                    IsRenaming = true;
+                    await RenameAsync(overlayViewModel.NewName, cancellationToken);
+                    break;
+                }
             }
+        }
+
+        [RelayCommand]
+        private async Task RenameAsync(string? newName, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                return;
+
+            IsRenaming = false;
+            if (await VaultViewModel.VaultModel.SetVaultNameAsync(newName, cancellationToken))
+                VaultViewModel.VaultName = newName;
         }
 
         [RelayCommand]
