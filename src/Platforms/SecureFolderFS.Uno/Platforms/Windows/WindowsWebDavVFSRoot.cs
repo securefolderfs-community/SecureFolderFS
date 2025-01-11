@@ -8,7 +8,7 @@ using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Diagnostics;
 using System.IO;
-using SecureFolderFS.Uno.UnsafeNative;
+using SecureFolderFS.Uno.PInvoke;
 #endif
 
 namespace SecureFolderFS.Uno.Platforms.Windows
@@ -77,7 +77,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows
                         {
                             // Retry with WM_CLOSE
                             var hWnd = new IntPtr(ie.HWND);
-                            _ = UnsafeNativeApis.SendMessageA(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                            _ = UnsafeNative.SendMessageA(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
                         }
                     }
                     catch (Exception ex)

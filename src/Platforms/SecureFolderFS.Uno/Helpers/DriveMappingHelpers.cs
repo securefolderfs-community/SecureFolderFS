@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Uno.UnsafeNative;
+using SecureFolderFS.Uno.PInvoke;
 
 namespace SecureFolderFS.Uno.Helpers
 {
@@ -45,7 +45,7 @@ namespace SecureFolderFS.Uno.Helpers
 
                 foreach (var drive in DriveInfo.GetDrives().Select(item => $"{item.Name[0]}:"))
                 {
-                    if (UnsafeNativeApis.WNetGetConnection(drive, driveRemotePathBuilder, ref bufferSize) == 0 && driveRemotePathBuilder.ToString() == remotePath)
+                    if (UnsafeNative.WNetGetConnection(drive, driveRemotePathBuilder, ref bufferSize) == 0 && driveRemotePathBuilder.ToString() == remotePath)
                         return drive;
 
                     driveRemotePathBuilder.Clear();
@@ -97,14 +97,14 @@ namespace SecureFolderFS.Uno.Helpers
             {
                 var netResource = new NETRESOURCE()
                 {
-                    dwType = UnsafeNativeApis.RESOURCETYPE_DISK,
+                    dwType = UnsafeNative.RESOURCETYPE_DISK,
                     lpLocalName = mountPath,
                     lpRemoteName = remotePath,
                 };
 
                 // WNetAddConnection2 doesn't return until it has either successfully established a connection or timed out,
                 // so it has to be run in another thread to prevent blocking the server from responding.
-                _ = Task.Run(() => UnsafeNativeApis.WNetAddConnection2(netResource, null!, null!, UnsafeNativeApis.CONNECT_TEMPORARY), cancellationToken);
+                _ = Task.Run(() => UnsafeNative.WNetAddConnection2(netResource, null!, null!, UnsafeNative.CONNECT_TEMPORARY), cancellationToken);
             }
             else if (OperatingSystem.IsMacCatalyst())
             {

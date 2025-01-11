@@ -3,6 +3,7 @@ namespace SecureFolderFS.UI
     public static class Constants
     {
         public const string MAIN_WINDOW_ID = "SecureFolderFS_mainwindow";
+        public const string DATA_CONTAINER_ID = "SecureFolderFS_datacontainer";
         public const string STORABLE_BOOKMARK_RID = "bookmark:";
 
         public static class GitHub

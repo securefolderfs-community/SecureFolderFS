@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace SecureFolderFS.Uno.UnsafeNative
+namespace SecureFolderFS.Uno.PInvoke
 {
-    internal static class UnsafeNativeApis
+    internal static partial class UnsafeNative
     {
         public const int CONNECT_TEMPORARY = 4;
         public const int RESOURCETYPE_DISK = 1;

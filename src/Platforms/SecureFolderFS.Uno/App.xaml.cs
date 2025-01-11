@@ -103,24 +103,26 @@ namespace SecureFolderFS.Uno
             window.Closed += Window_Closed;
 
 #if WINDOWS
+            var appWindow = window.AppWindow;
+
 #if !UNPACKAGED
             // Set icon
-            window.AppWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
+            appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, UI.Constants.FileNames.ICON_ASSET_PATH));
 #endif
             // Set backdrop
             window.SystemBackdrop = new MicaBackdrop();
 
             // Set title
-            window.AppWindow.Title = "SecureFolderFS";
+            appWindow.Title = nameof(SecureFolderFS);
 
             if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())
             {
                 // Extend title bar
-                window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 
                 // Set window buttons background to transparent
-                window.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                window.AppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             }
             else if (window.Content is MainWindowRootControl rootControl)
             {
@@ -135,15 +137,26 @@ namespace SecureFolderFS.Uno
             boundsManager.MinWidth = 662;
             boundsManager.MinHeight = 572;
 
-            // TODO: Temporary, set starting size on Windows (until window position store is implemented)
-            window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
+            // Load saved window state
+            if (!boundsManager.LoadWindowState(UI.Constants.MAIN_WINDOW_ID))
+                window.AppWindow.MoveAndResize(new(100, 100, 1050, 680));
+
 #else
+            window.Title = nameof(SecureFolderFS);
             global::Uno.Resizetizer.WindowExtensions.SetWindowIcon(window);
 #endif
         }
 
         private static async void Window_Closed(object sender, WindowEventArgs args)
         {
+#if WINDOWS
+            if (App.Instance?.MainWindow is { } mainWindow)
+            {
+                var boundsManager = Platforms.Windows.Helpers.WindowsBoundsManager.AddOrGet(mainWindow);
+                boundsManager.SaveWindowState(UI.Constants.MAIN_WINDOW_ID);
+            }
+#endif
+
             var settingsService = DI.Service<ISettingsService>();
             var shouldForceClose = (!App.Instance?.UseForceClose) ?? false;
             shouldForceClose = shouldForceClose && settingsService.UserSettings.ReduceToBackground;
@@ -157,7 +170,7 @@ namespace SecureFolderFS.Uno
             {
                 await SafetyHelpers.NoThrowAsync(async () => await settingsService.TrySaveAsync());
                 SafetyHelpers.NoThrow(static () => FileSystemManager.Instance.FileSystems.DisposeElements());
-                Application.Current.Exit();
+                App.Current.Exit();
             }
         }
 
