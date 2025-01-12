@@ -1,12 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using OwlCore.Storage;
+using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared.ComponentModel;
 
 namespace SecureFolderFS.UI.ViewModels.Health
 {
     /// <inheritdoc cref="HealthIssueViewModel"/>
-    public sealed partial class HealthRenameIssueViewModel : HealthIssueViewModel
+    public sealed partial class HealthNameIssueViewModel : HealthIssueViewModel
     {
         private readonly string _originalName;
 
@@ -15,11 +16,12 @@ namespace SecureFolderFS.UI.ViewModels.Health
 
         public bool WasNameChanged => !_originalName.Equals(ItemName);
 
-        public HealthRenameIssueViewModel(IStorable storable, IResult result, string? title = null)
+        public HealthNameIssueViewModel(IStorable storable, IResult result, string? title = null)
             : base(storable, result, title)
         {
             _originalName = storable.Name;
             ItemName = storable.Name;
+            Severity = SeverityType.Warning;
         }
 
         partial void OnIsEditingChanged(bool value)

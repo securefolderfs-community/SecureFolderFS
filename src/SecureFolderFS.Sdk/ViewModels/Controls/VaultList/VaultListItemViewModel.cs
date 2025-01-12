@@ -128,7 +128,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.VaultList
         private async Task RenameAsync(string? newName, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(newName))
-                return;
+                newName = VaultViewModel.VaultModel.Folder.Name;
 
             IsRenaming = false;
             if (await VaultViewModel.VaultModel.SetVaultNameAsync(newName, cancellationToken))

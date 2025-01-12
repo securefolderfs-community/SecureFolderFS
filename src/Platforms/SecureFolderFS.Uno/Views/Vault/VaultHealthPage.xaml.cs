@@ -43,7 +43,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         private void NameText_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthRenameIssueViewModel viewModel }} textBlock)
+            if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthNameIssueViewModel viewModel }} textBlock)
                 return;
 
             viewModel.IsEditing = true;
@@ -54,7 +54,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         private void NameEdit_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthRenameIssueViewModel viewModel } })
+            if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthNameIssueViewModel viewModel } })
                 return;
 
             viewModel.IsEditing = false;
@@ -64,7 +64,7 @@ namespace SecureFolderFS.Uno.Views.Vault
         {
             // Workaround: Since Visibility does not have *Changed event,
             // we rely on IsEnabled to notify when the IsEditing property changes and set the focus
-            if (sender is not TextBox { DataContext: ActionBlockControl { DataContext: HealthRenameIssueViewModel } } textBox)
+            if (sender is not TextBox { DataContext: ActionBlockControl { DataContext: HealthNameIssueViewModel } } textBox)
                 return;
 
             if (e.NewValue is not true)
@@ -76,7 +76,7 @@ namespace SecureFolderFS.Uno.Views.Vault
 
         private void NameEdit_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthRenameIssueViewModel viewModel } actionBlock })
+            if (sender is not FrameworkElement { DataContext: ActionBlockControl { DataContext: HealthNameIssueViewModel nameIssueViewModel } actionBlock })
                 return;
 
             switch (e.Key)
@@ -84,21 +84,21 @@ namespace SecureFolderFS.Uno.Views.Vault
                 case VirtualKey.Enter:
                 case VirtualKey.Escape:
                     e.Handled = true;
-                    viewModel.IsEditing = false;
+                    nameIssueViewModel.IsEditing = false;
                     break;
 
                 case VirtualKey.Tab:
-                    if (actionBlock.GetParent<ListView>()?.DataContext is not ActionBlockControl { DataContext: HealthCascadingIssuesViewModel cascadingViewModel })
+                    if (actionBlock.GetParent<ListView>()?.DataContext is not ActionBlockControl { DataContext: HealthDirectoryIssueViewModel directoryIssueViewModel })
                         break;
 
                     e.Handled = true;
-                    viewModel.IsEditing = false;
+                    nameIssueViewModel.IsEditing = false;
 
-                    var index = cascadingViewModel.Issues.IndexOf(viewModel) + 1;
-                    if (index >= cascadingViewModel.Issues.Count)
+                    var index = directoryIssueViewModel.Issues.IndexOf(directoryIssueViewModel) + 1;
+                    if (index >= directoryIssueViewModel.Issues.Count)
                         index = 0;
 
-                    if (cascadingViewModel.Issues.ElementAtOrDefault(index) is HealthRenameIssueViewModel nextElement)
+                    if (directoryIssueViewModel.Issues.ElementAtOrDefault(index) is HealthNameIssueViewModel nextElement)
                         nextElement.IsEditing = true;
 
                     break;

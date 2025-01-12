@@ -16,8 +16,8 @@
         <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
-        <!--  Cascading Issues  -->
-        <DataTemplate x:Key="CascadingIssuesTemplate" x:DataType="vm2:HealthCascadingIssuesViewModel">
+        <!--  Directory Issue  -->
+        <DataTemplate x:Key="DirectoryIssueTemplate" x:DataType="vm2:HealthDirectoryIssueViewModel">
             <ucab:ActionBlockControl
                 Title="{x:Bind Title, Mode=OneWay}"
                 BlockMode="Expandable"
@@ -35,9 +35,9 @@
                             SelectionMode="None">
                             <ListView.ItemTemplateSelector>
                                 <ts:HealthIssueTemplateSelector
-                                    CascadingIssuesTemplate="{StaticResource CascadingIssuesTemplate}"
+                                    DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
                                     IssueTemplate="{StaticResource IssueTemplate}"
-                                    RenameIssueTemplate="{StaticResource RenameIssueTemplate}" />
+                                    NameIssueTemplate="{StaticResource NameIssueTemplate}" />
                             </ListView.ItemTemplateSelector>
                         </ListView>
                     </Border>
@@ -60,7 +60,7 @@
         </DataTemplate>
 
         <!--  Name Issue  -->
-        <DataTemplate x:Key="RenameIssueTemplate" x:DataType="vm2:HealthRenameIssueViewModel">
+        <DataTemplate x:Key="NameIssueTemplate" x:DataType="vm2:HealthNameIssueViewModel">
             <ucab:ActionBlockControl
                 Title="{x:Bind Title, Mode=OneWay}"
                 BlockMode="Default"
@@ -161,23 +161,29 @@
                     Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
             </InfoBar>
             <ListView
-                Margin="-16,0,-12,0"
                 IsItemClickEnabled="False"
                 ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
+                ScrollViewer.IsVerticalRailEnabled="True"
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                ScrollViewer.VerticalScrollMode="Enabled"
                 SelectionMode="None">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel
-                            ScrollViewer.VerticalScrollBarVisibility="Auto"
-                            ScrollViewer.VerticalScrollMode="Auto"
-                            Spacing="4" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter ContentMargin="0,0,0,4" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+
                 <ListView.ItemTemplateSelector>
                     <ts:HealthIssueTemplateSelector
-                        CascadingIssuesTemplate="{StaticResource CascadingIssuesTemplate}"
+                        DirectoryIssueTemplate="{StaticResource DirectoryIssueTemplate}"
                         IssueTemplate="{StaticResource IssueTemplate}"
-                        RenameIssueTemplate="{StaticResource RenameIssueTemplate}" />
+                        NameIssueTemplate="{StaticResource NameIssueTemplate}" />
                 </ListView.ItemTemplateSelector>
             </ListView>
         </StackPanel>

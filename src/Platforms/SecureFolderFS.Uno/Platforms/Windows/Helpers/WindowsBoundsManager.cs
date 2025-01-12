@@ -38,7 +38,7 @@ namespace SecureFolderFS.Uno.Platforms.Windows.Helpers
         {
 #if UNPACKAGED
             // Unpackaged scenario is currently unsupported
-            return;
+            return false;
 #endif
             var dataContainer = GetDataContainer(false);
             if (dataContainer is null)

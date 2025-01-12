@@ -8,17 +8,20 @@ namespace SecureFolderFS.Uno.TemplateSelectors
     {
         public DataTemplate? IssueTemplate { get; set; }
 
-        public DataTemplate? RenameIssueTemplate { get; set; }
+        public DataTemplate? NameIssueTemplate { get; set; }
 
-        public DataTemplate? CascadingIssuesTemplate { get; set; }
+        public DataTemplate? FileDataIssueTemplate { get; set; }
+
+        public DataTemplate? DirectoryIssueTemplate { get; set; }
 
         /// <inheritdoc/>
         protected override DataTemplate? SelectTemplateCore(HealthIssueViewModel? item, DependencyObject container)
         {
             return item switch
             {
-                HealthRenameIssueViewModel => RenameIssueTemplate,
-                HealthCascadingIssuesViewModel => CascadingIssuesTemplate,
+                HealthNameIssueViewModel => NameIssueTemplate,
+                HealthFileDataIssueViewModel => FileDataIssueTemplate,
+                HealthDirectoryIssueViewModel => DirectoryIssueTemplate,
                 { } => IssueTemplate,
                 _ => base.SelectTemplateCore(item, container)
             };
