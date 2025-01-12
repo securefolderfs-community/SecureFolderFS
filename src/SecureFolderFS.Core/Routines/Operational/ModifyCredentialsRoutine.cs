@@ -88,8 +88,7 @@ namespace SecureFolderFS.Core.Routines.Operational
             await _vaultWriter.WriteKeystoreAsync(_keystoreDataModel, cancellationToken);
             await _vaultWriter.WriteConfigurationAsync(_configDataModel, cancellationToken);
 
-            // TODO: Return UnlockContract
-            return null!;
+            return _unlockContract;
         }
 
         /// <inheritdoc/>

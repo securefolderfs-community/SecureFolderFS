@@ -28,7 +28,7 @@ namespace SecureFolderFS.UI.ServiceImplementation.Settings
         /// <inheritdoc/>
         public virtual string PreferredFileSystemId
         {
-            get => GetSetting(static () => "WEBDAV"); // TODO: Use a constant
+            get => GetSetting(static () => Core.Constants.FileSystemId.FS_WEBDAV);
             set => SetSetting(value);
         }
 

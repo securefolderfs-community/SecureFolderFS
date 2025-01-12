@@ -46,7 +46,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
         /// <inheritdoc/>
         public void Receive(AddVaultMessage message)
         {
-#if WINDOWS // TODO(u win)
+#if WINDOWS
             if (ViewModel?.VaultListViewModel.Items.Count >= SecureFolderFS.Sdk.Constants.Vault.MAX_FREE_AMOUNT_OF_VAULTS
                 && !SettingsService.AppSettings.WasBetaNotificationShown1)
             {

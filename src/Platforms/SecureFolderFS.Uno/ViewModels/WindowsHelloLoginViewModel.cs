@@ -47,8 +47,7 @@ namespace SecureFolderFS.Uno.ViewModels
                 var key = await CreateSignatureAsync(result.Credential, auth.Challenge, cancellationToken);
 
                 // Compile new challenge in preparation
-                // TODO: Important
-                // TODO: When doing the signing operation, check payload MAC
+                // TODO: Important When doing the signing operation, check payload MAC
                 // TODO: Do something to avoid triggering the Windows Hello dialog twice
                 //using var newChallenge = GenerateChallenge(config.Id);
                 //using var newSignedChallenge = await CreateSignatureAsync(result.Credential, newChallenge.Key, cancellationToken);

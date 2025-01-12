@@ -19,7 +19,7 @@ namespace SecureFolderFS.Tests.FileSystemTests
             // Configure options
             var options = new Dictionary<string, object>()
             {
-                { nameof(FileSystemOptions.VolumeName), Guid.NewGuid().ToString() } // TODO: Sanitize name
+                { nameof(FileSystemOptions.VolumeName), Guid.NewGuid().ToString() }
             };
 
             // Create the storage layer

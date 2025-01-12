@@ -20,9 +20,7 @@ namespace SecureFolderFS.Uno.Platforms.MacCatalyst.ServiceImplementation
         /// <inheritdoc/>
         public override IEnumerable<string> GetContentCiphers()
         {
-            // TODO: AES-GCM is supported in NET 9 for Catalyst
-            //yield return Core.Cryptography.Constants.CipherId.AES_GCM;
-            
+            yield return Core.Cryptography.Constants.CipherId.AES_GCM;
             yield return Core.Cryptography.Constants.CipherId.XCHACHA20_POLY1305;
         }
 

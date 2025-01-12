@@ -12,7 +12,7 @@ namespace SecureFolderFS.Sdk.Helpers
 
             // Ensure the sanitized name is not empty and has a minimum length
             if (string.IsNullOrWhiteSpace(sanitizedVolumeName) || sanitizedVolumeName.Length < 3)
-                sanitizedVolumeName = fallback ?? "Mounted Volume";
+                sanitizedVolumeName = SanitizeVolumeName(fallback ?? "Mounted Volume", null);
 
             return sanitizedVolumeName;
         }

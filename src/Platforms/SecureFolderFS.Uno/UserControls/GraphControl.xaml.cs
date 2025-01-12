@@ -50,8 +50,8 @@ namespace SecureFolderFS.Uno.UserControls
             if (sender is not CartesianChart chart)
                 return;
 
-            chart.Series = new ISeries[]
-            {
+            chart.Series =
+            [
                 new LineSeries<double>()
                 {
                     Values = Data,
@@ -67,17 +67,17 @@ namespace SecureFolderFS.Uno.UserControls
                     IsHoverable = false,
                     GeometrySize = 0d // TODO: Setting this to 0 causes a bug with jumping line series
                 }
-            };
-            chart.XAxes = new ICartesianAxis[]
-            {
+            ];
+            chart.XAxes =
+            [
                 new Axis()
                 {
                     Labeler = x => string.Empty,
                     ShowSeparatorLines = false
                 }
-            };
-            chart.YAxes = new ICartesianAxis[]
-            {
+            ];
+            chart.YAxes =
+            [
                 new Axis()
                 {
                     ShowSeparatorLines = false,
@@ -85,7 +85,7 @@ namespace SecureFolderFS.Uno.UserControls
                     LabelsPaint = new SolidColorPaint(SKColors.Gray),
                     MinLimit = 0d
                 }
-            };
+            ];
 
             await Task.Delay(25);
             GraphLoaded = true;

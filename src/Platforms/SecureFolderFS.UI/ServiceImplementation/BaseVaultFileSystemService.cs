@@ -32,7 +32,6 @@ namespace SecureFolderFS.UI.ServiceImplementation
             if (result.Successful || result.Exception is null)
                 return null;
 
-            // TODO: Use custom implementations of the view model with options to resolve issues
             return result.Exception switch
             {
                 AggregateException aggregate => aggregate.InnerException switch
