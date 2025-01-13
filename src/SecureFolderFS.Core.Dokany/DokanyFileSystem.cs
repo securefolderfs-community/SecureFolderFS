@@ -1,14 +1,15 @@
 ﻿using DokanNet;
 using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.Dokany.AppModels;
 using SecureFolderFS.Core.Dokany.Callbacks;
 using SecureFolderFS.Core.Dokany.OpenHandles;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Extensions;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace SecureFolderFS.Core.Dokany
             dokanyWrapper.StartFileSystem(dokanyOptions.MountPoint);
 
             await Task.CompletedTask;
-            return new DokanyVFSRoot(dokanyWrapper, new SystemFolder(dokanyOptions.MountPoint), dokanyOptions);
+            return new DokanyVFSRoot(dokanyWrapper, new SystemFolderEx(dokanyOptions.MountPoint), specifics);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
 using SecureFolderFS.Storage.StorageProperties;
 
@@ -25,10 +25,10 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         {
             await foreach (var item in Inner.GetItemsAsync(type, cancellationToken))
             {
-                if (PathHelpers.IsCoreFile(item.Name))
+                if (PathHelpers.IsCoreName(item.Name))
                     continue;
 
-                var plaintextName = await DecryptNameAsync(item.Name, Inner);
+                var plaintextName = await DecryptNameAsync(item.Name, Inner, cancellationToken);
                 if (plaintextName is null)
                     continue;
 
@@ -44,7 +44,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
         /// <inheritdoc/>
         public async Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            var ciphertextName = await EncryptNameAsync(name, Inner);
+            var ciphertextName = await EncryptNameAsync(name, Inner, cancellationToken);
             return await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken) switch
             {
                 IChildFile file => (IStorableChild)Wrap(file, name),
@@ -70,7 +70,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             // TODO: Get by ID instead of name
             
             // We need to get the equivalent on the disk
-            var ciphertextName = await EncryptNameAsync(item.Name, Inner);
+            var ciphertextName = await EncryptNameAsync(item.Name, Inner, cancellationToken);
             var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
             
             // Delete the ciphertext item
@@ -83,21 +83,21 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var encryptedName = await EncryptNameAsync(name, Inner);
+            var encryptedName = await EncryptNameAsync(name, Inner, cancellationToken);
             var folder = await modifiableFolder.CreateFolderAsync(encryptedName, overwrite, cancellationToken);
             if (folder is not IModifiableFolder createdModifiableFolder)
                 throw new ArgumentException("The created folder is not modifiable.");
 
             // Get the DirectoryID file
-            var dirIdFile = await createdModifiableFolder.CreateFileAsync(Constants.Names.DIRECTORY_ID_FILENAME, false, cancellationToken);
-            var directoryId = Guid.NewGuid().ToByteArray();
+            var directoryIdFile = await createdModifiableFolder.CreateFileAsync(Constants.Names.DIRECTORY_ID_FILENAME, false, cancellationToken);
+            await using var directoryIdStream = await directoryIdFile.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
 
             // Initialize directory with DirectoryID
-            await using var directoryIdStream = await dirIdFile.OpenStreamAsync(FileAccess.ReadWrite, cancellationToken);
+            var directoryId = Guid.NewGuid().ToByteArray();
             await directoryIdStream.WriteAsync(directoryId, cancellationToken);
 
             // Set DirectoryID to known IDs
-            specifics.DirectoryIdCache.CacheSet(dirIdFile.Id, new(Guid.NewGuid().ToByteArray()));
+            specifics.DirectoryIdCache.CacheSet(directoryIdFile.Id, new(Guid.NewGuid().ToByteArray()));
 
             return (IChildFolder)Wrap(folder, name);
         }
@@ -108,7 +108,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
             if (Inner is not IModifiableFolder modifiableFolder)
                 throw new NotSupportedException("Modifying folder contents is not supported.");
 
-            var encryptedName = await EncryptNameAsync(name, Inner);
+            var encryptedName = await EncryptNameAsync(name, Inner, cancellationToken);
             var file = await modifiableFolder.CreateFileAsync(encryptedName, overwrite, cancellationToken);
 
             return (IChildFile)Wrap(file, name);

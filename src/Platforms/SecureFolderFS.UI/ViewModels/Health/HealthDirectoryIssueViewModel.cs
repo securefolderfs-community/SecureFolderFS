@@ -16,7 +16,7 @@ namespace SecureFolderFS.UI.ViewModels.Health
 
         public IFolder? Folder => Inner as IFolder;
 
-        public HealthDirectoryIssueViewModel(IStorable storable, IResult result, string? title = null)
+        public HealthDirectoryIssueViewModel(IStorableChild storable, IResult result, string? title = null)
             : base(storable, result, title)
         {
             Severity = SeverityType.Warning;

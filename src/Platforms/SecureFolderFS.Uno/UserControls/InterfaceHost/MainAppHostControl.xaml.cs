@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Contexts;
 using SecureFolderFS.Sdk.Messages;
 using SecureFolderFS.Sdk.Services;
@@ -15,6 +14,7 @@ using SecureFolderFS.Sdk.ViewModels.Views.Host;
 using SecureFolderFS.Sdk.ViewModels.Views.Vault;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Storage.SystemStorageEx;
 using SecureFolderFS.UI.Helpers;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
@@ -199,7 +199,7 @@ namespace SecureFolderFS.Uno.UserControls.InterfaceHost
 
             // Recreate as SystemFolder for best performance.
             // The logic can be changed to handle Platform Storage Items in the future, if needed.
-            var folder = new SystemFolder(item.Path);
+            var folder = new SystemFolderEx(item.Path);
             await ViewModel.VaultListViewModel.AddNewVaultCommand.ExecuteAsync(folder);
         }
 

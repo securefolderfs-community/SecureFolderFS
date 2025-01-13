@@ -1,6 +1,6 @@
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Helpers.Native;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using SecureFolderFS.Core.FUSE.OpenHandles;
 using SecureFolderFS.Core.FUSE.UnsafeNative;
 using System.Runtime.CompilerServices;
@@ -361,7 +361,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
 
             foreach (var entry in Directory.GetFileSystemEntries(ciphertextPath))
             {
-                if (PathHelpers.IsCoreFile(entry))
+                if (PathHelpers.IsCoreName(entry))
                     continue;
 
                 var directoryId = new byte[FileSystem.Constants.DIRECTORY_ID_SIZE];
@@ -431,7 +431,7 @@ namespace SecureFolderFS.Core.FUSE.Callbacks
             if (ciphertextPath is null)
                 return -ENOENT;
 
-            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreFile(x)))
+            if (Directory.EnumerateFileSystemEntries(ciphertextPath).Any(x => !PathHelpers.IsCoreName(x)))
                 return -ENOTEMPTY;
 
             var directoryIdPath = Path.Combine(ciphertextPath, FileSystem.Constants.Names.DIRECTORY_ID_FILENAME);

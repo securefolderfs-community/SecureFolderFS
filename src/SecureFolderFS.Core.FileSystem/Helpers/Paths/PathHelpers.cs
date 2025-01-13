@@ -3,14 +3,16 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace SecureFolderFS.Core.FileSystem.Helpers
+namespace SecureFolderFS.Core.FileSystem.Helpers.Paths
 {
     public static class PathHelpers
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsCoreFile(string fileName)
+        public static bool IsCoreName(string itemName)
         {
-            return fileName.Contains(Constants.Names.DIRECTORY_ID_FILENAME, StringComparison.OrdinalIgnoreCase);
+            return 
+                itemName.Contains(Constants.Names.DIRECTORY_ID_FILENAME, StringComparison.OrdinalIgnoreCase) ||
+                itemName.Contains(Constants.Names.RECYCLE_BIN_NAME, StringComparison.OrdinalIgnoreCase);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

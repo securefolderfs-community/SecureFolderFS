@@ -18,8 +18,9 @@ namespace SecureFolderFS.Sdk.Models
         /// <summary>
         /// Starts the scanning of the file system structure and reports errors through <see cref="IssueFound"/> event.
         /// </summary>
+        /// <param name="includeFileContents">Determines whether to include file contents during the scan operation.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> that cancels this action.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
-        Task ScanAsync(CancellationToken cancellationToken = default);
+        Task ScanAsync(bool includeFileContents, CancellationToken cancellationToken = default);
     }
 }

@@ -5,8 +5,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
-using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Storage.SystemStorageEx;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 
@@ -79,7 +79,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 return null;
 
             //return new WindowsStorageFile(file);
-            return new SystemFile(file.Path);
+            return new SystemFileEx(file.Path);
         }
 
         /// <inheritdoc/>
@@ -94,7 +94,7 @@ namespace SecureFolderFS.Uno.ServiceImplementation
                 return null;
 
             //return new WindowsStorageFolder(folder);
-            return new SystemFolder(folder.Path);
+            return new SystemFolderEx(folder.Path);
         }
 
         private static void WinRT_InitializeObject(object obj)

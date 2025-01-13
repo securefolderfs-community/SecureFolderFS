@@ -5,8 +5,8 @@ using NWebDav.Server.Locking;
 using NWebDav.Server.Props;
 using NWebDav.Server.Stores;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
-using SecureFolderFS.Core.FileSystem.Helpers.Native;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -187,7 +187,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 // Add all directories
                 foreach (var subDirectory in _directoryInfo.GetDirectories())
                 {
-                    if (PathHelpers.IsCoreFile(subDirectory.Name))
+                    if (PathHelpers.IsCoreName(subDirectory.Name))
                         continue;
 
                     yield return new EncryptingDiskStoreCollection(LockingManager, subDirectory, IsWritable, _specifics);
@@ -196,7 +196,7 @@ namespace SecureFolderFS.Core.WebDav.EncryptingStorage2
                 // Add all files
                 foreach (var file in _directoryInfo.GetFiles())
                 {
-                    if (PathHelpers.IsCoreFile(file.Name))
+                    if (PathHelpers.IsCoreName(file.Name))
                         continue;
 
                     yield return new EncryptingDiskStoreItem(LockingManager, file, IsWritable, _specifics);

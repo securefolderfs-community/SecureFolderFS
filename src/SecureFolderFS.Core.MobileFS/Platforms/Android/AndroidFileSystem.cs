@@ -2,7 +2,7 @@
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
 using SecureFolderFS.Core.FileSystem.AppModels;
-using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem;
 using SecureFolderFS.Shared.ComponentModel;
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android
             fileSystemOptions.SetupValidators(specifics);
 
             var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new AndroidVFSRoot(storageRoot, fileSystemOptions);
+            return new AndroidVFSRoot(storageRoot, specifics);
         }
     }
 }

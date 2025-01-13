@@ -1,5 +1,5 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Helpers.Abstract;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
@@ -62,7 +62,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
 
             try
             {
-                var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId).ConfigureAwait(false);
+                var result = await AbstractPathHelpers.GetDirectoryIdAsync(parentFolder, specifics, directoryId, cancellationToken).ConfigureAwait(false);
                 return specifics.Security.NameCrypt.DecryptName(Path.GetFileNameWithoutExtension(ciphertextName), result ? directoryId : ReadOnlySpan<byte>.Empty);
             }
             catch (FileNotFoundException)

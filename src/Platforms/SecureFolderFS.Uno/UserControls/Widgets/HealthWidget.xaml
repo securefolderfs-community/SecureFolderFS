@@ -17,7 +17,7 @@
         <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
         <vc:SeverityHealthIconConverter x:Key="SeverityHealthIconConverter" />
 
-        <DataTemplate x:Key="WithDetailedHealthTemplate" x:DataType="local:HealthWidget">
+        <DataTemplate x:Key="DetailedHealthTemplate" x:DataType="local:HealthWidget">
             <StackPanel Margin="0,-4,0,0" DataContext="{Binding ElementName=HealthControl}">
                 <!--  Vault status  -->
                 <TextBlock
@@ -48,7 +48,7 @@
                 </Grid>
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="WithoutDetailedHealthTemplate" x:DataType="local:HealthWidget">
+        <DataTemplate x:Key="NotDetailedHealthTemplate" x:DataType="local:HealthWidget">
             <Grid />
         </DataTemplate>
     </UserControl.Resources>
@@ -80,7 +80,7 @@
 
         <!--  Health status  -->
         <ContentPresenter
-            x:Name="DetailedHealthContentPresenter"
+            x:Name="HealthContentPresenter"
             Grid.Column="1"
             VerticalContentAlignment="Center"
             Canvas.ZIndex="1" />
@@ -95,15 +95,26 @@
             Spacing="4">
 
             <!--  Start scanning  -->
-            <Button
+            <SplitButton
                 Height="36"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 Command="{x:Bind StartScanningCommand, Mode=OneWay}"
+                CommandParameter=""
                 Content="Start scanning"
                 IsEnabled="True"
-                Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}" />
+                Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter='invert'}">
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Command="{x:Bind StartScanningCommand, Mode=OneWay}"
+                            CommandParameter="include_file_contents"
+                            IsEnabled="False"
+                            Text="Include file contents (slower)" />
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
 
             <!--  Cancel  -->
             <Button
@@ -112,6 +123,7 @@
                 Content="{l:ResourceString Rid=Cancel}"
                 Visibility="{x:Bind IsProgressing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
+            <!--  Open health details  -->
             <Button
                 Width="36"
                 Height="36"
@@ -132,7 +144,7 @@
                         <AdaptiveTrigger MinWindowWidth="350" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithDetailedHealthTemplate}" />
+                        <Setter Target="HealthContentPresenter.ContentTemplate" Value="{StaticResource DetailedHealthTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <!--  Small window  -->
@@ -141,7 +153,7 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="DetailedHealthContentPresenter.ContentTemplate" Value="{StaticResource WithoutDetailedHealthTemplate}" />
+                        <Setter Target="HealthContentPresenter.ContentTemplate" Value="{StaticResource NotDetailedHealthTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

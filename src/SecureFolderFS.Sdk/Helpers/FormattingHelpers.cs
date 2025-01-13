@@ -5,16 +5,21 @@ namespace SecureFolderFS.Sdk.Helpers
 {
     public static class FormattingHelpers
     {
-        public static string SanitizeVolumeName(string volumeName, string? fallback)
+        public static string SanitizeItemName(string itemName, string fallback)
         {
             var invalidChars = Path.GetInvalidFileNameChars();
-            var sanitizedVolumeName = new string(volumeName.Where(ch => !invalidChars.Contains(ch)).ToArray());
+            var sanitizedItemName = new string(itemName.Where(ch => !invalidChars.Contains(ch)).ToArray());
 
             // Ensure the sanitized name is not empty and has a minimum length
-            if (string.IsNullOrWhiteSpace(sanitizedVolumeName) || sanitizedVolumeName.Length < 3)
-                sanitizedVolumeName = SanitizeVolumeName(fallback ?? "Mounted Volume", null);
+            if (string.IsNullOrWhiteSpace(sanitizedItemName) || sanitizedItemName.Length < 3)
+                sanitizedItemName = SanitizeVolumeName(fallback, null);
 
-            return sanitizedVolumeName;
+            return sanitizedItemName;
+        }
+
+        public static string SanitizeVolumeName(string volumeName, string? fallback)
+        {
+            return SanitizeItemName(volumeName, fallback ?? "Mounted Volume");
         }
     }
 }

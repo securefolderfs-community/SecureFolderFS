@@ -1,5 +1,5 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.Extensions;
@@ -25,7 +25,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         {
             try
             {
-                if (PathHelpers.IsCoreFile(value.Name))
+                if (PathHelpers.IsCoreName(value.Name))
                     return;
 
                 if (value.Id.Equals(specifics.ContentFolder.Id, StringComparison.OrdinalIgnoreCase))

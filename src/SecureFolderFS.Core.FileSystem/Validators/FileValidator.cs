@@ -1,5 +1,5 @@
 ﻿using OwlCore.Storage;
-using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Models;
 using System;
@@ -21,7 +21,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
         /// <inheritdoc/>
         public override Task ValidateAsync(IFile value, CancellationToken cancellationToken = default)
         {
-            if (PathHelpers.IsCoreFile(value.Name))
+            if (PathHelpers.IsCoreName(value.Name))
                 return Task.CompletedTask;
 
             // TODO: Implement file validation (invalid chunks, checksum mismatch, etc...?)

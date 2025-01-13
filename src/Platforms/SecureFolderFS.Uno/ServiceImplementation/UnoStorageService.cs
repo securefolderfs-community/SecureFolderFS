@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Storage.SystemStorageEx;
 using Windows.Storage;
 
 namespace SecureFolderFS.Uno.ServiceImplementation
@@ -25,8 +26,8 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             await Task.CompletedTask;
             return (TStorable)(IStorable)(true switch
             {
-                _ when typeof(TStorable).IsAssignableFrom(typeof(IFile)) => new SystemFile(id),
-                _ when typeof(TStorable).IsAssignableFrom(typeof(IFolder)) => new SystemFolder(id),
+                _ when typeof(TStorable).IsAssignableFrom(typeof(IFile)) => new SystemFileEx(id),
+                _ when typeof(TStorable).IsAssignableFrom(typeof(IFolder)) => new SystemFolderEx(id),
                 _ => GetUnknown(id)
             });
 
@@ -34,11 +35,11 @@ namespace SecureFolderFS.Uno.ServiceImplementation
             {
                 // Check for file
                 if (Path.GetFileName(path) is { } str && str != string.Empty && File.Exists(path))
-                    return new SystemFile(path);
+                    return new SystemFileEx(path);
 
                 // Check for folder
                 if (Directory.Exists(path))
-                    return new SystemFolder(path);
+                    return new SystemFolderEx(path);
 
                 throw new ArgumentException("The path is not a file nor a folder.", nameof(id));
             }

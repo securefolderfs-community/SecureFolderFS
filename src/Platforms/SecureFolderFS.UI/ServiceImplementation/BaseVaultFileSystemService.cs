@@ -7,10 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem;
+using SecureFolderFS.Core.FileSystem.Helpers.Health;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
+using SecureFolderFS.Shared.Models;
 using SecureFolderFS.Storage.VirtualFileSystem;
 using SecureFolderFS.UI.ViewModels.Health;
 
@@ -26,7 +29,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public async Task<HealthIssueViewModel?> GetIssueViewModelAsync(IResult result, IStorable storable, CancellationToken cancellation)
+        public async Task<HealthIssueViewModel?> GetIssueViewModelAsync(IResult result, IStorableChild storable, CancellationToken cancellation)
         {
             await Task.CompletedTask;
             if (result.Successful || result.Exception is null)
@@ -53,7 +56,7 @@ namespace SecureFolderFS.UI.ServiceImplementation
         }
 
         /// <inheritdoc/>
-        public Task ResolveIssuesAsync(IEnumerable<HealthIssueViewModel> issues, CancellationToken cancellationToken = default)
+        public async Task ResolveIssuesAsync(IEnumerable<HealthIssueViewModel> issues, IDisposable contractOrRoot, IVaultFileSystemService.IssueDelegate? issueDelegate, CancellationToken cancellationToken = default)
         {
             // Sort in the following order:
             /*
@@ -68,16 +71,42 @@ namespace SecureFolderFS.UI.ServiceImplementation
                     // Get the amount of items
                     var pathComponents = issue.Inner.Id.Split(Path.DirectorySeparatorChar).Length;
 
-                    // We actually prioritize Directory ID issues first since the children
+                    // We actually prioritize Directory ID issues first, since the children
                     // of the affected directory also need to be renamed in one sweep
                     return issue is HealthDirectoryIssueViewModel ? ++pathComponents : pathComponents;
                 })
                 .ToArray();
 
-            // TODO: Resolve issues
-            _ = sortedIssues;
+            if (contractOrRoot is IWrapper<FileSystemSpecifics> specificsWrapper)
+            {
+                foreach (var item in sortedIssues)
+                {
+                    var result = item switch
+                    {
+                        // Name issue
+                        HealthNameIssueViewModel nameIssue => await HealthHelpers.RepairNameAsync(
+                            nameIssue.Inner,
+                            specificsWrapper.Inner,
+                            FormattingHelpers.SanitizeItemName(nameIssue.ItemName ?? string.Empty, nameIssue.OriginalName),
+                            cancellationToken),
 
-            return Task.CompletedTask;
+                        // TODO: Implement repair for HealthFileDataIssueViewModel
+                        HealthFileDataIssueViewModel dataIssue => Result.Failure(null),
+
+                        // Directory ID issue
+                        HealthDirectoryIssueViewModel directoryIssue => await HealthHelpers.RepairDirectoryAsync(
+                            directoryIssue.Folder ?? throw new ArgumentNullException(nameof(HealthDirectoryIssueViewModel.Folder)),
+                            specificsWrapper.Inner.Security,
+                            cancellationToken),
+
+                        // Default
+                        _ => null
+                    };
+
+                    if (result is not null)
+                        issueDelegate?.Invoke(item, result);
+                }
+            }
         }
 
         /// <inheritdoc/>

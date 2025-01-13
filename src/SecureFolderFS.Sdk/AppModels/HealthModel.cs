@@ -42,7 +42,7 @@ namespace SecureFolderFS.Sdk.AppModels
         }
 
         /// <inheritdoc/>
-        public async Task ScanAsync(CancellationToken cancellationToken = default)
+        public async Task ScanAsync(bool includeFileContents, CancellationToken cancellationToken = default)
         {
             await Task.Run(async () =>
             {
@@ -131,7 +131,7 @@ namespace SecureFolderFS.Sdk.AppModels
                     else if (storableResult.Value is IFolder)
                         Interlocked.Increment(ref _totalFoldersScanned);
 
-                    IssueFound?.Invoke(this, new(value, storableResult.Value));
+                    IssueFound?.Invoke(this, new(value, storableResult.Value as IStorableChild));
                     break;
                 }
 

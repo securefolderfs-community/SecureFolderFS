@@ -16,7 +16,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
 {
     [Inject<IClipboardService>]
     [Bindable(true)]
-    public partial class HealthIssueViewModel : ErrorViewModel, IWrapper<IStorable>
+    public partial class HealthIssueViewModel : ErrorViewModel, IWrapper<IStorableChild>
     {
         [ObservableProperty] private string? _Icon; // TODO: Change to IImage
         [ObservableProperty] private SeverityType _Severity;
@@ -27,15 +27,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
         protected IResult? Result { get; set; }
 
         /// <inheritdoc/>
-        public IStorable Inner { get; }
+        public IStorableChild Inner { get; }
 
-        public HealthIssueViewModel(IStorable storable, IResult? result, string? title = null)
+        public HealthIssueViewModel(IStorableChild storable, IResult? result, string? title = null)
             : this(storable, title ?? "Unknown error")
         {
             Result = result;
         }
 
-        public HealthIssueViewModel(IStorable storable, string title)
+        public HealthIssueViewModel(IStorableChild storable, string title)
             : base(title)
         {
             ServiceProvider = DI.Default;

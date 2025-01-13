@@ -14,8 +14,8 @@ namespace SecureFolderFS.Core.Dokany
         /// <inheritdoc/>
         public override string FileSystemName { get; } = Constants.FileSystem.FS_NAME;
 
-        public DokanyVFSRoot(DokanyWrapper dokanyWrapper, IFolder storageRoot, FileSystemOptions options)
-            : base(storageRoot, options)
+        public DokanyVFSRoot(DokanyWrapper dokanyWrapper, IFolder storageRoot, FileSystemSpecifics specifics)
+            : base(storageRoot, specifics)
         {
             _dokanyWrapper = dokanyWrapper;
         }
@@ -25,10 +25,13 @@ namespace SecureFolderFS.Core.Dokany
         {
             if (_disposed)
                 return;
-         
+
             _disposed = await Task.Run(_dokanyWrapper.CloseFileSystem);
             if (_disposed)
+            {
                 FileSystemManager.Instance.RemoveRoot(this);
+                await base.DisposeAsync();
+            }
         }
     }
 }

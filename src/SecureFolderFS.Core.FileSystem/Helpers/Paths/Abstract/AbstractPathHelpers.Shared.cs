@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace SecureFolderFS.Core.FileSystem.Helpers.Abstract
+namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Abstract
 {
     /// <summary>
     /// A set of file system path management helpers that work on any platform including constrained environments with limited file system access.

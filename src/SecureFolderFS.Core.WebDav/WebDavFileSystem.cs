@@ -5,7 +5,7 @@ using NWebDav.Server.Stores;
 using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem;
-using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.WebDav.AppModels;
 using SecureFolderFS.Core.WebDav.EncryptingStorage2;
 using SecureFolderFS.Core.WebDav.Helpers;
@@ -65,6 +65,7 @@ namespace SecureFolderFS.Core.WebDav
             var dispatcher = new WebDavDispatcher(new RootDiskStore(specifics.FileSystemOptions.VolumeName, encryptingDiskStore), davFolder, new RequestHandlerProvider(), null);
 
             return await MountAsync(
+                specifics,
                 httpListener,
                 webDavOptions,
                 dispatcher,
@@ -72,6 +73,7 @@ namespace SecureFolderFS.Core.WebDav
         }
 
         protected abstract Task<IVFSRoot> MountAsync(
+            FileSystemSpecifics specifics,
             HttpListener listener,
             WebDavOptions options,
             IRequestDispatcher requestDispatcher,

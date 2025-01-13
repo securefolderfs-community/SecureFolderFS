@@ -1,9 +1,9 @@
 ﻿using SecureFolderFS.Core.FileSystem.Validators;
 using SecureFolderFS.Storage.VirtualFileSystem;
 
-namespace SecureFolderFS.Core.FileSystem.Helpers
+namespace SecureFolderFS.Core.FileSystem.Extensions
 {
-    public static class FileSystemOptionsHelpers
+    public static class FileSystemOptionsExtensions
     {
         public static void SetupValidators<TOptions>(this TOptions fileSystemOptions, FileSystemSpecifics specifics)
             where TOptions : FileSystemOptions

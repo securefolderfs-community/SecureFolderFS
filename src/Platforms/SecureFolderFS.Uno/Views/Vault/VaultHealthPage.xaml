@@ -12,6 +12,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <vc:GenericEnumConverter x:Key="GenericEnumConverter" />
         <vc:CountToStringConverter x:Key="CountToStringConverter" />
         <vc:ProgressIsDeterminateConverter x:Key="ProgressIsDeterminateConverter" />
         <vc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -142,13 +143,20 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Spacing="4">
+        <!--  Scan details  -->
+        <Grid Grid.Row="0" RowSpacing="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
             <InfoBar
-                Title="{x:Bind ViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issues'}"
+                Title="{x:Bind ViewModel.FoundIssues.Count, Mode=OneWay, Converter={StaticResource CountToStringConverter}, ConverterParameter='STANDARD|Found {0} issue(s)'}"
+                Grid.Row="0"
                 VerticalContentAlignment="Center"
                 IsClosable="False"
                 IsOpen="True"
-                Severity="Warning">
+                Severity="{x:Bind ViewModel.Severity, Mode=OneWay, Converter={StaticResource GenericEnumConverter}}">
                 <ProgressRing
                     Width="16"
                     Height="16"
@@ -161,10 +169,10 @@
                     Value="{x:Bind ViewModel.CurrentProgress, Mode=OneWay}" />
             </InfoBar>
             <ListView
+                Grid.Row="1"
                 IsItemClickEnabled="False"
                 ItemsSource="{x:Bind ViewModel.FoundIssues, Mode=OneWay}"
-                ScrollViewer.IsVerticalRailEnabled="True"
-                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollMode="Enabled"
                 SelectionMode="None">
                 <ListView.ItemContainerStyle>
@@ -186,22 +194,25 @@
                         NameIssueTemplate="{StaticResource NameIssueTemplate}" />
                 </ListView.ItemTemplateSelector>
             </ListView>
-        </StackPanel>
+        </Grid>
 
+        <!--  Continuation action  -->
         <StackPanel
             Grid.Row="1"
             Orientation="Horizontal"
             Spacing="8">
+            <!--<Button Width="124" Content="Ignore" />-->
             <Button
                 Width="124"
                 Command="{x:Bind ViewModel.ResolveCommand, Mode=OneWay}"
-                Content="Resolve"
+                Content="Repair"
                 IsEnabled="{x:Bind ViewModel.CanResolve, Mode=OneWay}" />
             <TextBlock
                 VerticalAlignment="Center"
                 FontSize="12"
                 Opacity="0.8"
-                Text="During repair, your vault will be set into read-only mode." />
+                Text="During repair, your vault will be set into read-only mode."
+                TextTrimming="CharacterEllipsis" />
         </StackPanel>
     </Grid>
 </Page>

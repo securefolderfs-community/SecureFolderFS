@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace SecureFolderFS.Core.FileSystem.Helpers.Native
+namespace SecureFolderFS.Core.FileSystem.Helpers.Paths.Native
 {
     /// <summary>
     /// A set of file system path management helpers that only work in a native environment with unlimited file system access.

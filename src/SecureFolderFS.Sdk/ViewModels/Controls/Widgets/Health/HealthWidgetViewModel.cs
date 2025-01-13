@@ -101,7 +101,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
         }
 
         [RelayCommand]
-        private async Task StartScanningAsync()
+        private async Task StartScanningAsync(string? mode)
         {
             if (_vaultHealthModel is null)
                 return;
@@ -114,10 +114,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             _savedState.AddMultiple(HealthReportViewModel.FoundIssues);
             HealthReportViewModel.FoundIssues.Clear();
 
-            // Wait a small delay for UI to update
-            await Task.Delay(10);
+            // Determine whether to include file contents
+            var includeFileContents = mode?.Contains("include_file_contents", StringComparison.OrdinalIgnoreCase) ?? false;
 
-            _ = Task.Run(() => ScanAsync(_cts?.Token ?? default));
+            // Begin scanning
+            await Task.Delay(10);
+            _ = Task.Run(() => ScanAsync(includeFileContents, _cts?.Token ?? default));
             await Task.Yield();
         }
 
@@ -134,13 +136,13 @@ namespace SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health
             _context?.Post(_ => HealthReportViewModel.CanResolve = false, null);
         }
 
-        private async Task ScanAsync(CancellationToken cancellationToken)
+        private async Task ScanAsync(bool includeFileContents, CancellationToken cancellationToken)
         {
             if (_vaultHealthModel is null)
                 return;
 
             _context?.Post(_ => HealthReportViewModel.CanResolve = false, null);
-            await _vaultHealthModel.ScanAsync(cancellationToken).ConfigureAwait(false);
+            await _vaultHealthModel.ScanAsync(includeFileContents, cancellationToken).ConfigureAwait(false);
             EndScanning();
             _context?.Post(_ => HealthReportViewModel.CanResolve = true, null);
         }

@@ -4,7 +4,7 @@ using SecureFolderFS.Shared.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.Helpers;
+using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 
 namespace SecureFolderFS.Core.FileSystem.Validators
 {
@@ -39,7 +39,7 @@ namespace SecureFolderFS.Core.FileSystem.Validators
 
             await foreach (var item in scannedFolder.GetItemsAsync(StorableType.All, cancellationToken).ConfigureAwait(false))
             {
-                if (PathHelpers.IsCoreFile(item.Name))
+                if (PathHelpers.IsCoreName(item.Name))
                     continue;
 
                 if (item is IChildFile file)

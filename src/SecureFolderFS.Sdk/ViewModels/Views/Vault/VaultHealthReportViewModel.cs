@@ -7,6 +7,7 @@ using SecureFolderFS.Sdk.Extensions;
 using SecureFolderFS.Sdk.Services;
 using SecureFolderFS.Sdk.ViewModels.Controls.Widgets.Health;
 using SecureFolderFS.Shared;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using System;
 using System.Collections;
@@ -55,7 +56,15 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Vault
         [RelayCommand]
         private async Task ResolveAsync(CancellationToken cancellationToken)
         {
-            await VaultFileSystemService.ResolveIssuesAsync(FoundIssues, cancellationToken);
+            UnlockedVaultViewModel.Options.DangerousSetReadOnly(true);
+            await VaultFileSystemService.ResolveIssuesAsync(FoundIssues, UnlockedVaultViewModel.StorageRoot, IssueResolved, cancellationToken);
+            UnlockedVaultViewModel.Options.DangerousSetReadOnly(false);
+        }
+
+        private void IssueResolved(HealthIssueViewModel issueViewModel, IResult result)
+        {
+            if (result.Successful)
+                FoundIssues.RemoveMatch(x => x.Inner.Id == issueViewModel.Inner.Id);
         }
 
         private void FoundIssues_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using OwlCore.Storage;
 using SecureFolderFS.Core.Cryptography;
 using SecureFolderFS.Core.FileSystem.AppModels;
+using SecureFolderFS.Core.FileSystem.Extensions;
 using SecureFolderFS.Core.FileSystem.Storage;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Enums;
@@ -10,7 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SecureFolderFS.Core.FileSystem.Helpers;
 
 namespace SecureFolderFS.Core.FileSystem
 {
@@ -41,7 +41,7 @@ namespace SecureFolderFS.Core.FileSystem
             fileSystemOptions.SetupValidators(specifics);
 
             var storageRoot = new CryptoFolder(Path.DirectorySeparatorChar.ToString(), specifics.ContentFolder, specifics);
-            return new LocalVFSRoot(specifics, storageRoot, fileSystemOptions);
+            return new LocalVFSRoot(specifics, storageRoot, specifics);
         }
     }
 }
