@@ -77,7 +77,7 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 {
                     baseFlags |= DocumentContractFlags.SupportsCopy
                                  | DocumentContractFlags.SupportsMove
-                                 // | DocumentContractFlags.SupportsRename // TODO: Add support for rename
+                                 | DocumentContractFlags.SupportsRename
                                  | DocumentContractFlags.SupportsDelete
                                  | DocumentContractFlags.SupportsRemove;
                 }

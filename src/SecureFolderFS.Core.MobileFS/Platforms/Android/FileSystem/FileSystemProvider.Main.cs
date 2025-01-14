@@ -5,7 +5,9 @@ using Android.OS;
 using Android.OS.Storage;
 using Android.Provider;
 using OwlCore.Storage;
+using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.Renamable;
 using static SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem.Projections;
 
 namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
@@ -216,6 +218,31 @@ namespace SecureFolderFS.Core.MobileFS.Platforms.Android.FileSystem
                 
                 default: return null;
             }
+        }
+
+        /// <inheritdoc/>
+        public override string? RenameDocument(string? documentId, string? displayName)
+        {
+            if (string.IsNullOrWhiteSpace(displayName))
+                return null;
+            
+            documentId = documentId == "null" ? null : documentId;
+            if (documentId is null)
+                return null;
+            
+            var storable = GetStorableForDocumentId(documentId);
+            if (storable is not IStorableChild storableChild)
+                return null;
+            
+            var parentFolder = storableChild.GetParentAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            if (parentFolder is not IRenamableFolder renamableFolder)
+                return null;
+            
+            var renamedItem = renamableFolder.RenameAsync(storableChild, displayName).ConfigureAwait(false).GetAwaiter().GetResult();
+            if (renamedItem is IWrapper<global::Android.Net.Uri> uriWrapper)
+                return uriWrapper.Inner.ToString();
+            
+            throw new InvalidOperationException($"{nameof(renamedItem)} does not implement {nameof(IWrapper<global::Android.Net.Uri>)}.");
         }
 
         /// <inheritdoc/>

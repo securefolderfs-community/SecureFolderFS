@@ -8,15 +8,18 @@ using OwlCore.Storage;
 using SecureFolderFS.Sdk.Attributes;
 using SecureFolderFS.Sdk.Enums;
 using SecureFolderFS.Sdk.Extensions;
+using SecureFolderFS.Sdk.Helpers;
 using SecureFolderFS.Sdk.Services;
+using SecureFolderFS.Sdk.ViewModels.Views.Overlays;
 using SecureFolderFS.Shared;
 using SecureFolderFS.Shared.ComponentModel;
 using SecureFolderFS.Shared.Extensions;
 using SecureFolderFS.Storage.Extensions;
+using SecureFolderFS.Storage.Renamable;
 
 namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 {
-    [Inject<IFileExplorerService>]
+    [Inject<IFileExplorerService>, Inject<IOverlayService>]
     [Bindable(true)]
     public abstract partial class BrowserItemViewModel : ObservableObject, IWrapper<IStorable>, IViewable, IAsyncInitialize
     {
@@ -39,6 +42,8 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
 
         /// <inheritdoc/>
         public abstract Task InitAsync(CancellationToken cancellationToken = default);
+
+        protected abstract void UpdateStorable(IStorable storable);
 
         [RelayCommand]
         protected virtual async Task MoveAsync(CancellationToken cancellationToken)
@@ -122,6 +127,30 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
                 _ = ex;
                 // TODO: Report error
             }
+        }
+
+        [RelayCommand]
+        protected virtual async Task RenameAsync(CancellationToken cancellationToken)
+        {
+            if (ParentFolder?.Folder is not IRenamableFolder renamableFolder)
+                return;
+            
+            if (Inner is not IStorableChild innerChild)
+                return;
+
+            var viewModel = new RenameOverlayViewModel("Rename item") { Message = "Choose a new name" };
+            var result = await OverlayService.ShowAsync(viewModel);
+            if (!result.Positive())
+                return;
+
+            if (string.IsNullOrWhiteSpace(viewModel.NewName))
+                return;
+
+            var formattedName = FormattingHelpers.SanitizeItemName(viewModel.NewName, "item");
+            var renamedStorable = await renamableFolder.RenameAsync(innerChild, formattedName, cancellationToken);
+
+            Title = formattedName;
+            UpdateStorable(renamedStorable);
         }
 
         [RelayCommand]

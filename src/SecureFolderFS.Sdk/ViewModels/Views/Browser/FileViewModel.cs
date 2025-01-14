@@ -19,7 +19,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <summary>
         /// Gets the file associated with this view model.
         /// </summary>
-        public IFile File { get; }
+        public IFile File { get; protected set; }
 
         public FileViewModel(IFile file, FolderViewModel? parentFolder)
             : base(parentFolder)
@@ -34,6 +34,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         {
             // TODO: Load thumbnail
             return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateStorable(IStorable storable)
+        {
+            File = (IFile)storable;
         }
 
         /// <inheritdoc/>

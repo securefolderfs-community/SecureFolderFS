@@ -18,7 +18,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         public override string Name { get; }
 
         /// <inheritdoc/>
-        protected override DocumentFile? Document { get; }
+        public override DocumentFile? Document { get; }
 
         public AndroidFile(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
             : base(uri, activity, parent, permissionRoot, bookmarkId)

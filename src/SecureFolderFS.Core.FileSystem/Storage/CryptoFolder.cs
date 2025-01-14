@@ -7,17 +7,41 @@ using System.Threading.Tasks;
 using OwlCore.Storage;
 using SecureFolderFS.Core.FileSystem.Helpers.Paths;
 using SecureFolderFS.Core.FileSystem.Storage.StorageProperties;
+using SecureFolderFS.Storage.Renamable;
 using SecureFolderFS.Storage.StorageProperties;
 
 namespace SecureFolderFS.Core.FileSystem.Storage
 {
     // TODO(ns): Add move and copy support
     /// <inheritdoc cref="IFolder"/>
-    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IModifiableFolder, IGetFirstByName
+    public class CryptoFolder : CryptoStorable<IFolder>, IChildFolder, IModifiableFolder, IGetFirstByName, IRenamableFolder
     {
         public CryptoFolder(string plaintextId, IFolder inner, FileSystemSpecifics specifics, CryptoFolder? parent = null)
             : base(plaintextId, inner, specifics, parent)
         {
+        }
+        
+        /// <inheritdoc/>
+        public async Task<IStorableChild> RenameAsync(IStorableChild storable, string newName, CancellationToken cancellationToken = default)
+        {
+            if (Inner is not IRenamableFolder renamableFolder)
+                throw new NotSupportedException("Renaming folder contents is not supported.");
+            
+            // We need to get the equivalent on the disk
+            var ciphertextName = await EncryptNameAsync(storable.Name, Inner, cancellationToken);
+            var ciphertextItem = await Inner.GetFirstByNameAsync(ciphertextName, cancellationToken);
+            
+            // Encrypt name
+            var newCiphertextName = await EncryptNameAsync(newName, Inner, cancellationToken);
+            var renamedCiphertextItem = await renamableFolder.RenameAsync(ciphertextItem, newCiphertextName, cancellationToken);
+
+            var plaintextId = Path.Combine(Inner.Id, newName);
+            return renamedCiphertextItem switch
+            {
+                IFile file => new CryptoFile(plaintextId, file, specifics, this),
+                IFolder folder => new CryptoFolder(plaintextId, folder, specifics, this),
+                _ => throw new ArgumentOutOfRangeException(nameof(renamedCiphertextItem))
+            };
         }
 
         /// <inheritdoc/>
@@ -113,7 +137,7 @@ namespace SecureFolderFS.Core.FileSystem.Storage
 
             return (IChildFile)Wrap(file, name);
         }
-        
+
         /// <inheritdoc/>
         public override async Task<IBasicProperties> GetPropertiesAsync()
         {

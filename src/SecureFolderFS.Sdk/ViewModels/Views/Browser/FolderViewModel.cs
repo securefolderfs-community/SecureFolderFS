@@ -20,7 +20,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         /// <summary>
         /// Gets the folder associated with this view model.
         /// </summary>
-        public IFolder Folder { get; }
+        public IFolder Folder { get; protected set; }
 
         /// <summary>
         /// Gets the items in this folder.
@@ -50,6 +50,12 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Browser
         {
             // TODO: Load thumbnail
             return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateStorable(IStorable storable)
+        {
+            Folder = (IFolder)storable;
         }
 
         public async Task ListContentsAsync(CancellationToken cancellationToken = default)

@@ -34,7 +34,7 @@ namespace SecureFolderFS.Maui.Platforms.Android.Storage
         /// <summary>
         /// Gets the <see cref="DocumentFile"/> associated with the storage type identified by <see cref="AndroidUri"/>.
         /// </summary>
-        protected abstract DocumentFile? Document { get; }
+        public abstract DocumentFile? Document { get; }
 
         protected AndroidStorable(AndroidUri uri, Activity activity, AndroidFolder? parent = null, AndroidUri? permissionRoot = null, string? bookmarkId = null)
         {

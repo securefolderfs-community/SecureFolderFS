@@ -8,6 +8,7 @@ namespace SecureFolderFS.Sdk.ViewModels.Views.Overlays
     public sealed partial class RenameOverlayViewModel : ObservableObject, IViewable
     {
         [ObservableProperty] private string? _Title;
+        [ObservableProperty] private string? _Message;
         [ObservableProperty] private string? _NewName;
 
         public RenameOverlayViewModel(string? title)
